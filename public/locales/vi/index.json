@@ -1,0 +1,14 @@
+{
+  "english": "Tiếng Anh",
+  "vietnamese": "Tiếng Việt",
+  "register": "Đăng kí",
+  "login": "Đăng nhập",
+  "signout": "Đăng xuất",
+  "adminDashboard": "Trang Quản Lý",
+  "header": {
+    "home": "Trang Chủ",
+    "about": "Về chúng tôi",
+    "products": "Sản Phẩm",
+    "contact": "Liên Hệ"
+  }
+}
