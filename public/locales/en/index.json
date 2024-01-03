@@ -1,0 +1,14 @@
+{
+  "english": "English",
+  "vietnamese": "Vietnamese",
+  "register": "Register",
+  "login": "Login",
+  "signout": "Sign out",
+  "adminDashboard": "Admin Dashboard",
+  "header": {
+    "home": "Home",
+    "about": "About",
+    "products": "Products",
+    "contact": "Contact"
+  }
+}
