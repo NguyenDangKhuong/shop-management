@@ -17,11 +17,11 @@ export const metadata: Metadata = {
   description: 'Yumy Shop, Cu Chi, TPHCM, Viet Nam'
 }
 
-export default function RootLayout({
+const RootLayout = ({
   children
 }: {
   children: React.ReactNode
-}) {
+}) => {
   return (
     <html lang='en'>
       <body className={inter.className} suppressHydrationWarning={true}>
@@ -37,3 +37,5 @@ export default function RootLayout({
     </html>
   )
 }
+
+export default RootLayout
