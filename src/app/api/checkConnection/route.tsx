@@ -6,10 +6,7 @@ import { NextResponse } from 'next/server'
 export const GET = async () => {
   try {
     await connectDb()
-    const categories = await CategoryModel.find().sort().lean()
-    const totalDocs = await CategoryModel.countDocuments()
-    console.log(categories)
-    return NextResponse.json({ categories, totalDocs, success: true }, { status: 200 })
+    return NextResponse.json({ connected: true, success: true }, { status: 200 })
   } catch (err) {
     console.error('err ahihi', err)
     return NextResponse.json({

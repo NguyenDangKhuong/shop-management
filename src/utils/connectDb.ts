@@ -28,6 +28,7 @@ const connectDB = async () => {
   } catch (error: any) {
     console.log(error)
     console.log(`MongoDB can't connected, hic error is`, error.message)
+    throw new Error(`MongoDB can't connected, hic error is`, error.message);
     process.exit(1)
   }
 }

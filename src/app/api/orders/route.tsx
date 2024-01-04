@@ -5,10 +5,10 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const dynamic = "force-dynamic"
 
-connectDb()
 
 export const GET = async (req: NextRequest) => {
   try {
+    await connectDb()
     const searchParams = req.nextUrl.searchParams
     const date = searchParams.get('date')
     const isMonth = Boolean(searchParams.get('isMonth')) ?? false

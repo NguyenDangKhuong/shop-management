@@ -3,10 +3,9 @@ import connectDb from '@/utils/connectDb'
 import removeImage from '@/utils/removeImage'
 import { NextRequest, NextResponse } from 'next/server'
 
-connectDb()
-
 export const POST = async (req: NextRequest) => {
   try {
+    await connectDb()
     const body = await req.json()
     const { name, price, storage } = body
     if (!name || !price || !storage) {
@@ -48,6 +47,7 @@ export const POST = async (req: NextRequest) => {
 
 export const PUT = async (req: NextRequest) => {
   try {
+    await connectDb()
     const body = await req.json()
     const { _id, name, price, storage, imagePublicId } = body
     if (!name || !price || !storage) {
@@ -83,6 +83,7 @@ export const PUT = async (req: NextRequest) => {
 
 export const DELETE = async (req: NextRequest) => {
   try {
+    await connectDb()
     const body = await req.json()
     const { _id } = body
     if (!_id) return

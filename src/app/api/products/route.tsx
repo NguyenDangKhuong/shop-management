@@ -6,10 +6,9 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const dynamic = "force-dynamic"
 
-connectDb()
-
 export const GET = async (req: NextRequest) => {
   try {
+    await connectDb()
     const searchParams = req.nextUrl.searchParams
     // Convert querystring values to number
     const pageNum = Number(searchParams.get('page')) || 1

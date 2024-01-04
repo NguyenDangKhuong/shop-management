@@ -1,8 +1,10 @@
 import CategoryModel, { Category } from "@/models/Category"
+import connectDb from "@/utils/connectDb"
 import { NextRequest, NextResponse } from "next/server"
 
 export const POST = async (req: NextRequest) => {
   try {
+    await connectDb()
     const body = await req.json()
     const { name } = body
     if (!name) {
@@ -44,6 +46,7 @@ export const POST = async (req: NextRequest) => {
 
 export const PUT = async (req: NextRequest) => {
   try {
+    await connectDb()
     const body = await req.json()
     const { _id, name } = body
     if (!name) {
@@ -74,6 +77,7 @@ export const PUT = async (req: NextRequest) => {
 
 export const DELETE = async (req: NextRequest) => {
   try {
+    await connectDb()
     const body = await req.json()
     const { _id } = body
     if (!_id) return NextResponse.json({

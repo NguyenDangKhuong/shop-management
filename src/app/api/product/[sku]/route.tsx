@@ -6,6 +6,7 @@ connectDb()
 
 export const GET = async (req: NextRequest, { params }: { params: { sku: string } }) => {
   try {
+    await connectDb()
     const sku = params.sku
     const product = await ProductModel.findOne({ sku }).lean()
     return NextResponse.json({ product, success: true }, { status: 200 })

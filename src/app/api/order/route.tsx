@@ -4,10 +4,9 @@ import connectDb from '@/utils/connectDb'
 import removeImage from '@/utils/removeImage'
 import { NextRequest, NextResponse } from 'next/server'
 
-connectDb()
-
 export const POST = async (req: NextRequest) => {
   try {
+    await connectDb()
     const body = await req.json()
     const { products } = body
     if (products.length === 0) {
