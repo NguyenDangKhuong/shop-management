@@ -3,6 +3,8 @@ import mongoose, { ConnectOptions } from 'mongoose'
 const connection: any = {}
 const mongoUrl = `mongodb+srv://${process.env.NEXT_PUBLIC_MONGO_USER_NAME}:${process.env.NEXT_PUBLIC_MONGO_PASSWORD}@racroishop-management.2j99luj.mongodb.net/?retryWrites=true&w=majority`
 
+const mongoVercelUrl = `mongodb+srv://vercel-admin-user-6596c17aac277751e1d06264:vosHVce1gTpz3rcQ@racroishop-management.2j99luj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
+
 const connectDb = async () => {
   try {
     if (connection.isConnected) {
@@ -20,7 +22,7 @@ const connectDb = async () => {
       await mongoose.disconnect()
     }
 
-    const db = await mongoose.connect(mongoUrl, {
+    const db = await mongoose.connect(mongoVercelUrl, {
       dbName: 'main'
     } as ConnectOptions)
     console.log('MongoDB connected, yeah')
