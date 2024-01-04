@@ -33,6 +33,7 @@ export const GET = async (req: NextRequest) => {
       success: false
     }, {
       status: 500,
+      statusText: String(err)
     })
   }
 }

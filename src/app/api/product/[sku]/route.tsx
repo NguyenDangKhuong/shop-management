@@ -17,6 +17,7 @@ export const GET = async (req: NextRequest, { params }: { params: { sku: string 
       success: false
     }, {
       status: 500,
+      statusText: String(err)
     })
   }
 }

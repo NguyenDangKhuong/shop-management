@@ -14,6 +14,7 @@ export const GET = async () => {
       success: false
     }, {
       status: 500,
+      statusText: String(err)
     })
   }
 }

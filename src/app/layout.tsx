@@ -27,7 +27,7 @@ const RootLayout = ({
       <body className={inter.className} suppressHydrationWarning={true}>
         <StyledComponentsRegistry>
           <ConfigProvider theme={theme}>
-            <App className='h-[100vh]'>
+            <App>
               <DashboardLayout>{children}</DashboardLayout>
             </App>
           </ConfigProvider>
