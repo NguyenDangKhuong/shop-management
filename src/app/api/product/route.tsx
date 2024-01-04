@@ -41,6 +41,7 @@ export const POST = async (req: NextRequest) => {
     console.error(err)
     return NextResponse.json({ message: `Xin vui lòng thử lại hoặc báo Khương lỗi là ${err}`, success: false }, {
       status: 500,
+      statusText: String(err)
     })
   }
 }
@@ -77,6 +78,7 @@ export const PUT = async (req: NextRequest) => {
     console.error(err)
     return NextResponse.json({ message: `Xin vui lòng thử lại hoặc báo Khương lỗi là ${err}`, success: false }, {
       status: 500,
+      statusText: String(err)
     })
   }
 }
@@ -99,6 +101,7 @@ export const DELETE = async (req: NextRequest) => {
     console.error(err)
     return NextResponse.json({ message: `Xin vui lòng thử lại hoặc báo Khương lỗi là ${err}`, success: false }, {
       status: 500,
+      statusText: String(err)
     })
   }
 }

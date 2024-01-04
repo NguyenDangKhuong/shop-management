@@ -40,6 +40,7 @@ export const POST = async (req: NextRequest) => {
       success: false
     }, {
       status: 500,
+      statusText: String(err)
     })
   }
 }
@@ -71,6 +72,7 @@ export const PUT = async (req: NextRequest) => {
       success: false
     }, {
       status: 500,
+      statusText: String(err)
     })
   }
 }
@@ -103,6 +105,7 @@ export const DELETE = async (req: NextRequest) => {
       success: false
     }, {
       status: 500,
+      statusText: String(err)
     })
   }
 }
