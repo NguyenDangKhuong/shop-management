@@ -4,6 +4,8 @@ import connectDb from '@/utils/connectDb'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 import { NextRequest, NextResponse } from 'next/server'
 
+export const dynamic = "force-dynamic"
+
 connectDb()
 
 export const GET = async (req: NextRequest) => {
