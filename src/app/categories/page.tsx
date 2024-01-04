@@ -9,6 +9,7 @@ const CategoryPage = async (props: any) => {
     page,
     size: LIMIT_PAGE_NUMBER,
   }, ['categories'])
+  console.log('categories AAA', categories)
   return (
     <>
       <DashboardTitle pageName='danh mục' totalDocs={totalDocs} />

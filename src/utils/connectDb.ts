@@ -21,15 +21,13 @@ const connectDB = async () => {
     }
 
     const db = await mongoose.connect(mongoUrl, {
-      // useNewUrlParser: true,
-      // useUnifiedTopology: true,
       dbName: 'main'
     } as ConnectOptions)
     console.log('MongoDB connected, yeah')
     connection.isConnected = db.connections[0].readyState
   } catch (error: any) {
-    console.log(`MongoDB can't connected, hic`)
-    console.log(error.message)
+    console.log(error)
+    console.log(`MongoDB can't connected, hic error is`, error.message)
     process.exit(1)
   }
 }

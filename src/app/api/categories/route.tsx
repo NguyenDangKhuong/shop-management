@@ -8,9 +8,10 @@ export const GET = async () => {
   try {
     const categories = await CategoryModel.find().sort().lean()
     const totalDocs = await CategoryModel.countDocuments()
+    console.log(categories)
     return NextResponse.json({ categories, totalDocs, success: true }, { status: 200 })
   } catch (err) {
-    console.error(err)
+    console.error('err ahihi', err)
     return NextResponse.json({
       message: `Xin vui lòng thử lại hoặc báo Khương lỗi là ${err}`,
       success: false
