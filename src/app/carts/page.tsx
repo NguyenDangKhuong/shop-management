@@ -13,6 +13,8 @@ import { format } from 'date-fns'
 import { useEffect, useRef, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 
+export const dynamic = "force-dynamic"
+
 const CartPage = () => {
   const [cartList, setCartList] = useState<ProductCart[]>([])
   const [searchValue, setSearchValue] = useState('')
