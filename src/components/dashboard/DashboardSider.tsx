@@ -21,7 +21,11 @@ const DashboardSider = ({ collapsed }: any) => {
       collapsible
       collapsed={collapsed}>
       <Link href='/'>
-        <img className='bg-white mb-5 h-[65px] m-auto' src='/image/logo.png' />
+        <img
+          className='bg-white mb-5 h-[65px] m-auto'
+          src='/image/logo.png'
+          alt='logo'
+        />
       </Link>
       <Menu
         theme='dark'
