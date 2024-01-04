@@ -3,6 +3,8 @@ import connectDb from '@/utils/connectDb'
 import { endOfDay, endOfMonth, startOfDay, startOfMonth, subHours } from 'date-fns'
 import { NextRequest, NextResponse } from 'next/server'
 
+export const dynamic = "force-dynamic"
+
 connectDb()
 
 export const GET = async (req: NextRequest) => {

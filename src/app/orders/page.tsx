@@ -2,8 +2,6 @@ import DashboardTitle from '@/components/dashboard/DashboardTitle'
 import OrderTable from '@/components/dashboard/orders/OrderTable'
 import { get } from '@/utils/api'
 
-export const dynamic = "force-dynamic"
-
 const OrderPage = async (props: any) => {
   const date = props?.searchParams?.date ?? new Date()
   const isMonth = props?.searchParams?.isMonth ?? ''
