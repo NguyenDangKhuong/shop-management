@@ -22,7 +22,7 @@ const DashboardSider = ({ collapsed }: any) => {
       collapsed={collapsed}>
       <Link href='/'>
         <img
-          className='bg-white mb-5 h-[65px] m-auto'
+          className='bg-white mb-5 w-full h-[65px] m-auto'
           src='/image/logo.png'
           alt='logo'
         />

@@ -28,10 +28,11 @@ const CategoryTable = ({
   totalDocs: number
   categories: Category[]
 }) => {
-  const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
-  const pathname = usePathname();
-  const { replace } = useRouter();
+  const searchParams = useSearchParams()
+  const params = new URLSearchParams(searchParams)
+  const pathname = usePathname()
+  const { replace } = useRouter()
+  console.log('categories AAA', categories)
 
   const [isOpen, setIsOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category>(initialCategory)

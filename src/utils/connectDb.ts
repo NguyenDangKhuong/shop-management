@@ -3,7 +3,7 @@ import mongoose, { ConnectOptions } from 'mongoose'
 const connection: any = {}
 const mongoUrl = `mongodb+srv://${process.env.NEXT_PUBLIC_MONGO_USER_NAME}:${process.env.NEXT_PUBLIC_MONGO_PASSWORD}@racroishop-management.2j99luj.mongodb.net/?retryWrites=true&w=majority`
 
-const connectDB = async () => {
+const connectDb = async () => {
   try {
     if (connection.isConnected) {
       console.log('DB is already connected, haha')
@@ -28,12 +28,14 @@ const connectDB = async () => {
   } catch (error: any) {
     console.log(error)
     console.log(`MongoDB can't connected, hic error is`, error.message)
-    throw new Error(`MongoDB can't connected, hic error is`, error.message);
+    // throw new Error(`MongoDB can't connected, hic error is`, error.message);
     process.exit(1)
   }
 }
 
-export const disconnectDB = async () => {
+export default connectDb
+
+export const disconnectDb = async () => {
   if (connection.isConnected) {
     if (process.env.NODE_ENV === 'production') {
       await mongoose.disconnect()
@@ -44,4 +46,3 @@ export const disconnectDB = async () => {
   }
 }
 
-export default connectDB
