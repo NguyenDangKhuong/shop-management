@@ -32,6 +32,7 @@ export const POST = async (req: NextRequest) => {
       status: 201,
     })
   } catch (err) {
+    console.log(err)
     return NextResponse.json({
       message: `Xin vui lòng thử lại hoặc báo Khương lỗi là ${err}`,
       success: false
