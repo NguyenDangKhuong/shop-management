@@ -1,5 +1,5 @@
 import OrderModel from '@/models/Order'
-import ProductModel from '@/models/Product'
+import ProductModel, { Product } from '@/models/Product'
 import connectDb from '@/utils/connectDb'
 import removeImage from '@/utils/removeImage'
 import { NextRequest, NextResponse } from 'next/server'
@@ -22,7 +22,7 @@ export const POST = async (req: NextRequest) => {
     await Promise.all(
       products.map(async (item: any) => {
         if (item.product.storage - item.quantity === 0) {
-          const deletedProduct = await ProductModel.findByIdAndDelete(item.product._id)
+          const deletedProduct: any = await ProductModel.findByIdAndDelete(item.product._id)
           console.log('deletedProduct', deletedProduct)
           deletedProduct && removeImage(String(deletedProduct?.imagePublicId))
         } else {
