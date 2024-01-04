@@ -1,8 +1,8 @@
 'use client'
-import { useGenegateId } from "@/hooks/useGenegateId";
 import { ProductCart } from "@/models/ProductCart";
 import { post } from "@/utils/api";
 import { currencyFormat } from "@/utils/currencyFormat";
+import { genegateId } from "@/utils/genegateId";
 import numberWithCommas from "@/utils/numberWithCommas";
 import pushNotification from "@/utils/pushNotification";
 import {
@@ -53,7 +53,7 @@ const CartSumary: React.FC<{
       copyStyles: true,
       onAfterPrint: async () => {
         setIsLoading(true)
-        const orderId = useGenegateId(6)
+        const orderId = genegateId(6)
         const { message, success }: any = await post('api/order', {
           orderId,
           totalPrice,

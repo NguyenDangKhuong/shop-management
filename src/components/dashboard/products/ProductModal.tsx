@@ -1,4 +1,3 @@
-import { useGenegateId } from '@/hooks/useGenegateId';
 import { Category } from "@/models/Category";
 import { Product } from "@/models/Product";
 import { post, put } from "@/utils/api";
@@ -10,6 +9,7 @@ import {
 import { AutoComplete, Button, Flex, Form, Input, InputNumber, Modal, Select } from "antd";
 import { useEffect, useState } from "react";
 import { initialProduct } from "./ProductTable";
+import { genegateId } from "@/utils/genegateId";
 
 const { Option } = Select;
 
@@ -32,8 +32,8 @@ const ProductModal = ({ isOpen, setIsOpen, editingProduct, setEditingProduct, ca
   const [isLoading, setIsLoading] = useState(false)
   const [form] = Form.useForm()
   useEffect(() => form.setFieldsValue(editingProduct), [form, editingProduct])
-  const sku = useGenegateId(5)
-  const tempName = useGenegateId(3)
+  const sku = genegateId(5)
+  const tempName = genegateId(3)
   const { imagePublicId, categoryId } = editingProduct
   return <Modal
     title={`${editingProduct._id ? 'Sửa' : 'Thêm'} sản phẩm`}
