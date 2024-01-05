@@ -8,7 +8,7 @@ export const GET = async () => {
     await connectDb()
     const categories = await CategoryModel.find().sort().lean()
     const totalDocs = await CategoryModel.countDocuments()
-    console.log('categories api', categories, CategoryModel)
+    console.log('categories api a', categories, CategoryModel)
     return NextResponse.json({ categories, totalDocs, success: true }, { status: 200 })
   } catch (err) {
     console.error('err ahihi', err)
