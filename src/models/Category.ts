@@ -14,7 +14,7 @@ export class Category {
 }
 
 const CategoryModel = mongoose.models.Category || getModelForClass(Category, {
-  schemaOptions: { timestamps: true }
+  schemaOptions: { timestamps: true, collection: 'categories' }
 })
 
 export default CategoryModel
