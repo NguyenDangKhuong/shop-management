@@ -23,7 +23,7 @@ export class User {
 }
 
 const UserModel = mongoose.models.User || getModelForClass(User, {
-  schemaOptions: { timestamps: true }
+  schemaOptions: { timestamps: true, collection: 'users' }
 })
 
 export default UserModel

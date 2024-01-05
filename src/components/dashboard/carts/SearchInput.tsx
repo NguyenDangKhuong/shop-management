@@ -9,12 +9,14 @@ const SearchInput = ({
   isFetching,
   searchValue,
   setSearchValue,
+  scanInput
 }: {
   isFetching: boolean
   searchValue: string
-  setSearchValue: (val: string) => void
+  setSearchValue: (val: string) => void,
+  scanInput: any
 }) => {
-  const scanInput = useRef<InputRef>(null)
+  
   const onIdle = () => {
     scanInput?.current?.focus()
   }
