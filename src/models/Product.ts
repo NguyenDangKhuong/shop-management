@@ -34,7 +34,7 @@ export class Product {
 }
 
 const ProductModel = mongoose.models.Product || getModelForClass(Product, {
-  schemaOptions: { timestamps: true }
+  schemaOptions: { timestamps: true, collection: 'products' }
 })
 
 export default ProductModel
