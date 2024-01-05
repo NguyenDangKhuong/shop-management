@@ -8,7 +8,7 @@ import useDebounce from '@/hooks/useDebounce'
 import { ProductCart } from '@/models/ProductCart'
 import { get } from '@/utils/api'
 import pushNotification from '@/utils/pushNotification'
-import { Col, Row } from 'antd'
+import { Col, InputRef, Row } from 'antd'
 import { format } from 'date-fns'
 import { useEffect, useRef, useState } from 'react'
 import { isMobile } from 'react-device-detect'
@@ -21,14 +21,25 @@ const CartPage = () => {
   const [discountPrice, setDiscountPrice] = useState(0)
   const [customerCash, setCustomerCash] = useState(0)
   const [date, setDate] = useState('')
+  const scanInput = useRef<InputRef>(null)
 
   const debounedScanValue = useDebounce(searchValue, isMobile ? 2000 : 0)
 
   const componentRef: any = useRef(null)
 
   useEffect(() => {
+    //check connection every 30 minutes
+    setInterval(async () => {
+      const { connected, success } = await get(`/api/check-connection`, {}, ['connection'])
+      console.log('success', success, connected)
+      if (!connected || !success) {
+        window.location.reload()
+      }
+    }, 180000)
+    //fix date of date-fns
     setDate(format(new Date(), 'HH:mm - dd/MM/yyyy'))
-    // mutateCheckConnection()
+    
+    scanInput?.current?.focus()
   }, [])
 
   useEffect(() => {
@@ -53,6 +64,7 @@ const CartPage = () => {
         : [...cartList, { product, quantity: 1 }]
       product && setCartList(newCartList)
       setSearchValue('')
+      scanInput?.current?.focus()
     })()
   }, [debounedScanValue])
 
@@ -72,7 +84,7 @@ const CartPage = () => {
   return (
     <>
       <DashboardTitle pageName='Giỏ hàng' />
-      <SearchInput isFetching={isFetching} searchValue={searchValue} setSearchValue={(val) => setSearchValue(val)} />
+      <SearchInput isFetching={isFetching} searchValue={searchValue} scanInput={scanInput} setSearchValue={(val) => setSearchValue(val)} />
       <Row>
         <Col span={16}>
           <CartListItem isFetching={isFetching} setIsFetching={(val) => setIsFetching(val)} cartList={cartList} setCartList={(val) => setCartList(val)} />
