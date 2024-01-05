@@ -9,22 +9,22 @@ export class Order {
 
   @prop({ type: () => Number })
   customerCash!: number
-  
+
   @prop({ type: () => Number })
   totalPrice!: number
-  
+
   @prop({ type: () => Number })
   totalCart!: number
-  
+
   @prop({ type: () => Number })
   exchange!: number
 
   @prop({ type: () => Number })
   discountPrice!: number
-  
+
   @prop({ type: () => [ProductCart] })
   products!: ProductCart[]
-  
+
   @prop({ type: () => Date })
   createdAt?: Date
 
@@ -33,7 +33,7 @@ export class Order {
 }
 
 const OrderModel = mongoose.models.Order || getModelForClass(Order, {
-  schemaOptions: { timestamps: true }
+  schemaOptions: { timestamps: true, collection: 'orders' }
 })
 
 export default OrderModel
