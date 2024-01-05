@@ -23,7 +23,7 @@ const connectDb = async () => {
       await mongoose.disconnect()
     }
 
-    const db = await mongoose.connect(mongoVercelUrl, {
+    const db = await mongoose.connect(mongoUrl, {
       dbName: 'main'
     } as ConnectOptions)
     console.log('MongoDB connected, yeah')
