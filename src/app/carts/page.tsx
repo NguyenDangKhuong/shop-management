@@ -31,30 +31,29 @@ const CartPage = () => {
     //check connection every 30 minutes
     setInterval(async () => {
       const { connected, success } = await get(`/api/check-connection`, {}, ['connection'])
-      console.log('success', success, connected)
       if (!connected || !success) {
         window.location.reload()
       }
     }, 180000)
     //fix date of date-fns
     setDate(format(new Date(), 'HH:mm - dd/MM/yyyy'))
-    
+
     scanInput?.current?.focus()
   }, [])
-
+  
   useEffect(() => {
     (async () => {
       if (!debounedScanValue) return
-      setIsFetching(true)
       const { product, message, success } = await get(`/api/product/${debounedScanValue}`, {}, ['productsCart'])
-
-      const { _id } = product
 
       if (!success) {
         pushNotification(message, success)
+        setSearchValue('')
+        setIsFetching(false)
+        scanInput?.current?.focus()
         return
       }
-      const existedProduct = await cartList?.find(item => item.product?._id === _id)
+      const existedProduct = await cartList?.find(item => item.product?._id === product._id)
       const newCartList = existedProduct
         ? cartList.map(item =>
           item.product?._id === product._id
@@ -64,6 +63,7 @@ const CartPage = () => {
         : [...cartList, { product, quantity: 1 }]
       product && setCartList(newCartList)
       setSearchValue('')
+      setIsFetching(false)
       scanInput?.current?.focus()
     })()
   }, [debounedScanValue])
@@ -84,7 +84,7 @@ const CartPage = () => {
   return (
     <>
       <DashboardTitle pageName='Giỏ hàng' />
-      <SearchInput isFetching={isFetching} searchValue={searchValue} scanInput={scanInput} setSearchValue={(val) => setSearchValue(val)} />
+      <SearchInput isFetching={isFetching} setIsFetching={(val) => setIsFetching(val)} searchValue={searchValue} scanInput={scanInput} setSearchValue={(val) => setSearchValue(val)} />
       <Row>
         <Col span={16}>
           <CartListItem isFetching={isFetching} setIsFetching={(val) => setIsFetching(val)} cartList={cartList} setCartList={(val) => setCartList(val)} />

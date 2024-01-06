@@ -1,5 +1,6 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
-import { Button, Layout, theme } from 'antd'
+import { signOut } from '@/auth'
+import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, DownOutlined } from '@ant-design/icons'
+import { Avatar, Button, Dropdown, Flex, Layout, MenuProps, Space, theme } from 'antd'
 
 const { Header } = Layout
 
@@ -8,18 +9,43 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
     token: { colorBgContainer }
   } = theme.useToken()
 
+  const items: MenuProps['items'] = [
+    {
+      key: '1',
+      label: (
+        <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+          Profile
+        </a>
+      ),
+    },
+    {
+      key: 'signOut',
+      danger: true,
+      label: <span onClick={async () => {
+        await signOut();
+      }}>Sign out</span>,
+    },
+  ];
+
   return (
     <Header style={{ padding: 0, background: colorBgContainer }}>
-      <Button
-        type='text'
-        icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        onClick={() => setCollapsed()}
-        style={{
-          fontSize: '16px',
-          width: 64,
-          height: 64
-        }}
-      />
+      <Flex align='center' justify='space-between'>
+        <Button
+          type='text'
+          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          onClick={() => setCollapsed()}
+          style={{
+            fontSize: '16px',
+            width: 64,
+            height: 64
+          }}
+        />
+        <Dropdown menu={{ items }}>
+          <span className='mr-4'>
+            <Avatar size={40} icon={<UserOutlined />} />
+          </span>
+        </Dropdown>
+      </Flex>
     </Header>
   )
 }

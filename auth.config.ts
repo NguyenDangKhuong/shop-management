@@ -1,9 +1,11 @@
+import { NEXT_AUTH_SECRET } from '@/utils/constants';
 import type { NextAuthConfig } from 'next-auth';
  
 export const authConfig = {
   pages: {
     signIn: '/login',
   },
+  secret: NEXT_AUTH_SECRET,
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;

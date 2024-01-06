@@ -9,14 +9,16 @@ const SearchInput = ({
   isFetching,
   searchValue,
   setSearchValue,
+  setIsFetching,
   scanInput
 }: {
   isFetching: boolean
   searchValue: string
   setSearchValue: (val: string) => void,
+  setIsFetching: (val: boolean) => void,
   scanInput: any
 }) => {
-  
+
   const onIdle = () => {
     scanInput?.current?.focus()
   }
@@ -32,7 +34,9 @@ const SearchInput = ({
       disabled={isFetching}
       placeholder='Nhập mã sản phẩm'
       value={searchValue}
-      onChange={val => setSearchValue(val.target.value)}
+      onChange={val => { 
+        setIsFetching(true)
+        setSearchValue(val.target.value) }}
     />
 
   )

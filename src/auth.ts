@@ -1,20 +1,22 @@
+'use client'
 import NextAuth from 'next-auth';
 import { authConfig } from '../auth.config';
 import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
+import UserModel, { User } from './models/User';
 
 // import { sql } from '@vercel/postgres';
 // import type { User } from '@/app/lib/definitions';
 // import bcrypt from 'bcrypt';
 
 // async function getUser(email: string): Promise<User | undefined> {
-//   try {
-//     const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
-//     return user.rows[0];
-//   } catch (error) {
-//     console.error('Failed to fetch user:', error);
-//     throw new Error('Failed to fetch user.');
-//   }
+//     try {
+//         const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
+//         return user.rows[0];
+//     } catch (error) {
+//         console.error('Failed to fetch user:', error);
+//         throw new Error('Failed to fetch user.');
+//     }
 // }
 
 export const { auth, signIn, signOut } = NextAuth({
@@ -27,8 +29,12 @@ export const { auth, signIn, signOut } = NextAuth({
                 .safeParse(credentials);
             if (parsedCredentials.success) {
                 const { email, password } = parsedCredentials.data;
-                const user = await getUser(email);
-                if (!user) return null;
+                console.log(email, password)
+                if (!email) return
+                // const existedUser: User | null = await UserModel.findOne({ email }).lean()
+                // if (!existedUser) return null;
+                // if (password !== existedUser?.password) return null;
+                // return existedUser;
             }
             return null;
         },

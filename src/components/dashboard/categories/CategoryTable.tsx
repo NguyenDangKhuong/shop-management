@@ -32,7 +32,6 @@ const CategoryTable = ({
   const params = new URLSearchParams(searchParams)
   const pathname = usePathname()
   const { replace } = useRouter()
-  console.log('categories', categories)
 
   const [isOpen, setIsOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category>(initialCategory)
