@@ -9,6 +9,9 @@ export const GET = async (req: NextRequest, { params }: { params: { sku: string 
     await connectDb()
     const sku = params.sku
     const product = await ProductModel.findOne({ sku }).lean()
+    if (!product) {
+      return NextResponse.json({ message: 'Không tìm thấy sản phẩm', success: false, product: [] }, { status: 404 })
+    }
     return NextResponse.json({ product, success: true }, { status: 200 })
   } catch (err) {
     console.error(err)

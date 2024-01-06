@@ -37,11 +37,11 @@ const CartListItem = ({
     price: product.price,
     quantity,
   }))
-  useEffect(() => {
-    if (tableCartList) {
-      setIsFetching(false)
-    }
-  }, [tableCartList])
+  // useEffect(() => {
+  //   if (tableCartList) {
+  //     setIsFetching(false)
+  //   }
+  // }, [tableCartList])
   const columns = [
     // {
     //   title: 'Hình ảnh',

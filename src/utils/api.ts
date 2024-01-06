@@ -19,7 +19,13 @@ export const get = async (url: string, params?: object, tags?: string[], revalid
         next: { tags, revalidate }
       }
     )
-    return await res.json()
+    const data = await res.json()
+    return {
+      ...data,
+      success: data.success,
+      message: data.message,
+      status: await res.status
+    }
   } catch (err) {
     console.error(err)
   }

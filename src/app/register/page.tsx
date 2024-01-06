@@ -1,9 +1,9 @@
 import DashboardTitle from '@/components/dashboard/DashboardTitle'
-import LoginForm from '@/components/dashboard/login/LoginForm'
+import RegisterForm from '@/components/dashboard/register/RegisterForm'
 import { get } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 
-const LoginPage = async (props: any) => {
+const RegisterPage = async (props: any) => {
     //   const page = props?.searchParams?.page ?? 1
     //   const { totalDocs, categories } = await get(`api/categories`, {
     //     page,
@@ -12,9 +12,9 @@ const LoginPage = async (props: any) => {
     return (
         <>
             {/* <DashboardTitle pageName='danh mục' totalDocs={totalDocs} /> */}
-            <LoginForm />
+            <RegisterForm />
         </>
     )
 }
 
-export default LoginPage
+export default RegisterPage

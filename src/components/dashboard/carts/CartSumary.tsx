@@ -108,7 +108,7 @@ const CartSumary: React.FC<{
         </Flex>
 
         <Divider style={{ margin: '5px 0' }} />
-        <Text type="warning" strong className="uppercase">Tiền Khách Đưa</Text>
+        <Text strong className="uppercase">Tiền Khách Đưa</Text>
         <AutoComplete
           className='w-full'
           allowClear
@@ -154,8 +154,8 @@ const CartSumary: React.FC<{
 
         <Divider style={{ margin: '5px 0' }} />
         <Flex justify="space-between">
-          <Text type="success" strong className="uppercase">Shop nhận được</Text>
-          <Text type="success" strong className="uppercase">{currencyFormat(totalPrice - discountPrice)}</Text>
+          <Text type="success" className="uppercase">Shop nhận được</Text>
+          <Text type="success" className="uppercase">{currencyFormat(totalPrice - discountPrice)}</Text>
         </Flex>
 
         <Button
