@@ -36,6 +36,7 @@ const SearchInput = ({
       value={searchValue}
       onChange={e => {
         //check scan input 6 length input
+        console.log('searchValue', e.target.value)
         if(e.target.value.length > 5) {
           setSearchValue('') 
           return
