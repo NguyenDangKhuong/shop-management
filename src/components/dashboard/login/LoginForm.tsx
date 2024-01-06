@@ -1,5 +1,5 @@
 'use client'
-import { authenticate } from '@/app/lib/actions';
+// import { authenticate } from '@/app/lib/actions';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Col, Flex, Form, Input, Row } from 'antd';
 import Title from 'antd/es/typography/Title';
@@ -18,7 +18,7 @@ const LoginForm = () => {
                     initialValues={{ remember: true }}
                     onFinish={(values: any) => {
                         console.log('Received values of form: ', values);
-                        authenticate(values)
+                        // authenticate(values)
                     }}
                 >
                     <Form.Item
