@@ -35,8 +35,10 @@ const SearchInput = ({
       placeholder='Nhập mã sản phẩm'
       value={searchValue}
       onChange={val => { 
+        setSearchValue(val.target.value) 
+        if(val.target.value.length < 5) return
         setIsFetching(true)
-        setSearchValue(val.target.value) }}
+      }}
     />
 
   )

@@ -71,7 +71,7 @@ const CartPage = () => {
       setIsFetching(false)
       scanInput?.current?.focus()
     })()
-  }, [debounedScanValue])
+  }, [debounedScanValue.length > 4])
 
   const totalCart: number =
     cartList.reduce((acc, { quantity }) => acc + quantity!, 0) +
