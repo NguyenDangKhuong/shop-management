@@ -40,11 +40,11 @@ const CartPage = () => {
 
     scanInput?.current?.focus()
   }, [])
-  
+
   useEffect(() => {
     (async () => {
       if (!debounedScanValue) return
-      const { product, message, success } = await get(`/api/product/${debounedScanValue}`, {}, ['productsCart'])
+      const { product, message, success, status } = await get(`/api/product/${debounedScanValue}`, {}, ['productsCart'])
 
       if (!success) {
         pushNotification(message, success)
@@ -53,6 +53,11 @@ const CartPage = () => {
         scanInput?.current?.focus()
         return
       }
+      if(Number(status) === 500) {
+        window.location.reload()
+        return
+      }
+
       const existedProduct = await cartList?.find(item => item.product?._id === product._id)
       const newCartList = existedProduct
         ? cartList.map(item =>
@@ -87,7 +92,7 @@ const CartPage = () => {
       <SearchInput isFetching={isFetching} setIsFetching={(val) => setIsFetching(val)} searchValue={searchValue} scanInput={scanInput} setSearchValue={(val) => setSearchValue(val)} />
       <Row>
         <Col span={16}>
-          <CartListItem isFetching={isFetching} setIsFetching={(val) => setIsFetching(val)} cartList={cartList} setCartList={(val) => setCartList(val)} />
+          <CartListItem isFetching={isFetching} cartList={cartList} setCartList={(val) => setCartList(val)} scanInput={scanInput} />
         </Col>
         <Col span={8}>
           <CartSumary

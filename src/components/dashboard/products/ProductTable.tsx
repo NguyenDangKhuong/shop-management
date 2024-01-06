@@ -6,7 +6,8 @@ import {
   DeleteTwoTone,
   EditTwoTone,
   MinusOutlined,
-  PlusOutlined
+  PlusOutlined,
+  CopyTwoTone
 } from '@ant-design/icons'
 import { Button, Checkbox, Divider, Flex, Image, Popconfirm, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -103,12 +104,25 @@ const ProductTable = ({
       title: 'Mã số',
       dataIndex: 'sku',
       render: (_, record) => (
-        <Button type='primary' onClick={() => {
-          setEditingProduct(record)
-          setIsOpenBarcode(true)
-        }}>
-          {record.sku}
-        </Button>
+        <Flex>
+          <Button type='primary' onClick={() => {
+            setEditingProduct(record)
+            setIsOpenBarcode(true)
+          }}>
+            {record.sku}
+          </Button>
+          <CopyTwoTone
+            className='mr-2'
+            onClick={() => {
+              navigator.clipboard
+                .writeText(record.sku)
+                .then(() => {
+                  pushNotification('Mã số đã được sao chép', true)
+                }).catch((err) => {
+                  console.log(err.message);
+                });
+            }} />
+        </Flex>
       )
     },
     {

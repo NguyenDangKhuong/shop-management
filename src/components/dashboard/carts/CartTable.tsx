@@ -22,12 +22,12 @@ const CartListItem = ({
   cartList,
   setCartList,
   isFetching,
-  setIsFetching
+  scanInput
 }: {
   cartList: ProductCart[]
   setCartList: (val: any) => void
   isFetching: boolean
-  setIsFetching: (val: boolean) => void
+  scanInput: any
 }) => {
 
   const tableCartList = cartList.map(({ product, quantity }) => ({
@@ -37,11 +37,9 @@ const CartListItem = ({
     price: product.price,
     quantity,
   }))
-  // useEffect(() => {
-  //   if (tableCartList) {
-  //     setIsFetching(false)
-  //   }
-  // }, [tableCartList])
+  useEffect(() => {
+    scanInput?.current?.focus()
+  }, [tableCartList])
   const columns = [
     // {
     //   title: 'Hình ảnh',
