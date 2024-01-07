@@ -37,9 +37,6 @@ const CartListItem = ({
     price: product.price,
     quantity,
   }))
-  useEffect(() => {
-    scanInput?.current?.focus()
-  }, [tableCartList])
   const columns = [
     // {
     //   title: 'Hình ảnh',
