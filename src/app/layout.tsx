@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import Script from 'next/script'
 
 import { App, ConfigProvider } from 'antd'
 
@@ -8,7 +9,6 @@ import './globals.css'
 import DashboardLayout from '@/components/dashboard/DashboardLayout'
 import StyledComponentsRegistry from '@/lib/antdRegistry'
 import theme from '@/theme/themeConfig'
-import Script from 'next/script'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,11 +17,7 @@ export const metadata: Metadata = {
   description: 'Yumy Shop, Cu Chi, TPHCM, Viet Nam'
 }
 
-const RootLayout = ({
-  children
-}: {
-  children: React.ReactNode
-}) => {
+const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang='en'>
       <body className={inter.className} suppressHydrationWarning={true}>

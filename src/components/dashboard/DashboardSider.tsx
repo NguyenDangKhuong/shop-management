@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 import {
   BarChartOutlined,
@@ -7,25 +8,15 @@ import {
   TableOutlined
 } from '@ant-design/icons'
 import { Layout, Menu } from 'antd'
-import { usePathname } from 'next/navigation'
 
 const { Sider } = Layout
 
 const DashboardSider = ({ collapsed }: any) => {
   const pathname = usePathname()
   return (
-    <Sider
-      trigger={null}
-      collapsedWidth='0'
-      breakpoint='lg'
-      collapsible
-      collapsed={collapsed}>
+    <Sider trigger={null} collapsedWidth='0' breakpoint='lg' collapsible collapsed={collapsed}>
       <Link href='/'>
-        <img
-          className='bg-white mb-5 w-full h-[65px] m-auto'
-          src='/image/logo.png'
-          alt='logo'
-        />
+        <img className='bg-white mb-5 w-full h-[65px] m-auto' src='/image/logo.png' alt='logo' />
       </Link>
       <Menu
         theme='dark'

@@ -1,10 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary'
 
-import {
-  API_KEY_CLOUDINARY,
-  API_SECRET_CLOUDINARY,
-  CLOUD_NAME_CLOUDINARY
-} from './constants'
+import { API_KEY_CLOUDINARY, API_SECRET_CLOUDINARY, CLOUD_NAME_CLOUDINARY } from './constants'
 
 const removeImage = (publicId: string) => {
   try {

@@ -21,9 +21,7 @@ export const validateRegisterInput = (registerInput: User) => {
   if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(registerInput.name))
     return {
       message: 'Invalid username',
-      errors: [
-        { field: 'username', message: `Tên không được chứa kí tự đặc biệt` }
-      ]
+      errors: [{ field: 'username', message: `Tên không được chứa kí tự đặc biệt` }]
     }
 
   if (registerInput.password.length < 2)

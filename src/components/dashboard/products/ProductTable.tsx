@@ -1,5 +1,7 @@
 'use client'
 
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+
 import { useState } from 'react'
 
 import {
@@ -12,15 +14,15 @@ import {
 import { Button, Checkbox, Divider, Flex, Image, Popconfirm, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 
+import BarcodeModal from './BarcodeModal'
+import ProductModal from './ProductModal'
+
 import { Category } from '@/models/Category'
 import { Product } from '@/models/Product'
 import { remove } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 import { currencyFormat } from '@/utils/currencyFormat'
 import pushNotification from '@/utils/pushNotification'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import BarcodeModal from './BarcodeModal'
-import ProductModal from './ProductModal'
 
 export const initialProduct: Product = {
   _id: '',
@@ -42,10 +44,10 @@ const ProductTable = ({
   products: Product[]
   categories: Category[]
 }) => {
-  const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
-  const pathname = usePathname();
-  const { replace } = useRouter();
+  const searchParams = useSearchParams()
+  const params = new URLSearchParams(searchParams)
+  const pathname = usePathname()
+  const { replace } = useRouter()
 
   const [isOpen, setIsOpen] = useState(false)
   const [isOpenBarcode, setIsOpenBarcode] = useState(false)
@@ -97,18 +99,19 @@ const ProductTable = ({
       dataIndex: 'categoryId',
       width: 100,
       render: (_, { categoryId }) =>
-        categories?.find((category: Category) => categoryId === category._id)
-          ?.name
+        categories?.find((category: Category) => categoryId === category._id)?.name
     },
     {
       title: 'Mã số',
       dataIndex: 'sku',
       render: (_, record) => (
         <Flex>
-          <Button type='primary' onClick={() => {
-            setEditingProduct(record)
-            setIsOpenBarcode(true)
-          }}>
+          <Button
+            type='primary'
+            onClick={() => {
+              setEditingProduct(record)
+              setIsOpenBarcode(true)
+            }}>
             {record.sku}
           </Button>
           <CopyTwoTone
@@ -118,10 +121,12 @@ const ProductTable = ({
                 .writeText(record.sku)
                 .then(() => {
                   pushNotification('Mã số đã được sao chép', true)
-                }).catch((err) => {
-                  console.log(err.message);
-                });
-            }} />
+                })
+                .catch(err => {
+                  console.log(err.message)
+                })
+            }}
+          />
         </Flex>
       )
     },
@@ -129,22 +134,24 @@ const ProductTable = ({
       title: 'Hành động',
       render: (_, record) => (
         <>
-          <EditTwoTone className='cursor-pointer' onClick={() => {
-            setEditingProduct(record)
-            setIsOpen(true)
-          }} />
+          <EditTwoTone
+            className='cursor-pointer'
+            onClick={() => {
+              setEditingProduct(record)
+              setIsOpen(true)
+            }}
+          />
           <Divider className='mx-2' type='vertical' />
           <Popconfirm
-            placement="leftTop"
-            title={"Xác nhận xóa sản phẩm?"}
-            description={"Bạn có chắc chắn muốn xóa sản phẩm này ?"}
+            placement='leftTop'
+            title={'Xác nhận xóa sản phẩm?'}
+            description={'Bạn có chắc chắn muốn xóa sản phẩm này ?'}
             onConfirm={async () => {
               const { message, success }: any = await remove('api/product', record, 'products')
               pushNotification(message, success)
             }}
-            okText="Xác nhận"
-            cancelText="Hủy"
-          >
+            okText='Xác nhận'
+            cancelText='Hủy'>
             <DeleteTwoTone className='cursor-pointer' twoToneColor='#ff1500' />
           </Popconfirm>
         </>
@@ -154,11 +161,16 @@ const ProductTable = ({
   return (
     <>
       <Flex className='mb-5' justify='flex-end'>
-        <Button type='primary' onClick={() => {
-          setEditingProduct(initialProduct)
-          setIsOpen(true)
-        }}> Thêm sản phẩm</Button>
-      </Flex >
+        <Button
+          type='primary'
+          onClick={() => {
+            setEditingProduct(initialProduct)
+            setIsOpen(true)
+          }}>
+          {' '}
+          Thêm sản phẩm
+        </Button>
+      </Flex>
       <Table
         rowKey='_id'
         bordered
@@ -173,16 +185,24 @@ const ProductTable = ({
           showSizeChanger: true,
           onChange(page) {
             //change search param
-            params.set('page', String(page));
-            replace(`${pathname}?${params.toString()}`);
-          },
+            params.set('page', String(page))
+            replace(`${pathname}?${params.toString()}`)
+          }
         }}
       />
-      <ProductModal isOpen={isOpen} setIsOpen={(value) => setIsOpen(value)}
-        editingProduct={editingProduct} setEditingProduct={(val) => setEditingProduct(val)} categories={categories}
+      <ProductModal
+        isOpen={isOpen}
+        setIsOpen={value => setIsOpen(value)}
+        editingProduct={editingProduct}
+        setEditingProduct={val => setEditingProduct(val)}
+        categories={categories}
       />
-      <BarcodeModal isOpen={isOpenBarcode} setIsOpen={(value) => setIsOpenBarcode(value)}
-        editingProduct={editingProduct} setEditingProduct={(val) => setEditingProduct(val)} />
+      <BarcodeModal
+        isOpen={isOpenBarcode}
+        setIsOpen={value => setIsOpenBarcode(value)}
+        editingProduct={editingProduct}
+        setEditingProduct={val => setEditingProduct(val)}
+      />
     </>
   )
 }

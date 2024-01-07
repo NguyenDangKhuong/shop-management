@@ -1,10 +1,10 @@
+import { NextRequest, NextResponse } from 'next/server'
 
 import ProductModel from '@/models/Product'
 import connectDb from '@/utils/connectDb'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
-import { NextRequest, NextResponse } from 'next/server'
 
-export const dynamic = "force-dynamic"
+export const dynamic = 'force-dynamic'
 
 export const GET = async (req: NextRequest) => {
   try {
@@ -45,14 +45,15 @@ export const GET = async (req: NextRequest) => {
     return NextResponse.json({ products, totalPages, totalDocs, success: true }, { status: 200 })
   } catch (err) {
     console.error(err)
-    return NextResponse.json({
-      message: `Xin vui lòng thử lại hoặc báo Khương lỗi là ${err}`,
-      success: false
-    }, {
-      status: 500,
-      statusText: String(err)
-    })
+    return NextResponse.json(
+      {
+        message: `Xin vui lòng thử lại hoặc báo Khương lỗi là ${err}`,
+        success: false
+      },
+      {
+        status: 500,
+        statusText: String(err)
+      }
+    )
   }
 }
-
-

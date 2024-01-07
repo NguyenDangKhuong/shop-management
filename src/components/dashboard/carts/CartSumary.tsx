@@ -1,18 +1,19 @@
 'use client'
-import { ProductCart } from "@/models/ProductCart";
-import { post } from "@/utils/api";
-import { currencyFormat } from "@/utils/currencyFormat";
-import { genegateId } from "@/utils/genegateId";
-import numberWithCommas from "@/utils/numberWithCommas";
-import pushNotification from "@/utils/pushNotification";
-import {
-  MinusOutlined,
-} from '@ant-design/icons';
-import { AutoComplete, Button, Checkbox, Divider, Flex, Input, Typography } from "antd";
-import { useState } from "react";
-import { useReactToPrint } from "react-to-print";
 
-const { Text } = Typography;
+import { useState } from 'react'
+
+import { MinusOutlined } from '@ant-design/icons'
+import { AutoComplete, Button, Checkbox, Divider, Flex, Input, InputNumber, Typography } from 'antd'
+import { useReactToPrint } from 'react-to-print'
+
+import { ProductCart } from '@/models/ProductCart'
+import { post } from '@/utils/api'
+import { currencyFormat } from '@/utils/currencyFormat'
+import { genegateId } from '@/utils/genegateId'
+import numberWithCommas from '@/utils/numberWithCommas'
+import pushNotification from '@/utils/pushNotification'
+
+const { Text } = Typography
 const CartSumary: React.FC<{
   totalCart: number
   cartList: ProductCart[]
@@ -38,23 +39,28 @@ const CartSumary: React.FC<{
   addMoreList,
   setAddMoreList
 }) => {
-    const [options, setOptions] = useState<{ value: number }[]>([])
-    const [isPaidOnline, setIsPaidOnline] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
-    const getPanelValue = (price: number) =>
-      !price && price > 0 && price < 999 ? [] : [
-        { label: String(numberWithCommas(price * 1000)), value: price * 1000 },
-        { label: String(numberWithCommas(price * 10000)), value: price * 10000 },
-        { label: String(numberWithCommas(price * 100000)), value: price * 100000 }];
+  const [options, setOptions] = useState<{ value: number }[]>([])
+  const [isPaidOnline, setIsPaidOnline] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const getPanelValue = (price: number) =>
+    !price && price > 0 && price < 999
+      ? []
+      : [
+          { label: String(numberWithCommas(price * 1000)), value: price * 1000 },
+          { label: String(numberWithCommas(price * 10000)), value: price * 10000 },
+          { label: String(numberWithCommas(price * 100000)), value: price * 100000 }
+        ]
 
-    //print
-    const handlePrint = useReactToPrint({
-      content: () => componentRef.current,
-      copyStyles: true,
-      onAfterPrint: async () => {
-        setIsLoading(true)
-        const orderId = genegateId(6)
-        const { message, success }: any = await post('api/order', {
+  //print
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    copyStyles: true,
+    onAfterPrint: async () => {
+      setIsLoading(true)
+      const orderId = genegateId(6)
+      const { message, success }: any = await post(
+        'api/order',
+        {
           orderId,
           totalPrice,
           totalCart,
@@ -62,127 +68,137 @@ const CartSumary: React.FC<{
           customerCash: isPaidOnline ? totalPrice : customerCash,
           products: cartList,
           discountPrice: isPaidOnline ? 0 : discountPrice
-        }, 'orders')
-        setIsLoading(false)
-        pushNotification(message, success)
-        if (!success) return
-        window.location.reload()
-      }
-    })
-    return (
-      <div className="pl-2">
-        <Button
-          type="primary"
-          onClick={() => setAddMoreList([...addMoreList, 0])}
-        >
-          Thêm
-        </Button>
-        {addMoreList.map((item, idx) => (
-          <Flex className='mt-1' key={idx}>
-            <Input
-              type='text'
-              id='customerPrice'
-              placeholder='Nhập số tiền thêm món'
-              className='p-2 text-sm w-full border border-black rounded bg-gray-100 mr-3'
-              value={item || ''}
-              onChange={e => {
-                setAddMoreList(
-                  addMoreList.map((itemx, index) =>
-                    index === idx ? Number(e.target.value) : itemx
-                  )
-                )
-              }}
-              autoComplete='off'
-            />
-            <MinusOutlined
-              className='cursor-pointer'
-              onClick={() =>
-                setAddMoreList(addMoreList.filter((_, index) => index !== idx))
-              }
-            />
-          </Flex>
-        ))}
-        <Flex justify="space-between">
-          <Text strong className="uppercase">{`${totalCart} sản phẩm`}</Text>
-          <Text strong className="uppercase">{currencyFormat(totalPrice)}</Text>
+        },
+        'orders'
+      )
+      setIsLoading(false)
+      pushNotification(message, success)
+      if (!success) return
+      window.location.reload()
+    }
+  })
+  return (
+    <div className='pl-2'>
+      <Button type='primary' onClick={() => setAddMoreList([...addMoreList, 0])}>
+        Thêm
+      </Button>
+      {addMoreList.map((item, idx) => (
+        <Flex className='mt-1' key={idx}>
+          <Input
+            type='text'
+            id='customerPrice'
+            placeholder='Nhập số tiền thêm món'
+            className='p-2 text-sm w-full border border-black rounded bg-gray-100 mr-3'
+            value={item || ''}
+            onChange={e => {
+              setAddMoreList(
+                addMoreList.map((itemx, index) => (index === idx ? Number(e.target.value) : itemx))
+              )
+            }}
+            autoComplete='off'
+          />
+          <MinusOutlined
+            className='cursor-pointer'
+            onClick={() => setAddMoreList(addMoreList.filter((_, index) => index !== idx))}
+          />
         </Flex>
+      ))}
+      <Flex justify='space-between'>
+        <Text strong className='uppercase'>{`${totalCart} sản phẩm`}</Text>
+        <Text strong className='uppercase'>
+          {currencyFormat(totalPrice)}
+        </Text>
+      </Flex>
 
-        <Divider style={{ margin: '5px 0' }} />
-        <Text strong className="uppercase">Tiền Khách Đưa</Text>
-        <AutoComplete
-          className='w-full'
-          allowClear
-          disabled={isPaidOnline}
-          options={options}
-          onSelect={(val) => {
-            setCustomerCash(val)
-            setOptions([])
-          }}
-          onChange={(val) => {
-            setCustomerCash(Number(val))
-            setOptions([])
-          }}
-          onSearch={(val) => setOptions(val ? getPanelValue(Number(val)) : [])}
-          placeholder="Nhập số tiền khách đưa"
-        />
-        <Flex>
-          <div className='mr-2'>
-            <Checkbox checked={isPaidOnline} onChange={e => {
+      <Divider style={{ margin: '5px 0' }} />
+      <Text strong className='uppercase'>
+        Tiền Khách Đưa
+      </Text>
+      <AutoComplete
+        className='w-full'
+        allowClear
+        disabled={isPaidOnline}
+        options={options}
+        children={<InputNumber />}
+        onSelect={val => {
+          setCustomerCash(val)
+          setOptions([])
+        }}
+        onChange={val => {
+          setCustomerCash(Number(val))
+          setOptions([])
+        }}
+        onSearch={val => setOptions(val ? getPanelValue(Number(val)) : [])}
+        placeholder='Nhập số tiền khách đưa'
+      />
+      <Flex>
+        <div className='mr-2'>
+          <Checkbox
+            checked={isPaidOnline}
+            onChange={e => {
               setIsPaidOnline(e.target.checked)
             }}></Checkbox>
-          </div>
-          <Text>Khách chuyển khoản</Text>
+        </div>
+        <Text>Khách chuyển khoản</Text>
+      </Flex>
+
+      <Divider style={{ margin: '5px 0' }} />
+      <Text strong type='danger' className='uppercase'>
+        Giảm giá (-)
+      </Text>
+      <AutoComplete
+        className='w-full'
+        allowClear
+        options={options}
+        children={<InputNumber />}
+        onSelect={val => {
+          setDiscountPrice(val)
+          setOptions([])
+        }}
+        onChange={val => {
+          setDiscountPrice(Number(val))
+          setOptions([])
+        }}
+        onSearch={val => setOptions(val ? getPanelValue(Number(val)) : [])}
+        placeholder='Nhập số tiền giảm giá'
+      />
+
+      <Divider style={{ margin: '5px 0' }} />
+      <Flex justify='space-between'>
+        <Text type='success' className='uppercase'>
+          Shop nhận được
+        </Text>
+        <Text type='success' className='uppercase'>
+          {currencyFormat(totalPrice - discountPrice)}
+        </Text>
+      </Flex>
+
+      <Button
+        type='primary'
+        className='uppercase w-full'
+        loading={isLoading}
+        onClick={() => {
+          if (customerCash < 999 && !isPaidOnline) {
+            pushNotification('Tiền khách nhập phải lớn hơn 1.000đ', false)
+            return
+          }
+          handlePrint()
+        }}>
+        THANH TOÁN
+      </Button>
+      <Divider style={{ margin: '5px 0' }} />
+      {!!totalPrice && !isPaidOnline && (
+        <Flex justify='space-between'>
+          <Text strong className='uppercase'>
+            Tiền thối
+          </Text>
+          <Text strong className='uppercase'>
+            {exchange > 0 ? currencyFormat(exchange) : currencyFormat(0)}
+          </Text>
         </Flex>
-
-        <Divider style={{ margin: '5px 0' }} />
-        <Text strong type="danger" className="uppercase">Giảm giá (-)</Text>
-        <AutoComplete
-          className='w-full'
-          allowClear
-          options={options}
-          onSelect={(val) => {
-            setDiscountPrice(val)
-            setOptions([])
-          }}
-          onChange={(val) => {
-            setDiscountPrice(Number(val))
-            setOptions([])
-          }}
-          onSearch={(val) => setOptions(val ? getPanelValue(Number(val)) : [])}
-          placeholder="Nhập số tiền giảm giá"
-        />
-
-        <Divider style={{ margin: '5px 0' }} />
-        <Flex justify="space-between">
-          <Text type="success" className="uppercase">Shop nhận được</Text>
-          <Text type="success" className="uppercase">{currencyFormat(totalPrice - discountPrice)}</Text>
-        </Flex>
-
-        <Button
-          type="primary"
-          className="uppercase w-full"
-          loading={isLoading}
-          onClick={() => {
-            if (customerCash < 999 && !isPaidOnline) {
-              pushNotification('Tiền khách nhập phải lớn hơn 1.000đ', false)
-              return
-            }
-            handlePrint()
-          }}
-        >
-          THANH TOÁN
-        </Button>
-        <Divider style={{ margin: '5px 0' }} />
-        {
-          !!totalPrice && !isPaidOnline && (
-            <Flex justify="space-between">
-              <Text strong className="uppercase">Tiền thối</Text>
-              <Text strong className="uppercase">{exchange > 0 ? currencyFormat(exchange) : currencyFormat(0)}</Text>
-            </Flex>
-          )
-        }
-      </div>
-    )
-  }
+      )}
+    </div>
+  )
+}
 
 export default CartSumary

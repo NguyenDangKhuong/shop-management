@@ -17,10 +17,7 @@ declare global {
   }
 }
 
-type Kebab<
-  T extends string,
-  A extends string = ''
-> = T extends `${infer F}${infer R}`
+type Kebab<T extends string, A extends string = ''> = T extends `${infer F}${infer R}`
   ? Kebab<R, `${A}${F extends Lowercase<F> ? '' : '-'}${Lowercase<F>}`>
   : A
 
@@ -29,9 +26,7 @@ type Kebab<
  * @link https://swiperjs.com/element#parameters-as-attributes
  */
 type KebabObjectKeys<T> = {
-  [key in keyof T as Kebab<key & string>]: T[key] extends Object
-    ? KebabObjectKeys<T[key]>
-    : T[key]
+  [key in keyof T as Kebab<key & string>]: T[key] extends Object ? KebabObjectKeys<T[key]> : T[key]
 }
 
 /**

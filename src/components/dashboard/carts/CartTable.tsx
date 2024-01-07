@@ -2,20 +2,16 @@
 
 import { useEffect } from 'react'
 
+import { DeleteTwoTone, MinusOutlined, PlusOutlined } from '@ant-design/icons'
 import { Flex, Table } from 'antd'
 
 import { Category } from '@/models/Category'
 import { ProductCart } from '@/models/ProductCart'
 import { currencyFormat } from '@/utils/currencyFormat'
-import {
-  DeleteTwoTone,
-  MinusOutlined,
-  PlusOutlined
-} from '@ant-design/icons'
 
 export const initialCategory: Category = {
   _id: '',
-  name: '',
+  name: ''
 }
 
 const CartListItem = ({
@@ -29,13 +25,12 @@ const CartListItem = ({
   isFetching: boolean
   scanInput: any
 }) => {
-
   const tableCartList = cartList.map(({ product, quantity }) => ({
     _id: product._id,
     imageUrl: product.imageUrl,
     name: product.name,
     price: product.price,
-    quantity,
+    quantity
   }))
   const columns = [
     // {
@@ -60,30 +55,30 @@ const CartListItem = ({
           <Flex>
             <MinusOutlined
               className='cursor-pointer'
-              onClick={() => currProduct &&
+              onClick={() =>
+                currProduct &&
                 setCartList(
                   currProduct.quantity! > 1
                     ? cartList.map(item =>
-                      item.product?._id === _id
-                        ? { ...item, quantity: item.quantity! - 1 }
-                        : item
-                    )
+                        item.product?._id === _id ? { ...item, quantity: item.quantity! - 1 } : item
+                      )
                     : cartList.filter(item => _id !== item.product?._id)
-                )}
+                )
+              }
             />
             <span className='mx-2 px-2 py-1 bg-whiterounded text-sm shadow outline-none focus:outline-none focus:shadow-outline border w-16'>
               {quantity}
             </span>
             <PlusOutlined
               className='cursor-pointer'
-              onClick={() => currProduct &&
+              onClick={() =>
+                currProduct &&
                 setCartList(
                   cartList.map(item =>
-                    item.product?._id === _id
-                      ? { ...item, quantity: item.quantity! + 1 }
-                      : item
+                    item.product?._id === _id ? { ...item, quantity: item.quantity! + 1 } : item
                   )
-                )}
+                )
+              }
             />
           </Flex>
         )
@@ -100,10 +95,11 @@ const CartListItem = ({
     {
       title: 'Hành động',
       render: (_: any, { _id }: any) => (
-        <DeleteTwoTone className='cursor-pointer' twoToneColor='#ff4d4f'
-          onClick={() => setCartList(
-            cartList.filter(item => _id !== item.product?._id)
-          )} />
+        <DeleteTwoTone
+          className='cursor-pointer'
+          twoToneColor='#ff4d4f'
+          onClick={() => setCartList(cartList.filter(item => _id !== item.product?._id))}
+        />
       )
     }
   ]
