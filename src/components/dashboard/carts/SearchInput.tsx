@@ -1,9 +1,11 @@
 'use client'
-import { Input, InputRef } from 'antd';
-import { useRef } from 'react';
-import { useIdleTimer } from 'react-idle-timer';
 
-const { Search } = Input;
+import { useRef } from 'react'
+
+import { Input, InputRef } from 'antd'
+import { useIdleTimer } from 'react-idle-timer'
+
+const { Search } = Input
 
 const SearchInput = ({
   isFetching,
@@ -14,11 +16,10 @@ const SearchInput = ({
 }: {
   isFetching: boolean
   searchValue: string
-  setSearchValue: (val: string) => void,
-  setIsFetching: (val: boolean) => void,
+  setSearchValue: (val: string) => void
+  setIsFetching: (val: boolean) => void
   scanInput: any
 }) => {
-
   const onIdle = () => {
     scanInput?.current?.focus()
   }
@@ -37,17 +38,16 @@ const SearchInput = ({
       onChange={e => {
         //check scan input 6 length input
         console.log('searchValue', e.target.value)
-        if(e.target.value.length > 5) {
-          setSearchValue('') 
+        if (e.target.value.length > 5) {
+          setSearchValue('')
           return
         }
-        setSearchValue(e.target.value) 
+        setSearchValue(e.target.value)
         //check scan input with user typing
-        if(e.target.value.length < 5) return
+        if (e.target.value.length < 5) return
         setIsFetching(true)
       }}
     />
-
   )
 }
 

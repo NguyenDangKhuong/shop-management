@@ -1,5 +1,6 @@
-import { ProductCart } from "@/models/ProductCart"
-import { Modal, Table } from "antd"
+import { Modal, Table } from 'antd'
+
+import { ProductCart } from '@/models/ProductCart'
 
 const OrderModal = ({
   isOpen,
@@ -7,16 +8,14 @@ const OrderModal = ({
   products = []
 }: {
   isOpen: boolean
-  setIsOpen: (val: any) => void,
-  products: ProductCart[],
+  setIsOpen: (val: any) => void
+  products: ProductCart[]
 }) => {
-  const newProduct = products.map(item => (
-    {
-      name: item.product.name,
-      price: item.product.price,
-      quantity: item.quantity
-    }
-  ))
+  const newProduct = products.map(item => ({
+    name: item.product.name,
+    price: item.product.price,
+    quantity: item.quantity
+  }))
   return (
     <Modal
       title={`Chi tiết sản phẩm đơn hàng`}
@@ -24,8 +23,7 @@ const OrderModal = ({
       onCancel={() => {
         setIsOpen(false)
       }}
-      footer={false}
-    >
+      footer={false}>
       <Table
         rowKey='name'
         bordered
@@ -42,7 +40,8 @@ const OrderModal = ({
           {
             title: 'Số lượng mua',
             dataIndex: 'quantity'
-          }]}
+          }
+        ]}
         dataSource={newProduct ?? []}
       />
     </Modal>

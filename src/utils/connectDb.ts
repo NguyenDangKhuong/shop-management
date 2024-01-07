@@ -1,4 +1,5 @@
 import mongoose, { ConnectOptions } from 'mongoose'
+
 import { MONGO_PASSWORD, MONGO_USER_NAME } from './constants'
 
 const connection: any = {}
@@ -48,4 +49,3 @@ export const disconnectDb = async () => {
     }
   }
 }
-

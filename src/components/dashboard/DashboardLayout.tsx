@@ -20,10 +20,7 @@ const DashboardLayout = ({ children }: any) => {
     <Layout className='h-full'>
       <DashboardSider collapsed={collapsed} />
       <Layout>
-        <DashboardHeader
-          collapsed={collapsed}
-          setCollapsed={() => setCollapsed(!collapsed)}
-        />
+        <DashboardHeader collapsed={collapsed} setCollapsed={() => setCollapsed(!collapsed)} />
         <Content
           style={{
             margin: '24px 16px',

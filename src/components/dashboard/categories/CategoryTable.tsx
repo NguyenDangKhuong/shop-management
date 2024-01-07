@@ -1,24 +1,23 @@
 'use client'
 
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+
 import { useEffect, useState } from 'react'
 
-import {
-  DeleteTwoTone,
-  EditTwoTone
-} from '@ant-design/icons'
+import { DeleteTwoTone, EditTwoTone } from '@ant-design/icons'
 import { Button, Divider, Flex, Popconfirm, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+
+import CategoryModal from './CategoryModal'
 
 import { Category } from '@/models/Category'
 import { remove } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 import pushNotification from '@/utils/pushNotification'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import CategoryModal from './CategoryModal'
 
 export const initialCategory: Category = {
   _id: '',
-  name: '',
+  name: ''
 }
 
 const CategoryTable = ({
@@ -35,7 +34,7 @@ const CategoryTable = ({
 
   const [isOpen, setIsOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category>(initialCategory)
-  const [isFetching, setIsFetching] = useState(false);
+  const [isFetching, setIsFetching] = useState(false)
   useEffect(() => {
     if (categories) {
       setIsFetching(false)
@@ -50,22 +49,24 @@ const CategoryTable = ({
       title: 'Hành động',
       render: (_, record) => (
         <>
-          <EditTwoTone className='cursor-pointer' onClick={() => {
-            setEditingCategory(record)
-            setIsOpen(true)
-          }} />
+          <EditTwoTone
+            className='cursor-pointer'
+            onClick={() => {
+              setEditingCategory(record)
+              setIsOpen(true)
+            }}
+          />
           <Divider type='vertical' />
           <Popconfirm
-            placement="leftTop"
-            title={"Xác nhận xóa danh mục?"}
-            description={"Bạn có chắc chắn muốn xóa danh mục này ?"}
+            placement='leftTop'
+            title={'Xác nhận xóa danh mục?'}
+            description={'Bạn có chắc chắn muốn xóa danh mục này ?'}
             onConfirm={async () => {
               const { message, success }: any = await remove('api/category', record, 'categories')
               pushNotification(message, success)
             }}
-            okText="Xác nhận"
-            cancelText="Hủy"
-          >
+            okText='Xác nhận'
+            cancelText='Hủy'>
             <DeleteTwoTone className='cursor-pointer' twoToneColor='#ff4d4f' />
           </Popconfirm>
         </>
@@ -75,11 +76,15 @@ const CategoryTable = ({
   return (
     <>
       <Flex className='mb-5' justify='flex-end'>
-        <Button type='primary' onClick={() => {
-          setEditingCategory(initialCategory)
-          setIsOpen(true)
-        }}>Thêm danh mục</Button>
-      </Flex >
+        <Button
+          type='primary'
+          onClick={() => {
+            setEditingCategory(initialCategory)
+            setIsOpen(true)
+          }}>
+          Thêm danh mục
+        </Button>
+      </Flex>
       <Table
         rowKey='_id'
         loading={isFetching}
@@ -94,14 +99,18 @@ const CategoryTable = ({
           total: totalDocs,
           showSizeChanger: true,
           onChange(page) {
-            params.set('page', String(page));
-            replace(`${pathname}?${params.toString()}`);
+            params.set('page', String(page))
+            replace(`${pathname}?${params.toString()}`)
             setIsFetching(true)
-          },
+          }
         }}
       />
-      <CategoryModal isOpen={isOpen} setIsOpen={(value) => setIsOpen(value)}
-        editingCategory={editingCategory} setEditingCategory={(val) => setEditingCategory(val)} categories={categories}
+      <CategoryModal
+        isOpen={isOpen}
+        setIsOpen={value => setIsOpen(value)}
+        editingCategory={editingCategory}
+        setEditingCategory={val => setEditingCategory(val)}
+        categories={categories}
       />
     </>
   )

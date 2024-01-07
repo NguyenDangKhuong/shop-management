@@ -1,6 +1,7 @@
-import { signOut } from '@/auth'
 import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, DownOutlined } from '@ant-design/icons'
 import { Avatar, Button, Dropdown, Flex, Layout, MenuProps, Space, theme } from 'antd'
+
+import { signOut } from '@/auth'
 
 const { Header } = Layout
 
@@ -13,19 +14,24 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
     {
       key: '1',
       label: (
-        <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+        <a target='_blank' rel='noopener noreferrer' href='https://www.antgroup.com'>
           Profile
         </a>
-      ),
+      )
     },
     {
       key: 'signOut',
       danger: true,
-      label: <span onClick={async () => {
-        await signOut();
-      }}>Sign out</span>,
-    },
-  ];
+      label: (
+        <span
+          onClick={async () => {
+            await signOut()
+          }}>
+          Sign out
+        </span>
+      )
+    }
+  ]
 
   return (
     <Header style={{ padding: 0, background: colorBgContainer }}>

@@ -5,17 +5,21 @@ import { get } from '@/utils/api'
 const OrderPage = async (props: any) => {
   const date = props?.searchParams?.date ?? new Date()
   const isMonth = props?.searchParams?.isMonth ?? ''
-  const { totalDocs, orders } = await get(`api/orders`, {
-    date,
-    isMonth,
-  }, ['orders'])
+  const { totalDocs, orders } = await get(
+    `api/orders`,
+    {
+      date,
+      isMonth
+    },
+    ['orders']
+  )
   return (
     <>
-      <DashboardTitle pageName='Thống kê' totalDocs={totalDocs || 'Xin vui lòng chọn ngày hoặc tháng thống kê trước'} />
-      <OrderTable
-        totalDocs={totalDocs}
-        orders={orders}
+      <DashboardTitle
+        pageName='Thống kê'
+        totalDocs={totalDocs || 'Xin vui lòng chọn ngày hoặc tháng thống kê trước'}
       />
+      <OrderTable totalDocs={totalDocs} orders={orders} />
     </>
   )
 }

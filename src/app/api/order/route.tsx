@@ -1,8 +1,9 @@
+import { NextRequest, NextResponse } from 'next/server'
+
 import OrderModel from '@/models/Order'
 import ProductModel, { Product } from '@/models/Product'
 import connectDb from '@/utils/connectDb'
 import removeImage from '@/utils/removeImage'
-import { NextRequest, NextResponse } from 'next/server'
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -10,12 +11,15 @@ export const POST = async (req: NextRequest) => {
     const body = await req.json()
     const { products } = body
     if (products.length === 0) {
-      return NextResponse.json({
-        message: 'Không có sản phẩm',
-        success: false
-      }, {
-        status: 422,
-      })
+      return NextResponse.json(
+        {
+          message: 'Không có sản phẩm',
+          success: false
+        },
+        {
+          status: 422
+        }
+      )
     }
 
     await Promise.all(
@@ -38,20 +42,26 @@ export const POST = async (req: NextRequest) => {
       })
     )
     await new OrderModel({ ...body }).save()
-    return NextResponse.json({
-      message: 'Đã thêm đơn vào hệ thống!',
-      success: true
-    }, {
-      status: 201,
-    })
+    return NextResponse.json(
+      {
+        message: 'Đã thêm đơn vào hệ thống!',
+        success: true
+      },
+      {
+        status: 201
+      }
+    )
   } catch (err) {
     console.error(err)
-    return NextResponse.json({
-      message: `Xin vui lòng thử lại hoặc báo Khương lỗi là ${err}`,
-      success: false
-    }, {
-      status: 500,
-      statusText: String(err)
-    })
+    return NextResponse.json(
+      {
+        message: `Xin vui lòng thử lại hoặc báo Khương lỗi là ${err}`,
+        success: false
+      },
+      {
+        status: 500,
+        statusText: String(err)
+      }
+    )
   }
 }
