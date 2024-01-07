@@ -119,7 +119,6 @@ const CartSumary: React.FC<{
         allowClear
         disabled={isPaidOnline}
         options={options}
-        children={<InputNumber />}
         onSelect={val => {
           setCustomerCash(val)
           setOptions([])
@@ -150,7 +149,6 @@ const CartSumary: React.FC<{
         className='w-full'
         allowClear
         options={options}
-        children={<InputNumber />}
         onSelect={val => {
           setDiscountPrice(val)
           setOptions([])
