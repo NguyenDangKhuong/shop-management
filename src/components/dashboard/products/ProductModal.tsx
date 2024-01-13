@@ -201,7 +201,7 @@ const ProductModal = ({
                 Hủy
               </Button>
               <Button type='primary' htmlType='submit' loading={isLoading}>
-                Lưu
+                {`${editingProduct._id ? 'Sửa' : 'Thêm'}`}
               </Button>
             </Flex>
           </Form.Item>

@@ -14,7 +14,7 @@ export const GET = async (req: NextRequest) => {
     const pageNum = Number(searchParams.get('page')) || 1
     const pageSize = Number(searchParams.get('size')) || LIMIT_PAGE_NUMBER
     const name = searchParams.get('name') || ''
-    // const isPublic = searchParams.get('isPublic') || false
+    const isPublic = searchParams.get('isPublic') === 'true'
 
     const totalDocs = await ProductModel.countDocuments()
     const totalPages = Math.ceil(totalDocs / pageSize)
@@ -24,24 +24,32 @@ export const GET = async (req: NextRequest) => {
       })
         .sort({ createdAt: -1 })
         .lean()
-      return NextResponse.json({ products, totalPages, totalDocs }, { status: 200 })
+      const totalDocsSearched = products.length
+      return NextResponse.json({
+        products,
+        totalPages: Math.ceil(totalDocsSearched / pageSize),
+        totalDocs: totalDocsSearched
+      }, { status: 200 })
     }
     if (pageNum === 1) {
-      const products = await ProductModel.find({
-        // isPublic
-      })
-        .limit(pageSize)
-        .sort({ createdAt: -1 })
-        .lean()
-      return NextResponse.json({ products, totalPages, totalDocs }, { status: 200 })
+      const products =  await ProductModel.find({
+        isPublic
+      }).limit(pageSize)
+      .sort({ createdAt: -1 })
+      .lean()
+      return NextResponse.json({
+        products,
+        totalPages,
+        totalDocs
+      }, { status: 200 })
     }
     const skip = pageSize * (pageNum - 1)
-    const products = await ProductModel.find()
+    const products = await ProductModel.find({isPublic})
       .skip(skip)
       .limit(pageSize)
       .sort({ createdAt: -1 })
       .lean()
-
+    console.log(products.length)
     return NextResponse.json({ products, totalPages, totalDocs, success: true }, { status: 200 })
   } catch (err) {
     console.error(err)

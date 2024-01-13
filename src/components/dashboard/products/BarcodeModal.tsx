@@ -68,7 +68,7 @@ const BarcodeModal = ({
             handlePrint()
             setIsOpen(false)
           }}>
-          Lưu
+          In
         </Button>
       </Flex>
     </Modal>
