@@ -31,9 +31,21 @@ export const GET = async (req: NextRequest) => {
         totalDocs: totalDocsSearched
       }, { status: 200 })
     }
-    if (pageNum === 1) {
+    if (isPublic) {
       const products =  await ProductModel.find({
         isPublic
+      }).limit(pageSize)
+      .sort({ createdAt: -1 })
+      .lean()
+      const totalDocsSearched = products.length
+      return NextResponse.json({
+        products,
+        totalPages: Math.ceil(totalDocsSearched / pageSize),
+        totalDocs: totalDocsSearched
+      }, { status: 200 })
+    }
+    if (pageNum === 1) {
+      const products =  await ProductModel.find({
       }).limit(pageSize)
       .sort({ createdAt: -1 })
       .lean()
@@ -44,7 +56,8 @@ export const GET = async (req: NextRequest) => {
       }, { status: 200 })
     }
     const skip = pageSize * (pageNum - 1)
-    const products = await ProductModel.find({isPublic})
+    const products = await ProductModel.find({
+    })
       .skip(skip)
       .limit(pageSize)
       .sort({ createdAt: -1 })
