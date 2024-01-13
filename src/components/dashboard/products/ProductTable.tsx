@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
   DeleteTwoTone,
@@ -11,7 +11,7 @@ import {
   PlusOutlined,
   CopyTwoTone
 } from '@ant-design/icons'
-import { Button, Checkbox, Divider, Flex, Image, Popconfirm, Table } from 'antd'
+import { Button, Checkbox, Divider, Flex, Image, Input, Popconfirm, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 
 import BarcodeModal from './BarcodeModal'
@@ -23,6 +23,7 @@ import { remove } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 import { currencyFormat } from '@/utils/currencyFormat'
 import pushNotification from '@/utils/pushNotification'
+import useDebounce from '@/hooks/useDebounce'
 
 export const initialProduct: Product = {
   _id: '',
@@ -52,6 +53,14 @@ const ProductTable = ({
   const [isOpen, setIsOpen] = useState(false)
   const [isOpenBarcode, setIsOpenBarcode] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product>(initialProduct)
+  const [searchValue, setSearchValue] = useState('')
+
+  const debounedSearchValue = useDebounce(searchValue, 100)
+
+  useEffect(() => {
+    params.set('name', String(debounedSearchValue))
+    replace(`${pathname}?${params.toString()}`)
+  }, [debounedSearchValue])
   const columns: ColumnsType<Product> = [
     {
       title: 'Hiển thị',
@@ -161,6 +170,11 @@ const ProductTable = ({
   return (
     <>
       <Flex className='mb-5' justify='flex-end'>
+        <Input
+          className='mr-5'
+          placeholder='Nhập tên để tìm kiếm sản phẩm'
+          onChange={(e) => setSearchValue(e.target.value)}
+        />
         <Button
           type='primary'
           onClick={() => {

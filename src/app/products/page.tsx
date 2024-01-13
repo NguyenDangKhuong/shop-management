@@ -5,12 +5,13 @@ import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 
 const ProductPage = async (props: any) => {
   //fetch product data following search param
-  const page = props?.searchParams?.page ?? 1
   const { totalDocs, products } = await get(
     `api/products`,
     {
-      page,
-      size: LIMIT_PAGE_NUMBER
+      page: props?.searchParams?.page ?? 1,
+      size: props?.searchParams?.size ?? LIMIT_PAGE_NUMBER,
+      name: props?.searchParams?.name ?? '',
+      isPublic: props?.searchParams?.isPublic ?? false
     },
     ['products']
   )
