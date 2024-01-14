@@ -62,7 +62,6 @@ export const GET = async (req: NextRequest) => {
       .limit(pageSize)
       .sort({ createdAt: -1 })
       .lean()
-    console.log(products.length)
     return NextResponse.json({ products, totalPages, totalDocs, success: true }, { status: 200 })
   } catch (err) {
     console.error(err)
