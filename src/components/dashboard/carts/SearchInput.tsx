@@ -24,7 +24,7 @@ const SearchInput = ({
     scanInput?.current?.focus()
   }
 
-  useIdleTimer({ onIdle, timeout: 8_000 })
+  useIdleTimer({ onIdle, timeout: 4_000 })
   return (
     <Search
       ref={scanInput}
