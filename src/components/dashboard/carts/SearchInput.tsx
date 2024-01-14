@@ -42,7 +42,7 @@ const SearchInput = ({
           setSearchValue('')
           return
         }
-        setSearchValue(e.target.value)
+        setSearchValue(e.target.value.toLowerCase())
         //check scan input with user typing
         if (e.target.value.length < 5) return
         setIsFetching(true)
