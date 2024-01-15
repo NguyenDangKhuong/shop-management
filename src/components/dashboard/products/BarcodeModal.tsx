@@ -36,7 +36,7 @@ const BarcodeModal = ({
       footer={false}>
       <div ref={ref} className='grid grid-cols-2 gap-x-14 gap-y-2 text-center ml-10 my-auto'>
         {Array.from(Array(editingProduct.storage), (_, i) => (
-          <div key={i} className='flex flex-col justify-center items-center'>
+          <div key={i} className='flex flex-col justify-center items-center mt-2'>
             <div className='text-[8px]'>
               {editingProduct?.name?.length > 20
                 ? `${editingProduct?.name?.substring(0, 20)}...`
