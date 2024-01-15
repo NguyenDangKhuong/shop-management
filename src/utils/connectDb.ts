@@ -5,7 +5,7 @@ import { MONGO_PASSWORD, MONGO_USER_NAME } from './constants'
 const connection: any = {}
 const mongoUrl = `mongodb+srv://${MONGO_USER_NAME}:${MONGO_PASSWORD}@racroishop-management.2j99luj.mongodb.net/?retryWrites=true&w=majority`
 
-const mongoVercelUrl = `mongodb+srv://vercel-admin-user:vercel-admin-user-password@racroishop-management.2j99luj.mongodb.net/?retryWrites=true&w=majority`
+// const mongoVercelUrl = `mongodb+srv://vercel-admin-user:vercel-admin-user-password@racroishop-management.2j99luj.mongodb.net/?retryWrites=true&w=majority`
 
 const connectDb = async () => {
   try {
