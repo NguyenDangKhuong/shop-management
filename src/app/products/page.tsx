@@ -39,5 +39,5 @@ export async function generateStaticParams() {
     ['products']
   )
   console.log('products', products)
-  return { products, totalDocs }
+  return { ...products, ...totalDocs }
 }
