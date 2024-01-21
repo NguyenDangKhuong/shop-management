@@ -58,6 +58,17 @@ const CartSumary: React.FC<{
       onAfterPrint: async () => {
         setIsLoading(true)
         const orderId = genegateId(6)
+        const filteredAddMoreList = addMoreList.map(addMore => (
+          {
+            product: {
+              name: 'Sản phẩm thêm bằng tay',
+              sku: genegateId(6),
+              price: addMore,
+              storage: 1
+            },
+            quantity: 1
+          }
+        ))
         const { message, success }: any = await post(
           'api/order',
           {
@@ -66,13 +77,14 @@ const CartSumary: React.FC<{
             totalCart,
             exchange: isPaidOnline ? 0 : exchange,
             customerCash: isPaidOnline ? totalPrice : customerCash,
-            products: cartList,
+            products: [...cartList, ...filteredAddMoreList],
             discountPrice: isPaidOnline ? 0 : discountPrice
           },
           'orders'
         )
         setIsLoading(false)
         pushNotification(message, success)
+        console.log('success', success)
         if (!success) return
         window.location.reload()
       }
@@ -82,7 +94,7 @@ const CartSumary: React.FC<{
         <Button type='primary' onClick={() => setAddMoreList([...addMoreList, 0])}>
           Thêm
         </Button>
-        {addMoreList.map((item, idx) => (
+        {addMoreList.map((_, idx) => (
           <Flex className='mt-1' key={idx}>
             <AutoComplete
               className='w-full'
