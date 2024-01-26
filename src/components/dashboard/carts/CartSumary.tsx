@@ -58,10 +58,10 @@ const CartSumary: React.FC<{
       onAfterPrint: async () => {
         setIsLoading(true)
         const orderId = genegateId(6)
-        const filteredAddMoreList = addMoreList.map(addMore => (
+        const filteredAddMoreList = addMoreList.map((addMore, idx) => (
           {
             product: {
-              name: 'Sản phẩm thêm bằng tay',
+              name: `Sản phẩm thêm bằng tay ${idx + 1}`,
               sku: genegateId(6),
               price: addMore,
               storage: 1
