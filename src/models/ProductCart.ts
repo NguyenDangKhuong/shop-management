@@ -1,10 +1,19 @@
-import { prop } from '@typegoose/typegoose'
+import { prop, modelOptions, getModelForClass } from '@typegoose/typegoose'
+import mongoose from 'mongoose'
 import { Product } from './Product'
 
+@modelOptions({
+  options: {
+    customName: 'ProductCart',
+  },
+})
 export class ProductCart {
-  @prop({type: () => Number, required: true})
+  @prop({ required: true })
   public quantity!: number;
 
-  @prop({type: () => Product, required: true})
+  @prop({ required: true })
   public product!: Product;
 }
+
+export const ProductCartModel = mongoose.models.ProductCart || getModelForClass(ProductCart)
+export default ProductCartModel

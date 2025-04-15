@@ -1,20 +1,22 @@
-import { getModelForClass, mongoose, prop } from '@typegoose/typegoose'
+import { prop, getModelForClass, modelOptions } from '@typegoose/typegoose'
+import mongoose from 'mongoose'
 
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+    collection: 'categories',
+  },
+  options: {
+    customName: 'Category',
+  },
+})
 export class Category {
-  _id!: string
+  @prop({ required: true, unique: true })
+  public name!: string
 
-  @prop({ type: () => String, required: true, unique: true })
-  name!: string
-
-  @prop({ type: () => Date })
-  createdAt?: Date
-
-  @prop({ type: () => Date })
-  updatedAt?: Date
+  public createdAt?: Date
+  public updatedAt?: Date
 }
 
-const CategoryModel = mongoose.models.Category || getModelForClass(Category, {
-  schemaOptions: { timestamps: true, collection: 'categories' }
-})
-
+export const CategoryModel = mongoose.models.Category || getModelForClass(Category)
 export default CategoryModel

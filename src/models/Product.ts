@@ -1,40 +1,43 @@
-import { getModelForClass, mongoose, prop } from '@typegoose/typegoose'
+import { prop, getModelForClass, modelOptions } from '@typegoose/typegoose';
+import mongoose from 'mongoose';
+
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+    collection: 'products',
+  },
+  options: {
+    customName: 'Product',
+  },
+})
 export class Product {
-  _id!: string
+  @prop({ required: true, sparse: true })
+  public name!: string;
 
-  @prop({ type: () => String, required: true, sparse: true })
-  name!: string
+  @prop({ required: true, unique: true, sparse: true })
+  public sku!: string;
 
-  @prop({ type: () => String, required: true, unique: true, sparse: true })
-  sku!: string
+  @prop({ required: true })
+  public price!: number;
 
-  @prop({ type: () => Number, required: true })
-  price!: number
+  @prop({ required: true })
+  public storage!: number;
 
-  @prop({ type: () => Number, required: true })
-  storage!: number
+  @prop()
+  public categoryId?: string;
 
-  @prop({ type: () => String })
-  categoryId?: string
+  @prop()
+  public imageUrl?: string;
 
-  @prop({ type: () => String })
-  imageUrl?: string
+  @prop()
+  public imagePublicId?: string;
 
-  @prop({ type: () => String })
-  imagePublicId?: string
+  @prop()
+  public isPublic?: boolean;
 
-  @prop({ type: () => Boolean })
-  isPublic?: boolean
-
-  @prop({ type: () => Date })
-  createdAt?: Date
-
-  @prop({ type: () => Date })
-  updatedAt?: Date
+  public createdAt?: Date;
+  public updatedAt?: Date;
 }
 
-const ProductModel = mongoose.models.Product || getModelForClass(Product, {
-  schemaOptions: { timestamps: true, collection: 'products' }
-})
-
-export default ProductModel
+export const ProductModel = mongoose.models.Product || getModelForClass(Product);
+export default ProductModel;

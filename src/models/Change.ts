@@ -1,20 +1,22 @@
-import { getModelForClass, mongoose, prop } from '@typegoose/typegoose'
+import { prop, getModelForClass, modelOptions } from '@typegoose/typegoose';
+import mongoose from 'mongoose';
 
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+    collection: 'changes',
+  },
+  options: {
+    customName: 'Change',
+  },
+})
 export class Change {
-  _id!: string
+  @prop()
+  public change!: number;
 
-  @prop({ type: () => Number })
-  change!: number
-
-  @prop({ type: () => Date })
-  createdAt?: Date
-
-  @prop({ type: () => Date })
-  updatedAt?: Date
+  public createdAt?: Date;
+  public updatedAt?: Date;
 }
 
-const ChangeModel = mongoose.models.Change || getModelForClass(Change, {
-  schemaOptions: { timestamps: true }
-})
-
-export default ChangeModel
+export const ChangeModel = mongoose.models.Change || getModelForClass(Change);
+export default ChangeModel;

@@ -1,29 +1,31 @@
-import { getModelForClass, mongoose, prop } from '@typegoose/typegoose'
+import { prop, getModelForClass, modelOptions } from '@typegoose/typegoose';
+import mongoose from 'mongoose';
 
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+    collection: 'users', // Đảm bảo tên collection là 'users'
+  },
+  options: {
+    customName: 'User', // Đặt tên model là 'User'
+  },
+})
 export class User {
-  _id!: string
+  @prop({ required: true, unique: true })
+  public email!: string;
 
-  @prop({ type: () => String, required: true })
-  name!: string
+  @prop({ required: true })
+  public password!: string;
 
-  @prop({ type: () => String, required: true, unique: true })
-  email!: string
+  @prop({ required: true })
+  public name!: string;
 
-  @prop({ type: () => String, required: true })
-  password!: string
+  @prop({ required: true, enum: ['admin', 'user'], default: 'user' })
+  public role!: 'admin' | 'user';
 
-  @prop({ type: () => Number, required: true })
-  role!: number
-
-  @prop({ type: () => Date })
-  createAt?: Date
-
-  @prop({ type: () => Date })
-  updateAt?: Date
+  public createdAt?: Date;
+  public updatedAt?: Date;
 }
 
-const UserModel = mongoose.models.User || getModelForClass(User, {
-  schemaOptions: { timestamps: true, collection: 'users' }
-})
-
-export default UserModel
+// Kiểm tra xem model đã được định nghĩa trước đó chưa để tránh lỗi khi hot-reload
+export const UserModel = mongoose.models.User || getModelForClass(User);

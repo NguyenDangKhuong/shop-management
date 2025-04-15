@@ -1,26 +1,28 @@
-import { getModelForClass, mongoose, prop } from '@typegoose/typegoose'
+import { prop, getModelForClass, modelOptions } from '@typegoose/typegoose';
+import mongoose from 'mongoose';
 
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+    collection: 'customers',
+  },
+  options: {
+    customName: 'Customer',
+  },
+})
 export class Customer {
-  _id!: string
+  @prop({ required: true })
+  public name!: string;
 
-  @prop({ type: () => String, required: true })
-  name!: string
+  @prop({ required: true })
+  public phoneNumber!: number;
 
-  @prop({ type: () => Number, required: true })
-  phoneNumber!: number
+  @prop()
+  public amountPurchased!: number;
 
-  @prop({ type: () => Number })
-  amountPurchased: number
-
-  @prop({ type: () => Date })
-  createdAt?: Date
-
-  @prop({ type: () => Date })
-  updatedAt?: Date
+  public createdAt?: Date;
+  public updatedAt?: Date;
 }
 
-const CustomerModel = mongoose.models.Customer || getModelForClass(Customer, {
-  schemaOptions: { timestamps: true }
-})
-
-export default CustomerModel
+export const CustomerModel = mongoose.models.Customer || getModelForClass(Customer);
+export default CustomerModel;

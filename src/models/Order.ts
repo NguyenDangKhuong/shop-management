@@ -1,39 +1,41 @@
-import { getModelForClass, mongoose, prop } from '@typegoose/typegoose'
+import { prop, getModelForClass, modelOptions } from '@typegoose/typegoose'
+import mongoose from 'mongoose'
 import { ProductCart } from './ProductCart'
 
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+    collection: 'orders',
+  },
+  options: {
+    customName: 'Order',
+  },
+})
 export class Order {
-  _id?: string
+  @prop()
+  public orderId!: string
 
-  @prop({ type: () => String })
-  orderId!: string
+  @prop()
+  public customerCash!: number
 
-  @prop({ type: () => Number })
-  customerCash!: number
+  @prop()
+  public totalPrice!: number
 
-  @prop({ type: () => Number })
-  totalPrice!: number
+  @prop()
+  public totalCart!: number
 
-  @prop({ type: () => Number })
-  totalCart!: number
+  @prop()
+  public exchange!: number
 
-  @prop({ type: () => Number })
-  exchange!: number
-
-  @prop({ type: () => Number })
-  discountPrice!: number
+  @prop()
+  public discountPrice!: number
 
   @prop({ type: () => [ProductCart] })
-  products!: ProductCart[]
+  public products!: ProductCart[]
 
-  @prop({ type: () => Date })
-  createdAt?: Date
-
-  @prop({ type: () => Date })
-  updatedAt?: Date
+  public createdAt?: Date
+  public updatedAt?: Date
 }
 
-const OrderModel = mongoose.models.Order || getModelForClass(Order, {
-  schemaOptions: { timestamps: true, collection: 'orders' }
-})
-
+export const OrderModel = mongoose.models.Order || getModelForClass(Order)
 export default OrderModel

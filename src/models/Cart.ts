@@ -1,15 +1,23 @@
-import { getModelForClass, mongoose, prop } from '@typegoose/typegoose'
+import { prop, getModelForClass, modelOptions } from '@typegoose/typegoose'
+import mongoose from 'mongoose'
 import { ProductCart } from './ProductCart'
 
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+    collection: 'carts',
+  },
+  options: {
+    customName: 'Cart',
+  },
+})
 export class Cart {
-  _id!: string
+  @prop({ type: () => [ProductCart] })
+  public products?: ProductCart[]
 
-  @prop()
-  products?: ProductCart[]
+  public createdAt?: Date
+  public updatedAt?: Date
 }
 
-const CartModel = mongoose.models.Cart || getModelForClass(Cart, {
-  schemaOptions: { timestamps: true }
-})
-
+export const CartModel = mongoose.models.Cart || getModelForClass(Cart)
 export default CartModel
