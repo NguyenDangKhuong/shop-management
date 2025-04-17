@@ -26,6 +26,7 @@ export class User {
   public createdAt?: Date;
   public updatedAt?: Date;
 }
+console.log('test', mongoose.models)
 
 // Kiểm tra xem model đã được định nghĩa trước đó chưa để tránh lỗi khi hot-reload
 export const UserModel = mongoose.models.User || getModelForClass(User);

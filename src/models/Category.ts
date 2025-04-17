@@ -18,5 +18,7 @@ export class Category {
   public updatedAt?: Date
 }
 
+console.log('cate', mongoose.models)
+
 export const CategoryModel = mongoose.models.Category || getModelForClass(Category)
 export default CategoryModel
