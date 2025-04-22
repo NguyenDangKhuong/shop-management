@@ -1,7 +1,7 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, DownOutlined } from '@ant-design/icons'
 import { Avatar, Button, Dropdown, Flex, Layout, MenuProps, Space, theme } from 'antd'
 
-import { signOut } from '@/auth'
+import { signOut } from '@/auth/auth'
 
 const { Header } = Layout
 

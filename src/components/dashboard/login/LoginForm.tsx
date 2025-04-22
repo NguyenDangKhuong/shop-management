@@ -1,64 +1,73 @@
+// /app/login/page.tsx
 'use client'
 
-// import { authenticate } from '@/app/lib/actions';
-import Link from 'next/link'
+import { useState } from "react"
+import { Button, Form, Input, notification } from "antd"
+import { useRouter } from "next/navigation"
+import { signIn } from "@/auth/auth"
 
-import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import { Button, Checkbox, Col, Flex, Form, Input, Row } from 'antd'
-import Title from 'antd/es/typography/Title'
+export default function LoginForm() {
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
-const LoginForm = () => {
+  // Handle login submit
+  const onFinish = async (values: { email: string; password: string }) => {
+    setLoading(true)
+    console.log('check', values)
+    const response = await signIn("credentials", {
+      redirect: false,
+      email: values.email,
+      password: values.password,
+    })
+
+    console.log(response)
+    if (response?.error) {
+      notification.error({
+        message: "Đăng nhập thất bại",
+        description: response.error,
+      })
+    } else {
+      router.push("/admin") // Redirect to admin dashboard
+    }
+
+    setLoading(false)
+  }
+
   return (
-    <Row>
-      <Col span={8} offset={8}>
-        <Flex justify='center'>
-          <Title level={3} className='uppercase'>
-            Đăng nhập
-          </Title>
-        </Flex>
-        <Form
-          name='normal_login'
-          className='login-form'
-          initialValues={{ remember: true }}
-          onFinish={(values: any) => {
-            console.log('Received values of form: ', values)
-            // authenticate(values)
-          }}>
-          <Form.Item
-            name='email'
-            rules={[{ required: true, message: 'Please input your Username!' }]}>
-            <Input prefix={<UserOutlined className='site-form-item-icon' />} placeholder='Email' />
-          </Form.Item>
-          <Form.Item
-            name='password'
-            rules={[{ required: true, message: 'Please input your Password!' }]}>
-            <Input
-              prefix={<LockOutlined className='site-form-item-icon' />}
-              type='password'
-              placeholder='Password'
-            />
-          </Form.Item>
-          <Form.Item>
-            <Form.Item name='remember' valuePropName='checked' noStyle>
-              <Checkbox>Remember me</Checkbox>
-            </Form.Item>
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+      <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
+        <h2 className="text-center text-2xl font-bold mb-6">Đăng nhập</h2>
 
-            <a className='login-form-forgot' href=''>
-              Forgot password
-            </a>
+        <Form onFinish={onFinish} layout="vertical" initialValues={{ email: "", password: "" }}>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[{ required: true, message: "Vui lòng nhập email của bạn!" }]}
+          >
+            <Input type="email" className="ant-input" />
           </Form.Item>
-          <Flex justify='center' vertical={true} align='center'>
-            <Form.Item>
-              <Button type='primary' htmlType='submit' className='login-form-button'>
-                Log in
-              </Button>
-            </Form.Item>
-            or <Link href='/register'>Register now!</Link>
-          </Flex>
+
+          <Form.Item
+            label="Mật khẩu"
+            name="password"
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu của bạn!" }]}
+          >
+            <Input.Password className="ant-input" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              loading={loading}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Đăng nhập
+            </Button>
+          </Form.Item>
         </Form>
-      </Col>
-    </Row>
+      </div>
+    </div>
   )
 }
-
-export default LoginForm
