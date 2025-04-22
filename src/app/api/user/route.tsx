@@ -1,4 +1,4 @@
-import { UserModel } from '@/models/User'
+import UserModel from '@/models/User'
 import connectDb from '@/utils/connectDb'
 
 export async function getUserByEmail(email: string) {

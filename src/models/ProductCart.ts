@@ -1,5 +1,4 @@
-import { prop, modelOptions, getModelForClass } from '@typegoose/typegoose'
-import mongoose from 'mongoose'
+import { prop, modelOptions, getModelForClass, mongoose } from '@typegoose/typegoose'
 import { Product } from './Product'
 
 @modelOptions({
