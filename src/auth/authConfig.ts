@@ -3,7 +3,7 @@ import Credentials from 'next-auth/providers/credentials'
 import { z } from 'zod'
 import { NEXT_AUTH_SECRET } from '@/utils/constants'
 import { getUserByEmail } from '@/app/api/user/route'
-import connectDb from '@/utils/connectDb'
+import { MongoDBAdapter } from '@next-auth/mongodb-adapter'
 
 declare module 'next-auth' {
   interface User {
@@ -14,6 +14,7 @@ declare module 'next-auth' {
 export const authConfig: NextAuthConfig = {
   pages: {
     signIn: '/login',
+    error: '/login'
   },
   secret: NEXT_AUTH_SECRET,
   providers: [
@@ -24,7 +25,7 @@ export const authConfig: NextAuthConfig = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        await connectDb()
+        // await connectDb()
         const parsedCredentials = z
           .object({ email: z.string().email(), password: z.string().min(6) })
           .safeParse(credentials)
@@ -32,6 +33,7 @@ export const authConfig: NextAuthConfig = {
         if (!parsedCredentials.success) return null
 
         const { email, password } = parsedCredentials.data
+        console.log('email, password', email, password)
         const user = await getUserByEmail(email)
 
         if (!user) return null

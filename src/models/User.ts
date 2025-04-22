@@ -3,10 +3,10 @@ import { prop, getModelForClass, modelOptions, mongoose } from '@typegoose/typeg
 @modelOptions({
   schemaOptions: {
     timestamps: true,
-    collection: 'users', // Đảm bảo tên collection là 'users'
+    collection: 'users',
   },
   options: {
-    customName: 'User', // Đặt tên model là 'User'
+    customName: 'User',
   },
 })
 export class User {
@@ -25,7 +25,7 @@ export class User {
   public createdAt?: Date;
   public updatedAt?: Date;
 }
-console.log('test', mongoose.models)
-// Kiểm tra xem model đã được định nghĩa trước đó chưa để tránh lỗi khi hot-reload
+console.log('mongoose.models.User', mongoose.models)
+
 const UserModel = mongoose.models.User || getModelForClass(User);
 export default UserModel

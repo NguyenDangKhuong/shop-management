@@ -1,8 +1,8 @@
 import UserModel from '@/models/User'
-import connectDb from '@/utils/connectDb'
+import connectDb from '@/lib/connectDb'
 
 export async function getUserByEmail(email: string) {
-  await connectDb()
+  // await connectDb()
   console.log("📦 Models available:", UserModel) // debug model
   return UserModel.findOne({ email })
 }

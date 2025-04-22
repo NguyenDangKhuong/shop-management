@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import CategoryModel, { Category } from '@/models/Category'
-import connectDb from '@/utils/connectDb'
+import connectDb from '@/lib/connectDb'
 
 export const POST = async (req: NextRequest) => {
   try {

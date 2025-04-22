@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { endOfDay, endOfMonth, startOfDay, startOfMonth, subHours } from 'date-fns'
 
 import OrderModel from '@/models/Order'
-import connectDb from '@/utils/connectDb'
+import connectDb from '@/lib/connectDb'
 
 export const dynamic = 'force-dynamic'
 

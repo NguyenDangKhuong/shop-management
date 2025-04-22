@@ -1,7 +1,8 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, DownOutlined } from '@ant-design/icons'
 import { Avatar, Button, Dropdown, Flex, Layout, MenuProps, Space, theme } from 'antd'
+import { useRef } from 'react'
 
-import { signOut } from '@/auth/auth'
+// import { signOut } from '@/auth/auth'
 
 const { Header } = Layout
 
@@ -9,6 +10,8 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
   const {
     token: { colorBgContainer }
   } = theme.useToken()
+
+  const dropdownRef = useRef(null)
 
   const items: MenuProps['items'] = [
     {
@@ -25,7 +28,7 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
       label: (
         <span
           onClick={async () => {
-            await signOut()
+            // await signOut()
           }}>
           Sign out
         </span>

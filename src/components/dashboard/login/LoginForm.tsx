@@ -4,7 +4,7 @@
 import { useState } from "react"
 import { Button, Form, Input, notification } from "antd"
 import { useRouter } from "next/navigation"
-import { signIn } from "@/auth/auth"
+// import { auth, signIn } from "@/auth/auth"
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false)
@@ -14,20 +14,19 @@ export default function LoginForm() {
   const onFinish = async (values: { email: string; password: string }) => {
     setLoading(true)
     console.log('check', values)
-    const response = await signIn("credentials", {
-      redirect: false,
-      email: values.email,
-      password: values.password,
+    const res = await fetch('/api/auth/signin', {
+      method: 'POST',
+      body: JSON.stringify(values),
     })
 
-    console.log(response)
-    if (response?.error) {
+    if (res.ok) {
+      router.push('/admin') // Redirect to admin page if login is successful
+    } else {
+      alert('Login failed')
       notification.error({
         message: "Đăng nhập thất bại",
-        description: response.error,
+        description: String(res),
       })
-    } else {
-      router.push("/admin") // Redirect to admin dashboard
     }
 
     setLoading(false)

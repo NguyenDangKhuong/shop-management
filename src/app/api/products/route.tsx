@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import ProductModel from '@/models/Product'
-import connectDb from '@/utils/connectDb'
+import connectDb from '@/lib/connectDb'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 
 export const dynamic = 'force-dynamic'

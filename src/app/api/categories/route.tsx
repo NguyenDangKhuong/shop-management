@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import CategoryModel from '@/models/Category'
-import connectDb from '@/utils/connectDb'
+import connectDb from '@/lib/connectDb'
 
 export const GET = async () => {
   try {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import ProductModel, { Product } from '@/models/Product'
-import connectDb from '@/utils/connectDb'
+import connectDb from '@/lib/connectDb'
 import removeImage from '@/utils/removeImage'
 
 export const POST = async (req: NextRequest) => {
