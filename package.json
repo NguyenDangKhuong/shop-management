@@ -6,6 +6,9 @@
     "name": "Khuong",
     "url": "https://github.com/NguyenDangKhuong"
   },
+  "engines": {
+    "node": "22.x"
+  },
   "private": true,
   "scripts": {
     "dev": "next dev",
