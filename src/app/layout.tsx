@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
 
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { App, ConfigProvider } from 'antd'
 
 import './globals.css'
@@ -25,6 +26,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           <ConfigProvider theme={theme}>
             <App>
               <DashboardLayout>{children}</DashboardLayout>
+              <SpeedInsights />
             </App>
           </ConfigProvider>
         </StyledComponentsRegistry>
