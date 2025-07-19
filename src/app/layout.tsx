@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
 
+import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { App, ConfigProvider } from 'antd'
 
@@ -27,6 +28,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
             <App>
               <DashboardLayout>{children}</DashboardLayout>
               <SpeedInsights />
+              <Analytics />
             </App>
           </ConfigProvider>
         </StyledComponentsRegistry>
