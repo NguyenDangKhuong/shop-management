@@ -12,11 +12,12 @@ import CartListItem from '@/components/dashboard/carts/CartTable'
 import InvoiceTable from '@/components/dashboard/carts/InvoiceTable'
 import SearchInput from '@/components/dashboard/carts/SearchInput'
 import useDebounce from '@/hooks/useDebounce'
+import { usePushNotification } from '@/hooks/usePushNotification'
 import { ProductCart } from '@/models/ProductCart'
 import { get } from '@/utils/api'
-import pushNotification from '@/utils/pushNotification'
 
 const CartPage = () => {
+  const { push } = usePushNotification()
   const [cartList, setCartList] = useState<ProductCart[]>([])
   const [searchValue, setSearchValue] = useState('')
   const [isFetching, setIsFetching] = useState(false)
@@ -54,7 +55,7 @@ const CartPage = () => {
       )
 
       if (!success) {
-        pushNotification(message, success)
+        push(message, success)
         setSearchValue('')
         setIsFetching(false)
         scanInput?.current?.focus()

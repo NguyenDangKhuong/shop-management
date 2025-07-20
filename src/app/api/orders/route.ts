@@ -4,6 +4,7 @@ import { endOfDay, endOfMonth, startOfDay, startOfMonth, subHours } from 'date-f
 
 import OrderModel from '@/models/Order'
 import connectDb from '@/utils/connectDb'
+import { errorResponse } from '@/utils/apiResponse'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,15 +30,6 @@ export const GET = async (req: NextRequest) => {
     return NextResponse.json({ orders, success: true }, { status: 200 })
   } catch (err) {
     console.error(err)
-    return NextResponse.json(
-      {
-        message: `Xin vui lòng thử lại hoặc báo Khương lỗi là ${err}`,
-        success: false
-      },
-      {
-        status: 500,
-        statusText: String(err)
-      }
-    )
+    return errorResponse(err)
   }
 }

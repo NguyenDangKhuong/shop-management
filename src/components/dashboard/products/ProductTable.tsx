@@ -5,11 +5,11 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import {
+  CopyTwoTone,
   DeleteTwoTone,
   EditTwoTone,
   MinusOutlined,
-  PlusOutlined,
-  CopyTwoTone
+  PlusOutlined
 } from '@ant-design/icons'
 import { Button, Checkbox, Divider, Flex, Image, Input, Popconfirm, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -17,13 +17,13 @@ import type { ColumnsType } from 'antd/es/table'
 import BarcodeModal from './BarcodeModal'
 import ProductModal from './ProductModal'
 
+import useDebounce from '@/hooks/useDebounce'
+import { usePushNotification } from '@/hooks/usePushNotification'
 import { Category } from '@/models/Category'
 import { Product } from '@/models/Product'
 import { remove } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 import { currencyFormat } from '@/utils/currencyFormat'
-import pushNotification from '@/utils/pushNotification'
-import useDebounce from '@/hooks/useDebounce'
 
 export const initialProduct: Product = {
   _id: '',
@@ -45,6 +45,7 @@ const ProductTable = ({
   products: Product[]
   categories: Category[]
 }) => {
+  const { push } = usePushNotification()
   const searchParams = useSearchParams()
   const params = new URLSearchParams(searchParams)
   const pathname = usePathname()
@@ -129,7 +130,7 @@ const ProductTable = ({
               navigator.clipboard
                 .writeText(record.sku)
                 .then(() => {
-                  pushNotification('Mã số đã được sao chép', true)
+                  push('Mã số đã được sao chép', true)
                 })
                 .catch(err => {
                   console.log(err.message)
@@ -157,7 +158,7 @@ const ProductTable = ({
             description={'Bạn có chắc chắn muốn xóa sản phẩm này ?'}
             onConfirm={async () => {
               const { message, success }: any = await remove('api/product', record, 'products')
-              pushNotification(message, success)
+              push(message, success)
             }}
             okText='Xác nhận'
             cancelText='Hủy'>
@@ -173,7 +174,7 @@ const ProductTable = ({
         <Input
           className='mr-5'
           placeholder='Nhập tên để tìm kiếm sản phẩm'
-          onChange={(e) => setSearchValue(e.target.value)}
+          onChange={e => setSearchValue(e.target.value)}
         />
         <Button
           type='primary'

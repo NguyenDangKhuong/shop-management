@@ -4,9 +4,9 @@ import { Button, Flex, Form, Input, Modal } from 'antd'
 
 import { initialCategory } from './CategoryTable'
 
+import { usePushNotification } from '@/hooks/usePushNotification'
 import { Category } from '@/models/Category'
 import { post, put } from '@/utils/api'
-import pushNotification from '@/utils/pushNotification'
 
 const CategoryModal = ({
   isOpen,
@@ -21,6 +21,7 @@ const CategoryModal = ({
   setEditingCategory: (val: any) => void
   categories: Category[]
 }) => {
+  const { push } = usePushNotification()
   const isEdit = !!editingCategory._id
   const [isLoading, setIsLoading] = useState(false)
   const [form] = Form.useForm()
@@ -47,7 +48,7 @@ const CategoryModal = ({
             ? await put('api/category', editingCategory, 'categories')
             : await post('api/category', editingCategoryRemoveId, 'categories')
           setIsLoading(false)
-          pushNotification(message, success)
+          push(message, success)
           if (!success) return
           setEditingCategory(initialCategory)
           setIsOpen(false)
