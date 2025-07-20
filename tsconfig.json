@@ -1,7 +1,12 @@
 {
   "compilerOptions": {
     "target": "ES2018",
-    "lib": ["dom", "dom.iterable", "esnext", "ESNext.AsyncIterable"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+      "ESNext.AsyncIterable"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -24,7 +29,9 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
   "include": [
@@ -37,6 +44,8 @@
     "next.config.js",
     "next-i18next.config.js",
     ".next/types/**/*.ts"
-  ],
-  "exclude": ["node_modules"]
+, "postcss.config.mjs"  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

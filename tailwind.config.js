@@ -1,7 +1,5 @@
 module.exports = {
-  content: [
-    "./src/**/*.{js,ts,jsx,tsx,mdx}"
-  ],
+  content: ['./src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {}
   },
@@ -10,6 +8,6 @@ module.exports = {
       tailwindcss: {},
       autoprefixer: {},
       ...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {})
-    },
+    }
   ]
 }
