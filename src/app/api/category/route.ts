@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import CategoryModel, { Category } from '@/models/Category'
 import connectDb from '@/utils/connectDb'
+import { errorResponse } from '@/utils/apiResponse'
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -45,16 +46,7 @@ export const POST = async (req: NextRequest) => {
     )
   } catch (err) {
     console.log(err)
-    return NextResponse.json(
-      {
-        message: `Xin vui lòng thử lại hoặc báo Khương lỗi là ${err}`,
-        success: false
-      },
-      {
-        status: 500,
-        statusText: String(err)
-      }
-    )
+    return errorResponse(err)
   }
 }
 
@@ -86,16 +78,7 @@ export const PUT = async (req: NextRequest) => {
     )
   } catch (err) {
     console.error(err)
-    return NextResponse.json(
-      {
-        message: `Xin vui lòng thử lại hoặc báo Khương lỗi là ${err}`,
-        success: false
-      },
-      {
-        status: 500,
-        statusText: String(err)
-      }
-    )
+    return errorResponse(err)
   }
 }
 
@@ -114,7 +97,7 @@ export const DELETE = async (req: NextRequest) => {
           status: 422
         }
       )
-    // const deletedCategory: Category | null = 
+    // const deletedCategory: Category | null =
     await CategoryModel.findOneAndDelete({
       _id
     }).lean()
@@ -129,15 +112,6 @@ export const DELETE = async (req: NextRequest) => {
     )
   } catch (err) {
     console.error(err)
-    return NextResponse.json(
-      {
-        message: `Xin vui lòng thử lại hoặc báo Khương lỗi là ${err}`,
-        success: false
-      },
-      {
-        status: 500,
-        statusText: String(err)
-      }
-    )
+    return errorResponse(err)
   }
 }

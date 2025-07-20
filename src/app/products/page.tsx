@@ -15,7 +15,6 @@ const ProductPage = async ({ searchParams, params }: any) => {
     },
     ['products']
   )
-  console.log('params', params)
   const { categories } = await get(`api/categories`)
   return (
     <>
@@ -38,6 +37,5 @@ export async function generateStaticParams() {
     },
     ['products']
   )
-  console.log('products', products)
   return { ...products, ...totalDocs }
 }

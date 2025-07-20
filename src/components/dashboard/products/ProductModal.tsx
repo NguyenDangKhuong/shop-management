@@ -5,12 +5,12 @@ import { AutoComplete, Button, Flex, Form, Input, InputNumber, Modal, Select } f
 
 import { initialProduct } from './ProductTable'
 
+import { usePushNotification } from '@/hooks/usePushNotification'
 import { Category } from '@/models/Category'
 import { Product } from '@/models/Product'
 import { post, put } from '@/utils/api'
 import { genegateId } from '@/utils/genegateId'
 import numberWithCommas from '@/utils/numberWithCommas'
-import pushNotification from '@/utils/pushNotification'
 
 const { Option } = Select
 
@@ -27,6 +27,7 @@ const ProductModal = ({
   setEditingProduct: (val: any) => void
   categories: Category[]
 }) => {
+  const { push } = usePushNotification()
   const isEdit = !!editingProduct._id
   //auto complete price
   const [options, setOptions] = useState<{ value: number }[]>([])
@@ -34,10 +35,10 @@ const ProductModal = ({
     !price && price > 0 && price < 999
       ? []
       : [
-        { label: String(numberWithCommas(price * 1000)), value: price * 1000 },
-        { label: String(numberWithCommas(price * 10000)), value: price * 10000 },
-        { label: String(numberWithCommas(price * 100000)), value: price * 100000 }
-      ]
+          { label: String(numberWithCommas(price * 1000)), value: price * 1000 },
+          { label: String(numberWithCommas(price * 10000)), value: price * 10000 },
+          { label: String(numberWithCommas(price * 100000)), value: price * 100000 }
+        ]
 
   const [isLoading, setIsLoading] = useState(false)
   const [form] = Form.useForm()
@@ -67,7 +68,7 @@ const ProductModal = ({
             ? await put('api/product', editingProduct, 'products')
             : await post('api/product', { ...editingProductRemoveId, sku }, 'products')
           setIsLoading(false)
-          pushNotification(message, success)
+          push(message, success)
           if (!success) return
           setEditingProduct(initialProduct)
           setIsOpen(false)
@@ -158,7 +159,7 @@ const ProductModal = ({
         <Form.Item<Product>
           label='Ảnh'
           name='imageUrl'
-        // rules={[{ required: true, message: 'Vui lòng up hình sản phẩm' }]}
+          // rules={[{ required: true, message: 'Vui lòng up hình sản phẩm' }]}
         >
           <Button
             icon={!!!imagePublicId && <UploadOutlined />}

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import OrderModel from '@/models/Order'
-import ProductModel, { Product } from '@/models/Product'
+import ProductModel from '@/models/Product'
 import connectDb from '@/utils/connectDb'
 import removeImage from '@/utils/removeImage'
+import { errorResponse } from '@/utils/apiResponse'
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -53,15 +54,6 @@ export const POST = async (req: NextRequest) => {
     )
   } catch (err) {
     console.error(err)
-    return NextResponse.json(
-      {
-        message: `Xin vui lòng thử lại hoặc báo Khương lỗi là ${err}`,
-        success: false
-      },
-      {
-        status: 500,
-        statusText: String(err)
-      }
-    )
+    return errorResponse(err)
   }
 }

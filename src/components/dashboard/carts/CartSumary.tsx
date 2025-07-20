@@ -3,15 +3,15 @@
 import { useState } from 'react'
 
 import { DeleteTwoTone } from '@ant-design/icons'
-import { AutoComplete, Button, Checkbox, Divider, Flex, Input, InputNumber, Typography } from 'antd'
+import { AutoComplete, Button, Checkbox, Divider, Flex, Typography } from 'antd'
 import { useReactToPrint } from 'react-to-print'
 
+import { usePushNotification } from '@/hooks/usePushNotification'
 import { ProductCart } from '@/models/ProductCart'
 import { post } from '@/utils/api'
 import { currencyFormat } from '@/utils/currencyFormat'
 import { genegateId } from '@/utils/genegateId'
 import numberWithCommas from '@/utils/numberWithCommas'
-import pushNotification from '@/utils/pushNotification'
 
 const { Text } = Typography
 const CartSumary: React.FC<{
@@ -39,183 +39,182 @@ const CartSumary: React.FC<{
   addMoreList,
   setAddMoreList
 }) => {
-    const [options, setOptions] = useState<{ value: number }[]>([])
-    const [isPaidOnline, setIsPaidOnline] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
-    const getPanelValue = (price: number) =>
-      !price && price > 0 && price < 999
-        ? []
-        : [
+  const { push } = usePushNotification()
+  const [options, setOptions] = useState<{ value: number }[]>([])
+  const [isPaidOnline, setIsPaidOnline] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const getPanelValue = (price: number) =>
+    !price && price > 0 && price < 999
+      ? []
+      : [
           { label: String(numberWithCommas(price * 1000)), value: price * 1000 },
           { label: String(numberWithCommas(price * 10000)), value: price * 10000 },
           { label: String(numberWithCommas(price * 100000)), value: price * 100000 }
         ]
 
-    //print
-    const handlePrint = useReactToPrint({
-      content: () => componentRef.current,
-      copyStyles: true,
-      onAfterPrint: async () => {
-        setIsLoading(true)
-        const orderId = genegateId(6)
-        const filteredAddMoreList = addMoreList.map((addMore, idx) => (
-          {
-            product: {
-              name: `Sản phẩm thêm bằng tay ${idx + 1}`,
-              sku: genegateId(6),
-              price: addMore,
-              storage: 1
-            },
-            quantity: 1
-          }
-        ))
-        const { message, success }: any = await post(
-          'api/order',
-          {
-            orderId,
-            totalPrice,
-            totalCart,
-            exchange: isPaidOnline ? 0 : exchange,
-            customerCash: isPaidOnline ? totalPrice : customerCash,
-            products: [...cartList, ...filteredAddMoreList],
-            discountPrice: isPaidOnline ? 0 : discountPrice
-          },
-          'orders'
-        )
-        setIsLoading(false)
-        pushNotification(message, success)
-        console.log('success', success)
-        if (!success) return
-        window.location.reload()
-      }
-    })
-    return (
-      <div className='pl-2'>
-        <Button type='primary' onClick={() => setAddMoreList([...addMoreList, 0])}>
-          Thêm
-        </Button>
-        {addMoreList.map((_, idx) => (
-          <Flex className='mt-1' key={idx}>
-            <AutoComplete
-              className='w-full'
-              allowClear
-              options={options}
-              onSelect={val => {
-                setAddMoreList(
-                  addMoreList.map((itemx, index) => (index === idx ? Number(val) : itemx))
-                )
-                setOptions([])
-              }}
-              onChange={val => {
-                setAddMoreList(
-                  addMoreList.map((itemx, index) => (index === idx ? Number(val) : itemx))
-                )
-                setOptions([])
-              }}
-              onSearch={val => setOptions(val ? getPanelValue(Number(val)) : [])}
-              placeholder='Nhập số tiền thêm món'
-            />
-            <DeleteTwoTone
-              className='cursor-pointer'
-              twoToneColor='#ff4d4f'
-              onClick={() => setAddMoreList(addMoreList.filter((_, index) => index !== idx))}
-            />
-          </Flex>
-        ))}
-        <Flex justify='space-between'>
-          <Text strong className='uppercase'>{`${totalCart} sản phẩm`}</Text>
-          <Text strong className='uppercase'>
-            {currencyFormat(totalPrice)}
-          </Text>
+  //print
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    copyStyles: true,
+    onAfterPrint: async () => {
+      setIsLoading(true)
+      const orderId = genegateId(6)
+      const filteredAddMoreList = addMoreList.map((addMore, idx) => ({
+        product: {
+          name: `Sản phẩm thêm bằng tay ${idx + 1}`,
+          sku: genegateId(6),
+          price: addMore,
+          storage: 1
+        },
+        quantity: 1
+      }))
+      const { message, success }: any = await post(
+        'api/order',
+        {
+          orderId,
+          totalPrice,
+          totalCart,
+          exchange: isPaidOnline ? 0 : exchange,
+          customerCash: isPaidOnline ? totalPrice : customerCash,
+          products: [...cartList, ...filteredAddMoreList],
+          discountPrice: isPaidOnline ? 0 : discountPrice
+        },
+        'orders'
+      )
+      setIsLoading(false)
+      push(message, success)
+      console.log('success', success)
+      if (!success) return
+      window.location.reload()
+    }
+  })
+  return (
+    <div className='pl-2'>
+      <Button type='primary' onClick={() => setAddMoreList([...addMoreList, 0])}>
+        Thêm
+      </Button>
+      {addMoreList.map((_, idx) => (
+        <Flex className='mt-1' key={idx}>
+          <AutoComplete
+            className='w-full'
+            allowClear
+            options={options}
+            onSelect={val => {
+              setAddMoreList(
+                addMoreList.map((itemx, index) => (index === idx ? Number(val) : itemx))
+              )
+              setOptions([])
+            }}
+            onChange={val => {
+              setAddMoreList(
+                addMoreList.map((itemx, index) => (index === idx ? Number(val) : itemx))
+              )
+              setOptions([])
+            }}
+            onSearch={val => setOptions(val ? getPanelValue(Number(val)) : [])}
+            placeholder='Nhập số tiền thêm món'
+          />
+          <DeleteTwoTone
+            className='cursor-pointer'
+            twoToneColor='#ff4d4f'
+            onClick={() => setAddMoreList(addMoreList.filter((_, index) => index !== idx))}
+          />
         </Flex>
-
-        <Divider style={{ margin: '5px 0' }} />
+      ))}
+      <Flex justify='space-between'>
+        <Text strong className='uppercase'>{`${totalCart} sản phẩm`}</Text>
         <Text strong className='uppercase'>
-          Tiền Khách Đưa
+          {currencyFormat(totalPrice)}
         </Text>
-        <AutoComplete
-          className='w-full'
-          allowClear
-          disabled={isPaidOnline}
-          options={options}
-          onSelect={val => {
-            setCustomerCash(val)
-            setOptions([])
-          }}
-          onChange={val => {
-            setCustomerCash(Number(val))
-            setOptions([])
-          }}
-          onSearch={val => setOptions(val ? getPanelValue(Number(val)) : [])}
-          placeholder='Nhập số tiền khách đưa'
-        />
-        <Flex>
-          <div className='mr-2'>
-            <Checkbox
-              checked={isPaidOnline}
-              onChange={e => {
-                setIsPaidOnline(e.target.checked)
-              }}></Checkbox>
-          </div>
-          <Text>Khách chuyển khoản</Text>
-        </Flex>
+      </Flex>
 
-        <Divider style={{ margin: '5px 0' }} />
-        <Text strong type='danger' className='uppercase'>
-          Giảm giá (-)
+      <Divider style={{ margin: '5px 0' }} />
+      <Text strong className='uppercase'>
+        Tiền Khách Đưa
+      </Text>
+      <AutoComplete
+        className='w-full'
+        allowClear
+        disabled={isPaidOnline}
+        options={options}
+        onSelect={val => {
+          setCustomerCash(val)
+          setOptions([])
+        }}
+        onChange={val => {
+          setCustomerCash(Number(val))
+          setOptions([])
+        }}
+        onSearch={val => setOptions(val ? getPanelValue(Number(val)) : [])}
+        placeholder='Nhập số tiền khách đưa'
+      />
+      <Flex>
+        <div className='mr-2'>
+          <Checkbox
+            checked={isPaidOnline}
+            onChange={e => {
+              setIsPaidOnline(e.target.checked)
+            }}></Checkbox>
+        </div>
+        <Text>Khách chuyển khoản</Text>
+      </Flex>
+
+      <Divider style={{ margin: '5px 0' }} />
+      <Text strong type='danger' className='uppercase'>
+        Giảm giá (-)
+      </Text>
+      <AutoComplete
+        className='w-full'
+        allowClear
+        options={options}
+        onSelect={val => {
+          setDiscountPrice(val)
+          setOptions([])
+        }}
+        onChange={val => {
+          setDiscountPrice(Number(val))
+          setOptions([])
+        }}
+        onSearch={val => setOptions(val ? getPanelValue(Number(val)) : [])}
+        placeholder='Nhập số tiền giảm giá'
+      />
+
+      <Divider style={{ margin: '5px 0' }} />
+      <Flex justify='space-between'>
+        <Text type='success' className='uppercase'>
+          Shop nhận được
         </Text>
-        <AutoComplete
-          className='w-full'
-          allowClear
-          options={options}
-          onSelect={val => {
-            setDiscountPrice(val)
-            setOptions([])
-          }}
-          onChange={val => {
-            setDiscountPrice(Number(val))
-            setOptions([])
-          }}
-          onSearch={val => setOptions(val ? getPanelValue(Number(val)) : [])}
-          placeholder='Nhập số tiền giảm giá'
-        />
+        <Text type='success' className='uppercase'>
+          {currencyFormat(totalPrice - discountPrice)}
+        </Text>
+      </Flex>
 
-        <Divider style={{ margin: '5px 0' }} />
+      <Button
+        type='primary'
+        className='uppercase w-full'
+        loading={isLoading}
+        onClick={() => {
+          if (customerCash < 999 && !isPaidOnline) {
+            push('Tiền khách nhập phải lớn hơn 1.000đ', false)
+            return
+          }
+          handlePrint()
+        }}>
+        THANH TOÁN
+      </Button>
+      <Divider style={{ margin: '5px 0' }} />
+      {!!totalPrice && !isPaidOnline && (
         <Flex justify='space-between'>
-          <Text type='success' className='uppercase'>
-            Shop nhận được
+          <Text strong className='uppercase'>
+            Tiền thối
           </Text>
-          <Text type='success' className='uppercase'>
-            {currencyFormat(totalPrice - discountPrice)}
+          <Text strong className='uppercase'>
+            {exchange > 0 ? currencyFormat(exchange) : currencyFormat(0)}
           </Text>
         </Flex>
-
-        <Button
-          type='primary'
-          className='uppercase w-full'
-          loading={isLoading}
-          onClick={() => {
-            if (customerCash < 999 && !isPaidOnline) {
-              pushNotification('Tiền khách nhập phải lớn hơn 1.000đ', false)
-              return
-            }
-            handlePrint()
-          }}>
-          THANH TOÁN
-        </Button>
-        <Divider style={{ margin: '5px 0' }} />
-        {!!totalPrice && !isPaidOnline && (
-          <Flex justify='space-between'>
-            <Text strong className='uppercase'>
-              Tiền thối
-            </Text>
-            <Text strong className='uppercase'>
-              {exchange > 0 ? currencyFormat(exchange) : currencyFormat(0)}
-            </Text>
-          </Flex>
-        )}
-      </div>
-    )
-  }
+      )}
+    </div>
+  )
+}
 
 export default CartSumary
