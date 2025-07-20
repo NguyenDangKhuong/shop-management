@@ -119,9 +119,9 @@ export const DELETE = async (req: NextRequest) => {
     const body = await req.json()
     const { _id } = body
     if (!_id) return
-    const deletedProduct: Product | null = await ProductModel.findOneAndDelete({
+    const deletedProduct = await ProductModel.findOneAndDelete({
       _id
-    }).lean()
+    })
     deletedProduct && removeImage(String(deletedProduct?.imagePublicId))
 
     return NextResponse.json(

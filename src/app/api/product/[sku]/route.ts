@@ -5,10 +5,10 @@ import connectDb from '@/utils/connectDb'
 
 connectDb()
 
-export const GET = async (req: NextRequest, { params }: { params: { sku: string } }) => {
+export const GET = async (req: NextRequest, { params }: { params: Promise<{ sku: string }> }) => {
   try {
     await connectDb()
-    const sku = params.sku
+    const { sku } = await params
     const product = await ProductModel.findOne({ sku }).lean()
     if (!product) {
       return NextResponse.json(

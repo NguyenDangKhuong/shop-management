@@ -114,7 +114,8 @@ export const DELETE = async (req: NextRequest) => {
           status: 422
         }
       )
-    const deletedCategory: Category | null = await CategoryModel.findOneAndDelete({
+    // const deletedCategory: Category | null = 
+    await CategoryModel.findOneAndDelete({
       _id
     }).lean()
     return NextResponse.json(

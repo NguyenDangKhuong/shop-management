@@ -10,6 +10,14 @@ npm run dev
 yarn dev
 ```
 
+Build project:
+
+```bash
+npm run build
+# or
+yarn build
+```
+
 run build with bundle analyzer:
 ANALYZE=true yarn build
 
