@@ -11,7 +11,7 @@
   },
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "build-ananalyzer": "ANALYZE=true yarn build",
     "start": "next start",
