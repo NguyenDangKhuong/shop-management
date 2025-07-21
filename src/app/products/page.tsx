@@ -3,12 +3,7 @@ import ProductTable from '@/components/dashboard/products/ProductTable'
 import { get } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 
-type Props = {
-  searchParams: { [key: string]: string | undefined }
-  params: { [key: string]: string }
-}
-
-const ProductPage = async ({ searchParams, params }: Props) => {
+const ProductPage = async ({ searchParams, params }: any) => {
   const { page, size, name, isPublic } = await searchParams
   //fetch product data following search param
   const { totalDocs, products } = await get(
