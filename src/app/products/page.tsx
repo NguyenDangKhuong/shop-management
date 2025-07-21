@@ -3,19 +3,24 @@ import ProductTable from '@/components/dashboard/products/ProductTable'
 import { get } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 
-const ProductPage = async ({ searchParams, params }: any) => {
+type Props = {
+  searchParams: { [key: string]: string | undefined }
+  params: { [key: string]: string }
+}
+
+const ProductPage = async ({ searchParams, params }: Props) => {
+  const { page, size, name, isPublic } = await searchParams
   //fetch product data following search param
   const { totalDocs, products } = await get(
     `api/products`,
     {
-      page: searchParams?.page ?? 1,
-      size: searchParams?.size ?? LIMIT_PAGE_NUMBER,
-      name: searchParams?.name ?? '',
-      isPublic: searchParams?.isPublic ?? false
+      page: Number(page) ?? 1,
+      size: Number(size) ?? LIMIT_PAGE_NUMBER,
+      name: name ?? '',
+      isPublic: isPublic ?? false
     },
     ['products']
   )
-  console.log('products', products)
   const { categories } = await get(`api/categories`)
   return (
     <>
@@ -38,6 +43,5 @@ export async function generateStaticParams() {
     },
     ['products']
   )
-  console.log('products', products)
   return { ...products, ...totalDocs }
 }

@@ -2,14 +2,13 @@ import DashboardTitle from '@/components/dashboard/DashboardTitle'
 import OrderTable from '@/components/dashboard/orders/OrderTable'
 import { get } from '@/utils/api'
 
-const OrderPage = async (props: any) => {
-  const date = props?.searchParams?.date ?? new Date()
-  const isMonth = props?.searchParams?.isMonth ?? ''
+const OrderPage = async ({ searchParams }: any) => {
+  const { date, isMonth } = await searchParams
   const { totalDocs, orders } = await get(
     `api/orders`,
     {
-      date,
-      isMonth
+      date: date ?? new Date(),
+      isMonth: isMonth ?? ''
     },
     ['orders']
   )
