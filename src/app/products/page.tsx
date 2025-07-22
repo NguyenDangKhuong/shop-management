@@ -7,7 +7,7 @@ import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 export const dynamic = 'force-dynamic'
 
 const ProductPage = async ({ searchParams, params }: any) => {
-  const { page, size, name, isPublic } = await searchParams
+  const { page, size, name, isPublic } = searchParams
   //fetch product data following search param
   const { totalDocs, products } = await get(
     `api/products`,
