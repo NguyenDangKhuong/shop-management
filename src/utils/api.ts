@@ -25,7 +25,8 @@ export const get = async (
     console.log(cacheKey)
     const res = await fetch(fullUrl, {
       method: 'GET',
-      next: { tags: cacheKey, revalidate }
+      // next: { tags: cacheKey, revalidate }
+      cache: 'no-store'
       // bỏ lưu cache:
       // cache: 'no-store'
     })
