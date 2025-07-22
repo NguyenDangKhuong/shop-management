@@ -27,6 +27,7 @@ const CategoryTable = ({
   totalDocs: number
   categories: Category[]
 }) => {
+  console.log('categories', categories)
   const { push } = usePushNotification()
   const searchParams = useSearchParams()
   const params = new URLSearchParams(searchParams)

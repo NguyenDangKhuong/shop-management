@@ -45,6 +45,7 @@ const ProductTable = ({
   products: Product[]
   categories: Category[]
 }) => {
+  console.log('products', products)
   const { push } = usePushNotification()
   const searchParams = useSearchParams()
   const params = new URLSearchParams(searchParams)

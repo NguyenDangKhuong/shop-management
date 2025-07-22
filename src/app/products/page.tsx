@@ -3,8 +3,6 @@ import ProductTable from '@/components/dashboard/products/ProductTable'
 import { get } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 
-export const dynamic = 'force-dynamic'
-
 const ProductPage = async ({ searchParams, params }: any) => {
   const { page, size, name, isPublic } = await searchParams
   //fetch product data following search param
