@@ -16,7 +16,7 @@ const ProductPage = async ({ searchParams, params }: any) => {
     },
     ['products']
   )
-  const { categories } = await get(`api/categories`)
+  const { categories } = await get(`api/categories`, {}, ['categories'])
   return (
     <>
       <DashboardTitle pageName='sản phẩm' totalDocs={totalDocs} />

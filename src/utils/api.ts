@@ -22,10 +22,12 @@ export const get = async (
 
     // Tạo cache key phân biệt bằng cách gộp url + query
     const cacheKey = [`${url}?${queryString}`, ...(tags || [])]
+    console.log(cacheKey)
     const res = await fetch(fullUrl, {
       method: 'GET',
-      cache: 'no-store'
-      // next: { tags: cacheKey, revalidate }
+      next: { tags: cacheKey, revalidate }
+      // bỏ lưu cache:
+      // cache: 'no-store'
     })
 
     // Mẹo thêm (nếu cần invalidate):
