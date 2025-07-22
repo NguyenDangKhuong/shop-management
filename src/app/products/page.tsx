@@ -1,4 +1,5 @@
 import DashboardTitle from '@/components/dashboard/DashboardTitle'
+import DebugLog from '@/components/dashboard/DebugLog'
 import ProductTable from '@/components/dashboard/products/ProductTable'
 import { get } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
@@ -23,22 +24,23 @@ const ProductPage = async ({ searchParams, params }: any) => {
     <>
       <DashboardTitle pageName='sản phẩm' totalDocs={totalDocs} />
       <ProductTable totalDocs={totalDocs} products={products} categories={categories} />
+      <DebugLog products={products} categories={categories} />
     </>
   )
 }
 
 export default ProductPage
 
-export async function generateStaticParams() {
-  const { totalDocs, products } = await get(
-    `api/products`,
-    {
-      page: 1,
-      size: LIMIT_PAGE_NUMBER,
-      name: '',
-      isPublic: false
-    },
-    ['products']
-  )
-  return { ...products, ...totalDocs }
-}
+// export async function generateStaticParams() {
+//   const { totalDocs, products } = await get(
+//     `api/products`,
+//     {
+//       page: 1,
+//       size: LIMIT_PAGE_NUMBER,
+//       name: '',
+//       isPublic: false
+//     },
+//     ['products']
+//   )
+//   return { ...products, ...totalDocs }
+// }

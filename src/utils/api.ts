@@ -23,6 +23,7 @@ export const get = async (
     // Tạo cache key phân biệt bằng cách gộp url + query
     const cacheKey = [`${url}?${queryString}`, ...(tags || [])]
     console.log(cacheKey)
+    console.log('Fetching URL:', fullUrl)
     const res = await fetch(fullUrl, {
       method: 'GET',
       // next: { tags: cacheKey, revalidate }
