@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import DashboardTitle from '@/components/dashboard/DashboardTitle'
 import CategoryTable from '@/components/dashboard/categories/CategoryTable'
 import { get } from '@/utils/api'
