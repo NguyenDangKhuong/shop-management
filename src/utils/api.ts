@@ -22,20 +22,12 @@ export const get = async (
 
     // Tạo cache key phân biệt bằng cách gộp url + query
     const cacheKey = [`${url}?${queryString}`, ...(tags || [])]
-    console.log(cacheKey)
-    console.log('Fetching URL:', fullUrl)
     const res = await fetch(fullUrl, {
       method: 'GET',
-      next: { tags: cacheKey, revalidate }
-      // bỏ lưu cache:
-      // cache: 'no-store'
+      next: { tags: cacheKey, revalidate },
+      cache: revalidate === 0 ? 'no-store' : undefined
     })
 
-    // Mẹo thêm (nếu cần invalidate):
-    // Sau này, khi gọi revalidate:
-    // invalidate cache theo tag:
-    // await revalidateTag('products?page=1&name=abc')
-    // Hoặc bạn có thể dùng slugify(url + query) để ngắn gọn hơn nếu muốn.
     const data = await res.json()
     return {
       ...data,
