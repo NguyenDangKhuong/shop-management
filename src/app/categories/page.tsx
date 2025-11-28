@@ -15,6 +15,7 @@ const CategoryPage = async ({ searchParams }: any) => {
     },
     ['categories']
   )
+  console.log('categories 2', categories)
   return (
     <>
       <DashboardTitle pageName='danh mục' totalDocs={totalDocs} />
