@@ -24,7 +24,7 @@ export const get = async (
     const cacheKey = [`${url}?${queryString}`, ...(tags || [])]
     const res = await fetch(fullUrl, {
       method: 'GET',
-      next: { tags: cacheKey, revalidate },
+      next: revalidate === 0 ? { revalidate: 0 } : { tags: cacheKey, revalidate },
       cache: revalidate === 0 ? 'no-store' : undefined
     })
 

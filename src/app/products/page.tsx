@@ -8,18 +8,20 @@ export const dynamic = 'force-dynamic'
 const ProductPage = async ({ searchParams, params }: any) => {
   const { page, size, name, isPublic } = searchParams
   //fetch product data following search param
-  const { totalDocs, products } = await get(
-    `api/products`,
-    {
-      page: Number(page) ?? 1,
-      size: Number(size) ?? LIMIT_PAGE_NUMBER,
-      name: name ?? '',
-      isPublic: isPublic ?? false
-    },
-    ['products'],
-    0
-  )
-  const { categories } = await get(`api/categories`, {}, ['categories'], 0)
+  const [{ totalDocs, products }, { categories }] = await Promise.all([
+    get(
+      `api/products`,
+      {
+        page: Number(page) ?? 1,
+        size: Number(size) ?? LIMIT_PAGE_NUMBER,
+        name: name ?? '',
+        isPublic: isPublic ?? false
+      },
+      ['products'],
+      0
+    ),
+    get(`api/categories`, {}, ['categories'], 0)
+  ])
   return (
     <>
       <DashboardTitle pageName='sản phẩm' totalDocs={totalDocs} />
