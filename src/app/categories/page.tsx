@@ -6,7 +6,7 @@ import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 export const dynamic = 'force-dynamic'
 
 const CategoryPage = async ({ searchParams }: any) => {
-  const { page } = searchParams
+  const { page } = await searchParams
   const { totalDocs, categories } = await get(
     `api/categories`,
     {
@@ -15,7 +15,6 @@ const CategoryPage = async ({ searchParams }: any) => {
     },
     ['categories']
   )
-  console.log('categories 2', categories)
   return (
     <>
       <DashboardTitle pageName='danh mục' totalDocs={totalDocs} />
