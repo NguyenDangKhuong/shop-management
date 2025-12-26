@@ -13,7 +13,8 @@ const CategoryPage = async ({ searchParams }: any) => {
       page: Number(page) ?? 1,
       size: LIMIT_PAGE_NUMBER
     },
-    ['categories']
+    ['categories'],
+    0 // 🔧 Fix: Force no-cache to prevent cross-page data contamination
   )
   return (
     <>
