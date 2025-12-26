@@ -1,281 +1,160 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
-import type { CascaderProps } from 'antd'
-import {
-  AutoComplete,
-  Button,
-  Cascader,
-  Checkbox,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  Row,
-  Select
-} from 'antd'
-
-const { Option } = Select
-
-interface DataNodeType {
-  value: string
-  label: string
-  children?: DataNodeType[]
-}
-
-const residences: CascaderProps<DataNodeType>['options'] = [
-  {
-    value: 'zhejiang',
-    label: 'Zhejiang',
-    children: [
-      {
-        value: 'hangzhou',
-        label: 'Hangzhou',
-        children: [
-          {
-            value: 'xihu',
-            label: 'West Lake'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    value: 'jiangsu',
-    label: 'Jiangsu',
-    children: [
-      {
-        value: 'nanjing',
-        label: 'Nanjing',
-        children: [
-          {
-            value: 'zhonghuamen',
-            label: 'Zhong Hua Men'
-          }
-        ]
-      }
-    ]
-  }
-]
-
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 8 }
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 }
-  }
-}
-
-const tailFormItemLayout = {
-  wrapperCol: {
-    xs: {
-      span: 24,
-      offset: 0
-    },
-    sm: {
-      span: 16,
-      offset: 8
-    }
-  }
-}
+import { register } from '@/actions/auth'
 
 const RegisterForm = () => {
-  const [form] = Form.useForm()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const router = useRouter()
 
-  const onFinish = (values: any) => {
-    console.log('Received values of form: ', values)
-  }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
 
-  const prefixSelector = (
-    <Form.Item name='prefix' noStyle>
-      <Select style={{ width: 70 }}>
-        <Option value='86'>+86</Option>
-        <Option value='87'>+87</Option>
-      </Select>
-    </Form.Item>
-  )
+    const formData = new FormData(e.currentTarget)
+    const name = formData.get('name') as string
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+    const confirmPassword = formData.get('confirmPassword') as string
 
-  const suffixSelector = (
-    <Form.Item name='suffix' noStyle>
-      <Select style={{ width: 70 }}>
-        <Option value='USD'>$</Option>
-        <Option value='CNY'>¥</Option>
-      </Select>
-    </Form.Item>
-  )
+    // Validate password match
+    if (password !== confirmPassword) {
+      setError('Passwords do not match!')
+      setLoading(false)
+      return
+    }
 
-  const [autoCompleteResult, setAutoCompleteResult] = useState<string[]>([])
+    try {
+      const result = await register(name, email, password)
 
-  const onWebsiteChange = (value: string) => {
-    if (!value) {
-      setAutoCompleteResult([])
-    } else {
-      setAutoCompleteResult(['.com', '.org', '.net'].map(domain => `${value}${domain}`))
+      if (result.success) {
+        router.push('/login')
+      } else {
+        setError(result.error || 'Registration failed')
+      }
+    } catch (error) {
+      setError('An error occurred during registration')
+      console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
-  const websiteOptions = autoCompleteResult.map(website => ({
-    label: website,
-    value: website
-  }))
   return (
-    <Form
-      {...formItemLayout}
-      form={form}
-      name='register'
-      onFinish={onFinish}
-      initialValues={{ residence: ['zhejiang', 'hangzhou', 'xihu'], prefix: '86' }}
-      style={{ maxWidth: 600 }}
-      scrollToFirstError>
-      <Form.Item
-        name='email'
-        label='E-mail'
-        rules={[
-          {
-            type: 'email',
-            message: 'The input is not valid E-mail!'
-          },
-          {
-            required: true,
-            message: 'Please input your E-mail!'
-          }
-        ]}>
-        <Input />
-      </Form.Item>
+    <div className="bg-[#0a0a0a] min-h-screen flex items-center justify-center relative overflow-hidden p-4">
+      {/* Animated Background Orbs */}
+      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-[#00e5ff] rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-[float_6s_ease-in-out_infinite]"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-[#b927fc] rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-[float_6s_ease-in-out_3s_infinite]"></div>
 
-      <Form.Item
-        name='password'
-        label='Password'
-        rules={[
-          {
-            required: true,
-            message: 'Please input your password!'
-          }
-        ]}
-        hasFeedback>
-        <Input.Password />
-      </Form.Item>
+      {/* Register Card */}
+      <div className="relative w-full max-w-md bg-[rgba(255,255,255,0.03)] backdrop-blur-2xl border border-[rgba(255,255,255,0.08)] rounded-3xl p-8 md:p-10 shadow-2xl z-10">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-white mb-2">Create Account</h2>
+          <p className="text-gray-400 text-sm">Sign up to get started</p>
+        </div>
 
-      <Form.Item
-        name='confirm'
-        label='Confirm Password'
-        dependencies={['password']}
-        hasFeedback
-        rules={[
-          {
-            required: true,
-            message: 'Please confirm your password!'
-          },
-          ({ getFieldValue }) => ({
-            validator(_, value) {
-              if (!value || getFieldValue('password') === value) {
-                return Promise.resolve()
-              }
-              return Promise.reject(new Error('The new password that you entered do not match!'))
-            }
-          })
-        ]}>
-        <Input.Password />
-      </Form.Item>
+        {error && (
+          <div className="mb-6 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm text-center">
+            {error}
+          </div>
+        )}
 
-      <Form.Item
-        name='nickname'
-        label='Nickname'
-        tooltip='What do you want others to call you?'
-        rules={[{ required: true, message: 'Please input your nickname!', whitespace: true }]}>
-        <Input />
-      </Form.Item>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Name Input */}
+          <div className="group relative">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#00e5ff] transition-colors duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              className="w-full bg-transparent border border-[rgba(255,255,255,0.08)] rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 outline-none focus:border-[#00e5ff] focus:shadow-[0_0_15px_rgba(0,229,255,0.3)] transition-all duration-300"
+              required
+              minLength={2}
+            />
+          </div>
 
-      <Form.Item
-        name='residence'
-        label='Habitual Residence'
-        rules={[
-          { type: 'array', required: true, message: 'Please select your habitual residence!' }
-        ]}>
-        <Cascader options={residences} />
-      </Form.Item>
+          {/* Email Input */}
+          <div className="group relative">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#00e5ff] transition-colors duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              </svg>
+            </div>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              className="w-full bg-transparent border border-[rgba(255,255,255,0.08)] rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 outline-none focus:border-[#00e5ff] focus:shadow-[0_0_15px_rgba(0,229,255,0.3)] transition-all duration-300"
+              required
+            />
+          </div>
 
-      <Form.Item
-        name='phone'
-        label='Phone Number'
-        rules={[{ required: true, message: 'Please input your phone number!' }]}>
-        <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
-      </Form.Item>
+          {/* Password Input */}
+          <div className="group relative">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#00e5ff] transition-colors duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+            </div>
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              className="w-full bg-transparent border border-[rgba(255,255,255,0.08)] rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 outline-none focus:border-[#00e5ff] focus:shadow-[0_0_15px_rgba(0,229,255,0.3)] transition-all duration-300"
+              required
+              minLength={6}
+            />
+          </div>
 
-      <Form.Item
-        name='donation'
-        label='Donation'
-        rules={[{ required: true, message: 'Please input donation amount!' }]}>
-        <InputNumber addonAfter={suffixSelector} style={{ width: '100%' }} />
-      </Form.Item>
+          {/* Confirm Password Input */}
+          <div className="group relative">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-[#00e5ff] transition-colors duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+            </div>
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              className="w-full bg-transparent border border-[rgba(255,255,255,0.08)] rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 outline-none focus:border-[#00e5ff] focus:shadow-[0_0_15px_rgba(0,229,255,0.3)] transition-all duration-300"
+              required
+              minLength={6}
+            />
+          </div>
 
-      <Form.Item
-        name='website'
-        label='Website'
-        rules={[{ required: true, message: 'Please input website!' }]}>
-        <AutoComplete options={websiteOptions} onChange={onWebsiteChange} placeholder='website'>
-          <Input />
-        </AutoComplete>
-      </Form.Item>
+          {/* Register Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#00e5ff] to-[#b927fc] text-white font-bold text-lg shadow-lg shadow-[#00e5ff]/30 hover:scale-[1.02] hover:shadow-[#b927fc]/50 active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? 'CREATING ACCOUNT...' : 'SIGN UP'}
+          </button>
+        </form>
 
-      <Form.Item
-        name='intro'
-        label='Intro'
-        rules={[{ required: true, message: 'Please input Intro' }]}>
-        <Input.TextArea showCount maxLength={100} />
-      </Form.Item>
-
-      <Form.Item
-        name='gender'
-        label='Gender'
-        rules={[{ required: true, message: 'Please select gender!' }]}>
-        <Select placeholder='select your gender'>
-          <Option value='male'>Male</Option>
-          <Option value='female'>Female</Option>
-          <Option value='other'>Other</Option>
-        </Select>
-      </Form.Item>
-
-      <Form.Item label='Captcha' extra='We must make sure that your are a human.'>
-        <Row gutter={8}>
-          <Col span={12}>
-            <Form.Item
-              name='captcha'
-              noStyle
-              rules={[{ required: true, message: 'Please input the captcha you got!' }]}>
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Button>Get captcha</Button>
-          </Col>
-        </Row>
-      </Form.Item>
-
-      <Form.Item
-        name='agreement'
-        valuePropName='checked'
-        rules={[
-          {
-            validator: (_, value) =>
-              value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement'))
-          }
-        ]}
-        {...tailFormItemLayout}>
-        <Checkbox>
-          I have read the <a href=''>agreement</a>
-        </Checkbox>
-      </Form.Item>
-      <Form.Item {...tailFormItemLayout}>
-        <Button type='primary' htmlType='submit'>
-          Register
-        </Button>
-      </Form.Item>
-    </Form>
+        {/* Login Link */}
+        <p className="text-center text-gray-500 mt-8 text-sm">
+          Already have an account?{' '}
+          <Link href="/login" className="font-bold bg-gradient-to-r from-[#00e5ff] to-[#b927fc] bg-clip-text text-transparent hover:opacity-80 transition-opacity ml-1">
+            Login
+          </Link>
+        </p>
+      </div>
+    </div>
   )
 }
 

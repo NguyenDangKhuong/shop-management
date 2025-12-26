@@ -24,7 +24,7 @@ export const validateRegisterInput = (registerInput: User) => {
       errors: [{ field: 'username', message: `Tên không được chứa kí tự đặc biệt` }]
     }
 
-  if (registerInput.password.length < 2)
+  if (registerInput.password.length <= 2)
     return {
       message: 'Invalid password',
       errors: [

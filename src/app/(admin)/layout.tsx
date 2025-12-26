@@ -1,10 +1,7 @@
 import type { Metadata } from 'next'
 
-import { App, ConfigProvider } from 'antd'
-
+import AntdProvider from '@/components/providers/AntdProvider'
 import DashboardLayout from '@/components/dashboard/DashboardLayout'
-import StyledComponentsRegistry from '@/lib/antdRegistry'
-import theme from '@/theme/themeConfig'
 
 export const metadata: Metadata = {
     title: 'Yumy Shop - Admin',
@@ -13,13 +10,9 @@ export const metadata: Metadata = {
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     return (
-        <StyledComponentsRegistry>
-            <ConfigProvider theme={theme}>
-                <App>
-                    <DashboardLayout>{children}</DashboardLayout>
-                </App>
-            </ConfigProvider>
-        </StyledComponentsRegistry>
+        <AntdProvider>
+            <DashboardLayout>{children}</DashboardLayout>
+        </AntdProvider>
     )
 }
 

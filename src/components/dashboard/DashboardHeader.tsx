@@ -1,7 +1,7 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, DownOutlined } from '@ant-design/icons'
 import { Avatar, Button, Dropdown, Flex, Layout, MenuProps, Space, theme } from 'antd'
 
-import { signOut } from '@/auth'
+import { logout } from '@/actions/auth'
 
 const { Header } = Layout
 
@@ -25,7 +25,7 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
       label: (
         <span
           onClick={async () => {
-            await signOut()
+            await logout()
           }}>
           Sign out
         </span>

@@ -22,8 +22,6 @@ const ProductPage = async ({ searchParams, params }: any) => {
     ),
     get(`api/categories`, {}, ['categories'], 0)
   ])
-  console.log('products', products)
-  console.log('categories', categories)
   return (
     <>
       <DashboardTitle pageName='sản phẩm' totalDocs={totalDocs} />
