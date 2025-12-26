@@ -3,12 +3,14 @@ import CategoryTable from '@/components/dashboard/categories/CategoryTable'
 import { get } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 
-const CategoryPage = async (props: any) => {
-  const page = props?.searchParams?.page ?? 1
+export const dynamic = 'force-dynamic'
+
+const CategoryPage = async ({ searchParams }: any) => {
+  const { page } = await searchParams
   const { totalDocs, categories } = await get(
     `api/categories`,
     {
-      page,
+      page: Number(page) ?? 1,
       size: LIMIT_PAGE_NUMBER
     },
     ['categories']

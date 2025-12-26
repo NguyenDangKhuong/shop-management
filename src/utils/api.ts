@@ -10,17 +10,24 @@ export interface PostResponse {
   status: number
 }
 
-export const get = async (url: string, params?: object, tags?: string[], revalidate?: number) => {
+export const get = async (
+  url: string,
+  params: Record<string, any> = {},
+  tags?: string[],
+  revalidate?: number
+) => {
   try {
-    const res = await fetch(
-      `${BACKEND_HOST}/${url}?${new URLSearchParams({
-        ...params
-      })}`,
-      {
-        method: 'GET',
-        next: { tags, revalidate }
-      }
-    )
+    const queryString = new URLSearchParams(params).toString()
+    const fullUrl = `${BACKEND_HOST}/${url}?${queryString}`
+
+    // Tạo cache key phân biệt bằng cách gộp url + query
+    const cacheKey = [`${url}?${queryString}`, ...(tags || [])]
+    const res = await fetch(fullUrl, {
+      method: 'GET',
+      next: revalidate === 0 ? { revalidate: 0 } : { tags: cacheKey, revalidate },
+      cache: revalidate === 0 ? 'no-store' : undefined
+    })
+
     const data = await res.json()
     return {
       ...data,

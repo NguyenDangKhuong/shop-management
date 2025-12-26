@@ -4,13 +4,10 @@ import Script from 'next/script'
 
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import { App, ConfigProvider } from 'antd'
+
+import NextAuthProvider from '@/components/providers/NextAuthProvider'
 
 import './globals.css'
-
-import DashboardLayout from '@/components/dashboard/DashboardLayout'
-import StyledComponentsRegistry from '@/lib/antdRegistry'
-import theme from '@/theme/themeConfig'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,15 +20,11 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang='en'>
       <body className={inter.className} suppressHydrationWarning={true}>
-        <StyledComponentsRegistry>
-          <ConfigProvider theme={theme}>
-            <App>
-              <DashboardLayout>{children}</DashboardLayout>
-              <SpeedInsights />
-              <Analytics />
-            </App>
-          </ConfigProvider>
-        </StyledComponentsRegistry>
+        <NextAuthProvider>
+          {children}
+          <SpeedInsights />
+          <Analytics />
+        </NextAuthProvider>
       </body>
       <Script src='https://widget.cloudinary.com/v2.0/global/all.js'></Script>
     </html>
