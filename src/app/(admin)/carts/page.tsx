@@ -34,7 +34,7 @@ const CartPage = () => {
   useEffect(() => {
     //check connection every 30 minutes
     setInterval(async () => {
-      const { connected, success } = await get(`/api/check-connection`, {}, ['connection'])
+      const { connected, success } = await get(`/api/check-connection`, {}, ['connection'], 0)
       if (!connected || !success) {
         window.location.reload()
       }
@@ -51,7 +51,8 @@ const CartPage = () => {
       const { product, message, success, status } = await get(
         `/api/product/${debounedScanValue}`,
         {},
-        ['productsCart']
+        ['productsCart'],
+        0
       )
 
       if (!success) {

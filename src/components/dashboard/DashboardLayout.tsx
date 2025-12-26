@@ -17,7 +17,7 @@ const DashboardLayout = ({ children }: any) => {
   } = theme.useToken()
 
   return (
-    <Layout className='h-full'>
+    <Layout className='h-full' style={{ minHeight: '100vh' }}>
       <DashboardSider collapsed={collapsed} />
       <Layout>
         <DashboardHeader collapsed={collapsed} setCollapsed={() => setCollapsed(!collapsed)} />
