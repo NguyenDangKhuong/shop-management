@@ -11,7 +11,7 @@ export default function LandingPage() {
                         Y
                     </div>
                     <span className="font-bold text-xl tracking-tight text-white">
-                        Yumy<span className="text-[#38bdf8]">.shop</span>
+                        The<span className="text-[#38bdf8]">TapHoa</span>
                     </span>
                 </div>
 

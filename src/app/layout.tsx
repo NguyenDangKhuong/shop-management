@@ -12,8 +12,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Yumy Shop',
-  description: 'Yumy Shop, Cu Chi, TPHCM, Viet Nam'
+  title: 'TheTapHoa',
+  description: 'TheTapHoa, TPHCM, Viet Nam'
 }
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {

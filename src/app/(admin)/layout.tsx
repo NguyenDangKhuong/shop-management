@@ -4,8 +4,8 @@ import AntdProvider from '@/components/providers/AntdProvider'
 import DashboardLayout from '@/components/dashboard/DashboardLayout'
 
 export const metadata: Metadata = {
-    title: 'Yumy Shop - Admin',
-    description: 'Yumy Shop Management Dashboard'
+    title: 'TheTapHoa - Admin',
+    description: 'TheTapHoa Management Dashboard'
 }
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {

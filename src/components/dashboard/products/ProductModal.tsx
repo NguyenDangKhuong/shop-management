@@ -35,10 +35,10 @@ const ProductModal = ({
     !price && price > 0 && price < 999
       ? []
       : [
-          { label: String(numberWithCommas(price * 1000)), value: price * 1000 },
-          { label: String(numberWithCommas(price * 10000)), value: price * 10000 },
-          { label: String(numberWithCommas(price * 100000)), value: price * 100000 }
-        ]
+        { label: String(numberWithCommas(price * 1000)), value: price * 1000 },
+        { label: String(numberWithCommas(price * 10000)), value: price * 10000 },
+        { label: String(numberWithCommas(price * 100000)), value: price * 100000 }
+      ]
 
   const [isLoading, setIsLoading] = useState(false)
   const [form] = Form.useForm()
@@ -159,7 +159,7 @@ const ProductModal = ({
         <Form.Item<Product>
           label='Ảnh'
           name='imageUrl'
-          // rules={[{ required: true, message: 'Vui lòng up hình sản phẩm' }]}
+        // rules={[{ required: true, message: 'Vui lòng up hình sản phẩm' }]}
         >
           <Button
             icon={!!!imagePublicId && <UploadOutlined />}
@@ -167,8 +167,8 @@ const ProductModal = ({
               const widget = window.cloudinary.createUploadWidget(
                 {
                   cloudName: 'ndk',
-                  uploadPreset: 'yumyshop',
-                  folder: 'yumyshop/products'
+                  uploadPreset: 'thetaphoa',
+                  folder: 'thetaphoa/products'
                 },
                 (error: any, res: any) => {
                   if (error) {
