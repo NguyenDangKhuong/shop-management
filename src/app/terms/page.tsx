@@ -20,7 +20,7 @@ export default function TermsOfService() {
                     <section>
                         <h2 className="text-2xl font-semibold text-gray-800 mb-4">1. Acceptance of Terms</h2>
                         <p className="text-gray-700 leading-relaxed">
-                            By accessing and using Thetaphoa ("the Service"), you accept and agree to be bound by the terms and
+                            By accessing and using Thetaphoa (&quot;the Service&quot;), you accept and agree to be bound by the terms and
                             provision of this agreement. If you do not agree to these Terms of Service, please do not use the Service.
                         </p>
                     </section>
@@ -50,13 +50,13 @@ export default function TermsOfService() {
                     <section>
                         <h2 className="text-2xl font-semibold text-gray-800 mb-4">4. TikTok Integration</h2>
                         <p className="text-gray-700 leading-relaxed mb-3">
-                            Our Service may integrate with TikTok's platform. When using TikTok integration features:
+                            Our Service may integrate with TikTok&apos;s platform. When using TikTok integration features:
                         </p>
                         <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                            <li>You must comply with TikTok's Terms of Service and Community Guidelines</li>
+                            <li>You must comply with TikTok&apos;s Terms of Service and Community Guidelines</li>
                             <li>You authorize us to access your TikTok account data as necessary for the Service</li>
-                            <li>You understand that TikTok's terms and policies govern your use of their platform</li>
-                            <li>We are not responsible for any changes to TikTok's API or services</li>
+                            <li>You understand that TikTok&apos;s terms and policies govern your use of their platform</li>
+                            <li>We are not responsible for any changes to TikTok&apos;s API or services</li>
                         </ul>
                     </section>
 
@@ -105,7 +105,7 @@ export default function TermsOfService() {
                     <section>
                         <h2 className="text-2xl font-semibold text-gray-800 mb-4">9. Disclaimer of Warranties</h2>
                         <p className="text-gray-700 leading-relaxed">
-                            The Service is provided on an "AS IS" and "AS AVAILABLE" basis. We make no warranties, expressed
+                            The Service is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis. We make no warranties, expressed
                             or implied, regarding the Service, including but not limited to implied warranties of merchantability,
                             fitness for a particular purpose, or non-infringement.
                         </p>
@@ -124,7 +124,7 @@ export default function TermsOfService() {
                         <h2 className="text-2xl font-semibold text-gray-800 mb-4">11. Changes to Terms</h2>
                         <p className="text-gray-700 leading-relaxed">
                             We reserve the right to modify or replace these Terms at any time. We will provide notice of
-                            any changes by posting the new Terms on this page and updating the "Last Updated" date.
+                            any changes by posting the new Terms on this page and updating the &quot;Last Updated&quot; date.
                             Your continued use of the Service after any changes constitutes acceptance of the new Terms.
                         </p>
                     </section>
