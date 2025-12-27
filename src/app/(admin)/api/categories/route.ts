@@ -13,7 +13,7 @@ export const GET = async () => {
     const totalDocs = await CategoryModel.countDocuments()
     return NextResponse.json({ categories, totalDocs, success: true }, { status: 200 })
   } catch (err) {
-    console.error('err', err)
+    console.error('errR', err)
     return errorResponse(err)
   }
 }
