@@ -29,6 +29,7 @@
 - [Testing](#-testing)
 - [CI/CD](#-cicd)
 - [Deployment](#-deployment)
+- [Security](#-security)
 - [Tài khoản mặc định](#-tài-khoản-mặc-định)
 - [Đóng góp](#-đóng-góp)
 - [Tác giả](#-tác-giả)
@@ -169,33 +170,6 @@ npm install
 yarn install
 ```
 
-### 3. Cấu hình Environment Variables
-
-Tạo file `.env.local` trong thư mục gốc:
-
-```env
-# URL
-NEXT_PUBLIC_BACK_END_HOST_DEV=http://localhost:3000
-NEXT_PUBLIC_BACK_END_HOST_PROD=https://thetaphoa.vercel.app
-
-# MongoDB
-NEXT_PUBLIC_MONGO_USER_NAME_DEV=admin
-NEXT_PUBLIC_MONGO_PASSWORD_DEV=adminpassword
-NEXT_PUBLIC_MONGO_USER_NAME_PROD=your-prod-username
-NEXT_PUBLIC_MONGO_PASSWORD_PROD=your-prod-password
-
-# Cloudinary
-NEXT_PUBLIC_CLOUD_NAME_CLOUDINARY=your-cloud-name
-NEXT_PUBLIC_API_KEY_CLOUDINARY=your-api-key
-NEXT_PUBLIC_API_SECRET_CLOUDINARY=your-api-secret
-
-# NextAuth
-NEXT_PUBLIC_AUTH_SECRET=your-secret-key
-```
-
-**Lưu ý**: 
-- Thay thế các giá trị `your-*` bằng credentials thực của bạn
-- Để tạo `AUTH_SECRET`, chạy: `openssl rand -base64 32`
 
 ### 4. Chạy MongoDB (nếu dùng local)
 
@@ -493,6 +467,59 @@ npm run build
 # Start with PM2
 pm2 start npm --name thetaphoa -- start
 ```
+
+---
+
+## 🔒 Security
+
+### Bảo vệ Environment Variables
+
+> [!CAUTION]
+> **QUAN TRỌNG**: Không bao giờ commit file `.env.local` hoặc bất kỳ file chứa credentials vào Git!
+
+**Files an toàn để commit:**
+- ✅ `.env.example` - Template không có giá trị thật
+- ✅ `.gitignore` - Bảo vệ env files
+- ❌ `.env.local` - Chứa credentials (KHÔNG commit)
+- ❌ `.env` - Chứa credentials (KHÔNG commit)
+
+**Setup cho developers mới:**
+
+```bash
+# 1. Copy template
+cp .env.example .env.local
+
+# 2. Điền credentials thật vào .env.local
+# 3. File .env.local sẽ tự động bị gitignore
+```
+
+### Credentials Rotation
+
+**Lịch trình thay đổi credentials:**
+- 🔴 **Ngay lập tức** nếu nghi ngờ bị lộ
+- 🟡 **Mỗi 90 ngày** cho production
+- 🟢 **Mỗi 180 ngày** cho development
+
+**Các credentials cần rotate:**
+- NextAuth secret
+- MongoDB passwords
+- Cloudinary API keys
+- Admin account passwords
+
+### GitHub Secret Scanning
+
+**Khuyến nghị:**
+1. Enable Secret Scanning trên repository
+2. Enable Push Protection để block commits chứa secrets
+3. Review security alerts thường xuyên
+
+**Setup guide:** [`docs/github-secret-scanning.md`](./docs/github-secret-scanning.md)
+
+### Security Resources
+
+- 📚 [Environment Security Guide](./docs/env_security_guide.md)
+- 🔄 [Credentials Rotation Guide](./docs/credentials_rotation_guide.md)
+- 🛡️ [GitHub Secret Scanning Setup](./docs/github-secret-scanning.md)
 
 ---
 
