@@ -20,7 +20,7 @@ export default function PrivacyPolicy() {
                     <section>
                         <h2 className="text-2xl font-semibold text-gray-800 mb-4">1. Introduction</h2>
                         <p className="text-gray-700 leading-relaxed">
-                            Welcome to Thetaphoa ("we," "our," or "us"). We are committed to protecting your personal information
+                            Welcome to Thetaphoa (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). We are committed to protecting your personal information
                             and your right to privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard
                             your information when you use our shop management application and services.
                         </p>
@@ -84,7 +84,7 @@ export default function PrivacyPolicy() {
                             We may share your information with:
                         </p>
                         <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                            <li><strong>TikTok:</strong> When you use TikTok integration features, we share necessary data with TikTok's API</li>
+                            <li><strong>TikTok:</strong> When you use TikTok integration features, we share necessary data with TikTok&apos;s API</li>
                             <li><strong>Service providers:</strong> Third-party vendors who perform services on our behalf (hosting, analytics, payment processing)</li>
                             <li><strong>Legal requirements:</strong> When required by law or to protect our rights and safety</li>
                             <li><strong>Business transfers:</strong> In connection with a merger, acquisition, or sale of assets</li>
@@ -102,7 +102,7 @@ export default function PrivacyPolicy() {
                         <ul className="list-disc pl-6 space-y-2 text-gray-700">
                             <li>We request only the minimum permissions necessary to provide scheduling and posting features</li>
                             <li>You can revoke TikTok access at any time through your TikTok account settings</li>
-                            <li>We comply with TikTok's API Terms of Service and data handling requirements</li>
+                            <li>We comply with TikTok&apos;s API Terms of Service and data handling requirements</li>
                             <li>TikTok data is stored securely and used only for the purposes you authorize</li>
                         </ul>
                     </section>
@@ -179,7 +179,7 @@ export default function PrivacyPolicy() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">11. Children's Privacy</h2>
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-4">11. Children&apos;s Privacy</h2>
                         <p className="text-gray-700 leading-relaxed">
                             Our Service is not intended for children under the age of 13 (or 16 in the EEA). We do not knowingly
                             collect personal information from children. If you believe we have collected information from a child,
@@ -200,7 +200,7 @@ export default function PrivacyPolicy() {
                         <h2 className="text-2xl font-semibold text-gray-800 mb-4">13. Changes to This Privacy Policy</h2>
                         <p className="text-gray-700 leading-relaxed">
                             We may update this Privacy Policy from time to time. We will notify you of any changes by posting
-                            the new Privacy Policy on this page and updating the "Last Updated" date. We encourage you to review
+                            the new Privacy Policy on this page and updating the &quot;Last Updated&quot; date. We encourage you to review
                             this Privacy Policy periodically for any changes.
                         </p>
                     </section>
