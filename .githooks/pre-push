@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Add npm to PATH for Git GUI
+export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
+
+# Add Node.js paths
+if command -v node &> /dev/null; then
+    export PATH="$(dirname $(which node)):$PATH"
+fi
+
+echo "🔍 Running pre-push checks..."
+
+echo ""
+echo "📝 Running linter..."
+npm run lint || {
+    echo "❌ Linting failed. Please fix linting errors before pushing."
+    echo "💡 To skip this check, use: git push --no-verify"
+    exit 1
+}
+
+echo ""
+echo "🧪 Running tests..."
+npm test || {
+    echo "❌ Tests failed. Please fix failing tests before pushing."
+    echo "💡 To skip this check, use: git push --no-verify"
+    exit 1
+}
+
+echo ""
+echo "🏗️  Checking build..."
+npm run build || {
+    echo "❌ Build failed. Please fix build errors before pushing."
+    echo "💡 To skip this check, use: git push --no-verify"
+    exit 1
+}
+
+echo ""
+echo "✅ All checks passed! Pushing to remote..."

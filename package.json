@@ -22,7 +22,8 @@
     "test:perf:json": "lighthouse http://localhost:3000 --only-categories=performance --output=json --output-path=./lighthouse-reports/report.json --quiet && node scripts/parse-lighthouse.js",
     "test:perf:ci": "lighthouse http://localhost:3000 --only-categories=performance --output=json --output-path=./lighthouse-reports/report.json --chrome-flags=\"--headless\" --quiet",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "postinstall": "bash scripts/setup-hooks.sh"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.18.0-alpha.5",
