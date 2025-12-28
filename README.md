@@ -23,6 +23,7 @@
 - [Tech Stack](#-tech-stack)
 - [System Requirements](#-system-requirements)
 - [Installation](#-installation)
+- [Git Hooks](#-git-hooks)
 - [Usage](#-usage)
 - [Contributing](#-contributing)
 - [Author](#-author)
@@ -139,6 +140,79 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 🪝 Git Hooks
+
+This project uses Git hooks to ensure code quality before pushing.
+
+### Automatic Setup
+
+Git hooks are **automatically installed** when you run:
+
+```bash
+npm install
+```
+
+The `postinstall` script sets up the pre-push hook from `.githooks/` folder.
+
+### Pre-Push Checks
+
+Before every `git push`, the following checks run automatically:
+
+1. ✅ **ESLint** - Code style and quality
+2. ✅ **Jest Tests** - All unit tests (26 tests)
+3. ✅ **Production Build** - Verifies build succeeds
+
+**Example output:**
+```
+🔍 Running pre-push checks...
+📝 Running linter...
+✔ No ESLint warnings or errors
+🧪 Running tests...
+Tests: 26 passed, 26 total
+🏗️  Checking build...
+✓ Compiled successfully
+✅ All checks passed! Pushing to remote...
+```
+
+### Bypassing Checks
+
+In rare cases, you can skip checks:
+
+```bash
+git push --no-verify
+```
+
+⚠️ **Warning:** Only use when absolutely necessary!
+
+### Troubleshooting
+
+**Problem:** `npm: command not found` when pushing from VS Code/GUI
+
+**Solution:** Hooks are already configured with correct PATH. If issue persists:
+
+```bash
+npm run postinstall
+```
+
+**More info:** See [.githooks/README.md](./.githooks/README.md)
+
+---
+
+## 🚀 Usage
+
+To use the system, follow these steps:
+
+1. **Start the development server:** After installation, run `npm run dev` to start the application.
+2. **Access the application:** Open your browser and navigate to `http://localhost:3000`.
+3. **Login/Register:** Create an account or log in with existing credentials.
+4. **Manage your shop:**
+   - Use the dashboard to view key metrics.
+   - Navigate to "Products" to add, edit, or delete products.
+   - Go to "Orders" to manage customer orders.
+   - Use "Categories" to organize your product catalog.
 
 ---
 
