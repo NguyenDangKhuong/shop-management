@@ -9,6 +9,7 @@ import { usePushNotification } from '@/hooks/usePushNotification'
 import { Category } from '@/models/Category'
 import { Product } from '@/models/Product'
 import { post, put } from '@/utils/api'
+import { CLOUD_NAME_CLOUDINARY, CLOUDINARY_UPLOAD_PRESET } from '@/utils/constants'
 import { genegateId } from '@/utils/genegateId'
 import numberWithCommas from '@/utils/numberWithCommas'
 
@@ -166,8 +167,8 @@ const ProductModal = ({
             onClick={() => {
               const widget = window.cloudinary.createUploadWidget(
                 {
-                  cloudName: 'ndk',
-                  uploadPreset: 'thetaphoa',
+                  cloudName: CLOUD_NAME_CLOUDINARY,
+                  uploadPreset: CLOUDINARY_UPLOAD_PRESET,
                   folder: 'thetaphoa/products'
                 },
                 (error: any, res: any) => {
