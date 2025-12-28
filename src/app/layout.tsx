@@ -9,7 +9,12 @@ import NextAuthProvider from '@/components/providers/NextAuthProvider'
 
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+  variable: '--font-inter'
+})
 
 export const metadata: Metadata = {
   title: 'TheTapHoa',
@@ -26,7 +31,10 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           <Analytics />
         </NextAuthProvider>
       </body>
-      <Script src='https://widget.cloudinary.com/v2.0/global/all.js'></Script>
+      <Script
+        src='https://widget.cloudinary.com/v2.0/global/all.js'
+        strategy="lazyOnload"
+      />
     </html>
   )
 }
