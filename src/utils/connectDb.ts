@@ -6,6 +6,7 @@ const connection: any = {}
 let pending: Promise<void> | null = null
 
 const mongoUrl = `mongodb+srv://${MONGO_USER_NAME}:${MONGO_PASSWORD}@${MONGO_CLUSTER_URL}/?retryWrites=true&w=majority`
+
 const connectDb = async () => {
   try {
     // If there's already a connection in progress, wait for it
