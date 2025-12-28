@@ -12,6 +12,7 @@ export const MONGO_PASSWORD = __prod__
   : process.env.NEXT_PUBLIC_MONGO_PASSWORD_DEV
 
 export const MONGO_CLUSTER_URL = process.env.NEXT_PUBLIC_MONGO_CLUSTER_URL
+console.log('process.env.NODE_ENV', process.env.NODE_ENV)
 console.log('MONGO_CLUSTER_URL', MONGO_CLUSTER_URL)
 console.log('process.env.NEXT_PUBLIC_MONGO_CLUSTER_URL', process.env.NEXT_PUBLIC_MONGO_CLUSTER_URL)
 export const MONGO_DB_NAME = process.env.NEXT_PUBLIC_MONGO_DB_NAME
