@@ -4,7 +4,7 @@
 
 ## Cách hoạt động
 
-File hook đã được tạo tại: `.git/hooks/pre-push`
+File hook đã được tạo tại: `.githooks/pre-push`
 
 Mỗi khi bạn chạy `git push`, hook sẽ tự động:
 
@@ -64,13 +64,13 @@ git push
 
 **Check quyền executable:**
 ```bash
-ls -la .git/hooks/pre-push
+ls -la .githooks/pre-push
 # Phải thấy: -rwxr-xr-x (có x = executable)
 ```
 
 **Fix quyền:**
 ```bash
-chmod +x .git/hooks/pre-push
+chmod +x .githooks/pre-push
 ```
 
 ### Build quá lâu?
@@ -79,7 +79,7 @@ Nếu build mất nhiều thời gian, có thể comment out phần build trong 
 
 ```bash
 # Mở file và comment dòng build
-nano .git/hooks/pre-push
+nano .githooks/pre-push
 
 # Hoặc chỉ chạy lint + test
 # Comment out phần "Run build check"
