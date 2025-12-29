@@ -219,7 +219,7 @@ const ProductTable = ({
   return (
     <>
       {/* Modern search and action bar */}
-      <Flex className='mb-6' justify='space-between' align='center' gap='middle'>
+      <Flex className='mb-6' justify='space-between' align='center' gap='middle' style={{ marginBottom: 24 }}>
         <Input
           size='large'
           placeholder='Tìm kiếm sản phẩm theo tên...'

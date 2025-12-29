@@ -12,7 +12,9 @@ const config: Config = {
     testEnvironment: 'jsdom',
     setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
     moduleNameMapper: {
-        '^@/(.*)$': '<rootDir>/src/$1'
+        '^@/(.*)$': '<rootDir>/src/$1',
+        // Mock nanoid to avoid ES module issues
+        '^nanoid$': '<rootDir>/src/__mocks__/nanoid.ts'
     },
     collectCoverageFrom: [
         'src/**/*.{js,jsx,ts,tsx}',
