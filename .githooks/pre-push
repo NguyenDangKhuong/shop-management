@@ -3,9 +3,17 @@
 # Add npm to PATH for Git GUI
 export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
 
-# Add Node.js paths
-if command -v node &> /dev/null; then
-    export PATH="$(dirname $(which node)):$PATH"
+# Add NVM paths dynamically (works with any Node version)
+export NVM_DIR="$HOME/.nvm"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+    \. "$NVM_DIR/nvm.sh"
+    # Use nvm to get current version
+    if command -v nvm &> /dev/null; then
+        NODE_VERSION=$(nvm current 2>/dev/null)
+        if [ -n "$NODE_VERSION" ] && [ "$NODE_VERSION" != "none" ]; then
+            export PATH="$NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH"
+        fi
+    fi
 fi
 
 echo "🔍 Running pre-push checks..."
