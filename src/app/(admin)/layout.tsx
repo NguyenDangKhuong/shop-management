@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import AntdProvider from '@/components/providers/AntdProvider'
 import DashboardLayout from '@/components/dashboard/DashboardLayout'
+import '../globals.css'
 
 export const metadata: Metadata = {
     title: 'TheTapHoa - Admin',
