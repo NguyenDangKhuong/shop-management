@@ -11,7 +11,8 @@ beforeAll(() => {
         if (
             stringified.includes('Warning: An update to') ||
             stringified.includes('Not wrapped in act') ||
-            stringified.includes('Network error')
+            stringified.includes('Network error') ||
+            stringified.includes('Instance created by `useForm` is not connected')
         ) {
             return
         }
