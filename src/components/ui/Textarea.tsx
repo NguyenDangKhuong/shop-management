@@ -10,8 +10,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         const baseStyles = 'w-full bg-transparent border rounded-xl py-4 px-4 text-white placeholder-gray-500 outline-none transition-all duration-300 resize-none'
 
         const borderStyles = error
-            ? 'border-red-500/50 focus:border-red-500 focus:shadow-[0_0_15px] focus:shadow-red-500/30'
-            : 'border-glass-border focus:border-primary focus:shadow-[0_0_15px] focus:shadow-primary/30'
+            ? 'border-red-500/50 focus:border-red-500 focus:shadow-[0_0_15px_rgba(239,68,68,0.3)]'
+            : 'border-[rgba(255,255,255,0.08)] focus:border-[#00e5ff] focus:shadow-[0_0_15px_rgba(0,229,255,0.3)]'
 
         const combinedClassName = `${baseStyles} ${borderStyles} ${className}`.trim()
 

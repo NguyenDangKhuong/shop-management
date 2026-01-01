@@ -50,13 +50,13 @@ const RegisterForm = () => {
   }
 
   return (
-    <div className="bg-gray-950 min-h-screen flex items-center justify-center relative overflow-hidden p-4">
+    <div className="bg-[#0a0a0a] min-h-screen flex items-center justify-center relative overflow-hidden p-4">
       {/* Animated Background Orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-[float_6s_ease-in-out_infinite]"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-secondary rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-[float_6s_ease-in-out_3s_infinite]"></div>
+      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-[#00e5ff] rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-[float_6s_ease-in-out_infinite]"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-[#b927fc] rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-[float_6s_ease-in-out_3s_infinite]"></div>
 
       {/* Register Card */}
-      <div className="relative w-full max-w-md bg-glass-bg backdrop-blur-2xl border border-glass-border rounded-3xl p-8 md:p-10 shadow-2xl z-10">
+      <div className="relative w-full max-w-md bg-[rgba(255,255,255,0.03)] backdrop-blur-2xl border border-[rgba(255,255,255,0.08)] rounded-3xl p-8 md:p-10 shadow-2xl z-10">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-white mb-2">Create Account</h2>
           <p className="text-gray-400 text-sm">Sign up to get started</p>
@@ -121,7 +121,7 @@ const RegisterForm = () => {
         {/* Login Link */}
         <p className="text-center text-gray-500 mt-8 text-sm">
           Already have an account?{' '}
-          <Link href="/login" className="font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent hover:opacity-80 transition-opacity ml-1">
+          <Link href="/login" className="font-bold bg-gradient-to-r from-[#00e5ff] to-[#b927fc] bg-clip-text text-transparent hover:opacity-80 transition-opacity ml-1">
             Login
           </Link>
         </p>

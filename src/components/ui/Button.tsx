@@ -13,9 +13,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         const baseStyles = 'py-3.5 rounded-xl font-bold text-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed'
 
         const variantStyles = {
-            gradient: 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/30 hover:scale-[1.02] hover:shadow-secondary/50 active:scale-[0.98]',
-            outline: 'border-2 border-primary text-primary hover:bg-primary/10',
-            ghost: 'text-primary hover:bg-primary/10'
+            gradient: 'bg-gradient-to-r from-[#00e5ff] to-[#b927fc] text-white shadow-lg shadow-[#00e5ff]/30 hover:scale-[1.02] hover:shadow-[#b927fc]/50 active:scale-[0.98]',
+            outline: 'border-2 border-[#00e5ff] text-[#00e5ff] hover:bg-[#00e5ff]/10',
+            ghost: 'text-[#00e5ff] hover:bg-[#00e5ff]/10'
         }
 
         const widthStyles = fullWidth ? 'w-full' : ''
