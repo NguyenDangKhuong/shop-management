@@ -1,5 +1,5 @@
-import DashboardTitle from '@/components/dashboard/DashboardTitle'
-import LoginForm from '@/components/dashboard/login/LoginForm'
+import DashboardTitle from '@/components/shop/DashboardTitle'
+import LoginForm from '@/components/shop/login/LoginForm'
 import { get } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 

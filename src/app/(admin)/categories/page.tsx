@@ -1,5 +1,5 @@
-import DashboardTitle from '@/components/dashboard/DashboardTitle'
-import CategoryTable from '@/components/dashboard/categories/CategoryTable'
+import DashboardTitle from '@/components/shop/DashboardTitle'
+import CategoryTable from '@/components/shop/categories/CategoryTable'
 import { get } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 

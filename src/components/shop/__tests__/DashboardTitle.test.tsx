@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import DashboardTitle from '@/components/dashboard/DashboardTitle'
+import DashboardTitle from '@/components/shop/DashboardTitle'
 
 describe('DashboardTitle Component', () => {
     it('renders page name correctly', () => {

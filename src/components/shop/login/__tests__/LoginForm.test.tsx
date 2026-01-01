@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import LoginForm from '@/components/dashboard/login/LoginForm'
+import LoginForm from '@/components/shop/login/LoginForm'
 import { authenticate } from '@/actions/auth'
 
 // Mock the authenticate function

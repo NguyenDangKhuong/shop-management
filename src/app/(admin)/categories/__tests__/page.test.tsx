@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import CategoryPage from '@/app/(admin)/categories/page'
 
 // Mock DashboardTitle component
-jest.mock('@/components/dashboard/DashboardTitle', () => {
+jest.mock('@/components/shop/DashboardTitle', () => {
     return function MockDashboardTitle({ pageName, totalDocs }: any) {
         return (
             <div data-testid="dashboard-title">
@@ -14,7 +14,7 @@ jest.mock('@/components/dashboard/DashboardTitle', () => {
 })
 
 // Mock CategoryTable component
-jest.mock('@/components/dashboard/categories/CategoryTable', () => {
+jest.mock('@/components/shop/categories/CategoryTable', () => {
     return function MockCategoryTable({ totalDocs, categories }: any) {
         return (
             <div data-testid="category-table">

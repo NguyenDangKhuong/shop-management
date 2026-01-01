@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react'
-import CategoryTable from '@/components/dashboard/categories/CategoryTable'
+import CategoryTable from '@/components/shop/categories/CategoryTable'
 import { Category } from '@/models/Category'
 
 // Mock Next.js navigation

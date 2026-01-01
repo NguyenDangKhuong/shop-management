@@ -1,4 +1,4 @@
-import DashboardTitle from '@/components/dashboard/DashboardTitle'
+import DashboardTitle from '@/components/shop/DashboardTitle'
 import { get } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 import ProductTable from './ProductTable'

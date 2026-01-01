@@ -6,11 +6,11 @@ import { Col, InputRef, Row } from 'antd'
 import { format } from 'date-fns'
 import { isMobile } from 'react-device-detect'
 
-import DashboardTitle from '@/components/dashboard/DashboardTitle'
-import CartSumary from '@/components/dashboard/carts/CartSumary'
-import CartListItem from '@/components/dashboard/carts/CartTable'
-import InvoiceTable from '@/components/dashboard/carts/InvoiceTable'
-import SearchInput from '@/components/dashboard/carts/SearchInput'
+import DashboardTitle from '@/components/shop/DashboardTitle'
+import CartSumary from '@/components/shop/carts/CartSumary'
+import CartListItem from '@/components/shop/carts/CartTable'
+import InvoiceTable from '@/components/shop/carts/InvoiceTable'
+import SearchInput from '@/components/shop/carts/SearchInput'
 import useDebounce from '@/hooks/useDebounce'
 import { usePushNotification } from '@/hooks/usePushNotification'
 import { ProductCart } from '@/models/ProductCart'
@@ -46,7 +46,7 @@ const CartPage = () => {
   }, [])
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (!debounedScanValue) return
       const { product, message, success, status } = await get(
         `/api/product/${debounedScanValue}`,
@@ -70,8 +70,8 @@ const CartPage = () => {
       const existedProduct = await cartList?.find(item => item.product?._id === product._id)
       const newCartList = existedProduct
         ? cartList.map(item =>
-            item.product?._id === product._id ? { ...item, quantity: item.quantity! + 1 } : item
-          )
+          item.product?._id === product._id ? { ...item, quantity: item.quantity! + 1 } : item
+        )
         : [...cartList, { product, quantity: 1 }]
       product && setCartList(newCartList)
       setSearchValue('')

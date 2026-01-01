@@ -1,5 +1,5 @@
-import DashboardTitle from '@/components/dashboard/DashboardTitle'
-import OrderTable from '@/components/dashboard/orders/OrderTable'
+import DashboardTitle from '@/components/shop/DashboardTitle'
+import OrderTable from '@/components/shop/orders/OrderTable'
 import { get } from '@/utils/api'
 
 const OrderPage = async ({ searchParams }: any) => {

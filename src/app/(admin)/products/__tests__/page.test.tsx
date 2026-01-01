@@ -2,13 +2,13 @@ import { render } from '@testing-library/react'
 import ProductPage from '@/app/(admin)/products/page'
 
 // Mock components
-jest.mock('@/components/dashboard/products/ProductTableSkeleton', () => {
+jest.mock('@/components/shop/products/ProductTableSkeleton', () => {
     return function MockProductTableSkeleton() {
         return <div data-testid="product-skeleton">Loading...</div>
     }
 })
 
-jest.mock('@/components/dashboard/products/ProductDataLoader', () => {
+jest.mock('@/components/shop/products/ProductDataLoader', () => {
     return function MockProductDataLoader() {
         return <div data-testid="product-data-loader">Product Data</div>
     }

@@ -1,5 +1,5 @@
-import DashboardTitle from '@/components/dashboard/DashboardTitle'
-import RegisterForm from '@/components/dashboard/register/RegisterForm'
+import DashboardTitle from '@/components/shop/DashboardTitle'
+import RegisterForm from '@/components/shop/register/RegisterForm'
 import { get } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 

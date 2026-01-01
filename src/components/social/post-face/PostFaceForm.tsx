@@ -1,0 +1,155 @@
+'use client'
+
+import { useState } from 'react'
+import { ImageIcon, VideoIcon, XIcon } from '@/components/icons'
+
+const PostFaceForm = () => {
+    const [loading, setLoading] = useState(false)
+    const [content, setContent] = useState('')
+    const [selectedFile, setSelectedFile] = useState<File | null>(null)
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+    const [fileType, setFileType] = useState<'image' | 'video' | null>(null)
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        // Check file type
+        if (file.type.startsWith('image/')) {
+            setFileType('image')
+        } else if (file.type.startsWith('video/')) {
+            setFileType('video')
+        } else {
+            alert('Please select an image or video file')
+            return
+        }
+
+        setSelectedFile(file)
+        const url = URL.createObjectURL(file)
+        setPreviewUrl(url)
+    }
+
+    const removeFile = () => {
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl)
+        }
+        setSelectedFile(null)
+        setPreviewUrl(null)
+        setFileType(null)
+    }
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setLoading(true)
+
+        try {
+            // Here you can add your API call to submit the post
+            const formData = new FormData()
+            formData.append('content', content)
+            if (selectedFile) {
+                formData.append('media', selectedFile)
+            }
+
+            // Simulate API call
+            await new Promise((resolve) => setTimeout(resolve, 1500))
+
+            alert('Post submitted successfully!')
+
+            // Reset form
+            setContent('')
+            removeFile()
+        } catch (error) {
+            alert('Failed to submit post')
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return (
+        <div className="bg-[#0a0a0a] min-h-screen flex items-center justify-center relative overflow-hidden p-4">
+            {/* Animated Background Orbs */}
+            <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-[#00e5ff] rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-[float_6s_ease-in-out_infinite]"></div>
+            <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-[#b927fc] rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-[float_6s_ease-in-out_3s_infinite]"></div>
+
+            {/* Post Card */}
+            <div className="relative w-full max-w-2xl bg-[rgba(255,255,255,0.03)] backdrop-blur-2xl border border-[rgba(255,255,255,0.08)] rounded-3xl p-8 md:p-10 shadow-2xl z-10">
+                <div className="text-center mb-8">
+                    <h2 className="text-3xl font-bold text-white mb-2">Create Post</h2>
+                    <p className="text-gray-400 text-sm">Share your thoughts with the world</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Content Textarea */}
+                    <div className="group relative">
+                        <textarea
+                            name="content"
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            placeholder="What's on your mind?"
+                            rows={6}
+                            className="w-full bg-transparent border border-[rgba(255,255,255,0.08)] rounded-xl py-4 px-4 text-white placeholder-gray-500 outline-none focus:border-[#00e5ff] focus:shadow-[0_0_15px_rgba(0,229,255,0.3)] transition-all duration-300 resize-none"
+                            required
+                        />
+                        <div className="absolute bottom-3 right-3 text-xs text-gray-500">
+                            {content.length} characters
+                        </div>
+                    </div>
+
+                    {/* File Preview */}
+                    {previewUrl && (
+                        <div className="relative bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.08)] rounded-xl p-4">
+                            <button
+                                type="button"
+                                onClick={removeFile}
+                                className="absolute top-2 right-2 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all duration-300"
+                            >
+                                <XIcon />
+                            </button>
+                            {fileType === 'image' ? (
+                                <img
+                                    src={previewUrl}
+                                    alt="Preview"
+                                    className="w-full rounded-lg max-h-96 object-cover"
+                                />
+                            ) : (
+                                <video
+                                    src={previewUrl}
+                                    controls
+                                    className="w-full rounded-lg max-h-96"
+                                />
+                            )}
+                        </div>
+                    )}
+
+                    {/* Upload Buttons */}
+                    <div className="flex gap-4">
+                        <label className="flex-1 cursor-pointer">
+                            <input
+                                type="file"
+                                accept="image/*,video/*"
+                                onChange={handleFileChange}
+                                className="hidden"
+                            />
+                            <div className="flex items-center justify-center gap-2 py-3 px-4 bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.08)] rounded-xl text-gray-300 hover:text-white transition-all duration-300">
+                                <ImageIcon />
+                                <span className="font-medium">Photo/Video</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        disabled={loading || !content.trim()}
+                        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#00e5ff] to-[#b927fc] text-white font-bold text-lg shadow-lg shadow-[#00e5ff]/30 hover:scale-[1.02] hover:shadow-[#b927fc]/50 active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {loading ? 'POSTING...' : 'POST'}
+                    </button>
+                </form>
+            </div>
+        </div>
+    )
+}
+
+export default PostFaceForm

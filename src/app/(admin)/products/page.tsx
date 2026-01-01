@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
-import ProductTableSkeleton from '@/components/dashboard/products/ProductTableSkeleton'
-import ProductDataLoader from '@/components/dashboard/products/ProductDataLoader'
+import ProductTableSkeleton from '@/components/shop/products/ProductTableSkeleton'
+import ProductDataLoader from '@/components/shop/products/ProductDataLoader'
 
 export const dynamic = 'force-dynamic'
 

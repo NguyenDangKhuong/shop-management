@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import RegisterForm from '@/components/dashboard/register/RegisterForm'
+import RegisterForm from '@/components/shop/register/RegisterForm'
 import { register } from '@/actions/auth'
 
 // Mock the register function
