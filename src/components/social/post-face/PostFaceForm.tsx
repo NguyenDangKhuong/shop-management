@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { ImageIcon, VideoIcon, XIcon } from '@/components/icons'
+import { ImageIcon, XIcon } from '@/components/icons'
+import { Button, Textarea } from '@/components/ui'
 
 const PostFaceForm = () => {
     const [loading, setLoading] = useState(false)
@@ -67,13 +68,13 @@ const PostFaceForm = () => {
     }
 
     return (
-        <div className="bg-[#0a0a0a] min-h-screen flex items-center justify-center relative overflow-hidden p-4">
+        <div className="bg-gray-950 min-h-screen flex items-center justify-center relative overflow-hidden p-4">
             {/* Animated Background Orbs */}
-            <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-[#00e5ff] rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-[float_6s_ease-in-out_infinite]"></div>
-            <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-[#b927fc] rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-[float_6s_ease-in-out_3s_infinite]"></div>
+            <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-[float_6s_ease-in-out_infinite]"></div>
+            <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-secondary rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-[float_6s_ease-in-out_3s_infinite]"></div>
 
             {/* Post Card */}
-            <div className="relative w-full max-w-2xl bg-[rgba(255,255,255,0.03)] backdrop-blur-2xl border border-[rgba(255,255,255,0.08)] rounded-3xl p-8 md:p-10 shadow-2xl z-10">
+            <div className="relative w-full max-w-2xl bg-glass-bg backdrop-blur-2xl border border-glass-border rounded-3xl p-8 md:p-10 shadow-2xl z-10">
                 <div className="text-center mb-8">
                     <h2 className="text-3xl font-bold text-white mb-2">Create Post</h2>
                     <p className="text-gray-400 text-sm">Share your thoughts with the world</p>
@@ -81,24 +82,19 @@ const PostFaceForm = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Content Textarea */}
-                    <div className="group relative">
-                        <textarea
-                            name="content"
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                            placeholder="What's on your mind?"
-                            rows={6}
-                            className="w-full bg-transparent border border-[rgba(255,255,255,0.08)] rounded-xl py-4 px-4 text-white placeholder-gray-500 outline-none focus:border-[#00e5ff] focus:shadow-[0_0_15px_rgba(0,229,255,0.3)] transition-all duration-300 resize-none"
-                            required
-                        />
-                        <div className="absolute bottom-3 right-3 text-xs text-gray-500">
-                            {content.length} characters
-                        </div>
-                    </div>
+                    <Textarea
+                        name="content"
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder="What's on your mind?"
+                        rows={6}
+                        showCharCount
+                        required
+                    />
 
                     {/* File Preview */}
                     {previewUrl && (
-                        <div className="relative bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.08)] rounded-xl p-4">
+                        <div className="relative bg-glass-bg-light border border-glass-border rounded-xl p-4">
                             <button
                                 type="button"
                                 onClick={removeFile}
@@ -131,7 +127,7 @@ const PostFaceForm = () => {
                                 onChange={handleFileChange}
                                 className="hidden"
                             />
-                            <div className="flex items-center justify-center gap-2 py-3 px-4 bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.08)] rounded-xl text-gray-300 hover:text-white transition-all duration-300">
+                            <div className="flex items-center justify-center gap-2 py-3 px-4 bg-glass-bg-hover hover:bg-glass-border border border-glass-border rounded-xl text-gray-300 hover:text-white transition-all duration-300">
                                 <ImageIcon />
                                 <span className="font-medium">Photo/Video</span>
                             </div>
@@ -139,13 +135,9 @@ const PostFaceForm = () => {
                     </div>
 
                     {/* Submit Button */}
-                    <button
-                        type="submit"
-                        disabled={loading || !content.trim()}
-                        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#00e5ff] to-[#b927fc] text-white font-bold text-lg shadow-lg shadow-[#00e5ff]/30 hover:scale-[1.02] hover:shadow-[#b927fc]/50 active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
+                    <Button type="submit" loading={loading} fullWidth disabled={!content.trim()}>
                         {loading ? 'POSTING...' : 'POST'}
-                    </button>
+                    </Button>
                 </form>
             </div>
         </div>
