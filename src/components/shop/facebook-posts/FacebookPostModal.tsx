@@ -229,6 +229,13 @@ const FacebookPostModal = ({
                     </div>
                 </Form.Item>
 
+                <Form.Item label="Loại bài đăng" name="postType" initialValue="post">
+                    <Select>
+                        <Select.Option value="post">Post thường</Select.Option>
+                        <Select.Option value="reel">Reel</Select.Option>
+                    </Select>
+                </Form.Item>
+
                 <Form.Item label="Trạng thái" name="status">
                     <Select>
                         <Select.Option value="draft">Nháp</Select.Option>

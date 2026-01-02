@@ -124,6 +124,18 @@ const FacebookPostTable = () => {
             )
         },
         {
+            title: 'Loại',
+            dataIndex: 'postType',
+            key: 'postType',
+            align: 'center',
+            width: 100,
+            render: (postType: string) => (
+                <Tag color={postType === 'reel' ? 'purple' : 'default'}>
+                    {postType === 'reel' ? 'Reel' : 'Post'}
+                </Tag>
+            )
+        },
+        {
             title: 'Ngày',
             dataIndex: 'scheduledAt',
             key: 'scheduledDate',

@@ -26,6 +26,9 @@ export class FacebookPost {
     @prop({ type: () => String, enum: ['draft', 'scheduled', 'published', 'failed'], default: 'draft' })
     status!: string
 
+    @prop({ type: () => String, enum: ['post', 'reel'], default: 'post' })
+    postType!: string
+
     @prop({ type: () => Date })
     scheduledAt?: Date
 
