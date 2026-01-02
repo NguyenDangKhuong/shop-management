@@ -1,15 +1,17 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { DeleteTwoTone, EditTwoTone } from '@ant-design/icons'
-import { Button, Divider, Flex, Popconfirm, Table, Tag } from 'antd'
+import { DeleteTwoTone, EditTwoTone, CalendarOutlined, LinkOutlined } from '@ant-design/icons'
+import { Button, List, Tag, Popconfirm, Avatar, Space, Table, Divider } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import dayjs from 'dayjs'
+import { isMobile } from 'react-device-detect'
 import { FacebookPost } from '@/models/FacebookPost'
 import FacebookPostModal from './FacebookPostModal'
 
 const initialPost: Partial<FacebookPost> = {
     content: '',
-    status: 'scheduled' // Mặc định là "Đã lên lịch"
+    status: 'scheduled'
 }
 
 const FacebookPostTable = () => {
@@ -48,13 +50,19 @@ const FacebookPostTable = () => {
         }
     }
 
-    const statusColors: Record<string, string> = {
-        draft: 'default',
-        scheduled: 'blue',
-        published: 'green',
-        failed: 'red'
+    const handleEdit = (post: FacebookPost) => {
+        setEditingPost(post)
+        setIsModalOpen(true)
     }
 
+    const statusConfig: Record<string, { color: string; label: string }> = {
+        draft: { color: 'default', label: 'Nháp' },
+        scheduled: { color: 'blue', label: 'Đã lên lịch' },
+        published: { color: 'green', label: 'Đã đăng' },
+        failed: { color: 'red', label: 'Thất bại' }
+    }
+
+    // Table columns for desktop
     const columns: ColumnsType<FacebookPost> = [
         {
             title: 'Nội dung',
@@ -110,26 +118,29 @@ const FacebookPostTable = () => {
             align: 'center',
             width: 120,
             render: (status: string) => (
-                <Tag color={statusColors[status] || 'default'}>
-                    {status?.toUpperCase()}
+                <Tag color={statusConfig[status]?.color || 'default'}>
+                    {statusConfig[status]?.label || status}
                 </Tag>
             )
         },
         {
-            title: 'Ngày hẹn đăng',
-            dataIndex: 'scheduledDate',
-            key: 'scheduledDate',
-            width: 120,
-            align: 'center',
-            render: (date: string) => date || '-'
-        },
-        {
-            title: 'Giờ hẹn đăng',
-            dataIndex: 'scheduledTime',
-            key: 'scheduledTime',
-            width: 100,
-            align: 'center',
-            render: (time: string) => time || '-'
+            title: 'Thời gian hẹn',
+            dataIndex: 'scheduledAt',
+            key: 'scheduledAt',
+            width: 180,
+            render: (scheduledAt: string, record) => {
+                if (!scheduledAt) return '-'
+
+                const isOverdue = dayjs(scheduledAt).isBefore(dayjs()) &&
+                    ['draft', 'scheduled'].includes(record.status)
+
+                return (
+                    <span className={isOverdue ? 'text-red-500 font-semibold' : ''}>
+                        {dayjs(scheduledAt).format('DD/MM/YYYY HH:mm')}
+                        {isOverdue && ' ⚠️'}
+                    </span>
+                )
+            }
         },
         {
             title: 'Link bài đăng',
@@ -139,7 +150,6 @@ const FacebookPostTable = () => {
             render: (url: string) => {
                 if (!url) return '-'
 
-                // Ensure URL is absolute
                 const absoluteUrl = url.startsWith('http') ? url : `https://${url}`
 
                 return (
@@ -163,10 +173,7 @@ const FacebookPostTable = () => {
                 <>
                     <EditTwoTone
                         className="cursor-pointer"
-                        onClick={() => {
-                            setEditingPost(record)
-                            setIsModalOpen(true)
-                        }}
+                        onClick={() => handleEdit(record)}
                     />
                     <Divider type="vertical" />
                     <Popconfirm
@@ -184,11 +191,9 @@ const FacebookPostTable = () => {
     ]
 
     return (
-        <>
-            <Flex className="mb-5" justify="space-between" align="center">
-                <div className="text-sm text-gray-600">
-                    Tổng: {posts.length} bài viết
-                </div>
+        <div className="p-4">
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">Bài viết Facebook ({posts.length})</h2>
                 <Button
                     type="primary"
                     onClick={() => {
@@ -198,21 +203,136 @@ const FacebookPostTable = () => {
                 >
                     Tạo bài viết mới
                 </Button>
-            </Flex>
+            </div>
 
-            <Table
-                rowKey="_id"
-                loading={loading}
-                bordered
-                columns={columns}
-                dataSource={posts}
-                scroll={{ x: 1200, y: 600 }}
-                pagination={{
-                    pageSize: 20,
-                    showSizeChanger: true,
-                    showTotal: (total) => `Tổng ${total} bài viết`
-                }}
-            />
+            {/* Mobile: List View */}
+            {isMobile ? (
+                <List
+                    loading={loading}
+                    dataSource={posts}
+                    pagination={{
+                        pageSize: 10,
+                        showSizeChanger: true,
+                        showTotal: (total) => `Tổng ${total} bài viết`
+                    }}
+                    renderItem={(post) => (
+                        <List.Item
+                            key={post._id}
+                            actions={[
+                                <Button
+                                    key="edit"
+                                    type="link"
+                                    icon={<EditTwoTone />}
+                                    onClick={() => handleEdit(post)}
+                                >
+                                    Sửa
+                                </Button>,
+                                <Popconfirm
+                                    key="delete"
+                                    title="Xóa bài viết"
+                                    description="Bạn có chắc muốn xóa bài viết này?"
+                                    onConfirm={() => handleDelete(post._id!)}
+                                    okText="Xóa"
+                                    cancelText="Hủy"
+                                >
+                                    <Button type="link" danger icon={<DeleteTwoTone twoToneColor="#ff4d4f" />}>
+                                        Xóa
+                                    </Button>
+                                </Popconfirm>
+                            ]}
+                        >
+                            <List.Item.Meta
+                                avatar={
+                                    post.mediaFiles && post.mediaFiles.length > 0 ? (
+                                        <Avatar
+                                            shape="square"
+                                            size={64}
+                                            src={
+                                                post.mediaFiles[0].type === 'image'
+                                                    ? post.mediaFiles[0].url
+                                                    : undefined
+                                            }
+                                            icon={post.mediaFiles[0].type === 'video' ? '📹' : undefined}
+                                        />
+                                    ) : (
+                                        <Avatar shape="square" size={64} icon="📝" style={{ backgroundColor: '#f0f0f0' }} />
+                                    )
+                                }
+                                title={
+                                    <div className="flex flex-col gap-2">
+                                        <div className="text-sm font-normal text-gray-800 line-clamp-2">
+                                            {post.content}
+                                        </div>
+                                        <Space size="small" wrap>
+                                            <Tag color={statusConfig[post.status]?.color || 'default'}>
+                                                {statusConfig[post.status]?.label || post.status}
+                                            </Tag>
+                                            {post.mediaFiles && post.mediaFiles.length > 1 && (
+                                                <Tag color="purple">
+                                                    {post.mediaFiles.length} file
+                                                </Tag>
+                                            )}
+                                        </Space>
+                                    </div>
+                                }
+                                description={
+                                    <Space direction="vertical" size="small" className="text-xs">
+                                        {post.scheduledAt && (
+                                            <div className={`flex items-center gap-1 ${dayjs(post.scheduledAt).isBefore(dayjs()) &&
+                                                    ['draft', 'scheduled'].includes(post.status)
+                                                    ? 'text-red-500 font-semibold'
+                                                    : 'text-gray-500'
+                                                }`}>
+                                                <CalendarOutlined />
+                                                <span>
+                                                    Hẹn đăng: {dayjs(post.scheduledAt).format('DD/MM/YYYY HH:mm')}
+                                                    {dayjs(post.scheduledAt).isBefore(dayjs()) &&
+                                                        ['draft', 'scheduled'].includes(post.status) && (
+                                                            <span className="ml-1">⚠️ Quá hạn</span>
+                                                        )}
+                                                </span>
+                                            </div>
+                                        )}
+                                        {post.postUrl && (
+                                            <div className="flex items-center gap-1">
+                                                <LinkOutlined />
+                                                <a
+                                                    href={post.postUrl.startsWith('http') ? post.postUrl : `https://${post.postUrl}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-500 hover:underline"
+                                                >
+                                                    Xem bài
+                                                </a>
+                                            </div>
+                                        )}
+                                        {post.createdAt && (
+                                            <div className="text-gray-400">
+                                                Tạo lúc: {dayjs(post.createdAt).format('DD/MM/YYYY HH:mm')}
+                                            </div>
+                                        )}
+                                    </Space>
+                                }
+                            />
+                        </List.Item>
+                    )}
+                />
+            ) : (
+                /* Desktop: Table View */
+                <Table
+                    rowKey="_id"
+                    loading={loading}
+                    bordered
+                    columns={columns}
+                    dataSource={posts}
+                    scroll={{ x: 1200, y: 600 }}
+                    pagination={{
+                        pageSize: 20,
+                        showSizeChanger: true,
+                        showTotal: (total) => `Tổng ${total} bài viết`
+                    }}
+                />
+            )}
 
             <FacebookPostModal
                 isOpen={isModalOpen}
@@ -221,7 +341,7 @@ const FacebookPostTable = () => {
                 setEditingPost={setEditingPost}
                 onRefresh={loadPosts}
             />
-        </>
+        </div>
     )
 }
 

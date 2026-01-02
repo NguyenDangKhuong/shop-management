@@ -3,6 +3,7 @@
 import { useState } from 'react'
 
 import { Layout, theme } from 'antd'
+import { isMobile } from 'react-device-detect'
 
 import DashboardFooter from './DashboardFooter'
 import DashboardHeader from './DashboardHeader'
@@ -11,7 +12,7 @@ import DashboardSider from './DashboardSider'
 const { Content } = Layout
 
 const DashboardLayout = ({ children }: any) => {
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(isMobile)
   const {
     token: { colorBgContainer, borderRadiusLG }
   } = theme.useToken()

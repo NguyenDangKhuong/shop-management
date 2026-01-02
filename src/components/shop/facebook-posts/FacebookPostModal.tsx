@@ -163,6 +163,15 @@ const FacebookPostModal = ({
                 form={form}
                 layout="vertical"
             >
+                <div className="grid grid-cols-2 gap-4">
+                    <Form.Item label="Ngày hẹn đăng" name="scheduledDate">
+                        <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày" style={{ width: '100%' }} />
+                    </Form.Item>
+
+                    <Form.Item label="Giờ hẹn đăng" name="scheduledTime">
+                        <TimePicker format="HH:mm" placeholder="Chọn giờ" style={{ width: '100%' }} />
+                    </Form.Item>
+                </div>
                 <Form.Item
                     label="Nội dung"
                     name="content"
@@ -220,26 +229,13 @@ const FacebookPostModal = ({
                     </div>
                 </Form.Item>
 
-                {/* Chỉ hiển thị status khi edit, khi tạo mới mặc định là "scheduled" */}
-                {editingPost._id && (
-                    <Form.Item label="Trạng thái" name="status">
-                        <Select>
-                            <Select.Option value="draft">Nháp</Select.Option>
-                            <Select.Option value="scheduled">Đã lên lịch</Select.Option>
-                            <Select.Option value="published">Đã đăng</Select.Option>
-                        </Select>
-                    </Form.Item>
-                )}
-
-                <div className="grid grid-cols-2 gap-4">
-                    <Form.Item label="Ngày hẹn đăng" name="scheduledDate">
-                        <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày" style={{ width: '100%' }} />
-                    </Form.Item>
-
-                    <Form.Item label="Giờ hẹn đăng" name="scheduledTime">
-                        <TimePicker format="HH:mm" placeholder="Chọn giờ" style={{ width: '100%' }} />
-                    </Form.Item>
-                </div>
+                <Form.Item label="Trạng thái" name="status">
+                    <Select>
+                        <Select.Option value="draft">Nháp</Select.Option>
+                        <Select.Option value="scheduled">Đã lên lịch</Select.Option>
+                        <Select.Option value="published">Đã đăng</Select.Option>
+                    </Select>
+                </Form.Item>
 
                 <Form.Item label="Link bài đăng (sau khi đăng)" name="postUrl">
                     <Input placeholder="https://facebook.com/..." />
