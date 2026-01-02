@@ -9,6 +9,7 @@ import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload'
 import { FacebookPost, MediaFile } from '@/models/FacebookPost'
 import { facebookPostUploadConfig } from '@/utils/cloudinaryConfig'
 import { uploadVideoToMinIO, deleteVideoFromMinIO } from '@/utils/minioUpload'
+import { deleteCloudinaryImage } from '@/actions/cloudinary'
 
 dayjs.extend(customParseFormat)
 
@@ -115,22 +116,38 @@ const FacebookPostModal = ({
     }
 
     const handleRemoveMedia = async (publicId: string) => {
-        // For reels (MinIO videos), delete from S3 first
-        if (postType === 'reel') {
-            const videoFile = mediaFiles.find(file => file.publicId === publicId)
-            if (videoFile && videoFile.publicId) {
-                try {
-                    const result = await deleteVideoFromMinIO(videoFile.publicId)
-                    if (result.success) {
-                        message.success('Video deleted from storage')
-                    } else {
-                        message.warning('Could not delete video from storage: ' + result.message)
-                    }
-                } catch (error: any) {
-                    message.error('Delete error: ' + error.message)
+        const mediaFile = mediaFiles.find(file => file.publicId === publicId)
+
+        if (!mediaFile) return
+
+        // For reels (MinIO videos), delete from S3
+        if (postType === 'reel' && mediaFile.type === 'video') {
+            try {
+                const result = await deleteVideoFromMinIO(mediaFile.publicId!)
+                if (result.success) {
+                    message.success('Video deleted from storage')
+                } else {
+                    message.warning('Could not delete video from storage: ' + result.message)
                 }
+            } catch (error: any) {
+                message.error('Delete error: ' + error.message)
             }
         }
+
+        // For regular posts (Cloudinary images/videos), delete from Cloudinary
+        if (postType === 'post' && mediaFile.type === 'image' && mediaFile.publicId) {
+            try {
+                const result = await deleteCloudinaryImage(mediaFile.publicId)
+                if (result.success) {
+                    message.success('Image deleted from Cloudinary')
+                } else {
+                    message.warning('Could not delete image from Cloudinary: ' + result.message)
+                }
+            } catch (error: any) {
+                message.error('Delete error: ' + error.message)
+            }
+        }
+
         // Remove from UI state
         setMediaFiles(prev => prev.filter(file => file.publicId !== publicId))
     }

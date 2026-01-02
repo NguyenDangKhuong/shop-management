@@ -8,6 +8,8 @@ import dayjs from 'dayjs'
 import { isMobile } from 'react-device-detect'
 import { FacebookPost } from '@/models/FacebookPost'
 import FacebookPostModal from './FacebookPostModal'
+import { deleteCloudinaryImages } from '@/actions/cloudinary'
+import { deleteVideoFromMinIO } from '@/utils/minioUpload'
 
 const initialPost: Partial<FacebookPost> = {
     content: '',
@@ -44,6 +46,31 @@ const FacebookPostTable = () => {
 
     const handleDelete = async (id: string) => {
         try {
+            // Find the post to get its media files
+            const post = posts.find(p => p._id === id)
+
+            if (post && post.mediaFiles && post.mediaFiles.length > 0) {
+                // Delete media files from storage based on post type
+                if (post.postType === 'reel') {
+                    // Delete video from MinIO
+                    for (const file of post.mediaFiles) {
+                        if (file.type === 'video' && file.publicId) {
+                            await deleteVideoFromMinIO(file.publicId)
+                        }
+                    }
+                } else {
+                    // Delete images from Cloudinary
+                    const imagePublicIds = post.mediaFiles
+                        .filter(file => file.type === 'image' && file.publicId)
+                        .map(file => file.publicId!)
+
+                    if (imagePublicIds.length > 0) {
+                        await deleteCloudinaryImages(imagePublicIds)
+                    }
+                }
+            }
+
+            // Delete post from database
             const res = await fetch(`/api/facebook-posts?id=${id}`, { method: 'DELETE' })
             const result = await res.json()
             if (result.success) {
