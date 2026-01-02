@@ -124,10 +124,11 @@ const FacebookPostTable = () => {
             )
         },
         {
-            title: 'Thời gian hẹn',
+            title: 'Ngày',
             dataIndex: 'scheduledAt',
-            key: 'scheduledAt',
-            width: 180,
+            key: 'scheduledDate',
+            width: 120,
+            align: 'center',
             render: (scheduledAt: string, record) => {
                 if (!scheduledAt) return '-'
 
@@ -136,17 +137,36 @@ const FacebookPostTable = () => {
 
                 return (
                     <span className={isOverdue ? 'text-red-500 font-semibold' : ''}>
-                        {dayjs(scheduledAt).format('DD/MM/YYYY HH:mm')}
+                        {dayjs(scheduledAt).format('DD/MM/YYYY')}
+                    </span>
+                )
+            }
+        },
+        {
+            title: 'Giờ',
+            dataIndex: 'scheduledAt',
+            key: 'scheduledTime',
+            width: 100,
+            align: 'center',
+            render: (scheduledAt: string, record) => {
+                if (!scheduledAt) return '-'
+
+                const isOverdue = dayjs(scheduledAt).isBefore(dayjs()) &&
+                    ['draft', 'scheduled'].includes(record.status)
+
+                return (
+                    <span className={isOverdue ? 'text-red-500 font-semibold' : ''}>
+                        {dayjs(scheduledAt).format('HH:mm')}
                         {isOverdue && ' ⚠️'}
                     </span>
                 )
             }
         },
         {
-            title: 'Link bài đăng',
+            title: 'Link',
             dataIndex: 'postUrl',
             key: 'postUrl',
-            width: 150,
+            width: 100,
             render: (url: string) => {
                 if (!url) return '-'
 
@@ -159,16 +179,16 @@ const FacebookPostTable = () => {
                         rel="noopener noreferrer"
                         className="text-blue-500 hover:underline"
                     >
-                        Xem bài
+                        Xem
                     </a>
                 )
             }
         },
         {
-            title: 'Hành động',
+            title: 'Sửa/xoá',
             key: 'actions',
             align: 'center',
-            width: 120,
+            width: 100,
             render: (_, record) => (
                 <>
                     <EditTwoTone
@@ -279,9 +299,9 @@ const FacebookPostTable = () => {
                                     <Space direction="vertical" size="small" className="text-xs">
                                         {post.scheduledAt && (
                                             <div className={`flex items-center gap-1 ${dayjs(post.scheduledAt).isBefore(dayjs()) &&
-                                                    ['draft', 'scheduled'].includes(post.status)
-                                                    ? 'text-red-500 font-semibold'
-                                                    : 'text-gray-500'
+                                                ['draft', 'scheduled'].includes(post.status)
+                                                ? 'text-red-500 font-semibold'
+                                                : 'text-gray-500'
                                                 }`}>
                                                 <CalendarOutlined />
                                                 <span>
