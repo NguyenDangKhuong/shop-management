@@ -5,11 +5,12 @@ import { AutoComplete, Button, Flex, Form, Input, InputNumber, Modal, Select } f
 
 import { initialProduct } from './ProductTable'
 
+import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload'
 import { usePushNotification } from '@/hooks/usePushNotification'
 import { Category } from '@/models/Category'
 import { Product } from '@/models/Product'
 import { post, put } from '@/utils/api'
-import { CLOUD_NAME_CLOUDINARY, CLOUDINARY_UPLOAD_PRESET } from '@/utils/constants'
+import { productUploadConfig } from '@/utils/cloudinaryConfig'
 import { genegateId } from '@/utils/genegateId'
 import numberWithCommas from '@/utils/numberWithCommas'
 
@@ -44,6 +45,23 @@ const ProductModal = ({
   const [isLoading, setIsLoading] = useState(false)
   const [form] = Form.useForm()
   useEffect(() => form.setFieldsValue(editingProduct), [form, editingProduct])
+
+  // Cloudinary upload hook
+  const { openWidget, isUploading, progress, error: uploadError, clearError } = useCloudinaryUpload(
+    productUploadConfig,
+    (result) => {
+      setEditingProduct({
+        ...editingProduct,
+        imageUrl: result.url,
+        imagePublicId: result.publicId
+      })
+      form.setFieldsValue({ imageUrl: result.url })
+      push('Tải ảnh thành công!', true)
+    },
+    (error) => {
+      push('Tải ảnh thất bại: ' + (error?.message || 'Lỗi không xác định'), false)
+    }
+  )
   const sku = genegateId(5)
   const tempName = genegateId(3)
   const { imagePublicId, categoryId } = editingProduct
@@ -164,32 +182,16 @@ const ProductModal = ({
         >
           <Button
             icon={!!!imagePublicId && <UploadOutlined />}
-            onClick={() => {
-              const widget = window.cloudinary.createUploadWidget(
-                {
-                  cloudName: CLOUD_NAME_CLOUDINARY,
-                  uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-                  folder: 'thetaphoa/products'
-                },
-                (error: any, res: any) => {
-                  if (error) {
-                    console.error(error)
-                    return
-                  }
-                  if (res.event === 'success' && res.info.resource_type === 'image') {
-                    setEditingProduct({
-                      ...editingProduct,
-                      imageUrl: res.info.url,
-                      imagePublicId: res.info.public_id
-                    })
-                    form.setFieldsValue({ imageUrl: res.info.url })
-                  }
-                }
-              )
-              widget.open()
-            }}>
+            onClick={openWidget}
+            loading={isUploading}>
             {imagePublicId || 'Chọn ảnh'}
           </Button>
+          {isUploading && progress > 0 && (
+            <span className='ml-2 text-blue-500'>Đang tải: {progress}%</span>
+          )}
+          {uploadError && (
+            <div className='text-red-500 text-sm mt-1'>{uploadError}</div>
+          )}
         </Form.Item>
         <Flex justify='flex-end' className='mt-5'>
           <Form.Item>

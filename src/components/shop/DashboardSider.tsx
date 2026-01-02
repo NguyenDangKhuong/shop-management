@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import {
   BarChartOutlined,
   BookOutlined,
+  FacebookOutlined,
   ShoppingCartOutlined,
   TableOutlined
 } from '@ant-design/icons'
@@ -42,6 +43,11 @@ const DashboardSider = ({ collapsed }: any) => {
             key: '/orders',
             icon: <BarChartOutlined />,
             label: <Link href='/orders'>Thống kê</Link>
+          },
+          {
+            key: '/facebook-posts',
+            icon: <FacebookOutlined />,
+            label: <Link href='/facebook-posts'>Facebook Posts</Link>
           }
         ]}
       />
