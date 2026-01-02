@@ -17,7 +17,8 @@ const nextConfig = {
     domains: ['res.cloudinary.com'],
     unoptimized: true
   },
-  i18n,
+  // i18n config không được hỗ trợ trong App Router
+  // i18n,
   // async headers() {
   //   return [
   //     {

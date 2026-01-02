@@ -17,7 +17,7 @@ interface RegisterResult {
 
 export async function authenticate(email: string, password: string): Promise<LoginResult> {
     try {
-        const result = await signIn('credentials', {
+        const _ = await signIn('credentials', {
             email,
             password,
             redirect: false

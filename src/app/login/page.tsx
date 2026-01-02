@@ -1,6 +1,6 @@
 import LoginForm from '@/components/shop/login/LoginForm'
 
-const LoginPage = async (props: any) => {
+const LoginPage = async () => {
   //   const page = props?.searchParams?.page ?? 1
   //   const { totalDocs, categories } = await get(`api/categories`, {
   //     page,

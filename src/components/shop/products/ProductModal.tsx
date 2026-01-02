@@ -47,7 +47,7 @@ const ProductModal = ({
   useEffect(() => form.setFieldsValue(editingProduct), [form, editingProduct])
 
   // Cloudinary upload hook
-  const { openWidget, isUploading, progress, error: uploadError, clearError } = useCloudinaryUpload(
+  const { openWidget, isUploading, progress, error: uploadError } = useCloudinaryUpload(
     productUploadConfig,
     (result) => {
       setEditingProduct({

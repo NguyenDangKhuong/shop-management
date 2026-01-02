@@ -12,8 +12,7 @@ const CategoryModal = ({
   isOpen,
   setIsOpen,
   editingCategory,
-  setEditingCategory,
-  categories
+  setEditingCategory
 }: {
   isOpen: boolean
   setIsOpen: (val: any) => void

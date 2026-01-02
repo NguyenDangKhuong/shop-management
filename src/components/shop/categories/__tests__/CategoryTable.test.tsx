@@ -23,7 +23,7 @@ jest.mock('antd', () => {
     const actual = jest.requireActual('antd')
     return {
         ...actual,
-        Table: ({ dataSource, columns }: any) => (
+        Table: ({ dataSource }: any) => (
             <div data-testid="category-table">
                 {dataSource?.map((category: any) => (
                     <div key={category._id} data-testid="category-row">

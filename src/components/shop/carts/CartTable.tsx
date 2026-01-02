@@ -17,7 +17,7 @@ const CartListItem = ({
   cartList,
   setCartList,
   isFetching,
-  scanInput
+  scanInput: _scanInput
 }: {
   cartList: ProductCart[]
   setCartList: (val: any) => void
@@ -59,8 +59,8 @@ const CartListItem = ({
                 setCartList(
                   currProduct.quantity! > 1
                     ? cartList.map(item =>
-                        item.product?._id === _id ? { ...item, quantity: item.quantity! - 1 } : item
-                      )
+                      item.product?._id === _id ? { ...item, quantity: item.quantity! - 1 } : item
+                    )
                     : cartList.filter(item => _id !== item.product?._id)
                 )
               }

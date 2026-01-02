@@ -1,6 +1,6 @@
 import RegisterForm from '@/components/shop/register/RegisterForm'
 
-const RegisterPage = async (props: any) => {
+const RegisterPage = async () => {
   //   const page = props?.searchParams?.page ?? 1
   //   const { totalDocs, categories } = await get(`api/categories`, {
   //     page,

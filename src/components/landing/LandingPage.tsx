@@ -238,7 +238,7 @@ export default function LandingPage() {
 }
 
 // Helper Components
-function TechIcon({ children, name, color }: { children: React.ReactNode; name: string; color: string }) {
+function TechIcon({ children, name }: { children: React.ReactNode; name: string; color: string }) {
     return (
         <div
             className="w-14 h-14 rounded-2xl bg-slate-800/80 border border-white/20 flex items-center justify-center p-2 hover:scale-110 transition-transform shadow-sm"

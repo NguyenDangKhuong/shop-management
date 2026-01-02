@@ -25,7 +25,6 @@ const FacebookPostModal = ({
     isOpen,
     setIsOpen,
     editingPost,
-    setEditingPost,
     onRefresh
 }: FacebookPostModalProps) => {
     const [form] = Form.useForm()
