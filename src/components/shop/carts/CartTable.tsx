@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 
 import { DeleteTwoTone, MinusOutlined, PlusOutlined } from '@ant-design/icons'
 import { Flex, Table } from 'antd'

@@ -1,6 +1,6 @@
 'use client'
 
-import { Typography, Flex, Divider } from 'antd'
+import { Typography, Divider } from 'antd'
 
 const { Title, Text } = Typography
 

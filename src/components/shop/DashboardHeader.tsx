@@ -1,7 +1,8 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, DownOutlined } from '@ant-design/icons'
-import { Avatar, Button, Dropdown, Flex, Layout, MenuProps, Space, theme } from 'antd'
+import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons'
+import { Avatar, Button, Dropdown, Flex, Layout, MenuProps, theme } from 'antd'
 
 import { logout } from '@/actions/auth'
+import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
 
 const { Header } = Layout
 
@@ -46,11 +47,12 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
             height: 64
           }}
         />
-        <Dropdown menu={{ items }}>
-          <span className='mr-4'>
-            <Avatar size={40} icon={<UserOutlined />} />
-          </span>
-        </Dropdown>
+        <Flex align='center' gap={16} className="mr-4">
+          <LanguageSwitcher />
+          <Dropdown menu={{ items }}>
+            <Avatar size={40} icon={<UserOutlined />} className="cursor-pointer" />
+          </Dropdown>
+        </Flex>
       </Flex>
     </Header>
   )

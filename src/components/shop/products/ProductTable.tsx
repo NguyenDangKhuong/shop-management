@@ -12,7 +12,7 @@ import {
   PlusOutlined,
   SearchOutlined
 } from '@ant-design/icons'
-import { Button, Checkbox, Divider, Flex, Image, Input, Popconfirm, Space, Table } from 'antd'
+import { Button, Checkbox, Flex, Image, Input, Popconfirm, Space, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 
 import BarcodeModal from './BarcodeModal'

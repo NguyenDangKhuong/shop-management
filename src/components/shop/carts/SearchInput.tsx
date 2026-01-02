@@ -1,8 +1,7 @@
 'use client'
 
-import { useRef } from 'react'
 
-import { Input, InputRef } from 'antd'
+import { Input } from 'antd'
 import { useIdleTimer } from 'react-idle-timer'
 
 const { Search } = Input

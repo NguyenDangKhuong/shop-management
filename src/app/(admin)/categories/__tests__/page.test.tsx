@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import CategoryPage from '@/app/(admin)/categories/page'
 
 // Mock DashboardTitle component

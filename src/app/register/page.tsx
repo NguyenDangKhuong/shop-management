@@ -1,7 +1,4 @@
-import DashboardTitle from '@/components/shop/DashboardTitle'
 import RegisterForm from '@/components/shop/register/RegisterForm'
-import { get } from '@/utils/api'
-import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 
 const RegisterPage = async (props: any) => {
   //   const page = props?.searchParams?.page ?? 1

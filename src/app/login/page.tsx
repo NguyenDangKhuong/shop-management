@@ -1,7 +1,4 @@
-import DashboardTitle from '@/components/shop/DashboardTitle'
 import LoginForm from '@/components/shop/login/LoginForm'
-import { get } from '@/utils/api'
-import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 
 const LoginPage = async (props: any) => {
   //   const page = props?.searchParams?.page ?? 1

@@ -1,8 +1,54 @@
 {
-  "extends": "next/core-web-vitals",
+  // ===================================
+  // TypeScript ESLint Configuration
+  // ===================================
+  // Parser: Cho phép ESLint hiểu TypeScript syntax
+  "parser": "@typescript-eslint/parser",
+  // Plugins: Các plugin mở rộng chức năng ESLint
+  "plugins": [
+    "@typescript-eslint", // Plugin cho TypeScript rules
+    "unused-imports" // Plugin tự động xóa unused imports khi chạy --fix
+  ],
+  // Extends: Kế thừa config từ các preset có sẵn
+  "extends": [
+    "next/core-web-vitals" // Next.js recommended rules
+  ],
+  // ===================================
+  // Custom Rules
+  // ===================================
   "rules": {
-    "@next/next/no-img-element": "off",
-    "react-hooks/exhaustive-deps": "off",
-    "react/no-unescaped-entities": "off"
+    // Next.js Rules
+    "@next/next/no-img-element": "off", // Cho phép dùng <img> thay vì <Image>
+    // React Rules
+    "react-hooks/exhaustive-deps": "off", // Tắt warning về dependencies trong useEffect
+    "react/no-unescaped-entities": "off", // Cho phép dùng ', " trong JSX không cần escape
+    // ===================================
+    // Unused Imports/Variables Detection
+    // ===================================
+    // Tự động xóa unused imports khi chạy `npm run lint -- --fix`
+    "unused-imports/no-unused-imports": "error",
+    // Cảnh báo khi có unused variables (không auto-fix được)
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_", // Bỏ qua args bắt đầu bằng _ (VD: _unusedArg)
+        "varsIgnorePattern": "^_", // Bỏ qua vars bắt đầu bằng _ (VD: _unusedVar)
+        "ignoreRestSiblings": true // Bỏ qua rest siblings trong destructuring
+      }
+    ],
+    // Tắt các rules gốc để dùng rules từ plugin
+    "@typescript-eslint/no-unused-vars": "off",
+    "no-unused-vars": "off",
+    // ===================================
+    // TypeScript Rules (Disabled)
+    // ===================================
+    // Các rules này bị tắt để tránh quá strict
+    "@typescript-eslint/no-explicit-any": "off", // Cho phép dùng type 'any'
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "off", // Cho phép optional?.chain!
+    "@typescript-eslint/no-require-imports": "off", // Cho phép require()
+    "@typescript-eslint/no-unused-expressions": "off", // Cho phép unused expressions
+    "@typescript-eslint/no-wrapper-object-types": "off", // Cho phép Object type
+    "@typescript-eslint/no-empty-object-type": "off", // Cho phép empty interface
+    "no-var": "off" // Cho phép dùng var
   }
 }
