@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { DeleteTwoTone, EditTwoTone, CalendarOutlined, LinkOutlined } from '@ant-design/icons'
-import { Button, List, Tag, Popconfirm, Avatar, Space, Table, Divider } from 'antd'
+import { Button, List, Tag, Popconfirm, Avatar, Space, Table, Divider, Modal, Image } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
 import { isMobile } from 'react-device-detect'
@@ -19,6 +19,10 @@ const FacebookPostTable = () => {
     const [loading, setLoading] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingPost, setEditingPost] = useState<Partial<FacebookPost>>(initialPost)
+    const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null)
+    const [isVideoModalOpen, setIsVideoModalOpen] = useState(false)
+    const [imageGallery, setImageGallery] = useState<string[]>([])
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false)
 
     const loadPosts = async () => {
         setLoading(true)
@@ -88,8 +92,21 @@ const FacebookPostTable = () => {
                         {files.slice(0, 3).map((file, index) => (
                             <div
                                 key={index}
-                                className="relative w-10 h-10 rounded overflow-hidden border border-gray-300"
+                                className="relative w-10 h-10 rounded overflow-hidden border border-gray-300 cursor-pointer hover:opacity-80 transition"
                                 style={{ marginLeft: index > 0 ? '-8px' : '0' }}
+                                onClick={() => {
+                                    if (file.type === 'video') {
+                                        setVideoPreviewUrl(file.url)
+                                        setIsVideoModalOpen(true)
+                                    } else {
+                                        // Show all images from this post
+                                        const imageUrls = files
+                                            .filter(f => f.type === 'image')
+                                            .map(f => f.url)
+                                        setImageGallery(imageUrls)
+                                        setIsImageModalOpen(true)
+                                    }
+                                }}
                             >
                                 {file.type === 'image' ? (
                                     <img
@@ -98,7 +115,7 @@ const FacebookPostTable = () => {
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
-                                    <div className="w-full h-full bg-gray-200 flex items-center justify-center text-xs">
+                                    <div className="w-full h-full bg-gray-200 flex items-center justify-center text-xs hover:bg-gray-300">
                                         📹
                                     </div>
                                 )}
@@ -373,6 +390,58 @@ const FacebookPostTable = () => {
                 setEditingPost={setEditingPost}
                 onRefresh={loadPosts}
             />
+
+            {/* Video Preview Modal */}
+            <Modal
+                title="Video Preview"
+                open={isVideoModalOpen}
+                onCancel={() => {
+                    setIsVideoModalOpen(false)
+                    setVideoPreviewUrl(null)
+                }}
+                footer={null}
+                width={800}
+                centered
+            >
+                {videoPreviewUrl && (
+                    <video
+                        src={videoPreviewUrl}
+                        controls
+                        autoPlay
+                        className="w-full rounded"
+                        style={{ maxHeight: '70vh' }}
+                    >
+                        Your browser does not support the video tag.
+                    </video>
+                )}
+            </Modal>
+
+            {/* Image Gallery Modal */}
+            <Modal
+                title={`Image Gallery (${imageGallery.length} images)`}
+                open={isImageModalOpen}
+                onCancel={() => {
+                    setIsImageModalOpen(false)
+                    setImageGallery([])
+                }}
+                footer={null}
+                width={900}
+                centered
+            >
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <Image.PreviewGroup>
+                        {imageGallery.map((url, index) => (
+                            <Image
+                                key={index}
+                                src={url}
+                                alt={`Image ${index + 1}`}
+                                className="rounded cursor-pointer"
+                                style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                            />
+                        ))}
+                    </Image.PreviewGroup>
+                </div>
+            </Modal>
         </div>
     )
 }

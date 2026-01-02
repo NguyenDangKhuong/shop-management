@@ -33,6 +33,7 @@
     "cloudinary": "^2.8.0",
     "date-fns": "^2.30.0",
     "html5-qrcode": "^2.3.8",
+    "minio": "^8.0.6",
     "mongoose": "^8.0.1",
     "nanoid": "^5.0.3",
     "next": "15.4.10",

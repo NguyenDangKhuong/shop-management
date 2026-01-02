@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { DatePicker, Form, Input, Modal, Select, message, TimePicker, Button, Image } from 'antd'
 import { UploadOutlined, DeleteOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
@@ -8,6 +8,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat'
 import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload'
 import { FacebookPost, MediaFile } from '@/models/FacebookPost'
 import { facebookPostUploadConfig } from '@/utils/cloudinaryConfig'
+import { uploadVideoToMinIO, deleteVideoFromMinIO } from '@/utils/minioUpload'
 
 dayjs.extend(customParseFormat)
 
@@ -30,6 +31,9 @@ const FacebookPostModal = ({
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
     const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([])
+    const [postType, setPostType] = useState<string>('post')
+    const [videoUploading, setVideoUploading] = useState(false)
+    const videoInputRef = useRef<HTMLInputElement>(null)
 
     // Cloudinary upload hook
     const { openWidget, isUploading, progress } = useCloudinaryUpload(
@@ -68,16 +72,66 @@ const FacebookPostModal = ({
             form.setFieldsValue({
                 content: editingPost.content || '',
                 status: editingPost.status || 'draft',
+                postType: editingPost.postType || 'post',
                 postUrl: editingPost.postUrl || '',
                 scheduledDate,
                 scheduledTime
             })
+            setPostType(editingPost.postType || 'post')
         }
     }, [editingPost, isOpen, form])
 
+    const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]
+        if (!file) return
 
+        if (!file.type.startsWith('video/')) {
+            message.error('Vui lòng chọn file video!')
+            return
+        }
 
-    const handleRemoveMedia = (publicId: string) => {
+        setVideoUploading(true)
+        try {
+            const result = await uploadVideoToMinIO(file)
+            if (result.success) {
+                const newFile: MediaFile = {
+                    url: result.url,
+                    type: 'video',
+                    publicId: result.fileName || file.name // Use fileName from response as publicId
+                }
+                setMediaFiles([newFile]) // Reels chỉ 1 video
+                message.success('Video uploaded successfully!')
+            } else {
+                message.error('Upload failed: ' + result.message)
+            }
+        } catch (error: any) {
+            message.error('Upload error: ' + error.message)
+        } finally {
+            setVideoUploading(false)
+            if (videoInputRef.current) {
+                videoInputRef.current.value = ''
+            }
+        }
+    }
+
+    const handleRemoveMedia = async (publicId: string) => {
+        // For reels (MinIO videos), delete from S3 first
+        if (postType === 'reel') {
+            const videoFile = mediaFiles.find(file => file.publicId === publicId)
+            if (videoFile && videoFile.publicId) {
+                try {
+                    const result = await deleteVideoFromMinIO(videoFile.publicId)
+                    if (result.success) {
+                        message.success('Video deleted from storage')
+                    } else {
+                        message.warning('Could not delete video from storage: ' + result.message)
+                    }
+                } catch (error: any) {
+                    message.error('Delete error: ' + error.message)
+                }
+            }
+        }
+        // Remove from UI state
         setMediaFiles(prev => prev.filter(file => file.publicId !== publicId))
     }
 
@@ -109,6 +163,7 @@ const FacebookPostModal = ({
                 ...editingPost,
                 content: values.content,
                 status: editingPost._id ? values.status : 'scheduled', // Mặc định "scheduled" khi tạo mới
+                postType: values.postType,
                 scheduledAt,
                 scheduledDate,
                 scheduledTime,
@@ -185,56 +240,122 @@ const FacebookPostModal = ({
                     />
                 </Form.Item>
 
-                <Form.Item label="Hình ảnh/Video">
-                    <Button
-                        icon={<UploadOutlined />}
-                        onClick={openWidget}
-                        loading={isUploading}
-                        className="mb-3"
-                    >
-                        Tải lên hình/video
-                    </Button>
-                    {isUploading && progress > 0 && (
-                        <div className="text-blue-500 text-sm mt-1">Uploading: {progress}%</div>
-                    )}
-
-                    {mediaFiles.length > 0 && (
-                        <div className="grid grid-cols-4 gap-2 mt-2">
-                            {mediaFiles.map((file, index) => (
-                                <div key={index} className="relative border rounded p-1">
-                                    {file.type === 'image' ? (
-                                        <Image
-                                            src={file.url}
-                                            alt={`Media ${index + 1}`}
-                                            className="w-full h-24 object-cover rounded"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-24 bg-gray-200 flex items-center justify-center rounded">
-                                            <span className="text-2xl">📹</span>
-                                        </div>
-                                    )}
-                                    <Button
-                                        size="small"
-                                        danger
-                                        icon={<DeleteOutlined />}
-                                        className="absolute top-1 right-1"
-                                        onClick={() => handleRemoveMedia(file.publicId!)}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    <div className="text-xs text-gray-500 mt-2">
-                        Đã tải lên {mediaFiles.length} file
-                    </div>
-                </Form.Item>
-
                 <Form.Item label="Loại bài đăng" name="postType" initialValue="post">
-                    <Select>
+                    <Select onChange={(value) => {
+                        setPostType(value)
+                        setMediaFiles([]) // Clear media khi đổi type
+                    }}>
                         <Select.Option value="post">Post thường</Select.Option>
                         <Select.Option value="reel">Reel</Select.Option>
                     </Select>
                 </Form.Item>
+
+                {/* Conditional Upload UI */}
+                {postType === 'post' ? (
+                    <Form.Item label="Hình ảnh/Video">
+                        <Button
+                            icon={<UploadOutlined />}
+                            onClick={openWidget}
+                            loading={isUploading}
+                            className="mb-3"
+                        >
+                            Tải lên hình/video (Cloudinary)
+                        </Button>
+                        {isUploading && progress > 0 && (
+                            <div className="text-blue-500 text-sm mt-1">Uploading: {progress}%</div>
+                        )}
+
+                        {mediaFiles.length > 0 && (
+                            <div className="grid grid-cols-4 gap-2 mt-2">
+                                {mediaFiles.map((file, index) => (
+                                    <div key={index} className="relative border rounded p-1">
+                                        {file.type === 'image' ? (
+                                            <Image
+                                                src={file.url}
+                                                alt={`Media ${index + 1}`}
+                                                className="w-full h-24 object-cover rounded"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-24 bg-gray-200 flex items-center justify-center rounded">
+                                                <span className="text-2xl">📹</span>
+                                            </div>
+                                        )}
+                                        <Button
+                                            size="small"
+                                            danger
+                                            icon={<DeleteOutlined />}
+                                            className="absolute top-1 right-1"
+                                            onClick={() => handleRemoveMedia(file.publicId!)}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        <div className="text-xs text-gray-500 mt-2">
+                            Đã tải lên {mediaFiles.length} file
+                        </div>
+                    </Form.Item>
+                ) : (
+                    <Form.Item label="Upload Video Reel">
+                        <input
+                            ref={videoInputRef}
+                            type="file"
+                            accept="video/*"
+                            onChange={handleVideoUpload}
+                            style={{ display: 'none' }}
+                        />
+                        <Button
+                            icon={<UploadOutlined />}
+                            onClick={() => videoInputRef.current?.click()}
+                            loading={videoUploading}
+                            className="mb-3"
+                        >
+                            Tải lên video (MinIO S3)
+                        </Button>
+                        {videoUploading && (
+                            <div className="text-blue-500 text-sm mt-1">Uploading video...</div>
+                        )}
+
+                        {mediaFiles.length > 0 && (
+                            <div className="mt-2">
+                                <div className="border rounded p-2">
+                                    <video
+                                        src={mediaFiles[0].url}
+                                        controls
+                                        className="w-full max-h-64 rounded mb-2"
+                                        preload="metadata"
+                                    >
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1">
+                                            <div className="text-sm font-medium">{mediaFiles[0].publicId}</div>
+                                            <a
+                                                href={mediaFiles[0].url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-xs text-blue-500 hover:underline"
+                                            >
+                                                Open in new tab
+                                            </a>
+                                        </div>
+                                        <Button
+                                            size="small"
+                                            danger
+                                            icon={<DeleteOutlined />}
+                                            onClick={() => handleRemoveMedia(mediaFiles[0].publicId!)}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        <div className="text-xs text-gray-500 mt-2">
+                            Video sẽ được lưu tại: s3.thetaphoa.store
+                        </div>
+                    </Form.Item>
+                )}
 
                 <Form.Item label="Trạng thái" name="status">
                     <Select>
