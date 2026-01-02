@@ -9,7 +9,7 @@ import FacebookPostModal from './FacebookPostModal'
 
 const initialPost: Partial<FacebookPost> = {
     content: '',
-    status: 'draft'
+    status: 'scheduled' // Mặc định là "Đã lên lịch"
 }
 
 const FacebookPostTable = () => {
@@ -21,7 +21,7 @@ const FacebookPostTable = () => {
     const loadPosts = async () => {
         setLoading(true)
         try {
-            const res = await fetch('/admin/api/facebook-posts')
+            const res = await fetch('/api/facebook-posts')
             const result = await res.json()
             if (result.success) {
                 setPosts(result.data)
@@ -38,7 +38,7 @@ const FacebookPostTable = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            const res = await fetch(`/admin/api/facebook-posts?id=${id}`, { method: 'DELETE' })
+            const res = await fetch(`/api/facebook-posts?id=${id}`, { method: 'DELETE' })
             const result = await res.json()
             if (result.success) {
                 loadPosts()
@@ -57,7 +57,7 @@ const FacebookPostTable = () => {
 
     const columns: ColumnsType<FacebookPost> = [
         {
-            title: 'Content',
+            title: 'Nội dung',
             dataIndex: 'content',
             key: 'content',
             render: (text: string) => (
@@ -67,7 +67,7 @@ const FacebookPostTable = () => {
             )
         },
         {
-            title: 'Media',
+            title: 'Hình ảnh',
             dataIndex: 'mediaFiles',
             key: 'mediaFiles',
             align: 'center',
@@ -104,7 +104,7 @@ const FacebookPostTable = () => {
             }
         },
         {
-            title: 'Status',
+            title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
             align: 'center',
@@ -132,18 +132,30 @@ const FacebookPostTable = () => {
             render: (time: string) => time || '-'
         },
         {
-            title: 'Post URL',
+            title: 'Link bài đăng',
             dataIndex: 'postUrl',
             key: 'postUrl',
             width: 150,
-            render: (url: string) => url ? (
-                <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                    View Post
-                </a>
-            ) : '-'
+            render: (url: string) => {
+                if (!url) return '-'
+
+                // Ensure URL is absolute
+                const absoluteUrl = url.startsWith('http') ? url : `https://${url}`
+
+                return (
+                    <a
+                        href={absoluteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline"
+                    >
+                        Xem bài
+                    </a>
+                )
+            }
         },
         {
-            title: 'Actions',
+            title: 'Hành động',
             key: 'actions',
             align: 'center',
             width: 120,
@@ -158,11 +170,11 @@ const FacebookPostTable = () => {
                     />
                     <Divider type="vertical" />
                     <Popconfirm
-                        title="Delete post?"
-                        description="Are you sure you want to delete this post?"
+                        title="Xóa bài viết?"
+                        description="Bạn có chắc chắn muốn xóa bài viết này?"
                         onConfirm={() => handleDelete(record._id)}
-                        okText="Yes"
-                        cancelText="No"
+                        okText="Xóa"
+                        cancelText="Hủy"
                     >
                         <DeleteTwoTone className="cursor-pointer" twoToneColor="#ff4d4f" />
                     </Popconfirm>
@@ -175,7 +187,7 @@ const FacebookPostTable = () => {
         <>
             <Flex className="mb-5" justify="space-between" align="center">
                 <div className="text-sm text-gray-600">
-                    Total: {posts.length} posts
+                    Tổng: {posts.length} bài viết
                 </div>
                 <Button
                     type="primary"
@@ -184,7 +196,7 @@ const FacebookPostTable = () => {
                         setIsModalOpen(true)
                     }}
                 >
-                    Create New Post
+                    Tạo bài viết mới
                 </Button>
             </Flex>
 
@@ -198,7 +210,7 @@ const FacebookPostTable = () => {
                 pagination={{
                     pageSize: 20,
                     showSizeChanger: true,
-                    showTotal: (total) => `Total ${total} posts`
+                    showTotal: (total) => `Tổng ${total} bài viết`
                 }}
             />
 

@@ -109,7 +109,7 @@ const FacebookPostModal = ({
             const postData = {
                 ...editingPost,
                 content: values.content,
-                status: values.status || 'draft',
+                status: editingPost._id ? values.status : 'scheduled', // Mặc định "scheduled" khi tạo mới
                 scheduledAt,
                 scheduledDate,
                 scheduledTime,
@@ -117,7 +117,7 @@ const FacebookPostModal = ({
                 mediaFiles
             }
 
-            const url = '/admin/api/facebook-posts'
+            const url = '/api/facebook-posts'
             const method = editingPost._id ? 'PUT' : 'POST'
 
             const res = await fetch(url, {
@@ -152,39 +152,39 @@ const FacebookPostModal = ({
 
     return (
         <Modal
-            title={editingPost._id ? 'Edit Facebook Post' : 'Create New Facebook Post'}
+            title={editingPost._id ? 'Sửa bài viết Facebook' : 'Tạo bài viết Facebook mới'}
             open={isOpen}
             onOk={handleSubmit}
             onCancel={handleCancel}
             confirmLoading={loading}
             width={700}
-            okText={editingPost._id ? 'Update' : 'Create'}
+            okText={editingPost._id ? 'Cập nhật' : 'Tạo'}
         >
             <Form
                 form={form}
                 layout="vertical"
             >
                 <Form.Item
-                    label="Content"
+                    label="Nội dung"
                     name="content"
-                    rules={[{ required: true, message: 'Please enter post content' }]}
+                    rules={[{ required: true, message: 'Vui lòng nhập nội dung bài viết' }]}
                 >
                     <TextArea
                         rows={6}
-                        placeholder="What's on your mind?"
+                        placeholder="Bạn đang nghĩ gì?"
                         showCount
                         maxLength={5000}
                     />
                 </Form.Item>
 
-                <Form.Item label="Media Files">
+                <Form.Item label="Hình ảnh/Video">
                     <Button
                         icon={<UploadOutlined />}
                         onClick={openWidget}
                         loading={isUploading}
                         className="mb-3"
                     >
-                        Upload Images/Videos
+                        Tải lên hình/video
                     </Button>
                     {isUploading && progress > 0 && (
                         <div className="text-blue-500 text-sm mt-1">Uploading: {progress}%</div>
@@ -217,17 +217,20 @@ const FacebookPostModal = ({
                         </div>
                     )}
                     <div className="text-xs text-gray-500 mt-2">
-                        {mediaFiles.length} file(s) uploaded
+                        Đã tải lên {mediaFiles.length} file
                     </div>
                 </Form.Item>
 
-                <Form.Item label="Status" name="status">
-                    <Select>
-                        <Select.Option value="draft">Draft</Select.Option>
-                        <Select.Option value="scheduled">Scheduled</Select.Option>
-                        <Select.Option value="published">Published</Select.Option>
-                    </Select>
-                </Form.Item>
+                {/* Chỉ hiển thị status khi edit, khi tạo mới mặc định là "scheduled" */}
+                {editingPost._id && (
+                    <Form.Item label="Trạng thái" name="status">
+                        <Select>
+                            <Select.Option value="draft">Nháp</Select.Option>
+                            <Select.Option value="scheduled">Đã lên lịch</Select.Option>
+                            <Select.Option value="published">Đã đăng</Select.Option>
+                        </Select>
+                    </Form.Item>
+                )}
 
                 <div className="grid grid-cols-2 gap-4">
                     <Form.Item label="Ngày hẹn đăng" name="scheduledDate">
@@ -239,7 +242,7 @@ const FacebookPostModal = ({
                     </Form.Item>
                 </div>
 
-                <Form.Item label="Post URL (after publishing)" name="postUrl">
+                <Form.Item label="Link bài đăng (sau khi đăng)" name="postUrl">
                     <Input placeholder="https://facebook.com/..." />
                 </Form.Item>
             </Form>
