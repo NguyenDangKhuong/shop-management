@@ -4,8 +4,8 @@ export class MediaFile {
     @prop({ type: () => String, required: true })
     url!: string
 
-    @prop({ type: () => String, enum: ['image', 'video'], required: true })
-    type!: 'image' | 'video'
+    @prop({ type: () => String, enum: ['image', 'video', 'link'], required: true })
+    type!: 'image' | 'video' | 'link'
 
     @prop({ type: () => String })
     publicId?: string
@@ -26,7 +26,7 @@ export class FacebookPost {
     @prop({ type: () => String, enum: ['draft', 'scheduled', 'published', 'failed'], default: 'draft' })
     status!: string
 
-    @prop({ type: () => String, enum: ['post', 'reel'], default: 'post' })
+    @prop({ type: () => String, enum: ['post', 'reel-video', 'reel-link'], default: 'post' })
     postType!: string
 
     @prop({ type: () => Date })

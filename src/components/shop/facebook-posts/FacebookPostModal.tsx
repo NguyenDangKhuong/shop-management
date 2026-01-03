@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { DatePicker, Form, Input, Modal, Select, message, TimePicker, Button, Image } from 'antd'
-import { UploadOutlined, DeleteOutlined } from '@ant-design/icons'
+import { UploadOutlined, DeleteOutlined, LinkOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload'
@@ -13,7 +13,58 @@ import { deleteCloudinaryImage } from '@/actions/cloudinary'
 
 dayjs.extend(customParseFormat)
 
+// Constants
+const CONTENT_MAX_LENGTH = 5000
+const CONTENT_ROWS = 6
+const MODAL_WIDTH = 700
+const DATE_FORMAT = 'DD/MM/YYYY'
+const TIME_FORMAT = 'HH:mm'
+const DEFAULT_POST_TYPE = 'reel-link'
+const DEFAULT_STATUS = 'scheduled'
+
 const { TextArea } = Input
+
+// Configuration objects
+const statusOptions = [
+    { value: 'draft', label: 'Nháp' },
+    { value: 'scheduled', label: 'Đã lên lịch' },
+    { value: 'published', label: 'Đã đăng' },
+    { value: 'failed', label: 'Thất bại' }
+]
+
+const postTypeOptions = [
+    { value: 'reel-link', label: 'Reel Link' },
+    { value: 'post', label: 'Post thường' },
+    { value: 'reel-video', label: 'Reel Video' }
+]
+
+// Helper Functions
+const combineDateAndTime = (date: any, time: any) => {
+    if (!date || !time) {
+        return { scheduledAt: null, scheduledDate: null, scheduledTime: null }
+    }
+
+    const dateObj = dayjs(date)
+    const timeObj = dayjs(time)
+    const combined = dateObj.hour(timeObj.hour()).minute(timeObj.minute()).second(0)
+
+    return {
+        scheduledAt: combined.toISOString(),
+        scheduledDate: dateObj.format(DATE_FORMAT),
+        scheduledTime: timeObj.format(TIME_FORMAT)
+    }
+}
+
+const prepareMediaFiles = (postType: string, videoLink: string | undefined, currentMediaFiles: MediaFile[]): MediaFile[] => {
+    if (postType === 'reel-link' && videoLink) {
+        return [{
+            url: videoLink,
+            type: 'link',
+            publicId: ''
+        }]
+    }
+    return currentMediaFiles
+}
 
 interface FacebookPostModalProps {
     isOpen: boolean
@@ -32,7 +83,7 @@ const FacebookPostModal = ({
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
     const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([])
-    const [postType, setPostType] = useState<string>('post')
+    const [postType, setPostType] = useState<string>('reel-link')
     const [videoUploading, setVideoUploading] = useState(false)
     const videoInputRef = useRef<HTMLInputElement>(null)
 
@@ -61,24 +112,29 @@ const FacebookPostModal = ({
             setMediaFiles([])
         }
 
-        // Set form values including parsed dates
         if (isOpen) {
             const scheduledDate = editingPost.scheduledDate
-                ? dayjs(editingPost.scheduledDate, 'DD/MM/YYYY')
+                ? dayjs(editingPost.scheduledDate, DATE_FORMAT)
                 : null
             const scheduledTime = editingPost.scheduledTime
-                ? dayjs(editingPost.scheduledTime, 'HH:mm')
+                ? dayjs(editingPost.scheduledTime, TIME_FORMAT)
                 : null
+
+            // For reel-link, populate videoLink from mediaFiles[0].url
+            const videoLink = (editingPost.postType === 'reel-link' && editingPost.mediaFiles?.[0]?.url)
+                ? editingPost.mediaFiles[0].url
+                : undefined
 
             form.setFieldsValue({
                 content: editingPost.content || '',
                 status: editingPost.status || 'draft',
-                postType: editingPost.postType || 'post',
+                postType: editingPost.postType || DEFAULT_POST_TYPE,
                 postUrl: editingPost.postUrl || '',
                 scheduledDate,
-                scheduledTime
+                scheduledTime,
+                videoLink
             })
-            setPostType(editingPost.postType || 'post')
+            setPostType(editingPost.postType || DEFAULT_POST_TYPE)
         }
     }, [editingPost, isOpen, form])
 
@@ -100,7 +156,10 @@ const FacebookPostModal = ({
                     type: 'video',
                     publicId: result.fileName || file.name // Use fileName from response as publicId
                 }
-                setMediaFiles([newFile]) // Reels chỉ 1 video
+                setMediaFiles([newFile])
+                // Set postType to 'reel-video' for video upload
+                setPostType('reel-video')
+                form.setFieldsValue({ postType: 'reel-video' })
                 message.success('Video uploaded successfully!')
             } else {
                 message.error('Upload failed: ' + result.message)
@@ -121,7 +180,7 @@ const FacebookPostModal = ({
         if (!mediaFile) return
 
         // For reels (MinIO videos), delete from S3
-        if (postType === 'reel' && mediaFile.type === 'video') {
+        if (postType === 'reel-video' && mediaFile.type === 'video') {
             try {
                 const result = await deleteVideoFromMinIO(mediaFile.publicId!)
                 if (result.success) {
@@ -157,35 +216,20 @@ const FacebookPostModal = ({
             setLoading(true)
             const values = await form.validateFields()
 
-            // Combine date and time
-            let scheduledAt = null
-            let scheduledDate = null
-            let scheduledTime = null
+            // Use helper function for date/time combination
+            const scheduleData = combineDateAndTime(values.scheduledDate, values.scheduledTime)
 
-            if (values.scheduledDate && values.scheduledTime) {
-                const date = dayjs(values.scheduledDate)
-                const time = dayjs(values.scheduledTime)
-
-                scheduledAt = date
-                    .hour(time.hour())
-                    .minute(time.minute())
-                    .second(0)
-                    .toISOString()
-
-                scheduledDate = date.format('DD/MM/YYYY')
-                scheduledTime = time.format('HH:mm')
-            }
+            // Use helper function for media files preparation
+            const finalMediaFiles = prepareMediaFiles(values.postType, values.videoLink, mediaFiles)
 
             const postData = {
                 ...editingPost,
                 content: values.content,
-                status: editingPost._id ? values.status : 'scheduled', // Mặc định "scheduled" khi tạo mới
+                status: editingPost._id ? values.status : DEFAULT_STATUS,
                 postType: values.postType,
-                scheduledAt,
-                scheduledDate,
-                scheduledTime,
+                ...scheduleData,
                 postUrl: values.postUrl,
-                mediaFiles
+                mediaFiles: finalMediaFiles
             }
 
             const url = '/api/facebook-posts'
@@ -228,7 +272,7 @@ const FacebookPostModal = ({
             onOk={handleSubmit}
             onCancel={handleCancel}
             confirmLoading={loading}
-            width={700}
+            width={MODAL_WIDTH}
             okText={editingPost._id ? 'Cập nhật' : 'Tạo'}
         >
             <Form
@@ -237,11 +281,11 @@ const FacebookPostModal = ({
             >
                 <div className="grid grid-cols-2 gap-4">
                     <Form.Item label="Ngày hẹn đăng" name="scheduledDate">
-                        <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày" style={{ width: '100%' }} />
+                        <DatePicker format={DATE_FORMAT} placeholder="Chọn ngày" style={{ width: '100%' }} />
                     </Form.Item>
 
                     <Form.Item label="Giờ hẹn đăng" name="scheduledTime">
-                        <TimePicker format="HH:mm" placeholder="Chọn giờ" style={{ width: '100%' }} />
+                        <TimePicker format={TIME_FORMAT} placeholder="Chọn giờ" style={{ width: '100%' }} />
                     </Form.Item>
                 </div>
                 <Form.Item
@@ -250,20 +294,23 @@ const FacebookPostModal = ({
                     rules={[{ required: true, message: 'Vui lòng nhập nội dung bài viết' }]}
                 >
                     <TextArea
-                        rows={6}
+                        rows={CONTENT_ROWS}
                         placeholder="Bạn đang nghĩ gì?"
                         showCount
-                        maxLength={5000}
+                        maxLength={CONTENT_MAX_LENGTH}
                     />
                 </Form.Item>
 
-                <Form.Item label="Loại bài đăng" name="postType" initialValue="post">
+                <Form.Item label="Loại bài đăng" name="postType" initialValue={DEFAULT_POST_TYPE}>
                     <Select onChange={(value) => {
                         setPostType(value)
                         setMediaFiles([]) // Clear media khi đổi type
                     }}>
-                        <Select.Option value="post">Post thường</Select.Option>
-                        <Select.Option value="reel">Reel</Select.Option>
+                        {postTypeOptions.map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </Form.Item>
 
@@ -308,45 +355,40 @@ const FacebookPostModal = ({
                                 ))}
                             </div>
                         )}
-                        <div className="text-xs text-gray-500 mt-2">
-                            Đã tải lên {mediaFiles.length} file
-                        </div>
                     </Form.Item>
-                ) : (
-                    <Form.Item label="Upload Video Reel">
-                        <input
-                            ref={videoInputRef}
-                            type="file"
-                            accept="video/*"
-                            onChange={handleVideoUpload}
-                            style={{ display: 'none' }}
-                        />
-                        <Button
-                            icon={<UploadOutlined />}
-                            onClick={() => videoInputRef.current?.click()}
-                            loading={videoUploading}
-                            className="mb-3"
-                        >
-                            Tải lên video (MinIO S3)
-                        </Button>
-                        {videoUploading && (
-                            <div className="text-blue-500 text-sm mt-1">Uploading video...</div>
-                        )}
+                ) : postType === 'reel-video' ? (
+                    <div>
+                        <Form.Item label="Video Reel">
+                            <input
+                                ref={videoInputRef}
+                                type="file"
+                                accept="video/*"
+                                onChange={handleVideoUpload}
+                                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                disabled={videoUploading}
+                            />
+                            {videoUploading && (
+                                <div className="text-blue-500 text-sm mt-2">Uploading video...</div>
+                            )}
+                        </Form.Item>
 
-                        {mediaFiles.length > 0 && (
-                            <div className="mt-2">
-                                <div className="border rounded p-2">
+                        {/* Show uploaded video preview */}
+                        {mediaFiles.length > 0 && mediaFiles[0].type === 'video' && (
+                            <div className="mt-4 p-4 border rounded-lg bg-gray-50">
+                                <div className="flex flex-col gap-3">
                                     <video
-                                        src={mediaFiles[0].url}
                                         controls
-                                        className="w-full max-h-64 rounded mb-2"
-                                        preload="metadata"
+                                        src={mediaFiles[0].url}
+                                        className="w-full max-h-64 rounded-lg"
+                                        style={{ maxHeight: '256px' }}
                                     >
                                         Your browser does not support the video tag.
                                     </video>
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
-                                            <div className="text-sm font-medium">{mediaFiles[0].publicId}</div>
+                                            <div className="text-sm font-medium text-gray-700 mb-1">
+                                                {mediaFiles[0].publicId}
+                                            </div>
                                             <a
                                                 href={mediaFiles[0].url}
                                                 target="_blank"
@@ -371,14 +413,31 @@ const FacebookPostModal = ({
                         <div className="text-xs text-gray-500 mt-2">
                             Video sẽ được lưu tại: s3.thetaphoa.store
                         </div>
+                    </div>
+                ) : (postType === 'reel-link') && (
+                    <Form.Item
+                        label="Link Video Reel"
+                        name="videoLink"
+                        rules={[
+                            { type: 'url', message: 'Vui lòng nhập URL hợp lệ' },
+                            { required: true, message: 'Vui lòng nhập link video' }
+                        ]}
+                    >
+                        <Input
+                            placeholder="https://example.com/video.mp4"
+                            prefix={<LinkOutlined />}
+                        />
                     </Form.Item>
-                )}
+                )
 
+                /* Form items for scheduling and post URL */}
                 <Form.Item label="Trạng thái" name="status">
                     <Select>
-                        <Select.Option value="draft">Nháp</Select.Option>
-                        <Select.Option value="scheduled">Đã lên lịch</Select.Option>
-                        <Select.Option value="published">Đã đăng</Select.Option>
+                        {statusOptions.map(option => (
+                            <Select.Option key={option.value} value={option.value}>
+                                {option.label}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </Form.Item>
 

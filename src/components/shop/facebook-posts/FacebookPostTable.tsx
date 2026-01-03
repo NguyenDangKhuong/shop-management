@@ -11,9 +11,46 @@ import FacebookPostModal from './FacebookPostModal'
 import { deleteCloudinaryImages } from '@/actions/cloudinary'
 import { deleteVideoFromMinIO } from '@/utils/minioUpload'
 
+// Constants
+const CONTENT_PREVIEW_LENGTH = 100
+const MEDIA_PREVIEW_COUNT = 3
+const MOBILE_PAGE_SIZE = 10
+const DESKTOP_PAGE_SIZE = 20
+
 const initialPost: Partial<FacebookPost> = {
     content: '',
     status: 'scheduled'
+}
+
+// Helper Functions
+const isPostOverdue = (scheduledAt: string | Date, status: string): boolean => {
+    return dayjs(scheduledAt).isBefore(dayjs()) && ['draft', 'scheduled'].includes(status)
+}
+
+const toAbsoluteUrl = (url: string): string => {
+    return url.startsWith('http') ? url : `https://${url}`
+}
+
+const deleteMediaFiles = async (post: FacebookPost) => {
+    if (!post.mediaFiles || post.mediaFiles.length === 0) return
+
+    if (post.postType === 'reel-video') {
+        // Delete videos from MinIO
+        for (const file of post.mediaFiles) {
+            if (file.type === 'video' && file.publicId) {
+                await deleteVideoFromMinIO(file.publicId)
+            }
+        }
+    } else if (post.postType === 'post' || post.postType === 'reel-link') {
+        // Delete images from Cloudinary
+        const imagePublicIds = post.mediaFiles
+            .filter(file => file.type === 'image' && file.publicId)
+            .map(file => file.publicId!)
+
+        if (imagePublicIds.length > 0) {
+            await deleteCloudinaryImages(imagePublicIds)
+        }
+    }
 }
 
 const FacebookPostTable = () => {
@@ -46,28 +83,10 @@ const FacebookPostTable = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            // Find the post to get its media files
             const post = posts.find(p => p._id === id)
 
-            if (post && post.mediaFiles && post.mediaFiles.length > 0) {
-                // Delete media files from storage based on post type
-                if (post.postType === 'reel') {
-                    // Delete video from MinIO
-                    for (const file of post.mediaFiles) {
-                        if (file.type === 'video' && file.publicId) {
-                            await deleteVideoFromMinIO(file.publicId)
-                        }
-                    }
-                } else {
-                    // Delete images from Cloudinary
-                    const imagePublicIds = post.mediaFiles
-                        .filter(file => file.type === 'image' && file.publicId)
-                        .map(file => file.publicId!)
-
-                    if (imagePublicIds.length > 0) {
-                        await deleteCloudinaryImages(imagePublicIds)
-                    }
-                }
+            if (post) {
+                await deleteMediaFiles(post)
             }
 
             // Delete post from database
@@ -93,6 +112,23 @@ const FacebookPostTable = () => {
         failed: { color: 'red', label: 'Thất bại' }
     }
 
+    const postTypeConfig: Record<string, { color: string; label: string }> = {
+        post: { color: 'default', label: 'Post' },
+        'reel-video': { color: 'green', label: 'Reel Video' },
+        'reel-link': { color: 'purple', label: 'Reel Link' }
+    }
+
+    // Generate filters from config objects
+    const statusFilters = Object.entries(statusConfig).map(([value, config]) => ({
+        text: config.label,
+        value
+    }))
+
+    const postTypeFilters = Object.entries(postTypeConfig).map(([value, config]) => ({
+        text: config.label,
+        value
+    }))
+
     // Table columns for desktop
     const columns: ColumnsType<FacebookPost> = [
         {
@@ -101,12 +137,7 @@ const FacebookPostTable = () => {
             key: 'status',
             align: 'center',
             width: 140,
-            filters: [
-                { text: 'Nháp', value: 'draft' },
-                { text: 'Đã lên lịch', value: 'scheduled' },
-                { text: 'Đã đăng', value: 'published' },
-                { text: 'Thất bại', value: 'failed' }
-            ],
+            filters: statusFilters,
             onFilter: (value, record) => record.status === value,
             render: (status: string) => (
                 <Tag color={statusConfig[status]?.color || 'default'}>
@@ -120,14 +151,11 @@ const FacebookPostTable = () => {
             key: 'postType',
             align: 'center',
             width: 110,
-            filters: [
-                { text: 'Post', value: 'post' },
-                { text: 'Reel', value: 'reel' }
-            ],
+            filters: postTypeFilters,
             onFilter: (value, record) => record.postType === value,
             render: (postType: string) => (
-                <Tag color={postType === 'reel' ? 'purple' : 'default'}>
-                    {postType === 'reel' ? 'Reel' : 'Post'}
+                <Tag color={postTypeConfig[postType]?.color || 'default'}>
+                    {postTypeConfig[postType]?.label || 'Post'}
                 </Tag>
             )
         },
@@ -137,7 +165,7 @@ const FacebookPostTable = () => {
             key: 'content',
             render: (text: string) => (
                 <div className="max-w-md">
-                    {text.length > 100 ? `${text.substring(0, 100)}...` : text}
+                    {text.length > CONTENT_PREVIEW_LENGTH ? `${text.substring(0, CONTENT_PREVIEW_LENGTH)}...` : text}
                 </div>
             )
         },
@@ -152,7 +180,7 @@ const FacebookPostTable = () => {
 
                 return (
                     <div className="flex items-center justify-center gap-1">
-                        {files.slice(0, 3).map((file, index) => (
+                        {files.slice(0, MEDIA_PREVIEW_COUNT).map((file, index) => (
                             <div
                                 key={index}
                                 className="relative w-10 h-10 rounded overflow-hidden border border-gray-300 cursor-pointer hover:opacity-80 transition"
@@ -162,10 +190,7 @@ const FacebookPostTable = () => {
                                         setVideoPreviewUrl(file.url)
                                         setIsVideoModalOpen(true)
                                     } else {
-                                        // Show all images from this post
-                                        const imageUrls = files
-                                            .filter(f => f.type === 'image')
-                                            .map(f => f.url)
+                                        const imageUrls = files.filter(f => f.type === 'image').map(f => f.url)
                                         setImageGallery(imageUrls)
                                         setIsImageModalOpen(true)
                                     }
@@ -184,8 +209,8 @@ const FacebookPostTable = () => {
                                 )}
                             </div>
                         ))}
-                        {files.length > 3 && (
-                            <span className="text-xs text-gray-500 ml-1">+{files.length - 3}</span>
+                        {files.length > MEDIA_PREVIEW_COUNT && (
+                            <span className="text-xs text-gray-500 ml-1">+{files.length - MEDIA_PREVIEW_COUNT}</span>
                         )}
                     </div>
                 )
@@ -200,8 +225,7 @@ const FacebookPostTable = () => {
             render: (scheduledAt: string, record) => {
                 if (!scheduledAt) return '-'
 
-                const isOverdue = dayjs(scheduledAt).isBefore(dayjs()) &&
-                    ['draft', 'scheduled'].includes(record.status)
+                const isOverdue = isPostOverdue(scheduledAt, record.status)
 
                 return (
                     <span className={isOverdue ? 'text-red-500 font-semibold' : ''}>
@@ -219,8 +243,7 @@ const FacebookPostTable = () => {
             render: (scheduledAt: string, record) => {
                 if (!scheduledAt) return '-'
 
-                const isOverdue = dayjs(scheduledAt).isBefore(dayjs()) &&
-                    ['draft', 'scheduled'].includes(record.status)
+                const isOverdue = isPostOverdue(scheduledAt, record.status)
 
                 return (
                     <span className={isOverdue ? 'text-red-500 font-semibold' : ''}>
@@ -238,11 +261,9 @@ const FacebookPostTable = () => {
             render: (url: string) => {
                 if (!url) return '-'
 
-                const absoluteUrl = url.startsWith('http') ? url : `https://${url}`
-
                 return (
                     <a
-                        href={absoluteUrl}
+                        href={toAbsoluteUrl(url)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-500 hover:underline"
@@ -299,7 +320,7 @@ const FacebookPostTable = () => {
                     loading={loading}
                     dataSource={posts}
                     pagination={{
-                        pageSize: 10,
+                        pageSize: MOBILE_PAGE_SIZE,
                         showSizeChanger: true,
                         showTotal: (total) => `Tổng ${total} bài viết`
                     }}
@@ -366,18 +387,16 @@ const FacebookPostTable = () => {
                                 description={
                                     <Space direction="vertical" size="small" className="text-xs">
                                         {post.scheduledAt && (
-                                            <div className={`flex items-center gap-1 ${dayjs(post.scheduledAt).isBefore(dayjs()) &&
-                                                ['draft', 'scheduled'].includes(post.status)
+                                            <div className={`flex items-center gap-1 ${isPostOverdue(post.scheduledAt, post.status)
                                                 ? 'text-red-500 font-semibold'
                                                 : 'text-gray-500'
                                                 }`}>
                                                 <CalendarOutlined />
                                                 <span>
                                                     Hẹn đăng: {dayjs(post.scheduledAt).format('DD/MM/YYYY HH:mm')}
-                                                    {dayjs(post.scheduledAt).isBefore(dayjs()) &&
-                                                        ['draft', 'scheduled'].includes(post.status) && (
-                                                            <span className="ml-1">⚠️ Quá hạn</span>
-                                                        )}
+                                                    {isPostOverdue(post.scheduledAt, post.status) && (
+                                                        <span className="ml-1">⚠️ Quá hạn</span>
+                                                    )}
                                                 </span>
                                             </div>
                                         )}
@@ -385,7 +404,7 @@ const FacebookPostTable = () => {
                                             <div className="flex items-center gap-1">
                                                 <LinkOutlined />
                                                 <a
-                                                    href={post.postUrl.startsWith('http') ? post.postUrl : `https://${post.postUrl}`}
+                                                    href={toAbsoluteUrl(post.postUrl)}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="text-blue-500 hover:underline"
@@ -415,7 +434,7 @@ const FacebookPostTable = () => {
                     dataSource={posts}
                     scroll={{ x: 1200, y: 600 }}
                     pagination={{
-                        pageSize: 20,
+                        pageSize: DESKTOP_PAGE_SIZE,
                         showSizeChanger: true,
                         showTotal: (total) => `Tổng ${total} bài viết`
                     }}
