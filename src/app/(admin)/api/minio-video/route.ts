@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
         )
 
         // Generate public URL
-        const url = `https://s3.thetaphoa.store/${bucketName}/${fileName}`
+        const url = `http://s3.thetaphoa.store/${bucketName}/${fileName}`
 
         return NextResponse.json({
             success: true,
