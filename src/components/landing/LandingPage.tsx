@@ -227,6 +227,29 @@ export default function LandingPage() {
                     </div>
                 </main>
 
+                {/* Footer with Terms and Privacy Policy */}
+                <footer className="w-full max-w-6xl mx-auto mt-12 pt-8 pb-6 border-t border-slate-700/50 z-20">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
+                        <p className="text-slate-400">
+                            © 2026 TheTapHoa. All rights reserved.
+                        </p>
+                        <div className="flex items-center gap-6">
+                            <Link
+                                href="/privacy"
+                                className="text-slate-400 hover:text-[#38bdf8] transition-colors underline"
+                            >
+                                Privacy Policy
+                            </Link>
+                            <Link
+                                href="/terms"
+                                className="text-slate-400 hover:text-[#38bdf8] transition-colors underline"
+                            >
+                                Terms of Service
+                            </Link>
+                        </div>
+                    </div>
+                </footer>
+
                 {/* Background Gradients - Optimized */}
                 <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
                     <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[100px]" />

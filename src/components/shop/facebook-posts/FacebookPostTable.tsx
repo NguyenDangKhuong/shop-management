@@ -96,6 +96,42 @@ const FacebookPostTable = () => {
     // Table columns for desktop
     const columns: ColumnsType<FacebookPost> = [
         {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            key: 'status',
+            align: 'center',
+            width: 140,
+            filters: [
+                { text: 'Nháp', value: 'draft' },
+                { text: 'Đã lên lịch', value: 'scheduled' },
+                { text: 'Đã đăng', value: 'published' },
+                { text: 'Thất bại', value: 'failed' }
+            ],
+            onFilter: (value, record) => record.status === value,
+            render: (status: string) => (
+                <Tag color={statusConfig[status]?.color || 'default'}>
+                    {statusConfig[status]?.label || status}
+                </Tag>
+            )
+        },
+        {
+            title: 'Loại',
+            dataIndex: 'postType',
+            key: 'postType',
+            align: 'center',
+            width: 110,
+            filters: [
+                { text: 'Post', value: 'post' },
+                { text: 'Reel', value: 'reel' }
+            ],
+            onFilter: (value, record) => record.postType === value,
+            render: (postType: string) => (
+                <Tag color={postType === 'reel' ? 'purple' : 'default'}>
+                    {postType === 'reel' ? 'Reel' : 'Post'}
+                </Tag>
+            )
+        },
+        {
             title: 'Nội dung',
             dataIndex: 'content',
             key: 'content',
@@ -154,30 +190,6 @@ const FacebookPostTable = () => {
                     </div>
                 )
             }
-        },
-        {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            key: 'status',
-            align: 'center',
-            width: 120,
-            render: (status: string) => (
-                <Tag color={statusConfig[status]?.color || 'default'}>
-                    {statusConfig[status]?.label || status}
-                </Tag>
-            )
-        },
-        {
-            title: 'Loại',
-            dataIndex: 'postType',
-            key: 'postType',
-            align: 'center',
-            width: 100,
-            render: (postType: string) => (
-                <Tag color={postType === 'reel' ? 'purple' : 'default'}>
-                    {postType === 'reel' ? 'Reel' : 'Post'}
-                </Tag>
-            )
         },
         {
             title: 'Ngày',
