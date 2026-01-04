@@ -6,6 +6,7 @@ import {
   BookOutlined,
   FacebookOutlined,
   ShoppingCartOutlined,
+  ShoppingOutlined,
   TableOutlined
 } from '@ant-design/icons'
 import { Layout, Menu } from 'antd'
@@ -28,6 +29,11 @@ const DashboardSider = ({ collapsed }: any) => {
             key: '/facebook-posts',
             icon: <FacebookOutlined />,
             label: <Link href='/facebook-posts'>Facebook Posts</Link>
+          },
+          {
+            key: '/shopee-links',
+            icon: <ShoppingOutlined />,
+            label: <Link href='/shopee-links'>Shopee Links</Link>
           },
           {
             key: '/carts',

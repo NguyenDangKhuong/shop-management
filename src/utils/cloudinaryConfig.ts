@@ -1,4 +1,4 @@
-import { CLOUD_NAME_CLOUDINARY, CLOUDINARY_UPLOAD_FACEBOOK_POST_PRESET, CLOUDINARY_UPLOAD_PRODUCT_PRESET } from './constants'
+import { CLOUD_NAME_CLOUDINARY, CLOUDINARY_UPLOAD_FACEBOOK_POST_PRESET, CLOUDINARY_UPLOAD_PRODUCT_PRESET, CLOUDINARY_UPLOAD_SHOPEE_LINK_PRESET } from './constants'
 
 export interface CloudinaryUploadResult {
     url: string
@@ -46,6 +46,18 @@ export const facebookPostUploadConfig: CloudinaryWidgetOptions = {
     maxFileSize: 104857600, // 100MB
     sources: ['local', 'url', 'camera']
 }
+
+export const shopeeLinkUploadConfig: CloudinaryWidgetOptions = {
+    cloudName: CLOUD_NAME_CLOUDINARY || '',
+    uploadPreset: CLOUDINARY_UPLOAD_SHOPEE_LINK_PRESET || '',
+    multiple: false,
+    resourceType: 'image',
+    clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+    maxFileSize: 5242880, // 5MB
+    sources: ['local', 'url', 'camera'],
+    cropping: false
+}
+
 
 // Event handler types
 export type UploadSuccessCallback = (result: CloudinaryUploadResult) => void
