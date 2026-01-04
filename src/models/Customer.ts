@@ -19,7 +19,12 @@ export class Customer {
   updatedAt?: Date
 }
 
-const CustomerModel = mongoose.models.Customer || getModelForClass(Customer, {
+// Clear cached model to prevent hot reload issues
+if (mongoose.models.Customer) {
+  delete mongoose.models.Customer
+}
+
+const CustomerModel = getModelForClass(Customer, {
   schemaOptions: { timestamps: true }
 })
 

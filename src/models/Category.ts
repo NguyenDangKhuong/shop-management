@@ -13,7 +13,12 @@ export class Category {
   updatedAt?: Date
 }
 
-const CategoryModel = mongoose.models.Category || getModelForClass(Category, {
+// Clear cached model to prevent hot reload issues
+if (mongoose.models.Category) {
+  delete mongoose.models.Category
+}
+
+const CategoryModel = getModelForClass(Category, {
   schemaOptions: { timestamps: true, collection: 'categories' }
 })
 

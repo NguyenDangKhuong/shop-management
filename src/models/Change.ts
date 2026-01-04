@@ -13,7 +13,12 @@ export class Change {
   updatedAt?: Date
 }
 
-const ChangeModel = mongoose.models.Change || getModelForClass(Change, {
+// Clear cached model to prevent hot reload issues
+if (mongoose.models.Change) {
+  delete mongoose.models.Change
+}
+
+const ChangeModel = getModelForClass(Change, {
   schemaOptions: { timestamps: true }
 })
 

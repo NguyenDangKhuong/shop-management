@@ -8,7 +8,12 @@ export class Cart {
   products?: ProductCart[]
 }
 
-const CartModel = mongoose.models.Cart || getModelForClass(Cart, {
+// Clear cached model to prevent hot reload issues
+if (mongoose.models.Cart) {
+  delete mongoose.models.Cart
+}
+
+const CartModel = getModelForClass(Cart, {
   schemaOptions: { timestamps: true }
 })
 

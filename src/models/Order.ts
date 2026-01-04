@@ -32,7 +32,12 @@ export class Order {
   updatedAt?: Date
 }
 
-const OrderModel = mongoose.models.Order || getModelForClass(Order, {
+// Clear cached model to prevent hot reload issues
+if (mongoose.models.Order) {
+  delete mongoose.models.Order
+}
+
+const OrderModel = getModelForClass(Order, {
   schemaOptions: { timestamps: true, collection: 'orders' }
 })
 

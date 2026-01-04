@@ -22,7 +22,12 @@ export class User {
   updateAt?: Date
 }
 
-const UserModel = mongoose.models.User || getModelForClass(User, {
+// Clear cached model to prevent hot reload issues
+if (mongoose.models.User) {
+  delete mongoose.models.User
+}
+
+const UserModel = getModelForClass(User, {
   schemaOptions: { timestamps: true, collection: 'users' }
 })
 

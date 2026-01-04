@@ -45,7 +45,12 @@ export class FacebookPost {
     updatedAt?: Date
 }
 
-const FacebookPostModel = mongoose.models.FacebookPost || getModelForClass(FacebookPost, {
+// Clear cached model to prevent hot reload issues
+if (mongoose.models.FacebookPost) {
+    delete mongoose.models.FacebookPost
+}
+
+const FacebookPostModel = getModelForClass(FacebookPost, {
     schemaOptions: { timestamps: true, collection: 'facebookposts' }
 })
 

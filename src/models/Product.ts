@@ -33,7 +33,12 @@ export class Product {
   updatedAt?: Date
 }
 
-const ProductModel = mongoose.models.Product || getModelForClass(Product, {
+// Clear cached model to prevent hot reload issues
+if (mongoose.models.Product) {
+  delete mongoose.models.Product
+}
+
+const ProductModel = getModelForClass(Product, {
   schemaOptions: { timestamps: true, collection: 'products' }
 })
 
