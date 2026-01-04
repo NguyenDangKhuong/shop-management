@@ -10,6 +10,7 @@ import { FacebookPost } from '@/models/FacebookPost'
 import FacebookPostModal from './FacebookPostModal'
 import { deleteCloudinaryImages } from '@/actions/cloudinary'
 import { deleteVideoFromMinIO } from '@/utils/minioUpload'
+import { apiGet, apiDelete } from '@/utils/internalApi'
 
 // Constants
 const CONTENT_PREVIEW_LENGTH = 100
@@ -65,14 +66,10 @@ const FacebookPostTable = () => {
 
     const loadPosts = async () => {
         setLoading(true)
-        try {
-            const res = await fetch('/api/facebook-posts')
-            const result = await res.json()
-            if (result.success) {
-                setPosts(result.data)
-            }
-        } catch (error) {
-            console.error('Failed to load posts:', error)
+        const result = await apiGet<FacebookPost[]>('/api/facebook-posts')
+
+        if (result.success && result.data) {
+            setPosts(result.data)
         }
         setLoading(false)
     }
@@ -82,21 +79,16 @@ const FacebookPostTable = () => {
     }, [])
 
     const handleDelete = async (id: string) => {
-        try {
-            const post = posts.find(p => p._id === id)
+        const post = posts.find(p => p._id === id)
 
-            if (post) {
-                await deleteMediaFiles(post)
-            }
+        if (post) {
+            await deleteMediaFiles(post)
+        }
 
-            // Delete post from database
-            const res = await fetch(`/api/facebook-posts?id=${id}`, { method: 'DELETE' })
-            const result = await res.json()
-            if (result.success) {
-                loadPosts()
-            }
-        } catch (error) {
-            console.error('Failed to delete post:', error)
+        // Delete post from database
+        const result = await apiDelete(`/api/facebook-posts?id=${id}`)
+        if (result.success) {
+            loadPosts()
         }
     }
 

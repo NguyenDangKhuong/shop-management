@@ -10,6 +10,7 @@ import { FacebookPost, MediaFile } from '@/models/FacebookPost'
 import { facebookPostUploadConfig } from '@/utils/cloudinaryConfig'
 import { uploadVideoToMinIO, deleteVideoFromMinIO } from '@/utils/minioUpload'
 import { deleteCloudinaryImage } from '@/actions/cloudinary'
+import { apiPost, apiPut } from '@/utils/internalApi'
 
 dayjs.extend(customParseFormat)
 
@@ -243,16 +244,9 @@ const FacebookPostModal = ({
                 mediaFiles: finalMediaFiles
             }
 
-            const url = '/api/facebook-posts'
-            const method = editingPost._id ? 'PUT' : 'POST'
-
-            const res = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(editingPost._id ? { id: editingPost._id, ...postData } : postData)
-            })
-
-            const result = await res.json()
+            const result = editingPost._id
+                ? await apiPut('/api/facebook-posts', { id: editingPost._id, ...postData })
+                : await apiPost('/api/facebook-posts', postData)
 
             if (result.success) {
                 message.success(editingPost._id ? 'Post updated!' : 'Post created!')

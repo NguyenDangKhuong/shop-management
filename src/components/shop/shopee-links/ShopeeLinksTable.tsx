@@ -7,6 +7,7 @@ import type { ColumnsType } from 'antd/es/table'
 import { isMobile } from 'react-device-detect'
 import { ShopeeLink } from '@/models/ShopeeLink'
 import ShopeeLinksModal from './ShopeeLinksModal'
+import { apiGet, apiDelete } from '@/utils/internalApi'
 
 const initialLink: Partial<ShopeeLink> = {
     imageUrl: '',
@@ -22,15 +23,12 @@ const ShopeeLinksTable = () => {
 
     const loadLinks = async () => {
         setLoading(true)
-        try {
-            const res = await fetch('/api/shopee-links')
-            const result = await res.json()
-            if (result.success) {
-                setLinks(result.data)
-            }
-        } catch (error) {
-            console.error('Failed to load links:', error)
-            message.error('Không thể tải danh sách links')
+        const result = await apiGet<ShopeeLink[]>('/api/shopee-links')
+
+        if (result.success && result.data) {
+            setLinks(result.data)
+        } else {
+            message.error(result.error || 'Không thể tải danh sách links')
         }
         setLoading(false)
     }
@@ -40,18 +38,13 @@ const ShopeeLinksTable = () => {
     }, [])
 
     const handleDelete = async (id: string) => {
-        try {
-            const res = await fetch(`/api/shopee-links?id=${id}`, { method: 'DELETE' })
-            const result = await res.json()
-            if (result.success) {
-                message.success('Đã xóa link!')
-                loadLinks()
-            } else {
-                message.error(result.error || 'Xóa link thất bại')
-            }
-        } catch (error) {
-            console.error('Failed to delete link:', error)
-            message.error('Có lỗi xảy ra')
+        const result = await apiDelete(`/api/shopee-links?id=${id}`)
+
+        if (result.success) {
+            message.success('Đã xóa link!')
+            loadLinks()
+        } else {
+            message.error(result.error || 'Xóa link thất bại')
         }
     }
 

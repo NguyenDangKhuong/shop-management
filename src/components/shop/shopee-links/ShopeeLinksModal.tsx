@@ -6,6 +6,7 @@ import { UploadOutlined, LinkOutlined } from '@ant-design/icons'
 import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload'
 import { ShopeeLink } from '@/models/ShopeeLink'
 import { shopeeLinkUploadConfig } from '@/utils/cloudinaryConfig'
+import { apiPost, apiPut } from '@/utils/internalApi'
 
 interface ShopeeLinksModalProps {
     isOpen: boolean
@@ -55,16 +56,9 @@ const ShopeeLinksModal = ({
             setLoading(true)
             const values = await form.validateFields()
 
-            const url = '/api/shopee-links'
-            const method = editingLink._id ? 'PUT' : 'POST'
-
-            const res = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(editingLink._id ? { id: editingLink._id, ...values } : values)
-            })
-
-            const result = await res.json()
+            const result = editingLink._id
+                ? await apiPut('/api/shopee-links', { id: editingLink._id, ...values })
+                : await apiPost('/api/shopee-links', values)
 
             if (result.success) {
                 message.success(editingLink._id ? 'Đã cập nhật!' : 'Đã thêm link mới!')

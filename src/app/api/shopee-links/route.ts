@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/utils/connectDb'
 import ShopeeLinkModel from '@/models/ShopeeLink'
 
+// Force dynamic behavior - no caching
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 // GET - Fetch all Shopee links
 export async function GET() {
     try {
