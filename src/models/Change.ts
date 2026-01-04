@@ -1,4 +1,4 @@
-import { getModelForClass, prop } from '@typegoose/typegoose'
+import { prop } from '@typegoose/typegoose'
 import { getSingletonModel } from '@/utils/getSingletonModel'
 
 export class Change {
