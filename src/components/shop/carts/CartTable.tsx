@@ -59,7 +59,7 @@ const CartListItem = ({
                 setCartList(
                   currProduct.quantity! > 1
                     ? cartList.map(item =>
-                      item.product?._id === _id ? { ...item, quantity: item.quantity! - 1 } : item
+                      String(item.product?._id) === String(_id) ? { ...item, quantity: item.quantity! - 1 } : item
                     )
                     : cartList.filter(item => String(_id) !== String(item.product?._id))
                 )
@@ -74,7 +74,7 @@ const CartListItem = ({
                 currProduct &&
                 setCartList(
                   cartList.map(item =>
-                    item.product?._id === _id ? { ...item, quantity: item.quantity! + 1 } : item
+                    String(item.product?._id) === String(_id) ? { ...item, quantity: item.quantity! + 1 } : item
                   )
                 )
               }

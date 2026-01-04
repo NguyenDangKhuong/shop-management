@@ -27,10 +27,8 @@ export const POST = async (req: NextRequest) => {
       products.map(async (item: any) => {
         if (item.product.storage - item.quantity === 0) {
           const deletedProduct: any = await ProductModel.findByIdAndDelete(item.product._id)
-          console.log('deletedProduct', deletedProduct)
           deletedProduct && removeImage(String(deletedProduct?.imagePublicId))
         } else {
-          console.log('item', item)
           const minusQuantityProduct = {
             ...item.product,
             storage: item.product.storage - item.quantity
@@ -38,7 +36,6 @@ export const POST = async (req: NextRequest) => {
           const newProduct = await ProductModel.findByIdAndUpdate(item.product._id, {
             ...minusQuantityProduct
           })
-          console.log('minusQuantityProduct', newProduct)
         }
       })
     )

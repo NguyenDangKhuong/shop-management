@@ -11,15 +11,7 @@ export async function GET() {
     try {
         await connectDB()
 
-        // Debug logging to verify correct collection
-        console.log('🔍 ShopeeLink Model Info:', {
-            modelName: ShopeeLinkModel.modelName,
-            collectionName: ShopeeLinkModel.collection.name
-        })
-
         const links = await ShopeeLinkModel.find().sort({ createdAt: -1 })
-
-        console.log('✅ Fetched Shopee Links:', links.length)
 
         return NextResponse.json({
             success: true,

@@ -19,11 +19,6 @@ export const authConfig = {
         nextUrl.pathname.startsWith(route)
       )
 
-      console.log('🔒 AUTH CALLBACK RUNNING')
-      console.log('  📍 Pathname:', nextUrl.pathname)
-      console.log('  🎯 Is Admin Route:', isOnAdminRoute)
-      console.log('  👤 Is Logged In:', isLoggedIn)
-      console.log('  🎭 User Role:', userRole)
 
       if (isOnAdminRoute) {
         // Not logged in - redirect to login
