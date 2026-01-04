@@ -1,51 +1,67 @@
-import { getModelForClass, prop } from '@typegoose/typegoose'
-import { getSingletonModel } from '@/utils/getSingletonModel'
+import mongoose, { Schema, Document } from 'mongoose'
 
-export class MediaFile {
-    @prop({ type: () => String, required: true })
-    url!: string
-
-    @prop({ type: () => String, enum: ['image', 'video', 'link'], required: true })
-    type!: 'image' | 'video' | 'link'
-
-    @prop({ type: () => String })
+// MediaFile subdocument interface
+export interface IMediaFile {
+    url: string
+    type: 'image' | 'video' | 'link'
     publicId?: string
 }
 
-export class FacebookPost {
-    _id!: string
-
-    @prop({ type: () => String, required: true })
-    content!: string
-
-    @prop({ type: () => [MediaFile], default: [] })
-    mediaFiles?: MediaFile[]
-
-    @prop({ type: () => String })
+// FacebookPost interface
+export interface IFacebookPost extends Document {
+    content: string
+    mediaFiles?: IMediaFile[]
     postUrl?: string
-
-    @prop({ type: () => String, enum: ['draft', 'scheduled', 'published', 'failed'], default: 'draft' })
-    status!: string
-
-    @prop({ type: () => String, enum: ['post', 'reel-video', 'reel-link'], default: 'post' })
-    postType!: string
-
-    @prop({ type: () => Date })
+    status: 'draft' | 'scheduled' | 'published' | 'failed'
+    postType: 'post' | 'reel-video' | 'reel-link'
     scheduledAt?: Date
-
-    @prop({ type: () => String })
     scheduledDate?: string // Format: dd/MM/yyyy
-
-    @prop({ type: () => String })
     scheduledTime?: string // Format: HH:mm
-
-    @prop({ type: () => Date })
     createdAt?: Date
-
-    @prop({ type: () => Date })
     updatedAt?: Date
 }
 
-export default getSingletonModel('FacebookPost', FacebookPost, {
-    schemaOptions: { timestamps: true, collection: 'facebookposts' }
+// Type aliases for backwards compatibility
+export type MediaFile = IMediaFile
+export type FacebookPost = IFacebookPost
+
+// MediaFile subdocument schema
+const MediaFileSchema = new Schema({
+    url: { type: String, required: true },
+    type: { type: String, enum: ['image', 'video', 'link'], required: true },
+    publicId: { type: String }
+}, { _id: false })
+
+// FacebookPost schema
+const FacebookPostSchema = new Schema({
+    content: { type: String, required: true },
+    mediaFiles: { type: [MediaFileSchema], default: [] },
+    postUrl: { type: String },
+    status: {
+        type: String,
+        enum: ['draft', 'scheduled', 'published', 'failed'],
+        default: 'draft'
+    },
+    postType: {
+        type: String,
+        enum: ['post', 'reel-video', 'reel-link'],
+        default: 'post'
+    },
+    scheduledAt: { type: Date },
+    scheduledDate: { type: String },
+    scheduledTime: { type: String }
+}, {
+    timestamps: true,
+    collection: 'facebookposts'
 })
+
+// Delete any existing model to prevent caching issues
+if (mongoose.models.FacebookPost) {
+    delete mongoose.models.FacebookPost
+}
+
+// Use pure Mongoose with explicit model name
+const FacebookPostModel = mongoose.model<IFacebookPost>('FacebookPost', FacebookPostSchema)
+
+export default FacebookPostModel
+export { FacebookPostSchema }

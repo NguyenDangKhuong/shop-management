@@ -119,7 +119,7 @@ const ShopeeLinksTable = () => {
                     <Popconfirm
                         title="Xóa link?"
                         description="Bạn có chắc muốn xóa link này?"
-                        onConfirm={() => handleDelete(record._id)}
+                        onConfirm={() => handleDelete(record._id.toString())}
                         okText="Xóa"
                         cancelText="Hủy"
                     >
@@ -152,7 +152,7 @@ const ShopeeLinksTable = () => {
                     pagination={{ pageSize: 10, showTotal: (total) => `Tổng ${total} links` }}
                     renderItem={(link) => (
                         <List.Item
-                            key={link._id}
+                            key={link._id.toString()}
                             actions={[
                                 <Button
                                     key="edit"
@@ -166,7 +166,7 @@ const ShopeeLinksTable = () => {
                                     key="delete"
                                     title="Xóa link?"
                                     description="Bạn có chắc muốn xóa?"
-                                    onConfirm={() => handleDelete(link._id!)}
+                                    onConfirm={() => handleDelete(link._id.toString())}
                                     okText="Xóa"
                                     cancelText="Hủy"
                                 >

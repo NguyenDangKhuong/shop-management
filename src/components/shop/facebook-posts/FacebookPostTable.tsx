@@ -79,7 +79,7 @@ const FacebookPostTable = () => {
     }, [])
 
     const handleDelete = async (id: string) => {
-        const post = posts.find(p => p._id === id)
+        const post = posts.find(p => p._id.toString() === id)
 
         if (post) {
             await deleteMediaFiles(post)
@@ -280,7 +280,7 @@ const FacebookPostTable = () => {
                     <Popconfirm
                         title="Xóa bài viết?"
                         description="Bạn có chắc chắn muốn xóa bài viết này?"
-                        onConfirm={() => handleDelete(record._id)}
+                        onConfirm={() => handleDelete(record._id.toString())}
                         okText="Xóa"
                         cancelText="Hủy"
                     >
@@ -318,7 +318,7 @@ const FacebookPostTable = () => {
                     }}
                     renderItem={(post) => (
                         <List.Item
-                            key={post._id}
+                            key={post._id.toString()}
                             actions={[
                                 <Button
                                     key="edit"
@@ -332,7 +332,7 @@ const FacebookPostTable = () => {
                                     key="delete"
                                     title="Xóa bài viết"
                                     description="Bạn có chắc muốn xóa bài viết này?"
-                                    onConfirm={() => handleDelete(post._id!)}
+                                    onConfirm={() => handleDelete(post._id.toString())}
                                     okText="Xóa"
                                     cancelText="Hủy"
                                 >

@@ -1,22 +1,30 @@
-import { getModelForClass, prop } from '@typegoose/typegoose'
-import { getSingletonModel } from '@/utils/getSingletonModel'
+import mongoose, { Schema, Document } from 'mongoose'
 
-export class ShopeeLink {
-    _id!: string
-
-    @prop({ type: () => String, required: true })
-    imageUrl!: string
-
-    @prop({ type: () => String, required: true })
-    productUrl!: string
-
-    @prop({ type: () => Date })
+export interface IShopeeLink extends Document {
+    imageUrl: string
+    productUrl: string
     createdAt?: Date
-
-    @prop({ type: () => Date })
     updatedAt?: Date
 }
 
-export default getSingletonModel('ShopeeLink', ShopeeLink, {
-    schemaOptions: { timestamps: true, collection: 'shopeelinks' }
+// Type alias for backwards compatibility
+export type ShopeeLink = IShopeeLink
+
+const ShopeeLinkSchema = new Schema({
+    imageUrl: { type: String, required: true },
+    productUrl: { type: String, required: true }
+}, {
+    timestamps: true,
+    collection: 'shopeelinks'
 })
+
+// Delete any existing model to prevent caching issues
+if (mongoose.models.ShopeeLink) {
+    delete mongoose.models.ShopeeLink
+}
+
+// Use pure Mongoose with explicit model name
+const ShopeeLinkModel = mongoose.model<IShopeeLink>('ShopeeLink', ShopeeLinkSchema)
+
+export default ShopeeLinkModel
+export { ShopeeLinkSchema }
