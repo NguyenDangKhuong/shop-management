@@ -27,7 +27,7 @@ import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 import { currencyFormat } from '@/utils/currencyFormat'
 
 export const initialProduct: Product = {
-  _id: '',
+  _id: '' as any,
   name: '',
   price: 0,
   categoryId: '',
@@ -35,7 +35,7 @@ export const initialProduct: Product = {
   storage: 0,
   imageUrl: '',
   imagePublicId: ''
-}
+} as unknown as Product
 
 const ProductTable = ({
   totalDocs,
@@ -63,7 +63,7 @@ const ProductTable = ({
     const map = new Map<string, string>()
     categories?.forEach((category: Category) => {
       if (category._id) {
-        map.set(category._id, category.name)
+        map.set(String(category._id), category.name)
       }
     })
     return map

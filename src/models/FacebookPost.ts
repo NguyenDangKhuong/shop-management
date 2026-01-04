@@ -55,13 +55,8 @@ const FacebookPostSchema = new Schema({
     collection: 'facebookposts'
 })
 
-// Delete any existing model to prevent caching issues
-if (mongoose.models.FacebookPost) {
-    delete mongoose.models.FacebookPost
-}
-
 // Use pure Mongoose with explicit model name
-const FacebookPostModel = mongoose.model<IFacebookPost>('FacebookPost', FacebookPostSchema)
+const FacebookPostModel = mongoose.models.FacebookPost || mongoose.model<IFacebookPost>('FacebookPost', FacebookPostSchema)
 
 export default FacebookPostModel
 export { FacebookPostSchema }

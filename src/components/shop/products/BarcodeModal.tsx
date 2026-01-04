@@ -4,7 +4,7 @@ import { Button, Flex, Modal } from 'antd'
 import Barcode from 'react-barcode'
 import { useReactToPrint } from 'react-to-print'
 
-import { initialCategory } from '../categories/CategoryTable'
+import { initialProduct } from './ProductTable'
 
 import { Product } from '@/models/Product'
 import { currencyFormat } from '@/utils/currencyFormat'
@@ -30,7 +30,7 @@ const BarcodeModal = ({
       title={`Barcode: ${editingProduct.sku}`}
       open={isOpen}
       onCancel={() => {
-        setEditingProduct(initialCategory)
+        setEditingProduct(initialProduct)
         setIsOpen(false)
       }}
       footer={false}>
@@ -58,7 +58,7 @@ const BarcodeModal = ({
           className='mr-2'
           onClick={() => {
             setIsOpen(false)
-            setEditingProduct(initialCategory)
+            setEditingProduct(initialProduct)
           }}>
           Hủy
         </Button>

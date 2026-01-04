@@ -16,9 +16,9 @@ import { remove } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 
 export const initialCategory: Category = {
-  _id: '',
+  _id: '' as any,
   name: ''
-}
+} as unknown as Category
 
 const CategoryTable = ({
   totalDocs,

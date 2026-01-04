@@ -1,28 +1,29 @@
-import { prop } from '@typegoose/typegoose'
-import { getSingletonModel } from '@/utils/getSingletonModel'
+import mongoose, { Schema, Document } from 'mongoose'
 
-export class User {
-  _id!: string
-
-  @prop({ type: () => String, required: true })
-  name!: string
-
-  @prop({ type: () => String, required: true, unique: true })
-  email!: string
-
-  @prop({ type: () => String, required: true })
-  password!: string
-
-  @prop({ type: () => Number, required: true })
-  role!: number
-
-  @prop({ type: () => Date })
+export interface IUser extends Document {
+  name: string
+  email: string
+  password?: string // password might be selected out or optional in some contexts
+  role: number
   createAt?: Date
-
-  @prop({ type: () => Date })
   updateAt?: Date
 }
 
-export default getSingletonModel('User', User, {
-  schemaOptions: { timestamps: true, collection: 'users' }
+export type User = IUser
+
+const UserSchema = new Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  role: { type: Number, required: true },
+  createAt: { type: Date },
+  updateAt: { type: Date }
+}, {
+  timestamps: true,
+  collection: 'users'
 })
+
+const UserModel = mongoose.models.User || mongoose.model<IUser>('User', UserSchema)
+
+export default UserModel
+export { UserSchema }

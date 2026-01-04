@@ -1,19 +1,22 @@
-import { prop } from '@typegoose/typegoose'
-import { getSingletonModel } from '@/utils/getSingletonModel'
+import mongoose, { Schema, Document } from 'mongoose'
 
-export class Category {
-  _id!: string
 
-  @prop({ type: () => String, required: true, unique: true })
-  name!: string
-
-  @prop({ type: () => Date })
+export interface ICategory extends Document {
+  name: string
   createdAt?: Date
-
-  @prop({ type: () => Date })
   updatedAt?: Date
 }
 
-export default getSingletonModel('Category', Category, {
-  schemaOptions: { timestamps: true, collection: 'categories' }
+export type Category = ICategory
+
+const CategorySchema = new Schema({
+  name: { type: String, required: true, unique: true }
+}, {
+  timestamps: true,
+  collection: 'categories'
 })
+
+const CategoryModel = mongoose.models.Category || mongoose.model<ICategory>('Category', CategorySchema)
+
+export default CategoryModel
+export { CategorySchema }

@@ -1,19 +1,20 @@
-import { prop } from '@typegoose/typegoose'
-import { getSingletonModel } from '@/utils/getSingletonModel'
+import mongoose, { Schema, Document } from 'mongoose'
 
-export class Change {
-  _id!: string
-
-  @prop({ type: () => Number })
-  change!: number
-
-  @prop({ type: () => Date })
+export interface IChange extends Document {
+  change: number
   createdAt?: Date
-
-  @prop({ type: () => Date })
   updatedAt?: Date
 }
 
-export default getSingletonModel('Change', Change, {
-  schemaOptions: { timestamps: true }
+export type Change = IChange
+
+const ChangeSchema = new Schema({
+  change: { type: Number }
+}, {
+  timestamps: true
 })
+
+const ChangeModel = mongoose.models.Change || mongoose.model<IChange>('Change', ChangeSchema)
+
+export default ChangeModel
+export { ChangeSchema }

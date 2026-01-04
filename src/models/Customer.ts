@@ -1,25 +1,25 @@
-import { prop } from '@typegoose/typegoose'
-import { getSingletonModel } from '@/utils/getSingletonModel'
+import mongoose, { Schema, Document } from 'mongoose'
 
-export class Customer {
-  _id!: string
-
-  @prop({ type: () => String, required: true })
-  name!: string
-
-  @prop({ type: () => Number, required: true })
-  phoneNumber!: number
-
-  @prop({ type: () => Number })
-  amountPurchased: number
-
-  @prop({ type: () => Date })
+export interface ICustomer extends Document {
+  name: string
+  phoneNumber: number
+  amountPurchased?: number
   createdAt?: Date
-
-  @prop({ type: () => Date })
   updatedAt?: Date
 }
 
-export default getSingletonModel('Customer', Customer, {
-  schemaOptions: { timestamps: true }
+export type Customer = ICustomer
+
+const CustomerSchema = new Schema({
+  name: { type: String, required: true },
+  phoneNumber: { type: Number, required: true },
+  amountPurchased: { type: Number }
+}, {
+  timestamps: true
+  // Mongoose will pluralize to 'customers' by default
 })
+
+const CustomerModel = mongoose.models.Customer || mongoose.model<ICustomer>('Customer', CustomerSchema)
+
+export default CustomerModel
+export { CustomerSchema }

@@ -63,7 +63,7 @@ const InvoiceTable: React.FC<{
                 </tr>
               ))}
               {cartList.map(item => (
-                <tr key={item.product?._id}>
+                <tr key={String(item.product?._id)}>
                   <td className='border border-black text-left text-[10px]'>{item.product?.name}</td>
                   <td className='border border-black text-right text-[10px]'>{item.quantity}</td>
                   <td className='border border-black text-right text-[10px]'>

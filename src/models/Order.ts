@@ -1,38 +1,34 @@
-import { prop } from '@typegoose/typegoose'
-import { getSingletonModel } from '@/utils/getSingletonModel'
-import { ProductCart } from './ProductCart'
+import mongoose, { Schema, Document } from 'mongoose'
+import { IProductCart, ProductCartSchema } from './ProductCart'
 
-export class Order {
-  _id?: string
-
-  @prop({ type: () => String })
-  orderId!: string
-
-  @prop({ type: () => Number })
-  customerCash!: number
-
-  @prop({ type: () => Number })
-  totalPrice!: number
-
-  @prop({ type: () => Number })
-  totalCart!: number
-
-  @prop({ type: () => Number })
-  exchange!: number
-
-  @prop({ type: () => Number })
-  discountPrice!: number
-
-  @prop({ type: () => [ProductCart] })
-  products!: ProductCart[]
-
-  @prop({ type: () => Date })
+export interface IOrder extends Document {
+  orderId: string
+  customerCash: number
+  totalPrice: number
+  totalCart: number
+  exchange: number
+  discountPrice: number
+  products: IProductCart[]
   createdAt?: Date
-
-  @prop({ type: () => Date })
   updatedAt?: Date
 }
 
-export default getSingletonModel('Order', Order, {
-  schemaOptions: { timestamps: true, collection: 'orders' }
+export type Order = IOrder
+
+const OrderSchema = new Schema({
+  orderId: { type: String },
+  customerCash: { type: Number },
+  totalPrice: { type: Number },
+  totalCart: { type: Number },
+  exchange: { type: Number },
+  discountPrice: { type: Number },
+  products: { type: [ProductCartSchema] }
+}, {
+  timestamps: true,
+  collection: 'orders'
 })
+
+const OrderModel = mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema)
+
+export default OrderModel
+export { OrderSchema }

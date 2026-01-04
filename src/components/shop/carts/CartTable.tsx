@@ -9,9 +9,9 @@ import { ProductCart } from '@/models/ProductCart'
 import { currencyFormat } from '@/utils/currencyFormat'
 
 export const initialCategory: Category = {
-  _id: '',
+  _id: '' as any,
   name: ''
-}
+} as unknown as Category
 
 const CartListItem = ({
   cartList,
@@ -49,7 +49,7 @@ const CartListItem = ({
       title: 'Số lượng',
       dataIndex: 'quantity',
       render: (_: any, { quantity, _id }: any) => {
-        const currProduct = cartList.find(item => item.product?._id === _id)
+        const currProduct = cartList.find(item => String(item.product?._id) === String(_id))
         return (
           <Flex>
             <MinusOutlined
@@ -61,7 +61,7 @@ const CartListItem = ({
                     ? cartList.map(item =>
                       item.product?._id === _id ? { ...item, quantity: item.quantity! - 1 } : item
                     )
-                    : cartList.filter(item => _id !== item.product?._id)
+                    : cartList.filter(item => String(_id) !== String(item.product?._id))
                 )
               }
             />
@@ -97,7 +97,7 @@ const CartListItem = ({
         <DeleteTwoTone
           className='cursor-pointer'
           twoToneColor='#ff4d4f'
-          onClick={() => setCartList(cartList.filter(item => _id !== item.product?._id))}
+          onClick={() => setCartList(cartList.filter(item => String(_id) !== String(item.product?._id)))}
         />
       )
     }

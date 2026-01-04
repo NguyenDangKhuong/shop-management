@@ -18,13 +18,8 @@ const ShopeeLinkSchema = new Schema({
     collection: 'shopeelinks'
 })
 
-// Delete any existing model to prevent caching issues
-if (mongoose.models.ShopeeLink) {
-    delete mongoose.models.ShopeeLink
-}
-
 // Use pure Mongoose with explicit model name
-const ShopeeLinkModel = mongoose.model<IShopeeLink>('ShopeeLink', ShopeeLinkSchema)
+const ShopeeLinkModel = mongoose.models.ShopeeLink || mongoose.model<IShopeeLink>('ShopeeLink', ShopeeLinkSchema)
 
 export default ShopeeLinkModel
 export { ShopeeLinkSchema }

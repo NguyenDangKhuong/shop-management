@@ -67,10 +67,10 @@ const CartPage = () => {
         return
       }
 
-      const existedProduct = await cartList?.find(item => item.product?._id === product._id)
+      const existedProduct = await cartList?.find(({ product: p }) => String(p?._id) === String(product._id))
       const newCartList = existedProduct
         ? cartList.map(item =>
-          item.product?._id === product._id ? { ...item, quantity: item.quantity! + 1 } : item
+          String(item.product?._id) === String(product._id) ? { ...item, quantity: item.quantity! + 1 } : item
         )
         : [...cartList, { product, quantity: 1 }]
       product && setCartList(newCartList)

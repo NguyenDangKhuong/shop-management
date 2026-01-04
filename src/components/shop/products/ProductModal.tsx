@@ -115,7 +115,7 @@ const ProductModal = ({
                     setEditingProduct({
                       ...editingProduct,
                       name: `${String(
-                        categories.find(({ _id }) => _id === categoryId)?.name
+                        categories.find(({ _id }) => String(_id) === categoryId)?.name
                       )} ${tempName}`
                     })
                 }}>
@@ -169,7 +169,7 @@ const ProductModal = ({
               })
             }>
             {categories.map(item => (
-              <Option key={item._id} value={item._id}>
+              <Option key={String(item._id)} value={String(item._id)}>
                 {item.name}
               </Option>
             ))}

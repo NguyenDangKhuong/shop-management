@@ -1,14 +1,21 @@
-import { prop } from '@typegoose/typegoose'
-import { getSingletonModel } from '@/utils/getSingletonModel'
-import { ProductCart } from './ProductCart'
+import mongoose, { Schema, Document } from 'mongoose'
+import { IProductCart, ProductCartSchema } from './ProductCart'
 
-export class Cart {
-  _id!: string
-
-  @prop()
-  products?: ProductCart[]
+export interface ICart extends Document {
+  products?: IProductCart[]
+  createdAt?: Date
+  updatedAt?: Date
 }
 
-export default getSingletonModel('Cart', Cart, {
-  schemaOptions: { timestamps: true }
+export type Cart = ICart
+
+const CartSchema = new Schema({
+  products: { type: [ProductCartSchema], default: [] }
+}, {
+  timestamps: true,
 })
+
+const CartModel = mongoose.models.Cart || mongoose.model<ICart>('Cart', CartSchema)
+
+export default CartModel
+export { CartSchema }
