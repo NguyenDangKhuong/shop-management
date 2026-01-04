@@ -1,4 +1,5 @@
-import { getModelForClass, mongoose, prop } from '@typegoose/typegoose'
+import { getModelForClass, prop } from '@typegoose/typegoose'
+import { getSingletonModel } from '@/utils/getSingletonModel'
 
 export class User {
   _id!: string
@@ -22,13 +23,6 @@ export class User {
   updateAt?: Date
 }
 
-// Clear cached model to prevent hot reload issues
-if (mongoose.models.User) {
-  delete mongoose.models.User
-}
-
-const UserModel = getModelForClass(User, {
+export default getSingletonModel('User', User, {
   schemaOptions: { timestamps: true, collection: 'users' }
 })
-
-export default UserModel

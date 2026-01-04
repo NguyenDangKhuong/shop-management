@@ -1,4 +1,5 @@
-import { getModelForClass, mongoose, prop } from '@typegoose/typegoose'
+import { getModelForClass, prop } from '@typegoose/typegoose'
+import { getSingletonModel } from '@/utils/getSingletonModel'
 
 export class ShopeeLink {
     _id!: string
@@ -16,13 +17,6 @@ export class ShopeeLink {
     updatedAt?: Date
 }
 
-// Clear cached model to prevent hot reload issues
-if (mongoose.models.ShopeeLink) {
-    delete mongoose.models.ShopeeLink
-}
-
-const ShopeeLinkModel = getModelForClass(ShopeeLink, {
+export default getSingletonModel('ShopeeLink', ShopeeLink, {
     schemaOptions: { timestamps: true, collection: 'shopeelinks' }
 })
-
-export default ShopeeLinkModel

@@ -1,4 +1,5 @@
-import { getModelForClass, mongoose, prop } from '@typegoose/typegoose'
+import { getModelForClass, prop } from '@typegoose/typegoose'
+import { getSingletonModel } from '@/utils/getSingletonModel'
 
 export class Change {
   _id!: string
@@ -13,13 +14,6 @@ export class Change {
   updatedAt?: Date
 }
 
-// Clear cached model to prevent hot reload issues
-if (mongoose.models.Change) {
-  delete mongoose.models.Change
-}
-
-const ChangeModel = getModelForClass(Change, {
+export default getSingletonModel('Change', Change, {
   schemaOptions: { timestamps: true }
 })
-
-export default ChangeModel

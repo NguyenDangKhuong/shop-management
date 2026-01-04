@@ -1,4 +1,5 @@
-import { getModelForClass, mongoose, prop } from '@typegoose/typegoose'
+import { getModelForClass, prop } from '@typegoose/typegoose'
+import { getSingletonModel } from '@/utils/getSingletonModel'
 import { ProductCart } from './ProductCart'
 
 export class Order {
@@ -32,13 +33,6 @@ export class Order {
   updatedAt?: Date
 }
 
-// Clear cached model to prevent hot reload issues
-if (mongoose.models.Order) {
-  delete mongoose.models.Order
-}
-
-const OrderModel = getModelForClass(Order, {
+export default getSingletonModel('Order', Order, {
   schemaOptions: { timestamps: true, collection: 'orders' }
 })
-
-export default OrderModel
