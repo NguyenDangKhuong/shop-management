@@ -33,7 +33,7 @@ export const POST = async (req: NextRequest) => {
             ...item.product,
             storage: item.product.storage - item.quantity
           }
-          const newProduct = await ProductModel.findByIdAndUpdate(item.product._id, {
+          const _newProduct = await ProductModel.findByIdAndUpdate(item.product._id, {
             ...minusQuantityProduct
           })
         }

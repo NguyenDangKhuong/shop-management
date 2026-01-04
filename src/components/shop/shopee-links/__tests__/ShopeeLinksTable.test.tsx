@@ -1,4 +1,4 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import ShopeeLinksTable from '../ShopeeLinksTable'
 
 // Mock Next.js Image
@@ -28,7 +28,7 @@ jest.mock('antd', () => {
     const actual = jest.requireActual('antd')
     return {
         ...actual,
-        Table: ({ dataSource, columns }: any) => (
+        Table: ({ dataSource, columns: _columns }: any) => (
             <div data-testid="shopee-table">
                 {dataSource?.map((link: any) => (
                     <div key={link._id} data-testid="shopee-row">

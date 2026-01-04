@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { DeleteTwoTone, EditTwoTone, CopyOutlined } from '@ant-design/icons'
-import { Button, List, Popconfirm, Table, Image, App } from 'antd'
+import { Button, Popconfirm, Table, Image, App, Card, Row, Col } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { isMobile } from 'react-device-detect'
 import { ShopeeLink } from '@/models/ShopeeLink'
@@ -153,66 +153,62 @@ const ShopeeLinksTable = () => {
             </div>
 
             {isMobile ? (
-                <List
-                    loading={loading}
-                    dataSource={links}
-                    pagination={{ pageSize: 10, showTotal: (total) => `Tổng ${total} links` }}
-                    renderItem={(link) => (
-                        <List.Item
-                            key={link._id.toString()}
-                            actions={[
-                                <Button
-                                    key="edit"
-                                    type="link"
-                                    icon={<EditTwoTone />}
-                                    onClick={() => handleEdit(link)}
-                                >
-                                    Sửa
-                                </Button>,
-                                <Popconfirm
-                                    key="delete"
-                                    title="Xóa link?"
-                                    description="Bạn có chắc muốn xóa?"
-                                    onConfirm={() => handleDelete(link._id.toString())}
-                                    okText="Xóa"
-                                    cancelText="Hủy"
-                                >
-                                    <Button type="link" danger icon={<DeleteTwoTone twoToneColor="#ff4d4f" />}>
-                                        Xóa
-                                    </Button>
-                                </Popconfirm>
-                            ]}
-                        >
-                            <List.Item.Meta
-                                avatar={
+                <Row gutter={[16, 16]}>
+                    {links.map((link) => (
+                        <Col key={link._id.toString()} xs={12} sm={12}>
+                            <Card
+                                loading={loading}
+                                cover={
                                     <Image
                                         src={link.imageUrl}
-                                        alt="Product"
-                                        width={80}
-                                        height={80}
-                                        style={{ objectFit: 'cover', borderRadius: '8px' }}
+                                        alt={link.name}
+                                        style={{ height: 100, objectFit: 'cover' }}
+                                        preview={true}
                                     />
                                 }
-                                description={
-                                    <div className="flex items-center gap-2">
-                                        <CopyOutlined
-                                            className="cursor-pointer text-gray-500"
-                                            onClick={() => handleCopy(link.productUrl)}
+                                actions={[
+                                    <CopyOutlined
+                                        key="copy"
+                                        onClick={() => handleCopy(link.productUrl)}
+                                        className="text-lg"
+                                    />,
+                                    <EditTwoTone
+                                        key="edit"
+                                        onClick={() => handleEdit(link)}
+                                        className="text-lg"
+                                    />,
+                                    <Popconfirm
+                                        key="delete"
+                                        title="Xóa link?"
+                                        description="Bạn có chắc muốn xóa?"
+                                        onConfirm={() => handleDelete(link._id.toString())}
+                                        okText="Xóa"
+                                        cancelText="Hủy"
+                                    >
+                                        <DeleteTwoTone
+                                            twoToneColor="#ff4d4f"
+                                            className="text-lg"
                                         />
+                                    </Popconfirm>
+                                ]}
+                            >
+                                <Card.Meta
+                                    title={<div className="font-medium">{link.name}</div>}
+                                    description={
                                         <a
                                             href={link.productUrl}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-blue-500 text-sm"
+                                            className="text-blue-500 text-xs block truncate"
                                         >
-                                            {link.productUrl}
+                                            {link.productUrl.replace('https://', '')}
                                         </a>
-                                    </div>
-                                }
-                            />
-                        </List.Item>
-                    )}
-                />
+                                    }
+                                />
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
             ) : (
                 <Table
                     rowKey="_id"
