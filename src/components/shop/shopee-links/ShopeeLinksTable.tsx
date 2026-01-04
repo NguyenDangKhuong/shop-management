@@ -65,6 +65,13 @@ const ShopeeLinksTable = () => {
 
     const columns: ColumnsType<ShopeeLink> = [
         {
+            title: 'Tên sản phẩm',
+            dataIndex: 'name',
+            key: 'name',
+            width: 200,
+            ellipsis: true
+        },
+        {
             title: 'Hình ảnh',
             dataIndex: 'imageUrl',
             key: 'imageUrl',

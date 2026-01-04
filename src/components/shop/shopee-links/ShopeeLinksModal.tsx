@@ -44,6 +44,7 @@ const ShopeeLinksModal = ({
     useState(() => {
         if (isOpen) {
             form.setFieldsValue({
+                name: editingLink.name || '',
                 imageUrl: editingLink.imageUrl || '',
                 productUrl: editingLink.productUrl || ''
             })
@@ -93,6 +94,14 @@ const ShopeeLinksModal = ({
             okText={editingLink._id ? 'Cập nhật' : 'Thêm'}
         >
             <Form form={form} layout="vertical" className="mt-4">
+                <Form.Item
+                    label="Tên sản phẩm"
+                    name="name"
+                    rules={[{ required: true, message: 'Vui lòng nhập tên sản phẩm' }]}
+                >
+                    <Input placeholder="VD: Áo thun nam cotton..." />
+                </Form.Item>
+
                 <Form.Item
                     label="Hình ảnh sản phẩm"
                     name="imageUrl"

@@ -32,7 +32,7 @@ const DashboardLayout = ({ children }: any) => {
           width={200}
           styles={{ body: { padding: 0, background: '#001529' } }}
         >
-          <DashboardSider collapsed={false} />
+          <DashboardSider collapsed={false} onItemClick={() => setCollapsed(true)} />
         </Drawer>
       )}
 

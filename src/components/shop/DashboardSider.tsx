@@ -13,7 +13,7 @@ import { Layout, Menu } from 'antd'
 
 const { Sider } = Layout
 
-const DashboardSider = ({ collapsed }: any) => {
+const DashboardSider = ({ collapsed, onItemClick }: any) => {
   const pathname = usePathname()
   return (
     <Sider trigger={null} collapsedWidth='0' breakpoint='lg' collapsible collapsed={collapsed}>
@@ -24,6 +24,7 @@ const DashboardSider = ({ collapsed }: any) => {
         theme='dark'
         mode='inline'
         defaultSelectedKeys={[pathname]}
+        onClick={onItemClick}
         items={[
           {
             key: '/shopee-links',

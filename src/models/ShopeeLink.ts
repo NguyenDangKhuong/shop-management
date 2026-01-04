@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose'
 
 export interface IShopeeLink extends Document {
+    name: string
     imageUrl: string
     productUrl: string
     createdAt?: Date
@@ -11,6 +12,7 @@ export interface IShopeeLink extends Document {
 export type ShopeeLink = IShopeeLink
 
 const ShopeeLinkSchema = new Schema({
+    name: { type: String, required: true },
     imageUrl: { type: String, required: true },
     productUrl: { type: String, required: true }
 }, {
