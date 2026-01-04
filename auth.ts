@@ -37,7 +37,7 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
 
           // Return user object with role
           return {
-            id: user._id,
+            id: String(user._id),
             name: user.name,
             email: user.email,
             role: user.role
