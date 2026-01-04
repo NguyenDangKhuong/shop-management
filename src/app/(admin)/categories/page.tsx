@@ -3,7 +3,7 @@ import CategoryTable from '@/components/shop/categories/CategoryTable'
 import { get } from '@/utils/api'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60 // Revalidate every 60 seconds
 
 const CategoryPage = async ({ searchParams }: any) => {
   const { page } = await searchParams
@@ -13,8 +13,7 @@ const CategoryPage = async ({ searchParams }: any) => {
       page: Number(page) ?? 1,
       size: LIMIT_PAGE_NUMBER
     },
-    ['categories'],
-    0 // 🔧 Fix: Force no-cache to prevent cross-page data contamination
+    ['categories']
   )
   return (
     <>

@@ -24,7 +24,6 @@ export async function apiGet<T = any>(
     try {
         const res = await fetch(url, {
             method: 'GET',
-            cache: 'no-store', // Always fetch fresh data
             ...options
         })
 
@@ -58,7 +57,6 @@ export async function apiPost<T = any>(
                 ...options?.headers
             },
             body: JSON.stringify(body),
-            cache: 'no-store',
             ...options
         })
 
@@ -92,7 +90,6 @@ export async function apiPut<T = any>(
                 ...options?.headers
             },
             body: JSON.stringify(body),
-            cache: 'no-store',
             ...options
         })
 
@@ -119,7 +116,6 @@ export async function apiDelete<T = any>(
     try {
         const res = await fetch(url, {
             method: 'DELETE',
-            cache: 'no-store',
             ...options
         })
 

@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import ProductTableSkeleton from '@/components/shop/products/ProductTableSkeleton'
 import ProductDataLoader from '@/components/shop/products/ProductDataLoader'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 const ProductPage = async ({ searchParams }: any) => {
   return (

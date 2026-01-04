@@ -4,7 +4,6 @@ import CategoryModel from '@/models/Category'
 import { errorResponse } from '@/utils/apiResponse'
 import connectDb from '@/utils/connectDb'
 
-export const dynamic = 'force-dynamic'
 
 export const GET = async () => {
   try {

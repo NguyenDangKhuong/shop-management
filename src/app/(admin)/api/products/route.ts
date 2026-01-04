@@ -5,7 +5,6 @@ import connectDb from '@/utils/connectDb'
 import { LIMIT_PAGE_NUMBER } from '@/utils/constants'
 import { errorResponse } from '@/utils/apiResponse'
 
-export const dynamic = 'force-dynamic'
 
 export const GET = async (req: NextRequest) => {
   try {

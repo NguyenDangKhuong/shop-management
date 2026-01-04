@@ -1,8 +1,7 @@
 import { Metadata } from 'next'
 import FacebookPostTable from '@/components/shop/facebook-posts/FacebookPostTable'
 
-// Force dynamic rendering - no caching
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata: Metadata = {
     title: 'Facebook Posts Management',
