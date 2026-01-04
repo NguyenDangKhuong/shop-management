@@ -37,9 +37,9 @@ jest.mock('@/utils/api', () => ({
 }))
 
 describe('CategoryPage (Admin)', () => {
-    it('has correct dynamic export configuration', () => {
+    it('has correct revalidate export configuration', () => {
         const CategoryPageModule = require('@/app/(admin)/categories/page')
-        expect(CategoryPageModule.dynamic).toBe('force-dynamic')
+        expect(CategoryPageModule.revalidate).toBe(60)
     })
 
     it('renders DashboardTitle with correct props', async () => {

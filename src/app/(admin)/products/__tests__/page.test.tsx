@@ -15,9 +15,9 @@ jest.mock('@/components/shop/products/ProductDataLoader', () => {
 })
 
 describe('ProductPage (Admin)', () => {
-    it('has correct dynamic export configuration', () => {
+    it('has correct revalidate export configuration', () => {
         const ProductPageModule = require('@/app/(admin)/products/page')
-        expect(ProductPageModule.dynamic).toBe('force-dynamic')
+        expect(ProductPageModule.revalidate).toBe(60)
     })
 
     it('renders without errors', async () => {
