@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Form, Input, Modal, Button, App } from 'antd'
 import { UploadOutlined, LinkOutlined } from '@ant-design/icons'
 import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload'
@@ -41,7 +41,7 @@ const ShopeeLinksModal = ({
     )
 
     // Set form values when modal opens
-    useState(() => {
+    useEffect(() => {
         if (isOpen) {
             form.setFieldsValue({
                 name: editingLink.name || '',
@@ -50,7 +50,7 @@ const ShopeeLinksModal = ({
             })
             setImageUrl(editingLink.imageUrl || '')
         }
-    })
+    }, [isOpen, editingLink, form])
 
     const handleSubmit = async () => {
         try {
