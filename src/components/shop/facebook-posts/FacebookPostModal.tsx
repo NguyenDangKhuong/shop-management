@@ -27,7 +27,7 @@ const { TextArea } = Input
 // Configuration objects
 const statusOptions = [
     { value: 'draft', label: 'Nháp' },
-    { value: 'scheduled', label: 'Đã lên lịch' },
+    { value: 'scheduled', label: 'Lên lịch' },
     { value: 'published', label: 'Đã đăng' },
     { value: 'failed', label: 'Thất bại' }
 ]
@@ -216,8 +216,18 @@ const FacebookPostModal = ({
             setLoading(true)
             const values = await form.validateFields()
 
+            // Auto-set schedule if not provided (current time + 5 minutes)
+            let scheduleDate = values.scheduledDate
+            let scheduleTime = values.scheduledTime
+
+            if (!scheduleDate || !scheduleTime) {
+                const now = dayjs().add(5, 'minute')
+                scheduleDate = scheduleDate || now
+                scheduleTime = scheduleTime || now
+            }
+
             // Use helper function for date/time combination
-            const scheduleData = combineDateAndTime(values.scheduledDate, values.scheduledTime)
+            const scheduleData = combineDateAndTime(scheduleDate, scheduleTime)
 
             // Use helper function for media files preparation
             const finalMediaFiles = prepareMediaFiles(values.postType, values.videoLink, mediaFiles)

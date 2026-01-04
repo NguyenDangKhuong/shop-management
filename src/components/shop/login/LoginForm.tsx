@@ -29,7 +29,7 @@ const LoginForm = () => {
       if (result.success) {
         // Redirect based on role
         if (result.role === 0) {
-          router.push('/products')
+          router.push('/facebook-posts')
         } else {
           router.push('/')
         }

@@ -25,6 +25,11 @@ const DashboardSider = ({ collapsed }: any) => {
         defaultSelectedKeys={[pathname]}
         items={[
           {
+            key: '/facebook-posts',
+            icon: <FacebookOutlined />,
+            label: <Link href='/facebook-posts'>Facebook Posts</Link>
+          },
+          {
             key: '/carts',
             icon: <ShoppingCartOutlined />,
             label: <Link href='/carts'>Thanh toán</Link>
@@ -43,11 +48,6 @@ const DashboardSider = ({ collapsed }: any) => {
             key: '/orders',
             icon: <BarChartOutlined />,
             label: <Link href='/orders'>Thống kê</Link>
-          },
-          {
-            key: '/facebook-posts',
-            icon: <FacebookOutlined />,
-            label: <Link href='/facebook-posts'>Facebook Posts</Link>
           }
         ]}
       />
