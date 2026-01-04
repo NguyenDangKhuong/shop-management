@@ -16,7 +16,12 @@ export class ShopeeLink {
     updatedAt?: Date
 }
 
-const ShopeeLinkModel = mongoose.models.ShopeeLink || getModelForClass(ShopeeLink, {
+// Clear cached model to prevent hot reload issues
+if (mongoose.models.ShopeeLink) {
+    delete mongoose.models.ShopeeLink
+}
+
+const ShopeeLinkModel = getModelForClass(ShopeeLink, {
     schemaOptions: { timestamps: true, collection: 'shopeelinks' }
 })
 
