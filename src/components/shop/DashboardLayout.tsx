@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { Layout, theme } from 'antd'
+import { Drawer, Layout, theme } from 'antd'
 import { isMobile } from 'react-device-detect'
 
 import DashboardFooter from './DashboardFooter'
@@ -19,7 +19,23 @@ const DashboardLayout = ({ children }: any) => {
 
   return (
     <Layout className='h-full' style={{ minHeight: '100vh' }}>
-      <DashboardSider collapsed={collapsed} />
+      {/* Desktop Sidebar - Always visible */}
+      {!isMobile && <DashboardSider collapsed={collapsed} />}
+
+      {/* Mobile Drawer - Overlay on top */}
+      {isMobile && (
+        <Drawer
+          placement='left'
+          onClose={() => setCollapsed(true)}
+          open={!collapsed}
+          closable={false}
+          width={200}
+          styles={{ body: { padding: 0, background: '#001529' } }}
+        >
+          <DashboardSider collapsed={false} />
+        </Drawer>
+      )}
+
       <Layout>
         <DashboardHeader collapsed={collapsed} setCollapsed={() => setCollapsed(!collapsed)} />
         <Content

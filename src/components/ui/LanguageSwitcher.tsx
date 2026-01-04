@@ -31,18 +31,14 @@ const LanguageSwitcher = () => {
         <Select
             value={currentLocale}
             onChange={handleLanguageChange}
-            style={{ width: 120 }}
+            style={{ width: 100 }}
             suffixIcon={<GlobalOutlined />}
         >
             <Option value="vi">
-                <span className="flex items-center gap-2">
-                    🇻🇳 Tiếng Việt
-                </span>
+                🇻🇳 VN
             </Option>
             <Option value="en">
-                <span className="flex items-center gap-2">
-                    🇬🇧 English
-                </span>
+                🇬🇧 EN
             </Option>
         </Select>
     )
