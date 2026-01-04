@@ -10,13 +10,23 @@ export const revalidate = 0
 export async function GET() {
     try {
         await connectDB()
+
+        // Debug logging to verify correct collection
+        console.log('🔍 ShopeeLink Model Info:', {
+            modelName: ShopeeLinkModel.modelName,
+            collectionName: ShopeeLinkModel.collection.name
+        })
+
         const links = await ShopeeLinkModel.find().sort({ createdAt: -1 })
+
+        console.log('✅ Fetched Shopee Links:', links.length)
 
         return NextResponse.json({
             success: true,
             data: links
         })
     } catch (error: any) {
+        console.error('❌ Shopee Links GET Error:', error)
         return NextResponse.json({
             success: false,
             error: error.message
