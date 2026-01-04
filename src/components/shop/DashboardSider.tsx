@@ -26,14 +26,14 @@ const DashboardSider = ({ collapsed }: any) => {
         defaultSelectedKeys={[pathname]}
         items={[
           {
-            key: '/facebook-posts',
-            icon: <FacebookOutlined />,
-            label: <Link href='/facebook-posts'>Facebook Posts</Link>
-          },
-          {
             key: '/shopee-links',
             icon: <ShoppingOutlined />,
             label: <Link href='/shopee-links'>Shopee Links</Link>
+          },
+          {
+            key: '/facebook-posts',
+            icon: <FacebookOutlined />,
+            label: <Link href='/facebook-posts'>Facebook Posts</Link>
           },
           {
             key: '/carts',

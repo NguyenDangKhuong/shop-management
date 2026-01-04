@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { DatePicker, Form, Input, Modal, Select, message, TimePicker, Button, Image } from 'antd'
+import { DatePicker, Form, Input, Modal, Select, App, TimePicker, Button, Image } from 'antd'
 import { UploadOutlined, DeleteOutlined, LinkOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
@@ -80,6 +80,7 @@ const FacebookPostModal = ({
     editingPost,
     onRefresh
 }: FacebookPostModalProps) => {
+    const { message } = App.useApp()
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
     const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([])

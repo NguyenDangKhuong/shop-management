@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Form, Input, Modal, Button, message } from 'antd'
+import { Form, Input, Modal, Button, App } from 'antd'
 import { UploadOutlined, LinkOutlined } from '@ant-design/icons'
 import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload'
 import { ShopeeLink } from '@/models/ShopeeLink'
@@ -21,6 +21,7 @@ const ShopeeLinksModal = ({
     editingLink,
     onRefresh
 }: ShopeeLinksModalProps) => {
+    const { message } = App.useApp()
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
     const [imageUrl, setImageUrl] = useState('')

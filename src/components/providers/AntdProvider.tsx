@@ -1,3 +1,5 @@
+'use client'
+
 import { App, ConfigProvider } from 'antd'
 
 import StyledComponentsRegistry from '@/lib/antdRegistry'

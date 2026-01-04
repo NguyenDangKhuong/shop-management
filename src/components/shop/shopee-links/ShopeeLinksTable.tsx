@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { DeleteTwoTone, EditTwoTone } from '@ant-design/icons'
-import { Button, List, Popconfirm, Table, Image, message } from 'antd'
+import { DeleteTwoTone, EditTwoTone, CopyOutlined } from '@ant-design/icons'
+import { Button, List, Popconfirm, Table, Image, App } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { isMobile } from 'react-device-detect'
 import { ShopeeLink } from '@/models/ShopeeLink'
@@ -14,6 +14,7 @@ const initialLink: Partial<ShopeeLink> = {
 }
 
 const ShopeeLinksTable = () => {
+    const { message } = App.useApp()
     const [links, setLinks] = useState<ShopeeLink[]>([])
     const [loading, setLoading] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -54,6 +55,16 @@ const ShopeeLinksTable = () => {
         }
     }
 
+    const handleCopy = async (url: string) => {
+        try {
+            await navigator.clipboard.writeText(url)
+            message.success('Đã copy link!')
+        } catch (error) {
+            console.error('Failed to copy:', error)
+            message.error('Không thể copy link')
+        }
+    }
+
     const handleEdit = (link: ShopeeLink) => {
         setEditingLink(link)
         setIsModalOpen(true)
@@ -80,16 +91,26 @@ const ShopeeLinksTable = () => {
             title: 'Link sản phẩm',
             dataIndex: 'productUrl',
             key: 'productUrl',
-            render: (url: string) => (
-                <a
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
-                >
-                    {url.length > 50 ? `${url.substring(0, 50)}...` : url}
-                </a>
-            )
+            render: (url: string) => {
+                if (!url) return null
+                return (
+                    <div className="flex items-center gap-2">
+                        <CopyOutlined
+                            className="cursor-pointer text-gray-500 hover:text-blue-500"
+                            onClick={() => handleCopy(url)}
+                            title="Copy link"
+                        />
+                        <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:underline"
+                        >
+                            {url.length > 50 ? `${url.substring(0, 50)}...` : url}
+                        </a>
+                    </div>
+                )
+            }
         },
         {
             title: 'Hành động',
@@ -173,14 +194,20 @@ const ShopeeLinksTable = () => {
                                     />
                                 }
                                 description={
-                                    <a
-                                        href={link.productUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-500 text-sm"
-                                    >
-                                        {link.productUrl}
-                                    </a>
+                                    <div className="flex items-center gap-2">
+                                        <CopyOutlined
+                                            className="cursor-pointer text-gray-500"
+                                            onClick={() => handleCopy(link.productUrl)}
+                                        />
+                                        <a
+                                            href={link.productUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-500 text-sm"
+                                        >
+                                            {link.productUrl}
+                                        </a>
+                                    </div>
                                 }
                             />
                         </List.Item>
