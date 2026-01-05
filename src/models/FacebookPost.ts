@@ -1,11 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose'
-
-// MediaFile subdocument interface
-export interface IMediaFile {
-    url: string
-    type: 'image' | 'video' | 'link'
-    publicId?: string
-}
+import { IMediaFile, MediaFile, MediaFileSchema } from './MediaFile'
 
 // FacebookPost interface
 export interface IFacebookPost extends Document {
@@ -21,16 +15,11 @@ export interface IFacebookPost extends Document {
     updatedAt?: Date
 }
 
-// Type aliases for backwards compatibility
-export type MediaFile = IMediaFile
+// Type alias for backwards compatibility
 export type FacebookPost = IFacebookPost
 
-// MediaFile subdocument schema
-const MediaFileSchema = new Schema({
-    url: { type: String, required: true },
-    type: { type: String, enum: ['image', 'video', 'link'], required: true },
-    publicId: { type: String }
-}, { _id: false })
+// Re-export MediaFile types for backwards compatibility
+export type { MediaFile }
 
 // FacebookPost schema
 const FacebookPostSchema = new Schema({

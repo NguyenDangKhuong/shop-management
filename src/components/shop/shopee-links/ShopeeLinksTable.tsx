@@ -11,7 +11,7 @@ import { apiGet, apiDelete } from '@/utils/internalApi'
 import useDebounce from '@/hooks/useDebounce'
 
 const initialLink: Partial<ShopeeLink> = {
-    imageUrl: '',
+    mediaFile: { url: '', type: 'image' as const },
     productUrl: ''
 }
 
@@ -76,13 +76,13 @@ const ShopeeLinksTable = () => {
         },
         {
             title: 'Hình ảnh',
-            dataIndex: 'imageUrl',
-            key: 'imageUrl',
+            dataIndex: 'mediaFile',
+            key: 'mediaFile',
             align: 'center',
             width: 150,
-            render: (url: string) => (
+            render: (mediaFile: { url: string; type: string }) => (
                 <Image
-                    src={url}
+                    src={mediaFile?.url}
                     alt="Product"
                     width={100}
                     height={100}
@@ -180,7 +180,7 @@ const ShopeeLinksTable = () => {
                                     cover={
                                         <div style={{ width: '100%', height: '100px', overflow: 'hidden', backgroundColor: '#f0f0f0' }}>
                                             <Image
-                                                src={link.imageUrl}
+                                                src={link.mediaFile?.url}
                                                 alt={link.name}
                                                 width="100%"
                                                 height={100}

@@ -1,8 +1,9 @@
 import mongoose, { Schema, Document } from 'mongoose'
+import { IMediaFile, MediaFileSchema } from './MediaFile'
 
 export interface IShopeeLink extends Document {
     name: string
-    imageUrl: string
+    mediaFile: IMediaFile  // Required media file
     productUrl: string
     createdAt?: Date
     updatedAt?: Date
@@ -13,7 +14,7 @@ export type ShopeeLink = IShopeeLink
 
 const ShopeeLinkSchema = new Schema({
     name: { type: String, required: true },
-    imageUrl: { type: String, required: true },
+    mediaFile: { type: MediaFileSchema, required: true },
     productUrl: { type: String, required: true }
 }, {
     timestamps: true,

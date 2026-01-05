@@ -8,6 +8,8 @@ import { ShopeeLink } from '@/models/ShopeeLink'
 import { shopeeLinkUploadConfig } from '@/utils/cloudinaryConfig'
 import { apiPost, apiPut } from '@/utils/internalApi'
 
+import { deleteCloudinaryImage } from '@/actions/cloudinary'
+
 interface ShopeeLinksModalProps {
     isOpen: boolean
     setIsOpen: (value: boolean) => void
@@ -25,14 +27,19 @@ const ShopeeLinksModal = ({
     const { message } = App.useApp()
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
-    const [imageUrl, setImageUrl] = useState('')
+    const [mediaFile, setMediaFile] = useState<{ url: string; type: string; publicId?: string } | null>(null)
 
     // Cloudinary upload hook
     const { openWidget, isUploading } = useCloudinaryUpload(
         shopeeLinkUploadConfig,
         (result) => {
-            setImageUrl(result.url)
-            form.setFieldsValue({ imageUrl: result.url })
+            const newMediaFile = {
+                url: result.url,
+                type: 'image',
+                publicId: result.publicId
+            }
+            setMediaFile(newMediaFile)
+            form.setFieldsValue({ mediaUrl: result.url })
             message.success('Upload ảnh thành công!')
         },
         (error) => {
@@ -45,10 +52,13 @@ const ShopeeLinksModal = ({
         if (isOpen) {
             form.setFieldsValue({
                 name: editingLink.name || '',
-                imageUrl: editingLink.imageUrl || '',
+                mediaUrl: editingLink.mediaFile?.url || '',
                 productUrl: editingLink.productUrl || ''
             })
-            setImageUrl(editingLink.imageUrl || '')
+            setMediaFile(editingLink.mediaFile || null)
+        } else {
+            // Reset when closing
+            setMediaFile(null)
         }
     }, [isOpen, editingLink, form])
 
@@ -57,15 +67,22 @@ const ShopeeLinksModal = ({
             setLoading(true)
             const values = await form.validateFields()
 
+            // Prepare data with mediaFile structure
+            const submitData: any = {
+                name: values.name,
+                productUrl: values.productUrl,
+                mediaFile: mediaFile
+            }
+
             const result = editingLink._id
-                ? await apiPut('/api/shopee-links', { id: editingLink._id, ...values })
-                : await apiPost('/api/shopee-links', values)
+                ? await apiPut('/api/shopee-links', { id: editingLink._id, ...submitData })
+                : await apiPost('/api/shopee-links', submitData)
 
             if (result.success) {
                 message.success(editingLink._id ? 'Đã cập nhật!' : 'Đã thêm link mới!')
                 setIsOpen(false)
                 form.resetFields()
-                setImageUrl('')
+                setMediaFile(null)
                 onRefresh()
             } else {
                 message.error(result.error || 'Lưu link thất bại')
@@ -77,10 +94,22 @@ const ShopeeLinksModal = ({
         }
     }
 
-    const handleCancel = () => {
+    const handleCancel = async () => {
+        // Delete newly uploaded image if user cancels without saving
+        if (mediaFile && mediaFile.publicId && mediaFile.publicId !== editingLink.mediaFile?.publicId) {
+            try {
+                const result = await deleteCloudinaryImage(mediaFile.publicId)
+                if (result.success) {
+                    message.info('Đã xóa ảnh chưa sử dụng')
+                }
+            } catch (error) {
+                console.error('Failed to delete uploaded image:', error)
+            }
+        }
+
         setIsOpen(false)
         form.resetFields()
-        setImageUrl('')
+        setMediaFile(null)
     }
 
     return (
@@ -102,9 +131,10 @@ const ShopeeLinksModal = ({
                     <Input placeholder="VD: Áo thun nam cotton..." />
                 </Form.Item>
 
+
                 <Form.Item
                     label="Hình ảnh sản phẩm"
-                    name="imageUrl"
+                    name="mediaUrl"
                     rules={[{ required: true, message: 'Vui lòng upload hình ảnh' }]}
                 >
                     <div>
@@ -116,10 +146,10 @@ const ShopeeLinksModal = ({
                         >
                             Upload Hình Ảnh
                         </Button>
-                        {imageUrl && (
+                        {mediaFile?.url && (
                             <div className="mt-2 border rounded p-2">
                                 <img
-                                    src={imageUrl}
+                                    src={mediaFile.url}
                                     alt="Preview"
                                     className="w-32 h-32 object-cover rounded"
                                 />

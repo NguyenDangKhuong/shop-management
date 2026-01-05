@@ -30,18 +30,21 @@ export async function POST(request: NextRequest) {
         const body = await request.json()
 
         // Validate required fields
-        if (!body.name || !body.imageUrl || !body.productUrl) {
+        if (!body.name || !body.productUrl || !body.mediaFile) {
             return NextResponse.json({
                 success: false,
-                error: 'Missing required fields: name, imageUrl, or productUrl'
+                error: 'Missing required fields: name, productUrl, or mediaFile'
             }, { status: 400 })
         }
 
-        const newLink = await ShopeeLinkModel.create({
+        // Create link data
+        const linkData = {
             name: body.name,
-            imageUrl: body.imageUrl,
-            productUrl: body.productUrl
-        })
+            productUrl: body.productUrl,
+            mediaFile: body.mediaFile
+        }
+
+        const newLink = await ShopeeLinkModel.create(linkData)
 
         return NextResponse.json({
             success: true,

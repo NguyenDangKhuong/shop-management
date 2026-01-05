@@ -75,7 +75,7 @@ describe('ShopeeLinksModal', () => {
             editingLink: {
                 _id: '1',
                 name: 'Test Product',
-                imageUrl: 'https://example.com/image.jpg',
+                mediaFile: { url: 'https://example.com/image.jpg', type: 'image' },
                 productUrl: 'https://shopee.vn/product/123'
             } as any
         }
@@ -142,7 +142,7 @@ describe('ShopeeLinksModal', () => {
 
         const editProps = {
             ...defaultProps,
-            editingLink: { _id: '1', name: 'Test', imageUrl: 'url', productUrl: 'url' } as any
+            editingLink: { _id: '1', name: 'Test', mediaFile: { url: 'url', type: 'image' }, productUrl: 'url' } as any
         }
 
         render(<ShopeeLinksModal {...editProps} />)

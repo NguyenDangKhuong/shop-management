@@ -65,14 +65,14 @@ describe('ShopeeLinksTable', () => {
         {
             _id: '1',
             name: 'Áo thun nam cotton',
-            imageUrl: 'https://example.com/image1.jpg',
+            mediaFile: { url: 'https://example.com/image1.jpg', type: 'image' },
             productUrl: 'https://shopee.vn/product/123',
             createdAt: '2026-01-01T10:00:00Z'
         },
         {
             _id: '2',
             name: 'Giày thể thao',
-            imageUrl: 'https://example.com/image2.jpg',
+            mediaFile: { url: 'https://example.com/image2.jpg', type: 'image' },
             productUrl: 'https://shopee.vn/product/456',
             createdAt: '2026-01-02T10:00:00Z'
         }
