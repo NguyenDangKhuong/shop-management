@@ -178,12 +178,19 @@ const ShopeeLinksTable = () => {
                                 <Card
                                     loading={loading}
                                     cover={
-                                        <Image
-                                            src={link.imageUrl}
-                                            alt={link.name}
-                                            style={{ height: 100, objectFit: 'cover' }}
-                                            preview={true}
-                                        />
+                                        <div style={{ width: '100%', height: '100px', overflow: 'hidden', backgroundColor: '#f0f0f0' }}>
+                                            <Image
+                                                src={link.imageUrl}
+                                                alt={link.name}
+                                                width="100%"
+                                                height={100}
+                                                style={{ height: '100%', objectFit: 'cover', width: '100%', display: 'block' }}
+                                                preview={true}
+                                                placeholder={
+                                                    <div style={{ width: '100%', height: '100px', backgroundColor: '#f0f0f0' }} />
+                                                }
+                                            />
+                                        </div>
                                     }
                                     actions={[
                                         <CopyOutlined

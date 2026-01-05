@@ -76,7 +76,7 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
             background: '#fff',
             borderRadius: '2px',
             transition: 'all 0.3s ease',
-            transform: collapsed ? 'rotate(0deg)' : 'rotate(45deg) translateY(7px)'
+            transform: collapsed ? 'rotate(0deg)' : 'rotate(45deg) translateY(10px)'
           }} />
           <span style={{
             width: '24px',
@@ -92,7 +92,7 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
             background: '#fff',
             borderRadius: '2px',
             transition: 'all 0.3s ease',
-            transform: collapsed ? 'rotate(0deg)' : 'rotate(-45deg) translateY(-7px)'
+            transform: collapsed ? 'rotate(0deg)' : 'rotate(-45deg) translateY(-10px)'
           }} />
         </button>
         <Flex align='center' gap={16}>
