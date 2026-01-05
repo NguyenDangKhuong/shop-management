@@ -29,7 +29,16 @@ export async function POST(request: NextRequest) {
         await connectDB()
         const body = await request.json()
 
+        // Validate required fields
+        if (!body.name || !body.imageUrl || !body.productUrl) {
+            return NextResponse.json({
+                success: false,
+                error: 'Missing required fields: name, imageUrl, or productUrl'
+            }, { status: 400 })
+        }
+
         const newLink = await ShopeeLinkModel.create({
+            name: body.name,
             imageUrl: body.imageUrl,
             productUrl: body.productUrl
         })
@@ -39,6 +48,7 @@ export async function POST(request: NextRequest) {
             data: newLink
         })
     } catch (error: any) {
+        console.error('❌ Shopee Link POST Error:', error)
         return NextResponse.json({
             success: false,
             error: error.message
