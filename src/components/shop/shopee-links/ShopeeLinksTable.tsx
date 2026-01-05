@@ -210,9 +210,19 @@ const ShopeeLinksTable = () => {
                                             />
                                         </Popconfirm>
                                     ]}
+                                    bodyStyle={{ padding: '12px' }}
                                 >
                                     <Card.Meta
-                                        title={<div className="font-medium text-sm">{link.name}</div>}
+                                        title={
+                                            <div className="flex items-center gap-1">
+                                                <CopyOutlined
+                                                    className="text-gray-400 hover:text-blue-500 cursor-pointer text-xs"
+                                                    onClick={() => handleCopy(link.name)}
+                                                    title="Copy tên sản phẩm"
+                                                />
+                                                <span className="font-medium text-sm">{link.name}</span>
+                                            </div>
+                                        }
                                         description={
                                             <a
                                                 href={link.productUrl}
