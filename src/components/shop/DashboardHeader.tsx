@@ -1,5 +1,5 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons'
-import { Avatar, Button, Dropdown, Flex, Layout, MenuProps, theme } from 'antd'
+import { UserOutlined } from '@ant-design/icons'
+import { Avatar, Dropdown, Flex, Layout, MenuProps, theme } from 'antd'
 
 import { logout } from '@/actions/auth'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
@@ -35,22 +35,80 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
   ]
 
   return (
-    <Header style={{ padding: 0, background: colorBgContainer }}>
-      <Flex align='center' justify='space-between'>
-        <Button
-          type='text'
-          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+    <Header
+      style={{
+        padding: '0 24px',
+        background: 'linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
+        height: '64px',
+        lineHeight: 'normal',
+        display: 'flex',
+        alignItems: 'center'
+      }}
+    >
+      <Flex align='center' justify='space-between' style={{ width: '100%', height: '100%' }}>
+        {/* Custom Animated Hamburger */}
+        <button
           onClick={() => setCollapsed()}
+          className="hamburger-menu"
           style={{
-            fontSize: '16px',
-            width: 64,
-            height: 64
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '12px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '5px',
+            width: '48px',
+            height: '48px',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: '8px',
+            transition: 'background 0.3s ease'
           }}
-        />
-        <Flex align='center' gap={16} className="mr-4">
+          onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+        >
+          <span style={{
+            width: '24px',
+            height: '2px',
+            background: '#fff',
+            borderRadius: '2px',
+            transition: 'all 0.3s ease',
+            transform: collapsed ? 'rotate(0deg)' : 'rotate(45deg) translateY(7px)'
+          }} />
+          <span style={{
+            width: '24px',
+            height: '2px',
+            background: '#fff',
+            borderRadius: '2px',
+            transition: 'all 0.3s ease',
+            opacity: collapsed ? 1 : 0
+          }} />
+          <span style={{
+            width: '24px',
+            height: '2px',
+            background: '#fff',
+            borderRadius: '2px',
+            transition: 'all 0.3s ease',
+            transform: collapsed ? 'rotate(0deg)' : 'rotate(-45deg) translateY(-7px)'
+          }} />
+        </button>
+        <Flex align='center' gap={16}>
           <LanguageSwitcher />
           <Dropdown menu={{ items }}>
-            <Avatar size={40} icon={<UserOutlined />} className="cursor-pointer" />
+            <Avatar
+              size={40}
+              icon={<UserOutlined />}
+              className="cursor-pointer hover:scale-110 transition-transform"
+              style={{
+                background: 'linear-gradient(135deg, #141e30 0%, #243b55 100%)',
+                border: '2px solid rgba(255,255,255,0.3)'
+              }}
+            />
           </Dropdown>
         </Flex>
       </Flex>

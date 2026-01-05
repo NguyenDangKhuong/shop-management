@@ -40,7 +40,7 @@ const DashboardLayout = ({ children }: any) => {
         <DashboardHeader collapsed={collapsed} setCollapsed={() => setCollapsed(!collapsed)} />
         <Content
           style={{
-            margin: '24px 16px',
+            margin: '24px',
             padding: 24,
             minHeight: 280,
             background: colorBgContainer,
