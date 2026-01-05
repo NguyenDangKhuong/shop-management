@@ -38,7 +38,7 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
     <Header
       style={{
         padding: '0 24px',
-        background: 'linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)',
+        background: 'linear-gradient(135deg, #0a1929 0%, #001e3c 50%, #0d47a1 100%)',
         boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
         position: 'sticky',
         top: 0,
@@ -58,11 +58,9 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
             background: 'transparent',
             border: 'none',
             cursor: 'pointer',
-            padding: '12px',
             display: 'flex',
             flexDirection: 'column',
             gap: '5px',
-            width: '48px',
             height: '48px',
             justifyContent: 'center',
             alignItems: 'center',
