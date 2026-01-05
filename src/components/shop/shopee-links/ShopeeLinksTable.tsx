@@ -212,7 +212,7 @@ const ShopeeLinksTable = () => {
                                     ]}
                                 >
                                     <Card.Meta
-                                        title={<div className="font-medium">{link.name}</div>}
+                                        title={<div className="font-medium text-sm">{link.name}</div>}
                                         description={
                                             <a
                                                 href={link.productUrl}

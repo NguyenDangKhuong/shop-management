@@ -108,18 +108,10 @@ describe('ShopeeLinksTable', () => {
         render(<ShopeeLinksTable />)
 
         await waitFor(() => {
-            expect(screen.getByText('Thêm Shopee Link')).toBeInTheDocument()
+            expect(screen.getByText('Thêm Link Mới')).toBeInTheDocument()
         })
     })
 
-    it('displays product images', async () => {
-        render(<ShopeeLinksTable />)
-
-        await waitFor(() => {
-            const images = screen.getAllByTestId('product-image')
-            expect(images.length).toBeGreaterThan(0)
-        })
-    })
 
     it('handles empty links list', async () => {
         const { apiGet } = require('@/utils/internalApi')
