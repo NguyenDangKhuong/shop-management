@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { DeleteTwoTone, EditTwoTone, CopyOutlined } from '@ant-design/icons'
-import { Button, Popconfirm, Table, Image, App, Card, Row, Col } from 'antd'
+import { Button, Popconfirm, Table, Image, App, Card, Row, Col, Input } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { isMobile } from 'react-device-detect'
 import { ShopeeLink } from '@/models/ShopeeLink'
 import ShopeeLinksModal from './ShopeeLinksModal'
 import { apiGet, apiDelete } from '@/utils/internalApi'
+import useDebounce from '@/hooks/useDebounce'
 
 const initialLink: Partial<ShopeeLink> = {
     imageUrl: '',
@@ -20,6 +21,8 @@ const ShopeeLinksTable = () => {
     const [loading, setLoading] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingLink, setEditingLink] = useState<Partial<ShopeeLink>>(initialLink)
+    const [searchTerm, setSearchTerm] = useState('')
+    const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
     const loadLinks = async () => {
         setLoading(true)
@@ -152,73 +155,90 @@ const ShopeeLinksTable = () => {
                 </Button>
             </div>
 
-            {isMobile ? (
-                <Row gutter={[16, 16]}>
-                    {links.map((link) => (
-                        <Col key={link._id.toString()} xs={12} sm={12}>
-                            <Card
-                                loading={loading}
-                                cover={
-                                    <Image
-                                        src={link.imageUrl}
-                                        alt={link.name}
-                                        style={{ height: 100, objectFit: 'cover' }}
-                                        preview={true}
-                                    />
-                                }
-                                actions={[
-                                    <CopyOutlined
-                                        key="copy"
-                                        onClick={() => handleCopy(link.productUrl)}
-                                        className="text-lg"
-                                    />,
-                                    <EditTwoTone
-                                        key="edit"
-                                        onClick={() => handleEdit(link)}
-                                        className="text-lg"
-                                    />,
-                                    <Popconfirm
-                                        key="delete"
-                                        title="Xóa link?"
-                                        description="Bạn có chắc muốn xóa?"
-                                        onConfirm={() => handleDelete(link._id.toString())}
-                                        okText="Xóa"
-                                        cancelText="Hủy"
-                                    >
-                                        <DeleteTwoTone
-                                            twoToneColor="#ff4d4f"
-                                            className="text-lg"
-                                        />
-                                    </Popconfirm>
-                                ]}
-                            >
-                                <Card.Meta
-                                    title={<div className="font-medium">{link.name}</div>}
-                                    description={
-                                        <a
-                                            href={link.productUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-blue-500 text-xs block truncate"
-                                        >
-                                            {link.productUrl.replace('https://', '')}
-                                        </a>
-                                    }
-                                />
-                            </Card>
-                        </Col>
-                    ))}
-                </Row>
-            ) : (
-                <Table
-                    rowKey="_id"
-                    loading={loading}
-                    bordered
-                    columns={columns}
-                    dataSource={links}
-                    pagination={{ pageSize: 20, showTotal: (total) => `Tổng ${total} links` }}
+            <div className="mb-4">
+                <Input.Search
+                    placeholder="Tìm kiếm theo tên sản phẩm..."
+                    allowClear
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ maxWidth: 400 }}
                 />
-            )}
+            </div>
+
+            {/* Filter links based on search term */}
+            {(() => {
+                const filteredLinks = links.filter(link =>
+                    link.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+                )
+
+                return isMobile ? (
+                    <Row gutter={[16, 16]}>
+                        {filteredLinks.map((link) => (
+                            <Col key={link._id.toString()} xs={12} sm={12}>
+                                <Card
+                                    loading={loading}
+                                    cover={
+                                        <Image
+                                            src={link.imageUrl}
+                                            alt={link.name}
+                                            style={{ height: 100, objectFit: 'cover' }}
+                                            preview={true}
+                                        />
+                                    }
+                                    actions={[
+                                        <CopyOutlined
+                                            key="copy"
+                                            onClick={() => handleCopy(link.productUrl)}
+                                            className="text-lg"
+                                        />,
+                                        <EditTwoTone
+                                            key="edit"
+                                            onClick={() => handleEdit(link)}
+                                            className="text-lg"
+                                        />,
+                                        <Popconfirm
+                                            key="delete"
+                                            title="Xóa link?"
+                                            description="Bạn có chắc muốn xóa?"
+                                            onConfirm={() => handleDelete(link._id.toString())}
+                                            okText="Xóa"
+                                            cancelText="Hủy"
+                                        >
+                                            <DeleteTwoTone
+                                                twoToneColor="#ff4d4f"
+                                                className="text-lg"
+                                            />
+                                        </Popconfirm>
+                                    ]}
+                                >
+                                    <Card.Meta
+                                        title={<div className="font-medium">{link.name}</div>}
+                                        description={
+                                            <a
+                                                href={link.productUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-blue-500 text-xs block truncate"
+                                            >
+                                                {link.productUrl.replace('https://', '')}
+                                            </a>
+                                        }
+                                    />
+                                </Card>
+                            </Col>
+                        ))}
+                    </Row>
+                ) : (
+                    <Table
+                        rowKey="_id"
+                        loading={loading}
+                        bordered
+                        columns={columns}
+                        dataSource={filteredLinks}
+                        pagination={{ pageSize: 20, showTotal: (total) => `Tổng ${total} links` }}
+                    />
+                )
+            })()}
 
             <ShopeeLinksModal
                 isOpen={isModalOpen}
