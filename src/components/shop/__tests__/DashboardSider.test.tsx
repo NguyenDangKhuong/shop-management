@@ -25,6 +25,7 @@ describe('DashboardSider', () => {
         const menuItems = [
             'Shopee Links',
             'Facebook Posts',
+            'TikTok Accounts',
             'Thanh toán',
             'Sản phẩm',
             'Danh mục',
@@ -39,10 +40,11 @@ describe('DashboardSider', () => {
         const links = screen.getAllByRole('link')
         expect(links[1]).toHaveTextContent('Shopee Links') // First menu item (index 1 because logo is index 0)
         expect(links[2]).toHaveTextContent('Facebook Posts')
-        expect(links[3]).toHaveTextContent('Thanh toán')
-        expect(links[4]).toHaveTextContent('Sản phẩm')
-        expect(links[5]).toHaveTextContent('Danh mục')
-        expect(links[6]).toHaveTextContent('Thống kê')
+        expect(links[3]).toHaveTextContent('TikTok Accounts')
+        expect(links[4]).toHaveTextContent('Thanh toán')
+        expect(links[5]).toHaveTextContent('Sản phẩm')
+        expect(links[6]).toHaveTextContent('Danh mục')
+        expect(links[7]).toHaveTextContent('Thống kê')
     })
 
     it('should have correct navigation links', () => {
@@ -50,6 +52,7 @@ describe('DashboardSider', () => {
 
         expect(screen.getByText('Shopee Links').closest('a')).toHaveAttribute('href', '/shopee-links')
         expect(screen.getByText('Facebook Posts').closest('a')).toHaveAttribute('href', '/facebook-posts')
+        expect(screen.getByText('TikTok Accounts').closest('a')).toHaveAttribute('href', '/tiktok-accounts')
         expect(screen.getByText('Thanh toán').closest('a')).toHaveAttribute('href', '/carts')
         expect(screen.getByText('Sản phẩm').closest('a')).toHaveAttribute('href', '/products')
         expect(screen.getByText('Danh mục').closest('a')).toHaveAttribute('href', '/categories')
@@ -76,6 +79,7 @@ describe('DashboardSider', () => {
         // Check for icon classes - Ant Design uses these classes for icons
         expect(container.querySelector('.anticon-shopping')).toBeInTheDocument() // ShoppingOutlined
         expect(container.querySelector('.anticon-facebook')).toBeInTheDocument() // FacebookOutlined
+        expect(container.querySelector('.anticon-tik-tok')).toBeInTheDocument() // TikTokOutlined
         expect(container.querySelector('.anticon-shopping-cart')).toBeInTheDocument() // ShoppingCartOutlined
         expect(container.querySelector('.anticon-table')).toBeInTheDocument() // TableOutlined
         expect(container.querySelector('.anticon-book')).toBeInTheDocument() // BookOutlined
