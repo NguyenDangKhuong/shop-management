@@ -7,7 +7,8 @@ import {
   FacebookOutlined,
   ShoppingCartOutlined,
   ShoppingOutlined,
-  TableOutlined
+  TableOutlined,
+  TikTokOutlined
 } from '@ant-design/icons'
 import { Layout, Menu } from 'antd'
 
@@ -35,6 +36,11 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
             key: '/facebook-posts',
             icon: <FacebookOutlined />,
             label: <Link href='/facebook-posts'>Facebook Posts</Link>
+          },
+          {
+            key: '/tiktok-accounts',
+            icon: <TikTokOutlined />,
+            label: <Link href='/tiktok-accounts'>TikTok Accounts</Link>
           },
           {
             key: '/carts',

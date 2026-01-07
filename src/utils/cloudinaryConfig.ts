@@ -58,6 +58,19 @@ export const shopeeLinkUploadConfig: CloudinaryWidgetOptions = {
     cropping: false
 }
 
+export const tiktokAccountUploadConfig: CloudinaryWidgetOptions = {
+    cloudName: CLOUD_NAME_CLOUDINARY || '',
+    uploadPreset: CLOUDINARY_UPLOAD_SHOPEE_LINK_PRESET || '', // Reuse shopee preset
+    multiple: false,
+    resourceType: 'image',
+    clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+    maxFileSize: 5242880, // 5MB
+    sources: ['local', 'url', 'camera'],
+    cropping: true,
+    croppingAspectRatio: 1, // Square avatar
+    showSkipCropButton: true
+}
+
 
 // Event handler types
 export type UploadSuccessCallback = (result: CloudinaryUploadResult) => void
