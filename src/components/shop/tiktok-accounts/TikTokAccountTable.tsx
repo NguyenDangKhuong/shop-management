@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Table, Button, Popconfirm, App, Image, Tag } from 'antd'
+import { Table, Button, Popconfirm, App, Image } from 'antd'
 import { EditOutlined, DeleteOutlined, PlusOutlined, UserOutlined, CopyOutlined } from '@ant-design/icons'
 import TikTokAccountModal from './TikTokAccountModal'
 import { TikTokAccount } from '@/models/TikTokAccount'

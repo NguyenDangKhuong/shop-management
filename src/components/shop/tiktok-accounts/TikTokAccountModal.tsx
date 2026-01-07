@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Form, Input, Modal, Button, App } from 'antd'
-import { UploadOutlined, UserOutlined, MailOutlined, KeyOutlined } from '@ant-design/icons'
+import { UploadOutlined, UserOutlined, MailOutlined } from '@ant-design/icons'
 import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload'
 import { TikTokAccount } from '@/models/TikTokAccount'
 import { tiktokAccountUploadConfig } from '@/utils/cloudinaryConfig'
