@@ -6,9 +6,7 @@ import { App, Spin, Button, Popconfirm } from 'antd'
 import {
     CopyOutlined,
     DeleteOutlined,
-    EditOutlined,
     PlusOutlined,
-    UploadOutlined,
     UserOutlined
 } from '@ant-design/icons'
 import dayjs from 'dayjs'
