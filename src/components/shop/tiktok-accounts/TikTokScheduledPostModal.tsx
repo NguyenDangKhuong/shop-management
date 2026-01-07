@@ -99,8 +99,14 @@ const TikTokScheduledPostModal = ({
     const handleVideoUpload = async (file: File) => {
         try {
             setUploading(true)
+
+            // Sanitize filename client-side to avoid "The string did not match the expected pattern" error
+            // which occurs in some browsers (like Safari) when filenames contain special characters
+            const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
+            const renamedFile = new File([file], sanitizedName, { type: file.type })
+
             const formData = new FormData()
-            formData.append('video', file)
+            formData.append('video', renamedFile)
 
             const response = await fetch('/api/minio-video', {
                 method: 'POST',
@@ -120,7 +126,7 @@ const TikTokScheduledPostModal = ({
                 uploadedThisSessionRef.current = newVideo
                 message.success('Đã upload video!')
             } else {
-                message.error('Upload thất bại: ' + data.error)
+                message.error('Upload thất bại: ' + (data.message || 'Lỗi không xác định'))
             }
         } catch (error: any) {
             message.error('Lỗi upload: ' + error.message)
