@@ -61,7 +61,8 @@ const ShopeeLinksModal = ({
             form.setFieldsValue({
                 name: editingLink.name || '',
                 mediaUrl: editingLink.mediaFile?.url || '',
-                productUrl: editingLink.productUrl || ''
+                productUrl: editingLink.productUrl || '',
+                description: editingLink.description || ''
             })
             setMediaFile(editingLink.mediaFile || null)
         } else {
@@ -79,6 +80,7 @@ const ShopeeLinksModal = ({
             const submitData: any = {
                 name: values.name,
                 productUrl: values.productUrl,
+                description: values.description || '',
                 mediaFile: mediaFile
             }
 
@@ -185,6 +187,16 @@ const ShopeeLinksModal = ({
                     <Input
                         placeholder="https://shopee.vn/product/..."
                         prefix={<LinkOutlined />}
+                    />
+                </Form.Item>
+
+                <Form.Item
+                    label="Mô tả"
+                    name="description"
+                >
+                    <Input.TextArea
+                        rows={3}
+                        placeholder="Mô tả sản phẩm (tùy chọn)..."
                     />
                 </Form.Item>
             </Form>

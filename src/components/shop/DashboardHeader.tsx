@@ -8,7 +8,7 @@ const { Header } = Layout
 
 const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
   const {
-    token: { colorBgContainer }
+    token: { colorBgContainer: _colorBgContainer }
   } = theme.useToken()
 
   const items: MenuProps['items'] = [

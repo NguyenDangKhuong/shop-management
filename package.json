@@ -16,6 +16,7 @@
     "build-ananalyzer": "ANALYZE=true yarn build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "format": "prettier --write \"./**/*.{ts,tsx,json}\"",
     "test": "jest",
     "test:perf": "lighthouse http://localhost:3000 --only-categories=performance --output=html --output-path=./lighthouse-reports/report-$(date +%Y%m%d-%H%M%S).html --view",

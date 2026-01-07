@@ -5,6 +5,7 @@ export interface IShopeeLink extends Document {
     name: string
     mediaFile: IMediaFile  // Required media file
     productUrl: string
+    description?: string
     createdAt?: Date
     updatedAt?: Date
 }
@@ -15,7 +16,8 @@ export type ShopeeLink = IShopeeLink
 const ShopeeLinkSchema = new Schema({
     name: { type: String, required: true },
     mediaFile: { type: MediaFileSchema, required: true },
-    productUrl: { type: String, required: true }
+    productUrl: { type: String, required: true },
+    description: { type: String, required: false }
 }, {
     timestamps: true,
     collection: 'shopeelinks'
