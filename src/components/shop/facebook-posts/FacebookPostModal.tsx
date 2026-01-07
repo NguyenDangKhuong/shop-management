@@ -89,6 +89,10 @@ const FacebookPostModal = ({
     const [videoUploading, setVideoUploading] = useState(false)
     const videoInputRef = useRef<HTMLInputElement>(null)
 
+    // Track newly uploaded media this session (not existing media from editing)
+    // Store full MediaFile info so cleanup doesn't depend on state
+    const uploadedThisSessionRef = useRef<MediaFile[]>([])
+
     // Cloudinary upload hook
     const { openWidget, isUploading, progress } = useCloudinaryUpload(
         facebookPostUploadConfig,
@@ -99,6 +103,8 @@ const FacebookPostModal = ({
                 publicId: result.publicId
             }
             setMediaFiles(prev => [...prev, newFile])
+            // Track new upload for cleanup
+            uploadedThisSessionRef.current.push(newFile)
             message.success(`${result.resourceType} uploaded successfully!`)
         },
         (error) => {
@@ -115,6 +121,9 @@ const FacebookPostModal = ({
         }
 
         if (isOpen) {
+            // Clear tracker when modal opens - don't track existing media as "new"
+            uploadedThisSessionRef.current = []
+
             const scheduledDate = editingPost.scheduledDate
                 ? dayjs(editingPost.scheduledDate, DATE_FORMAT)
                 : null
@@ -159,6 +168,8 @@ const FacebookPostModal = ({
                     publicId: result.fileName || file.name // Use fileName from response as publicId
                 }
                 setMediaFiles([newFile])
+                // Track new upload for cleanup
+                uploadedThisSessionRef.current.push(newFile)
                 // Set postType to 'reel-video' for video upload
                 setPostType('reel-video')
                 form.setFieldsValue({ postType: 'reel-video' })
@@ -209,8 +220,46 @@ const FacebookPostModal = ({
             }
         }
 
+        // Remove from tracking (already deleted)
+        uploadedThisSessionRef.current = uploadedThisSessionRef.current.filter(
+            file => file.publicId !== publicId
+        )
+
         // Remove from UI state
         setMediaFiles(prev => prev.filter(file => file.publicId !== publicId))
+    }
+
+    // Cleanup unsubmitted uploads when modal is closed without saving
+    const cleanupUnsubmittedUploads = async () => {
+        if (uploadedThisSessionRef.current.length === 0) return
+
+        const cleanupPromises: Promise<void>[] = []
+
+        // Use the tracked files (not state) to ensure we have the data even after state is cleared
+        for (const mediaFile of uploadedThisSessionRef.current) {
+            if (!mediaFile.publicId) continue
+
+            // Cleanup based on file type
+            if (mediaFile.type === 'video') {
+                // MinIO cleanup for reel-video
+                cleanupPromises.push(
+                    deleteVideoFromMinIO(mediaFile.publicId)
+                        .then(() => { /* void */ })
+                        .catch(err => console.error('Cleanup error (MinIO):', err))
+                )
+            } else if (mediaFile.type === 'image' && mediaFile.publicId) {
+                // Cloudinary cleanup for post images
+                cleanupPromises.push(
+                    deleteCloudinaryImage(mediaFile.publicId)
+                        .then(() => { /* void */ })
+                        .catch(err => console.error('Cleanup error (Cloudinary):', err))
+                )
+            }
+        }
+
+        // Wait for all cleanups to complete
+        await Promise.all(cleanupPromises)
+        uploadedThisSessionRef.current = []
     }
 
     const handleSubmit = async () => {
@@ -249,6 +298,8 @@ const FacebookPostModal = ({
                 : await apiPost('/api/facebook-posts', postData)
 
             if (result.success) {
+                // Clear tracker on successful submit (media is now saved)
+                uploadedThisSessionRef.current = []
                 message.success(editingPost._id ? 'Post updated!' : 'Post created!')
                 setIsOpen(false)
                 form.resetFields()
@@ -264,7 +315,14 @@ const FacebookPostModal = ({
         }
     }
 
-    const handleCancel = () => {
+    const handleCancel = async () => {
+        // Prevent modal from closing immediately - we'll close it manually after cleanup
+        setLoading(true)
+
+        // Cleanup any uploaded media that wasn't submitted
+        await cleanupUnsubmittedUploads()
+
+        setLoading(false)
         setIsOpen(false)
         form.resetFields()
         setMediaFiles([])

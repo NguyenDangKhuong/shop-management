@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Form, Input, Modal, Button, App } from 'antd'
 import { UploadOutlined, LinkOutlined } from '@ant-design/icons'
 import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload'
@@ -29,6 +29,9 @@ const ShopeeLinksModal = ({
     const [loading, setLoading] = useState(false)
     const [mediaFile, setMediaFile] = useState<{ url: string; type: string; publicId?: string } | null>(null)
 
+    // Track newly uploaded image this session (not existing from editing)
+    const uploadedThisSessionRef = useRef<{ url: string; type: string; publicId?: string } | null>(null)
+
     // Cloudinary upload hook
     const { openWidget, isUploading } = useCloudinaryUpload(
         shopeeLinkUploadConfig,
@@ -39,6 +42,8 @@ const ShopeeLinksModal = ({
                 publicId: result.publicId
             }
             setMediaFile(newMediaFile)
+            // Track new upload for cleanup
+            uploadedThisSessionRef.current = newMediaFile
             form.setFieldsValue({ mediaUrl: result.url })
             message.success('Upload ảnh thành công!')
         },
@@ -50,6 +55,9 @@ const ShopeeLinksModal = ({
     // Set form values when modal opens
     useEffect(() => {
         if (isOpen) {
+            // Clear tracker when modal opens - don't track existing media as "new"
+            uploadedThisSessionRef.current = null
+
             form.setFieldsValue({
                 name: editingLink.name || '',
                 mediaUrl: editingLink.mediaFile?.url || '',
@@ -79,6 +87,8 @@ const ShopeeLinksModal = ({
                 : await apiPost('/api/shopee-links', submitData)
 
             if (result.success) {
+                // Clear tracker on successful submit (image is now saved)
+                uploadedThisSessionRef.current = null
                 message.success(editingLink._id ? 'Đã cập nhật!' : 'Đã thêm link mới!')
                 setIsOpen(false)
                 form.resetFields()
@@ -95,18 +105,24 @@ const ShopeeLinksModal = ({
     }
 
     const handleCancel = async () => {
+        // Show loading to ensure cleanup completes before modal closes
+        setLoading(true)
+
         // Delete newly uploaded image if user cancels without saving
-        if (mediaFile && mediaFile.publicId && mediaFile.publicId !== editingLink.mediaFile?.publicId) {
+        // Use ref instead of state to ensure we have data even after state clears
+        if (uploadedThisSessionRef.current?.publicId) {
             try {
-                const result = await deleteCloudinaryImage(mediaFile.publicId)
+                const result = await deleteCloudinaryImage(uploadedThisSessionRef.current.publicId)
                 if (result.success) {
-                    message.info('Đã xóa ảnh chưa sử dụng')
+                    console.log('Cleanup: Deleted unused image')
                 }
             } catch (error) {
-                console.error('Failed to delete uploaded image:', error)
+                console.error('Cleanup error:', error)
             }
         }
 
+        uploadedThisSessionRef.current = null
+        setLoading(false)
         setIsOpen(false)
         form.resetFields()
         setMediaFile(null)
