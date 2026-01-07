@@ -32,7 +32,9 @@ export async function POST(request: NextRequest) {
 
         // Generate unique filename
         const timestamp = Date.now()
-        const fileName = `reel-${timestamp}-${file.name}`
+        // Sanitize filename: remove special characters, spaces, etc.
+        const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
+        const fileName = `reel-${timestamp}-${sanitizedFileName}`
 
         // Upload to MinIO
         await minioClient.putObject(
