@@ -100,35 +100,45 @@ const TikTokScheduledPostModal = ({
         try {
             setUploading(true)
 
-            // Sanitize filename client-side to avoid "The string did not match the expected pattern" error
-            // which occurs in some browsers (like Safari) when filenames contain special characters
+            // 1. Get Presigned URL
             const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
-            const renamedFile = new File([file], sanitizedName, { type: file.type })
+            const presignedResponse = await fetch(
+                `/api/minio-video?fileName=${encodeURIComponent(sanitizedName)}&fileType=${encodeURIComponent(file.type)}`
+            )
+            const presignedData = await presignedResponse.json()
 
-            const formData = new FormData()
-            formData.append('video', renamedFile)
+            if (!presignedData.success) {
+                throw new Error(presignedData.message || 'Failed to get upload URL')
+            }
 
-            const response = await fetch('/api/minio-video', {
-                method: 'POST',
-                body: formData
+            const { uploadUrl, publicUrl, fileName } = presignedData
+
+            // 2. Upload to MinIO directly
+            const uploadResponse = await fetch(uploadUrl, {
+                method: 'PUT',
+                body: file,
+                headers: {
+                    'Content-Type': file.type
+                }
             })
 
-            const data = await response.json()
-
-            if (data.success) {
+            if (uploadResponse.ok) {
                 const newVideo = {
-                    url: data.url,
+                    url: publicUrl,
                     type: 'video',
-                    publicId: data.fileName
+                    publicId: fileName
                 }
                 setVideo(newVideo)
                 // Track new upload for cleanup
                 uploadedThisSessionRef.current = newVideo
                 message.success('Đã upload video!')
             } else {
-                message.error('Upload thất bại: ' + (data.message || 'Lỗi không xác định'))
+                console.error('Upload failed with status:', uploadResponse.status)
+                throw new Error('Upload to storage failed')
             }
+
         } catch (error: any) {
+            console.error('Upload error:', error)
             message.error('Lỗi upload: ' + error.message)
         } finally {
             setUploading(false)
