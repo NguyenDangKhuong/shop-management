@@ -91,7 +91,7 @@ const TikTokScheduledPostModal = ({
             form.setFieldsValue({ description: descriptionText })
 
             if (!selected.description) {
-                message.info('Shopee Link chưa có mô tả, đã điền tên sản phẩm')
+                message.info('Shopee Link chưa có mô tả, đã điền tên sản phẩm', 3)
             }
         }
     }

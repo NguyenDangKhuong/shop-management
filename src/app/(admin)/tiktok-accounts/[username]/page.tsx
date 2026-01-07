@@ -3,7 +3,15 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { App, Spin, Button, Popconfirm } from 'antd'
-import { UserOutlined, PlusOutlined, EditOutlined, DeleteOutlined, CopyOutlined } from '@ant-design/icons'
+import {
+    CopyOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    PlusOutlined,
+    UploadOutlined,
+    UserOutlined
+} from '@ant-design/icons'
+import dayjs from 'dayjs'
 import TikTokScheduledPostModal from '@/components/shop/tiktok-accounts/TikTokScheduledPostModal'
 
 interface TikTokAccount {
@@ -226,7 +234,11 @@ export default function TikTokAccountPage() {
                 ) : (
                     <div className="space-y-3">
                         {scheduledPosts.map((post: any) => (
-                            <div key={post._id} className="border rounded-lg p-3 flex gap-3">
+                            <div
+                                key={post._id}
+                                className="border rounded-lg p-3 flex gap-3 cursor-pointer hover:bg-gray-50 transition-colors"
+                                onClick={() => handleEditPost(post)}
+                            >
                                 {/* Video Thumbnail */}
                                 {post.video?.url && (
                                     <div className="w-20 h-20 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
@@ -242,9 +254,21 @@ export default function TikTokAccountPage() {
                                     {/* Schedule Time */}
                                     <div className="flex items-center gap-2 mb-1">
                                         <span className="text-xs font-semibold text-blue-600">
-                                            {new Date(post.scheduledDate).toLocaleDateString('vi-VN')}
+                                            {(() => {
+                                                const date = dayjs(post.scheduledDate)
+                                                const today = dayjs()
+                                                const tomorrow = dayjs().add(1, 'day')
+
+                                                if (date.isSame(today, 'day')) {
+                                                    return `(Hôm nay) - ${date.format('DD/MM/YYYY')}`
+                                                }
+                                                if (date.isSame(tomorrow, 'day')) {
+                                                    return `(Ngày mai) - ${date.format('DD/MM/YYYY')}`
+                                                }
+                                                return date.format('DD/MM/YYYY')
+                                            })()}
                                         </span>
-                                        <span className="text-xs text-gray-500">
+                                        <span className="text-xs font-semibold text-blue-600">
                                             {post.scheduledTime}
                                         </span>
                                     </div>
@@ -274,13 +298,7 @@ export default function TikTokAccountPage() {
                                         </span>
 
                                         {/* Action Buttons */}
-                                        <div className="flex gap-1">
-                                            <Button
-                                                type="text"
-                                                size="small"
-                                                icon={<EditOutlined />}
-                                                onClick={() => handleEditPost(post)}
-                                            />
+                                        <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
                                             <Popconfirm
                                                 title="Xóa bài đăng?"
                                                 description="Bạn có chắc muốn xóa bài này?"
