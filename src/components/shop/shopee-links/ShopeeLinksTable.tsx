@@ -109,8 +109,29 @@ const ShopeeLinksTable = () => {
                             rel="noopener noreferrer"
                             className="text-blue-500 hover:underline"
                         >
-                            {url.length > 50 ? `${url.substring(0, 50)}...` : url}
+                            {url.length > 30 ? `${url.substring(0, 30)}...` : url}
                         </a>
+                    </div>
+                )
+            }
+        },
+        {
+            title: 'Mô tả',
+            dataIndex: 'description',
+            key: 'description',
+            width: 250,
+            render: (desc: string) => {
+                if (!desc) return <span className="text-gray-400 italic">Không có mô tả</span>
+                return (
+                    <div className="flex items-center gap-2 group">
+                        <CopyOutlined
+                            className="cursor-pointer text-gray-500"
+                            onClick={() => handleCopy(desc)}
+                            title="Copy mô tả"
+                        />
+                        <span className="line-clamp-2" title={desc}>
+                            {desc}
+                        </span>
                     </div>
                 )
             }
@@ -231,14 +252,27 @@ const ShopeeLinksTable = () => {
                                             </div>
                                         }
                                         description={
-                                            <a
-                                                href={link.productUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-blue-500 text-xs block truncate"
-                                            >
-                                                {link.productUrl.replace('https://', '')}
-                                            </a>
+                                            <div className="flex flex-col gap-1 mt-1">
+                                                <div className="flex items-center gap-1">
+                                                    <a
+                                                        href={link.productUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-500 text-xs block truncate flex-1"
+                                                    >
+                                                        {link.productUrl.replace('https://', '')}
+                                                    </a>
+                                                </div>
+                                                {link.description && (
+                                                    <div className="flex items-start gap-1 text-gray-500 bg-gray-50 p-1 rounded">
+                                                        <CopyOutlined
+                                                            className="text-gray-400 cursor-pointer text-xs mt-0.5"
+                                                            onClick={() => handleCopy(link.description!)}
+                                                        />
+                                                        <span className="text-xs line-clamp-2">{link.description}</span>
+                                                    </div>
+                                                )}
+                                            </div>
                                         }
                                     />
                                 </Card>
