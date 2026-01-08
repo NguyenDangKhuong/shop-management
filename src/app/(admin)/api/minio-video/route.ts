@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Client } from 'minio'
-import { MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_BUCKET } from '@/utils/constants'
+import { MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_FACEBOOK_BUCKET } from '@/utils/constants'
 
 // MinIO Client Configuration
 const minioClient = new Client({
@@ -11,7 +11,7 @@ const minioClient = new Client({
     secretKey: MINIO_SECRET_KEY || '',
 })
 
-const bucketName = MINIO_BUCKET || 'videos'
+const bucketName = MINIO_FACEBOOK_BUCKET || 'videos'
 
 // GET - Generate Presigned URL for direct upload
 export async function GET(request: NextRequest) {
