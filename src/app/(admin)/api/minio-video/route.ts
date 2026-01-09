@@ -11,60 +11,12 @@ const minioClient = new Client({
     secretKey: MINIO_SECRET_KEY || '',
 })
 
-const bucketName = MINIO_FACEBOOK_BUCKET || 'videos'
-
-// GET - Generate Presigned URL for direct upload
-export async function GET(request: NextRequest) {
-    try {
-        const { searchParams } = new URL(request.url)
-        const fileName = searchParams.get('fileName')
-        const fileType = searchParams.get('fileType')
-
-        if (fileName) {
-            // Case 1: Generate Presigned URL for Upload
-
-            // Sanitize filename (double check safety)
-            const sanitizedName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_')
-            const timestamp = Date.now()
-            const objectName = `reel-${timestamp}-${sanitizedName}`
-
-            // Generate presigned URL (valid for 1 hour)
-            const uploadUrl = await minioClient.presignedPutObject(
-                bucketName,
-                objectName,
-                60 * 60
-            )
-
-            // Public URL for accessing the file after upload
-            const publicUrl = `http://s3.thetaphoa.store/${bucketName}/${objectName}`
-
-            return NextResponse.json({
-                success: true,
-                uploadUrl,
-                publicUrl,
-                fileName: objectName
-            })
-        }
-
-        return NextResponse.json(
-            { success: false, message: 'Missing fileName parameter' },
-            { status: 400 }
-        )
-
-    } catch (error: any) {
-        console.error('MinIO presigned url error:', error)
-        return NextResponse.json(
-            { success: false, message: error.message || 'Failed to generate upload URL' },
-            { status: 500 }
-        )
-    }
-}
-
-// POST - Legacy direct upload (kept for reference or fallback, though we are moving to presigned)
+// POST - Upload video to MinIO
 export async function POST(request: NextRequest) {
     try {
         const formData = await request.formData()
         const file = formData.get('video') as File
+        const bucketName = (formData.get('bucketName') as string) || MINIO_FACEBOOK_BUCKET || 'facebookpost'
 
         if (!file) {
             return NextResponse.json(
@@ -116,6 +68,7 @@ export async function DELETE(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
         const fileName = searchParams.get('fileName')
+        const bucketName = searchParams.get('bucketName') || MINIO_FACEBOOK_BUCKET || 'facebookpost'
 
         if (!fileName) {
             return NextResponse.json(

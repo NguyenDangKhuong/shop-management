@@ -11,6 +11,7 @@ import { facebookPostUploadConfig } from '@/utils/cloudinaryConfig'
 import { uploadVideoToMinIO, deleteVideoFromMinIO } from '@/utils/minioUpload'
 import { deleteCloudinaryImage } from '@/actions/cloudinary'
 import { apiPost, apiPut } from '@/utils/internalApi'
+import { MINIO_FACEBOOK_BUCKET } from '@/utils/constants'
 
 dayjs.extend(customParseFormat)
 
@@ -160,17 +161,15 @@ const FacebookPostModal = ({
 
         setVideoUploading(true)
         try {
-            const result = await uploadVideoToMinIO(file)
+            const result = await uploadVideoToMinIO(file, MINIO_FACEBOOK_BUCKET)
             if (result.success) {
                 const newFile: MediaFile = {
                     url: result.url,
                     type: 'video',
-                    publicId: result.fileName || file.name // Use fileName from response as publicId
+                    publicId: result.fileName || file.name
                 }
                 setMediaFiles([newFile])
-                // Track new upload for cleanup
                 uploadedThisSessionRef.current.push(newFile)
-                // Set postType to 'reel-video' for video upload
                 setPostType('reel-video')
                 form.setFieldsValue({ postType: 'reel-video' })
                 message.success('Video uploaded successfully!')
@@ -195,7 +194,7 @@ const FacebookPostModal = ({
         // For reels (MinIO videos), delete from S3
         if (postType === 'reel-video' && mediaFile.type === 'video') {
             try {
-                const result = await deleteVideoFromMinIO(mediaFile.publicId!)
+                const result = await deleteVideoFromMinIO(mediaFile.publicId!, MINIO_FACEBOOK_BUCKET)
                 if (result.success) {
                     message.success('Video deleted from storage')
                 } else {
@@ -243,7 +242,7 @@ const FacebookPostModal = ({
             if (mediaFile.type === 'video') {
                 // MinIO cleanup for reel-video
                 cleanupPromises.push(
-                    deleteVideoFromMinIO(mediaFile.publicId)
+                    deleteVideoFromMinIO(mediaFile.publicId, MINIO_FACEBOOK_BUCKET)
                         .then(() => { /* void */ })
                         .catch(err => console.error('Cleanup error (MinIO):', err))
                 )

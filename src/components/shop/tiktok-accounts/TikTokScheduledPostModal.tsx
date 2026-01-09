@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react'
 import { Form, Input, Modal, Button, App, DatePicker, Select, Upload, TimePicker } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 import { apiPost, apiPut } from '@/utils/internalApi'
-import { deleteVideoFromMinIO } from '@/utils/minioUpload'
+import { uploadVideoToMinIO, deleteVideoFromMinIO } from '@/utils/minioUpload'
+import { MINIO_TIKTOK_BUCKET } from '@/utils/constants'
 import dayjs from 'dayjs'
 
 interface ScheduledPostModalProps {
@@ -100,43 +101,19 @@ const TikTokScheduledPostModal = ({
         try {
             setUploading(true)
 
-            // 1. Get Presigned URL
-            const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
-            const presignedResponse = await fetch(
-                `/api/minio-video?fileName=${encodeURIComponent(sanitizedName)}&fileType=${encodeURIComponent(file.type)}`
-            )
-            const presignedData = await presignedResponse.json()
-
-            if (!presignedData.success) {
-                throw new Error(presignedData.message || 'Failed to get upload URL')
-            }
-
-            const { uploadUrl, publicUrl, fileName } = presignedData
-
-            // 2. Upload to MinIO directly
-            const uploadResponse = await fetch(uploadUrl, {
-                method: 'PUT',
-                body: file,
-                headers: {
-                    'Content-Type': file.type
-                }
-            })
-
-            if (uploadResponse.ok) {
+            const result = await uploadVideoToMinIO(file, MINIO_TIKTOK_BUCKET)
+            if (result.success) {
                 const newVideo = {
-                    url: publicUrl,
+                    url: result.url,
                     type: 'video',
-                    publicId: fileName
+                    publicId: result.fileName || file.name
                 }
                 setVideo(newVideo)
-                // Track new upload for cleanup
                 uploadedThisSessionRef.current = newVideo
                 message.success('Đã upload video!')
             } else {
-                console.error('Upload failed with status:', uploadResponse.status)
-                throw new Error('Upload to storage failed')
+                message.error('Upload failed: ' + result.message)
             }
-
         } catch (error: any) {
             console.error('Upload error:', error)
             message.error('Lỗi upload: ' + error.message)
@@ -195,7 +172,7 @@ const TikTokScheduledPostModal = ({
         // Delete uploaded video if it wasn't saved
         if (uploadedThisSessionRef.current?.publicId) {
             try {
-                const result = await deleteVideoFromMinIO(uploadedThisSessionRef.current.publicId)
+                const result = await deleteVideoFromMinIO(uploadedThisSessionRef.current.publicId, MINIO_TIKTOK_BUCKET)
                 if (result.success) {
                     console.log('🗑️ Cleaned up unsaved video:', uploadedThisSessionRef.current.publicId)
                 } else {

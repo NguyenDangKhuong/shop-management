@@ -1,8 +1,9 @@
 // MinIO S3 Video Upload Utility (via API Route)
-export const uploadVideoToMinIO = async (file: File): Promise<{ url: string; fileName?: string; success: boolean; message?: string }> => {
+export const uploadVideoToMinIO = async (file: File, bucketName?: string): Promise<{ url: string; fileName?: string; success: boolean; message?: string }> => {
     try {
         const formData = new FormData()
         formData.append('video', file)
+        if (bucketName) formData.append('bucketName', bucketName)
 
         // Upload via Next.js API route (which handles MinIO connection)
         const response = await fetch('/api/minio-video', {
@@ -35,9 +36,11 @@ export const uploadVideoToMinIO = async (file: File): Promise<{ url: string; fil
 }
 
 // MinIO S3 Video Delete Utility (via API Route)
-export const deleteVideoFromMinIO = async (fileName: string): Promise<{ success: boolean; message?: string }> => {
+export const deleteVideoFromMinIO = async (fileName: string, bucketName?: string): Promise<{ success: boolean; message?: string }> => {
     try {
-        const response = await fetch(`/api/minio-video?fileName=${encodeURIComponent(fileName)}`, {
+        const url = `/api/minio-video?fileName=${encodeURIComponent(fileName)}`
+        const finalUrl = bucketName ? `${url}&bucketName=${encodeURIComponent(bucketName)}` : url
+        const response = await fetch(finalUrl, {
             method: 'DELETE',
         })
 
