@@ -58,7 +58,7 @@ const TikTokScheduledPostModal = ({
 
             if (editingPost) {
                 form.setFieldsValue({
-                    scheduledDate: editingPost.scheduledDate ? dayjs(editingPost.scheduledDate) : null,
+                    scheduledDate: editingPost.scheduledDate ? dayjs(editingPost.scheduledDate, 'DD/MM/YYYY') : null,
                     scheduledTime: editingPost.scheduledTime ? dayjs(editingPost.scheduledTime, 'HH:mm') : null,
                     productId: editingPost.productId || '',
                     description: editingPost.description || '',
@@ -137,7 +137,7 @@ const TikTokScheduledPostModal = ({
 
             const postData = {
                 accountId,
-                scheduledDate: values.scheduledDate?.toISOString(),
+                scheduledDate: values.scheduledDate?.format('DD/MM/YYYY'),
                 scheduledTime: values.scheduledTime?.format('HH:mm'),
                 productId: values.productId || null,
                 productTitle: selectedProduct?.title || null,

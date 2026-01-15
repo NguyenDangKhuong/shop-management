@@ -3,7 +3,7 @@ import { IMediaFile, MediaFileSchema } from './MediaFile'
 
 export interface ITikTokScheduledPost extends Document {
     accountId: string
-    scheduledDate: Date
+    scheduledDate: string // Format: DD/MM/YYYY
     scheduledTime: string
     productId?: string
     productTitle?: string
@@ -18,7 +18,7 @@ export type TikTokScheduledPost = ITikTokScheduledPost
 
 const TikTokScheduledPostSchema = new Schema({
     accountId: { type: String, required: true },
-    scheduledDate: { type: Date, required: true },
+    scheduledDate: { type: String, required: true }, // Format: DD/MM/YYYY
     scheduledTime: { type: String, required: true },
     productId: { type: String },
     productTitle: { type: String },

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json()
-        const { cookie, offset = 0, count = 50 } = body
+        const { cookie, offset = 0, count = 100 } = body
 
         if (!cookie) {
             return NextResponse.json({
