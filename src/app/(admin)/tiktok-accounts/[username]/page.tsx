@@ -38,7 +38,6 @@ export default function TikTokAccountPage() {
     const [postsLoading, setPostsLoading] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingPost, setEditingPost] = useState<any>(null)
-    const [testModalOpen, setTestModalOpen] = useState(false)
 
     // Extract username from params (decode URI and remove @ prefix if exists)
     const username = params.username
