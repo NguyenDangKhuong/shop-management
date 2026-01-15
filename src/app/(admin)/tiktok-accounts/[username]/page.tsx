@@ -38,6 +38,7 @@ export default function TikTokAccountPage() {
     const [postsLoading, setPostsLoading] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingPost, setEditingPost] = useState<any>(null)
+    const [testModalOpen, setTestModalOpen] = useState(false)
 
     // Extract username from params (decode URI and remove @ prefix if exists)
     const username = params.username
@@ -253,17 +254,17 @@ export default function TikTokAccountPage() {
                                     <div className="flex items-center gap-2 mb-1">
                                         <span className="text-xs font-semibold text-blue-600">
                                             {(() => {
-                                                const date = dayjs(post.scheduledDate)
+                                                const date = dayjs(post.scheduledDate, 'DD/MM/YYYY')
                                                 const today = dayjs()
                                                 const tomorrow = dayjs().add(1, 'day')
 
                                                 if (date.isSame(today, 'day')) {
-                                                    return `(Hôm nay) - ${date.format('DD/MM/YYYY')}`
+                                                    return `(Hôm nay) - ${post.scheduledDate}`
                                                 }
                                                 if (date.isSame(tomorrow, 'day')) {
-                                                    return `(Ngày mai) - ${date.format('DD/MM/YYYY')}`
+                                                    return `(Ngày mai) - ${post.scheduledDate}`
                                                 }
-                                                return date.format('DD/MM/YYYY')
+                                                return post.scheduledDate
                                             })()}
                                         </span>
                                         <span className="text-xs font-semibold text-blue-600">
