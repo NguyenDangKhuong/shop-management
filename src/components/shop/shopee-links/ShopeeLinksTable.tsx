@@ -51,13 +51,18 @@ const ShopeeLinksTable = () => {
         }
     }
 
-    const handleCopy = async (url: string) => {
+    const handleCopy = async (text: string, type: 'link' | 'description' | 'name' = 'link') => {
         try {
-            await navigator.clipboard.writeText(url)
-            message.success('Đã copy link!')
+            await navigator.clipboard.writeText(text)
+            const messages = {
+                link: 'Đã copy link!',
+                description: 'Đã copy mô tả!',
+                name: 'Đã copy tên!'
+            }
+            message.success(messages[type])
         } catch (error) {
             console.error('Failed to copy:', error)
-            message.error('Không thể copy link')
+            message.error('Không thể copy')
         }
     }
 
@@ -100,7 +105,7 @@ const ShopeeLinksTable = () => {
                     <div className="flex items-center gap-2">
                         <CopyOutlined
                             className="cursor-pointer text-gray-500 hover:text-blue-500"
-                            onClick={() => handleCopy(url)}
+                            onClick={() => handleCopy(url, 'link')}
                             title="Copy link"
                         />
                         <a
@@ -123,16 +128,9 @@ const ShopeeLinksTable = () => {
             render: (desc: string) => {
                 if (!desc) return <span className="text-gray-400 italic">Không có mô tả</span>
                 return (
-                    <div className="flex items-center gap-2 group">
-                        <CopyOutlined
-                            className="cursor-pointer text-gray-500"
-                            onClick={() => handleCopy(desc)}
-                            title="Copy mô tả"
-                        />
-                        <span className="line-clamp-2" title={desc}>
-                            {desc}
-                        </span>
-                    </div>
+                    <span className="line-clamp-2" title={desc}>
+                        {desc}
+                    </span>
                 )
             }
         },
@@ -216,7 +214,7 @@ const ShopeeLinksTable = () => {
                                     actions={[
                                         <CopyOutlined
                                             key="copy"
-                                            onClick={() => handleCopy(link.productUrl)}
+                                            onClick={() => handleCopy(link.description || '', 'description')}
                                             className="text-lg"
                                         />,
                                         <EditTwoTone
@@ -245,7 +243,7 @@ const ShopeeLinksTable = () => {
                                             <div className="flex items-center gap-1">
                                                 <CopyOutlined
                                                     className="text-gray-400 hover:text-blue-500 cursor-pointer text-xs"
-                                                    onClick={() => handleCopy(link.name)}
+                                                    onClick={() => handleCopy(link.name, 'name')}
                                                     title="Copy tên sản phẩm"
                                                 />
                                                 <span className="font-medium text-sm">{link.name}</span>
@@ -254,6 +252,11 @@ const ShopeeLinksTable = () => {
                                         description={
                                             <div className="flex flex-col gap-1 mt-1">
                                                 <div className="flex items-center gap-1">
+                                                    <CopyOutlined
+                                                        className="text-gray-400 hover:text-blue-500 cursor-pointer text-xs"
+                                                        onClick={() => handleCopy(link.productUrl, 'link')}
+                                                        title="Copy link"
+                                                    />
                                                     <a
                                                         href={link.productUrl}
                                                         target="_blank"
@@ -264,11 +267,7 @@ const ShopeeLinksTable = () => {
                                                     </a>
                                                 </div>
                                                 {link.description && (
-                                                    <div className="flex items-start gap-1 text-gray-500 bg-gray-50 p-1 rounded">
-                                                        <CopyOutlined
-                                                            className="text-gray-400 cursor-pointer text-xs mt-0.5"
-                                                            onClick={() => handleCopy(link.description!)}
-                                                        />
+                                                    <div className="text-gray-500 bg-gray-50 p-1 rounded">
                                                         <span className="text-xs line-clamp-2">{link.description}</span>
                                                     </div>
                                                 )}
