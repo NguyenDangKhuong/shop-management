@@ -8,7 +8,7 @@ export async function GET() {
     try {
         await connectDB()
 
-        const links = await ShopeeLinkModel.find().sort({ createdAt: -1 })
+        const links = await ShopeeLinkModel.find().sort({ order: 1, createdAt: -1 })
 
         return NextResponse.json({
             success: true,
@@ -37,12 +37,17 @@ export async function POST(request: NextRequest) {
             }, { status: 400 })
         }
 
+        // Get the highest order number and increment
+        const maxOrderLink = await ShopeeLinkModel.findOne().sort({ order: -1 }).select('order')
+        const nextOrder = (maxOrderLink?.order ?? -1) + 1
+
         // Create link data
         const linkData = {
             name: body.name,
             productUrl: body.productUrl,
             mediaFile: body.mediaFile,
-            description: body.description
+            description: body.description,
+            order: nextOrder
         }
 
         const newLink = await ShopeeLinkModel.create(linkData)
