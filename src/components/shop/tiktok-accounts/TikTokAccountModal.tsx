@@ -94,7 +94,7 @@ const TikTokAccountModal = ({
                     // Support flat structure as well
                     cookieValue = jsonData.headers.Cookie
                 }
-            } catch (jsonError) {
+            } catch {
                 // Not JSON, try parsing as raw HTTP request text
                 const lines = httpRequest.split('\n')
 
