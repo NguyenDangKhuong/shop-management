@@ -6,6 +6,7 @@ export interface ITikTokAccount extends Document {
     displayName: string
     email: string
     cookie: string
+    httpRequest?: string
     avatar?: IMediaFile
     createdAt?: Date
     updatedAt?: Date
@@ -19,6 +20,7 @@ const TikTokAccountSchema = new Schema({
     displayName: { type: String, required: true },
     email: { type: String, required: true },
     cookie: { type: String, required: true },
+    httpRequest: { type: String, required: false },
     avatar: { type: MediaFileSchema, required: false }
 }, {
     timestamps: true,

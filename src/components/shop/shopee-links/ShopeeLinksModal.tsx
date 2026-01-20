@@ -179,10 +179,10 @@ const ShopeeLinksModal = ({
                 <Form.Item
                     label="Link sản phẩm Shopee"
                     name="productUrl"
-                    rules={[
-                        { required: true, message: 'Vui lòng nhập link sản phẩm' },
-                        { type: 'url', message: 'Vui lòng nhập URL hợp lệ' }
-                    ]}
+                // rules={[
+                //     { required: true, message: 'Vui lòng nhập link sản phẩm' },
+                //     { type: 'url', message: 'Vui lòng nhập URL hợp lệ' }
+                // ]}
                 >
                     <Input
                         placeholder="https://shopee.vn/product/..."

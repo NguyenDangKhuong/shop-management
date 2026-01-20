@@ -135,10 +135,30 @@ const TikTokScheduledPostModal = ({
 
             const selectedProduct = products.find(p => p.product_id === values.productId)
 
+            // Calculate Unix timestamp from scheduledDate + scheduledTime
+            let scheduledUnixTime: number | null = null
+            if (values.scheduledDate && values.scheduledTime) {
+                const dateStr = values.scheduledDate.format('DD/MM/YYYY')
+                const timeStr = values.scheduledTime.format('HH:mm')
+
+                // Parse DD/MM/YYYY HH:mm to Unix timestamp
+                const [day, month, year] = dateStr.split('/')
+                const [hours, minutes] = timeStr.split(':')
+                const combinedDate = new Date(
+                    parseInt(year),
+                    parseInt(month) - 1, // Month is 0-indexed
+                    parseInt(day),
+                    parseInt(hours),
+                    parseInt(minutes)
+                )
+                scheduledUnixTime = Math.floor(combinedDate.getTime() / 1000) // Convert to Unix timestamp (seconds)
+            }
+
             const postData = {
                 accountId,
                 scheduledDate: values.scheduledDate?.format('DD/MM/YYYY'),
                 scheduledTime: values.scheduledTime?.format('HH:mm'),
+                scheduledUnixTime: scheduledUnixTime, // Auto-calculated Unix timestamp
                 productId: values.productId || null,
                 productTitle: selectedProduct?.title || null,
                 description: values.description,

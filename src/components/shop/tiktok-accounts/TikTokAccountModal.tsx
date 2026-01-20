@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Form, Input, Modal, Button, App } from 'antd'
-import { UploadOutlined, UserOutlined, MailOutlined } from '@ant-design/icons'
+import { UploadOutlined, UserOutlined, MailOutlined, FilterOutlined } from '@ant-design/icons'
 import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload'
 import { TikTokAccount } from '@/models/TikTokAccount'
 import { tiktokAccountUploadConfig } from '@/utils/cloudinaryConfig'
@@ -60,6 +60,7 @@ const TikTokAccountModal = ({
                 displayName: editingAccount.displayName || '',
                 email: editingAccount.email || '',
                 cookie: editingAccount.cookie || '',
+                httpRequest: editingAccount.httpRequest || '',
                 avatarUrl: editingAccount.avatar?.url || ''
             })
             setAvatar(editingAccount.avatar || null)
@@ -67,6 +68,57 @@ const TikTokAccountModal = ({
             setAvatar(null)
         }
     }, [isOpen, editingAccount, form])
+
+
+    // Extract cookie from HTTP request (supports both JSON and raw text formats)
+    const extractCookie = () => {
+        try {
+            const httpRequest = form.getFieldValue('httpRequest')
+            if (!httpRequest) {
+                message.warning('Vui lòng nhập HTTP Request trước')
+                return
+            }
+
+            let cookieValue = ''
+
+            // Try to parse as JSON first
+            try {
+                const jsonData = JSON.parse(httpRequest)
+
+                // Check for http.headers.Cookie or ws.headers.Cookie
+                if (jsonData.http?.headers?.Cookie) {
+                    cookieValue = jsonData.http.headers.Cookie
+                } else if (jsonData.ws?.headers?.Cookie) {
+                    cookieValue = jsonData.ws.headers.Cookie
+                } else if (jsonData.headers?.Cookie) {
+                    // Support flat structure as well
+                    cookieValue = jsonData.headers.Cookie
+                }
+            } catch (jsonError) {
+                // Not JSON, try parsing as raw HTTP request text
+                const lines = httpRequest.split('\n')
+
+                for (const line of lines) {
+                    const trimmedLine = line.trim()
+                    // Check for Cookie header (case-insensitive)
+                    if (trimmedLine.toLowerCase().startsWith('cookie:')) {
+                        cookieValue = trimmedLine.substring(7).trim() // Remove "Cookie:" prefix
+                        break
+                    }
+                }
+            }
+
+            if (cookieValue) {
+                form.setFieldsValue({ cookie: cookieValue })
+                message.success('Đã lấy cookie thành công!')
+            } else {
+                message.warning('Không tìm thấy Cookie trong HTTP Request')
+            }
+        } catch (error: any) {
+            message.error('Lỗi khi lọc cookie: ' + (error?.message || 'Unknown error'))
+        }
+    }
+
 
     const handleSubmit = async () => {
         try {
@@ -78,6 +130,7 @@ const TikTokAccountModal = ({
                 displayName: values.displayName,
                 email: values.email,
                 cookie: values.cookie,
+                httpRequest: values.httpRequest,
                 avatar: avatar
             }
 
@@ -170,6 +223,26 @@ const TikTokAccountModal = ({
                         rows={4}
                         placeholder="sessionid=...; sid_tt=...; ..."
                     />
+                </Form.Item>
+
+                <Form.Item
+                    label="HTTP Request"
+                    name="httpRequest"
+                >
+                    <div>
+                        <Input.TextArea
+                            rows={4}
+                            placeholder="Nhập HTTP Request (tùy chọn)..."
+                        />
+                        <Button
+                            icon={<FilterOutlined />}
+                            onClick={extractCookie}
+                            className="mt-2"
+                            type="default"
+                        >
+                            Lọc Cookie
+                        </Button>
+                    </div>
                 </Form.Item>
 
                 <Form.Item
