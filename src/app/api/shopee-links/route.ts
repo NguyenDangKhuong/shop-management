@@ -41,7 +41,8 @@ export async function POST(request: NextRequest) {
         const linkData = {
             name: body.name,
             productUrl: body.productUrl,
-            mediaFile: body.mediaFile
+            mediaFile: body.mediaFile,
+            description: body.description
         }
 
         const newLink = await ShopeeLinkModel.create(linkData)
