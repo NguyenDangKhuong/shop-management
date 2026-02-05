@@ -31,6 +31,7 @@ const TikTokScheduledPostModal = ({
     const [video, setVideo] = useState<any>(null)
     const [uploading, setUploading] = useState(false)
     const [shopeeLinks, setShopeeLinks] = useState<any[]>([])
+    const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null)
 
     // Track newly uploaded video this session (not existing from editing)
     const uploadedThisSessionRef = useRef<{ url: string; type: string; publicId?: string } | null>(null)
@@ -137,27 +138,32 @@ const TikTokScheduledPostModal = ({
 
             // Calculate Unix timestamp from scheduledDate + scheduledTime
             let scheduledUnixTime: number | null = null
+            // Random minutes from 0-59
+            const randomMinutes = Math.floor(Math.random() * 60)
+
             if (values.scheduledDate && values.scheduledTime) {
                 const dateStr = values.scheduledDate.format('DD/MM/YYYY')
-                const timeStr = values.scheduledTime.format('HH:mm')
+                const hours = values.scheduledTime.format('HH')
 
                 // Parse DD/MM/YYYY HH:mm to Unix timestamp
                 const [day, month, year] = dateStr.split('/')
-                const [hours, minutes] = timeStr.split(':')
                 const combinedDate = new Date(
                     parseInt(year),
                     parseInt(month) - 1, // Month is 0-indexed
                     parseInt(day),
                     parseInt(hours),
-                    parseInt(minutes)
+                    randomMinutes
                 )
                 scheduledUnixTime = Math.floor(combinedDate.getTime() / 1000) // Convert to Unix timestamp (seconds)
             }
 
+            // Format time with random minutes
+            const formattedTime = values.scheduledTime ? `${values.scheduledTime.format('HH')}:${String(randomMinutes).padStart(2, '0')}` : null
+
             const postData = {
                 accountId,
                 scheduledDate: values.scheduledDate?.format('DD/MM/YYYY'),
-                scheduledTime: values.scheduledTime?.format('HH:mm'),
+                scheduledTime: formattedTime,
                 scheduledUnixTime: scheduledUnixTime, // Auto-calculated Unix timestamp
                 productId: values.productId || null,
                 productTitle: selectedProduct?.title || null,
@@ -229,7 +235,21 @@ const TikTokScheduledPostModal = ({
                         rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}
                         className="flex-1"
                     >
-                        <DatePicker className="w-full" format="DD/MM/YYYY" />
+                        <DatePicker
+                            className="w-full"
+                            format="DD/MM/YYYY"
+                            disabledDate={(current) => current && current < dayjs().startOf('day')}
+                            onChange={(date) => {
+                                setSelectedDate(date)
+                                // Reset time if date changes to today and current time is in the past
+                                if (date && date.isSame(dayjs(), 'day')) {
+                                    const currentTime = form.getFieldValue('scheduledTime')
+                                    if (currentTime && currentTime.hour() <= dayjs().hour()) {
+                                        form.setFieldValue('scheduledTime', null)
+                                    }
+                                }
+                            }}
+                        />
                     </Form.Item>
 
                     <Form.Item
@@ -238,7 +258,22 @@ const TikTokScheduledPostModal = ({
                         rules={[{ required: true, message: 'Vui lòng chọn giờ' }]}
                         className="flex-1"
                     >
-                        <TimePicker className="w-full" format="HH:mm" />
+                        <TimePicker
+                            className="w-full"
+                            format="HH"
+                            showMinute={false}
+                            showSecond={false}
+                            disabledTime={() => {
+                                const isToday = selectedDate && selectedDate.isSame(dayjs(), 'day')
+                                if (isToday) {
+                                    const currentHour = dayjs().hour()
+                                    return {
+                                        disabledHours: () => Array.from({ length: currentHour + 1 }, (_, i) => i)
+                                    }
+                                }
+                                return {}
+                            }}
+                        />
                     </Form.Item>
                 </div>
 

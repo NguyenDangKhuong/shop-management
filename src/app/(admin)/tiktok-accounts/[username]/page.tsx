@@ -198,9 +198,24 @@ export default function TikTokAccountPage() {
                         <p className="text-sm text-blue-600 font-mono mb-1">
                             @{account.username}
                         </p>
-                        <p className="text-xs text-gray-500 truncate">
+                        <p className="text-xs text-gray-500 truncate mb-1">
                             {account.email}
                         </p>
+                        <div className="flex items-center gap-1">
+                            <span className="text-xs text-gray-400 font-mono truncate">
+                                ID: {account._id}
+                            </span>
+                            <Button
+                                type="text"
+                                size="small"
+                                icon={<CopyOutlined />}
+                                onClick={() => {
+                                    navigator.clipboard.writeText(account._id)
+                                    message.success('Đã copy Account ID!')
+                                }}
+                                className="!p-0 !h-5 !w-5 !min-w-0"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
