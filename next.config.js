@@ -17,6 +17,11 @@ const nextConfig = {
     domains: ['res.cloudinary.com'],
     unoptimized: true
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '100mb',
+    },
+  },
   // i18n config không được hỗ trợ trong App Router
   // i18n,
   // async headers() {

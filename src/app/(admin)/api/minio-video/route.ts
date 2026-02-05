@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Client } from 'minio'
 import { MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_FACEBOOK_BUCKET } from '@/utils/constants'
 
+// Route Segment Config - Increase body size limit for video uploads
+export const maxDuration = 60 // 60 seconds timeout
+export const dynamic = 'force-dynamic'
+
 // MinIO Client Configuration
 const minioClient = new Client({
     endPoint: 's3.thetaphoa.store',

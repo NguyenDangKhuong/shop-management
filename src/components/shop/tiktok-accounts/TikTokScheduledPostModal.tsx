@@ -263,6 +263,7 @@ const TikTokScheduledPostModal = ({
                             format="HH"
                             showMinute={false}
                             showSecond={false}
+                            defaultOpenValue={dayjs()}
                             disabledTime={() => {
                                 const isToday = selectedDate && selectedDate.isSame(dayjs(), 'day')
                                 if (isToday) {
