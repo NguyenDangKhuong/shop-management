@@ -6,11 +6,13 @@ import { App, Spin, Button, Popconfirm } from 'antd'
 import {
     CopyOutlined,
     DeleteOutlined,
+    EditOutlined,
     PlusOutlined,
     UserOutlined
 } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import TikTokScheduledPostModal from '@/components/shop/tiktok-accounts/TikTokScheduledPostModal'
+import PromptModal from '@/components/shop/tiktok-accounts/PromptModal'
 
 interface TikTokAccount {
     _id: string
@@ -38,6 +40,10 @@ export default function TikTokAccountPage() {
     const [postsLoading, setPostsLoading] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingPost, setEditingPost] = useState<any>(null)
+    const [prompts, setPrompts] = useState<any[]>([])
+    const [promptsLoading, setPromptsLoading] = useState(false)
+    const [isPromptModalOpen, setIsPromptModalOpen] = useState(false)
+    const [editingPrompt, setEditingPrompt] = useState<any>(null)
 
     // Extract username from params (decode URI and remove @ prefix if exists)
     const username = params.username
@@ -60,9 +66,10 @@ export default function TikTokAccountPage() {
 
                     if (foundAccount) {
                         setAccount(foundAccount)
-                        // Fetch products and scheduled posts after account is loaded
+                        // Fetch products, scheduled posts, and prompts after account is loaded
                         fetchProducts(foundAccount.cookie)
                         fetchScheduledPosts(foundAccount._id)
+                        fetchPrompts(foundAccount._id)
                     } else {
                         message.error('Không tìm thấy account này')
                     }
@@ -104,6 +111,58 @@ export default function TikTokAccountPage() {
     const handleAddNew = () => {
         setEditingPost(null)
         setIsModalOpen(true)
+    }
+
+    // Prompt handlers
+    const fetchPrompts = async (accountId: string) => {
+        try {
+            setPromptsLoading(true)
+            const response = await fetch(`/api/prompts?accountId=${accountId}`)
+            const data = await response.json()
+
+            if (data.success) {
+                setPrompts(data.data)
+            } else {
+                console.error('❌ Failed to fetch prompts:', data.error)
+            }
+        } catch (error: any) {
+            console.error('❌ Prompts Error:', error)
+        } finally {
+            setPromptsLoading(false)
+        }
+    }
+
+    const handleAddPrompt = () => {
+        setEditingPrompt(null)
+        setIsPromptModalOpen(true)
+    }
+
+    const handleEditPrompt = (prompt: any) => {
+        setEditingPrompt(prompt)
+        setIsPromptModalOpen(true)
+    }
+
+    const handleDeletePrompt = async (promptId: string) => {
+        try {
+            const response = await fetch(`/api/prompts?id=${promptId}`, {
+                method: 'DELETE'
+            })
+            const data = await response.json()
+
+            if (data.success) {
+                message.success('Đã xóa prompt!')
+                if (account) fetchPrompts(account._id)
+            } else {
+                message.error('Xóa thất bại')
+            }
+        } catch (error: any) {
+            message.error('Lỗi: ' + error.message)
+        }
+    }
+
+    const handleCopyPromptContent = (content: string) => {
+        navigator.clipboard.writeText(content)
+        message.success('Đã copy nội dung prompt!')
     }
 
     const fetchScheduledPosts = async (accountId: string) => {
@@ -336,6 +395,85 @@ export default function TikTokAccountPage() {
                 )}
             </div>
 
+            {/* Prompts Section */}
+            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+                <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-base font-semibold">
+                        Prompt ({prompts.length})
+                    </h2>
+                    <Button
+                        type="primary"
+                        size="small"
+                        icon={<PlusOutlined />}
+                        onClick={handleAddPrompt}
+                    >
+                        Thêm
+                    </Button>
+                </div>
+
+                {promptsLoading ? (
+                    <div className="text-center py-4">
+                        <Spin size="small" />
+                    </div>
+                ) : prompts.length === 0 ? (
+                    <p className="text-sm text-gray-500 text-center py-4">
+                        Chưa có prompt nào
+                    </p>
+                ) : (
+                    <div className="space-y-3">
+                        {prompts.map((prompt: any) => (
+                            <div
+                                key={prompt._id}
+                                className="border rounded-lg p-3 hover:bg-gray-50 transition-colors"
+                            >
+                                <div className="flex items-start justify-between gap-2">
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="text-sm font-semibold text-gray-800 mb-1">
+                                            {prompt.title}
+                                        </h3>
+                                        <p className="text-xs text-gray-600 line-clamp-3 whitespace-pre-wrap">
+                                            {prompt.content}
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-1 flex-shrink-0">
+                                        <Button
+                                            type="text"
+                                            size="small"
+                                            icon={<CopyOutlined />}
+                                            onClick={() => handleCopyPromptContent(prompt.content)}
+                                            title="Copy nội dung"
+                                        />
+                                        <Button
+                                            type="text"
+                                            size="small"
+                                            icon={<EditOutlined />}
+                                            onClick={() => handleEditPrompt(prompt)}
+                                            title="Sửa"
+                                        />
+                                        <Popconfirm
+                                            title="Xóa prompt?"
+                                            description="Bạn có chắc muốn xóa prompt này?"
+                                            onConfirm={() => handleDeletePrompt(prompt._id)}
+                                            okText="Xóa"
+                                            cancelText="Hủy"
+                                            okButtonProps={{ danger: true }}
+                                        >
+                                            <Button
+                                                type="text"
+                                                size="small"
+                                                danger
+                                                icon={<DeleteOutlined />}
+                                                title="Xóa"
+                                            />
+                                        </Popconfirm>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
             {/* Content Area - Products */}
             <div className="bg-white rounded-lg shadow-sm p-4">
                 <h2 className="text-base font-semibold mb-3">
@@ -406,6 +544,16 @@ export default function TikTokAccountPage() {
                     products={products}
                     editingPost={editingPost}
                     onRefresh={() => fetchScheduledPosts(account._id)}
+                />
+            )}
+
+            {account && (
+                <PromptModal
+                    isOpen={isPromptModalOpen}
+                    setIsOpen={setIsPromptModalOpen}
+                    accountId={account._id}
+                    editingPrompt={editingPrompt}
+                    onRefresh={() => fetchPrompts(account._id)}
                 />
             )}
         </div>

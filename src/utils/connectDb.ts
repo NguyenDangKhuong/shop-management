@@ -45,8 +45,7 @@ const connectDb = async () => {
     pending = null
     console.log(error)
     console.log(`MongoDB can't connected, hic error is`, error.message)
-    // throw new Error(`MongoDB can't connected, hic error is`, error.message);
-    process.exit(1)
+    throw error
   }
 }
 
