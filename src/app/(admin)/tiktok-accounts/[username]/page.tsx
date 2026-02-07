@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { App, Spin, Button, Popconfirm } from 'antd'
+import { App, Spin, Button, Popconfirm, Image } from 'antd'
 import {
     CopyOutlined,
     DeleteOutlined,
@@ -395,17 +395,18 @@ export default function TikTokAccountPage() {
                 )}
             </div>
 
-            {/* Prompts Section */}
+            {/* Prompts Section - Grouped by Product */}
             <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
                 <div className="flex items-center justify-between mb-3">
                     <h2 className="text-base font-semibold">
-                        Prompt ({prompts.length})
+                        Prompts ({prompts.length})
                     </h2>
                     <Button
                         type="primary"
                         size="small"
                         icon={<PlusOutlined />}
                         onClick={handleAddPrompt}
+                        disabled={products.length === 0}
                     >
                         Thêm
                     </Button>
@@ -415,61 +416,244 @@ export default function TikTokAccountPage() {
                     <div className="text-center py-4">
                         <Spin size="small" />
                     </div>
+                ) : products.length === 0 ? (
+                    <p className="text-sm text-gray-500 text-center py-4">
+                        Chưa có sản phẩm nào để thêm prompt
+                    </p>
                 ) : prompts.length === 0 ? (
                     <p className="text-sm text-gray-500 text-center py-4">
                         Chưa có prompt nào
                     </p>
                 ) : (
-                    <div className="space-y-3">
-                        {prompts.map((prompt: any) => (
-                            <div
-                                key={prompt._id}
-                                className="border rounded-lg p-3 hover:bg-gray-50 transition-colors"
-                            >
-                                <div className="flex items-start justify-between gap-2">
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="text-sm font-semibold text-gray-800 mb-1">
-                                            {prompt.title}
-                                        </h3>
-                                        <p className="text-xs text-gray-600 line-clamp-3 whitespace-pre-wrap">
-                                            {prompt.content}
-                                        </p>
+                    <div className="space-y-4">
+                        {/* Group prompts by product */}
+                        {(() => {
+                            const groupedPrompts: { [key: string]: any[] } = {}
+                            prompts.forEach(prompt => {
+                                const key = prompt.productId || 'no-product'
+                                if (!groupedPrompts[key]) {
+                                    groupedPrompts[key] = []
+                                }
+                                groupedPrompts[key].push(prompt)
+                            })
+
+                            return Object.entries(groupedPrompts).map(([productId, productPrompts]) => {
+                                // Handle no-product case
+                                if (productId === 'no-product') {
+                                    return (
+                                        <div key={productId} className="border rounded-lg overflow-hidden">
+                                            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-3 py-2 border-b">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm font-semibold text-gray-700">
+                                                        ⚠️ Prompts chưa gán sản phẩm
+                                                    </span>
+                                                    <span className="text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-full">
+                                                        {productPrompts.length} prompt{productPrompts.length > 1 ? 's' : ''}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            {/* Prompts List */}
+                                            <div className="divide-y">
+                                                {productPrompts.map((prompt: any) => (
+                                                    <div
+                                                        key={prompt._id}
+                                                        className="p-3 hover:bg-gray-50 transition-colors"
+                                                    >
+                                                        <div className="flex items-start justify-between gap-2">
+                                                            {prompt.productImage && (
+                                                                <div className="flex-shrink-0">
+                                                                    <Image
+                                                                        src={prompt.productImage}
+                                                                        alt={prompt.productTitle || 'Product'}
+                                                                        width={60}
+                                                                        height={60}
+                                                                        className="rounded object-cover cursor-pointer"
+                                                                        preview={{
+                                                                            mask: '🔍 Xem'
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                            )}
+
+                                                            <div className="flex-1 min-w-0">
+                                                                <h3 className="text-sm font-semibold text-gray-800 mb-1">
+                                                                    {prompt.title}
+                                                                </h3>
+                                                                {prompt.mediaId && (
+                                                                    <p className="text-xs text-blue-600 font-mono mb-1">
+                                                                        Media ID: {prompt.mediaId}
+                                                                    </p>
+                                                                )}
+                                                                <p className="text-xs text-gray-600 line-clamp-3 whitespace-pre-wrap">
+                                                                    {prompt.content}
+                                                                </p>
+                                                            </div>
+                                                            <div className="flex gap-1 flex-shrink-0">
+                                                                <Button
+                                                                    type="text"
+                                                                    size="small"
+                                                                    icon={<CopyOutlined />}
+                                                                    onClick={() => handleCopyPromptContent(prompt.content)}
+                                                                    title="Copy nội dung"
+                                                                />
+                                                                <Button
+                                                                    type="text"
+                                                                    size="small"
+                                                                    icon={<EditOutlined />}
+                                                                    onClick={() => handleEditPrompt(prompt)}
+                                                                    title="Sửa"
+                                                                />
+                                                                <Popconfirm
+                                                                    title="Xóa prompt?"
+                                                                    description="Bạn có chắc muốn xóa prompt này?"
+                                                                    onConfirm={() => handleDeletePrompt(prompt._id)}
+                                                                    okText="Xóa"
+                                                                    cancelText="Hủy"
+                                                                    okButtonProps={{ danger: true }}
+                                                                >
+                                                                    <Button
+                                                                        type="text"
+                                                                        size="small"
+                                                                        danger
+                                                                        icon={<DeleteOutlined />}
+                                                                        title="Xóa"
+                                                                    />
+                                                                </Popconfirm>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )
+                                }
+
+                                // Normal product case
+                                const product = products.find(p => p.product_id === productId)
+                                const productTitle = product?.title || productPrompts[0]?.productTitle || 'Sản phẩm không xác định'
+                                const productImage = product?.images?.[0]?.url_list?.[0] || productPrompts[0]?.productImage
+
+                                return (
+                                    <div key={productId} className="border rounded-lg overflow-hidden">
+                                        {/* Product Header */}
+                                        <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-3 py-2 border-b">
+                                            <div className="flex items-center justify-between gap-2">
+                                                <div className="flex items-center gap-2">
+                                                    {productImage && (
+                                                        <img
+                                                            src={productImage}
+                                                            alt={productTitle}
+                                                            className="w-8 h-8 rounded object-cover"
+                                                        />
+                                                    )}
+                                                    <span className="text-sm font-semibold text-blue-900">
+                                                        📦 {productTitle}
+                                                    </span>
+                                                    <span className="text-xs bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full">
+                                                        {productPrompts.length} prompt{productPrompts.length > 1 ? 's' : ''}
+                                                    </span>
+                                                </div>
+
+                                                {/* API Link */}
+                                                <Button
+                                                    type="text"
+                                                    size="small"
+                                                    icon={<CopyOutlined />}
+                                                    onClick={() => {
+                                                        const apiUrl = `/api/prompts?productId=${productId}`
+                                                        navigator.clipboard.writeText(apiUrl)
+                                                        message.success('Đã copy API link!')
+                                                    }}
+                                                    className="text-blue-700 hover:text-blue-900"
+                                                    title="Copy API endpoint"
+                                                >
+                                                    API
+                                                </Button>
+                                            </div>
+
+                                            {/* API URL Display */}
+                                            <div className="mt-1 text-xs text-blue-700 font-mono bg-white/50 px-2 py-1 rounded">
+                                                GET /api/prompts?productId={productId}
+                                            </div>
+                                        </div>
+
+                                        {/* Prompts List */}
+                                        <div className="divide-y">
+                                            {productPrompts.map((prompt: any) => (
+                                                <div
+                                                    key={prompt._id}
+                                                    className="p-3 hover:bg-gray-50 transition-colors"
+                                                >
+                                                    <div className="flex items-start justify-between gap-2">
+                                                        {/* Product Thumbnail */}
+                                                        {prompt.productImage && (
+                                                            <div className="flex-shrink-0">
+                                                                <Image
+                                                                    src={prompt.productImage}
+                                                                    alt={prompt.productTitle}
+                                                                    width={60}
+                                                                    height={60}
+                                                                    className="rounded object-cover cursor-pointer"
+                                                                    preview={{
+                                                                        mask: '🔍 Xem'
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        )}
+
+                                                        <div className="flex-1 min-w-0">
+                                                            <h3 className="text-sm font-semibold text-gray-800 mb-1">
+                                                                {prompt.title}
+                                                            </h3>
+                                                            {prompt.mediaId && (
+                                                                <p className="text-xs text-blue-600 font-mono mb-1">
+                                                                    Media ID: {prompt.mediaId}
+                                                                </p>
+                                                            )}
+                                                            <p className="text-xs text-gray-600 line-clamp-3 whitespace-pre-wrap">
+                                                                {prompt.content}
+                                                            </p>
+                                                        </div>
+                                                        <div className="flex gap-1 flex-shrink-0">
+                                                            <Button
+                                                                type="text"
+                                                                size="small"
+                                                                icon={<CopyOutlined />}
+                                                                onClick={() => handleCopyPromptContent(prompt.content)}
+                                                                title="Copy nội dung"
+                                                            />
+                                                            <Button
+                                                                type="text"
+                                                                size="small"
+                                                                icon={<EditOutlined />}
+                                                                onClick={() => handleEditPrompt(prompt)}
+                                                                title="Sửa"
+                                                            />
+                                                            <Popconfirm
+                                                                title="Xóa prompt?"
+                                                                description="Bạn có chắc muốn xóa prompt này?"
+                                                                onConfirm={() => handleDeletePrompt(prompt._id)}
+                                                                okText="Xóa"
+                                                                cancelText="Hủy"
+                                                                okButtonProps={{ danger: true }}
+                                                            >
+                                                                <Button
+                                                                    type="text"
+                                                                    size="small"
+                                                                    danger
+                                                                    icon={<DeleteOutlined />}
+                                                                    title="Xóa"
+                                                                />
+                                                            </Popconfirm>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                    <div className="flex gap-1 flex-shrink-0">
-                                        <Button
-                                            type="text"
-                                            size="small"
-                                            icon={<CopyOutlined />}
-                                            onClick={() => handleCopyPromptContent(prompt.content)}
-                                            title="Copy nội dung"
-                                        />
-                                        <Button
-                                            type="text"
-                                            size="small"
-                                            icon={<EditOutlined />}
-                                            onClick={() => handleEditPrompt(prompt)}
-                                            title="Sửa"
-                                        />
-                                        <Popconfirm
-                                            title="Xóa prompt?"
-                                            description="Bạn có chắc muốn xóa prompt này?"
-                                            onConfirm={() => handleDeletePrompt(prompt._id)}
-                                            okText="Xóa"
-                                            cancelText="Hủy"
-                                            okButtonProps={{ danger: true }}
-                                        >
-                                            <Button
-                                                type="text"
-                                                size="small"
-                                                danger
-                                                icon={<DeleteOutlined />}
-                                                title="Xóa"
-                                            />
-                                        </Popconfirm>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+                                )
+                            })
+                        })()}
                     </div>
                 )}
             </div>
@@ -552,6 +736,7 @@ export default function TikTokAccountPage() {
                     isOpen={isPromptModalOpen}
                     setIsOpen={setIsPromptModalOpen}
                     accountId={account._id}
+                    products={products}
                     editingPrompt={editingPrompt}
                     onRefresh={() => fetchPrompts(account._id)}
                 />
