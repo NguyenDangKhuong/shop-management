@@ -14,9 +14,10 @@ TikTok Account
         ├── productId, productTitle, productImage
         ├── autoFlowUrl (API endpoint for this flow)
         ├── n8nUrl (optional, n8n webhook URL)
+        ├── description (optional, lấy từ ShopeeLink)
         └── Prompt[] (nhiều prompt per product)
               ├── title
-              ├── content
+              ├── content (maxLength: 90 ký tự)
               └── mediaId (optional, chọn từ Veo3 Media)
 ```
 
@@ -34,6 +35,7 @@ TikTok Account
 | `productImage` | String | ❌ | URL ảnh sản phẩm |
 | `autoFlowUrl` | String | ❌ | URL API endpoint của AutoFlow (tự động tạo khi tạo/sửa) |
 | `n8nUrl` | String | ❌ | URL webhook n8n (optional, nhập tay) |
+| `description` | String | ❌ | Mô tả sản phẩm (lấy từ ShopeeLink khi chọn trong modal) |
 | `enabled` | Boolean | ❌ | Trạng thái bật/tắt (default: `false`) |
 | `status` | String | ❌ | Trạng thái chạy flow: `pending`, `running`, `done`, `error` (default: `pending`) |
 | `createdAt` | Date | Auto | Thời gian tạo |
@@ -48,7 +50,7 @@ TikTok Account
 |-------|------|----------|-------|
 | `productId` | String | ✅ | ID sản phẩm (liên kết với AutoFlow) |
 | `title` | String | ✅ | Tiêu đề prompt |
-| `content` | String | ✅ | Nội dung prompt |
+| `content` | String | ✅ | Nội dung prompt (maxLength: 90 ký tự) |
 | `mediaId` | String | ❌ | Media ID (optional, chọn từ danh sách Veo3 Media) |
 | `createdAt` | Date | Auto | Thời gian tạo |
 | `updatedAt` | Date | Auto | Thời gian cập nhật |
@@ -116,6 +118,7 @@ Content-Type: application/json
   "productImage": "...",
   "autoFlowUrl": "https://domain/api/autoflows?accountId=...&productId=...",
   "n8nUrl": "https://your-n8n.com/webhook/...",
+  "description": "Mô tả từ ShopeeLink...",
   "enabled": false
 }
 ```
@@ -211,7 +214,7 @@ DELETE /api/prompts?id={promptId}
 
 ### AutoFlowModal (`src/components/shop/tiktok-accounts/AutoFlowModal.tsx`)
 
-Modal để tạo/chỉnh sửa AutoFlow. Hiển thị select chọn sản phẩm, tự động lọc bỏ sản phẩm đã có AutoFlow.
+Modal để tạo/chỉnh sửa AutoFlow. Hiển thị select chọn sản phẩm, Shopee Link (để lấy description), và n8n URL.
 
 **Props:**
 
@@ -224,9 +227,11 @@ Modal để tạo/chỉnh sửa AutoFlow. Hiển thị select chọn sản phẩ
 | `autoflows` | `any[]` | Danh sách AutoFlow hiện tại (để lọc trùng) |
 | `editingAutoFlow` | `any` | AutoFlow đang chỉnh sửa (null = tạo mới) |
 | `onRefresh` | `() => void` | Callback refresh data |
+| `shopeeLinks` | `any[]` | Danh sách ShopeeLink (để chọn và lấy description) |
 
 **Form fields:**
 - **Sản phẩm** — Select dropdown chọn product (required)
+- **Shopee Link** — Select dropdown chọn ShopeeLink, lưu description vào AutoFlow (optional)
 - **n8n URL** — Input text nhập webhook URL (optional)
 
 ### PromptModal (`src/components/shop/tiktok-accounts/PromptModal.tsx`)
@@ -247,7 +252,7 @@ Modal để tạo/chỉnh sửa Prompt trong một AutoFlow cụ thể.
 **Form fields:**
 - **Tiêu đề** — Input text (required)
 - **Media ID** — Select dropdown chọn từ Veo3 Media, hiển thị thumbnail (optional)
-- **Nội dung** — TextArea (required)
+- **Nội dung** — TextArea (required, maxLength: 90 ký tự, hiển thị bộ đếm ký tự)
 
 ### TikTok Account Page (`src/app/(admin)/tiktok-accounts/[username]/page.tsx`)
 
@@ -257,10 +262,11 @@ Trang chi tiết TikTok Account hiển thị:
 3. **⚡ AutoFlow** — Danh sách AutoFlow cards, mỗi card hiển thị:
    - Toggle bật/tắt
    - Thông tin sản phẩm (ảnh, tên)
+   - 📝 Description (nếu có — lấy từ ShopeeLink)
    - Số lượng prompt
    - API endpoint URL (clickable, mở tab mới, có nút copy)
    - n8n URL (nếu có — clickable, màu xanh lá, mở tab mới, có nút copy)
-   - Nút ✏️ sửa AutoFlow (chỉnh product, n8n URL)
+   - Nút ✏️ sửa AutoFlow (chỉnh product, shopee link, n8n URL)
    - Danh sách prompt con (hiển thị thumbnail Veo3 Media + mediaId, copy, edit, delete)
 4. **🎬 Veo3 Media** — Quản lý media cho account (xem `docs/VEO3_MEDIA.md`)
 5. **Danh sách sản phẩm** — Product grid
@@ -282,3 +288,4 @@ Trang chi tiết TikTok Account hiển thị:
 
 *Tài liệu cập nhật: 08/02/2026*
 *Cập nhật: 09/02/2026 — Thêm field `status` (pending/running/done/error)*
+*Cập nhật: 08/02/2026 — Thêm field `description` (lấy từ ShopeeLink), Prompt maxLength 90 ký tự*

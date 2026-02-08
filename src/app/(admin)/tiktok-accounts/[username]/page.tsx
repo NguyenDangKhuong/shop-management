@@ -181,6 +181,7 @@ export default function TikTokAccountPage() {
     const [veo3MediaLoading, setVeo3MediaLoading] = useState(false)
     const [newMediaId, setNewMediaId] = useState('')
     const [newMediaFile, setNewMediaFile] = useState<{ url: string; type: string; publicId?: string } | null>(null)
+    const [shopeeLinks, setShopeeLinks] = useState<any[]>([])
 
     // Extract username from params (decode URI and remove @ prefix if exists)
     const username = params.username
@@ -208,6 +209,7 @@ export default function TikTokAccountPage() {
                         fetchScheduledPosts(foundAccount._id)
                         fetchAutoFlows(foundAccount._id)
                         fetchVeo3Media(foundAccount._id)
+                        fetchShopeeLinks()
                     } else {
                         message.error('Không tìm thấy account này')
                     }
@@ -249,6 +251,19 @@ export default function TikTokAccountPage() {
     const handleAddNew = () => {
         setEditingPost(null)
         setIsModalOpen(true)
+    }
+
+    // Shopee Links
+    const fetchShopeeLinks = async () => {
+        try {
+            const response = await fetch('/api/shopee-links')
+            const data = await response.json()
+            if (data.success) {
+                setShopeeLinks(data.data)
+            }
+        } catch (error: any) {
+            console.error('❌ ShopeeLinks Error:', error)
+        }
     }
 
     // AutoFlow handlers
@@ -820,20 +835,24 @@ export default function TikTokAccountPage() {
                                             <span className="text-sm font-semibold text-blue-900 truncate block">
                                                 📦 {autoflow.productTitle || 'Sản phẩm không xác định'}
                                             </span>
+                                            {autoflow.description && (
+                                                <p className="text-xs text-gray-600 truncate mt-0.5">
+                                                    📝 {autoflow.description}
+                                                </p>
+                                            )}
                                             <div className="flex items-center gap-2">
                                                 <span className="text-xs text-blue-700">
                                                     {autoflow.prompts?.length || 0} prompt{(autoflow.prompts?.length || 0) !== 1 ? 's' : ''}
                                                 </span>
-                                                <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${
-                                                    autoflow.status === 'running' ? 'bg-blue-100 text-blue-700' :
-                                                    autoflow.status === 'done' ? 'bg-green-100 text-green-700' :
-                                                    autoflow.status === 'error' ? 'bg-red-100 text-red-700' :
-                                                    'bg-gray-100 text-gray-600'
-                                                }`}>
+                                                <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${autoflow.status === 'running' ? 'bg-blue-100 text-blue-700' :
+                                                        autoflow.status === 'done' ? 'bg-green-100 text-green-700' :
+                                                            autoflow.status === 'error' ? 'bg-red-100 text-red-700' :
+                                                                'bg-gray-100 text-gray-600'
+                                                    }`}>
                                                     {autoflow.status === 'running' ? '🔄 Running' :
-                                                     autoflow.status === 'done' ? '✅ Done' :
-                                                     autoflow.status === 'error' ? '❌ Error' :
-                                                     '⏳ Pending'}
+                                                        autoflow.status === 'done' ? '✅ Done' :
+                                                            autoflow.status === 'error' ? '❌ Error' :
+                                                                '⏳ Pending'}
                                                 </span>
                                             </div>
                                         </div>
@@ -1178,6 +1197,7 @@ export default function TikTokAccountPage() {
                     autoflows={autoflows}
                     editingAutoFlow={editingAutoFlow}
                     onRefresh={() => fetchAutoFlows(account._id)}
+                    shopeeLinks={shopeeLinks}
                 />
             )}
 

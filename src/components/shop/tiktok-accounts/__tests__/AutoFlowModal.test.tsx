@@ -31,7 +31,8 @@ jest.mock('antd', () => {
             useApp: () => ({
                 message: {
                     success: jest.fn(),
-                    error: jest.fn()
+                    error: jest.fn(),
+                    info: jest.fn()
                 }
             })
         }
@@ -70,6 +71,29 @@ describe('AutoFlowModal', () => {
         }
     ]
 
+    const mockShopeeLinks = [
+        {
+            _id: 'sl_1',
+            name: 'Đèn hoàng hôn',
+            description: 'Đèn chiếu hoàng hôn RGB 16 màu',
+            productUrl: 'https://shopee.vn/product/1',
+            mediaFile: { url: 'https://img.example.com/lamp.jpg', type: 'image' }
+        },
+        {
+            _id: 'sl_2',
+            name: 'Tai nghe Bluetooth',
+            description: 'Tai nghe không dây chống ồn',
+            productUrl: 'https://shopee.vn/product/2',
+            mediaFile: { url: 'https://img.example.com/headphone.jpg', type: 'image' }
+        },
+        {
+            _id: 'sl_3',
+            name: 'Sản phẩm không có description',
+            productUrl: 'https://shopee.vn/product/3',
+            mediaFile: { url: 'https://img.example.com/other.jpg', type: 'image' }
+        }
+    ]
+
     const defaultProps = {
         isOpen: true,
         setIsOpen: mockSetIsOpen,
@@ -77,7 +101,8 @@ describe('AutoFlowModal', () => {
         products: mockProducts,
         autoflows: mockAutoflows,
         editingAutoFlow: undefined,
-        onRefresh: mockOnRefresh
+        onRefresh: mockOnRefresh,
+        shopeeLinks: mockShopeeLinks
     }
 
     beforeEach(() => {
@@ -137,6 +162,12 @@ describe('AutoFlowModal', () => {
         expect(screen.getByText('Sản phẩm')).toBeInTheDocument()
     })
 
+    it('displays Shopee Link select field with label', () => {
+        render(<AutoFlowModal {...defaultProps} />)
+
+        expect(screen.getByText('Shopee Link')).toBeInTheDocument()
+    })
+
     it('displays n8n URL field with label', () => {
         render(<AutoFlowModal {...defaultProps} />)
 
@@ -184,10 +215,10 @@ describe('AutoFlowModal', () => {
     it('filters out products that already have an autoflow', () => {
         render(<AutoFlowModal {...defaultProps} />)
 
-        // prod_1 already has an autoflow, so only prod_2 and prod_3 should be in the select
-        // Open the select dropdown
-        const select = screen.getByRole('combobox')
-        fireEvent.mouseDown(select)
+        // Open the product select dropdown (first combobox)
+        const selects = screen.getAllByRole('combobox')
+        const productSelect = selects[0]
+        fireEvent.mouseDown(productSelect)
 
         // prod_1 should NOT be in the dropdown since it already has an autoflow
         expect(screen.queryByTitle('Sản phẩm A')).not.toBeInTheDocument()
@@ -208,12 +239,26 @@ describe('AutoFlowModal', () => {
 
         render(<AutoFlowModal {...editProps} />)
 
-        const select = screen.getByRole('combobox')
-        fireEvent.mouseDown(select)
+        const selects = screen.getAllByRole('combobox')
+        const productSelect = selects[0]
+        fireEvent.mouseDown(productSelect)
 
         // prod_1 should be available since we're editing its autoflow
         const matches = screen.getAllByTitle('Sản phẩm A')
         expect(matches.length).toBeGreaterThanOrEqual(1)
+    })
+
+    it('shows shopee link options in dropdown', () => {
+        render(<AutoFlowModal {...defaultProps} />)
+
+        // Shopee Link select is the second combobox
+        const selects = screen.getAllByRole('combobox')
+        const shopeeSelect = selects[1]
+        fireEvent.mouseDown(shopeeSelect)
+
+        expect(screen.getByTitle('Đèn hoàng hôn')).toBeInTheDocument()
+        expect(screen.getByTitle('Tai nghe Bluetooth')).toBeInTheDocument()
+        expect(screen.getByTitle('Sản phẩm không có description')).toBeInTheDocument()
     })
 
     it('closes modal when cancel button is clicked', () => {
@@ -228,8 +273,8 @@ describe('AutoFlowModal', () => {
     it('shows placeholder text in product select', () => {
         render(<AutoFlowModal {...defaultProps} />)
 
-        const select = screen.getByRole('combobox')
-        expect(select).toBeInTheDocument()
+        const selects = screen.getAllByRole('combobox')
+        expect(selects.length).toBeGreaterThanOrEqual(2) // product + shopee link
     })
 
     it('renders with empty products list', () => {
@@ -238,5 +283,21 @@ describe('AutoFlowModal', () => {
         render(<AutoFlowModal {...emptyProps} />)
 
         expect(screen.getByText('Thêm AutoFlow mới')).toBeInTheDocument()
+    })
+
+    it('renders with empty shopeeLinks list', () => {
+        const emptyProps = { ...defaultProps, shopeeLinks: [] }
+
+        render(<AutoFlowModal {...emptyProps} />)
+
+        expect(screen.getByText('Shopee Link')).toBeInTheDocument()
+    })
+
+    it('renders without shopeeLinks prop', () => {
+        const { shopeeLinks, ...propsWithoutLinks } = defaultProps
+
+        render(<AutoFlowModal {...propsWithoutLinks} />)
+
+        expect(screen.getByText('Shopee Link')).toBeInTheDocument()
     })
 })

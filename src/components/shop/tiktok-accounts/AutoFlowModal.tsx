@@ -12,6 +12,7 @@ interface AutoFlowModalProps {
     autoflows?: any[]
     editingAutoFlow?: any
     onRefresh: () => void
+    shopeeLinks?: any[]
 }
 
 const AutoFlowModal = ({
@@ -21,7 +22,8 @@ const AutoFlowModal = ({
     products = [],
     autoflows = [],
     editingAutoFlow,
-    onRefresh
+    onRefresh,
+    shopeeLinks = []
 }: AutoFlowModalProps) => {
     const { message } = App.useApp()
     const [form] = Form.useForm()
@@ -32,7 +34,8 @@ const AutoFlowModal = ({
             if (editingAutoFlow) {
                 form.setFieldsValue({
                     productId: editingAutoFlow.productId || '',
-                    n8nUrl: editingAutoFlow.n8nUrl || ''
+                    n8nUrl: editingAutoFlow.n8nUrl || '',
+                    shopeeLinkId: editingAutoFlow.shopeeLinkId || undefined
                 })
             } else {
                 form.resetFields()
@@ -46,6 +49,7 @@ const AutoFlowModal = ({
             const values = await form.validateFields()
 
             const selectedProduct = products.find(p => p.product_id === values.productId)
+            const selectedShopeeLink = shopeeLinks.find(l => l._id === values.shopeeLinkId)
 
             const autoFlowData = {
                 accountId,
@@ -54,6 +58,7 @@ const AutoFlowModal = ({
                 productImage: selectedProduct?.images?.[0]?.url_list?.[0] || editingAutoFlow?.productImage || '',
                 autoFlowUrl: `${window.location.origin}/api/autoflows?accountId=${accountId}&productId=${values.productId}`,
                 n8nUrl: values.n8nUrl || '',
+                description: selectedShopeeLink?.description || '',
                 enabled: editingAutoFlow?.enabled || false
             }
 
@@ -114,6 +119,28 @@ const AutoFlowModal = ({
                                 label: product.title
                             }))
                         }
+                    />
+                </Form.Item>
+
+                <Form.Item
+                    label="Shopee Link"
+                    name="shopeeLinkId"
+                >
+                    <Select
+                        placeholder="Chọn Shopee Link để lấy description..."
+                        allowClear
+                        showSearch
+                        optionFilterProp="label"
+                        options={shopeeLinks.map((link: any) => ({
+                            value: link._id,
+                            label: link.name
+                        }))}
+                        onChange={(value) => {
+                            const selectedLink = shopeeLinks.find(l => l._id === value)
+                            if (selectedLink?.description) {
+                                message.info(`Description: ${selectedLink.description.substring(0, 50)}...`)
+                            }
+                        }}
                     />
                 </Form.Item>
 

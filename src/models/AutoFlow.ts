@@ -9,6 +9,7 @@ export interface IAutoFlow extends Document {
     productImage?: string
     autoFlowUrl?: string
     n8nUrl?: string
+    description?: string
     enabled: boolean
     status: AutoFlowStatus
     createdAt?: Date
@@ -24,6 +25,7 @@ const AutoFlowSchema = new Schema({
     productImage: { type: String },
     autoFlowUrl: { type: String },
     n8nUrl: { type: String },
+    description: { type: String },
     enabled: { type: Boolean, default: false },
     status: { type: String, enum: ['pending', 'running', 'done', 'error'], default: 'pending' }
 }, {
