@@ -279,7 +279,7 @@ const TikTokMusicTable = () => {
 
     return (
         <div className="p-4">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-2">
                 <h2 className="text-xl font-semibold">🎵 TikTok Music ({musicList.length})</h2>
                 <Button
                     type="primary"
@@ -288,6 +288,23 @@ const TikTokMusicTable = () => {
                 >
                     Thêm nhạc
                 </Button>
+            </div>
+
+            <div className="mb-4 px-3 py-2 bg-gray-50 border rounded-lg flex items-center gap-2 text-sm">
+                <span className="text-gray-500">🎲 Random API:</span>
+                <a
+                    href="/api/tiktok-music?random=1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 font-mono truncate"
+                >
+                    {typeof window !== 'undefined' ? window.location.origin : ''}/api/tiktok-music?random=1
+                </a>
+                <CopyOutlined
+                    className="cursor-pointer text-gray-400 hover:text-blue-500 flex-shrink-0"
+                    onClick={() => handleCopy(`${typeof window !== 'undefined' ? window.location.origin : ''}/api/tiktok-music?random=1`)}
+                    title="Copy link"
+                />
             </div>
 
             {isMobile ? (
