@@ -37,6 +37,7 @@ describe('DashboardSider', () => {
             'TikTok Accounts',
             'Shopee Links',
             'Facebook Posts',
+            'Veo3 Tokens',
             'Thanh toán',
             'Sản phẩm',
             'Danh mục',
@@ -52,10 +53,11 @@ describe('DashboardSider', () => {
         expect(links[1]).toHaveTextContent('TikTok Accounts') // First menu item (index 1 because logo is index 0)
         expect(links[2]).toHaveTextContent('Shopee Links')
         expect(links[3]).toHaveTextContent('Facebook Posts')
-        expect(links[4]).toHaveTextContent('Thanh toán')
-        expect(links[5]).toHaveTextContent('Sản phẩm')
-        expect(links[6]).toHaveTextContent('Danh mục')
-        expect(links[7]).toHaveTextContent('Thống kê')
+        expect(links[4]).toHaveTextContent('Veo3 Tokens')
+        expect(links[5]).toHaveTextContent('Thanh toán')
+        expect(links[6]).toHaveTextContent('Sản phẩm')
+        expect(links[7]).toHaveTextContent('Danh mục')
+        expect(links[8]).toHaveTextContent('Thống kê')
     })
 
     it('should have correct navigation links', () => {
@@ -64,6 +66,7 @@ describe('DashboardSider', () => {
         expect(screen.getByText('TikTok Accounts').closest('a')).toHaveAttribute('href', '/tiktok-accounts')
         expect(screen.getByText('Shopee Links').closest('a')).toHaveAttribute('href', '/shopee-links')
         expect(screen.getByText('Facebook Posts').closest('a')).toHaveAttribute('href', '/facebook-posts')
+        expect(screen.getByText('Veo3 Tokens').closest('a')).toHaveAttribute('href', '/veo3-tokens')
         expect(screen.getByText('Thanh toán').closest('a')).toHaveAttribute('href', '/carts')
         expect(screen.getByText('Sản phẩm').closest('a')).toHaveAttribute('href', '/products')
         expect(screen.getByText('Danh mục').closest('a')).toHaveAttribute('href', '/categories')
@@ -91,6 +94,7 @@ describe('DashboardSider', () => {
         expect(container.querySelector('.anticon-shopping')).toBeInTheDocument() // ShoppingOutlined
         expect(container.querySelector('.anticon-facebook')).toBeInTheDocument() // FacebookOutlined
         expect(container.querySelector('.anticon-tik-tok')).toBeInTheDocument() // TikTokOutlined
+        expect(container.querySelector('.anticon-key')).toBeInTheDocument() // KeyOutlined
         expect(container.querySelector('.anticon-shopping-cart')).toBeInTheDocument() // ShoppingCartOutlined
         expect(container.querySelector('.anticon-table')).toBeInTheDocument() // TableOutlined
         expect(container.querySelector('.anticon-book')).toBeInTheDocument() // BookOutlined
