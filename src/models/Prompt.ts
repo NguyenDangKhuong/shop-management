@@ -5,6 +5,7 @@ export interface IPrompt extends Document {
     title: string
     content: string
     mediaId?: string
+    order?: number
     createdAt?: Date
     updatedAt?: Date
 }
@@ -15,7 +16,8 @@ const PromptSchema = new Schema({
     productId: { type: String, required: true },
     title: { type: String, required: true },
     content: { type: String, required: true },
-    mediaId: { type: String }
+    mediaId: { type: String },
+    order: { type: Number, default: 0 }
 }, {
     timestamps: true,
     collection: 'prompts'

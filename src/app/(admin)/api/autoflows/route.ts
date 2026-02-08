@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
         const productIds = autoflows.map((a: any) => a.productId)
         const prompts = productIds.length > 0
             ? await PromptModel.find({ productId: { $in: productIds } })
-                .sort({ createdAt: -1 })
+                .sort({ order: 1, createdAt: -1 })
                 .lean()
             : []
 
