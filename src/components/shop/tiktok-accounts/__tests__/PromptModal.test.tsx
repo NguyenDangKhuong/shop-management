@@ -42,12 +42,34 @@ describe('PromptModal', () => {
     const mockSetIsOpen = jest.fn()
     const mockOnRefresh = jest.fn()
 
+    const mockVeo3Media = [
+        {
+            _id: 'vm_1',
+            mediaId: 'CAMaJDBjOWRk',
+            mediaFile: {
+                url: 'https://res.cloudinary.com/test/image/upload/v1/veo3/abc.jpg',
+                type: 'image',
+                publicId: 'veo3/abc'
+            }
+        },
+        {
+            _id: 'vm_2',
+            mediaId: 'XYZ123456789',
+            mediaFile: null
+        },
+        {
+            _id: 'vm_3',
+            mediaId: 'NoImageMedia'
+        }
+    ]
+
     const defaultProps = {
         isOpen: true,
         setIsOpen: mockSetIsOpen,
         productId: 'prod_1',
         editingPrompt: undefined,
-        onRefresh: mockOnRefresh
+        onRefresh: mockOnRefresh,
+        veo3Media: mockVeo3Media
     }
 
     beforeEach(() => {
@@ -73,7 +95,7 @@ describe('PromptModal', () => {
                 _id: 'prompt_1',
                 title: 'Test Prompt',
                 content: 'Test Content',
-                mediaId: 'media_1'
+                mediaId: 'CAMaJDBjOWRk'
             }
         }
 
@@ -96,10 +118,26 @@ describe('PromptModal', () => {
         expect(screen.getByPlaceholderText('Nhập tiêu đề prompt...')).toBeInTheDocument()
     })
 
-    it('has correct placeholder for media ID', () => {
+    it('renders Media ID as a Select dropdown (not Input)', () => {
         render(<PromptModal {...defaultProps} />)
 
-        expect(screen.getByPlaceholderText('Nhập Media ID (optional)...')).toBeInTheDocument()
+        // Should have a combobox for Media ID select
+        const selects = screen.getAllByRole('combobox')
+        expect(selects.length).toBeGreaterThanOrEqual(1)
+    })
+
+    it('shows veo3 media options in Media ID dropdown', () => {
+        render(<PromptModal {...defaultProps} />)
+
+        // Open the select dropdown
+        const selects = screen.getAllByRole('combobox')
+        const mediaSelect = selects[0] // Media ID select
+        fireEvent.mouseDown(mediaSelect)
+
+        // Should show media IDs as options
+        expect(screen.getByTitle('CAMaJDBjOWRk')).toBeInTheDocument()
+        expect(screen.getByTitle('XYZ123456789')).toBeInTheDocument()
+        expect(screen.getByTitle('NoImageMedia')).toBeInTheDocument()
     })
 
     it('has correct placeholder for content', () => {
@@ -145,27 +183,24 @@ describe('PromptModal', () => {
                 _id: 'prompt_1',
                 title: 'Test Title',
                 content: 'Test Content',
-                mediaId: 'media_123'
+                mediaId: 'CAMaJDBjOWRk'
             }
         }
 
         render(<PromptModal {...editProps} />)
 
         expect(screen.getByDisplayValue('Test Title')).toBeInTheDocument()
-        expect(screen.getByDisplayValue('media_123')).toBeInTheDocument()
         expect(screen.getByDisplayValue('Test Content')).toBeInTheDocument()
+        // mediaId is now a Select, so we check for the displayed text
+        expect(screen.getByTitle('CAMaJDBjOWRk')).toBeInTheDocument()
     })
 
-    it('resets form when opening in create mode', () => {
-        render(<PromptModal {...defaultProps} />)
+    it('renders with empty veo3Media list', () => {
+        const emptyProps = { ...defaultProps, veo3Media: [] }
 
-        const titleInput = screen.getByPlaceholderText('Nhập tiêu đề prompt...')
-        const mediaInput = screen.getByPlaceholderText('Nhập Media ID (optional)...')
-        const contentInput = screen.getByPlaceholderText('Nhập nội dung prompt...')
+        render(<PromptModal {...emptyProps} />)
 
-        expect(titleInput).toHaveValue('')
-        expect(mediaInput).toHaveValue('')
-        expect(contentInput).toHaveValue('')
+        expect(screen.getByText('Thêm Prompt mới')).toBeInTheDocument()
     })
 
     it('renders with modal width 500', () => {

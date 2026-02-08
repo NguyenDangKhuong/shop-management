@@ -12,10 +12,11 @@ TikTok Account
         ├── enabled: true/false
         ├── productId, productTitle, productImage
         ├── autoFlowUrl (API endpoint for this flow)
+        ├── n8nUrl (optional, n8n webhook URL)
         └── Prompt[] (nhiều prompt per product)
               ├── title
               ├── content
-              └── mediaId (optional)
+              └── mediaId (optional, chọn từ Veo3 Media)
 ```
 
 ---
@@ -31,6 +32,7 @@ TikTok Account
 | `productTitle` | String | ✅ | Tên sản phẩm |
 | `productImage` | String | ❌ | URL ảnh sản phẩm |
 | `autoFlowUrl` | String | ❌ | URL API endpoint của AutoFlow (tự động tạo khi tạo/sửa) |
+| `n8nUrl` | String | ❌ | URL webhook n8n (optional, nhập tay) |
 | `enabled` | Boolean | ❌ | Trạng thái bật/tắt (default: `false`) |
 | `createdAt` | Date | Auto | Thời gian tạo |
 | `updatedAt` | Date | Auto | Thời gian cập nhật |
@@ -45,7 +47,7 @@ TikTok Account
 | `productId` | String | ✅ | ID sản phẩm (liên kết với AutoFlow) |
 | `title` | String | ✅ | Tiêu đề prompt |
 | `content` | String | ✅ | Nội dung prompt |
-| `mediaId` | String | ❌ | Media ID (optional) |
+| `mediaId` | String | ❌ | Media ID (optional, chọn từ danh sách Veo3 Media) |
 | `createdAt` | Date | Auto | Thời gian tạo |
 | `updatedAt` | Date | Auto | Thời gian cập nhật |
 
@@ -111,6 +113,7 @@ Content-Type: application/json
   "productTitle": "...",
   "productImage": "...",
   "autoFlowUrl": "https://domain/api/autoflows?accountId=...&productId=...",
+  "n8nUrl": "https://your-n8n.com/webhook/...",
   "enabled": false
 }
 ```
@@ -220,6 +223,10 @@ Modal để tạo/chỉnh sửa AutoFlow. Hiển thị select chọn sản phẩ
 | `editingAutoFlow` | `any` | AutoFlow đang chỉnh sửa (null = tạo mới) |
 | `onRefresh` | `() => void` | Callback refresh data |
 
+**Form fields:**
+- **Sản phẩm** — Select dropdown chọn product (required)
+- **n8n URL** — Input text nhập webhook URL (optional)
+
 ### PromptModal (`src/components/shop/tiktok-accounts/PromptModal.tsx`)
 
 Modal để tạo/chỉnh sửa Prompt trong một AutoFlow cụ thể.
@@ -233,6 +240,12 @@ Modal để tạo/chỉnh sửa Prompt trong một AutoFlow cụ thể.
 | `productId` | `string` | ID sản phẩm mà prompt thuộc về |
 | `editingPrompt` | `any` | Prompt đang chỉnh sửa (null = tạo mới) |
 | `onRefresh` | `() => void` | Callback refresh data |
+| `veo3Media` | `any[]` | Danh sách Veo3 Media (để hiển thị dropdown chọn mediaId) |
+
+**Form fields:**
+- **Tiêu đề** — Input text (required)
+- **Media ID** — Select dropdown chọn từ Veo3 Media, hiển thị thumbnail (optional)
+- **Nội dung** — TextArea (required)
 
 ### TikTok Account Page (`src/app/(admin)/tiktok-accounts/[username]/page.tsx`)
 
@@ -243,9 +256,12 @@ Trang chi tiết TikTok Account hiển thị:
    - Toggle bật/tắt
    - Thông tin sản phẩm (ảnh, tên)
    - Số lượng prompt
-   - API endpoint URL (`autoFlowUrl` từ DB, có nút copy)
-   - Danh sách prompt con (copy, edit, delete)
-4. **Danh sách sản phẩm** — Product grid
+   - API endpoint URL (clickable, mở tab mới, có nút copy)
+   - n8n URL (nếu có — clickable, màu xanh lá, mở tab mới, có nút copy)
+   - Nút ✏️ sửa AutoFlow (chỉnh product, n8n URL)
+   - Danh sách prompt con (hiển thị thumbnail Veo3 Media + mediaId, copy, edit, delete)
+4. **🎬 Veo3 Media** — Quản lý media cho account (xem `docs/VEO3_MEDIA.md`)
+5. **Danh sách sản phẩm** — Product grid
 
 ---
 
@@ -263,3 +279,4 @@ Trang chi tiết TikTok Account hiển thị:
 ---
 
 *Tài liệu cập nhật: 08/02/2026*
+*Cập nhật gần nhất: Thêm n8nUrl, edit button, clickable links, Veo3 Media integration*

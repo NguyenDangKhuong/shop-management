@@ -1,0 +1,156 @@
+# 🎬 Veo3 Media - Quản lý Media cho TikTok Accounts
+
+## 📋 Tổng quan
+
+**Veo3 Media** là tính năng quản lý media (hình ảnh) gắn liền với từng TikTok Account. Mỗi media item có một `mediaId` duy nhất và có thể kèm hình ảnh upload lên Cloudinary. Media ID được sử dụng trong **Prompt** để liên kết nội dung prompt với media tương ứng.
+
+### Kiến trúc
+
+```
+TikTok Account
+  └── Veo3Media[] (nhiều media per account)
+        ├── mediaId: string (bắt buộc)
+        └── mediaFile?: MediaFile (optional, upload Cloudinary)
+              ├── url: string
+              ├── type: 'image' | 'video' | 'link'
+              └── publicId?: string
+```
+
+---
+
+## 🗄️ Database Model
+
+### Veo3Media Model
+
+| Field | Type | Required | Mô tả |
+|-------|------|----------|-------|
+| `accountId` | String | ✅ | ID của TikTok Account |
+| `mediaId` | String | ✅ | ID media (dùng để liên kết với Prompt) |
+| `mediaFile` | MediaFile | ❌ | File media upload Cloudinary (subdocument) |
+| `createdAt` | Date | Auto | Thời gian tạo |
+| `updatedAt` | Date | Auto | Thời gian cập nhật |
+
+**Collection:** `veo3medias`
+**File:** `src/models/Veo3Media.ts`
+
+### MediaFile Subdocument
+
+| Field | Type | Required | Mô tả |
+|-------|------|----------|-------|
+| `url` | String | ✅ | URL file trên Cloudinary |
+| `type` | String | ✅ | Loại file: `image`, `video`, hoặc `link` |
+| `publicId` | String | ❌ | Public ID trên Cloudinary (dùng để xóa) |
+
+**File:** `src/models/MediaFile.ts`
+
+---
+
+## 🔌 API Endpoints (`/api/veo3-media`)
+
+### GET - Lấy danh sách media theo account
+
+```
+GET /api/veo3-media?accountId={accountId}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "...",
+      "accountId": "...",
+      "mediaId": "CAMaJDBjOWRk...",
+      "mediaFile": {
+        "url": "https://res.cloudinary.com/...",
+        "type": "image",
+        "publicId": "tiktok/abc123"
+      }
+    }
+  ]
+}
+```
+
+### POST - Tạo media mới
+
+```
+POST /api/veo3-media
+Content-Type: application/json
+
+{
+  "accountId": "...",
+  "mediaId": "..."
+}
+```
+
+### PUT - Cập nhật media (upload/xóa hình)
+
+```
+PUT /api/veo3-media
+Content-Type: application/json
+
+{
+  "id": "media_document_id",
+  "mediaFile": {
+    "url": "https://...",
+    "type": "image",
+    "publicId": "tiktok/xyz789"
+  }
+}
+```
+
+Để xóa hình, gửi `mediaFile: null`.
+
+### DELETE - Xóa media
+
+```
+DELETE /api/veo3-media?id={mediaId}
+```
+
+> [!CAUTION]
+> Khi xóa media có hình, hình trên Cloudinary cũng sẽ bị xóa theo.
+
+---
+
+## 🖥️ UI
+
+### Vị trí trên trang
+
+Section **🎬 Veo3 Media** nằm trên trang chi tiết TikTok Account, giữa **AutoFlow** và **Danh sách sản phẩm**.
+
+### Chức năng
+
+1. **Thêm media** — Nhập Media ID vào input + nhấn "Thêm"
+2. **Upload hình** — Nhấn 📷 → Cloudinary widget mở ra → upload xong tự lưu
+3. **Xóa hình** — Nhấn 🗑️ xóa hình khỏi Cloudinary (giữ media ID)
+4. **Xóa media** — Nhấn Delete xóa toàn bộ record
+5. **Copy Media ID** — Nhấn icon copy
+
+### Upload Config
+
+Upload sử dụng preset `CLOUDINARY_UPLOAD_TIKTOK_PRESET` (env: `NEXT_PUBLIC_CLOUDINARY_UPLOAD_TIKTOK_PRESET`).
+
+**Config:** `veo3MediaUploadConfig` trong `src/utils/cloudinaryConfig.ts`
+- Multiple: `false`
+- Resource type: `image`
+- Formats: jpg, jpeg, png, webp, gif
+- Max size: 10MB
+
+---
+
+## 🔗 Liên kết với Prompt
+
+Khi tạo/sửa Prompt trong AutoFlow, field **Media ID** là dropdown `Select` chọn từ danh sách Veo3 Media của account đó. Mỗi option hiển thị:
+- Thumbnail hình ảnh (nếu có)
+- Media ID text
+
+Trên AutoFlow card, mỗi prompt cũng hiển thị thumbnail nhỏ (24×24px) bên cạnh Media ID.
+
+**File liên quan:**
+- `src/components/shop/tiktok-accounts/PromptModal.tsx` — Prop `veo3Media` truyền từ page
+- `src/app/(admin)/tiktok-accounts/[username]/page.tsx` — Component `SortablePromptItem` nhận `veo3Media`
+
+---
+
+*Tài liệu tạo: 08/02/2026*

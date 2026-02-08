@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Table, Button, Popconfirm, App, Image } from 'antd'
-import { EditOutlined, DeleteOutlined, PlusOutlined, UserOutlined, CopyOutlined } from '@ant-design/icons'
-import TikTokAccountModal from './TikTokAccountModal'
+import { deleteCloudinaryImage } from '@/actions/cloudinary'
 import { TikTokAccount } from '@/models/TikTokAccount'
 import { apiDelete } from '@/utils/internalApi'
-import { deleteCloudinaryImage } from '@/actions/cloudinary'
+import { CopyOutlined, DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons'
+import { App, Button, Image, Popconfirm, Table } from 'antd'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import TikTokAccountModal from './TikTokAccountModal'
 
 const TikTokAccountTable = () => {
     const { message } = App.useApp()
@@ -101,7 +102,9 @@ const TikTokAccountTable = () => {
                         className="cursor-pointer text-gray-400 hover:text-blue-500"
                         onClick={() => handleCopy(username, 'username')}
                     />
-                    <span className="font-mono text-sm text-blue-600">@{username}</span>
+                    <Link href={`/tiktok-accounts/${username}`} className="font-mono text-sm text-blue-600 hover:underline">
+                        @{username}
+                    </Link>
                 </div>
             ),
             sorter: (a: TikTokAccount, b: TikTokAccount) => a.username.localeCompare(b.username)
@@ -170,6 +173,14 @@ const TikTokAccountTable = () => {
             width: 120,
             render: (_: any, record: TikTokAccount) => (
                 <div className="flex gap-2">
+                    <Link href={`/tiktok-accounts/${record.username}`}>
+                        <Button
+                            type="link"
+                            icon={<EyeOutlined />}
+                        >
+                            Chi tiết
+                        </Button>
+                    </Link>
                     <Button
                         type="link"
                         icon={<EditOutlined />}
@@ -261,7 +272,11 @@ const TikTokAccountTable = () => {
                                             className="cursor-pointer text-gray-400 hover:text-blue-500 text-xs"
                                             onClick={() => handleCopy(account.username, 'username')}
                                         />
-                                        <span className="text-xs text-blue-600 font-mono">@{account.username}</span>
+                                        <span className="text-xs text-blue-600 font-mono">
+                                            <Link href={`/tiktok-accounts/${account.username}`} className="hover:underline">
+                                                @{account.username}
+                                            </Link>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -299,6 +314,16 @@ const TikTokAccountTable = () => {
 
                             {/* Actions */}
                             <div className="flex gap-2 pt-3 border-t">
+                                <Link href={`/tiktok-accounts/${account.username}`} className="flex-1">
+                                    <Button
+                                        type="default"
+                                        icon={<EyeOutlined />}
+                                        size="small"
+                                        className="w-full"
+                                    >
+                                        Chi tiết
+                                    </Button>
+                                </Link>
                                 <Button
                                     type="default"
                                     icon={<EditOutlined />}

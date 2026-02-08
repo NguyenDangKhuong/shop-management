@@ -1,4 +1,4 @@
-import { CLOUD_NAME_CLOUDINARY, CLOUDINARY_UPLOAD_FACEBOOK_POST_PRESET, CLOUDINARY_UPLOAD_PRODUCT_PRESET, CLOUDINARY_UPLOAD_SHOPEE_LINK_PRESET } from './constants'
+import { CLOUD_NAME_CLOUDINARY, CLOUDINARY_UPLOAD_FACEBOOK_POST_PRESET, CLOUDINARY_UPLOAD_PRODUCT_PRESET, CLOUDINARY_UPLOAD_SHOPEE_LINK_PRESET, CLOUDINARY_UPLOAD_TIKTOK_PRESET } from './constants'
 
 export interface CloudinaryUploadResult {
     url: string
@@ -69,6 +69,17 @@ export const tiktokAccountUploadConfig: CloudinaryWidgetOptions = {
     cropping: true,
     croppingAspectRatio: 1, // Square avatar
     showSkipCropButton: true
+}
+
+export const veo3MediaUploadConfig: CloudinaryWidgetOptions = {
+    cloudName: CLOUD_NAME_CLOUDINARY || '',
+    uploadPreset: CLOUDINARY_UPLOAD_TIKTOK_PRESET || '', // Reuse shopee preset
+    multiple: false,
+    resourceType: 'image',
+    clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+    maxFileSize: 10485760, // 10MB
+    sources: ['local', 'url', 'camera'],
+    cropping: false
 }
 
 

@@ -6,6 +6,7 @@ export interface IAutoFlow extends Document {
     productTitle: string
     productImage?: string
     autoFlowUrl?: string
+    n8nUrl?: string
     enabled: boolean
     createdAt?: Date
     updatedAt?: Date
@@ -19,6 +20,7 @@ const AutoFlowSchema = new Schema({
     productTitle: { type: String, required: true },
     productImage: { type: String },
     autoFlowUrl: { type: String },
+    n8nUrl: { type: String },
     enabled: { type: Boolean, default: false }
 }, {
     timestamps: true,

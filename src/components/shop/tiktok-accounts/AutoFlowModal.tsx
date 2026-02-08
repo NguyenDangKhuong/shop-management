@@ -1,7 +1,7 @@
 'use client'
 
 import { apiPost, apiPut } from '@/utils/internalApi'
-import { App, Button, Form, Modal, Select } from 'antd'
+import { App, Button, Form, Input, Modal, Select } from 'antd'
 import { useEffect, useState } from 'react'
 
 interface AutoFlowModalProps {
@@ -31,7 +31,8 @@ const AutoFlowModal = ({
         if (isOpen) {
             if (editingAutoFlow) {
                 form.setFieldsValue({
-                    productId: editingAutoFlow.productId || ''
+                    productId: editingAutoFlow.productId || '',
+                    n8nUrl: editingAutoFlow.n8nUrl || ''
                 })
             } else {
                 form.resetFields()
@@ -52,6 +53,7 @@ const AutoFlowModal = ({
                 productTitle: selectedProduct?.title || editingAutoFlow?.productTitle || '',
                 productImage: selectedProduct?.images?.[0]?.url_list?.[0] || editingAutoFlow?.productImage || '',
                 autoFlowUrl: `${window.location.origin}/api/autoflows?accountId=${accountId}&productId=${values.productId}`,
+                n8nUrl: values.n8nUrl || '',
                 enabled: editingAutoFlow?.enabled || false
             }
 
@@ -113,6 +115,13 @@ const AutoFlowModal = ({
                             }))
                         }
                     />
+                </Form.Item>
+
+                <Form.Item
+                    label="n8n URL"
+                    name="n8nUrl"
+                >
+                    <Input placeholder="Nhập n8n webhook URL (optional)..." />
                 </Form.Item>
             </Form>
         </Modal>

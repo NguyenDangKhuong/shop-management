@@ -137,6 +137,50 @@ describe('AutoFlowModal', () => {
         expect(screen.getByText('Sản phẩm')).toBeInTheDocument()
     })
 
+    it('displays n8n URL field with label', () => {
+        render(<AutoFlowModal {...defaultProps} />)
+
+        expect(screen.getByText('n8n URL')).toBeInTheDocument()
+    })
+
+    it('has n8n URL input with correct placeholder', () => {
+        render(<AutoFlowModal {...defaultProps} />)
+
+        expect(screen.getByPlaceholderText('Nhập n8n webhook URL (optional)...')).toBeInTheDocument()
+    })
+
+    it('populates n8nUrl when editing an autoflow with n8nUrl', () => {
+        const editProps = {
+            ...defaultProps,
+            editingAutoFlow: {
+                _id: 'af_1',
+                productId: 'prod_1',
+                productTitle: 'Sản phẩm A',
+                n8nUrl: 'https://my-n8n.com/webhook/12345'
+            }
+        }
+
+        render(<AutoFlowModal {...editProps} />)
+
+        expect(screen.getByDisplayValue('https://my-n8n.com/webhook/12345')).toBeInTheDocument()
+    })
+
+    it('n8nUrl field is empty when editing autoflow without n8nUrl', () => {
+        const editProps = {
+            ...defaultProps,
+            editingAutoFlow: {
+                _id: 'af_1',
+                productId: 'prod_1',
+                productTitle: 'Sản phẩm A'
+            }
+        }
+
+        render(<AutoFlowModal {...editProps} />)
+
+        const n8nInput = screen.getByPlaceholderText('Nhập n8n webhook URL (optional)...')
+        expect(n8nInput).toHaveValue('')
+    })
+
     it('filters out products that already have an autoflow', () => {
         render(<AutoFlowModal {...defaultProps} />)
 

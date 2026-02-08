@@ -1,7 +1,7 @@
 'use client'
 
 import { apiPost, apiPut } from '@/utils/internalApi'
-import { App, Button, Form, Input, Modal } from 'antd'
+import { App, Button, Form, Input, Modal, Select } from 'antd'
 import { useEffect, useState } from 'react'
 
 interface PromptModalProps {
@@ -10,6 +10,7 @@ interface PromptModalProps {
     productId: string
     editingPrompt?: any
     onRefresh: () => void
+    veo3Media?: any[]
 }
 
 const PromptModal = ({
@@ -17,7 +18,8 @@ const PromptModal = ({
     setIsOpen,
     productId,
     editingPrompt,
-    onRefresh
+    onRefresh,
+    veo3Media = []
 }: PromptModalProps) => {
     const { message } = App.useApp()
     const [form] = Form.useForm()
@@ -94,7 +96,33 @@ const PromptModal = ({
                     label="Media ID"
                     name="mediaId"
                 >
-                    <Input placeholder="Nhập Media ID (optional)..." />
+                    <Select
+                        placeholder="Chọn Media ID (optional)..."
+                        allowClear
+                        showSearch
+                        optionFilterProp="label"
+                        options={veo3Media.map((m: any) => ({
+                            value: m.mediaId,
+                            label: m.mediaId,
+                        }))}
+                        optionRender={(option) => {
+                            const media = veo3Media.find((m: any) => m.mediaId === option.value)
+                            return (
+                                <div className="flex items-center gap-2 py-1">
+                                    {media?.mediaFile?.url ? (
+                                        <img
+                                            src={media.mediaFile.url}
+                                            alt={String(option.value)}
+                                            className="w-8 h-8 rounded object-cover flex-shrink-0"
+                                        />
+                                    ) : (
+                                        <div className="w-8 h-8 rounded bg-gray-200 flex-shrink-0" />
+                                    )}
+                                    <span className="font-mono text-sm">{option.label}</span>
+                                </div>
+                            )
+                        }}
+                    />
                 </Form.Item>
 
                 <Form.Item
