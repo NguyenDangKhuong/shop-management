@@ -8,6 +8,7 @@ import {
   BarChartOutlined,
   BookOutlined,
   FacebookOutlined,
+  KeyOutlined,
   ShoppingCartOutlined,
   ShoppingOutlined,
   TableOutlined,
@@ -84,6 +85,11 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
             key: '/facebook-posts',
             icon: <FacebookOutlined />,
             label: <Link href='/facebook-posts'>Facebook Posts</Link>
+          },
+          {
+            key: '/veo3-tokens',
+            icon: <KeyOutlined />,
+            label: <Link href='/veo3-tokens'>Veo3 Tokens</Link>
           },
           {
             key: '/carts',
