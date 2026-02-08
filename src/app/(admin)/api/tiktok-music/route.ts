@@ -1,6 +1,15 @@
 import TikTokMusicModel from '@/models/TikTokMusic'
 import connectDB from '@/utils/connectDb'
+import { v2 as cloudinary } from 'cloudinary'
 import { NextRequest, NextResponse } from 'next/server'
+import { API_KEY_CLOUDINARY, API_SECRET_CLOUDINARY, CLOUD_NAME_CLOUDINARY } from '@/utils/constants'
+
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: CLOUD_NAME_CLOUDINARY,
+    api_key: API_KEY_CLOUDINARY,
+    api_secret: API_SECRET_CLOUDINARY
+})
 
 // GET - Fetch all music or random one (?random=1)
 export async function GET(request: NextRequest) {
@@ -103,7 +112,7 @@ export async function PUT(request: NextRequest) {
     }
 }
 
-// DELETE - Delete music
+// DELETE - Delete music (also removes from Cloudinary)
 export async function DELETE(request: NextRequest) {
     try {
         await connectDB()
@@ -117,14 +126,30 @@ export async function DELETE(request: NextRequest) {
             }, { status: 400 })
         }
 
-        const deleted = await TikTokMusicModel.findByIdAndDelete(id)
+        // Find music first to get publicId for Cloudinary deletion
+        const music = await TikTokMusicModel.findById(id)
 
-        if (!deleted) {
+        if (!music) {
             return NextResponse.json({
                 success: false,
                 error: 'Music not found'
             }, { status: 404 })
         }
+
+        // Delete from Cloudinary if music file has publicId
+        if (music.music?.publicId) {
+            try {
+                // Audio files in Cloudinary use resource_type 'video'
+                const result = await cloudinary.uploader.destroy(music.music.publicId, {
+                    resource_type: 'video'
+                })
+                console.log('🗑️ Cloudinary music deleted:', result)
+            } catch (cloudinaryError: any) {
+                console.error('⚠️ Cloudinary delete failed (continuing with DB delete):', cloudinaryError.message)
+            }
+        }
+
+        await TikTokMusicModel.findByIdAndDelete(id)
 
         return NextResponse.json({
             success: true,
@@ -138,3 +163,4 @@ export async function DELETE(request: NextRequest) {
         }, { status: 500 })
     }
 }
+

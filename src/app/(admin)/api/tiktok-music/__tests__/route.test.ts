@@ -10,12 +10,30 @@
 // Mock connectDB
 jest.mock('@/utils/connectDb', () => jest.fn().mockResolvedValue(undefined))
 
+// Mock Cloudinary
+jest.mock('cloudinary', () => ({
+    v2: {
+        config: jest.fn(),
+        uploader: {
+            destroy: jest.fn().mockResolvedValue({ result: 'ok' })
+        }
+    }
+}))
+
+// Mock constants
+jest.mock('@/utils/constants', () => ({
+    CLOUD_NAME_CLOUDINARY: 'test_cloud',
+    API_KEY_CLOUDINARY: 'test_key',
+    API_SECRET_CLOUDINARY: 'test_secret'
+}))
+
 // Mock TikTokMusicModel
 jest.mock('@/models/TikTokMusic', () => {
     const mockLean = jest.fn()
     const mockSort = jest.fn().mockReturnValue({ lean: mockLean })
     const model: any = jest.fn()
     model.find = jest.fn().mockReturnValue({ sort: mockSort })
+    model.findById = jest.fn()
     model.create = jest.fn()
     model.findByIdAndUpdate = jest.fn()
     model.findByIdAndDelete = jest.fn()
@@ -202,6 +220,7 @@ describe('TikTok Music API', () => {
 
     describe('DELETE', () => {
         it('deletes a music item', async () => {
+            mockModel.findById.mockResolvedValue({ _id: 'm_1', music: null })
             mockModel.findByIdAndDelete.mockResolvedValue({ _id: 'm_1' })
 
             const request = new NextRequest('http://localhost:3000/api/tiktok-music?id=m_1', {
@@ -211,6 +230,24 @@ describe('TikTok Music API', () => {
             const json = await response.json()
 
             expect(json.success).toBe(true)
+        })
+
+        it('deletes music with Cloudinary file', async () => {
+            const { v2: cloudinary } = require('cloudinary')
+            mockModel.findById.mockResolvedValue({
+                _id: 'm_1',
+                music: { url: 'https://example.com/song.mp3', type: 'audio', publicId: 'music_123' }
+            })
+            mockModel.findByIdAndDelete.mockResolvedValue({ _id: 'm_1' })
+
+            const request = new NextRequest('http://localhost:3000/api/tiktok-music?id=m_1', {
+                method: 'DELETE'
+            })
+            const response = await DELETE(request)
+            const json = await response.json()
+
+            expect(json.success).toBe(true)
+            expect(cloudinary.uploader.destroy).toHaveBeenCalledWith('music_123', { resource_type: 'video' })
         })
 
         it('returns 400 when id is missing', async () => {
@@ -225,7 +262,7 @@ describe('TikTok Music API', () => {
         })
 
         it('returns 404 when music not found', async () => {
-            mockModel.findByIdAndDelete.mockResolvedValue(null)
+            mockModel.findById.mockResolvedValue(null)
 
             const request = new NextRequest('http://localhost:3000/api/tiktok-music?id=nonexistent', {
                 method: 'DELETE'
@@ -235,6 +272,25 @@ describe('TikTok Music API', () => {
 
             expect(json.success).toBe(false)
             expect(response.status).toBe(404)
+        })
+
+        it('still deletes from DB if Cloudinary fails', async () => {
+            const { v2: cloudinary } = require('cloudinary')
+            cloudinary.uploader.destroy.mockRejectedValueOnce(new Error('Cloudinary error'))
+            mockModel.findById.mockResolvedValue({
+                _id: 'm_1',
+                music: { url: 'https://example.com/song.mp3', type: 'audio', publicId: 'music_fail' }
+            })
+            mockModel.findByIdAndDelete.mockResolvedValue({ _id: 'm_1' })
+
+            const request = new NextRequest('http://localhost:3000/api/tiktok-music?id=m_1', {
+                method: 'DELETE'
+            })
+            const response = await DELETE(request)
+            const json = await response.json()
+
+            expect(json.success).toBe(true)
+            expect(mockModel.findByIdAndDelete).toHaveBeenCalledWith('m_1')
         })
     })
 })
