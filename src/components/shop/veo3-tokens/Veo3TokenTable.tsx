@@ -1,15 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { DeleteTwoTone, EditTwoTone, CopyOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Popconfirm, Table, App, Input, Modal, Form } from 'antd'
+import { apiDelete, apiGet, apiPost, apiPut } from '@/utils/internalApi'
+import { CopyOutlined, DeleteTwoTone, EditTwoTone, PlusOutlined } from '@ant-design/icons'
+import { App, Button, Form, Input, Modal, Popconfirm, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
-import { apiGet, apiPost, apiDelete } from '@/utils/internalApi'
 
 interface Veo3Token {
     _id: string
-    key: string
     value: string
     createdAt?: string
     updatedAt?: string
@@ -20,7 +19,7 @@ const Veo3TokenTable = () => {
     const [tokens, setTokens] = useState<Veo3Token[]>([])
     const [loading, setLoading] = useState(true)
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [editingToken, setEditingToken] = useState<Partial<Veo3Token> | null>(null)
+    const [editingToken, setEditingToken] = useState<Veo3Token | null>(null)
     const [form] = Form.useForm()
 
     const loadTokens = async () => {
@@ -54,15 +53,14 @@ const Veo3TokenTable = () => {
         try {
             await navigator.clipboard.writeText(text)
             message.success('Đã copy!')
-        } catch (error) {
-            console.error('Failed to copy:', error)
+        } catch {
             message.error('Không thể copy')
         }
     }
 
     const handleEdit = (token: Veo3Token) => {
         setEditingToken(token)
-        form.setFieldsValue({ key: token.key, value: token.value })
+        form.setFieldsValue({ value: token.value })
         setIsModalOpen(true)
     }
 
@@ -75,7 +73,10 @@ const Veo3TokenTable = () => {
     const handleSubmit = async () => {
         try {
             const values = await form.validateFields()
-            const result = await apiPost('/api/veo3-tokens', values)
+
+            const result = editingToken
+                ? await apiPut('/api/veo3-tokens', { id: editingToken._id, value: values.value })
+                : await apiPost('/api/veo3-tokens', { value: values.value })
 
             if (result.success) {
                 message.success(editingToken ? 'Đã cập nhật token!' : 'Đã thêm token!')
@@ -85,40 +86,29 @@ const Veo3TokenTable = () => {
             } else {
                 message.error(result.error || 'Lưu token thất bại')
             }
-        } catch (error) {
+        } catch {
             // Form validation error
         }
     }
 
+    const apiUrl = typeof window !== 'undefined'
+        ? `${window.location.origin}/api/veo3-tokens`
+        : '/api/veo3-tokens'
+
     const columns: ColumnsType<Veo3Token> = [
         {
-            title: 'Key',
-            dataIndex: 'key',
-            key: 'key',
-            width: 200,
-            render: (key: string) => (
-                <div className="flex items-center gap-2">
-                    <CopyOutlined
-                        className="cursor-pointer text-gray-500 hover:text-blue-500"
-                        onClick={() => handleCopy(key)}
-                    />
-                    <span className="font-medium">{key}</span>
-                </div>
-            )
-        },
-        {
-            title: 'Value',
+            title: 'Token',
             dataIndex: 'value',
             key: 'value',
             ellipsis: true,
             render: (value: string) => (
                 <div className="flex items-center gap-2">
                     <CopyOutlined
-                        className="cursor-pointer text-gray-500 hover:text-blue-500"
+                        className="cursor-pointer text-gray-500 hover:text-blue-500 flex-shrink-0"
                         onClick={() => handleCopy(value)}
                     />
                     <span className="font-mono text-xs">
-                        {value.length > 50 ? `${value.substring(0, 50)}...` : value}
+                        {value.length > 80 ? `${value.substring(0, 80)}...` : value}
                     </span>
                 </div>
             )
@@ -155,10 +145,6 @@ const Veo3TokenTable = () => {
         }
     ]
 
-    const apiUrl = typeof window !== 'undefined'
-        ? `${window.location.origin}/api/veo3-tokens`
-        : '/api/veo3-tokens'
-
     return (
         <div className="p-4">
             <div className="flex justify-between items-center mb-4">
@@ -182,7 +168,7 @@ const Veo3TokenTable = () => {
                     />
                 </div>
                 <div className="text-xs text-gray-500 mt-1">
-                    Body: <code className="bg-gray-100 px-1 rounded">{'{ "key": "token_name", "value": "token_value" }'}</code>
+                    Body: <code className="bg-gray-100 px-1 rounded">{'{ "value": "your_token_here" }'}</code>
                 </div>
             </div>
 
@@ -193,8 +179,7 @@ const Veo3TokenTable = () => {
                             key={token._id}
                             className="border rounded-lg p-3 bg-white shadow-sm"
                         >
-                            <div className="flex justify-between items-start mb-2">
-                                <span className="font-semibold text-blue-600">{token.key}</span>
+                            <div className="flex justify-end items-start mb-2">
                                 <div className="flex gap-2">
                                     <CopyOutlined
                                         className="cursor-pointer text-gray-500"
@@ -252,16 +237,9 @@ const Veo3TokenTable = () => {
             >
                 <Form form={form} layout="vertical" className="mt-4">
                     <Form.Item
-                        name="key"
-                        label="Key"
-                        rules={[{ required: true, message: 'Vui lòng nhập key' }]}
-                    >
-                        <Input placeholder="Ví dụ: access_token, refresh_token..." />
-                    </Form.Item>
-                    <Form.Item
                         name="value"
-                        label="Value"
-                        rules={[{ required: true, message: 'Vui lòng nhập value' }]}
+                        label="Token"
+                        rules={[{ required: true, message: 'Vui lòng nhập token' }]}
                     >
                         <Input.TextArea
                             placeholder="Nhập giá trị token..."

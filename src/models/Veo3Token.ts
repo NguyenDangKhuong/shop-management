@@ -1,14 +1,12 @@
 import mongoose, { Document, Schema } from 'mongoose'
 
 export interface IVeo3Token extends Document {
-    key: string
     value: string
     createdAt?: Date
     updatedAt?: Date
 }
 
 const Veo3TokenSchema = new Schema({
-    key: { type: String, required: true, unique: true },
     value: { type: String, required: true }
 }, {
     timestamps: true,

@@ -22,26 +22,21 @@ export async function GET() {
     }
 }
 
-// POST - Create or update a veo3 token (upsert by key)
+// POST - Create a new veo3 token
 export async function POST(request: NextRequest) {
     try {
         await connectDB()
         const body = await request.json()
 
-        // Validate required fields
-        if (!body.key || !body.value) {
+        // Validate required field
+        if (!body.value) {
             return NextResponse.json({
                 success: false,
-                error: 'Missing required fields: key and value'
+                error: 'Missing required field: value'
             }, { status: 400 })
         }
 
-        // Upsert: update if key exists, create if not
-        const token = await Veo3TokenModel.findOneAndUpdate(
-            { key: body.key },
-            { key: body.key, value: body.value },
-            { new: true, upsert: true }
-        )
+        const token = await Veo3TokenModel.create({ value: body.value })
 
         return NextResponse.json({
             success: true,
@@ -61,7 +56,7 @@ export async function PUT(request: NextRequest) {
     try {
         await connectDB()
         const body = await request.json()
-        const { id, ...updateData } = body
+        const { id, value } = body
 
         if (!id) {
             return NextResponse.json({
@@ -72,7 +67,7 @@ export async function PUT(request: NextRequest) {
 
         const updatedToken = await Veo3TokenModel.findByIdAndUpdate(
             id,
-            updateData,
+            { value },
             { new: true }
         )
 
