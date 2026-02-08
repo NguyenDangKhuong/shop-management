@@ -1,8 +1,8 @@
 'use client'
 
+import AutoFlowModal from '@/components/shop/tiktok-accounts/AutoFlowModal'
 import PromptModal from '@/components/shop/tiktok-accounts/PromptModal'
 import TikTokScheduledPostModal from '@/components/shop/tiktok-accounts/TikTokScheduledPostModal'
-import WorkflowModal from '@/components/shop/tiktok-accounts/WorkflowModal'
 import {
     CopyOutlined,
     DeleteOutlined,
@@ -10,7 +10,7 @@ import {
     PlusOutlined,
     UserOutlined
 } from '@ant-design/icons'
-import { App, Button, Image, Popconfirm, Spin } from 'antd'
+import { App, Button, Popconfirm, Spin, Switch } from 'antd'
 import dayjs from 'dayjs'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -41,14 +41,13 @@ export default function TikTokAccountPage() {
     const [postsLoading, setPostsLoading] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingPost, setEditingPost] = useState<any>(null)
-    const [prompts, setPrompts] = useState<any[]>([])
-    const [promptsLoading, setPromptsLoading] = useState(false)
+    const [autoflows, setAutoflows] = useState<any[]>([])
+    const [autoflowsLoading, setAutoflowsLoading] = useState(false)
+    const [isAutoFlowModalOpen, setIsAutoFlowModalOpen] = useState(false)
+    const [editingAutoFlow, setEditingAutoFlow] = useState<any>(null)
     const [isPromptModalOpen, setIsPromptModalOpen] = useState(false)
     const [editingPrompt, setEditingPrompt] = useState<any>(null)
-    const [workflows, setWorkflows] = useState<any[]>([])
-    const [workflowsLoading, setWorkflowsLoading] = useState(false)
-    const [isWorkflowModalOpen, setIsWorkflowModalOpen] = useState(false)
-    const [editingWorkflow, setEditingWorkflow] = useState<any>(null)
+    const [promptProductId, setPromptProductId] = useState<string>('')
 
     // Extract username from params (decode URI and remove @ prefix if exists)
     const username = params.username
@@ -71,11 +70,10 @@ export default function TikTokAccountPage() {
 
                     if (foundAccount) {
                         setAccount(foundAccount)
-                        // Fetch products, scheduled posts, prompts, and workflows after account is loaded
+                        // Fetch products, scheduled posts, and autoflows after account is loaded
                         fetchProducts(foundAccount.cookie)
                         fetchScheduledPosts(foundAccount._id)
-                        fetchPrompts(foundAccount._id)
-                        fetchWorkflows(foundAccount._id)
+                        fetchAutoFlows(foundAccount._id)
                     } else {
                         message.error('Không tìm thấy account này')
                     }
@@ -119,31 +117,77 @@ export default function TikTokAccountPage() {
         setIsModalOpen(true)
     }
 
-    // Prompt handlers
-    const fetchPrompts = async (accountId: string) => {
+    // AutoFlow handlers
+    const fetchAutoFlows = async (accountId: string) => {
         try {
-            setPromptsLoading(true)
-            const response = await fetch(`/api/prompts?accountId=${accountId}`)
+            setAutoflowsLoading(true)
+            const response = await fetch(`/api/autoflows?accountId=${accountId}`)
             const data = await response.json()
 
             if (data.success) {
-                setPrompts(data.data)
+                setAutoflows(data.data)
             } else {
-                console.error('❌ Failed to fetch prompts:', data.error)
+                console.error('❌ Failed to fetch autoflows:', data.error)
             }
         } catch (error: any) {
-            console.error('❌ Prompts Error:', error)
+            console.error('❌ AutoFlows Error:', error)
         } finally {
-            setPromptsLoading(false)
+            setAutoflowsLoading(false)
         }
     }
 
-    const handleAddPrompt = () => {
+    const handleAddAutoFlow = () => {
+        setEditingAutoFlow(null)
+        setIsAutoFlowModalOpen(true)
+    }
+
+    const handleDeleteAutoFlow = async (autoflowId: string) => {
+        try {
+            const response = await fetch(`/api/autoflows?id=${autoflowId}`, {
+                method: 'DELETE'
+            })
+            const data = await response.json()
+
+            if (data.success) {
+                message.success('Đã xóa AutoFlow và tất cả prompts!')
+                if (account) fetchAutoFlows(account._id)
+            } else {
+                message.error('Xóa thất bại')
+            }
+        } catch (error: any) {
+            message.error('Lỗi: ' + error.message)
+        }
+    }
+
+    const handleToggleAutoFlow = async (autoflow: any, enabled: boolean) => {
+        try {
+            const response = await fetch('/api/autoflows', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: autoflow._id, enabled })
+            })
+            const data = await response.json()
+
+            if (data.success) {
+                message.success(enabled ? 'Đã bật AutoFlow!' : 'Đã tắt AutoFlow!')
+                if (account) fetchAutoFlows(account._id)
+            } else {
+                message.error('Cập nhật thất bại')
+            }
+        } catch (error: any) {
+            message.error('Lỗi: ' + error.message)
+        }
+    }
+
+    // Prompt handlers (within an autoflow)
+    const handleAddPrompt = (productId: string) => {
+        setPromptProductId(productId)
         setEditingPrompt(null)
         setIsPromptModalOpen(true)
     }
 
     const handleEditPrompt = (prompt: any) => {
+        setPromptProductId(prompt.productId)
         setEditingPrompt(prompt)
         setIsPromptModalOpen(true)
     }
@@ -157,54 +201,7 @@ export default function TikTokAccountPage() {
 
             if (data.success) {
                 message.success('Đã xóa prompt!')
-                if (account) fetchPrompts(account._id)
-            } else {
-                message.error('Xóa thất bại')
-            }
-        } catch (error: any) {
-            message.error('Lỗi: ' + error.message)
-        }
-    }
-
-    // Workflow handlers
-    const fetchWorkflows = async (accountId: string) => {
-        try {
-            setWorkflowsLoading(true)
-            const response = await fetch(`/api/workflows?accountId=${accountId}`)
-            const data = await response.json()
-
-            if (data.success) {
-                setWorkflows(data.data)
-            } else {
-                console.error('❌ Failed to fetch workflows:', data.error)
-            }
-        } catch (error: any) {
-            console.error('❌ Workflows Error:', error)
-        } finally {
-            setWorkflowsLoading(false)
-        }
-    }
-
-    const handleAddWorkflow = () => {
-        setEditingWorkflow(null)
-        setIsWorkflowModalOpen(true)
-    }
-
-    const handleEditWorkflow = (workflow: any) => {
-        setEditingWorkflow(workflow)
-        setIsWorkflowModalOpen(true)
-    }
-
-    const handleDeleteWorkflow = async (workflowId: string) => {
-        try {
-            const response = await fetch(`/api/workflows?id=${workflowId}`, {
-                method: 'DELETE'
-            })
-            const data = await response.json()
-
-            if (data.success) {
-                message.success('Đã xóa workflow!')
-                if (account) fetchWorkflows(account._id)
+                if (account) fetchAutoFlows(account._id)
             } else {
                 message.error('Xóa thất bại')
             }
@@ -448,371 +445,181 @@ export default function TikTokAccountPage() {
                 )}
             </div>
 
-            {/* Workflow Automation */}
+
+            {/* AutoFlow Section */}
             <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
                 <div className="flex items-center justify-between mb-3">
                     <h2 className="text-base font-semibold">
-                        ⚡ Workflow Automation ({workflows.length})
+                        ⚡ AutoFlow ({autoflows.length})
                     </h2>
                     <Button
                         type="primary"
                         size="small"
                         icon={<PlusOutlined />}
-                        onClick={handleAddWorkflow}
-                        disabled={prompts.length === 0}
-                    >
-                        Thêm
-                    </Button>
-                </div>
-
-                {workflowsLoading ? (
-                    <div className="text-center py-4">
-                        <Spin size="small" />
-                    </div>
-                ) : prompts.length === 0 ? (
-                    <p className="text-sm text-gray-500 text-center py-4">
-                        Cần có prompt trước khi tạo workflow
-                    </p>
-                ) : workflows.length === 0 ? (
-                    <p className="text-sm text-gray-500 text-center py-4">
-                        Chưa có workflow nào
-                    </p>
-                ) : (
-                    <div className="space-y-3">
-                        {workflows.map((workflow: any) => (
-                            <div
-                                key={workflow._id}
-                                className="border rounded-lg p-3 flex items-center gap-3 hover:bg-gray-50 transition-colors"
-                            >
-                                {/* Prompt Info */}
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <span className="text-sm font-semibold text-gray-800">
-                                            {workflow.prompt?.title || 'Prompt đã bị xóa'}
-                                        </span>
-                                    </div>
-                                    {workflow.prompt?.productTitle && (
-                                        <div className="text-xs text-gray-500 mb-1">
-                                            📦 {workflow.prompt.productTitle}
-                                        </div>
-                                    )}
-                                    {workflow.prompt?.content && (
-                                        <p className="text-xs text-gray-600 line-clamp-2">
-                                            {workflow.prompt.content}
-                                        </p>
-                                    )}
-                                </div>
-
-                                {/* Status Badge */}
-                                <span className={`text-xs px-2 py-0.5 rounded flex-shrink-0 ${
-                                    workflow.status === 'active' ? 'bg-green-100 text-green-700' :
-                                    workflow.status === 'running' ? 'bg-blue-100 text-blue-700' :
-                                    workflow.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
-                                    workflow.status === 'failed' ? 'bg-red-100 text-red-700' :
-                                    'bg-gray-100 text-gray-700'
-                                }`}>
-                                    {workflow.status === 'active' ? '🟢 Active' :
-                                     workflow.status === 'running' ? '🔵 Running' :
-                                     workflow.status === 'completed' ? '✅ Completed' :
-                                     workflow.status === 'failed' ? '🔴 Failed' :
-                                     '⚪ Inactive'}
-                                </span>
-
-                                {/* Actions */}
-                                <div className="flex gap-1 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-                                    <Button
-                                        type="text"
-                                        size="small"
-                                        icon={<EditOutlined />}
-                                        onClick={() => handleEditWorkflow(workflow)}
-                                        title="Sửa"
-                                    />
-                                    <Popconfirm
-                                        title="Xóa workflow?"
-                                        description="Bạn có chắc muốn xóa workflow này?"
-                                        onConfirm={() => handleDeleteWorkflow(workflow._id)}
-                                        okText="Xóa"
-                                        cancelText="Hủy"
-                                        okButtonProps={{ danger: true }}
-                                    >
-                                        <Button
-                                            type="text"
-                                            size="small"
-                                            danger
-                                            icon={<DeleteOutlined />}
-                                            title="Xóa"
-                                        />
-                                    </Popconfirm>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            {/* Prompts Section - Grouped by Product */}
-            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-                <div className="flex items-center justify-between mb-3">
-                    <h2 className="text-base font-semibold">
-                        Prompts ({prompts.length})
-                    </h2>
-                    <Button
-                        type="primary"
-                        size="small"
-                        icon={<PlusOutlined />}
-                        onClick={handleAddPrompt}
+                        onClick={handleAddAutoFlow}
                         disabled={products.length === 0}
                     >
                         Thêm
                     </Button>
                 </div>
 
-                {promptsLoading ? (
+                {autoflowsLoading ? (
                     <div className="text-center py-4">
                         <Spin size="small" />
                     </div>
                 ) : products.length === 0 ? (
                     <p className="text-sm text-gray-500 text-center py-4">
-                        Chưa có sản phẩm nào để thêm prompt
+                        Cần có sản phẩm trước khi tạo AutoFlow
                     </p>
-                ) : prompts.length === 0 ? (
+                ) : autoflows.length === 0 ? (
                     <p className="text-sm text-gray-500 text-center py-4">
-                        Chưa có prompt nào
+                        Chưa có AutoFlow nào
                     </p>
                 ) : (
                     <div className="space-y-4">
-                        {/* Group prompts by product */}
-                        {(() => {
-                            const groupedPrompts: { [key: string]: any[] } = {}
-                            prompts.forEach(prompt => {
-                                const key = prompt.productId || 'no-product'
-                                if (!groupedPrompts[key]) {
-                                    groupedPrompts[key] = []
-                                }
-                                groupedPrompts[key].push(prompt)
-                            })
+                        {autoflows.map((autoflow: any) => (
+                            <div key={autoflow._id} className="border rounded-lg overflow-hidden">
+                                {/* AutoFlow Header */}
+                                <div className={`bg-gradient-to-r from-blue-50 to-blue-100 px-3 py-2 border-b ${!autoflow.enabled ? 'opacity-60' : ''}`}>
+                                    <div className="flex items-center gap-3">
+                                        <Switch
+                                            checked={autoflow.enabled}
+                                            onChange={(checked) => handleToggleAutoFlow(autoflow, checked)}
+                                            size="small"
+                                        />
 
-                            return Object.entries(groupedPrompts).map(([productId, productPrompts]) => {
-                                // Handle no-product case
-                                if (productId === 'no-product') {
-                                    return (
-                                        <div key={productId} className="border rounded-lg overflow-hidden">
-                                            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-3 py-2 border-b">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-sm font-semibold text-gray-700">
-                                                        ⚠️ Prompts chưa gán sản phẩm
-                                                    </span>
-                                                    <span className="text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-full">
-                                                        {productPrompts.length} prompt{productPrompts.length > 1 ? 's' : ''}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            {/* Prompts List */}
-                                            <div className="divide-y">
-                                                {productPrompts.map((prompt: any) => (
-                                                    <div
-                                                        key={prompt._id}
-                                                        className="p-3 hover:bg-gray-50 transition-colors"
-                                                    >
-                                                        <div className="flex items-start justify-between gap-2">
-                                                            {prompt.productImage && (
-                                                                <div className="flex-shrink-0">
-                                                                    <Image
-                                                                        src={prompt.productImage}
-                                                                        alt={prompt.productTitle || 'Product'}
-                                                                        width={60}
-                                                                        height={60}
-                                                                        className="rounded object-cover cursor-pointer"
-                                                                        preview={{
-                                                                            mask: '🔍 Xem'
-                                                                        }}
-                                                                    />
-                                                                </div>
-                                                            )}
+                                        {autoflow.productImage && (
+                                            <img
+                                                src={autoflow.productImage}
+                                                alt={autoflow.productTitle}
+                                                className="w-8 h-8 rounded object-cover flex-shrink-0"
+                                            />
+                                        )}
 
-                                                            <div className="flex-1 min-w-0">
-                                                                <h3 className="text-sm font-semibold text-gray-800 mb-1">
-                                                                    {prompt.title}
-                                                                </h3>
-                                                                {prompt.mediaId && (
-                                                                    <p className="text-xs text-blue-600 font-mono mb-1">
-                                                                        Media ID: {prompt.mediaId}
-                                                                    </p>
-                                                                )}
-                                                                <p className="text-xs text-gray-600 line-clamp-3 whitespace-pre-wrap">
-                                                                    {prompt.content}
-                                                                </p>
-                                                            </div>
-                                                            <div className="flex gap-1 flex-shrink-0">
-                                                                <Button
-                                                                    type="text"
-                                                                    size="small"
-                                                                    icon={<CopyOutlined />}
-                                                                    onClick={() => handleCopyPromptContent(prompt.content)}
-                                                                    title="Copy nội dung"
-                                                                />
-                                                                <Button
-                                                                    type="text"
-                                                                    size="small"
-                                                                    icon={<EditOutlined />}
-                                                                    onClick={() => handleEditPrompt(prompt)}
-                                                                    title="Sửa"
-                                                                />
-                                                                <Popconfirm
-                                                                    title="Xóa prompt?"
-                                                                    description="Bạn có chắc muốn xóa prompt này?"
-                                                                    onConfirm={() => handleDeletePrompt(prompt._id)}
-                                                                    okText="Xóa"
-                                                                    cancelText="Hủy"
-                                                                    okButtonProps={{ danger: true }}
-                                                                >
-                                                                    <Button
-                                                                        type="text"
-                                                                        size="small"
-                                                                        danger
-                                                                        icon={<DeleteOutlined />}
-                                                                        title="Xóa"
-                                                                    />
-                                                                </Popconfirm>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
+                                        <div className="flex-1 min-w-0">
+                                            <span className="text-sm font-semibold text-blue-900 truncate block">
+                                                📦 {autoflow.productTitle || 'Sản phẩm không xác định'}
+                                            </span>
+                                            <span className="text-xs text-blue-700">
+                                                {autoflow.prompts?.length || 0} prompt{(autoflow.prompts?.length || 0) !== 1 ? 's' : ''}
+                                            </span>
                                         </div>
-                                    )
-                                }
 
-                                // Normal product case
-                                const product = products.find(p => p.product_id === productId)
-                                const productTitle = product?.title || productPrompts[0]?.productTitle || 'Sản phẩm không xác định'
-                                const productImage = product?.images?.[0]?.url_list?.[0] || productPrompts[0]?.productImage
-
-                                return (
-                                    <div key={productId} className="border rounded-lg overflow-hidden">
-                                        {/* Product Header */}
-                                        <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-3 py-2 border-b">
-                                            <div className="flex items-center justify-between gap-2">
-                                                <div className="flex items-center gap-2">
-                                                    {productImage && (
-                                                        <img
-                                                            src={productImage}
-                                                            alt={productTitle}
-                                                            className="w-8 h-8 rounded object-cover"
-                                                        />
-                                                    )}
-                                                    <span className="text-sm font-semibold text-blue-900">
-                                                        📦 {productTitle}
-                                                    </span>
-                                                    <span className="text-xs bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full">
-                                                        {productPrompts.length} prompt{productPrompts.length > 1 ? 's' : ''}
-                                                    </span>
-                                                </div>
-
-                                                {/* API Link */}
+                                        <div className="flex gap-1 flex-shrink-0">
+                                            <Button
+                                                type="text"
+                                                size="small"
+                                                icon={<PlusOutlined />}
+                                                onClick={() => handleAddPrompt(autoflow.productId)}
+                                                title="Thêm prompt"
+                                                className="text-blue-700"
+                                            />
+                                            <Popconfirm
+                                                title="Xóa AutoFlow?"
+                                                description="Sẽ xóa tất cả prompts của AutoFlow này!"
+                                                onConfirm={() => handleDeleteAutoFlow(autoflow._id)}
+                                                okText="Xóa"
+                                                cancelText="Hủy"
+                                                okButtonProps={{ danger: true }}
+                                            >
                                                 <Button
                                                     type="text"
                                                     size="small"
-                                                    icon={<CopyOutlined />}
-                                                    onClick={() => {
-                                                        const apiUrl = `/api/prompts?productId=${productId}`
-                                                        navigator.clipboard.writeText(apiUrl)
-                                                        message.success('Đã copy API link!')
-                                                    }}
-                                                    className="text-blue-700 hover:text-blue-900"
-                                                    title="Copy API endpoint"
-                                                >
-                                                    API
-                                                </Button>
-                                            </div>
-
-                                            {/* API URL Display */}
-                                            <div className="mt-1 text-xs text-blue-700 font-mono bg-white/50 px-2 py-1 rounded">
-                                                GET /api/prompts?productId={productId}
-                                            </div>
-                                        </div>
-
-                                        {/* Prompts List */}
-                                        <div className="divide-y">
-                                            {productPrompts.map((prompt: any) => (
-                                                <div
-                                                    key={prompt._id}
-                                                    className="p-3 hover:bg-gray-50 transition-colors"
-                                                >
-                                                    <div className="flex items-start justify-between gap-2">
-                                                        {/* Product Thumbnail */}
-                                                        {prompt.productImage && (
-                                                            <div className="flex-shrink-0">
-                                                                <Image
-                                                                    src={prompt.productImage}
-                                                                    alt={prompt.productTitle}
-                                                                    width={60}
-                                                                    height={60}
-                                                                    className="rounded object-cover cursor-pointer"
-                                                                    preview={{
-                                                                        mask: '🔍 Xem'
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        )}
-
-                                                        <div className="flex-1 min-w-0">
-                                                            <h3 className="text-sm font-semibold text-gray-800 mb-1">
-                                                                {prompt.title}
-                                                            </h3>
-                                                            {prompt.mediaId && (
-                                                                <p className="text-xs text-blue-600 font-mono mb-1">
-                                                                    Media ID: {prompt.mediaId}
-                                                                </p>
-                                                            )}
-                                                            <p className="text-xs text-gray-600 line-clamp-3 whitespace-pre-wrap">
-                                                                {prompt.content}
-                                                            </p>
-                                                        </div>
-                                                        <div className="flex gap-1 flex-shrink-0">
-                                                            <Button
-                                                                type="text"
-                                                                size="small"
-                                                                icon={<CopyOutlined />}
-                                                                onClick={() => handleCopyPromptContent(prompt.content)}
-                                                                title="Copy nội dung"
-                                                            />
-                                                            <Button
-                                                                type="text"
-                                                                size="small"
-                                                                icon={<EditOutlined />}
-                                                                onClick={() => handleEditPrompt(prompt)}
-                                                                title="Sửa"
-                                                            />
-                                                            <Popconfirm
-                                                                title="Xóa prompt?"
-                                                                description="Bạn có chắc muốn xóa prompt này?"
-                                                                onConfirm={() => handleDeletePrompt(prompt._id)}
-                                                                okText="Xóa"
-                                                                cancelText="Hủy"
-                                                                okButtonProps={{ danger: true }}
-                                                            >
-                                                                <Button
-                                                                    type="text"
-                                                                    size="small"
-                                                                    danger
-                                                                    icon={<DeleteOutlined />}
-                                                                    title="Xóa"
-                                                                />
-                                                            </Popconfirm>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
+                                                    danger
+                                                    icon={<DeleteOutlined />}
+                                                    title="Xóa"
+                                                />
+                                            </Popconfirm>
                                         </div>
                                     </div>
-                                )
-                            })
-                        })()}
+
+                                    {/* API Endpoint */}
+                                    <div className="flex items-center gap-2 mt-1.5 bg-white/50 px-2 py-1 rounded">
+                                        <span className="text-xs text-blue-700 font-mono truncate flex-1">
+                                            {autoflow.autoFlowUrl || `${window.location.origin}/api/autoflows?accountId=${autoflow.accountId}&productId=${autoflow.productId}`}
+                                        </span>
+                                        <Button
+                                            type="text"
+                                            size="small"
+                                            icon={<CopyOutlined />}
+                                            onClick={() => {
+                                                const url = autoflow.autoFlowUrl || `${window.location.origin}/api/autoflows?accountId=${autoflow.accountId}&productId=${autoflow.productId}`
+                                                navigator.clipboard.writeText(url)
+                                                message.success('Đã copy API URL!')
+                                            }}
+                                            className="!p-0 !h-5 !w-5 !min-w-0 text-blue-700"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Child Prompts */}
+                                <div className="divide-y">
+                                    {(autoflow.prompts || []).length === 0 ? (
+                                        <p className="text-xs text-gray-400 text-center py-3">
+                                            Chưa có prompt nào — nhấn + để thêm
+                                        </p>
+                                    ) : (
+                                        autoflow.prompts.map((prompt: any) => (
+                                            <div
+                                                key={prompt._id}
+                                                className="p-3 hover:bg-gray-50 transition-colors"
+                                            >
+                                                <div className="flex items-start gap-2">
+                                                    <div className="flex-1 min-w-0">
+                                                        <h3 className="text-sm font-semibold text-gray-800 mb-1">
+                                                            {prompt.title}
+                                                        </h3>
+                                                        {prompt.mediaId && (
+                                                            <p className="text-xs text-blue-600 font-mono mb-1">
+                                                                Media ID: {prompt.mediaId}
+                                                            </p>
+                                                        )}
+                                                        <p className="text-xs text-gray-600 line-clamp-3 whitespace-pre-wrap">
+                                                            {prompt.content}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex gap-1 flex-shrink-0">
+                                                        <Button
+                                                            type="text"
+                                                            size="small"
+                                                            icon={<CopyOutlined />}
+                                                            onClick={() => handleCopyPromptContent(prompt.content)}
+                                                            title="Copy nội dung"
+                                                        />
+                                                        <Button
+                                                            type="text"
+                                                            size="small"
+                                                            icon={<EditOutlined />}
+                                                            onClick={() => handleEditPrompt(prompt)}
+                                                            title="Sửa"
+                                                        />
+                                                        <Popconfirm
+                                                            title="Xóa prompt?"
+                                                            description="Bạn có chắc muốn xóa prompt này?"
+                                                            onConfirm={() => handleDeletePrompt(prompt._id)}
+                                                            okText="Xóa"
+                                                            cancelText="Hủy"
+                                                            okButtonProps={{ danger: true }}
+                                                        >
+                                                            <Button
+                                                                type="text"
+                                                                size="small"
+                                                                danger
+                                                                icon={<DeleteOutlined />}
+                                                                title="Xóa"
+                                                            />
+                                                        </Popconfirm>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 )}
             </div>
-
             {/* Content Area - Products */}
             <div className="bg-white rounded-lg shadow-sm p-4">
                 <h2 className="text-base font-semibold mb-3">
@@ -887,26 +694,24 @@ export default function TikTokAccountPage() {
             )}
 
             {account && (
-                <PromptModal
-                    isOpen={isPromptModalOpen}
-                    setIsOpen={setIsPromptModalOpen}
+                <AutoFlowModal
+                    isOpen={isAutoFlowModalOpen}
+                    setIsOpen={setIsAutoFlowModalOpen}
                     accountId={account._id}
                     products={products}
-                    editingPrompt={editingPrompt}
-                    onRefresh={() => fetchPrompts(account._id)}
+                    autoflows={autoflows}
+                    editingAutoFlow={editingAutoFlow}
+                    onRefresh={() => fetchAutoFlows(account._id)}
                 />
             )}
 
-            {account && (
-                <WorkflowModal
-                    isOpen={isWorkflowModalOpen}
-                    setIsOpen={setIsWorkflowModalOpen}
-                    accountId={account._id}
-                    prompts={prompts}
-                    editingWorkflow={editingWorkflow}
-                    onRefresh={() => fetchWorkflows(account._id)}
-                />
-            )}
+            <PromptModal
+                isOpen={isPromptModalOpen}
+                setIsOpen={setIsPromptModalOpen}
+                productId={promptProductId}
+                editingPrompt={editingPrompt}
+                onRefresh={() => { if (account) fetchAutoFlows(account._id) }}
+            />
         </div>
     )
 }

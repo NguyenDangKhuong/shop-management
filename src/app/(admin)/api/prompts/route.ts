@@ -1,18 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server'
 import PromptModel from '@/models/Prompt'
 import connectDb from '@/utils/connectDb'
+import { NextRequest, NextResponse } from 'next/server'
 
-// GET all prompts (optionally filter by accountId and/or productId)
+// GET prompts (filter by productId)
 export async function GET(request: NextRequest) {
     try {
         await connectDb()
         const { searchParams } = new URL(request.url)
-        const accountId = searchParams.get('accountId')
         const productId = searchParams.get('productId')
 
-        // Build query object based on provided parameters
         const query: any = {}
-        if (accountId) query.accountId = accountId
         if (productId) query.productId = productId
 
         const prompts = await PromptModel.find(query)

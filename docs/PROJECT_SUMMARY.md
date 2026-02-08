@@ -198,6 +198,8 @@ shop-management/
 | **ShopeeLink** | Link Shopee | productId, shopeeUrl |
 | **TikTokAccount** | TK TikTok | username, accessToken |
 | **TikTokScheduledPost** | Bài TikTok | content, scheduledTime |
+| **AutoFlow** | AutoFlow | accountId, productId, productTitle, autoFlowUrl, enabled |
+| **Prompt** | Prompt | productId, title, content, mediaId |
 | **Change** | Changelog | description, timestamp |
 
 ---
@@ -299,6 +301,7 @@ MINIO_SECRET_KEY=...
 | [TESTING.md](../TESTING.md) | Hướng dẫn testing chi tiết |
 | [CICD.md](../CICD.md) | CI/CD Pipeline documentation |
 | [PRE_PUSH_HOOK.md](../PRE_PUSH_HOOK.md) | Git hooks documentation |
+| [AUTOFLOW.md](AUTOFLOW.md) | AutoFlow feature documentation |
 
 ---
 
