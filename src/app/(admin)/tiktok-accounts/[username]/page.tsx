@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
-import { App, Spin, Button, Popconfirm, Image } from 'antd'
+import PromptModal from '@/components/shop/tiktok-accounts/PromptModal'
+import TikTokScheduledPostModal from '@/components/shop/tiktok-accounts/TikTokScheduledPostModal'
+import WorkflowModal from '@/components/shop/tiktok-accounts/WorkflowModal'
 import {
     CopyOutlined,
     DeleteOutlined,
@@ -10,9 +10,10 @@ import {
     PlusOutlined,
     UserOutlined
 } from '@ant-design/icons'
+import { App, Button, Image, Popconfirm, Spin } from 'antd'
 import dayjs from 'dayjs'
-import TikTokScheduledPostModal from '@/components/shop/tiktok-accounts/TikTokScheduledPostModal'
-import PromptModal from '@/components/shop/tiktok-accounts/PromptModal'
+import { useParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 interface TikTokAccount {
     _id: string
@@ -44,6 +45,10 @@ export default function TikTokAccountPage() {
     const [promptsLoading, setPromptsLoading] = useState(false)
     const [isPromptModalOpen, setIsPromptModalOpen] = useState(false)
     const [editingPrompt, setEditingPrompt] = useState<any>(null)
+    const [workflows, setWorkflows] = useState<any[]>([])
+    const [workflowsLoading, setWorkflowsLoading] = useState(false)
+    const [isWorkflowModalOpen, setIsWorkflowModalOpen] = useState(false)
+    const [editingWorkflow, setEditingWorkflow] = useState<any>(null)
 
     // Extract username from params (decode URI and remove @ prefix if exists)
     const username = params.username
@@ -66,10 +71,11 @@ export default function TikTokAccountPage() {
 
                     if (foundAccount) {
                         setAccount(foundAccount)
-                        // Fetch products, scheduled posts, and prompts after account is loaded
+                        // Fetch products, scheduled posts, prompts, and workflows after account is loaded
                         fetchProducts(foundAccount.cookie)
                         fetchScheduledPosts(foundAccount._id)
                         fetchPrompts(foundAccount._id)
+                        fetchWorkflows(foundAccount._id)
                     } else {
                         message.error('Không tìm thấy account này')
                     }
@@ -152,6 +158,53 @@ export default function TikTokAccountPage() {
             if (data.success) {
                 message.success('Đã xóa prompt!')
                 if (account) fetchPrompts(account._id)
+            } else {
+                message.error('Xóa thất bại')
+            }
+        } catch (error: any) {
+            message.error('Lỗi: ' + error.message)
+        }
+    }
+
+    // Workflow handlers
+    const fetchWorkflows = async (accountId: string) => {
+        try {
+            setWorkflowsLoading(true)
+            const response = await fetch(`/api/workflows?accountId=${accountId}`)
+            const data = await response.json()
+
+            if (data.success) {
+                setWorkflows(data.data)
+            } else {
+                console.error('❌ Failed to fetch workflows:', data.error)
+            }
+        } catch (error: any) {
+            console.error('❌ Workflows Error:', error)
+        } finally {
+            setWorkflowsLoading(false)
+        }
+    }
+
+    const handleAddWorkflow = () => {
+        setEditingWorkflow(null)
+        setIsWorkflowModalOpen(true)
+    }
+
+    const handleEditWorkflow = (workflow: any) => {
+        setEditingWorkflow(workflow)
+        setIsWorkflowModalOpen(true)
+    }
+
+    const handleDeleteWorkflow = async (workflowId: string) => {
+        try {
+            const response = await fetch(`/api/workflows?id=${workflowId}`, {
+                method: 'DELETE'
+            })
+            const data = await response.json()
+
+            if (data.success) {
+                message.success('Đã xóa workflow!')
+                if (account) fetchWorkflows(account._id)
             } else {
                 message.error('Xóa thất bại')
             }
@@ -388,6 +441,108 @@ export default function TikTokAccountPage() {
                                             </Popconfirm>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* Workflow Automation */}
+            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+                <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-base font-semibold">
+                        ⚡ Workflow Automation ({workflows.length})
+                    </h2>
+                    <Button
+                        type="primary"
+                        size="small"
+                        icon={<PlusOutlined />}
+                        onClick={handleAddWorkflow}
+                        disabled={prompts.length === 0}
+                    >
+                        Thêm
+                    </Button>
+                </div>
+
+                {workflowsLoading ? (
+                    <div className="text-center py-4">
+                        <Spin size="small" />
+                    </div>
+                ) : prompts.length === 0 ? (
+                    <p className="text-sm text-gray-500 text-center py-4">
+                        Cần có prompt trước khi tạo workflow
+                    </p>
+                ) : workflows.length === 0 ? (
+                    <p className="text-sm text-gray-500 text-center py-4">
+                        Chưa có workflow nào
+                    </p>
+                ) : (
+                    <div className="space-y-3">
+                        {workflows.map((workflow: any) => (
+                            <div
+                                key={workflow._id}
+                                className="border rounded-lg p-3 flex items-center gap-3 hover:bg-gray-50 transition-colors"
+                            >
+                                {/* Prompt Info */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className="text-sm font-semibold text-gray-800">
+                                            {workflow.prompt?.title || 'Prompt đã bị xóa'}
+                                        </span>
+                                    </div>
+                                    {workflow.prompt?.productTitle && (
+                                        <div className="text-xs text-gray-500 mb-1">
+                                            📦 {workflow.prompt.productTitle}
+                                        </div>
+                                    )}
+                                    {workflow.prompt?.content && (
+                                        <p className="text-xs text-gray-600 line-clamp-2">
+                                            {workflow.prompt.content}
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* Status Badge */}
+                                <span className={`text-xs px-2 py-0.5 rounded flex-shrink-0 ${
+                                    workflow.status === 'active' ? 'bg-green-100 text-green-700' :
+                                    workflow.status === 'running' ? 'bg-blue-100 text-blue-700' :
+                                    workflow.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
+                                    workflow.status === 'failed' ? 'bg-red-100 text-red-700' :
+                                    'bg-gray-100 text-gray-700'
+                                }`}>
+                                    {workflow.status === 'active' ? '🟢 Active' :
+                                     workflow.status === 'running' ? '🔵 Running' :
+                                     workflow.status === 'completed' ? '✅ Completed' :
+                                     workflow.status === 'failed' ? '🔴 Failed' :
+                                     '⚪ Inactive'}
+                                </span>
+
+                                {/* Actions */}
+                                <div className="flex gap-1 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                                    <Button
+                                        type="text"
+                                        size="small"
+                                        icon={<EditOutlined />}
+                                        onClick={() => handleEditWorkflow(workflow)}
+                                        title="Sửa"
+                                    />
+                                    <Popconfirm
+                                        title="Xóa workflow?"
+                                        description="Bạn có chắc muốn xóa workflow này?"
+                                        onConfirm={() => handleDeleteWorkflow(workflow._id)}
+                                        okText="Xóa"
+                                        cancelText="Hủy"
+                                        okButtonProps={{ danger: true }}
+                                    >
+                                        <Button
+                                            type="text"
+                                            size="small"
+                                            danger
+                                            icon={<DeleteOutlined />}
+                                            title="Xóa"
+                                        />
+                                    </Popconfirm>
                                 </div>
                             </div>
                         ))}
@@ -739,6 +894,17 @@ export default function TikTokAccountPage() {
                     products={products}
                     editingPrompt={editingPrompt}
                     onRefresh={() => fetchPrompts(account._id)}
+                />
+            )}
+
+            {account && (
+                <WorkflowModal
+                    isOpen={isWorkflowModalOpen}
+                    setIsOpen={setIsWorkflowModalOpen}
+                    accountId={account._id}
+                    prompts={prompts}
+                    editingWorkflow={editingWorkflow}
+                    onRefresh={() => fetchWorkflows(account._id)}
                 />
             )}
         </div>
