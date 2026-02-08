@@ -128,10 +128,15 @@ const PromptModal = ({
                 <Form.Item
                     label="Nội dung"
                     name="content"
-                    rules={[{ required: true, message: 'Vui lòng nhập nội dung' }]}
+                    rules={[
+                        { required: true, message: 'Vui lòng nhập nội dung' },
+                        { max: 90, message: 'Nội dung không được vượt quá 90 ký tự' }
+                    ]}
                 >
                     <Input.TextArea
                         rows={6}
+                        maxLength={90}
+                        showCount
                         placeholder="Nhập nội dung prompt..."
                     />
                 </Form.Item>
