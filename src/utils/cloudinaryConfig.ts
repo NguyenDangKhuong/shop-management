@@ -82,6 +82,16 @@ export const veo3MediaUploadConfig: CloudinaryWidgetOptions = {
     cropping: false
 }
 
+export const tiktokMusicUploadConfig: CloudinaryWidgetOptions = {
+    cloudName: CLOUD_NAME_CLOUDINARY || '',
+    uploadPreset: CLOUDINARY_UPLOAD_TIKTOK_PRESET || '',
+    multiple: false,
+    resourceType: 'auto',
+    clientAllowedFormats: ['mp3', 'wav', 'ogg', 'm4a', 'aac'],
+    maxFileSize: 52428800, // 50MB
+    sources: ['local', 'url'],
+    cropping: false
+}
 
 // Event handler types
 export type UploadSuccessCallback = (result: CloudinaryUploadResult) => void

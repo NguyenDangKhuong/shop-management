@@ -5,15 +5,16 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import {
-  BarChartOutlined,
-  BookOutlined,
-  FacebookOutlined,
-  KeyOutlined,
-  ShoppingCartOutlined,
-  ShoppingOutlined,
-  TableOutlined,
-  TikTokOutlined,
-  UserOutlined
+    BarChartOutlined,
+    BookOutlined,
+    FacebookOutlined,
+    KeyOutlined,
+    ShoppingCartOutlined,
+    ShoppingOutlined,
+    SoundOutlined,
+    TableOutlined,
+    TikTokOutlined,
+    UserOutlined
 } from '@ant-design/icons'
 import { Layout, Menu } from 'antd'
 
@@ -90,6 +91,11 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
             key: '/veo3-tokens',
             icon: <KeyOutlined />,
             label: <Link href='/veo3-tokens'>Veo3 Tokens</Link>
+          },
+          {
+            key: '/tiktok-music',
+            icon: <SoundOutlined />,
+            label: <Link href='/tiktok-music'>TikTok Music</Link>
           },
           {
             key: '/carts',

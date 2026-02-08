@@ -10,6 +10,7 @@
 TikTok Account
   └── AutoFlow (1 per product)
         ├── enabled: true/false
+        ├── status: pending | running | done | error
         ├── productId, productTitle, productImage
         ├── autoFlowUrl (API endpoint for this flow)
         ├── n8nUrl (optional, n8n webhook URL)
@@ -34,6 +35,7 @@ TikTok Account
 | `autoFlowUrl` | String | ❌ | URL API endpoint của AutoFlow (tự động tạo khi tạo/sửa) |
 | `n8nUrl` | String | ❌ | URL webhook n8n (optional, nhập tay) |
 | `enabled` | Boolean | ❌ | Trạng thái bật/tắt (default: `false`) |
+| `status` | String | ❌ | Trạng thái chạy flow: `pending`, `running`, `done`, `error` (default: `pending`) |
 | `createdAt` | Date | Auto | Thời gian tạo |
 | `updatedAt` | Date | Auto | Thời gian cập nhật |
 
@@ -279,4 +281,4 @@ Trang chi tiết TikTok Account hiển thị:
 ---
 
 *Tài liệu cập nhật: 08/02/2026*
-*Cập nhật gần nhất: Thêm n8nUrl, edit button, clickable links, Veo3 Media integration*
+*Cập nhật: 09/02/2026 — Thêm field `status` (pending/running/done/error)*

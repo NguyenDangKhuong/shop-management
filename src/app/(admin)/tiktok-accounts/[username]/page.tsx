@@ -180,6 +180,7 @@ export default function TikTokAccountPage() {
     const [veo3Media, setVeo3Media] = useState<any[]>([])
     const [veo3MediaLoading, setVeo3MediaLoading] = useState(false)
     const [newMediaId, setNewMediaId] = useState('')
+    const [newMediaFile, setNewMediaFile] = useState<{ url: string; type: string; publicId?: string } | null>(null)
 
     // Extract username from params (decode URI and remove @ prefix if exists)
     const username = params.username
@@ -413,18 +414,23 @@ export default function TikTokAccountPage() {
     const handleAddVeo3Media = async () => {
         if (!newMediaId.trim() || !account) return
         try {
+            const body: any = {
+                accountId: account._id,
+                mediaId: newMediaId.trim()
+            }
+            if (newMediaFile) {
+                body.mediaFile = newMediaFile
+            }
             const response = await fetch('/api/veo3-media', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    accountId: account._id,
-                    mediaId: newMediaId.trim()
-                })
+                body: JSON.stringify(body)
             })
             const data = await response.json()
             if (data.success) {
                 message.success('Đã thêm media!')
                 setNewMediaId('')
+                setNewMediaFile(null)
                 fetchVeo3Media(account._id)
             } else {
                 message.error('Thêm thất bại: ' + data.error)
@@ -433,6 +439,22 @@ export default function TikTokAccountPage() {
             message.error('Lỗi: ' + error.message)
         }
     }
+
+    // Upload for new media (in the add section)
+    const onNewMediaUploadSuccess = useCallback((result: any) => {
+        setNewMediaFile({
+            url: result.url,
+            type: result.resourceType === 'video' ? 'video' : 'image',
+            publicId: result.publicId
+        })
+        message.success('Upload thành công!')
+    }, [message])
+
+    const { openWidget: openNewMediaWidget } = useCloudinaryUpload(
+        veo3MediaUploadConfig,
+        onNewMediaUploadSuccess,
+        (err) => message.error('Upload thất bại: ' + err?.message)
+    )
 
     const handleDeleteVeo3Media = async (mediaId: string, publicId?: string) => {
         try {
@@ -798,9 +820,22 @@ export default function TikTokAccountPage() {
                                             <span className="text-sm font-semibold text-blue-900 truncate block">
                                                 📦 {autoflow.productTitle || 'Sản phẩm không xác định'}
                                             </span>
-                                            <span className="text-xs text-blue-700">
-                                                {autoflow.prompts?.length || 0} prompt{(autoflow.prompts?.length || 0) !== 1 ? 's' : ''}
-                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs text-blue-700">
+                                                    {autoflow.prompts?.length || 0} prompt{(autoflow.prompts?.length || 0) !== 1 ? 's' : ''}
+                                                </span>
+                                                <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${
+                                                    autoflow.status === 'running' ? 'bg-blue-100 text-blue-700' :
+                                                    autoflow.status === 'done' ? 'bg-green-100 text-green-700' :
+                                                    autoflow.status === 'error' ? 'bg-red-100 text-red-700' :
+                                                    'bg-gray-100 text-gray-600'
+                                                }`}>
+                                                    {autoflow.status === 'running' ? '🔄 Running' :
+                                                     autoflow.status === 'done' ? '✅ Done' :
+                                                     autoflow.status === 'error' ? '❌ Error' :
+                                                     '⏳ Pending'}
+                                                </span>
+                                            </div>
                                         </div>
 
                                         <div className="flex gap-1 flex-shrink-0">
@@ -922,23 +957,52 @@ export default function TikTokAccountPage() {
                 </div>
 
                 {/* Add new media */}
-                <div className="flex gap-2 mb-3">
-                    <Input
-                        placeholder="Nhập Media ID..."
-                        value={newMediaId}
-                        onChange={(e) => setNewMediaId(e.target.value)}
-                        size="small"
-                        onPressEnter={handleAddVeo3Media}
-                    />
-                    <Button
-                        type="primary"
-                        size="small"
-                        icon={<PlusOutlined />}
-                        onClick={handleAddVeo3Media}
-                        disabled={!newMediaId.trim()}
-                    >
-                        Thêm
-                    </Button>
+                <div className="mb-3">
+                    <div className="flex gap-2 mb-2">
+                        <Input
+                            placeholder="Nhập Media ID..."
+                            value={newMediaId}
+                            onChange={(e) => setNewMediaId(e.target.value)}
+                            size="small"
+                            onPressEnter={handleAddVeo3Media}
+                        />
+                        <Button
+                            size="small"
+                            onClick={() => openNewMediaWidget()}
+                            title="Upload hình"
+                        >
+                            📷 Upload
+                        </Button>
+                        <Button
+                            type="primary"
+                            size="small"
+                            icon={<PlusOutlined />}
+                            onClick={handleAddVeo3Media}
+                            disabled={!newMediaId.trim()}
+                        >
+                            Thêm
+                        </Button>
+                    </div>
+                    {newMediaFile && (
+                        <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded">
+                            <img
+                                src={newMediaFile.url}
+                                alt="Preview"
+                                className="w-12 h-12 object-cover rounded"
+                            />
+                            <span className="text-xs text-green-700 truncate flex-1">
+                                {newMediaFile.url}
+                            </span>
+                            <Button
+                                type="text"
+                                size="small"
+                                danger
+                                onClick={() => setNewMediaFile(null)}
+                            >
+                                ✕
+                            </Button>
+                        </div>
+                    )}
                 </div>
 
                 {veo3MediaLoading ? (

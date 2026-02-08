@@ -1,5 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose'
 
+export type AutoFlowStatus = 'pending' | 'running' | 'done' | 'error'
+
 export interface IAutoFlow extends Document {
     accountId: string
     productId: string
@@ -8,6 +10,7 @@ export interface IAutoFlow extends Document {
     autoFlowUrl?: string
     n8nUrl?: string
     enabled: boolean
+    status: AutoFlowStatus
     createdAt?: Date
     updatedAt?: Date
 }
@@ -21,7 +24,8 @@ const AutoFlowSchema = new Schema({
     productImage: { type: String },
     autoFlowUrl: { type: String },
     n8nUrl: { type: String },
-    enabled: { type: Boolean, default: false }
+    enabled: { type: Boolean, default: false },
+    status: { type: String, enum: ['pending', 'running', 'done', 'error'], default: 'pending' }
 }, {
     timestamps: true,
     collection: 'autoflows'
@@ -32,3 +36,4 @@ const AutoFlowModel = mongoose.models.AutoFlow ||
 
 export default AutoFlowModel
 export { AutoFlowSchema }
+

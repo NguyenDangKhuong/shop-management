@@ -80,9 +80,17 @@ Content-Type: application/json
 
 {
   "accountId": "...",
-  "mediaId": "..."
+  "mediaId": "...",
+  "mediaFile": {
+    "url": "https://res.cloudinary.com/...",
+    "type": "image",
+    "publicId": "tiktok/abc123"
+  }
 }
 ```
+
+> [!NOTE]
+> Field `mediaFile` là optional. Có thể tạo media trước rồi upload hình sau, hoặc upload ngay khi tạo mới bằng nút "📷 Upload" trên form.
 
 ### PUT - Cập nhật media (upload/xóa hình)
 
@@ -121,8 +129,8 @@ Section **🎬 Veo3 Media** nằm trên trang chi tiết TikTok Account, giữa 
 
 ### Chức năng
 
-1. **Thêm media** — Nhập Media ID vào input + nhấn "Thêm"
-2. **Upload hình** — Nhấn 📷 → Cloudinary widget mở ra → upload xong tự lưu
+1. **Thêm media** — Nhập Media ID vào input, có thể upload hình ngay bằng nút "📷 Upload" (preview hiển thị bên dưới), nhấn "Thêm" để tạo media kèm hình
+2. **Upload hình (sau khi tạo)** — Nhấn 📷 trên item trong danh sách → Cloudinary widget mở ra → upload xong tự lưu
 3. **Xóa hình** — Nhấn 🗑️ xóa hình khỏi Cloudinary (giữ media ID)
 4. **Xóa media** — Nhấn Delete xóa toàn bộ record
 5. **Copy Media ID** — Nhấn icon copy
@@ -154,3 +162,4 @@ Trên AutoFlow card, mỗi prompt cũng hiển thị thumbnail nhỏ (24×24px) 
 ---
 
 *Tài liệu tạo: 08/02/2026*
+*Cập nhật: 09/02/2026 — Thêm upload hình ngay khi tạo media mới*
