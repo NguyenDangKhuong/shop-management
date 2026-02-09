@@ -26,7 +26,7 @@ export interface CloudinaryWidgetOptions {
 // Cloudinary Upload Widget configuration presets
 export const productUploadConfig: CloudinaryWidgetOptions = {
     cloudName: CLOUD_NAME_CLOUDINARY || '',
-    uploadPreset: CLOUDINARY_UPLOAD_PRODUCT_PRESET || '', //preset's manager in cloudinary
+    uploadPreset: CLOUDINARY_UPLOAD_PRODUCT_PRESET || '',
     multiple: false,
     resourceType: 'image',
     clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
@@ -34,7 +34,6 @@ export const productUploadConfig: CloudinaryWidgetOptions = {
     sources: ['local', 'url', 'camera'],
     cropping: false
 }
-
 
 export const facebookPostUploadConfig: CloudinaryWidgetOptions = {
     cloudName: CLOUD_NAME_CLOUDINARY || '',
@@ -60,7 +59,7 @@ export const shopeeLinkUploadConfig: CloudinaryWidgetOptions = {
 
 export const tiktokAccountUploadConfig: CloudinaryWidgetOptions = {
     cloudName: CLOUD_NAME_CLOUDINARY || '',
-    uploadPreset: CLOUDINARY_UPLOAD_SHOPEE_LINK_PRESET || '', // Reuse shopee preset
+    uploadPreset: CLOUDINARY_UPLOAD_SHOPEE_LINK_PRESET || '',
     multiple: false,
     resourceType: 'image',
     clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
@@ -73,12 +72,23 @@ export const tiktokAccountUploadConfig: CloudinaryWidgetOptions = {
 
 export const veo3MediaUploadConfig: CloudinaryWidgetOptions = {
     cloudName: CLOUD_NAME_CLOUDINARY || '',
-    uploadPreset: CLOUDINARY_UPLOAD_TIKTOK_PRESET || '', // Reuse shopee preset
+    uploadPreset: CLOUDINARY_UPLOAD_TIKTOK_PRESET || '',
     multiple: false,
     resourceType: 'image',
     clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
     maxFileSize: 10485760, // 10MB
     sources: ['local', 'url', 'camera'],
+    cropping: false
+}
+
+export const autoFlowVideoUploadConfig: CloudinaryWidgetOptions = {
+    cloudName: CLOUD_NAME_CLOUDINARY || '',
+    uploadPreset: CLOUDINARY_UPLOAD_TIKTOK_PRESET || '',
+    multiple: false,
+    resourceType: 'video',
+    clientAllowedFormats: ['mp4', 'mov', 'avi', 'webm'],
+    maxFileSize: 104857600, // 100MB
+    sources: ['local', 'url'],
     cropping: false
 }
 

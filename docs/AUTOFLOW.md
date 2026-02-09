@@ -44,6 +44,7 @@ TikTok Account
 | `enabled` | Boolean | ❌ | Bật/tắt (default: `false`) |
 | `status` | String | ❌ | `pending` \| `running` \| `done` \| `error` |
 | `promptIds` | String[] | ❌ | Mảng ID tham chiếu đến Prompt |
+| `videoFile` | MediaFile | ❌ | Video đính kèm (url, publicId, type) — upload Cloudinary |
 
 **Collection:** `autoflows`
 
@@ -108,6 +109,7 @@ POST /api/autoflows
   "productId": "...",
   "productTitle": "...",
   "promptIds": ["promptId1", "promptId2"],
+  "videoFile": { "url": "https://...", "publicId": "...", "type": "video" },
   "n8nUrl": "https://n8n.example.com/webhook/..."
 }
 ```
@@ -190,7 +192,7 @@ Layout từ trên xuống:
 | `shopeeLinks` | `any[]` | ShopeeLink (lấy description) |
 | `allPrompts` | `any[]` | Tất cả prompt (cho multi-select) |
 
-**Form fields:** Sản phẩm, Shopee Link, n8n URL, **Chọn Prompts** (multi-select)
+**Form fields:** Sản phẩm, Shopee Link, n8n URL, **Chọn Prompts** (multi-select), **Video** (Cloudinary upload)
 
 ### PromptModal (`src/components/shop/tiktok-accounts/PromptModal.tsx`)
 

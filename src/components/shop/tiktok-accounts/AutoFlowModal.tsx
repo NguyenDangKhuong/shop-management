@@ -1,6 +1,10 @@
 'use client'
 
+import { deleteCloudinaryImage } from '@/actions/cloudinary'
+import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload'
+import { autoFlowVideoUploadConfig } from '@/utils/cloudinaryConfig'
 import { apiPost, apiPut } from '@/utils/internalApi'
+import { DeleteOutlined } from '@ant-design/icons'
 import { App, Button, Form, Input, Modal, Select } from 'antd'
 import { useEffect, useState } from 'react'
 
@@ -30,6 +34,22 @@ const AutoFlowModal = ({
     const { message } = App.useApp()
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
+    const [videoFile, setVideoFile] = useState<any>(null)
+
+    const { openWidget: openVideoWidget, isUploading: isVideoUploading } = useCloudinaryUpload(
+        autoFlowVideoUploadConfig,
+        async (result) => {
+            setVideoFile({
+                url: result.url,
+                publicId: result.publicId,
+                type: 'video'
+            })
+            message.success('Upload video thành công!')
+        },
+        (error) => {
+            message.error('Lỗi upload video: ' + error.message)
+        }
+    )
 
     useEffect(() => {
         if (isOpen) {
@@ -40,11 +60,24 @@ const AutoFlowModal = ({
                     shopeeLinkId: editingAutoFlow.shopeeLinkId || undefined,
                     promptIds: editingAutoFlow.promptIds || []
                 })
+                setVideoFile(editingAutoFlow.videoFile || null)
             } else {
                 form.resetFields()
+                setVideoFile(null)
             }
         }
     }, [isOpen, editingAutoFlow, form])
+
+    const handleRemoveVideo = async () => {
+        if (videoFile?.publicId) {
+            try {
+                await deleteCloudinaryImage(videoFile.publicId)
+            } catch (e) {
+                // Ignore delete error
+            }
+        }
+        setVideoFile(null)
+    }
 
     const handleSubmit = async () => {
         try {
@@ -54,7 +87,7 @@ const AutoFlowModal = ({
             const selectedProduct = products.find(p => p.product_id === values.productId)
             const selectedShopeeLink = shopeeLinks.find(l => l._id === values.shopeeLinkId)
 
-            const autoFlowData = {
+            const autoFlowData: any = {
                 accountId,
                 productId: values.productId,
                 productTitle: selectedProduct?.title || editingAutoFlow?.productTitle || '',
@@ -64,6 +97,12 @@ const AutoFlowModal = ({
                 description: selectedShopeeLink?.description || editingAutoFlow?.description || '',
                 enabled: editingAutoFlow?.enabled || false,
                 promptIds: values.promptIds || []
+            }
+
+            if (videoFile) {
+                autoFlowData.videoFile = videoFile
+            } else {
+                autoFlowData.videoFile = null
             }
 
             if (editingAutoFlow?._id) {
@@ -179,6 +218,38 @@ const AutoFlowModal = ({
                             )
                         }}
                     />
+                </Form.Item>
+
+                {/* Video Upload */}
+                <Form.Item label="Video">
+                    {videoFile ? (
+                        <div className="flex items-center gap-3 p-2 border rounded-lg bg-gray-50">
+                            <video
+                                src={videoFile.url}
+                                className="w-24 h-16 rounded object-cover bg-black"
+                                muted
+                            />
+                            <div className="flex-1 min-w-0">
+                                <p className="text-xs text-gray-600 truncate">{videoFile.url}</p>
+                            </div>
+                            <Button
+                                type="text"
+                                danger
+                                size="small"
+                                icon={<DeleteOutlined />}
+                                onClick={handleRemoveVideo}
+                                title="Xóa video"
+                            />
+                        </div>
+                    ) : (
+                        <Button
+                            onClick={() => openVideoWidget()}
+                            loading={isVideoUploading}
+                            block
+                        >
+                            🎬 Upload Video
+                        </Button>
+                    )}
                 </Form.Item>
             </Form>
         </Modal>
