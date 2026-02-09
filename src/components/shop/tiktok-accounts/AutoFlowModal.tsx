@@ -6,7 +6,7 @@ import { autoFlowVideoUploadConfig } from '@/utils/cloudinaryConfig'
 import { apiPost, apiPut } from '@/utils/internalApi'
 import { DeleteOutlined } from '@ant-design/icons'
 import { App, Button, Form, Input, Modal, Select } from 'antd'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface AutoFlowModalProps {
     isOpen: boolean
@@ -35,10 +35,19 @@ const AutoFlowModal = ({
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
     const [videoFile, setVideoFile] = useState<any>(null)
+    const originalVideoRef = useRef<any>(null)
 
     const { openWidget: openVideoWidget, isUploading: isVideoUploading } = useCloudinaryUpload(
         autoFlowVideoUploadConfig,
         async (result) => {
+            // Xóa video cũ trên Cloudinary nếu đang thay thế
+            if (videoFile?.publicId) {
+                try {
+                    await deleteCloudinaryImage(videoFile.publicId)
+                } catch {
+                    // Ignore delete error
+                }
+            }
             setVideoFile({
                 url: result.url,
                 publicId: result.publicId,
@@ -60,13 +69,28 @@ const AutoFlowModal = ({
                     shopeeLinkId: editingAutoFlow.shopeeLinkId || undefined,
                     promptIds: editingAutoFlow.promptIds || []
                 })
-                setVideoFile(editingAutoFlow.videoFile || null)
+                const original = editingAutoFlow.videoFile || null
+                setVideoFile(original)
+                originalVideoRef.current = original
             } else {
                 form.resetFields()
                 setVideoFile(null)
+                originalVideoRef.current = null
             }
         }
     }, [isOpen, editingAutoFlow, form])
+
+    const handleCancel = async () => {
+        // Xóa video mới upload nếu chưa lưu (khác với video gốc từ DB)
+        if (videoFile?.publicId && videoFile.publicId !== originalVideoRef.current?.publicId) {
+            try {
+                await deleteCloudinaryImage(videoFile.publicId)
+            } catch {
+                // Ignore
+            }
+        }
+        setIsOpen(false)
+    }
 
     const handleRemoveVideo = async () => {
         if (videoFile?.publicId) {
@@ -128,9 +152,9 @@ const AutoFlowModal = ({
         <Modal
             title={editingAutoFlow ? 'Chỉnh sửa AutoFlow' : 'Thêm AutoFlow mới'}
             open={isOpen}
-            onCancel={() => setIsOpen(false)}
+            onCancel={handleCancel}
             footer={[
-                <Button key="cancel" onClick={() => setIsOpen(false)}>
+                <Button key="cancel" onClick={handleCancel}>
                     Hủy
                 </Button>,
                 <Button key="submit" type="primary" loading={loading} onClick={handleSubmit}>
