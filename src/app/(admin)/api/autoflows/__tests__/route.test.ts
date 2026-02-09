@@ -5,6 +5,7 @@
 /**
  * Tests for AutoFlow API route
  * Tests CRUD operations and status field
+ * Updated: prompts are now independent (no cascade delete), populated via promptIds
  */
 
 // Mock connectDB
@@ -59,12 +60,20 @@ describe('AutoFlow API', () => {
     })
 
     describe('GET', () => {
-        it('fetches autoflows by accountId with prompts', async () => {
+        it('fetches autoflows by accountId with prompts populated via promptIds', async () => {
             const mockAutoflows = [
-                { _id: 'af_1', accountId: 'acc_1', productId: 'prod_1', productTitle: 'Product 1', enabled: true, status: 'pending' }
+                {
+                    _id: 'af_1',
+                    accountId: 'acc_1',
+                    productId: 'prod_1',
+                    productTitle: 'Product 1',
+                    enabled: true,
+                    status: 'pending',
+                    promptIds: ['p_1']
+                }
             ]
             const mockPrompts = [
-                { _id: 'p_1', productId: 'prod_1', title: 'Prompt 1', content: 'Content 1' }
+                { _id: 'p_1', accountId: 'acc_1', title: 'Prompt 1', content: 'Content 1' }
             ]
             mockLean.mockResolvedValue(mockAutoflows)
             mockPromptLean.mockResolvedValue(mockPrompts)
@@ -77,6 +86,21 @@ describe('AutoFlow API', () => {
             expect(json.data).toHaveLength(1)
             expect(json.data[0].prompts).toHaveLength(1)
             expect(json.data[0].status).toBe('pending')
+        })
+
+        it('returns empty prompts when autoflow has no promptIds', async () => {
+            const mockAutoflows = [
+                { _id: 'af_1', accountId: 'acc_1', productId: 'prod_1', enabled: true }
+            ]
+            mockLean.mockResolvedValue(mockAutoflows)
+            mockPromptLean.mockResolvedValue([])
+
+            const request = new NextRequest('http://localhost:3000/api/autoflows?accountId=acc_1')
+            const response = await GET(request)
+            const json = await response.json()
+
+            expect(json.success).toBe(true)
+            expect(json.data[0].prompts).toHaveLength(0)
         })
 
         it('fetches autoflows by productId', async () => {
@@ -111,7 +135,8 @@ describe('AutoFlow API', () => {
                 productId: 'prod_1',
                 productTitle: 'Product 1',
                 enabled: false,
-                status: 'pending'
+                status: 'pending',
+                promptIds: []
             }
             mockModel.create.mockResolvedValue(newAutoflow)
 
@@ -120,7 +145,8 @@ describe('AutoFlow API', () => {
                 body: JSON.stringify({
                     accountId: 'acc_1',
                     productId: 'prod_1',
-                    productTitle: 'Product 1'
+                    productTitle: 'Product 1',
+                    promptIds: []
                 })
             })
             const response = await POST(request)
@@ -128,6 +154,30 @@ describe('AutoFlow API', () => {
 
             expect(json.success).toBe(true)
             expect(json.data.status).toBe('pending')
+        })
+
+        it('creates autoflow with videoFile', async () => {
+            const newAutoflow = {
+                _id: 'af_new',
+                accountId: 'acc_1',
+                productId: 'prod_1',
+                videoFile: { url: 'https://cloudinary.com/video.mp4', publicId: 'vid1', type: 'video' }
+            }
+            mockModel.create.mockResolvedValue(newAutoflow)
+
+            const request = new NextRequest('http://localhost:3000/api/autoflows', {
+                method: 'POST',
+                body: JSON.stringify({
+                    accountId: 'acc_1',
+                    productId: 'prod_1',
+                    videoFile: { url: 'https://cloudinary.com/video.mp4', publicId: 'vid1', type: 'video' }
+                })
+            })
+            const response = await POST(request)
+            const json = await response.json()
+
+            expect(json.success).toBe(true)
+            expect(json.data.videoFile.url).toBe('https://cloudinary.com/video.mp4')
         })
 
         it('returns 500 on creation error', async () => {
@@ -183,6 +233,27 @@ describe('AutoFlow API', () => {
             expect(json.data.enabled).toBe(true)
         })
 
+        it('updates autoflow videoFile', async () => {
+            const updated = {
+                _id: 'af_1',
+                videoFile: { url: 'https://cloudinary.com/video.mp4', publicId: 'vid1', type: 'video' }
+            }
+            mockModel.findByIdAndUpdate.mockResolvedValue(updated)
+
+            const request = new NextRequest('http://localhost:3000/api/autoflows', {
+                method: 'PUT',
+                body: JSON.stringify({
+                    id: 'af_1',
+                    videoFile: { url: 'https://cloudinary.com/video.mp4', publicId: 'vid1', type: 'video' }
+                })
+            })
+            const response = await PUT(request)
+            const json = await response.json()
+
+            expect(json.success).toBe(true)
+            expect(json.data.videoFile.url).toBe('https://cloudinary.com/video.mp4')
+        })
+
         it('returns 500 on update error', async () => {
             mockModel.findByIdAndUpdate.mockRejectedValue(new Error('Update failed'))
 
@@ -199,9 +270,7 @@ describe('AutoFlow API', () => {
     })
 
     describe('DELETE', () => {
-        it('deletes autoflow and its child prompts', async () => {
-            mockModel.findById.mockResolvedValue({ _id: 'af_1', productId: 'prod_1' })
-            mockPromptModel.deleteMany.mockResolvedValue({ deletedCount: 2 })
+        it('deletes autoflow only (no cascade delete of prompts)', async () => {
             mockModel.findByIdAndDelete.mockResolvedValue({ _id: 'af_1' })
 
             const request = new NextRequest('http://localhost:3000/api/autoflows?id=af_1', {
@@ -211,12 +280,13 @@ describe('AutoFlow API', () => {
             const json = await response.json()
 
             expect(json.success).toBe(true)
-            expect(mockPromptModel.deleteMany).toHaveBeenCalledWith({ productId: 'prod_1' })
             expect(mockModel.findByIdAndDelete).toHaveBeenCalledWith('af_1')
+            // Prompts should NOT be deleted — they are independent entities
+            expect(mockPromptModel.deleteMany).not.toHaveBeenCalled()
         })
 
         it('returns 500 on delete error', async () => {
-            mockModel.findById.mockRejectedValue(new Error('Delete failed'))
+            mockModel.findByIdAndDelete.mockRejectedValue(new Error('Delete failed'))
 
             const request = new NextRequest('http://localhost:3000/api/autoflows?id=af_1', {
                 method: 'DELETE'
