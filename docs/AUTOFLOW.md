@@ -17,7 +17,7 @@ TikTok Account
         ├── description (optional, lấy từ ShopeeLink)
         └── Prompt[] (nhiều prompt per product)
               ├── title
-              ├── content (maxLength: 90 ký tự)
+              ├── content (max 90 từ)
               └── mediaId (optional, chọn từ Veo3 Media)
 ```
 
@@ -50,7 +50,7 @@ TikTok Account
 |-------|------|----------|-------|
 | `productId` | String | ✅ | ID sản phẩm (liên kết với AutoFlow) |
 | `title` | String | ✅ | Tiêu đề prompt |
-| `content` | String | ✅ | Nội dung prompt (maxLength: 90 ký tự) |
+| `content` | String | ✅ | Nội dung prompt (max 90 từ, frontend validation) |
 | `mediaId` | String | ❌ | Media ID (optional, chọn từ danh sách Veo3 Media) |
 | `createdAt` | Date | Auto | Thời gian tạo |
 | `updatedAt` | Date | Auto | Thời gian cập nhật |
@@ -252,7 +252,7 @@ Modal để tạo/chỉnh sửa Prompt trong một AutoFlow cụ thể.
 **Form fields:**
 - **Tiêu đề** — Input text (required)
 - **Media ID** — Select dropdown chọn từ Veo3 Media, hiển thị thumbnail (optional)
-- **Nội dung** — TextArea (required, maxLength: 90 ký tự, hiển thị bộ đếm ký tự)
+- **Nội dung** — TextArea (required, max 90 từ, hiển thị bộ đếm từ)
 
 ### TikTok Account Page (`src/app/(admin)/tiktok-accounts/[username]/page.tsx`)
 
@@ -288,4 +288,4 @@ Trang chi tiết TikTok Account hiển thị:
 
 *Tài liệu cập nhật: 08/02/2026*
 *Cập nhật: 09/02/2026 — Thêm field `status` (pending/running/done/error)*
-*Cập nhật: 08/02/2026 — Thêm field `description` (lấy từ ShopeeLink), Prompt maxLength 90 ký tự*
+*Cập nhật: 08/02/2026 — Thêm field `description` (lấy từ ShopeeLink), Prompt max 90 từ*

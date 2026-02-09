@@ -9,7 +9,7 @@ When user requests a new product video prompt, use the templates below and repla
 ## Rules
 
 - Under 90 words
-- Caption or content text at the bottom must be under 90 characters
+- Caption or content text at the bottom must also be under 90 words
 - No special characters (no quotes, dashes, semicolons, exclamation marks, dots between sentences)
 - Full English only, no Vietnamese text at all
 - Only replace product name, features, scene and caption content
