@@ -1,31 +1,36 @@
-# ⚡ AutoFlow - Hệ thống quản lý Prompt tự động
+# ⚡ AutoFlow & 📝 Prompt Library
 
 ## 📋 Tổng quan
 
-**AutoFlow** là tính năng quản lý prompt tự động, cho phép gán các tập prompt vào từng sản phẩm TikTok. Mỗi AutoFlow đại diện cho một sản phẩm cụ thể và chứa nhiều prompt con phục vụ việc tạo nội dung tự động.
+Hệ thống AutoFlow/Prompt phục vụ việc tạo nội dung tự động cho sản phẩm TikTok.
+
+- **AutoFlow** — đại diện cho một sản phẩm, chứa cấu hình tự động hoá (webhook, API URL, bật/tắt)
+- **Prompt Library** — thư viện prompt độc lập, quản lý riêng biệt, được AutoFlow tham chiếu qua `promptIds`
 
 ### Kiến trúc
 
 ```
 TikTok Account
-  └── AutoFlow (1 per product)
-        ├── enabled: true/false
-        ├── status: pending | running | done | error
+  ├── 📝 Prompt Library (independent, per account)
+  │     ├── Prompt A (title, content, mediaId)
+  │     ├── Prompt B
+  │     └── Prompt C
+  │
+  └── ⚡ AutoFlow[] (1 per product)
         ├── productId, productTitle, productImage
-        ├── autoFlowUrl (API endpoint for this flow)
-        ├── n8nUrl (optional, n8n webhook URL)
-        ├── description (optional, lấy từ ShopeeLink)
-        └── Prompt[] (nhiều prompt per product)
-              ├── title
-              ├── content (max 90 từ)
-              └── mediaId (optional, chọn từ Veo3 Media)
+        ├── autoFlowUrl, n8nUrl, description
+        ├── enabled, status
+        └── promptIds → [Prompt A._id, Prompt C._id]  (references)
 ```
+
+> [!IMPORTANT]
+> Prompt là entity **độc lập** — không thuộc về AutoFlow nào. AutoFlow chỉ **tham chiếu** prompt qua mảng `promptIds`. Xóa AutoFlow **không** xóa prompt.
 
 ---
 
 ## 🗄️ Database Models
 
-### AutoFlow Model
+### AutoFlow Model (`src/models/AutoFlow.ts`)
 
 | Field | Type | Required | Mô tả |
 |-------|------|----------|-------|
@@ -33,33 +38,29 @@ TikTok Account
 | `productId` | String | ✅ | ID sản phẩm TikTok |
 | `productTitle` | String | ✅ | Tên sản phẩm |
 | `productImage` | String | ❌ | URL ảnh sản phẩm |
-| `autoFlowUrl` | String | ❌ | URL API endpoint của AutoFlow (tự động tạo khi tạo/sửa) |
-| `n8nUrl` | String | ❌ | URL webhook n8n (optional, nhập tay) |
-| `description` | String | ❌ | Mô tả sản phẩm (lấy từ ShopeeLink khi chọn trong modal) |
-| `enabled` | Boolean | ❌ | Trạng thái bật/tắt (default: `false`) |
-| `status` | String | ❌ | Trạng thái chạy flow: `pending`, `running`, `done`, `error` (default: `pending`) |
-| `createdAt` | Date | Auto | Thời gian tạo |
-| `updatedAt` | Date | Auto | Thời gian cập nhật |
+| `autoFlowUrl` | String | ❌ | URL API endpoint |
+| `n8nUrl` | String | ❌ | URL webhook n8n |
+| `description` | String | ❌ | Mô tả (từ ShopeeLink) |
+| `enabled` | Boolean | ❌ | Bật/tắt (default: `false`) |
+| `status` | String | ❌ | `pending` \| `running` \| `done` \| `error` |
+| `promptIds` | String[] | ❌ | Mảng ID tham chiếu đến Prompt |
 
 **Collection:** `autoflows`
-**File:** `src/models/AutoFlow.ts`
 
-### Prompt Model
+### Prompt Model (`src/models/Prompt.ts`)
 
 | Field | Type | Required | Mô tả |
 |-------|------|----------|-------|
-| `productId` | String | ✅ | ID sản phẩm (liên kết với AutoFlow) |
+| `accountId` | String | ✅ | ID của TikTok Account |
 | `title` | String | ✅ | Tiêu đề prompt |
-| `content` | String | ✅ | Nội dung prompt (max 90 từ, frontend validation) |
-| `mediaId` | String | ❌ | Media ID (optional, chọn từ danh sách Veo3 Media) |
-| `createdAt` | Date | Auto | Thời gian tạo |
-| `updatedAt` | Date | Auto | Thời gian cập nhật |
+| `content` | String | ✅ | Nội dung prompt (max 90 từ) |
+| `mediaId` | String | ❌ | Media ID (từ Veo3 Media) |
+| `order` | Number | ❌ | Thứ tự sắp xếp |
 
 **Collection:** `prompts`
-**File:** `src/models/Prompt.ts`
 
-> [!IMPORTANT]
-> `productId` là khóa liên kết giữa AutoFlow và Prompt. Khi xóa AutoFlow, tất cả Prompt có cùng `productId` sẽ bị xóa theo (cascade delete).
+> [!NOTE]
+> Prompt **không** chứa thông tin sản phẩm. Mối liên hệ với sản phẩm được xác định qua AutoFlow.
 
 ---
 
@@ -67,15 +68,14 @@ TikTok Account
 
 ### AutoFlow API (`/api/autoflows`)
 
-#### GET - Lấy danh sách AutoFlow
+#### GET — Lấy danh sách AutoFlow (kèm prompts)
 
 ```
 GET /api/autoflows?accountId={accountId}&productId={productId}
 ```
 
-Cả hai tham số `accountId` và `productId` đều là optional. Có thể dùng riêng lẻ hoặc kết hợp.
+Response trả về AutoFlow kèm danh sách Prompt đã được populate từ `promptIds`:
 
-**Response:**
 ```json
 {
   "success": true,
@@ -85,15 +85,12 @@ Cả hai tham số `accountId` và `productId` đều là optional. Có thể d�
       "accountId": "...",
       "productId": "1234567890",
       "productTitle": "Sản phẩm A",
-      "productImage": "https://...",
-      "autoFlowUrl": "https://domain/api/autoflows?accountId=...&productId=1234567890",
-      "enabled": true,
+      "promptIds": ["promptId1", "promptId2"],
       "prompts": [
         {
-          "_id": "...",
-          "productId": "1234567890",
+          "_id": "promptId1",
           "title": "Prompt 1",
-          "content": "Nội dung prompt...",
+          "content": "Nội dung...",
           "mediaId": ""
         }
       ]
@@ -102,107 +99,65 @@ Cả hai tham số `accountId` và `productId` đều là optional. Có thể d�
 }
 ```
 
-> [!NOTE]
-> GET trả về AutoFlow kèm theo tất cả Prompt con (populated via `productId` match).
+#### POST — Tạo AutoFlow
 
-#### POST - Tạo AutoFlow mới
-
-```
+```json
 POST /api/autoflows
-Content-Type: application/json
-
 {
   "accountId": "...",
   "productId": "...",
   "productTitle": "...",
-  "productImage": "...",
-  "autoFlowUrl": "https://domain/api/autoflows?accountId=...&productId=...",
-  "n8nUrl": "https://your-n8n.com/webhook/...",
-  "description": "Mô tả từ ShopeeLink...",
-  "enabled": false
+  "promptIds": ["promptId1", "promptId2"],
+  "n8nUrl": "https://n8n.example.com/webhook/..."
 }
 ```
 
-#### PUT - Cập nhật AutoFlow
+#### PUT — Cập nhật AutoFlow
 
-```
+```json
 PUT /api/autoflows
-Content-Type: application/json
-
-{
-  "id": "autoflow_id",
-  "enabled": true
-}
+{ "id": "autoflow_id", "promptIds": ["promptId1"], "enabled": true }
 ```
 
-#### DELETE - Xóa AutoFlow
+#### DELETE — Xóa AutoFlow
 
 ```
 DELETE /api/autoflows?id={autoflowId}
 ```
 
-> [!CAUTION]
-> DELETE sẽ xóa cả AutoFlow và tất cả Prompt con có cùng `productId`.
+> [!TIP]
+> Xóa AutoFlow **không** xóa prompt. Prompt vẫn tồn tại trong Prompt Library.
 
 ---
 
 ### Prompt API (`/api/prompts`)
 
-#### GET - Lấy danh sách Prompt theo sản phẩm
+#### GET — Lấy danh sách Prompt
 
 ```
-GET /api/prompts?productId={productId}
+GET /api/prompts?accountId={accountId}
 ```
 
-Đây là API endpoint hiển thị trên mỗi AutoFlow card trong giao diện. Copy URL từ giao diện để gọi API lấy prompt cho sản phẩm cụ thể.
+#### POST — Tạo Prompt
 
-**Response:**
 ```json
-{
-  "success": true,
-  "data": [
-    {
-      "_id": "...",
-      "productId": "1234567890",
-      "title": "Prompt 1",
-      "content": "Nội dung prompt...",
-      "mediaId": "",
-      "createdAt": "...",
-      "updatedAt": "..."
-    }
-  ]
-}
-```
-
-#### POST - Tạo Prompt mới
-
-```
 POST /api/prompts
-Content-Type: application/json
-
 {
-  "productId": "...",
+  "accountId": "...",
   "title": "...",
   "content": "...",
   "mediaId": ""
 }
 ```
 
-#### PUT - Cập nhật Prompt
+#### PUT — Cập nhật Prompt
 
-```
+```json
 PUT /api/prompts
-Content-Type: application/json
-
-{
-  "id": "prompt_id",
-  "title": "...",
-  "content": "...",
-  "mediaId": ""
-}
+{ "id": "prompt_id", "title": "...", "content": "..." }
 ```
 
-#### DELETE - Xóa Prompt
+#### DELETE — Xóa Prompt
 
 ```
 DELETE /api/prompts?id={promptId}
@@ -212,80 +167,56 @@ DELETE /api/prompts?id={promptId}
 
 ## 🖥️ UI Components
 
+### Trang TikTok Account (`src/app/(admin)/tiktok-accounts/[username]/page.tsx`)
+
+Layout từ trên xuống:
+1. **Account Header** — Thông tin tài khoản
+2. **Lịch đăng bài** — Scheduled posts
+3. **⚡ AutoFlow** — Danh sách AutoFlow cards
+4. **📝 Prompt Library** — Quản lý prompt độc lập (CRUD)
+5. **🎬 Veo3 Media** — Quản lý media
+6. **Danh sách sản phẩm** — Product grid
+
 ### AutoFlowModal (`src/components/shop/tiktok-accounts/AutoFlowModal.tsx`)
-
-Modal để tạo/chỉnh sửa AutoFlow. Hiển thị select chọn sản phẩm, Shopee Link (để lấy description), và n8n URL.
-
-**Props:**
 
 | Prop | Type | Mô tả |
 |------|------|-------|
-| `isOpen` | `boolean` | Trạng thái hiển thị modal |
-| `setIsOpen` | `(open: boolean) => void` | Callback đóng/mở modal |
-| `accountId` | `string` | ID tài khoản TikTok |
+| `isOpen` / `setIsOpen` | `boolean` / `fn` | Đóng/mở modal |
+| `accountId` | `string` | ID tài khoản |
 | `products` | `any[]` | Danh sách sản phẩm |
-| `autoflows` | `any[]` | Danh sách AutoFlow hiện tại (để lọc trùng) |
-| `editingAutoFlow` | `any` | AutoFlow đang chỉnh sửa (null = tạo mới) |
-| `onRefresh` | `() => void` | Callback refresh data |
-| `shopeeLinks` | `any[]` | Danh sách ShopeeLink (để chọn và lấy description) |
+| `autoflows` | `any[]` | AutoFlow hiện tại (lọc trùng) |
+| `editingAutoFlow` | `any` | AutoFlow đang sửa (null = tạo mới) |
+| `onRefresh` | `fn` | Callback refresh |
+| `shopeeLinks` | `any[]` | ShopeeLink (lấy description) |
+| `allPrompts` | `any[]` | Tất cả prompt (cho multi-select) |
 
-**Form fields:**
-- **Sản phẩm** — Select dropdown chọn product (required)
-- **Shopee Link** — Select dropdown chọn ShopeeLink, lưu description vào AutoFlow (optional)
-- **n8n URL** — Input text nhập webhook URL (optional)
+**Form fields:** Sản phẩm, Shopee Link, n8n URL, **Chọn Prompts** (multi-select)
 
 ### PromptModal (`src/components/shop/tiktok-accounts/PromptModal.tsx`)
 
-Modal để tạo/chỉnh sửa Prompt trong một AutoFlow cụ thể.
-
-**Props:**
-
 | Prop | Type | Mô tả |
 |------|------|-------|
-| `isOpen` | `boolean` | Trạng thái hiển thị modal |
-| `setIsOpen` | `(open: boolean) => void` | Callback đóng/mở modal |
-| `productId` | `string` | ID sản phẩm mà prompt thuộc về |
-| `editingPrompt` | `any` | Prompt đang chỉnh sửa (null = tạo mới) |
-| `onRefresh` | `() => void` | Callback refresh data |
-| `veo3Media` | `any[]` | Danh sách Veo3 Media (để hiển thị dropdown chọn mediaId) |
+| `isOpen` / `setIsOpen` | `boolean` / `fn` | Đóng/mở modal |
+| `accountId` | `string` | ID tài khoản |
+| `editingPrompt` | `any` | Prompt đang sửa (null = tạo mới) |
+| `onRefresh` | `fn` | Callback refresh |
+| `veo3Media` | `any[]` | Veo3 Media (dropdown chọn mediaId) |
 
-**Form fields:**
-- **Tiêu đề** — Input text (required)
-- **Media ID** — Select dropdown chọn từ Veo3 Media, hiển thị thumbnail (optional)
-- **Nội dung** — TextArea (required, max 90 từ, hiển thị bộ đếm từ)
-
-### TikTok Account Page (`src/app/(admin)/tiktok-accounts/[username]/page.tsx`)
-
-Trang chi tiết TikTok Account hiển thị:
-1. **Account Header** — Thông tin tài khoản
-2. **Lịch đăng bài** — Scheduled posts
-3. **⚡ AutoFlow** — Danh sách AutoFlow cards, mỗi card hiển thị:
-   - Toggle bật/tắt
-   - Thông tin sản phẩm (ảnh, tên)
-   - 📝 Description (nếu có — lấy từ ShopeeLink)
-   - Số lượng prompt
-   - API endpoint URL (clickable, mở tab mới, có nút copy)
-   - n8n URL (nếu có — clickable, màu xanh lá, mở tab mới, có nút copy)
-   - Nút ✏️ sửa AutoFlow (chỉnh product, shopee link, n8n URL)
-   - Danh sách prompt con (hiển thị thumbnail Veo3 Media + mediaId, copy, edit, delete)
-4. **🎬 Veo3 Media** — Quản lý media cho account (xem `docs/VEO3_MEDIA.md`)
-5. **Danh sách sản phẩm** — Product grid
+**Form fields:** Tiêu đề, Media ID (select từ Veo3), Nội dung (max 90 từ)
 
 ---
 
 ## 🔄 Luồng hoạt động
 
 ```
-1. Người dùng vào trang TikTok Account
-2. Hệ thống fetch AutoFlows + Products
-3. Người dùng tạo AutoFlow → chọn sản phẩm
-4. Trong AutoFlow, thêm Prompt → nhập title, content, mediaId
-5. Bật/tắt AutoFlow bằng Switch
-6. Copy API URL để gọi từ service khác
+1. Vào trang TikTok Account
+2. Tạo prompt trong Prompt Library (title, content, mediaId)
+3. Tạo AutoFlow → chọn sản phẩm + chọn prompts từ library
+4. Bật/tắt AutoFlow bằng Switch
+5. Copy API URL / n8n URL để tích hợp service ngoài
 ```
 
 ---
 
-*Tài liệu cập nhật: 08/02/2026*
-*Cập nhật: 09/02/2026 — Thêm field `status` (pending/running/done/error)*
-*Cập nhật: 08/02/2026 — Thêm field `description` (lấy từ ShopeeLink), Prompt max 90 từ*
+*Tài liệu cập nhật: 09/02/2026*
+*Refactored: Prompt tách riêng thành entity độc lập, AutoFlow tham chiếu qua `promptIds`*

@@ -6,30 +6,13 @@ import PromptModal from '@/components/shop/tiktok-accounts/PromptModal'
 import TikTokScheduledPostModal from '@/components/shop/tiktok-accounts/TikTokScheduledPostModal'
 import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload'
 import { veo3MediaUploadConfig } from '@/utils/cloudinaryConfig'
-import { apiPost } from '@/utils/internalApi'
 import {
     CopyOutlined,
     DeleteOutlined,
     EditOutlined,
-    HolderOutlined,
     PlusOutlined,
     UserOutlined
 } from '@ant-design/icons'
-import {
-    closestCenter,
-    DndContext,
-    DragEndEvent,
-    PointerSensor,
-    useSensor,
-    useSensors
-} from '@dnd-kit/core'
-import {
-    arrayMove,
-    SortableContext,
-    useSortable,
-    verticalListSortingStrategy
-} from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
 import { App, Button, Input, Popconfirm, Spin, Switch } from 'antd'
 import dayjs from 'dayjs'
 import { useParams } from 'next/navigation'
@@ -50,114 +33,7 @@ interface TikTokAccount {
     updatedAt: string
 }
 
-// Sortable Prompt Item for drag-and-drop reordering
-const SortablePromptItem = ({
-    prompt,
-    onCopy,
-    onEdit,
-    onDelete,
-    veo3Media = []
-}: {
-    prompt: any
-    onCopy: (content: string) => void
-    onEdit: (prompt: any) => void
-    onDelete: (id: string) => void
-    veo3Media?: any[]
-}) => {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging
-    } = useSortable({ id: prompt._id })
 
-    const style: React.CSSProperties = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-        opacity: isDragging ? 0.5 : 1
-    }
-
-    return (
-        <div
-            ref={setNodeRef}
-            style={style}
-            className="p-3 hover:bg-gray-50 transition-colors"
-        >
-            <div className="flex items-start gap-2">
-                <div
-                    {...attributes}
-                    {...listeners}
-                    className="cursor-grab active:cursor-grabbing pt-0.5 text-gray-400 hover:text-gray-600"
-                >
-                    <HolderOutlined />
-                </div>
-                <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-gray-800 mb-1">
-                        {prompt.title}
-                    </h3>
-                    {prompt.mediaId && (() => {
-                        const media = veo3Media.find((m: any) => m.mediaId === prompt.mediaId)
-                        return (
-                            <div className="flex items-center gap-1.5 mb-1">
-                                {media?.mediaFile?.url ? (
-                                    <img
-                                        src={media.mediaFile.url}
-                                        alt={prompt.mediaId}
-                                        className="w-6 h-6 rounded object-cover"
-                                    />
-                                ) : (
-                                    <div className="w-6 h-6 rounded bg-gray-200 flex items-center justify-center">
-                                        <span className="text-[8px] text-gray-400">🎬</span>
-                                    </div>
-                                )}
-                                <span className="text-xs text-blue-600 font-mono truncate max-w-[120px]">
-                                    {prompt.mediaId}
-                                </span>
-                            </div>
-                        )
-                    })()}
-                    <p className="text-xs text-gray-600 line-clamp-3 whitespace-pre-wrap">
-                        {prompt.content}
-                    </p>
-                </div>
-                <div className="flex gap-1 flex-shrink-0">
-                    <Button
-                        type="text"
-                        size="small"
-                        icon={<CopyOutlined />}
-                        onClick={() => onCopy(prompt.content)}
-                        title="Copy nội dung"
-                    />
-                    <Button
-                        type="text"
-                        size="small"
-                        icon={<EditOutlined />}
-                        onClick={() => onEdit(prompt)}
-                        title="Sửa"
-                    />
-                    <Popconfirm
-                        title="Xóa prompt?"
-                        description="Bạn có chắc muốn xóa prompt này?"
-                        onConfirm={() => onDelete(prompt._id)}
-                        okText="Xóa"
-                        cancelText="Hủy"
-                        okButtonProps={{ danger: true }}
-                    >
-                        <Button
-                            type="text"
-                            size="small"
-                            danger
-                            icon={<DeleteOutlined />}
-                            title="Xóa"
-                        />
-                    </Popconfirm>
-                </div>
-            </div>
-        </div>
-    )
-}
 
 export default function TikTokAccountPage() {
     const params = useParams()
@@ -174,9 +50,10 @@ export default function TikTokAccountPage() {
     const [autoflowsLoading, setAutoflowsLoading] = useState(false)
     const [isAutoFlowModalOpen, setIsAutoFlowModalOpen] = useState(false)
     const [editingAutoFlow, setEditingAutoFlow] = useState<any>(null)
+    const [allPrompts, setAllPrompts] = useState<any[]>([])
+    const [promptsLoading, setPromptsLoading] = useState(false)
     const [isPromptModalOpen, setIsPromptModalOpen] = useState(false)
     const [editingPrompt, setEditingPrompt] = useState<any>(null)
-    const [promptProductId, setPromptProductId] = useState<string>('')
     const [veo3Media, setVeo3Media] = useState<any[]>([])
     const [veo3MediaLoading, setVeo3MediaLoading] = useState(false)
     const [newMediaId, setNewMediaId] = useState('')
@@ -204,10 +81,11 @@ export default function TikTokAccountPage() {
 
                     if (foundAccount) {
                         setAccount(foundAccount)
-                        // Fetch products, scheduled posts, and autoflows after account is loaded
+                        // Fetch products, scheduled posts, autoflows, prompts, etc.
                         fetchProducts(foundAccount.cookie)
                         fetchScheduledPosts(foundAccount._id)
                         fetchAutoFlows(foundAccount._id)
+                        fetchPrompts(foundAccount._id)
                         fetchVeo3Media(foundAccount._id)
                         fetchShopeeLinks()
                     } else {
@@ -303,7 +181,7 @@ export default function TikTokAccountPage() {
             const data = await response.json()
 
             if (data.success) {
-                message.success('Đã xóa AutoFlow và tất cả prompts!')
+                message.success('Đã xóa AutoFlow!')
                 if (account) fetchAutoFlows(account._id)
             } else {
                 message.error('Xóa thất bại')
@@ -333,15 +211,28 @@ export default function TikTokAccountPage() {
         }
     }
 
-    // Prompt handlers (within an autoflow)
-    const handleAddPrompt = (productId: string) => {
-        setPromptProductId(productId)
+    // Independent Prompt Library handlers
+    const fetchPrompts = async (accountId: string) => {
+        try {
+            setPromptsLoading(true)
+            const response = await fetch(`/api/prompts?accountId=${accountId}`)
+            const data = await response.json()
+            if (data.success) {
+                setAllPrompts(data.data)
+            }
+        } catch (error: any) {
+            console.error('❌ Prompts Error:', error)
+        } finally {
+            setPromptsLoading(false)
+        }
+    }
+
+    const handleAddPrompt = () => {
         setEditingPrompt(null)
         setIsPromptModalOpen(true)
     }
 
     const handleEditPrompt = (prompt: any) => {
-        setPromptProductId(prompt.productId)
         setEditingPrompt(prompt)
         setIsPromptModalOpen(true)
     }
@@ -355,51 +246,15 @@ export default function TikTokAccountPage() {
 
             if (data.success) {
                 message.success('Đã xóa prompt!')
-                if (account) fetchAutoFlows(account._id)
+                if (account) {
+                    fetchPrompts(account._id)
+                    fetchAutoFlows(account._id)
+                }
             } else {
                 message.error('Xóa thất bại')
             }
         } catch (error: any) {
             message.error('Lỗi: ' + error.message)
-        }
-    }
-
-    // Drag-and-drop prompt reorder
-    const sensors = useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: { distance: 5 }
-        })
-    )
-
-    const handlePromptDragEnd = async (event: DragEndEvent, autoflow: any) => {
-        const { active, over } = event
-        if (!over || active.id === over.id) return
-
-        const prompts = autoflow.prompts || []
-        const oldIndex = prompts.findIndex((p: any) => p._id === active.id)
-        const newIndex = prompts.findIndex((p: any) => p._id === over.id)
-
-        const newPrompts = arrayMove(prompts, oldIndex, newIndex)
-
-        // Optimistically update UI
-        setAutoflows(prev =>
-            prev.map((af: any) =>
-                af._id === autoflow._id
-                    ? { ...af, prompts: newPrompts }
-                    : af
-            )
-        )
-
-        // Save new order to DB
-        const items = newPrompts.map((p: any, index: number) => ({
-            id: p._id,
-            order: index
-        }))
-
-        const result = await apiPost('/api/prompts/reorder', { items })
-        if (!result.success) {
-            message.error('Không thể cập nhật thứ tự')
-            if (account) fetchAutoFlows(account._id)
         }
     }
 
@@ -845,9 +700,9 @@ export default function TikTokAccountPage() {
                                                     {autoflow.prompts?.length || 0} prompt{(autoflow.prompts?.length || 0) !== 1 ? 's' : ''}
                                                 </span>
                                                 <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${autoflow.status === 'running' ? 'bg-blue-100 text-blue-700' :
-                                                        autoflow.status === 'done' ? 'bg-green-100 text-green-700' :
-                                                            autoflow.status === 'error' ? 'bg-red-100 text-red-700' :
-                                                                'bg-gray-100 text-gray-600'
+                                                    autoflow.status === 'done' ? 'bg-green-100 text-green-700' :
+                                                        autoflow.status === 'error' ? 'bg-red-100 text-red-700' :
+                                                            'bg-gray-100 text-gray-600'
                                                     }`}>
                                                     {autoflow.status === 'running' ? '🔄 Running' :
                                                         autoflow.status === 'done' ? '✅ Done' :
@@ -861,14 +716,6 @@ export default function TikTokAccountPage() {
                                             <Button
                                                 type="text"
                                                 size="small"
-                                                icon={<PlusOutlined />}
-                                                onClick={() => handleAddPrompt(autoflow.productId)}
-                                                title="Thêm prompt"
-                                                className="text-blue-700"
-                                            />
-                                            <Button
-                                                type="text"
-                                                size="small"
                                                 icon={<EditOutlined />}
                                                 onClick={() => handleEditAutoFlow(autoflow)}
                                                 title="Sửa AutoFlow"
@@ -876,7 +723,7 @@ export default function TikTokAccountPage() {
                                             />
                                             <Popconfirm
                                                 title="Xóa AutoFlow?"
-                                                description="Sẽ xóa tất cả prompts của AutoFlow này!"
+                                                description="AutoFlow sẽ bị xóa. Prompts vẫn được giữ lại."
                                                 onConfirm={() => handleDeleteAutoFlow(autoflow._id)}
                                                 okText="Xóa"
                                                 cancelText="Hủy"
@@ -931,35 +778,155 @@ export default function TikTokAccountPage() {
                                     )}
                                 </div>
 
-                                {/* Child Prompts */}
+                                {/* Selected Prompts (read-only) */}
                                 <div className="divide-y">
                                     {(autoflow.prompts || []).length === 0 ? (
                                         <p className="text-xs text-gray-400 text-center py-3">
-                                            Chưa có prompt nào — nhấn + để thêm
+                                            Chưa chọn prompt nào — nhấn ✏️ để chọn từ Prompt Library
                                         </p>
                                     ) : (
-                                        <DndContext
-                                            sensors={sensors}
-                                            collisionDetection={closestCenter}
-                                            onDragEnd={(event) => handlePromptDragEnd(event, autoflow)}
-                                        >
-                                            <SortableContext
-                                                items={autoflow.prompts.map((p: any) => p._id)}
-                                                strategy={verticalListSortingStrategy}
-                                            >
-                                                {autoflow.prompts.map((prompt: any) => (
-                                                    <SortablePromptItem
-                                                        key={prompt._id}
-                                                        prompt={prompt}
-                                                        onCopy={handleCopyPromptContent}
-                                                        onEdit={handleEditPrompt}
-                                                        onDelete={handleDeletePrompt}
-                                                        veo3Media={veo3Media}
+                                        autoflow.prompts.map((prompt: any) => (
+                                            <div key={prompt._id} className="p-3 hover:bg-gray-50 transition-colors">
+                                                <div className="flex items-start gap-2">
+                                                    <div className="flex-1 min-w-0">
+                                                        <h3 className="text-sm font-semibold text-gray-800 mb-1">
+                                                            {prompt.title}
+                                                        </h3>
+                                                        {prompt.mediaId && (() => {
+                                                            const media = veo3Media.find((m: any) => m.mediaId === prompt.mediaId)
+                                                            return (
+                                                                <div className="flex items-center gap-1.5 mb-1">
+                                                                    {media?.mediaFile?.url ? (
+                                                                        <img
+                                                                            src={media.mediaFile.url}
+                                                                            alt={prompt.mediaId}
+                                                                            className="w-6 h-6 rounded object-cover"
+                                                                        />
+                                                                    ) : (
+                                                                        <div className="w-6 h-6 rounded bg-gray-200 flex items-center justify-center">
+                                                                            <span className="text-[8px] text-gray-400">🎬</span>
+                                                                        </div>
+                                                                    )}
+                                                                    <span className="text-xs text-blue-600 font-mono truncate max-w-[120px]">
+                                                                        {prompt.mediaId}
+                                                                    </span>
+                                                                </div>
+                                                            )
+                                                        })()}
+                                                        <p className="text-xs text-gray-600 line-clamp-3 whitespace-pre-wrap">
+                                                            {prompt.content}
+                                                        </p>
+                                                    </div>
+                                                    <Button
+                                                        type="text"
+                                                        size="small"
+                                                        icon={<CopyOutlined />}
+                                                        onClick={() => handleCopyPromptContent(prompt.content)}
+                                                        title="Copy nội dung"
                                                     />
-                                                ))}
-                                            </SortableContext>
-                                        </DndContext>
+                                                </div>
+                                            </div>
+                                        ))
                                     )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* Prompt Library Section */}
+            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+                <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-base font-semibold">
+                        📝 Prompt Library ({allPrompts.length})
+                    </h2>
+                    <Button
+                        type="primary"
+                        size="small"
+                        icon={<PlusOutlined />}
+                        onClick={handleAddPrompt}
+                    >
+                        Thêm
+                    </Button>
+                </div>
+
+                {promptsLoading ? (
+                    <div className="text-center py-4">
+                        <Spin size="small" />
+                    </div>
+                ) : allPrompts.length === 0 ? (
+                    <p className="text-sm text-gray-500 text-center py-4">
+                        Chưa có prompt nào
+                    </p>
+                ) : (
+                    <div className="space-y-2">
+                        {allPrompts.map((prompt: any) => (
+                            <div key={prompt._id} className="border rounded-lg p-3">
+                                <div className="flex items-start gap-2">
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <h3 className="text-sm font-semibold text-gray-800">
+                                                {prompt.title}
+                                            </h3>
+                                        </div>
+                                        {prompt.mediaId && (() => {
+                                            const media = veo3Media.find((m: any) => m.mediaId === prompt.mediaId)
+                                            return (
+                                                <div className="flex items-center gap-1.5 mb-1">
+                                                    {media?.mediaFile?.url ? (
+                                                        <img
+                                                            src={media.mediaFile.url}
+                                                            alt={prompt.mediaId}
+                                                            className="w-6 h-6 rounded object-cover"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-6 h-6 rounded bg-gray-200 flex items-center justify-center">
+                                                            <span className="text-[8px] text-gray-400">🎬</span>
+                                                        </div>
+                                                    )}
+                                                    <span className="text-xs text-blue-600 font-mono truncate max-w-[120px]">
+                                                        {prompt.mediaId}
+                                                    </span>
+                                                </div>
+                                            )
+                                        })()}
+                                        <p className="text-xs text-gray-600 line-clamp-2 whitespace-pre-wrap">
+                                            {prompt.content}
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-1 flex-shrink-0">
+                                        <Button
+                                            type="text"
+                                            size="small"
+                                            icon={<CopyOutlined />}
+                                            onClick={() => handleCopyPromptContent(prompt.content)}
+                                            title="Copy nội dung"
+                                        />
+                                        <Button
+                                            type="text"
+                                            size="small"
+                                            icon={<EditOutlined />}
+                                            onClick={() => handleEditPrompt(prompt)}
+                                            title="Sửa"
+                                        />
+                                        <Popconfirm
+                                            title="Xóa prompt?"
+                                            description="Bạn có chắc muốn xóa prompt này?"
+                                            onConfirm={() => handleDeletePrompt(prompt._id)}
+                                            okText="Xóa"
+                                            cancelText="Hủy"
+                                            okButtonProps={{ danger: true }}
+                                        >
+                                            <Button
+                                                type="text"
+                                                size="small"
+                                                danger
+                                                icon={<DeleteOutlined />}
+                                                title="Xóa"
+                                            />
+                                        </Popconfirm>
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -1198,17 +1165,23 @@ export default function TikTokAccountPage() {
                     editingAutoFlow={editingAutoFlow}
                     onRefresh={() => fetchAutoFlows(account._id)}
                     shopeeLinks={shopeeLinks}
+                    allPrompts={allPrompts}
                 />
             )}
 
-            <PromptModal
-                isOpen={isPromptModalOpen}
-                setIsOpen={setIsPromptModalOpen}
-                productId={promptProductId}
-                editingPrompt={editingPrompt}
-                onRefresh={() => { if (account) fetchAutoFlows(account._id) }}
-                veo3Media={veo3Media}
-            />
+            {account && (
+                <PromptModal
+                    isOpen={isPromptModalOpen}
+                    setIsOpen={setIsPromptModalOpen}
+                    accountId={account._id}
+                    editingPrompt={editingPrompt}
+                    onRefresh={() => {
+                        fetchPrompts(account._id)
+                        fetchAutoFlows(account._id)
+                    }}
+                    veo3Media={veo3Media}
+                />
+            )}
         </div>
     )
 }

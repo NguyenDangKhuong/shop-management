@@ -3,7 +3,7 @@ import AutoFlowModel from '@/models/AutoFlow'
 import PromptModel from '@/models/Prompt'
 import connectDb from '@/utils/connectDb'
 
-// GET all autoflows (filter by accountId), populate child prompts
+// GET all autoflows (filter by accountId), populate prompts via promptIds
 export async function GET(request: NextRequest) {
     try {
         await connectDb()
@@ -19,26 +19,29 @@ export async function GET(request: NextRequest) {
             .sort({ createdAt: -1 })
             .lean()
 
-        // Fetch all prompts for these autoflows' products
-        const productIds = autoflows.map((a: any) => a.productId)
-        const prompts = productIds.length > 0
-            ? await PromptModel.find({ productId: { $in: productIds } })
+        // Collect all promptIds from all autoflows
+        const allPromptIds = autoflows.flatMap((a: any) => a.promptIds || [])
+        const uniquePromptIds = [...new Set(allPromptIds)]
+
+        // Fetch all referenced prompts in one query
+        const prompts = uniquePromptIds.length > 0
+            ? await PromptModel.find({ _id: { $in: uniquePromptIds } })
                 .sort({ order: 1, createdAt: -1 })
                 .lean()
             : []
 
-        // Group prompts by productId
-        const promptsByProduct = new Map<string, any[]>()
+        // Create a map for fast lookup
+        const promptsMap = new Map<string, any>()
         prompts.forEach((p: any) => {
-            const list = promptsByProduct.get(p.productId) || []
-            list.push(p)
-            promptsByProduct.set(p.productId, list)
+            promptsMap.set(p._id.toString(), p)
         })
 
-        // Attach prompts to each autoflow
+        // Attach prompts to each autoflow (maintaining order from promptIds)
         const populatedAutoFlows = autoflows.map((a: any) => ({
             ...a,
-            prompts: promptsByProduct.get(a.productId) || []
+            prompts: (a.promptIds || [])
+                .map((id: string) => promptsMap.get(id))
+                .filter(Boolean)
         }))
 
         return NextResponse.json({ success: true, data: populatedAutoFlows })
@@ -72,17 +75,12 @@ export async function PUT(request: NextRequest) {
     }
 }
 
-// DELETE autoflow and its child prompts
+// DELETE autoflow (no longer cascades to prompts - prompts are independent)
 export async function DELETE(request: NextRequest) {
     try {
         await connectDb()
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
-        // Find autoflow to get productId for cascade delete
-        const autoflow = await AutoFlowModel.findById(id)
-        if (autoflow) {
-            await PromptModel.deleteMany({ productId: autoflow.productId })
-        }
         await AutoFlowModel.findByIdAndDelete(id)
         return NextResponse.json({ success: true })
     } catch (error: any) {

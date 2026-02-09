@@ -12,6 +12,7 @@ export interface IAutoFlow extends Document {
     description?: string
     enabled: boolean
     status: AutoFlowStatus
+    promptIds: string[]
     createdAt?: Date
     updatedAt?: Date
 }
@@ -27,7 +28,8 @@ const AutoFlowSchema = new Schema({
     n8nUrl: { type: String },
     description: { type: String },
     enabled: { type: Boolean, default: false },
-    status: { type: String, enum: ['pending', 'running', 'done', 'error'], default: 'pending' }
+    status: { type: String, enum: ['pending', 'running', 'done', 'error'], default: 'pending' },
+    promptIds: [{ type: String }]
 }, {
     timestamps: true,
     collection: 'autoflows'

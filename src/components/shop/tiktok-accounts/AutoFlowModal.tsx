@@ -13,6 +13,7 @@ interface AutoFlowModalProps {
     editingAutoFlow?: any
     onRefresh: () => void
     shopeeLinks?: any[]
+    allPrompts?: any[]
 }
 
 const AutoFlowModal = ({
@@ -23,7 +24,8 @@ const AutoFlowModal = ({
     autoflows = [],
     editingAutoFlow,
     onRefresh,
-    shopeeLinks = []
+    shopeeLinks = [],
+    allPrompts = []
 }: AutoFlowModalProps) => {
     const { message } = App.useApp()
     const [form] = Form.useForm()
@@ -35,7 +37,8 @@ const AutoFlowModal = ({
                 form.setFieldsValue({
                     productId: editingAutoFlow.productId || '',
                     n8nUrl: editingAutoFlow.n8nUrl || '',
-                    shopeeLinkId: editingAutoFlow.shopeeLinkId || undefined
+                    shopeeLinkId: editingAutoFlow.shopeeLinkId || undefined,
+                    promptIds: editingAutoFlow.promptIds || []
                 })
             } else {
                 form.resetFields()
@@ -58,8 +61,9 @@ const AutoFlowModal = ({
                 productImage: selectedProduct?.images?.[0]?.url_list?.[0] || editingAutoFlow?.productImage || '',
                 autoFlowUrl: `${window.location.origin}/api/autoflows?accountId=${accountId}&productId=${values.productId}`,
                 n8nUrl: values.n8nUrl || '',
-                description: selectedShopeeLink?.description || '',
-                enabled: editingAutoFlow?.enabled || false
+                description: selectedShopeeLink?.description || editingAutoFlow?.description || '',
+                enabled: editingAutoFlow?.enabled || false,
+                promptIds: values.promptIds || []
             }
 
             if (editingAutoFlow?._id) {
@@ -149,6 +153,32 @@ const AutoFlowModal = ({
                     name="n8nUrl"
                 >
                     <Input placeholder="Nhập n8n webhook URL (optional)..." />
+                </Form.Item>
+
+                <Form.Item
+                    label="Chọn Prompts"
+                    name="promptIds"
+                >
+                    <Select
+                        mode="multiple"
+                        placeholder="Chọn prompts từ Prompt Library..."
+                        allowClear
+                        showSearch
+                        optionFilterProp="label"
+                        options={allPrompts.map((prompt: any) => ({
+                            value: prompt._id,
+                            label: prompt.title
+                        }))}
+                        optionRender={(option) => {
+                            const prompt = allPrompts.find((p: any) => p._id === option.value)
+                            return (
+                                <div className="py-1">
+                                    <div className="text-sm font-medium">{prompt?.title}</div>
+                                    <div className="text-xs text-gray-400 line-clamp-1">{prompt?.content}</div>
+                                </div>
+                            )
+                        }}
+                    />
                 </Form.Item>
             </Form>
         </Modal>

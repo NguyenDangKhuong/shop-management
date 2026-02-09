@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 interface PromptModalProps {
     isOpen: boolean
     setIsOpen: (open: boolean) => void
-    productId: string
+    accountId: string
     editingPrompt?: any
     onRefresh: () => void
     veo3Media?: any[]
@@ -16,7 +16,7 @@ interface PromptModalProps {
 const PromptModal = ({
     isOpen,
     setIsOpen,
-    productId,
+    accountId,
     editingPrompt,
     onRefresh,
     veo3Media = []
@@ -31,7 +31,7 @@ const PromptModal = ({
                 form.setFieldsValue({
                     title: editingPrompt.title || '',
                     content: editingPrompt.content || '',
-                    mediaId: editingPrompt.mediaId || ''
+                    mediaId: editingPrompt.mediaId || undefined
                 })
             } else {
                 form.resetFields()
@@ -44,8 +44,8 @@ const PromptModal = ({
             setLoading(true)
             const values = await form.validateFields()
 
-            const promptData = {
-                productId,
+            const promptData: any = {
+                accountId,
                 title: values.title,
                 content: values.content,
                 mediaId: values.mediaId || ''
@@ -62,7 +62,9 @@ const PromptModal = ({
             setIsOpen(false)
             onRefresh()
         } catch (error: any) {
-            message.error('Lỗi: ' + error.message)
+            if (error?.message) {
+                message.error('Lỗi: ' + error.message)
+            }
         } finally {
             setLoading(false)
         }

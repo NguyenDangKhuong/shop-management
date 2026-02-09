@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose'
 
 export interface IPrompt extends Document {
-    productId: string
+    accountId: string
     title: string
     content: string
     mediaId?: string
@@ -13,7 +13,7 @@ export interface IPrompt extends Document {
 export type Prompt = IPrompt
 
 const PromptSchema = new Schema({
-    productId: { type: String, required: true },
+    accountId: { type: String, required: true },
     title: { type: String, required: true },
     content: { type: String, required: true },
     mediaId: { type: String },
