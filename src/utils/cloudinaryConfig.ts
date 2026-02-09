@@ -88,7 +88,7 @@ export const autoFlowVideoUploadConfig: CloudinaryWidgetOptions = {
     resourceType: 'video',
     clientAllowedFormats: ['mp4', 'mov', 'avi', 'webm'],
     maxFileSize: 104857600, // 100MB
-    sources: ['local', 'url'],
+    sources: ['local', 'url', 'camera'],
     cropping: false
 }
 
