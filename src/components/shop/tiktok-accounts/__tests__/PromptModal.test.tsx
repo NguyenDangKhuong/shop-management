@@ -66,7 +66,7 @@ describe('PromptModal', () => {
     const defaultProps = {
         isOpen: true,
         setIsOpen: mockSetIsOpen,
-        productId: 'prod_1',
+        accountId: 'acc_1',
         editingPrompt: undefined,
         onRefresh: mockOnRefresh,
         veo3Media: mockVeo3Media
@@ -104,12 +104,14 @@ describe('PromptModal', () => {
         expect(screen.getByText('Chỉnh sửa Prompt')).toBeInTheDocument()
     })
 
-    it('displays all form fields', () => {
+    it('displays all form fields (no product field)', () => {
         render(<PromptModal {...defaultProps} />)
 
         expect(screen.getByText('Tiêu đề')).toBeInTheDocument()
         expect(screen.getByText('Media ID')).toBeInTheDocument()
         expect(screen.getByText('Nội dung')).toBeInTheDocument()
+        // Product field should NOT exist — prompts are independent
+        expect(screen.queryByText('Sản phẩm')).not.toBeInTheDocument()
     })
 
     it('has correct placeholder for title', () => {

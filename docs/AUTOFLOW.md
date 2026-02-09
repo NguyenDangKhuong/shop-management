@@ -208,17 +208,53 @@ Layout từ trên xuống:
 
 ---
 
+## 🎬 Video Upload (Cloudinary)
+
+Mỗi AutoFlow có thể đính kèm 1 video, upload qua Cloudinary widget.
+
+**Config:** `autoFlowVideoUploadConfig` trong `src/utils/cloudinaryConfig.ts`
+
+| Thuộc tính | Giá trị |
+|-----------|---------|
+| resourceType | `video` |
+| Formats | mp4, mov, avi, webm |
+| Max size | 100MB |
+| Sources | local, url |
+
+**Luồng:**
+1. Trong AutoFlowModal, nhấn "🎬 Upload Video"
+2. Cloudinary widget mở → chọn file video
+3. Upload xong → hiển thị preview + nút xóa
+4. Submit → lưu `videoFile: { url, publicId, type: 'video' }` vào AutoFlow
+
+**Hiển thị:** Video nhỏ ở cuối mỗi AutoFlow card trên trang TikTok Account (với controls, max height 160px).
+
+---
+
 ## 🔄 Luồng hoạt động
 
 ```
 1. Vào trang TikTok Account
 2. Tạo prompt trong Prompt Library (title, content, mediaId)
-3. Tạo AutoFlow → chọn sản phẩm + chọn prompts từ library
+3. Tạo AutoFlow → chọn sản phẩm + chọn prompts + upload video
 4. Bật/tắt AutoFlow bằng Switch
 5. Copy API URL / n8n URL để tích hợp service ngoài
 ```
 
 ---
 
+## 🧪 Testing
+
+Test files:
+- `src/components/shop/tiktok-accounts/__tests__/AutoFlowModal.test.tsx` — 24 tests
+- `src/components/shop/tiktok-accounts/__tests__/PromptModal.test.tsx` — 13 tests
+
+```bash
+npx jest --testPathPattern="tiktok-accounts/__tests__/(AutoFlowModal|PromptModal)"
+```
+
+---
+
 *Tài liệu cập nhật: 09/02/2026*
-*Refactored: Prompt tách riêng thành entity độc lập, AutoFlow tham chiếu qua `promptIds`*
+*Thêm video upload (Cloudinary), prompt tách riêng thành entity độc lập*
+

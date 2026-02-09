@@ -22,6 +22,19 @@ jest.mock('@/utils/internalApi', () => ({
     apiPut: jest.fn()
 }))
 
+// Mock useCloudinaryUpload hook
+jest.mock('@/hooks/useCloudinaryUpload', () => ({
+    useCloudinaryUpload: jest.fn(() => ({
+        openWidget: jest.fn(),
+        isUploading: false
+    }))
+}))
+
+// Mock cloudinary actions
+jest.mock('@/actions/cloudinary', () => ({
+    deleteCloudinaryImage: jest.fn()
+}))
+
 // Mock Ant Design App context
 jest.mock('antd', () => {
     const actual = jest.requireActual('antd')
@@ -94,6 +107,21 @@ describe('AutoFlowModal', () => {
         }
     ]
 
+    const mockPrompts = [
+        {
+            _id: 'pr_1',
+            title: 'Prompt Alpha',
+            content: 'Nội dung prompt alpha...',
+            accountId: 'acc_1'
+        },
+        {
+            _id: 'pr_2',
+            title: 'Prompt Beta',
+            content: 'Nội dung prompt beta...',
+            accountId: 'acc_1'
+        }
+    ]
+
     const defaultProps = {
         isOpen: true,
         setIsOpen: mockSetIsOpen,
@@ -102,12 +130,15 @@ describe('AutoFlowModal', () => {
         autoflows: mockAutoflows,
         editingAutoFlow: undefined,
         onRefresh: mockOnRefresh,
-        shopeeLinks: mockShopeeLinks
+        shopeeLinks: mockShopeeLinks,
+        allPrompts: mockPrompts
     }
 
     beforeEach(() => {
         jest.clearAllMocks()
     })
+
+    // --- Basic Rendering ---
 
     it('renders modal when open', () => {
         render(<AutoFlowModal {...defaultProps} />)
@@ -156,22 +187,16 @@ describe('AutoFlowModal', () => {
         expect(screen.getByText('Cập nhật')).toBeInTheDocument()
     })
 
-    it('displays product select field with label', () => {
+    // --- Form Fields ---
+
+    it('displays all form fields including video and prompts', () => {
         render(<AutoFlowModal {...defaultProps} />)
 
         expect(screen.getByText('Sản phẩm')).toBeInTheDocument()
-    })
-
-    it('displays Shopee Link select field with label', () => {
-        render(<AutoFlowModal {...defaultProps} />)
-
         expect(screen.getByText('Shopee Link')).toBeInTheDocument()
-    })
-
-    it('displays n8n URL field with label', () => {
-        render(<AutoFlowModal {...defaultProps} />)
-
         expect(screen.getByText('n8n URL')).toBeInTheDocument()
+        expect(screen.getByText('Chọn Prompts')).toBeInTheDocument()
+        expect(screen.getByText('Video')).toBeInTheDocument()
     })
 
     it('has n8n URL input with correct placeholder', () => {
@@ -212,17 +237,16 @@ describe('AutoFlowModal', () => {
         expect(n8nInput).toHaveValue('')
     })
 
+    // --- Product Select ---
+
     it('filters out products that already have an autoflow', () => {
         render(<AutoFlowModal {...defaultProps} />)
 
-        // Open the product select dropdown (first combobox)
         const selects = screen.getAllByRole('combobox')
         const productSelect = selects[0]
         fireEvent.mouseDown(productSelect)
 
-        // prod_1 should NOT be in the dropdown since it already has an autoflow
         expect(screen.queryByTitle('Sản phẩm A')).not.toBeInTheDocument()
-        // prod_2 and prod_3 should be available
         expect(screen.getByTitle('Sản phẩm B')).toBeInTheDocument()
         expect(screen.getByTitle('Sản phẩm C')).toBeInTheDocument()
     })
@@ -243,15 +267,15 @@ describe('AutoFlowModal', () => {
         const productSelect = selects[0]
         fireEvent.mouseDown(productSelect)
 
-        // prod_1 should be available since we're editing its autoflow
         const matches = screen.getAllByTitle('Sản phẩm A')
         expect(matches.length).toBeGreaterThanOrEqual(1)
     })
 
+    // --- Shopee Link Select ---
+
     it('shows shopee link options in dropdown', () => {
         render(<AutoFlowModal {...defaultProps} />)
 
-        // Shopee Link select is the second combobox
         const selects = screen.getAllByRole('combobox')
         const shopeeSelect = selects[1]
         fireEvent.mouseDown(shopeeSelect)
@@ -260,6 +284,89 @@ describe('AutoFlowModal', () => {
         expect(screen.getByTitle('Tai nghe Bluetooth')).toBeInTheDocument()
         expect(screen.getByTitle('Sản phẩm không có description')).toBeInTheDocument()
     })
+
+    // --- Prompt Select ---
+
+    it('displays prompt select as multi-select field', () => {
+        render(<AutoFlowModal {...defaultProps} />)
+
+        expect(screen.getByText('Chọn Prompts')).toBeInTheDocument()
+    })
+
+    it('populates promptIds when editing autoflow with prompts', () => {
+        const editProps = {
+            ...defaultProps,
+            editingAutoFlow: {
+                _id: 'af_1',
+                productId: 'prod_1',
+                productTitle: 'Sản phẩm A',
+                promptIds: ['pr_1']
+            }
+        }
+
+        render(<AutoFlowModal {...editProps} />)
+
+        // The selected prompt title should be displayed
+        expect(screen.getByTitle('Prompt Alpha')).toBeInTheDocument()
+    })
+
+    // --- Video Upload ---
+
+    it('shows upload button when no video is set', () => {
+        render(<AutoFlowModal {...defaultProps} />)
+
+        expect(screen.getByText('🎬 Upload Video')).toBeInTheDocument()
+    })
+
+    it('shows video preview when editing autoflow with video', () => {
+        const editProps = {
+            ...defaultProps,
+            editingAutoFlow: {
+                _id: 'af_1',
+                productId: 'prod_1',
+                productTitle: 'Sản phẩm A',
+                videoFile: {
+                    url: 'https://cloudinary.com/test/video.mp4',
+                    publicId: 'test/video',
+                    type: 'video'
+                }
+            }
+        }
+
+        render(<AutoFlowModal {...editProps} />)
+
+        // Should show the video element, not the upload button
+        const video = document.querySelector('video')
+        expect(video).toBeInTheDocument()
+        expect(video?.getAttribute('src')).toBe('https://cloudinary.com/test/video.mp4')
+
+        // Upload button should NOT be visible
+        expect(screen.queryByText('🎬 Upload Video')).not.toBeInTheDocument()
+    })
+
+    it('shows delete button when video is present', () => {
+        const editProps = {
+            ...defaultProps,
+            editingAutoFlow: {
+                _id: 'af_1',
+                productId: 'prod_1',
+                productTitle: 'Sản phẩm A',
+                videoFile: {
+                    url: 'https://cloudinary.com/test/video.mp4',
+                    publicId: 'test/video',
+                    type: 'video'
+                }
+            }
+        }
+
+        render(<AutoFlowModal {...editProps} />)
+
+        // Should have a delete button (Ant Design DeleteOutlined renders specific markup)
+        const deleteButton = document.querySelector('[title="Xóa video"]')
+        expect(deleteButton).toBeInTheDocument()
+    })
+
+    // --- Modal Actions ---
 
     it('closes modal when cancel button is clicked', () => {
         render(<AutoFlowModal {...defaultProps} />)
@@ -270,12 +377,7 @@ describe('AutoFlowModal', () => {
         expect(mockSetIsOpen).toHaveBeenCalledWith(false)
     })
 
-    it('shows placeholder text in product select', () => {
-        render(<AutoFlowModal {...defaultProps} />)
-
-        const selects = screen.getAllByRole('combobox')
-        expect(selects.length).toBeGreaterThanOrEqual(2) // product + shopee link
-    })
+    // --- Edge Cases ---
 
     it('renders with empty products list', () => {
         const emptyProps = { ...defaultProps, products: [], autoflows: [] }
@@ -299,5 +401,21 @@ describe('AutoFlowModal', () => {
         render(<AutoFlowModal {...propsWithoutLinks} />)
 
         expect(screen.getByText('Shopee Link')).toBeInTheDocument()
+    })
+
+    it('renders with empty allPrompts list', () => {
+        const emptyProps = { ...defaultProps, allPrompts: [] }
+
+        render(<AutoFlowModal {...emptyProps} />)
+
+        expect(screen.getByText('Chọn Prompts')).toBeInTheDocument()
+    })
+
+    it('renders without allPrompts prop', () => {
+        const { allPrompts, ...propsWithoutPrompts } = defaultProps
+
+        render(<AutoFlowModal {...propsWithoutPrompts} />)
+
+        expect(screen.getByText('Chọn Prompts')).toBeInTheDocument()
     })
 })
