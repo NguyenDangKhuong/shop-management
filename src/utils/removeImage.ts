@@ -20,16 +20,16 @@ cloudinary.config({
  * @param publicId - The public ID of the image to remove
  * @returns Promise with success status and result/error
  */
-const removeImage = async (publicId: string): Promise<RemoveImageResult> => {
+const removeImage = async (publicId: string, resourceType: 'image' | 'video' = 'image'): Promise<RemoveImageResult> => {
   try {
-    const result = await cloudinary.uploader.destroy(publicId)
-    console.log('Image removed:', result)
+    const result = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType })
+    console.log('Resource removed:', result)
     return {
       success: result.result === 'ok',
       result
     }
   } catch (err) {
-    console.error('Error removing image:', err)
+    console.error('Error removing resource:', err)
     return {
       success: false,
       error: err instanceof Error ? err.message : 'Unknown error'

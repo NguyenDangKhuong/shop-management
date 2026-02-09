@@ -43,7 +43,7 @@ const AutoFlowModal = ({
             // Xóa video cũ trên Cloudinary nếu đang thay thế
             if (videoFile?.publicId) {
                 try {
-                    await deleteCloudinaryImage(videoFile.publicId)
+                    await deleteCloudinaryImage(videoFile.publicId, 'video')
                 } catch {
                     // Ignore delete error
                 }
@@ -84,7 +84,7 @@ const AutoFlowModal = ({
         // Xóa video mới upload nếu chưa lưu (khác với video gốc từ DB)
         if (videoFile?.publicId && videoFile.publicId !== originalVideoRef.current?.publicId) {
             try {
-                await deleteCloudinaryImage(videoFile.publicId)
+                await deleteCloudinaryImage(videoFile.publicId, 'video')
             } catch {
                 // Ignore
             }
@@ -95,7 +95,7 @@ const AutoFlowModal = ({
     const handleRemoveVideo = async () => {
         if (videoFile?.publicId) {
             try {
-                await deleteCloudinaryImage(videoFile.publicId)
+                await deleteCloudinaryImage(videoFile.publicId, 'video')
             } catch {
                 // Ignore delete error
             }

@@ -7,9 +7,9 @@ import removeImage, { removeImages } from '@/utils/removeImage'
  * @param publicId - The public ID of the image to delete
  * @returns Promise with success status and message
  */
-export async function deleteCloudinaryImage(publicId: string) {
+export async function deleteCloudinaryImage(publicId: string, resourceType: 'image' | 'video' = 'image') {
     try {
-        const result = await removeImage(publicId)
+        const result = await removeImage(publicId, resourceType)
 
         if (result.success) {
             return {
