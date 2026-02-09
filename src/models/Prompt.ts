@@ -15,7 +15,7 @@ export type Prompt = IPrompt
 const PromptSchema = new Schema({
     productId: { type: String, required: true },
     title: { type: String, required: true },
-    content: { type: String, required: true, maxlength: 90 },
+    content: { type: String, required: true },
     mediaId: { type: String },
     order: { type: Number, default: 0 }
 }, {

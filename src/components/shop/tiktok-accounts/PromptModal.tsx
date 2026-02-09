@@ -130,13 +130,26 @@ const PromptModal = ({
                     name="content"
                     rules={[
                         { required: true, message: 'Vui lòng nhập nội dung' },
-                        { max: 90, message: 'Nội dung không được vượt quá 90 ký tự' }
+                        {
+                            validator: (_, value) => {
+                                if (!value) return Promise.resolve()
+                                const wordCount = value.trim().split(/\s+/).filter(Boolean).length
+                                if (wordCount > 90) {
+                                    return Promise.reject('Nội dung không được vượt quá 90 từ')
+                                }
+                                return Promise.resolve()
+                            }
+                        }
                     ]}
                 >
                     <Input.TextArea
                         rows={6}
-                        maxLength={90}
-                        showCount
+                        showCount={{
+                            formatter: ({ value }) => {
+                                const count = value ? value.trim().split(/\s+/).filter(Boolean).length : 0
+                                return `${count} / 90 từ`
+                            }
+                        }}
                         placeholder="Nhập nội dung prompt..."
                     />
                 </Form.Item>
