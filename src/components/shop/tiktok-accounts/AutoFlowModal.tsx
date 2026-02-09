@@ -72,7 +72,7 @@ const AutoFlowModal = ({
         if (videoFile?.publicId) {
             try {
                 await deleteCloudinaryImage(videoFile.publicId)
-            } catch (e) {
+            } catch {
                 // Ignore delete error
             }
         }
