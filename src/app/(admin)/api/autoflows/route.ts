@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const accountId = searchParams.get('accountId')
         const productId = searchParams.get('productId')
+        const randomPrompt = searchParams.get('randomPrompt') === 'true'
 
         const query: any = {}
         if (accountId) query.accountId = accountId
@@ -44,12 +45,20 @@ export async function GET(request: NextRequest) {
                 : a.videoFile?.url
                     ? [a.videoFile]
                     : []
+
+            const allPrompts = (a.promptIds || [])
+                .map((id: string) => promptsMap.get(id))
+                .filter(Boolean)
+
+            // If randomPrompt=true, pick only 1 random prompt
+            const selectedPrompts = randomPrompt && allPrompts.length > 0
+                ? [allPrompts[Math.floor(Math.random() * allPrompts.length)]]
+                : allPrompts
+
             return {
                 ...a,
                 videoFiles,
-                prompts: (a.promptIds || [])
-                    .map((id: string) => promptsMap.get(id))
-                    .filter(Boolean)
+                prompts: selectedPrompts
             }
         })
 

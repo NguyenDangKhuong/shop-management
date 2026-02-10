@@ -743,15 +743,15 @@ export default function TikTokAccountPage() {
 
                                     {/* API Endpoint */}
                                     <div className="flex items-center gap-2 mt-1.5 bg-white/50 px-2 py-1 rounded">
-                                        <a href={autoflow.autoFlowUrl || `${window.location.origin}/api/autoflows?accountId=${autoflow.accountId}&productId=${autoflow.productId}`} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 font-mono truncate flex-1 hover:underline">
-                                            {autoflow.autoFlowUrl || `${window.location.origin}/api/autoflows?accountId=${autoflow.accountId}&productId=${autoflow.productId}`}
+                                        <a href={autoflow.autoFlowUrl || `${window.location.origin}/api/autoflows?accountId=${autoflow.accountId}&productId=${autoflow.productId}&randomPrompt=true`} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 font-mono truncate flex-1 hover:underline">
+                                            {autoflow.autoFlowUrl || `${window.location.origin}/api/autoflows?accountId=${autoflow.accountId}&productId=${autoflow.productId}&randomPrompt=true`}
                                         </a>
                                         <Button
                                             type="text"
                                             size="small"
                                             icon={<CopyOutlined />}
                                             onClick={() => {
-                                                const url = autoflow.autoFlowUrl || `${window.location.origin}/api/autoflows?accountId=${autoflow.accountId}&productId=${autoflow.productId}`
+                                                const url = autoflow.autoFlowUrl || `${window.location.origin}/api/autoflows?accountId=${autoflow.accountId}&productId=${autoflow.productId}&randomPrompt=true`
                                                 navigator.clipboard.writeText(url)
                                                 message.success('Đã copy API URL!')
                                             }}
