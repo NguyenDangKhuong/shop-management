@@ -35,6 +35,7 @@ interface TikTokAccount {
 
 
 
+
 export default function TikTokAccountPage() {
     const params = useParams()
     const { message } = App.useApp()
@@ -816,6 +817,11 @@ export default function TikTokAccountPage() {
                                                         <p className="text-xs text-gray-600 line-clamp-3 whitespace-pre-wrap">
                                                             {prompt.content}
                                                         </p>
+                                                        {prompt.subPrompt && (
+                                                            <p className="text-xs text-purple-600 mt-1 line-clamp-2 whitespace-pre-wrap italic">
+                                                                📝 {prompt.subPrompt}
+                                                            </p>
+                                                        )}
                                                     </div>
                                                     <Button
                                                         type="text"
@@ -907,6 +913,11 @@ export default function TikTokAccountPage() {
                                         <p className="text-xs text-gray-600 line-clamp-2 whitespace-pre-wrap">
                                             {prompt.content}
                                         </p>
+                                        {prompt.subPrompt && (
+                                            <p className="text-xs text-purple-600 mt-1 line-clamp-2 whitespace-pre-wrap italic">
+                                                📝 {prompt.subPrompt}
+                                            </p>
+                                        )}
                                     </div>
                                     <div className="flex gap-1 flex-shrink-0">
                                         <Button

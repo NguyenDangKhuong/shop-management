@@ -31,6 +31,7 @@ const PromptModal = ({
                 form.setFieldsValue({
                     title: editingPrompt.title || '',
                     content: editingPrompt.content || '',
+                    subPrompt: editingPrompt.subPrompt || '',
                     mediaId: editingPrompt.mediaId || undefined
                 })
             } else {
@@ -48,6 +49,7 @@ const PromptModal = ({
                 accountId,
                 title: values.title,
                 content: values.content,
+                subPrompt: values.subPrompt || '',
                 mediaId: values.mediaId || ''
             }
 
@@ -137,6 +139,16 @@ const PromptModal = ({
                     <Input.TextArea
                         rows={6}
                         placeholder="Nhập nội dung prompt..."
+                    />
+                </Form.Item>
+
+                <Form.Item
+                    label="Sub Prompt"
+                    name="subPrompt"
+                >
+                    <Input.TextArea
+                        rows={3}
+                        placeholder="Nhập sub prompt..."
                     />
                 </Form.Item>
             </Form>
