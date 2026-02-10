@@ -12,7 +12,7 @@ Hệ thống AutoFlow/Prompt phục vụ việc tạo nội dung tự động ch
 ```
 TikTok Account
   ├── 📝 Prompt Library (independent, per account)
-  │     ├── Prompt A (title, content, mediaId)
+  │     ├── Prompt A (title, content, subPrompt, mediaId)
   │     ├── Prompt B
   │     └── Prompt C
   │
@@ -55,6 +55,7 @@ TikTok Account
 | `accountId` | String | ✅ | ID của TikTok Account |
 | `title` | String | ✅ | Tiêu đề prompt |
 | `content` | String | ✅ | Nội dung prompt (max 90 từ) |
+| `subPrompt` | String | ❌ | Nội dung sub-prompt bổ sung |
 | `mediaId` | String | ❌ | Media ID (từ Veo3 Media) |
 | `order` | Number | ❌ | Thứ tự sắp xếp |
 
@@ -148,6 +149,7 @@ POST /api/prompts
   "accountId": "...",
   "title": "...",
   "content": "...",
+  "subPrompt": "...",
   "mediaId": ""
 }
 ```
@@ -204,7 +206,7 @@ Layout từ trên xuống:
 | `onRefresh` | `fn` | Callback refresh |
 | `veo3Media` | `any[]` | Veo3 Media (dropdown chọn mediaId) |
 
-**Form fields:** Tiêu đề, Media ID (select từ Veo3), Nội dung (max 90 từ)
+**Form fields:** Tiêu đề, Media ID (select từ Veo3), Nội dung (max 90 từ), **Sub Prompt** (text, optional)
 
 ---
 
@@ -255,6 +257,6 @@ npx jest --testPathPattern="tiktok-accounts/__tests__/(AutoFlowModal|PromptModal
 
 ---
 
-*Tài liệu cập nhật: 09/02/2026*
-*Thêm video upload (Cloudinary), prompt tách riêng thành entity độc lập*
+*Tài liệu cập nhật: 10/02/2026*
+*Thêm field `subPrompt` vào Prompt model*
 
