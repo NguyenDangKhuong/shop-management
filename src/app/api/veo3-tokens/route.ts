@@ -36,7 +36,10 @@ export async function POST(request: NextRequest) {
             }, { status: 400 })
         }
 
-        const token = await Veo3TokenModel.create({ value: body.value })
+        const token = await Veo3TokenModel.create({
+            value: body.value,
+            ...(body.tokenCheckStatus !== undefined && { tokenCheckStatus: body.tokenCheckStatus })
+        })
 
         return NextResponse.json({
             success: true,
@@ -56,7 +59,7 @@ export async function PUT(request: NextRequest) {
     try {
         await connectDB()
         const body = await request.json()
-        const { id, value } = body
+        const { id, value, tokenCheckStatus } = body
 
         if (!id) {
             return NextResponse.json({
@@ -65,9 +68,13 @@ export async function PUT(request: NextRequest) {
             }, { status: 400 })
         }
 
+        const updateData: any = {}
+        if (value !== undefined) updateData.value = value
+        if (tokenCheckStatus !== undefined) updateData.tokenCheckStatus = tokenCheckStatus
+
         const updatedToken = await Veo3TokenModel.findByIdAndUpdate(
             id,
-            { value },
+            updateData,
             { new: true }
         )
 

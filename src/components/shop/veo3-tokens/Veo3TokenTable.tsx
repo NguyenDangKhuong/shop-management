@@ -10,6 +10,7 @@ import { isMobile } from 'react-device-detect'
 interface Veo3Token {
     _id: string
     value: string
+    tokenCheckStatus?: string
     createdAt?: string
     updatedAt?: string
 }
@@ -60,7 +61,7 @@ const Veo3TokenTable = () => {
 
     const handleEdit = (token: Veo3Token) => {
         setEditingToken(token)
-        form.setFieldsValue({ value: token.value })
+        form.setFieldsValue({ value: token.value, tokenCheckStatus: token.tokenCheckStatus || '' })
         setIsModalOpen(true)
     }
 
@@ -75,8 +76,8 @@ const Veo3TokenTable = () => {
             const values = await form.validateFields()
 
             const result = editingToken
-                ? await apiPut('/api/veo3-tokens', { id: editingToken._id, value: values.value })
-                : await apiPost('/api/veo3-tokens', { value: values.value })
+                ? await apiPut('/api/veo3-tokens', { id: editingToken._id, value: values.value, tokenCheckStatus: values.tokenCheckStatus || '' })
+                : await apiPost('/api/veo3-tokens', { value: values.value, tokenCheckStatus: values.tokenCheckStatus || '' })
 
             if (result.success) {
                 message.success(editingToken ? 'Đã cập nhật token!' : 'Đã thêm token!')
@@ -112,6 +113,24 @@ const Veo3TokenTable = () => {
                     </span>
                 </div>
             )
+        },
+        {
+            title: 'Token Check Status',
+            dataIndex: 'tokenCheckStatus',
+            key: 'tokenCheckStatus',
+            ellipsis: true,
+            width: 200,
+            render: (value: string) => value ? (
+                <div className="flex items-center gap-2">
+                    <CopyOutlined
+                        className="cursor-pointer text-gray-500 hover:text-blue-500 flex-shrink-0"
+                        onClick={() => handleCopy(value)}
+                    />
+                    <span className="font-mono text-xs">
+                        {value.length > 40 ? `${value.substring(0, 40)}...` : value}
+                    </span>
+                </div>
+            ) : <span className="text-gray-400 text-xs">—</span>
         },
         {
             title: 'Cập nhật',
@@ -202,6 +221,14 @@ const Veo3TokenTable = () => {
                             <div className="font-mono text-xs text-gray-600 break-all bg-gray-50 p-2 rounded">
                                 {token.value}
                             </div>
+                            {token.tokenCheckStatus && (
+                                <div className="mt-2">
+                                    <span className="text-xs font-semibold text-purple-600">Check Status:</span>
+                                    <div className="font-mono text-xs text-purple-700 break-all bg-purple-50 p-2 rounded mt-1">
+                                        {token.tokenCheckStatus}
+                                    </div>
+                                </div>
+                            )}
                             {token.updatedAt && (
                                 <div className="text-xs text-gray-400 mt-2">
                                     {new Date(token.updatedAt).toLocaleString('vi-VN')}
@@ -244,6 +271,16 @@ const Veo3TokenTable = () => {
                         <Input.TextArea
                             placeholder="Nhập giá trị token..."
                             rows={4}
+                            className="font-mono text-xs"
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        name="tokenCheckStatus"
+                        label="Token Check Status"
+                    >
+                        <Input.TextArea
+                            placeholder="Nhập token check status..."
+                            rows={3}
                             className="font-mono text-xs"
                         />
                     </Form.Item>
