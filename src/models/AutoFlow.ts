@@ -14,7 +14,7 @@ export interface IAutoFlow extends Document {
     enabled: boolean
     status: AutoFlowStatus
     promptIds: string[]
-    videoFile?: IMediaFile
+    videoFiles?: IMediaFile[]
     createdAt?: Date
     updatedAt?: Date
 }
@@ -32,7 +32,7 @@ const AutoFlowSchema = new Schema({
     enabled: { type: Boolean, default: false },
     status: { type: String, enum: ['pending', 'running', 'done', 'error'], default: 'pending' },
     promptIds: [{ type: String }],
-    videoFile: { type: MediaFileSchema }
+    videoFiles: [{ type: MediaFileSchema }]
 }, {
     timestamps: true,
     collection: 'autoflows'

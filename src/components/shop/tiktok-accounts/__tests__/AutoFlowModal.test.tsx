@@ -196,7 +196,7 @@ describe('AutoFlowModal', () => {
         expect(screen.getByText('Shopee Link')).toBeInTheDocument()
         expect(screen.getByText('n8n URL')).toBeInTheDocument()
         expect(screen.getByText('Chọn Prompts')).toBeInTheDocument()
-        expect(screen.getByText('Video')).toBeInTheDocument()
+        expect(screen.getByText('Videos (0)')).toBeInTheDocument()
     })
 
     it('has n8n URL input with correct placeholder', () => {
@@ -315,7 +315,7 @@ describe('AutoFlowModal', () => {
     it('shows upload button when no video is set', () => {
         render(<AutoFlowModal {...defaultProps} />)
 
-        expect(screen.getByText('🎬 Upload Video')).toBeInTheDocument()
+        expect(screen.getByText('🎬 Thêm Video')).toBeInTheDocument()
     })
 
     it('shows video preview when editing autoflow with video', () => {
@@ -340,8 +340,8 @@ describe('AutoFlowModal', () => {
         expect(video).toBeInTheDocument()
         expect(video?.getAttribute('src')).toBe('https://cloudinary.com/test/video.mp4')
 
-        // Upload button should NOT be visible
-        expect(screen.queryByText('🎬 Upload Video')).not.toBeInTheDocument()
+        // Upload button should still be visible (can add more videos)
+        expect(screen.getByText('🎬 Thêm Video')).toBeInTheDocument()
     })
 
     it('shows delete button when video is present', () => {

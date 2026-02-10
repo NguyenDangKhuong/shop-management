@@ -34,25 +34,18 @@ const AutoFlowModal = ({
     const { message } = App.useApp()
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
-    const [videoFile, setVideoFile] = useState<any>(null)
-    const originalVideoRef = useRef<any>(null)
+    const [videoFiles, setVideoFiles] = useState<any[]>([])
+    const originalVideosRef = useRef<any[]>([])
 
     const { openWidget: openVideoWidget, isUploading: isVideoUploading } = useCloudinaryUpload(
         autoFlowVideoUploadConfig,
         async (result) => {
-            // Xóa video cũ trên Cloudinary nếu đang thay thế
-            if (videoFile?.publicId) {
-                try {
-                    await deleteCloudinaryImage(videoFile.publicId, 'video')
-                } catch {
-                    // Ignore delete error
-                }
-            }
-            setVideoFile({
+            const newVideo = {
                 url: result.url,
                 publicId: result.publicId,
-                type: 'video'
-            })
+                type: 'video' as const
+            }
+            setVideoFiles(prev => [...prev, newVideo])
             message.success('Upload video thành công!')
         },
         (error) => {
@@ -69,38 +62,47 @@ const AutoFlowModal = ({
                     shopeeLinkId: editingAutoFlow.shopeeLinkId || undefined,
                     promptIds: editingAutoFlow.promptIds || []
                 })
-                const original = editingAutoFlow.videoFile || null
-                setVideoFile(original)
-                originalVideoRef.current = original
+                // Backward compat: support old videoFile or new videoFiles
+                const existing = editingAutoFlow.videoFiles?.length
+                    ? editingAutoFlow.videoFiles
+                    : editingAutoFlow.videoFile
+                        ? [editingAutoFlow.videoFile]
+                        : []
+                setVideoFiles(existing)
+                originalVideosRef.current = existing
             } else {
                 form.resetFields()
-                setVideoFile(null)
-                originalVideoRef.current = null
+                setVideoFiles([])
+                originalVideosRef.current = []
             }
         }
     }, [isOpen, editingAutoFlow, form])
 
     const handleCancel = async () => {
-        // Xóa video mới upload nếu chưa lưu (khác với video gốc từ DB)
-        if (videoFile?.publicId && videoFile.publicId !== originalVideoRef.current?.publicId) {
-            try {
-                await deleteCloudinaryImage(videoFile.publicId, 'video')
-            } catch {
-                // Ignore
+        // Xóa các video mới upload chưa lưu (không có trong original)
+        const originalIds = new Set(originalVideosRef.current.map((v: any) => v.publicId))
+        for (const video of videoFiles) {
+            if (video.publicId && !originalIds.has(video.publicId)) {
+                try {
+                    await deleteCloudinaryImage(video.publicId, 'video')
+                } catch {
+                    // Ignore
+                }
             }
         }
         setIsOpen(false)
     }
 
-    const handleRemoveVideo = async () => {
-        if (videoFile?.publicId) {
+    const handleRemoveVideo = async (index: number) => {
+        const video = videoFiles[index]
+        if (video?.publicId) {
             try {
-                await deleteCloudinaryImage(videoFile.publicId, 'video')
+                await deleteCloudinaryImage(video.publicId, 'video')
             } catch {
                 // Ignore delete error
             }
         }
-        setVideoFile(null)
+        setVideoFiles(prev => prev.filter((_, i) => i !== index))
     }
 
     const handleSubmit = async () => {
@@ -120,13 +122,8 @@ const AutoFlowModal = ({
                 n8nUrl: values.n8nUrl || '',
                 description: selectedShopeeLink?.description || editingAutoFlow?.description || '',
                 enabled: editingAutoFlow?.enabled || false,
-                promptIds: values.promptIds || []
-            }
-
-            if (videoFile) {
-                autoFlowData.videoFile = videoFile
-            } else {
-                autoFlowData.videoFile = null
+                promptIds: values.promptIds || [],
+                videoFiles: videoFiles.length > 0 ? videoFiles : []
             }
 
             if (editingAutoFlow?._id) {
@@ -244,36 +241,39 @@ const AutoFlowModal = ({
                     />
                 </Form.Item>
 
-                {/* Video Upload */}
-                <Form.Item label="Video">
-                    {videoFile ? (
-                        <div className="flex items-center gap-3 p-2 border rounded-lg bg-gray-50">
-                            <video
-                                src={videoFile.url}
-                                className="w-24 h-16 rounded object-cover bg-black"
-                                muted
-                            />
-                            <div className="flex-1 min-w-0">
-                                <p className="text-xs text-gray-600 truncate">{videoFile.url}</p>
-                            </div>
-                            <Button
-                                type="text"
-                                danger
-                                size="small"
-                                icon={<DeleteOutlined />}
-                                onClick={handleRemoveVideo}
-                                title="Xóa video"
-                            />
+                {/* Video Upload - Multiple */}
+                <Form.Item label={`Videos (${videoFiles.length})`}>
+                    {videoFiles.length > 0 && (
+                        <div className="space-y-2 mb-2">
+                            {videoFiles.map((video, index) => (
+                                <div key={video.publicId || index} className="flex items-center gap-3 p-2 border rounded-lg bg-gray-50">
+                                    <video
+                                        src={video.url}
+                                        className="w-24 h-16 rounded object-cover bg-black"
+                                        muted
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-xs text-gray-600 truncate">{video.url}</p>
+                                    </div>
+                                    <Button
+                                        type="text"
+                                        danger
+                                        size="small"
+                                        icon={<DeleteOutlined />}
+                                        onClick={() => handleRemoveVideo(index)}
+                                        title="Xóa video"
+                                    />
+                                </div>
+                            ))}
                         </div>
-                    ) : (
-                        <Button
-                            onClick={() => openVideoWidget()}
-                            loading={isVideoUploading}
-                            block
-                        >
-                            🎬 Upload Video
-                        </Button>
                     )}
+                    <Button
+                        onClick={() => openVideoWidget()}
+                        loading={isVideoUploading}
+                        block
+                    >
+                        🎬 Thêm Video
+                    </Button>
                 </Form.Item>
             </Form>
         </Modal>

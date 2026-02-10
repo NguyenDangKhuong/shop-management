@@ -44,7 +44,7 @@ TikTok Account
 | `enabled` | Boolean | ❌ | Bật/tắt (default: `false`) |
 | `status` | String | ❌ | `pending` \| `running` \| `done` \| `error` |
 | `promptIds` | String[] | ❌ | Mảng ID tham chiếu đến Prompt |
-| `videoFile` | MediaFile | ❌ | Video đính kèm (url, publicId, type) — upload Cloudinary |
+| `videoFiles` | MediaFile[] | ❌ | Danh sách video đính kèm (url, publicId, type) — upload Cloudinary |
 
 **Collection:** `autoflows`
 
@@ -212,7 +212,7 @@ Layout từ trên xuống:
 
 ## 🎬 Video Upload (Cloudinary)
 
-Mỗi AutoFlow có thể đính kèm 1 video, upload qua Cloudinary widget.
+Mỗi AutoFlow có thể đính kèm **nhiều video**, upload qua Cloudinary widget.
 
 **Config:** `autoFlowVideoUploadConfig` trong `src/utils/cloudinaryConfig.ts`
 
@@ -224,12 +224,16 @@ Mỗi AutoFlow có thể đính kèm 1 video, upload qua Cloudinary widget.
 | Sources | local, url |
 
 **Luồng:**
-1. Trong AutoFlowModal, nhấn "🎬 Upload Video"
+1. Trong AutoFlowModal, nhấn "🎬 Thêm Video"
 2. Cloudinary widget mở → chọn file video
-3. Upload xong → hiển thị preview + nút xóa
-4. Submit → lưu `videoFile: { url, publicId, type: 'video' }` vào AutoFlow
+3. Upload xong → video được **thêm vào danh sách** + hiển thị preview + nút xóa riêng
+4. Có thể upload nhiều video lần lượt
+5. Submit → lưu `videoFiles: [{ url, publicId, type: 'video' }, ...]` vào AutoFlow
 
-**Hiển thị:** Video nhỏ ở cuối mỗi AutoFlow card trên trang TikTok Account (với controls, max height 160px).
+**Hiển thị:** Danh sách video ở cuối mỗi AutoFlow card trên trang TikTok Account (với controls, max height 160px mỗi video).
+
+> [!NOTE]
+> **Backward compat:** API GET tự động migrate dữ liệu cũ `videoFile` → `videoFiles: [videoFile]`
 
 ---
 
@@ -258,5 +262,5 @@ npx jest --testPathPattern="tiktok-accounts/__tests__/(AutoFlowModal|PromptModal
 ---
 
 *Tài liệu cập nhật: 10/02/2026*
-*Thêm field `subPrompt` vào Prompt model*
+*Thêm multi-video support cho AutoFlow (`videoFile` → `videoFiles`)*
 

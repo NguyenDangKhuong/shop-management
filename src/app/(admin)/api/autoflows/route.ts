@@ -37,12 +37,21 @@ export async function GET(request: NextRequest) {
         })
 
         // Attach prompts to each autoflow (maintaining order from promptIds)
-        const populatedAutoFlows = autoflows.map((a: any) => ({
-            ...a,
-            prompts: (a.promptIds || [])
-                .map((id: string) => promptsMap.get(id))
-                .filter(Boolean)
-        }))
+        // Also migrate old videoFile → videoFiles for backward compat
+        const populatedAutoFlows = autoflows.map((a: any) => {
+            const videoFiles = a.videoFiles?.length
+                ? a.videoFiles
+                : a.videoFile?.url
+                    ? [a.videoFile]
+                    : []
+            return {
+                ...a,
+                videoFiles,
+                prompts: (a.promptIds || [])
+                    .map((id: string) => promptsMap.get(id))
+                    .filter(Boolean)
+            }
+        })
 
         return NextResponse.json({ success: true, data: populatedAutoFlows })
     } catch (error: any) {

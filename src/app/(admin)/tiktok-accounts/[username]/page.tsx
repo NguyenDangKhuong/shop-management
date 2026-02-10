@@ -836,18 +836,30 @@ export default function TikTokAccountPage() {
                                     )}
                                 </div>
 
-                                {/* Video */}
-                                {autoflow.videoFile?.url && (
-                                    <div className="px-3 py-2 border-t bg-gray-50">
-                                        <p className="text-xs text-gray-500 mb-1.5">🎬 Video</p>
-                                        <video
-                                            src={autoflow.videoFile.url}
-                                            controls
-                                            className="w-full max-h-40 rounded-lg bg-black"
-                                            preload="metadata"
-                                        />
-                                    </div>
-                                )}
+                                {/* Videos */}
+                                {(() => {
+                                    const videos = autoflow.videoFiles?.length
+                                        ? autoflow.videoFiles
+                                        : autoflow.videoFile?.url
+                                            ? [autoflow.videoFile]
+                                            : []
+                                    return videos.length > 0 && (
+                                        <div className="px-3 py-2 border-t bg-gray-50">
+                                            <p className="text-xs text-gray-500 mb-1.5">🎬 Videos ({videos.length})</p>
+                                            <div className="space-y-2">
+                                                {videos.map((video: any, idx: number) => (
+                                                    <video
+                                                        key={video.publicId || idx}
+                                                        src={video.url}
+                                                        controls
+                                                        className="w-full max-h-40 rounded-lg bg-black"
+                                                        preload="metadata"
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )
+                                })()}
                             </div>
                         ))}
                     </div>
