@@ -76,6 +76,29 @@ TikTok Account
 GET /api/autoflows?accountId={accountId}&productId={productId}
 ```
 
+**Query Parameters:**
+
+| Param | Type | Mô tả |
+|-------|------|-------|
+| `accountId` | String | Lọc theo TikTok Account ID |
+| `productId` | String | Lọc theo Product ID |
+| `randomPrompt` | `true` | Chỉ trả về **1 prompt random** và **1 video random** cho mỗi AutoFlow |
+
+##### Chế độ bình thường (trả về tất cả)
+
+```
+GET /api/autoflows?accountId=xxx&productId=yyy
+```
+
+##### Chế độ random (cho n8n/auto flow)
+
+```
+GET /api/autoflows?accountId=xxx&productId=yyy&randomPrompt=true
+```
+
+> [!TIP]
+> Dùng `randomPrompt=true` khi tích hợp n8n — mỗi lần gọi API sẽ nhận được 1 prompt và 1 video khác nhau để tạo content đa dạng.
+
 Response trả về AutoFlow kèm danh sách Prompt đã được populate từ `promptIds`:
 
 ```json
@@ -95,11 +118,17 @@ Response trả về AutoFlow kèm danh sách Prompt đã được populate từ 
           "content": "Nội dung...",
           "mediaId": ""
         }
+      ],
+      "videoFiles": [
+        { "url": "https://...", "publicId": "...", "type": "video" }
       ]
     }
   ]
 }
 ```
+
+> [!NOTE]
+> Khi `randomPrompt=true`, mảng `prompts` và `videoFiles` trong response sẽ chỉ có **1 phần tử** được chọn ngẫu nhiên.
 
 #### POST — Tạo AutoFlow
 
@@ -262,5 +291,6 @@ npx jest --testPathPattern="tiktok-accounts/__tests__/(AutoFlowModal|PromptModal
 ---
 
 *Tài liệu cập nhật: 10/02/2026*
+*Thêm `randomPrompt=true` — random 1 prompt + 1 video cho n8n integration*
 *Thêm multi-video support cho AutoFlow (`videoFile` → `videoFiles`)*
 
