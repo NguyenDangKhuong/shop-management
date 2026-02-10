@@ -50,14 +50,18 @@ export async function GET(request: NextRequest) {
                 .map((id: string) => promptsMap.get(id))
                 .filter(Boolean)
 
-            // If randomPrompt=true, pick only 1 random prompt
+            // If randomPrompt=true, pick only 1 random prompt and 1 random video
             const selectedPrompts = randomPrompt && allPrompts.length > 0
                 ? [allPrompts[Math.floor(Math.random() * allPrompts.length)]]
                 : allPrompts
 
+            const selectedVideos = randomPrompt && videoFiles.length > 0
+                ? [videoFiles[Math.floor(Math.random() * videoFiles.length)]]
+                : videoFiles
+
             return {
                 ...a,
-                videoFiles,
+                videoFiles: selectedVideos,
                 prompts: selectedPrompts
             }
         })

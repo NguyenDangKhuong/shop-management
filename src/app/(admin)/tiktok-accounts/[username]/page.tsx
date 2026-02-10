@@ -742,22 +742,27 @@ export default function TikTokAccountPage() {
                                     </div>
 
                                     {/* API Endpoint */}
-                                    <div className="flex items-center gap-2 mt-1.5 bg-white/50 px-2 py-1 rounded">
-                                        <a href={autoflow.autoFlowUrl || `${window.location.origin}/api/autoflows?accountId=${autoflow.accountId}&productId=${autoflow.productId}&randomPrompt=true`} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 font-mono truncate flex-1 hover:underline">
-                                            {autoflow.autoFlowUrl || `${window.location.origin}/api/autoflows?accountId=${autoflow.accountId}&productId=${autoflow.productId}&randomPrompt=true`}
-                                        </a>
-                                        <Button
-                                            type="text"
-                                            size="small"
-                                            icon={<CopyOutlined />}
-                                            onClick={() => {
-                                                const url = autoflow.autoFlowUrl || `${window.location.origin}/api/autoflows?accountId=${autoflow.accountId}&productId=${autoflow.productId}&randomPrompt=true`
-                                                navigator.clipboard.writeText(url)
-                                                message.success('Đã copy API URL!')
-                                            }}
-                                            className="!p-0 !h-5 !w-5 !min-w-0 text-blue-700"
-                                        />
-                                    </div>
+                                    {(() => {
+                                        const baseUrl = autoflow.autoFlowUrl || `${window.location.origin}/api/autoflows?accountId=${autoflow.accountId}&productId=${autoflow.productId}`
+                                        const fullUrl = baseUrl.includes('randomPrompt=') ? baseUrl : `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}randomPrompt=true`
+                                        return (
+                                            <div className="flex items-center gap-2 mt-1.5 bg-white/50 px-2 py-1 rounded">
+                                                <a href={fullUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 font-mono truncate flex-1 hover:underline">
+                                                    {fullUrl}
+                                                </a>
+                                                <Button
+                                                    type="text"
+                                                    size="small"
+                                                    icon={<CopyOutlined />}
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(fullUrl)
+                                                        message.success('Đã copy API URL!')
+                                                    }}
+                                                    className="!p-0 !h-5 !w-5 !min-w-0 text-blue-700"
+                                                />
+                                            </div>
+                                        )
+                                    })()}
 
                                     {/* n8n URL */}
                                     {autoflow.n8nUrl && (
