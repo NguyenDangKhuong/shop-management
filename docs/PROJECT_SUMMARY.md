@@ -54,7 +54,10 @@ shop-management/
 │   │   │   ├── 📁 carts/          # Quản lý giỏ hàng
 │   │   │   ├── 📁 facebook-posts/ # Facebook integration
 │   │   │   ├── 📁 shopee-links/   # Shopee integration
-│   │   │   └── 📁 tiktok-accounts/# TikTok integration
+│   │   │   ├── 📁 tiktok-accounts/# TikTok integration
+│   │   │   └── 📁 veo3-tokens/    # Veo3 token management
+│   │   ├── 📁 cv/                 # CV page (PDF viewer)
+│   │   ├── 📁 projects/           # Projects portfolio page
 │   │   ├── 📁 login/              # Đăng nhập
 │   │   ├── 📁 register/           # Đăng ký
 │   │   ├── 📁 privacy/            # Chính sách bảo mật
@@ -200,6 +203,7 @@ shop-management/
 | **TikTokScheduledPost** | Bài TikTok | content, scheduledTime |
 | **AutoFlow** | AutoFlow | accountId, productId, productTitle, autoFlowUrl, shopeeLinkId, enabled, promptIds[], videoFiles[] |
 | **Prompt** | Prompt (độc lập) | accountId, title, content, referenceImages[] |
+| **Veo3Token** | Veo3 Token | value, tokenCheckStatus |
 | **Change** | Changelog | description, timestamp |
 
 ---
@@ -374,4 +378,19 @@ Sử dụng `react-device-detect` để tối ưu trải nghiệm trên từng t
 
 ---
 
-*Tài liệu được tạo tự động bởi AI Assistant - 05/02/2026*
+## 🌐 Public Pages
+
+| Route | Mô tả |
+|-------|-------|
+| `/` | Landing page - Portfolio cá nhân |
+| `/cv` | CV page - Hiển thị PDF CV full-screen |
+| `/projects` | Projects page - Danh sách projects với screenshots demo |
+| `/products` | Public products listing |
+| `/login` | Đăng nhập |
+| `/register` | Đăng ký |
+| `/privacy` | Chính sách bảo mật |
+| `/terms` | Điều khoản sử dụng |
+
+---
+
+*Tài liệu cập nhật: 11/02/2026*

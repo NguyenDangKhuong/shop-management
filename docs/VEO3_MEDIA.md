@@ -171,3 +171,38 @@ Trên AutoFlow card và Prompt Library, mỗi prompt hiển thị danh sách thu
 
 *Tài liệu tạo: 08/02/2026*
 *Cập nhật: 15/02/2026 — Đổi `mediaId` thành `referenceImages[]` multi-select (chỉ cho prompt describe)*
+
+---
+
+## 🔑 Veo3 Tokens (`/veo3-tokens`)
+
+### Tổng quan
+
+**Veo3 Tokens** quản lý token dùng cho Veo3 API. Mỗi token có thể kèm **Token Check Status** để lưu trạng thái kiểm tra.
+
+### Database Model
+
+| Field | Type | Required | Mô tả |
+|-------|------|----------|-------|
+| `value` | String | ✅ | Giá trị token |
+| `tokenCheckStatus` | String | ❌ | Trạng thái kiểm tra token |
+| `createdAt` | Date | Auto | Thời gian tạo |
+| `updatedAt` | Date | Auto | Thời gian cập nhật |
+
+**Collection:** `veo3tokens`
+**File:** `src/models/Veo3Token.ts`
+
+### API Endpoints (`/api/veo3-tokens`)
+
+| Method | Body/Params | Mô tả |
+|--------|-------------|-------|
+| `GET` | — | Lấy tất cả tokens |
+| `POST` | `{ value, tokenCheckStatus? }` | Tạo token mới |
+| `PUT` | `{ id, value?, tokenCheckStatus? }` | Cập nhật token |
+| `DELETE` | `?id={id}` | Xóa token |
+
+### UI
+
+- Trang `/veo3-tokens` — Bảng danh sách tokens (desktop) / card list (mobile)
+- Mỗi token hiển thị: value, token check status, thời gian cập nhật
+- Hỗ trợ copy, thêm/sửa/xóa token
