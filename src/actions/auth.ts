@@ -3,6 +3,7 @@
 import { signIn, signOut } from '../../auth'
 import UserModel, { User } from '@/models/User'
 import { AuthError } from 'next-auth'
+import bcrypt from 'bcryptjs'
 
 interface LoginResult {
     success: boolean
@@ -52,10 +53,11 @@ export async function register(name: string, email: string, password: string): P
         }
 
         // Create new user with role=1 (regular user), role=0 is admin
+        const hashedPassword = bcrypt.hashSync(password, 10)
         await UserModel.create({
             name,
             email,
-            password, // In production, hash this with bcrypt!
+            password: hashedPassword,
             role: 1
         })
 
