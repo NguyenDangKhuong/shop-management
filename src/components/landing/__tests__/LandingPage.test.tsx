@@ -17,7 +17,7 @@ describe('LandingPage Component', () => {
         render(<LandingPage />)
 
         expect(screen.getByText(/hello, i'm/i)).toBeInTheDocument()
-        expect(screen.getByText(/khuong/i)).toBeInTheDocument()
+        expect(screen.getAllByText(/khuong/i).length).toBeGreaterThan(0)
         expect(screen.getByText(/i build accessible web experiences/i)).toBeInTheDocument()
     })
 
@@ -41,7 +41,7 @@ describe('LandingPage Component', () => {
 
         const viewProjectsLink = screen.getByRole('link', { name: /view projects/i })
         expect(viewProjectsLink).toBeInTheDocument()
-        expect(viewProjectsLink).toHaveAttribute('href', '/products')
+        expect(viewProjectsLink).toHaveAttribute('href', '/projects')
     })
 
     it('displays tech stack section', () => {
@@ -54,7 +54,7 @@ describe('LandingPage Component', () => {
         render(<LandingPage />)
 
         expect(screen.getByRole('heading', { name: /about me/i })).toBeInTheDocument()
-        expect(screen.getByText(/i'm alex, a front-end developer based in los angeles/i)).toBeInTheDocument()
+        expect(screen.getByText(/i'm khuong, a front-end developer based in ho chi minh city/i)).toBeInTheDocument()
     })
 
     it('renders featured project section', () => {
@@ -69,9 +69,8 @@ describe('LandingPage Component', () => {
         render(<LandingPage />)
 
         expect(screen.getByRole('heading', { name: /contact/i })).toBeInTheDocument()
-        const emailLink = screen.getByRole('link', { name: /email@gmail\.com/i })
+        const emailLink = document.querySelector('a[href="mailto:nguyendangkhuong96@gmail.com"]')
         expect(emailLink).toBeInTheDocument()
-        expect(emailLink).toHaveAttribute('href', 'mailto:email@gmail.com')
     })
 
     it('shows performance stats badges', () => {
@@ -99,9 +98,9 @@ describe('LandingPage Component', () => {
     it('displays developer portrait image', () => {
         render(<LandingPage />)
 
-        const portrait = screen.getByAltText(/developer portrait/i)
+        const portrait = screen.getByAltText(/khuong.*developer portrait/i)
         expect(portrait).toBeInTheDocument()
-        expect(portrait).toHaveAttribute('src', expect.stringContaining('unsplash'))
+        expect(portrait).toHaveAttribute('src', '/image/home/avatar.jpg')
     })
 
     it('shows project mockup image', () => {

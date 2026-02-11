@@ -22,7 +22,7 @@ export const GET = async (req: NextRequest) => {
       const products = await ProductModel.find({
         name: { $regex: name, $options: 'i' }
       })
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: 1 })
         .lean()
       const totalDocsSearched = products.length
       return NextResponse.json(
@@ -39,7 +39,7 @@ export const GET = async (req: NextRequest) => {
         isPublic
       })
         .limit(pageSize)
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: 1 })
         .lean()
       const totalDocsSearched = products.length
       return NextResponse.json(
@@ -52,7 +52,7 @@ export const GET = async (req: NextRequest) => {
       )
     }
     if (pageNum === 1) {
-      const products = await ProductModel.find({}).limit(pageSize).sort({ createdAt: -1 }).lean()
+      const products = await ProductModel.find({}).limit(pageSize).sort({ createdAt: 1 }).lean()
       return NextResponse.json(
         {
           products,
@@ -66,7 +66,7 @@ export const GET = async (req: NextRequest) => {
     const products = await ProductModel.find({})
       .skip(skip)
       .limit(pageSize)
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .lean()
     return NextResponse.json({ products, totalPages, totalDocs, success: true }, { status: 200 })
   } catch (err) {

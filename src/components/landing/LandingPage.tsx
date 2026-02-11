@@ -61,7 +61,7 @@ export default function LandingPage() {
                                     </h1>
                                     <div className="pt-4">
                                         <Link
-                                            href="/products"
+                                            href="/projects"
                                             className="inline-block px-6 py-3 rounded-full bg-slate-800/50 border border-[#38bdf8]/50 text-white font-semibold transition hover:bg-[#38bdf8]/20 shadow-[0_0_15px_rgba(56,189,248,0.3)]"
                                         >
                                             View Projects
@@ -72,8 +72,8 @@ export default function LandingPage() {
                                 <div className="relative shrink-0">
                                     <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-slate-700/50 shadow-[0_0_15px_rgba(192,132,252,0.3)]">
                                         <Image
-                                            src="https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=400&auto=format&fit=crop"
-                                            alt="Developer Portrait"
+                                            src="/image/home/avatar.jpg"
+                                            alt="Khuong - Developer Portrait"
                                             width={256}
                                             height={256}
                                             priority
@@ -91,7 +91,7 @@ export default function LandingPage() {
 
                                 <h2 className="text-xl font-semibold text-white">About Me</h2>
                                 <p className="text-slate-400 max-w-2xl">
-                                    I&apos;m Alex, a front-end developer based in Los Angeles. I&apos;m passionate about creating
+                                    I&apos;m Khuong, a front-end developer based in Ho Chi Minh City. I&apos;m passionate about creating
                                     intuitive, dynamic user experiences and clean, efficient code. Currently focused on the React
                                     ecosystem.
                                 </p>
@@ -187,11 +187,10 @@ export default function LandingPage() {
                                 <div className="glass-card space-y-3 flex flex-col justify-center">
                                     <h2 className="text-base font-semibold text-white">Contact</h2>
                                     <a
-                                        href="mailto:email@gmail.com"
+                                        href="mailto:nguyendangkhuong96@gmail.com"
                                         className="text-sm text-slate-400 flex items-center gap-2 hover:text-[#38bdf8] transition"
                                     >
                                         <EmailIcon />
-                                        email@gmail.com
                                     </a>
                                     <div className="flex gap-3 text-slate-400 pt-1">
                                         <a href="#" className="hover:text-white transition">
@@ -200,7 +199,7 @@ export default function LandingPage() {
                                         <a href="#" className="hover:text-white transition">
                                             <TwitterIcon />
                                         </a>
-                                        <a href="#" className="hover:text-white transition">
+                                        <a href="https://github.com/NguyenDangKhuong" className="hover:text-white transition">
                                             <GitHubIcon />
                                         </a>
                                     </div>
