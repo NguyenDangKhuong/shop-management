@@ -6,6 +6,7 @@ export interface IPrompt extends Document {
     content: string
     subPrompt?: string
     mediaId?: string
+    type?: 'hook' | 'describe'
     order?: number
     createdAt?: Date
     updatedAt?: Date
@@ -19,6 +20,7 @@ const PromptSchema = new Schema({
     content: { type: String, required: true },
     subPrompt: { type: String },
     mediaId: { type: String },
+    type: { type: String, enum: ['hook', 'describe'], default: 'describe' },
     order: { type: Number, default: 0 }
 }, {
     timestamps: true,

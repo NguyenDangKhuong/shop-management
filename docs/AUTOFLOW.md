@@ -55,6 +55,7 @@ TikTok Account
 | `accountId` | String | ✅ | ID của TikTok Account |
 | `title` | String | ✅ | Tiêu đề prompt |
 | `content` | String | ✅ | Nội dung prompt (max 90 từ) |
+| `type` | String | ❌ | Loại prompt: `hook` \| `describe` (default: `describe`) |
 | `subPrompt` | String | ❌ | Nội dung sub-prompt bổ sung |
 | `mediaId` | String | ❌ | Media ID (từ Veo3 Media) |
 | `order` | Number | ❌ | Thứ tự sắp xếp |
@@ -235,7 +236,7 @@ Layout từ trên xuống:
 | `onRefresh` | `fn` | Callback refresh |
 | `veo3Media` | `any[]` | Veo3 Media (dropdown chọn mediaId) |
 
-**Form fields:** Tiêu đề, Media ID (select từ Veo3), Nội dung (max 90 từ), **Sub Prompt** (text, optional)
+**Form fields:** Tiêu đề, **Loại prompt** (select: Hook / Describe), Media ID (select từ Veo3), Nội dung (max 90 từ), **Sub Prompt** (text, optional)
 
 ---
 

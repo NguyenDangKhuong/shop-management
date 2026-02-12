@@ -108,6 +108,7 @@ describe('PromptModal', () => {
         render(<PromptModal {...defaultProps} />)
 
         expect(screen.getByText('Tiêu đề')).toBeInTheDocument()
+        expect(screen.getByText('Loại prompt')).toBeInTheDocument()
         expect(screen.getByText('Media ID')).toBeInTheDocument()
         expect(screen.getByText('Nội dung')).toBeInTheDocument()
         // Product field should NOT exist — prompts are independent
@@ -120,12 +121,12 @@ describe('PromptModal', () => {
         expect(screen.getByPlaceholderText('Nhập tiêu đề prompt...')).toBeInTheDocument()
     })
 
-    it('renders Media ID as a Select dropdown (not Input)', () => {
+    it('renders Media ID and Type as Select dropdowns', () => {
         render(<PromptModal {...defaultProps} />)
 
-        // Should have a combobox for Media ID select
+        // Should have 2 comboboxes: Type select + Media ID select
         const selects = screen.getAllByRole('combobox')
-        expect(selects.length).toBeGreaterThanOrEqual(1)
+        expect(selects.length).toBeGreaterThanOrEqual(2)
     })
 
     it('shows veo3 media options in Media ID dropdown', () => {

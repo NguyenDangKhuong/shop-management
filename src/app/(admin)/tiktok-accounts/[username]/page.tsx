@@ -798,6 +798,11 @@ export default function TikTokAccountPage() {
                                                         <h3 className="text-sm font-semibold text-gray-800 mb-1">
                                                             {prompt.title}
                                                         </h3>
+                                                        {prompt.type && (
+                                                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium mb-1 inline-block ${prompt.type === 'hook' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>
+                                                                {prompt.type === 'hook' ? '🪝 Hook' : '📝 Describe'}
+                                                            </span>
+                                                        )}
                                                         {prompt.mediaId && (() => {
                                                             const media = veo3Media.find((m: any) => m.mediaId === prompt.mediaId)
                                                             return (
@@ -905,6 +910,11 @@ export default function TikTokAccountPage() {
                                             <h3 className="text-sm font-semibold text-gray-800">
                                                 {prompt.title}
                                             </h3>
+                                            {prompt.type && (
+                                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${prompt.type === 'hook' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>
+                                                    {prompt.type === 'hook' ? '🪝 Hook' : '📝 Describe'}
+                                                </span>
+                                            )}
                                         </div>
                                         {prompt.mediaId && (() => {
                                             const media = veo3Media.find((m: any) => m.mediaId === prompt.mediaId)

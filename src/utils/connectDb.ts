@@ -1,6 +1,10 @@
 import mongoose, { ConnectOptions } from 'mongoose'
+import dns from 'dns'
 
 import { MONGO_CLUSTER_URL, MONGO_DB_NAME, MONGO_PASSWORD, MONGO_USER_NAME } from './constants'
+
+// Force Google DNS for SRV resolution (fixes Windows DNS issues)
+dns.setServers(['8.8.8.8', '8.8.4.4'])
 
 const connection: any = {}
 let pending: Promise<void> | null = null

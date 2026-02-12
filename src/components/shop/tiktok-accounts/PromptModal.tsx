@@ -30,6 +30,7 @@ const PromptModal = ({
             if (editingPrompt) {
                 form.setFieldsValue({
                     title: editingPrompt.title || '',
+                    type: editingPrompt.type || 'describe',
                     content: editingPrompt.content || '',
                     subPrompt: editingPrompt.subPrompt || '',
                     mediaId: editingPrompt.mediaId || undefined
@@ -48,6 +49,7 @@ const PromptModal = ({
             const promptData: any = {
                 accountId,
                 title: values.title,
+                type: values.type || 'describe',
                 content: values.content,
                 subPrompt: values.subPrompt || '',
                 mediaId: values.mediaId || ''
@@ -94,6 +96,19 @@ const PromptModal = ({
                     rules={[{ required: true, message: 'Vui lòng nhập tiêu đề' }]}
                 >
                     <Input placeholder="Nhập tiêu đề prompt..." />
+                </Form.Item>
+
+                <Form.Item
+                    label="Loại prompt"
+                    name="type"
+                    initialValue="describe"
+                >
+                    <Select
+                        options={[
+                            { value: 'hook', label: '🪝 Hook' },
+                            { value: 'describe', label: '📝 Describe' }
+                        ]}
+                    />
                 </Form.Item>
 
                 <Form.Item
