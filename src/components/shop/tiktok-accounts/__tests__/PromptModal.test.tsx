@@ -134,7 +134,7 @@ describe('PromptModal', () => {
 
         // Open the select dropdown
         const selects = screen.getAllByRole('combobox')
-        const mediaSelect = selects[0] // Media ID select
+        const mediaSelect = selects[1] // Media ID select (index 1, after Type select)
         fireEvent.mouseDown(mediaSelect)
 
         // Should show media IDs as options
