@@ -50,10 +50,27 @@ export async function GET(request: NextRequest) {
                 .map((id: string) => promptsMap.get(id))
                 .filter(Boolean)
 
-            // If randomPrompt=true, pick only 1 random prompt and 1 random video
-            const selectedPrompts = randomPrompt && allPrompts.length > 0
-                ? [allPrompts[Math.floor(Math.random() * allPrompts.length)]]
-                : allPrompts
+            // If randomPrompt=true, randomly pick one mode:
+            // - hook mode: return 1 random hook prompt
+            // - describe mode: return all describe prompts
+            let selectedPrompts = allPrompts
+            if (randomPrompt && allPrompts.length > 0) {
+                const hookPrompts = allPrompts.filter((p: any) => p.type === 'hook')
+                const describePrompts = allPrompts.filter((p: any) => p.type !== 'hook')
+
+                // Randomly choose between hook or describe mode
+                const useHook = hookPrompts.length > 0 && describePrompts.length > 0
+                    ? Math.random() < 0.5
+                    : hookPrompts.length > 0
+
+                if (useHook) {
+                    // Hook mode: pick 1 random hook
+                    selectedPrompts = [hookPrompts[Math.floor(Math.random() * hookPrompts.length)]]
+                } else {
+                    // Describe mode: return all describe prompts
+                    selectedPrompts = describePrompts
+                }
+            }
 
             const selectedVideos = randomPrompt && videoFiles.length > 0
                 ? [videoFiles[Math.floor(Math.random() * videoFiles.length)]]

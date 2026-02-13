@@ -125,6 +125,88 @@ describe('AutoFlow API', () => {
             expect(json.success).toBe(false)
             expect(response.status).toBe(500)
         })
+
+        it('randomPrompt=true returns either 1 hook or all describe prompts (not both)', async () => {
+            const mockAutoflows = [
+                {
+                    _id: 'af_1',
+                    accountId: 'acc_1',
+                    productId: 'prod_1',
+                    promptIds: ['p_hook1', 'p_hook2', 'p_desc1', 'p_desc2']
+                }
+            ]
+            const mockPrompts = [
+                { _id: 'p_hook1', accountId: 'acc_1', title: 'Hook 1', content: 'Hook content 1', type: 'hook' },
+                { _id: 'p_hook2', accountId: 'acc_1', title: 'Hook 2', content: 'Hook content 2', type: 'hook' },
+                { _id: 'p_desc1', accountId: 'acc_1', title: 'Desc 1', content: 'Desc content 1', type: 'describe' },
+                { _id: 'p_desc2', accountId: 'acc_1', title: 'Desc 2', content: 'Desc content 2', type: 'describe' }
+            ]
+            mockLean.mockResolvedValue(mockAutoflows)
+            mockPromptLean.mockResolvedValue(mockPrompts)
+
+            const request = new NextRequest('http://localhost:3000/api/autoflows?accountId=acc_1&randomPrompt=true')
+            const response = await GET(request)
+            const json = await response.json()
+
+            expect(json.success).toBe(true)
+            const prompts = json.data[0].prompts
+            // Should be EITHER 1 hook OR 2 describes, never both
+            const hookResults = prompts.filter((p: any) => p.type === 'hook')
+            const descResults = prompts.filter((p: any) => p.type === 'describe')
+            const isHookMode = hookResults.length === 1 && descResults.length === 0
+            const isDescribeMode = hookResults.length === 0 && descResults.length === 2
+            expect(isHookMode || isDescribeMode).toBe(true)
+        })
+
+        it('randomPrompt=true returns all describe prompts when no hook prompts exist', async () => {
+            const mockAutoflows = [
+                {
+                    _id: 'af_1',
+                    accountId: 'acc_1',
+                    productId: 'prod_1',
+                    promptIds: ['p_desc1', 'p_desc2']
+                }
+            ]
+            const mockPrompts = [
+                { _id: 'p_desc1', accountId: 'acc_1', title: 'Desc 1', content: 'Content 1', type: 'describe' },
+                { _id: 'p_desc2', accountId: 'acc_1', title: 'Desc 2', content: 'Content 2', type: 'describe' }
+            ]
+            mockLean.mockResolvedValue(mockAutoflows)
+            mockPromptLean.mockResolvedValue(mockPrompts)
+
+            const request = new NextRequest('http://localhost:3000/api/autoflows?accountId=acc_1&randomPrompt=true')
+            const response = await GET(request)
+            const json = await response.json()
+
+            expect(json.success).toBe(true)
+            expect(json.data[0].prompts).toHaveLength(2)
+        })
+
+        it('randomPrompt=true returns 1 random hook when only hook prompts exist', async () => {
+            const mockAutoflows = [
+                {
+                    _id: 'af_1',
+                    accountId: 'acc_1',
+                    productId: 'prod_1',
+                    promptIds: ['p_hook1', 'p_hook2', 'p_hook3']
+                }
+            ]
+            const mockPrompts = [
+                { _id: 'p_hook1', accountId: 'acc_1', title: 'Hook 1', content: 'Content 1', type: 'hook' },
+                { _id: 'p_hook2', accountId: 'acc_1', title: 'Hook 2', content: 'Content 2', type: 'hook' },
+                { _id: 'p_hook3', accountId: 'acc_1', title: 'Hook 3', content: 'Content 3', type: 'hook' }
+            ]
+            mockLean.mockResolvedValue(mockAutoflows)
+            mockPromptLean.mockResolvedValue(mockPrompts)
+
+            const request = new NextRequest('http://localhost:3000/api/autoflows?accountId=acc_1&randomPrompt=true')
+            const response = await GET(request)
+            const json = await response.json()
+
+            expect(json.success).toBe(true)
+            expect(json.data[0].prompts).toHaveLength(1)
+            expect(json.data[0].prompts[0].type).toBe('hook')
+        })
     })
 
     describe('POST', () => {

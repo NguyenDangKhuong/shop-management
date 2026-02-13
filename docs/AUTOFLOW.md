@@ -83,7 +83,7 @@ GET /api/autoflows?accountId={accountId}&productId={productId}
 |-------|------|-------|
 | `accountId` | String | Lọc theo TikTok Account ID |
 | `productId` | String | Lọc theo Product ID |
-| `randomPrompt` | `true` | Chỉ trả về **1 prompt random** và **1 video random** cho mỗi AutoFlow |
+| `randomPrompt` | `true` | Trả về **1 prompt hook random** + **tất cả prompt describe** và **1 video random** cho mỗi AutoFlow |
 
 ##### Chế độ bình thường (trả về tất cả)
 
@@ -98,7 +98,7 @@ GET /api/autoflows?accountId=xxx&productId=yyy&randomPrompt=true
 ```
 
 > [!TIP]
-> Dùng `randomPrompt=true` khi tích hợp n8n — mỗi lần gọi API sẽ nhận được 1 prompt và 1 video khác nhau để tạo content đa dạng.
+> Dùng `randomPrompt=true` khi tích hợp n8n — mỗi lần gọi API sẽ nhận được 1 hook prompt khác nhau (random) cùng tất cả describe prompt, kèm 1 video random.
 
 Response trả về AutoFlow kèm danh sách Prompt đã được populate từ `promptIds`:
 
@@ -115,9 +115,15 @@ Response trả về AutoFlow kèm danh sách Prompt đã được populate từ 
       "prompts": [
         {
           "_id": "promptId1",
-          "title": "Prompt 1",
-          "content": "Nội dung...",
-          "mediaId": ""
+          "title": "Hook Prompt",
+          "content": "Nội dung hook...",
+          "type": "hook"
+        },
+        {
+          "_id": "promptId2",
+          "title": "Describe Prompt",
+          "content": "Nội dung describe...",
+          "type": "describe"
         }
       ],
       "videoFiles": [
@@ -129,7 +135,9 @@ Response trả về AutoFlow kèm danh sách Prompt đã được populate từ 
 ```
 
 > [!NOTE]
-> Khi `randomPrompt=true`, mảng `prompts` và `videoFiles` trong response sẽ chỉ có **1 phần tử** được chọn ngẫu nhiên.
+> Khi `randomPrompt=true`:
+> - Mảng `prompts` chứa **1 hook random** + **tất cả describe**
+> - Mảng `videoFiles` chỉ có **1 phần tử** được chọn ngẫu nhiên
 
 #### POST — Tạo AutoFlow
 
