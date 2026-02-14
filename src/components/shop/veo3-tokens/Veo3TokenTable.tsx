@@ -10,6 +10,8 @@ import { isMobile } from 'react-device-detect'
 interface Veo3Token {
     _id: string
     value: string
+    projectId?: string
+    sessionId?: string
     tokenCheckStatus?: string
     createdAt?: string
     updatedAt?: string
@@ -61,7 +63,7 @@ const Veo3TokenTable = () => {
 
     const handleEdit = (token: Veo3Token) => {
         setEditingToken(token)
-        form.setFieldsValue({ value: token.value, tokenCheckStatus: token.tokenCheckStatus || '' })
+        form.setFieldsValue({ value: token.value, projectId: token.projectId || '', sessionId: token.sessionId || '', tokenCheckStatus: token.tokenCheckStatus || '' })
         setIsModalOpen(true)
     }
 
@@ -76,8 +78,8 @@ const Veo3TokenTable = () => {
             const values = await form.validateFields()
 
             const result = editingToken
-                ? await apiPut('/api/veo3-tokens', { id: editingToken._id, value: values.value, tokenCheckStatus: values.tokenCheckStatus || '' })
-                : await apiPost('/api/veo3-tokens', { value: values.value, tokenCheckStatus: values.tokenCheckStatus || '' })
+                ? await apiPut('/api/veo3-tokens', { id: editingToken._id, value: values.value, projectId: values.projectId || '', sessionId: values.sessionId || '', tokenCheckStatus: values.tokenCheckStatus || '' })
+                : await apiPost('/api/veo3-tokens', { value: values.value, projectId: values.projectId || '', sessionId: values.sessionId || '', tokenCheckStatus: values.tokenCheckStatus || '' })
 
             if (result.success) {
                 message.success(editingToken ? 'Đã cập nhật token!' : 'Đã thêm token!')
@@ -113,6 +115,42 @@ const Veo3TokenTable = () => {
                     </span>
                 </div>
             )
+        },
+        {
+            title: 'Project ID',
+            dataIndex: 'projectId',
+            key: 'projectId',
+            ellipsis: true,
+            width: 160,
+            render: (value: string) => value ? (
+                <div className="flex items-center gap-2">
+                    <CopyOutlined
+                        className="cursor-pointer text-gray-500 hover:text-blue-500 flex-shrink-0"
+                        onClick={() => handleCopy(value)}
+                    />
+                    <span className="font-mono text-xs">
+                        {value.length > 30 ? `${value.substring(0, 30)}...` : value}
+                    </span>
+                </div>
+            ) : <span className="text-gray-400 text-xs">—</span>
+        },
+        {
+            title: 'Session ID',
+            dataIndex: 'sessionId',
+            key: 'sessionId',
+            ellipsis: true,
+            width: 160,
+            render: (value: string) => value ? (
+                <div className="flex items-center gap-2">
+                    <CopyOutlined
+                        className="cursor-pointer text-gray-500 hover:text-blue-500 flex-shrink-0"
+                        onClick={() => handleCopy(value)}
+                    />
+                    <span className="font-mono text-xs">
+                        {value.length > 30 ? `${value.substring(0, 30)}...` : value}
+                    </span>
+                </div>
+            ) : <span className="text-gray-400 text-xs">—</span>
         },
         {
             title: 'Token Check Status',
@@ -221,6 +259,22 @@ const Veo3TokenTable = () => {
                             <div className="font-mono text-xs text-gray-600 break-all bg-gray-50 p-2 rounded">
                                 {token.value}
                             </div>
+                            {token.projectId && (
+                                <div className="mt-2">
+                                    <span className="text-xs font-semibold text-green-600">Project ID:</span>
+                                    <div className="font-mono text-xs text-green-700 break-all bg-green-50 p-2 rounded mt-1">
+                                        {token.projectId}
+                                    </div>
+                                </div>
+                            )}
+                            {token.sessionId && (
+                                <div className="mt-2">
+                                    <span className="text-xs font-semibold text-orange-600">Session ID:</span>
+                                    <div className="font-mono text-xs text-orange-700 break-all bg-orange-50 p-2 rounded mt-1">
+                                        {token.sessionId}
+                                    </div>
+                                </div>
+                            )}
                             {token.tokenCheckStatus && (
                                 <div className="mt-2">
                                     <span className="text-xs font-semibold text-purple-600">Check Status:</span>
@@ -271,6 +325,24 @@ const Veo3TokenTable = () => {
                         <Input.TextArea
                             placeholder="Nhập giá trị token..."
                             rows={4}
+                            className="font-mono text-xs"
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        name="projectId"
+                        label="Project ID"
+                    >
+                        <Input
+                            placeholder="Nhập project ID..."
+                            className="font-mono text-xs"
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        name="sessionId"
+                        label="Session ID"
+                    >
+                        <Input
+                            placeholder="Nhập session ID..."
                             className="font-mono text-xs"
                         />
                     </Form.Item>

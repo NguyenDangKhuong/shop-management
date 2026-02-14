@@ -2,6 +2,8 @@ import mongoose, { Document, Schema } from 'mongoose'
 
 export interface IVeo3Token extends Document {
     value: string
+    projectId?: string
+    sessionId?: string
     tokenCheckStatus?: string
     createdAt?: Date
     updatedAt?: Date
@@ -9,6 +11,8 @@ export interface IVeo3Token extends Document {
 
 const Veo3TokenSchema = new Schema({
     value: { type: String, required: true },
+    projectId: { type: String, default: '' },
+    sessionId: { type: String, default: '' },
     tokenCheckStatus: { type: String, default: '' }
 }, {
     timestamps: true,
