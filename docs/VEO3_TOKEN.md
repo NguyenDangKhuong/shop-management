@@ -11,6 +11,7 @@ Veo3 Token
   ├── value: string (bắt buộc - giá trị token)
   ├── projectId?: string (optional - ID project)
   ├── sessionId?: string (optional - ID session)
+  ├── apiKeyNanoAI?: string (optional - API Key NanoAI)
   └── tokenCheckStatus?: string (optional - trạng thái kiểm tra)
 ```
 
@@ -27,6 +28,7 @@ Veo3 Token
 | `value` | String | ✅ | Giá trị token |
 | `projectId` | String | ❌ | ID project (default: `''`) |
 | `sessionId` | String | ❌ | ID session (default: `''`) |
+| `apiKeyNanoAI` | String | ❌ | API Key NanoAI (default: `''`) |
 | `tokenCheckStatus` | String | ❌ | Trạng thái kiểm tra token (default: `''`) |
 | `createdAt` | Date | Auto | Thời gian tạo |
 | `updatedAt` | Date | Auto | Thời gian cập nhật |
@@ -54,6 +56,7 @@ GET /api/veo3-tokens
       "value": "eyJhbGciOiJSUzI1NiIs...",
       "projectId": "my-project-123",
       "sessionId": "session-abc-456",
+      "apiKeyNanoAI": "nano-key-789",
       "tokenCheckStatus": "valid",
       "createdAt": "2026-02-14T...",
       "updatedAt": "2026-02-14T..."
@@ -75,6 +78,7 @@ Content-Type: application/json
   "value": "your_token_here",
   "projectId": "optional_project_id",
   "sessionId": "optional_session_id",
+  "apiKeyNanoAI": "optional_api_key",
   "tokenCheckStatus": "optional_status"
 }
 ```
@@ -84,6 +88,7 @@ Content-Type: application/json
 | `value` | ✅ | Giá trị token |
 | `projectId` | ❌ | ID project |
 | `sessionId` | ❌ | ID session |
+| `apiKeyNanoAI` | ❌ | API Key NanoAI |
 | `tokenCheckStatus` | ❌ | Trạng thái kiểm tra |
 
 ### PUT - Cập nhật token
@@ -97,6 +102,7 @@ Content-Type: application/json
   "value": "updated_token_value",
   "projectId": "updated_project_id",
   "sessionId": "updated_session_id",
+  "apiKeyNanoAI": "updated_api_key",
   "tokenCheckStatus": "updated_status"
 }
 ```
@@ -107,6 +113,7 @@ Content-Type: application/json
 | `value` | ❌ | Giá trị token mới |
 | `projectId` | ❌ | ID project mới |
 | `sessionId` | ❌ | ID session mới |
+| `apiKeyNanoAI` | ❌ | API Key NanoAI mới |
 | `tokenCheckStatus` | ❌ | Trạng thái kiểm tra mới |
 
 > [!NOTE]
@@ -154,6 +161,7 @@ Trên đầu trang hiển thị một banner chứa thông tin API endpoint:
 | Token | Giá trị token (truncate 80 ký tự, monospace) + nút copy |
 | Project ID | ID project (truncate 30 ký tự) + nút copy |
 | Session ID | ID session (truncate 30 ký tự) + nút copy |
+| API Key NanoAI | API Key NanoAI (truncate 30 ký tự) + nút copy |
 | Token Check Status | Trạng thái kiểm tra (truncate 40 ký tự) + nút copy |
 | Cập nhật | Thời gian cập nhật (format `vi-VN`) |
 | Hành động | Nút sửa + xóa |
@@ -170,4 +178,4 @@ Trên đầu trang hiển thị một banner chứa thông tin API endpoint:
 ---
 
 *Tài liệu tạo: 14/02/2026*
-*Cập nhật: 14/02/2026 — Thêm field `projectId` và `sessionId`*
+*Cập nhật: 14/02/2026 — Thêm field `projectId`, `sessionId`, và `apiKeyNanoAI`*

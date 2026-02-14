@@ -12,6 +12,7 @@ interface Veo3Token {
     value: string
     projectId?: string
     sessionId?: string
+    apiKeyNanoAI?: string
     tokenCheckStatus?: string
     createdAt?: string
     updatedAt?: string
@@ -63,7 +64,7 @@ const Veo3TokenTable = () => {
 
     const handleEdit = (token: Veo3Token) => {
         setEditingToken(token)
-        form.setFieldsValue({ value: token.value, projectId: token.projectId || '', sessionId: token.sessionId || '', tokenCheckStatus: token.tokenCheckStatus || '' })
+        form.setFieldsValue({ value: token.value, projectId: token.projectId || '', sessionId: token.sessionId || '', apiKeyNanoAI: token.apiKeyNanoAI || '', tokenCheckStatus: token.tokenCheckStatus || '' })
         setIsModalOpen(true)
     }
 
@@ -78,8 +79,8 @@ const Veo3TokenTable = () => {
             const values = await form.validateFields()
 
             const result = editingToken
-                ? await apiPut('/api/veo3-tokens', { id: editingToken._id, value: values.value, projectId: values.projectId || '', sessionId: values.sessionId || '', tokenCheckStatus: values.tokenCheckStatus || '' })
-                : await apiPost('/api/veo3-tokens', { value: values.value, projectId: values.projectId || '', sessionId: values.sessionId || '', tokenCheckStatus: values.tokenCheckStatus || '' })
+                ? await apiPut('/api/veo3-tokens', { id: editingToken._id, value: values.value, projectId: values.projectId || '', sessionId: values.sessionId || '', apiKeyNanoAI: values.apiKeyNanoAI || '', tokenCheckStatus: values.tokenCheckStatus || '' })
+                : await apiPost('/api/veo3-tokens', { value: values.value, projectId: values.projectId || '', sessionId: values.sessionId || '', apiKeyNanoAI: values.apiKeyNanoAI || '', tokenCheckStatus: values.tokenCheckStatus || '' })
 
             if (result.success) {
                 message.success(editingToken ? 'Đã cập nhật token!' : 'Đã thêm token!')
@@ -140,6 +141,24 @@ const Veo3TokenTable = () => {
             key: 'sessionId',
             ellipsis: true,
             width: 160,
+            render: (value: string) => value ? (
+                <div className="flex items-center gap-2">
+                    <CopyOutlined
+                        className="cursor-pointer text-gray-500 hover:text-blue-500 flex-shrink-0"
+                        onClick={() => handleCopy(value)}
+                    />
+                    <span className="font-mono text-xs">
+                        {value.length > 30 ? `${value.substring(0, 30)}...` : value}
+                    </span>
+                </div>
+            ) : <span className="text-gray-400 text-xs">—</span>
+        },
+        {
+            title: 'API Key NanoAI',
+            dataIndex: 'apiKeyNanoAI',
+            key: 'apiKeyNanoAI',
+            ellipsis: true,
+            width: 180,
             render: (value: string) => value ? (
                 <div className="flex items-center gap-2">
                     <CopyOutlined
@@ -275,6 +294,14 @@ const Veo3TokenTable = () => {
                                     </div>
                                 </div>
                             )}
+                            {token.apiKeyNanoAI && (
+                                <div className="mt-2">
+                                    <span className="text-xs font-semibold text-cyan-600">API Key NanoAI:</span>
+                                    <div className="font-mono text-xs text-cyan-700 break-all bg-cyan-50 p-2 rounded mt-1">
+                                        {token.apiKeyNanoAI}
+                                    </div>
+                                </div>
+                            )}
                             {token.tokenCheckStatus && (
                                 <div className="mt-2">
                                     <span className="text-xs font-semibold text-purple-600">Check Status:</span>
@@ -343,6 +370,15 @@ const Veo3TokenTable = () => {
                     >
                         <Input
                             placeholder="Nhập session ID..."
+                            className="font-mono text-xs"
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        name="apiKeyNanoAI"
+                        label="API Key NanoAI"
+                    >
+                        <Input
+                            placeholder="Nhập API Key NanoAI..."
                             className="font-mono text-xs"
                         />
                     </Form.Item>
