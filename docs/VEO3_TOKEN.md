@@ -2,7 +2,7 @@
 
 ## 📋 Tổng quan
 
-**Veo3 Token** là tính năng quản lý các token dùng để xác thực / kết nối với dịch vụ Veo3. Mỗi token có một giá trị (`value`) và trạng thái kiểm tra (`tokenCheckStatus`) tùy chọn. Hệ thống hỗ trợ CRUD đầy đủ với giao diện responsive cho cả desktop (bảng) và mobile (card).
+**Veo3 Token** là tính năng quản lý các token dùng để xác thực / kết nối với dịch vụ Veo3. Mỗi token có một giá trị (`value`) và các thông tin bổ sung như `projectId`, `sessionId`, `apiKeyNanoAI`. Hệ thống hỗ trợ CRUD đầy đủ với giao diện responsive cho cả desktop (bảng) và mobile (card).
 
 ### Kiến trúc
 
@@ -12,7 +12,6 @@ Veo3 Token
   ├── projectId?: string (optional - ID project)
   ├── sessionId?: string (optional - ID session)
   ├── apiKeyNanoAI?: string (optional - API Key NanoAI)
-  └── tokenCheckStatus?: string (optional - trạng thái kiểm tra)
 ```
 
 **Trang quản lý:** `/veo3-tokens`
@@ -29,7 +28,6 @@ Veo3 Token
 | `projectId` | String | ❌ | ID project (default: `''`) |
 | `sessionId` | String | ❌ | ID session (default: `''`) |
 | `apiKeyNanoAI` | String | ❌ | API Key NanoAI (default: `''`) |
-| `tokenCheckStatus` | String | ❌ | Trạng thái kiểm tra token (default: `''`) |
 | `createdAt` | Date | Auto | Thời gian tạo |
 | `updatedAt` | Date | Auto | Thời gian cập nhật |
 
@@ -57,7 +55,6 @@ GET /api/veo3-tokens
       "projectId": "my-project-123",
       "sessionId": "session-abc-456",
       "apiKeyNanoAI": "nano-key-789",
-      "tokenCheckStatus": "valid",
       "createdAt": "2026-02-14T...",
       "updatedAt": "2026-02-14T..."
     }
@@ -78,18 +75,16 @@ Content-Type: application/json
   "value": "your_token_here",
   "projectId": "optional_project_id",
   "sessionId": "optional_session_id",
-  "apiKeyNanoAI": "optional_api_key",
-  "tokenCheckStatus": "optional_status"
+  "apiKeyNanoAI": "optional_api_key"
 }
 ```
 
 | Field | Required | Mô tả |
-|-------|----------|-------|
+|-------|----------|---------|
 | `value` | ✅ | Giá trị token |
 | `projectId` | ❌ | ID project |
 | `sessionId` | ❌ | ID session |
 | `apiKeyNanoAI` | ❌ | API Key NanoAI |
-| `tokenCheckStatus` | ❌ | Trạng thái kiểm tra |
 
 ### PUT - Cập nhật token
 
@@ -102,19 +97,17 @@ Content-Type: application/json
   "value": "updated_token_value",
   "projectId": "updated_project_id",
   "sessionId": "updated_session_id",
-  "apiKeyNanoAI": "updated_api_key",
-  "tokenCheckStatus": "updated_status"
+  "apiKeyNanoAI": "updated_api_key"
 }
 ```
 
 | Field | Required | Mô tả |
-|-------|----------|-------|
+|-------|----------|---------|
 | `id` | ✅ | MongoDB document ID |
 | `value` | ❌ | Giá trị token mới |
 | `projectId` | ❌ | ID project mới |
 | `sessionId` | ❌ | ID session mới |
 | `apiKeyNanoAI` | ❌ | API Key NanoAI mới |
-| `tokenCheckStatus` | ❌ | Trạng thái kiểm tra mới |
 
 > [!NOTE]
 > Chỉ các field được gửi lên mới được cập nhật (partial update).
@@ -149,10 +142,10 @@ Trên đầu trang hiển thị một banner chứa thông tin API endpoint:
 
 ### Chức năng
 
-1. **Thêm token** — Nhấn "Thêm Token" → Modal mở → Nhập `value` (bắt buộc) và `tokenCheckStatus` (tùy chọn) → Lưu
+1. **Thêm token** — Nhấn "Thêm Token" → Modal mở → Nhập `value` (bắt buộc) và các field tùy chọn → Lưu
 2. **Sửa token** — Nhấn ✏️ trên row/card → Modal mở với dữ liệu cũ → Sửa → Lưu
 3. **Xóa token** — Nhấn 🗑️ → Xác nhận Popconfirm → Xóa
-4. **Copy token** — Nhấn icon copy bên cạnh giá trị token hoặc token check status
+4. **Copy token** — Nhấn icon copy bên cạnh giá trị token hoặc các field khác
 
 ### Cột hiển thị (Desktop)
 
@@ -162,7 +155,6 @@ Trên đầu trang hiển thị một banner chứa thông tin API endpoint:
 | Project ID | ID project (truncate 30 ký tự) + nút copy |
 | Session ID | ID session (truncate 30 ký tự) + nút copy |
 | API Key NanoAI | API Key NanoAI (truncate 30 ký tự) + nút copy |
-| Token Check Status | Trạng thái kiểm tra (truncate 40 ký tự) + nút copy |
 | Cập nhật | Thời gian cập nhật (format `vi-VN`) |
 | Hành động | Nút sửa + xóa |
 
@@ -178,4 +170,4 @@ Trên đầu trang hiển thị một banner chứa thông tin API endpoint:
 ---
 
 *Tài liệu tạo: 14/02/2026*
-*Cập nhật: 14/02/2026 — Thêm field `projectId`, `sessionId`, và `apiKeyNanoAI`*
+*Cập nhật: 14/02/2026 — Thêm field `projectId`, `sessionId`, `apiKeyNanoAI`; xóa field `tokenCheckStatus`*

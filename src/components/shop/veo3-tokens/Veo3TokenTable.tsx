@@ -13,7 +13,6 @@ interface Veo3Token {
     projectId?: string
     sessionId?: string
     apiKeyNanoAI?: string
-    tokenCheckStatus?: string
     createdAt?: string
     updatedAt?: string
 }
@@ -64,7 +63,7 @@ const Veo3TokenTable = () => {
 
     const handleEdit = (token: Veo3Token) => {
         setEditingToken(token)
-        form.setFieldsValue({ value: token.value, projectId: token.projectId || '', sessionId: token.sessionId || '', apiKeyNanoAI: token.apiKeyNanoAI || '', tokenCheckStatus: token.tokenCheckStatus || '' })
+        form.setFieldsValue({ value: token.value, projectId: token.projectId || '', sessionId: token.sessionId || '', apiKeyNanoAI: token.apiKeyNanoAI || '' })
         setIsModalOpen(true)
     }
 
@@ -79,8 +78,8 @@ const Veo3TokenTable = () => {
             const values = await form.validateFields()
 
             const result = editingToken
-                ? await apiPut('/api/veo3-tokens', { id: editingToken._id, value: values.value, projectId: values.projectId || '', sessionId: values.sessionId || '', apiKeyNanoAI: values.apiKeyNanoAI || '', tokenCheckStatus: values.tokenCheckStatus || '' })
-                : await apiPost('/api/veo3-tokens', { value: values.value, projectId: values.projectId || '', sessionId: values.sessionId || '', apiKeyNanoAI: values.apiKeyNanoAI || '', tokenCheckStatus: values.tokenCheckStatus || '' })
+                ? await apiPut('/api/veo3-tokens', { id: editingToken._id, value: values.value, projectId: values.projectId || '', sessionId: values.sessionId || '', apiKeyNanoAI: values.apiKeyNanoAI || '' })
+                : await apiPost('/api/veo3-tokens', { value: values.value, projectId: values.projectId || '', sessionId: values.sessionId || '', apiKeyNanoAI: values.apiKeyNanoAI || '' })
 
             if (result.success) {
                 message.success(editingToken ? 'Đã cập nhật token!' : 'Đã thêm token!')
@@ -167,24 +166,6 @@ const Veo3TokenTable = () => {
                     />
                     <span className="font-mono text-xs">
                         {value.length > 30 ? `${value.substring(0, 30)}...` : value}
-                    </span>
-                </div>
-            ) : <span className="text-gray-400 text-xs">—</span>
-        },
-        {
-            title: 'Token Check Status',
-            dataIndex: 'tokenCheckStatus',
-            key: 'tokenCheckStatus',
-            ellipsis: true,
-            width: 200,
-            render: (value: string) => value ? (
-                <div className="flex items-center gap-2">
-                    <CopyOutlined
-                        className="cursor-pointer text-gray-500 hover:text-blue-500 flex-shrink-0"
-                        onClick={() => handleCopy(value)}
-                    />
-                    <span className="font-mono text-xs">
-                        {value.length > 40 ? `${value.substring(0, 40)}...` : value}
                     </span>
                 </div>
             ) : <span className="text-gray-400 text-xs">—</span>
@@ -302,14 +283,6 @@ const Veo3TokenTable = () => {
                                     </div>
                                 </div>
                             )}
-                            {token.tokenCheckStatus && (
-                                <div className="mt-2">
-                                    <span className="text-xs font-semibold text-purple-600">Check Status:</span>
-                                    <div className="font-mono text-xs text-purple-700 break-all bg-purple-50 p-2 rounded mt-1">
-                                        {token.tokenCheckStatus}
-                                    </div>
-                                </div>
-                            )}
                             {token.updatedAt && (
                                 <div className="text-xs text-gray-400 mt-2">
                                     {new Date(token.updatedAt).toLocaleString('vi-VN')}
@@ -379,16 +352,6 @@ const Veo3TokenTable = () => {
                     >
                         <Input
                             placeholder="Nhập API Key NanoAI..."
-                            className="font-mono text-xs"
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        name="tokenCheckStatus"
-                        label="Token Check Status"
-                    >
-                        <Input.TextArea
-                            placeholder="Nhập token check status..."
-                            rows={3}
                             className="font-mono text-xs"
                         />
                     </Form.Item>
