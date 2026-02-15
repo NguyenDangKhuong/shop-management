@@ -18,16 +18,12 @@ Prompt Library là thư viện prompt **độc lập**, quản lý riêng biệt
 | `content` | String | ✅ | Nội dung prompt (max 90 từ) |
 | `type` | String | ❌ | Loại prompt: `hook` \| `describe` (default: `describe`) |
 | `subPrompt` | String | ❌ | Nội dung sub-prompt bổ sung |
-| `referenceImages` | Array | ❌ | Mảng reference images (chỉ dùng cho `describe`). Mỗi item: `{ imageUsageType, mediaId }` |
 | `order` | Number | ❌ | Thứ tự sắp xếp |
 
 **Collection:** `prompts`
 
 > [!IMPORTANT]
-> **`referenceImages` subdocument có `_id: false`** — Mongoose mặc định tự thêm `_id` vào mỗi item trong array subdocument, nhưng field này không cần thiết vì:
-> - Tất cả CRUD operations (GET/POST/PUT/DELETE) đều thao tác trên Prompt document chính qua `prompt._id`
-> - Mỗi reference image được xác định bằng `mediaId` (unique từ Veo3 Media), không cần `_id` riêng
-> - Loại bỏ `_id` giúp API response sạch hơn, đặc biệt khi tích hợp với n8n workflows
+> **`referenceImages` đã được chuyển sang AutoFlow model** — Xem [AUTOFLOW.md](AUTOFLOW.md). Reference images là per-product (ảnh sản phẩm + ảnh mẫu), không phải per-prompt, nên đặt ở AutoFlow hợp lý hơn.
 
 ---
 
@@ -47,10 +43,7 @@ POST /api/prompts
   "accountId": "...",
   "title": "...",
   "content": "...",
-  "subPrompt": "...",
-  "referenceImages": [
-    { "imageUsageType": "IMAGE_USAGE_TYPE_ASSET", "mediaId": "CAMaJGJm..." }
-  ]
+  "subPrompt": "..."
 }
 ```
 
@@ -77,9 +70,11 @@ DELETE /api/prompts?id={promptId}
 | `accountId` | `string` | ID tài khoản |
 | `editingPrompt` | `any` | Prompt đang sửa (null = tạo mới) |
 | `onRefresh` | `fn` | Callback refresh |
-| `veo3Media` | `any[]` | Veo3 Media (dropdown chọn referenceImages) |
 
-**Form fields:** Tiêu đề, **Loại prompt** (select: Hook / Describe), **Reference Images** (multi-select từ Veo3, chỉ hiện khi type=describe), Nội dung (max 90 từ), **Sub Prompt** (text, optional)
+**Form fields:** Tiêu đề, **Loại prompt** (select: Hook / Describe), Nội dung (max 90 từ), **Sub Prompt** (text, optional)
+
+> [!NOTE]
+> **Reference Images** đã chuyển sang **AutoFlowModal** — chọn 1 lần ở AutoFlow, tất cả prompts dùng chung.
 
 ---
 
@@ -87,7 +82,7 @@ DELETE /api/prompts?id={promptId}
 
 ### Reference Images
 
-Mỗi prompt `describe` sử dụng 2 reference images:
+Mỗi prompt `describe` sử dụng 2 reference images (đặt ở **AutoFlow**, không phải ở Prompt):
 
 | Ref | Nội dung | ImageUsageType | Mục đích |
 |-----|----------|----------------|----------|
@@ -118,15 +113,29 @@ Mỗi prompt `describe` sử dụng 2 reference images:
 >
 > IMPORTANT: Output ONLY the final completed prompt text. Do not include any thinking, explanation, reasoning, commentary, notes, or additional text. Return nothing but the raw prompt ready to use.
 
+### Prompt 4 — Mirror selfie che mặt, không thoại (mirror of Prompt 1)
+
+> A highly detailed cinematic video of the fashion model shown in reference image 2. She has luminous snow-white porcelain skin, Douyin goddess aesthetic, long silky black hair with soft natural waves, wearing stylish feminine thin gold-framed round glasses. She has an elegant hourglass figure with extremely long slender legs. She must be wearing the identical outfit from reference image 1 preserving every detail including exact color exact pattern exact fabric texture exact neckline exact sleeve length exact fit and exact silhouette as shown in the product photo. Do not alter modify or reinterpret any part of the clothing. She is standing [POSE] in front of a full-length mirror in a [BACKGROUND]. Soft golden morning sunlight streaming through sheer white curtains creating warm natural light and gentle shadows. She is holding an orange iPhone 17 Pro Max up in front of her face covering her face completely while recording a mirror selfie video so only the phone and her body outfit are visible not her face. The phone camera angle moves naturally closer to show the outfit fabric texture and details then slowly pulls back to reveal her full body silhouette and long legs like a real person filming themselves. She does not speak or make any sound the entire video is silent with only ambient room atmosphere. No text no captions no animals no dialogue no voiceover. Ultra-realistic natural handheld phone movement. Shallow depth of field with model in sharp focus. Fashion editorial cinematic color grading
+
+### Prompt 5 — Tay chạm show vải che mặt, không thoại (mirror of Prompt 2)
+
+> A highly detailed cinematic video of the fashion model shown in reference image 2. She has luminous snow-white porcelain skin, Douyin goddess aesthetic, long silky black hair with soft natural waves, wearing stylish feminine thin gold-framed round glasses. She has an elegant hourglass figure with extremely long slender legs. She must be wearing the identical outfit from reference image 1 preserving every detail including exact color exact pattern exact fabric texture exact neckline exact sleeve length exact fit and exact silhouette as shown in the product photo. Do not alter modify or reinterpret any part of the clothing. She is standing [POSE] in front of a full-length mirror in a [BACKGROUND]. Soft golden morning sunlight streaming through sheer white curtains creating warm natural light. She is holding an orange iPhone 17 Pro Max up in front of her face covering her face completely while recording herself so only the phone and her body outfit are visible not her face. Her free hand gently touches the fabric at her waist showing the smooth quality material then slides down to lightly adjust the hem showing the fit and texture of the outfit. She pinches the fabric slightly between her fingers highlighting the softness and drape of the material. She does not speak or make any sound the entire video is silent with only ambient room atmosphere. No text no captions no animals no dialogue no voiceover. Ultra-realistic natural handheld phone movement. Shallow depth of field. Fashion editorial cinematic color grading
+
+### Prompt 6 — Nghiêng nhẹ show dáng che mặt, không thoại (mirror of Prompt 3)
+
+> A highly detailed cinematic video of the fashion model shown in reference image 2. She has luminous snow-white porcelain skin, Douyin goddess aesthetic, long silky black hair with soft natural waves, wearing stylish feminine thin gold-framed round glasses. She has an elegant hourglass figure with extremely long slender legs. She must be wearing the identical outfit from reference image 1 preserving every detail including exact color exact pattern exact fabric texture exact neckline exact sleeve length exact fit and exact silhouette as shown in the product photo. Do not alter modify or reinterpret any part of the clothing. She is standing [POSE] in front of a full-length mirror in a [BACKGROUND]. Soft golden morning sunlight streaming through sheer white curtains creating warm natural light and gentle shadows. She is holding an orange iPhone 17 Pro Max up in front of her face covering her face completely while recording so only the phone and her body outfit are visible not her face. She subtly shifts her weight and sways her body gently to the left showing the outfit from a slight side angle then back to center then gently to the right revealing the other side. Her free hand rests naturally on her hip then moves to touch her collar. She does not speak or make any sound the entire video is silent with only ambient room atmosphere. No text no captions no animals no dialogue no voiceover. Ultra-realistic natural handheld phone movement. Shallow depth of field with model in sharp focus. Fashion editorial cinematic color grading
+
 ### Design Notes
 
 > [!IMPORTANT]
 > **Outfit fidelity** — Dùng `"must be wearing the identical outfit from reference image 1 preserving every detail including exact color exact pattern exact fabric texture exact neckline exact sleeve length exact fit and exact silhouette"` + `"Do not alter modify or reinterpret"` để AI giữ nguyên 100% bộ đồ.
 
 > [!NOTE]
-> - **Prompt 1** mẫu chào + giới thiệu (KOL style)
-> - **Prompt 2 & 3** không chào, nói thẳng vào nội dung tránh lặp
-> - Không dùng `"no talking"` / `"no speaking"` → gây lỗi `PUBLIC_ERROR_AUDIO_FILTERED`
+> - **Prompt 1–3** có thoại tiếng Việt, thấy mặt mẫu
+> - **Prompt 4–6** che mặt bằng điện thoại + hoàn toàn không thoại (silent video)
+> - Prompt 4 ↔ 1, Prompt 5 ↔ 2, Prompt 6 ↔ 3 (cùng concept, khác style)
+> - Không dùng `"no talking"` / `"no speaking"` trong prompt có thoại → gây lỗi `PUBLIC_ERROR_AUDIO_FILTERED`
+> - Prompt không thoại dùng `"does not speak"` + `"no dialogue no voiceover"`
 > - Dùng placeholder `[POSE]` + `[BACKGROUND]` → Sub Prompt tự random mỗi lần gọi
 
 ---
@@ -141,4 +150,4 @@ npx jest --testPathPattern="PromptModal"
 
 ---
 
-*Tài liệu cập nhật: 15/02/2026*
+*Tài liệu cập nhật: 16/02/2026*

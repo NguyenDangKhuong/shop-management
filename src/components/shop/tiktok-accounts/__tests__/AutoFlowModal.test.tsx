@@ -122,6 +122,23 @@ describe('AutoFlowModal', () => {
         }
     ]
 
+    const mockVeo3Media = [
+        {
+            _id: 'vm_1',
+            mediaId: 'CAMaJDBjOWRk',
+            mediaFile: {
+                url: 'https://res.cloudinary.com/test/image/upload/v1/veo3/abc.jpg',
+                type: 'image',
+                publicId: 'veo3/abc'
+            }
+        },
+        {
+            _id: 'vm_2',
+            mediaId: 'XYZ123456789',
+            mediaFile: null
+        }
+    ]
+
     const defaultProps = {
         isOpen: true,
         setIsOpen: mockSetIsOpen,
@@ -131,7 +148,8 @@ describe('AutoFlowModal', () => {
         editingAutoFlow: undefined,
         onRefresh: mockOnRefresh,
         shopeeLinks: mockShopeeLinks,
-        allPrompts: mockPrompts
+        allPrompts: mockPrompts,
+        veo3Media: mockVeo3Media
     }
 
     beforeEach(() => {
@@ -196,6 +214,7 @@ describe('AutoFlowModal', () => {
         expect(screen.getByText('Shopee Link')).toBeInTheDocument()
         expect(screen.getByText('n8n URL')).toBeInTheDocument()
         expect(screen.getByText('Chọn Prompts')).toBeInTheDocument()
+        expect(screen.getByText('Reference Images')).toBeInTheDocument()
         expect(screen.getByText('Videos (0)')).toBeInTheDocument()
     })
 
@@ -450,5 +469,47 @@ describe('AutoFlowModal', () => {
         render(<AutoFlowModal {...propsWithoutPrompts} />)
 
         expect(screen.getByText('Chọn Prompts')).toBeInTheDocument()
+    })
+
+    // --- Reference Images ---
+
+    it('displays Reference Images field', () => {
+        render(<AutoFlowModal {...defaultProps} />)
+
+        expect(screen.getByText('Reference Images')).toBeInTheDocument()
+    })
+
+    it('populates referenceImages when editing autoflow with referenceImages', () => {
+        const editProps = {
+            ...defaultProps,
+            editingAutoFlow: {
+                _id: 'af_1',
+                productId: 'prod_1',
+                productTitle: 'Sản phẩm A',
+                referenceImages: [
+                    { imageUsageType: 'IMAGE_USAGE_TYPE_ASSET', mediaId: 'CAMaJDBjOWRk' }
+                ]
+            }
+        }
+
+        render(<AutoFlowModal {...editProps} />)
+
+        expect(screen.getByTitle('CAMaJDBjOWRk')).toBeInTheDocument()
+    })
+
+    it('renders with empty veo3Media list', () => {
+        const emptyProps = { ...defaultProps, veo3Media: [] }
+
+        render(<AutoFlowModal {...emptyProps} />)
+
+        expect(screen.getByText('Reference Images')).toBeInTheDocument()
+    })
+
+    it('renders without veo3Media prop', () => {
+        const { veo3Media, ...propsWithoutMedia } = defaultProps
+
+        render(<AutoFlowModal {...propsWithoutMedia} />)
+
+        expect(screen.getByText('Reference Images')).toBeInTheDocument()
     })
 })

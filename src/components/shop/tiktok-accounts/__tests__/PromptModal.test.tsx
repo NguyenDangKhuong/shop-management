@@ -42,34 +42,12 @@ describe('PromptModal', () => {
     const mockSetIsOpen = jest.fn()
     const mockOnRefresh = jest.fn()
 
-    const mockVeo3Media = [
-        {
-            _id: 'vm_1',
-            mediaId: 'CAMaJDBjOWRk',
-            mediaFile: {
-                url: 'https://res.cloudinary.com/test/image/upload/v1/veo3/abc.jpg',
-                type: 'image',
-                publicId: 'veo3/abc'
-            }
-        },
-        {
-            _id: 'vm_2',
-            mediaId: 'XYZ123456789',
-            mediaFile: null
-        },
-        {
-            _id: 'vm_3',
-            mediaId: 'NoImageMedia'
-        }
-    ]
-
     const defaultProps = {
         isOpen: true,
         setIsOpen: mockSetIsOpen,
         accountId: 'acc_1',
         editingPrompt: undefined,
-        onRefresh: mockOnRefresh,
-        veo3Media: mockVeo3Media
+        onRefresh: mockOnRefresh
     }
 
     beforeEach(() => {
@@ -94,10 +72,7 @@ describe('PromptModal', () => {
             editingPrompt: {
                 _id: 'prompt_1',
                 title: 'Test Prompt',
-                content: 'Test Content',
-                referenceImages: [
-                    { imageUsageType: 'IMAGE_USAGE_TYPE_ASSET', mediaId: 'CAMaJDBjOWRk' }
-                ]
+                content: 'Test Content'
             }
         }
 
@@ -106,13 +81,14 @@ describe('PromptModal', () => {
         expect(screen.getByText('Chỉnh sửa Prompt')).toBeInTheDocument()
     })
 
-    it('displays all form fields (no product field)', () => {
+    it('displays all form fields (no referenceImages, no product field)', () => {
         render(<PromptModal {...defaultProps} />)
 
         expect(screen.getByText('Tiêu đề')).toBeInTheDocument()
         expect(screen.getByText('Loại prompt')).toBeInTheDocument()
-        expect(screen.getByText('Reference Images')).toBeInTheDocument()
         expect(screen.getByText('Nội dung')).toBeInTheDocument()
+        // Reference Images moved to AutoFlowModal
+        expect(screen.queryByText('Reference Images')).not.toBeInTheDocument()
         // Product field should NOT exist — prompts are independent
         expect(screen.queryByText('Sản phẩm')).not.toBeInTheDocument()
     })
@@ -123,26 +99,12 @@ describe('PromptModal', () => {
         expect(screen.getByPlaceholderText('Nhập tiêu đề prompt...')).toBeInTheDocument()
     })
 
-    it('renders Media ID and Type as Select dropdowns', () => {
+    it('renders Type as Select dropdown', () => {
         render(<PromptModal {...defaultProps} />)
 
-        // Should have 2 comboboxes: Type select + Media ID select
+        // Should have 1 combobox: Type select only (no more Media ID select)
         const selects = screen.getAllByRole('combobox')
-        expect(selects.length).toBeGreaterThanOrEqual(2)
-    })
-
-    it('shows veo3 media options in Reference Images dropdown', () => {
-        render(<PromptModal {...defaultProps} />)
-
-        // Open the select dropdown
-        const selects = screen.getAllByRole('combobox')
-        const mediaSelect = selects[1] // Reference Images select (index 1, after Type select)
-        fireEvent.mouseDown(mediaSelect)
-
-        // Should show media IDs as options
-        expect(screen.getByTitle('CAMaJDBjOWRk')).toBeInTheDocument()
-        expect(screen.getByTitle('XYZ123456789')).toBeInTheDocument()
-        expect(screen.getByTitle('NoImageMedia')).toBeInTheDocument()
+        expect(selects.length).toBe(1)
     })
 
     it('has correct placeholder for content', () => {
@@ -187,10 +149,7 @@ describe('PromptModal', () => {
             editingPrompt: {
                 _id: 'prompt_1',
                 title: 'Test Title',
-                content: 'Test Content',
-                referenceImages: [
-                    { imageUsageType: 'IMAGE_USAGE_TYPE_ASSET', mediaId: 'CAMaJDBjOWRk' }
-                ]
+                content: 'Test Content'
             }
         }
 
@@ -198,16 +157,6 @@ describe('PromptModal', () => {
 
         expect(screen.getByDisplayValue('Test Title')).toBeInTheDocument()
         expect(screen.getByDisplayValue('Test Content')).toBeInTheDocument()
-        // referenceImages is now a multi-Select, so we check for the displayed text
-        expect(screen.getByTitle('CAMaJDBjOWRk')).toBeInTheDocument()
-    })
-
-    it('renders with empty veo3Media list', () => {
-        const emptyProps = { ...defaultProps, veo3Media: [] }
-
-        render(<PromptModal {...emptyProps} />)
-
-        expect(screen.getByText('Thêm Prompt mới')).toBeInTheDocument()
     })
 
     it('renders with modal width 500', () => {

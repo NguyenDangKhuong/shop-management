@@ -259,6 +259,34 @@ export default function TikTokAccountPage() {
         }
     }
 
+    const handleDuplicatePrompt = async (prompt: any) => {
+        try {
+            const response = await fetch('/api/prompts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    accountId: prompt.accountId,
+                    title: `${prompt.title} (Copy)`,
+                    content: prompt.content,
+                    type: prompt.type || 'describe',
+                    subPrompt: prompt.subPrompt || '',
+                    order: (prompt.order ?? 0) + 1
+                })
+            })
+            const data = await response.json()
+            if (data.success) {
+                message.success('Đã nhân bản prompt!')
+                if (account) {
+                    fetchPrompts(account._id)
+                }
+            } else {
+                message.error('Nhân bản thất bại: ' + data.error)
+            }
+        } catch (error: any) {
+            message.error('Lỗi: ' + error.message)
+        }
+    }
+
     const handleCopyPromptContent = (content: string) => {
         navigator.clipboard.writeText(content)
         message.success('Đã copy nội dung prompt!')
@@ -782,6 +810,34 @@ export default function TikTokAccountPage() {
                                             />
                                         </div>
                                     )}
+
+                                    {/* Reference Images on AutoFlow */}
+                                    {autoflow.referenceImages?.length > 0 && (
+                                        <div className="flex flex-wrap items-center gap-1.5 mt-1 bg-white/50 px-2 py-1 rounded">
+                                            <span className="text-[10px] text-gray-500 mr-1">🖼️ Ref:</span>
+                                            {autoflow.referenceImages.map((ref: any, idx: number) => {
+                                                const media = veo3Media.find((m: any) => m.mediaId === ref.mediaId)
+                                                return (
+                                                    <div key={idx} className="flex items-center gap-1">
+                                                        {media?.mediaFile?.url ? (
+                                                            <img
+                                                                src={media.mediaFile.url}
+                                                                alt={ref.mediaId}
+                                                                className="w-6 h-6 rounded object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div className="w-6 h-6 rounded bg-gray-200 flex items-center justify-center">
+                                                                <span className="text-[8px] text-gray-400">🎬</span>
+                                                            </div>
+                                                        )}
+                                                        <span className="text-xs text-blue-600 font-mono truncate max-w-[120px]">
+                                                            {ref.mediaId}
+                                                        </span>
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Selected Prompts (read-only) */}
@@ -803,31 +859,7 @@ export default function TikTokAccountPage() {
                                                                 {prompt.type === 'hook' ? '🪝 Hook' : '📝 Describe'}
                                                             </span>
                                                         )}
-                                                        {prompt.referenceImages?.length > 0 && (
-                                                            <div className="flex flex-wrap items-center gap-1.5 mb-1">
-                                                                {prompt.referenceImages.map((ref: any, idx: number) => {
-                                                                    const media = veo3Media.find((m: any) => m.mediaId === ref.mediaId)
-                                                                    return (
-                                                                        <div key={idx} className="flex items-center gap-1">
-                                                                            {media?.mediaFile?.url ? (
-                                                                                <img
-                                                                                    src={media.mediaFile.url}
-                                                                                    alt={ref.mediaId}
-                                                                                    className="w-6 h-6 rounded object-cover"
-                                                                                />
-                                                                            ) : (
-                                                                                <div className="w-6 h-6 rounded bg-gray-200 flex items-center justify-center">
-                                                                                    <span className="text-[8px] text-gray-400">🎬</span>
-                                                                                </div>
-                                                                            )}
-                                                                            <span className="text-xs text-blue-600 font-mono truncate max-w-[120px]">
-                                                                                {ref.mediaId}
-                                                                            </span>
-                                                                        </div>
-                                                                    )
-                                                                })}
-                                                            </div>
-                                                        )}
+
                                                         <p className="text-xs text-gray-600 line-clamp-3 whitespace-pre-wrap">
                                                             {prompt.content}
                                                         </p>
@@ -920,31 +952,6 @@ export default function TikTokAccountPage() {
                                                 </span>
                                             )}
                                         </div>
-                                        {prompt.referenceImages?.length > 0 && (
-                                            <div className="flex flex-wrap items-center gap-1.5 mb-1">
-                                                {prompt.referenceImages.map((ref: any, idx: number) => {
-                                                    const media = veo3Media.find((m: any) => m.mediaId === ref.mediaId)
-                                                    return (
-                                                        <div key={idx} className="flex items-center gap-1">
-                                                            {media?.mediaFile?.url ? (
-                                                                <img
-                                                                    src={media.mediaFile.url}
-                                                                    alt={ref.mediaId}
-                                                                    className="w-6 h-6 rounded object-cover"
-                                                                />
-                                                            ) : (
-                                                                <div className="w-6 h-6 rounded bg-gray-200 flex items-center justify-center">
-                                                                    <span className="text-[8px] text-gray-400">🎬</span>
-                                                                </div>
-                                                            )}
-                                                            <span className="text-xs text-blue-600 font-mono truncate max-w-[120px]">
-                                                                {ref.mediaId}
-                                                            </span>
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
-                                        )}
                                         <p className="text-xs text-gray-600 line-clamp-2 whitespace-pre-wrap">
                                             {prompt.content}
                                         </p>
@@ -962,6 +969,14 @@ export default function TikTokAccountPage() {
                                             onClick={() => handleCopyPromptContent(prompt.content)}
                                             title="Copy nội dung"
                                         />
+                                        <Button
+                                            type="text"
+                                            size="small"
+                                            onClick={() => handleDuplicatePrompt(prompt)}
+                                            title="Nhân bản"
+                                        >
+                                            📋
+                                        </Button>
                                         <Button
                                             type="text"
                                             size="small"
@@ -1225,6 +1240,7 @@ export default function TikTokAccountPage() {
                     onRefresh={() => fetchAutoFlows(account._id)}
                     shopeeLinks={shopeeLinks}
                     allPrompts={allPrompts}
+                    veo3Media={veo3Media}
                 />
             )}
 
@@ -1238,7 +1254,6 @@ export default function TikTokAccountPage() {
                         fetchPrompts(account._id)
                         fetchAutoFlows(account._id)
                     }}
-                    veo3Media={veo3Media}
                 />
             )}
         </div>

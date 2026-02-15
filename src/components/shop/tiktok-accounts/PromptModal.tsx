@@ -10,7 +10,6 @@ interface PromptModalProps {
     accountId: string
     editingPrompt?: any
     onRefresh: () => void
-    veo3Media?: any[]
 }
 
 const PromptModal = ({
@@ -18,13 +17,11 @@ const PromptModal = ({
     setIsOpen,
     accountId,
     editingPrompt,
-    onRefresh,
-    veo3Media = []
+    onRefresh
 }: PromptModalProps) => {
     const { message } = App.useApp()
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
-    const promptType = Form.useWatch('type', form)
 
     useEffect(() => {
         if (isOpen) {
@@ -33,8 +30,7 @@ const PromptModal = ({
                     title: editingPrompt.title || '',
                     type: editingPrompt.type || 'describe',
                     content: editingPrompt.content || '',
-                    subPrompt: editingPrompt.subPrompt || '',
-                    referenceImages: editingPrompt.referenceImages?.map((r: any) => r.mediaId) || []
+                    subPrompt: editingPrompt.subPrompt || ''
                 })
             } else {
                 form.resetFields()
@@ -52,11 +48,7 @@ const PromptModal = ({
                 title: values.title,
                 type: values.type || 'describe',
                 content: values.content,
-                subPrompt: values.subPrompt || '',
-                referenceImages: (values.referenceImages || []).map((mid: string) => ({
-                    imageUsageType: 'IMAGE_USAGE_TYPE_ASSET',
-                    mediaId: mid
-                }))
+                subPrompt: values.subPrompt || ''
             }
 
             if (editingPrompt?._id) {
@@ -114,42 +106,6 @@ const PromptModal = ({
                         ]}
                     />
                 </Form.Item>
-
-                {(promptType || 'describe') === 'describe' && (
-                    <Form.Item
-                        label="Reference Images"
-                        name="referenceImages"
-                    >
-                        <Select
-                            mode="multiple"
-                            placeholder="Chọn Media IDs (optional)..."
-                            allowClear
-                            showSearch
-                            optionFilterProp="label"
-                            options={veo3Media.map((m: any) => ({
-                                value: m.mediaId,
-                                label: m.mediaId,
-                            }))}
-                            optionRender={(option) => {
-                                const media = veo3Media.find((m: any) => m.mediaId === option.value)
-                                return (
-                                    <div className="flex items-center gap-2 py-1">
-                                        {media?.mediaFile?.url ? (
-                                            <img
-                                                src={media.mediaFile.url}
-                                                alt={String(option.value)}
-                                                className="w-8 h-8 rounded object-cover flex-shrink-0"
-                                            />
-                                        ) : (
-                                            <div className="w-8 h-8 rounded bg-gray-200 flex-shrink-0" />
-                                        )}
-                                        <span className="font-mono text-sm">{option.label}</span>
-                                    </div>
-                                )
-                            }}
-                        />
-                    </Form.Item>
-                )}
 
                 <Form.Item
                     label="Nội dung"

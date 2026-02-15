@@ -18,6 +18,7 @@ interface AutoFlowModalProps {
     onRefresh: () => void
     shopeeLinks?: any[]
     allPrompts?: any[]
+    veo3Media?: any[]
 }
 
 const AutoFlowModal = ({
@@ -29,13 +30,24 @@ const AutoFlowModal = ({
     editingAutoFlow,
     onRefresh,
     shopeeLinks = [],
-    allPrompts = []
+    allPrompts = [],
+    veo3Media = []
 }: AutoFlowModalProps) => {
     const { message } = App.useApp()
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
     const [videoFiles, setVideoFiles] = useState<any[]>([])
     const originalVideosRef = useRef<any[]>([])
+
+    // Watch promptIds to determine first prompt type
+    const selectedPromptIds = Form.useWatch('promptIds', form) || []
+    const firstPrompt = selectedPromptIds.length > 0
+        ? allPrompts.find((p: any) => p._id === selectedPromptIds[0])
+        : null
+    const firstPromptType = firstPrompt?.type || null
+    // hook → show Video, hide Images | describe → show Images, hide Video | null → show both
+    const showReferenceImages = firstPromptType !== 'hook'
+    const showVideo = firstPromptType !== 'describe'
 
     const { openWidget: openVideoWidget, isUploading: isVideoUploading } = useCloudinaryUpload(
         autoFlowVideoUploadConfig,
@@ -60,7 +72,8 @@ const AutoFlowModal = ({
                     productId: editingAutoFlow.productId || '',
                     n8nUrl: editingAutoFlow.n8nUrl || '',
                     shopeeLinkId: editingAutoFlow.shopeeLinkId || undefined,
-                    promptIds: editingAutoFlow.promptIds || []
+                    promptIds: editingAutoFlow.promptIds || [],
+                    referenceImages: editingAutoFlow.referenceImages?.map((r: any) => r.mediaId) || []
                 })
                 // Backward compat: support old videoFile or new videoFiles
                 const existing = editingAutoFlow.videoFiles?.length
@@ -124,6 +137,10 @@ const AutoFlowModal = ({
                 description: selectedShopeeLink?.description || editingAutoFlow?.description || '',
                 enabled: editingAutoFlow?.enabled || false,
                 promptIds: values.promptIds || [],
+                referenceImages: (values.referenceImages || []).map((mid: string) => ({
+                    imageUsageType: 'IMAGE_USAGE_TYPE_ASSET',
+                    mediaId: mid
+                })),
                 videoFiles: videoFiles.length > 0 ? videoFiles : []
             }
 
@@ -262,7 +279,43 @@ const AutoFlowModal = ({
                     />
                 </Form.Item>
 
-                {/* Video Upload - Multiple */}
+                {showReferenceImages && (
+                <Form.Item
+                    label="Reference Images"
+                    name="referenceImages"
+                >
+                    <Select
+                        mode="multiple"
+                        placeholder="Chọn Media IDs (optional)..."
+                        allowClear
+                        showSearch
+                        optionFilterProp="label"
+                        options={veo3Media.map((m: any) => ({
+                            value: m.mediaId,
+                            label: m.mediaId,
+                        }))}
+                        optionRender={(option) => {
+                            const media = veo3Media.find((m: any) => m.mediaId === option.value)
+                            return (
+                                <div className="flex items-center gap-2 py-1">
+                                    {media?.mediaFile?.url ? (
+                                        <img
+                                            src={media.mediaFile.url}
+                                            alt={String(option.value)}
+                                            className="w-8 h-8 rounded object-cover flex-shrink-0"
+                                        />
+                                    ) : (
+                                        <div className="w-8 h-8 rounded bg-gray-200 flex-shrink-0" />
+                                    )}
+                                    <span className="font-mono text-sm">{option.label}</span>
+                                </div>
+                            )
+                        }}
+                    />
+                </Form.Item>
+                )}
+
+                {showVideo && (
                 <Form.Item label={`Videos (${videoFiles.length})`}>
                     {videoFiles.length > 0 && (
                         <div className="space-y-2 mb-2">
@@ -296,6 +349,7 @@ const AutoFlowModal = ({
                         🎬 Thêm Video
                     </Button>
                 </Form.Item>
+                )}
             </Form>
         </Modal>
     )

@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
 import AutoFlowModel from '@/models/AutoFlow'
 import PromptModel from '@/models/Prompt'
 import connectDb from '@/utils/connectDb'
+import { NextRequest, NextResponse } from 'next/server'
 
 // GET all autoflows (filter by accountId), populate prompts via promptIds
 export async function GET(request: NextRequest) {
@@ -31,12 +31,9 @@ export async function GET(request: NextRequest) {
                 .lean()
             : []
 
-        // Create a map for fast lookup, strip _id from referenceImages subdocuments
+        // Create a map for fast lookup
         const promptsMap = new Map<string, any>()
         prompts.forEach((p: any) => {
-            if (p.referenceImages) {
-                p.referenceImages = p.referenceImages.map(({ _id, ...rest }: any) => rest)
-            }
             promptsMap.set(p._id.toString(), p)
         })
 
@@ -49,14 +46,20 @@ export async function GET(request: NextRequest) {
                     ? [a.videoFile]
                     : []
 
+            // Strip _id from referenceImages subdocuments (backward compat with old data)
+            const referenceImages = (a.referenceImages || []).map(({ _id, ...rest }: any) => rest)
+
             const allPrompts = (a.promptIds || [])
                 .map((id: string) => promptsMap.get(id))
                 .filter(Boolean)
 
             // If randomPrompt=true, randomly pick one mode:
-            // - hook mode: return 1 random hook prompt
-            // - describe mode: return all describe prompts
+            // - hook mode: return 1 random hook prompt + 1 random video + NO referenceImages
+            // - describe mode: return all describe prompts + referenceImages + NO video
             let selectedPrompts = allPrompts
+            let selectedVideos = videoFiles
+            let selectedReferenceImages = referenceImages
+
             if (randomPrompt && allPrompts.length > 0) {
                 const hookPrompts = allPrompts.filter((p: any) => p.type === 'hook')
                 const describePrompts = allPrompts.filter((p: any) => p.type !== 'hook')
@@ -67,22 +70,31 @@ export async function GET(request: NextRequest) {
                     : hookPrompts.length > 0
 
                 if (useHook) {
-                    // Hook mode: pick 1 random hook
+                    // Hook mode: pick 1 random hook + 1 random video, no referenceImages
                     selectedPrompts = [hookPrompts[Math.floor(Math.random() * hookPrompts.length)]]
+                    selectedVideos = videoFiles.length > 0
+                        ? [videoFiles[Math.floor(Math.random() * videoFiles.length)]]
+                        : []
+                    selectedReferenceImages = []
                 } else {
-                    // Describe mode: return all describe prompts
+                    // Describe mode: return all describe prompts + referenceImages, no video
                     selectedPrompts = describePrompts
+                    selectedVideos = []
+                    selectedReferenceImages = referenceImages
                 }
             }
 
-            const selectedVideos = randomPrompt && videoFiles.length > 0
-                ? [videoFiles[Math.floor(Math.random() * videoFiles.length)]]
-                : videoFiles
+            // Inject autoflow's referenceImages into each prompt for API consumers
+            const enrichedPrompts = selectedPrompts.map((p: any) => ({
+                ...p,
+                referenceImages: selectedReferenceImages
+            }))
 
             return {
                 ...a,
+                referenceImages: selectedReferenceImages,
                 videoFiles: selectedVideos,
-                prompts: selectedPrompts
+                prompts: enrichedPrompts
             }
         })
 

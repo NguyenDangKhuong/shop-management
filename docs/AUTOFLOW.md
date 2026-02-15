@@ -17,6 +17,7 @@ TikTok Account
         ├── productId, productTitle, productImage
         ├── autoFlowUrl, n8nUrl, shopeeLinkId, description
         ├── enabled, status
+        ├── referenceImages → [{imageUsageType, mediaId}]  (Veo3 Media refs)
         └── promptIds → [Prompt A._id, Prompt C._id]  (references)
 ```
 
@@ -40,9 +41,13 @@ TikTok Account
 | `enabled` | Boolean | ❌ | Bật/tắt (default: `false`) |
 | `status` | String | ❌ | `pending` \| `running` \| `done` \| `error` |
 | `promptIds` | String[] | ❌ | Mảng ID tham chiếu đến Prompt |
+| `referenceImages` | Array | ❌ | Mảng reference images từ Veo3 Media. Mỗi item: `{ imageUsageType, mediaId }` |
 | `videoFiles` | MediaFile[] | ❌ | Danh sách video đính kèm (url, publicId, type) — upload Cloudinary |
 
 **Collection:** `autoflows`
+
+> [!IMPORTANT]
+> **`referenceImages` nằm ở AutoFlow**, không phải ở Prompt. 1 AutoFlow tham chiếu nhiều prompts, tất cả dùng chung reference images. Điều này tránh duplicate dữ liệu và giúp prompt tái sử dụng được cho nhiều sản phẩm khác nhau.
 
 ---
 
@@ -75,9 +80,10 @@ GET /api/autoflows?accountId=xxx&productId=yyy&randomPrompt=true
 ```
 
 > [!TIP]
-> Dùng `randomPrompt=true` khi tích hợp n8n — mỗi lần gọi API sẽ nhận được 1 hook prompt khác nhau (random) cùng tất cả describe prompt, kèm 1 video random.
+> Dùng `randomPrompt=true` khi tích hợp n8n — API sẽ random chọn **hook mode** hoặc **describe mode**.
 
-Response trả về AutoFlow kèm danh sách Prompt đã được populate từ `promptIds`:
+Response trả về AutoFlow kèm danh sách Prompt đã được populate từ `promptIds`.
+`referenceImages` của AutoFlow được inject vào từng prompt trong response:
 
 ```json
 {
@@ -89,12 +95,20 @@ Response trả về AutoFlow kèm danh sách Prompt đã được populate từ 
       "productId": "1234567890",
       "productTitle": "Sản phẩm A",
       "promptIds": ["promptId1", "promptId2"],
+      "referenceImages": [
+        { "imageUsageType": "IMAGE_USAGE_TYPE_ASSET", "mediaId": "CAMaJGJm..." },
+        { "imageUsageType": "IMAGE_USAGE_TYPE_ASSET", "mediaId": "CAMaJDg0..." }
+      ],
       "prompts": [
         {
           "_id": "promptId1",
           "title": "Hook Prompt",
           "content": "Nội dung hook...",
-          "type": "hook"
+          "type": "hook",
+          "referenceImages": [
+            { "imageUsageType": "IMAGE_USAGE_TYPE_ASSET", "mediaId": "CAMaJGJm..." },
+            { "imageUsageType": "IMAGE_USAGE_TYPE_ASSET", "mediaId": "CAMaJDg0..." }
+          ]
         },
         {
           "_id": "promptId2",
@@ -116,9 +130,10 @@ Response trả về AutoFlow kèm danh sách Prompt đã được populate từ 
 ```
 
 > [!NOTE]
-> Khi `randomPrompt=true`:
-> - Mảng `prompts` chứa **1 hook random** + **tất cả describe**
-> - Mảng `videoFiles` chỉ có **1 phần tử** được chọn ngẫu nhiên
+> - `referenceImages` được **lưu ở AutoFlow**, nhưng API inject vào **từng prompt** trong response để tiện cho n8n
+> - Khi `randomPrompt=true`, random chọn 1 trong 2 mode:
+>   - **Hook mode**: 1 hook prompt random + 1 video random + **không có** `referenceImages`
+>   - **Describe mode**: tất cả describe prompts + `referenceImages` + **không có** `videoFiles`
 
 #### POST — Tạo AutoFlow
 
@@ -164,8 +179,15 @@ DELETE /api/autoflows?id={autoflowId}
 | `onRefresh` | `fn` | Callback refresh |
 | `shopeeLinks` | `any[]` | ShopeeLink (lấy description) |
 | `allPrompts` | `any[]` | Tất cả prompt (cho multi-select) |
+| `veo3Media` | `any[]` | Veo3 Media (dropdown chọn referenceImages) |
 
-**Form fields:** Sản phẩm, Shopee Link, n8n URL, **Chọn Prompts** (multi-select), **Video** (Cloudinary upload)
+**Form fields:** Sản phẩm, Shopee Link, n8n URL, **Chọn Prompts** (multi-select), **Reference Images** (multi-select từ Veo3 Media), **Video** (Cloudinary upload)
+
+> [!IMPORTANT]
+> Hiển thị theo prompt đầu tiên được chọn:
+> - **Hook** → ẩn Reference Images, hiện Video
+> - **Describe** → hiện Reference Images, ẩn Video
+> - **Chưa chọn prompt** → hiện cả hai
 
 ---
 
@@ -196,7 +218,7 @@ Mỗi AutoFlow có thể đính kèm **nhiều video**, upload qua Cloudinary wi
 
 ## 🧪 Testing
 
-Test file: `src/components/shop/tiktok-accounts/__tests__/AutoFlowModal.test.tsx` — 26 tests
+Test file: `src/components/shop/tiktok-accounts/__tests__/AutoFlowModal.test.tsx` — 30 tests
 
 ```bash
 npx jest --testPathPattern="AutoFlowModal"
@@ -204,4 +226,4 @@ npx jest --testPathPattern="AutoFlowModal"
 
 ---
 
-*Tài liệu cập nhật: 15/02/2026*
+*Tài liệu cập nhật: 16/02/2026*

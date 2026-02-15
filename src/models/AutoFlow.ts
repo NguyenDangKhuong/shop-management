@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose'
 import { IMediaFile, MediaFileSchema } from './MediaFile'
+import { IReferenceImage } from './Prompt'
 
 export type AutoFlowStatus = 'pending' | 'running' | 'done' | 'error'
 
@@ -15,6 +16,7 @@ export interface IAutoFlow extends Document {
     enabled: boolean
     status: AutoFlowStatus
     promptIds: string[]
+    referenceImages?: IReferenceImage[]
     videoFiles?: IMediaFile[]
     createdAt?: Date
     updatedAt?: Date
@@ -34,6 +36,14 @@ const AutoFlowSchema = new Schema({
     enabled: { type: Boolean, default: false },
     status: { type: String, enum: ['pending', 'running', 'done', 'error'], default: 'pending' },
     promptIds: [{ type: String }],
+    referenceImages: {
+        type: [{
+            imageUsageType: { type: String, default: 'IMAGE_USAGE_TYPE_ASSET' },
+            mediaId: { type: String },
+            _id: false
+        }],
+        default: undefined
+    },
     videoFiles: [{ type: MediaFileSchema }]
 }, {
     timestamps: true,
