@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="popup.css">
+  <title>Flow Token Extractor</title>
+</head>
+<body>
+  <div class="header">
+    <span class="header-icon">🔑</span>
+    <h1>Flow Token Extractor</h1>
+    <span class="badge" id="tokenCount">0</span>
+  </div>
+
+  <div class="config-section">
+    <label>API Endpoint</label>
+    <div class="config-row">
+      <input
+        type="text"
+        class="config-input"
+        id="apiUrl"
+        value="https://shop.thetaphoa.store/api/veo3-tokens"
+        placeholder="https://shop.thetaphoa.store/api/veo3-tokens"
+      >
+      <button class="btn-save" id="saveConfigBtn">Save</button>
+    </div>
+  </div>
+
+  <div class="actions-bar">
+    <button class="btn btn-send" id="sendBtn" disabled>
+      <span>📤</span> PUT
+    </button>
+    <button class="btn btn-clear" id="clearBtn">
+      <span>🗑️</span> Clear
+    </button>
+  </div>
+
+  <div class="auto-post-section">
+    <div class="auto-post-row">
+      <div class="auto-post-info">
+        <span class="auto-post-label">⏰ Auto-PUT every</span>
+        <input type="number" id="autoPostMinutes" class="minutes-input" value="5" min="1" max="1440">
+        <span class="auto-post-label">min</span>
+        <span class="auto-post-status" id="autoPostStatus">OFF</span>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="autoPostToggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="auto-post-last" id="lastAutoPost"></div>
+  </div>
+
+  <div id="tokenList" class="token-list">
+    <div class="empty-state">
+      <div class="icon">🔍</div>
+      <p>No tokens captured yet</p>
+      <p class="hint">Navigate to Google Flow to start capturing headers</p>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

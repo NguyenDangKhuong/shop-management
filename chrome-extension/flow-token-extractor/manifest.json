@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Flow Token Extractor",
+  "version": "1.0.0",
+  "description": "Extract token data from Google Flow request headers and send to Veo3 Token API",
+  "permissions": [
+    "webRequest",
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "*://labs.google/*",
+    "*://*.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
