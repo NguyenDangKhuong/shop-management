@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
-  // Send token to API
+  // Send token to API (GET first, then PUT with id, or POST if none exist)
   async function sendTokenToApi(apiUrl, tokenData, silent = false) {
     try {
       const tokenValue = tokenData.tokenValue
@@ -95,29 +95,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return false
       }
 
-      const payload = {
-        value: tokenValue
-      }
+      // Step 1: GET existing tokens to find id
+      const getResponse = await fetch(apiUrl)
+      const getResult = await getResponse.json()
 
-      // Extract projectId from URL if available
-      const urlMatch = tokenData.url?.match(/project\/([a-f0-9-]+)/)
-      if (urlMatch) {
-        payload.projectId = urlMatch[1]
+      let response
+      if (getResult.success && getResult.data && getResult.data.length > 0) {
+        // PUT — update existing token's value
+        const existingToken = getResult.data[0]
+        response = await fetch(apiUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: existingToken._id,
+            value: tokenValue
+          })
+        })
+      } else {
+        // POST — no existing token, create new
+        response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ value: tokenValue })
+        })
       }
-
-      // Extract sessionId from x-goog-authuser header
-      const headers = tokenData.headers || {}
-      if (headers['x-goog-authuser']) {
-        payload.sessionId = headers['x-goog-authuser']
-      }
-
-      const response = await fetch(apiUrl, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      })
 
       const result = await response.json()
 
