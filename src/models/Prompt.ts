@@ -1,11 +1,16 @@
 import mongoose, { Schema, Document } from 'mongoose'
 
+export interface IReferenceImage {
+    imageUsageType: string
+    mediaId: string
+}
+
 export interface IPrompt extends Document {
     accountId: string
     title: string
     content: string
     subPrompt?: string
-    mediaId?: string
+    referenceImages?: IReferenceImage[]
     type?: 'hook' | 'describe'
     order?: number
     createdAt?: Date
@@ -19,7 +24,10 @@ const PromptSchema = new Schema({
     title: { type: String, required: true },
     content: { type: String, required: true },
     subPrompt: { type: String },
-    mediaId: { type: String },
+    referenceImages: [{
+        imageUsageType: { type: String, default: 'IMAGE_USAGE_TYPE_ASSET' },
+        mediaId: { type: String }
+    }],
     type: { type: String, enum: ['hook', 'describe'], default: 'describe' },
     order: { type: Number, default: 0 }
 }, {

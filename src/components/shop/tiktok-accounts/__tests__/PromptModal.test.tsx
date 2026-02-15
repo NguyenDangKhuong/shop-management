@@ -95,7 +95,9 @@ describe('PromptModal', () => {
                 _id: 'prompt_1',
                 title: 'Test Prompt',
                 content: 'Test Content',
-                mediaId: 'CAMaJDBjOWRk'
+                referenceImages: [
+                    { imageUsageType: 'IMAGE_USAGE_TYPE_ASSET', mediaId: 'CAMaJDBjOWRk' }
+                ]
             }
         }
 
@@ -109,7 +111,7 @@ describe('PromptModal', () => {
 
         expect(screen.getByText('Tiêu đề')).toBeInTheDocument()
         expect(screen.getByText('Loại prompt')).toBeInTheDocument()
-        expect(screen.getByText('Media ID')).toBeInTheDocument()
+        expect(screen.getByText('Reference Images')).toBeInTheDocument()
         expect(screen.getByText('Nội dung')).toBeInTheDocument()
         // Product field should NOT exist — prompts are independent
         expect(screen.queryByText('Sản phẩm')).not.toBeInTheDocument()
@@ -129,12 +131,12 @@ describe('PromptModal', () => {
         expect(selects.length).toBeGreaterThanOrEqual(2)
     })
 
-    it('shows veo3 media options in Media ID dropdown', () => {
+    it('shows veo3 media options in Reference Images dropdown', () => {
         render(<PromptModal {...defaultProps} />)
 
         // Open the select dropdown
         const selects = screen.getAllByRole('combobox')
-        const mediaSelect = selects[1] // Media ID select (index 1, after Type select)
+        const mediaSelect = selects[1] // Reference Images select (index 1, after Type select)
         fireEvent.mouseDown(mediaSelect)
 
         // Should show media IDs as options
@@ -186,7 +188,9 @@ describe('PromptModal', () => {
                 _id: 'prompt_1',
                 title: 'Test Title',
                 content: 'Test Content',
-                mediaId: 'CAMaJDBjOWRk'
+                referenceImages: [
+                    { imageUsageType: 'IMAGE_USAGE_TYPE_ASSET', mediaId: 'CAMaJDBjOWRk' }
+                ]
             }
         }
 
@@ -194,7 +198,7 @@ describe('PromptModal', () => {
 
         expect(screen.getByDisplayValue('Test Title')).toBeInTheDocument()
         expect(screen.getByDisplayValue('Test Content')).toBeInTheDocument()
-        // mediaId is now a Select, so we check for the displayed text
+        // referenceImages is now a multi-Select, so we check for the displayed text
         expect(screen.getByTitle('CAMaJDBjOWRk')).toBeInTheDocument()
     })
 

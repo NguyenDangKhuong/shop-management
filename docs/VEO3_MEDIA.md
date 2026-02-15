@@ -2,7 +2,7 @@
 
 ## 📋 Tổng quan
 
-**Veo3 Media** là tính năng quản lý media (hình ảnh) gắn liền với từng TikTok Account. Mỗi media item có một `mediaId` duy nhất và có thể kèm hình ảnh upload lên Cloudinary. Media ID được sử dụng trong **Prompt** để liên kết nội dung prompt với media tương ứng.
+**Veo3 Media** là tính năng quản lý media (hình ảnh) gắn liền với từng TikTok Account. Mỗi media item có một `mediaId` duy nhất và có thể kèm hình ảnh upload lên Cloudinary. Media ID được sử dụng trong **Prompt** (loại `describe`) thông qua mảng `referenceImages` để liên kết nội dung prompt với nhiều media tương ứng.
 
 ### Kiến trúc
 
@@ -149,17 +149,25 @@ Upload sử dụng preset `CLOUDINARY_UPLOAD_TIKTOK_PRESET` (env: `NEXT_PUBLIC_C
 
 ## 🔗 Liên kết với Prompt
 
-Khi tạo/sửa Prompt trong AutoFlow, field **Media ID** là dropdown `Select` chọn từ danh sách Veo3 Media của account đó. Mỗi option hiển thị:
+Khi tạo/sửa Prompt loại **describe**, field **Reference Images** là dropdown multi-select `Select` chọn từ danh sách Veo3 Media của account đó (prompt loại **hook** không có field này). Mỗi option hiển thị:
 - Thumbnail hình ảnh (nếu có)
 - Media ID text
 
-Trên AutoFlow card, mỗi prompt cũng hiển thị thumbnail nhỏ (24×24px) bên cạnh Media ID.
+Dữ liệu lưu dạng mảng `referenceImages`:
+```json
+[
+  { "imageUsageType": "IMAGE_USAGE_TYPE_ASSET", "mediaId": "CAMaJGJm..." },
+  { "imageUsageType": "IMAGE_USAGE_TYPE_ASSET", "mediaId": "CAMaJDg0..." }
+]
+```
+
+Trên AutoFlow card và Prompt Library, mỗi prompt hiển thị danh sách thumbnails nhỏ (24×24px) cho từng reference image.
 
 **File liên quan:**
 - `src/components/shop/tiktok-accounts/PromptModal.tsx` — Prop `veo3Media` truyền từ page
-- `src/app/(admin)/tiktok-accounts/[username]/page.tsx` — Component `SortablePromptItem` nhận `veo3Media`
+- `src/app/(admin)/tiktok-accounts/[username]/page.tsx` — Hiển thị referenceImages trên prompt cards
 
 ---
 
 *Tài liệu tạo: 08/02/2026*
-*Cập nhật: 09/02/2026 — Thêm upload hình ngay khi tạo media mới*
+*Cập nhật: 15/02/2026 — Đổi `mediaId` thành `referenceImages[]` multi-select (chỉ cho prompt describe)*

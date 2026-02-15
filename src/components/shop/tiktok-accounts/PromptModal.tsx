@@ -24,6 +24,7 @@ const PromptModal = ({
     const { message } = App.useApp()
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
+    const promptType = Form.useWatch('type', form)
 
     useEffect(() => {
         if (isOpen) {
@@ -33,7 +34,7 @@ const PromptModal = ({
                     type: editingPrompt.type || 'describe',
                     content: editingPrompt.content || '',
                     subPrompt: editingPrompt.subPrompt || '',
-                    mediaId: editingPrompt.mediaId || undefined
+                    referenceImages: editingPrompt.referenceImages?.map((r: any) => r.mediaId) || []
                 })
             } else {
                 form.resetFields()
@@ -52,7 +53,10 @@ const PromptModal = ({
                 type: values.type || 'describe',
                 content: values.content,
                 subPrompt: values.subPrompt || '',
-                mediaId: values.mediaId || ''
+                referenceImages: (values.referenceImages || []).map((mid: string) => ({
+                    imageUsageType: 'IMAGE_USAGE_TYPE_ASSET',
+                    mediaId: mid
+                }))
             }
 
             if (editingPrompt?._id) {
@@ -111,38 +115,41 @@ const PromptModal = ({
                     />
                 </Form.Item>
 
-                <Form.Item
-                    label="Media ID"
-                    name="mediaId"
-                >
-                    <Select
-                        placeholder="Chọn Media ID (optional)..."
-                        allowClear
-                        showSearch
-                        optionFilterProp="label"
-                        options={veo3Media.map((m: any) => ({
-                            value: m.mediaId,
-                            label: m.mediaId,
-                        }))}
-                        optionRender={(option) => {
-                            const media = veo3Media.find((m: any) => m.mediaId === option.value)
-                            return (
-                                <div className="flex items-center gap-2 py-1">
-                                    {media?.mediaFile?.url ? (
-                                        <img
-                                            src={media.mediaFile.url}
-                                            alt={String(option.value)}
-                                            className="w-8 h-8 rounded object-cover flex-shrink-0"
-                                        />
-                                    ) : (
-                                        <div className="w-8 h-8 rounded bg-gray-200 flex-shrink-0" />
-                                    )}
-                                    <span className="font-mono text-sm">{option.label}</span>
-                                </div>
-                            )
-                        }}
-                    />
-                </Form.Item>
+                {(promptType || 'describe') === 'describe' && (
+                    <Form.Item
+                        label="Reference Images"
+                        name="referenceImages"
+                    >
+                        <Select
+                            mode="multiple"
+                            placeholder="Chọn Media IDs (optional)..."
+                            allowClear
+                            showSearch
+                            optionFilterProp="label"
+                            options={veo3Media.map((m: any) => ({
+                                value: m.mediaId,
+                                label: m.mediaId,
+                            }))}
+                            optionRender={(option) => {
+                                const media = veo3Media.find((m: any) => m.mediaId === option.value)
+                                return (
+                                    <div className="flex items-center gap-2 py-1">
+                                        {media?.mediaFile?.url ? (
+                                            <img
+                                                src={media.mediaFile.url}
+                                                alt={String(option.value)}
+                                                className="w-8 h-8 rounded object-cover flex-shrink-0"
+                                            />
+                                        ) : (
+                                            <div className="w-8 h-8 rounded bg-gray-200 flex-shrink-0" />
+                                        )}
+                                        <span className="font-mono text-sm">{option.label}</span>
+                                    </div>
+                                )
+                            }}
+                        />
+                    </Form.Item>
+                )}
 
                 <Form.Item
                     label="Nội dung"

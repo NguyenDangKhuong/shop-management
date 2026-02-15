@@ -12,7 +12,7 @@ Hệ thống AutoFlow/Prompt phục vụ việc tạo nội dung tự động ch
 ```
 TikTok Account
   ├── 📝 Prompt Library (independent, per account)
-  │     ├── Prompt A (title, content, subPrompt, mediaId)
+  │     ├── Prompt A (title, content, subPrompt, referenceImages[])
   │     ├── Prompt B
   │     └── Prompt C
   │
@@ -57,7 +57,7 @@ TikTok Account
 | `content` | String | ✅ | Nội dung prompt (max 90 từ) |
 | `type` | String | ❌ | Loại prompt: `hook` \| `describe` (default: `describe`) |
 | `subPrompt` | String | ❌ | Nội dung sub-prompt bổ sung |
-| `mediaId` | String | ❌ | Media ID (từ Veo3 Media) |
+| `referenceImages` | Array | ❌ | Mảng reference images (chỉ dùng cho `describe`). Mỗi item: `{ imageUsageType, mediaId }` |
 | `order` | Number | ❌ | Thứ tự sắp xếp |
 
 **Collection:** `prompts`
@@ -123,7 +123,11 @@ Response trả về AutoFlow kèm danh sách Prompt đã được populate từ 
           "_id": "promptId2",
           "title": "Describe Prompt",
           "content": "Nội dung describe...",
-          "type": "describe"
+          "type": "describe",
+          "referenceImages": [
+            { "imageUsageType": "IMAGE_USAGE_TYPE_ASSET", "mediaId": "CAMaJGJm..." },
+            { "imageUsageType": "IMAGE_USAGE_TYPE_ASSET", "mediaId": "CAMaJDg0..." }
+          ]
         }
       ],
       "videoFiles": [
@@ -188,7 +192,9 @@ POST /api/prompts
   "title": "...",
   "content": "...",
   "subPrompt": "...",
-  "mediaId": ""
+  "referenceImages": [
+    { "imageUsageType": "IMAGE_USAGE_TYPE_ASSET", "mediaId": "CAMaJGJm..." }
+  ]
 }
 ```
 
@@ -242,9 +248,9 @@ Layout từ trên xuống:
 | `accountId` | `string` | ID tài khoản |
 | `editingPrompt` | `any` | Prompt đang sửa (null = tạo mới) |
 | `onRefresh` | `fn` | Callback refresh |
-| `veo3Media` | `any[]` | Veo3 Media (dropdown chọn mediaId) |
+| `veo3Media` | `any[]` | Veo3 Media (dropdown chọn referenceImages) |
 
-**Form fields:** Tiêu đề, **Loại prompt** (select: Hook / Describe), Media ID (select từ Veo3), Nội dung (max 90 từ), **Sub Prompt** (text, optional)
+**Form fields:** Tiêu đề, **Loại prompt** (select: Hook / Describe), **Reference Images** (multi-select từ Veo3, chỉ hiện khi type=describe), Nội dung (max 90 từ), **Sub Prompt** (text, optional)
 
 ---
 
@@ -279,7 +285,7 @@ Mỗi AutoFlow có thể đính kèm **nhiều video**, upload qua Cloudinary wi
 
 ```
 1. Vào trang TikTok Account
-2. Tạo prompt trong Prompt Library (title, content, mediaId)
+2. Tạo prompt trong Prompt Library (title, content, referenceImages)
 3. Tạo AutoFlow → chọn sản phẩm + chọn prompts + upload video
 4. Bật/tắt AutoFlow bằng Switch
 5. Copy API URL / n8n URL để tích hợp service ngoài
@@ -299,7 +305,8 @@ npx jest --testPathPattern="tiktok-accounts/__tests__/(AutoFlowModal|PromptModal
 
 ---
 
-*Tài liệu cập nhật: 10/02/2026*
+*Tài liệu cập nhật: 15/02/2026*
+*Đổi `mediaId` thành `referenceImages[]` — multi-select chỉ dành cho prompt `describe`*
 *Thêm `randomPrompt=true` — random 1 prompt + 1 video cho n8n integration*
 *Thêm multi-video support cho AutoFlow (`videoFile` → `videoFiles`)*
 

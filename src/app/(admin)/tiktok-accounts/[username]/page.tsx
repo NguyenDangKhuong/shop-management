@@ -803,27 +803,31 @@ export default function TikTokAccountPage() {
                                                                 {prompt.type === 'hook' ? '🪝 Hook' : '📝 Describe'}
                                                             </span>
                                                         )}
-                                                        {prompt.mediaId && (() => {
-                                                            const media = veo3Media.find((m: any) => m.mediaId === prompt.mediaId)
-                                                            return (
-                                                                <div className="flex items-center gap-1.5 mb-1">
-                                                                    {media?.mediaFile?.url ? (
-                                                                        <img
-                                                                            src={media.mediaFile.url}
-                                                                            alt={prompt.mediaId}
-                                                                            className="w-6 h-6 rounded object-cover"
-                                                                        />
-                                                                    ) : (
-                                                                        <div className="w-6 h-6 rounded bg-gray-200 flex items-center justify-center">
-                                                                            <span className="text-[8px] text-gray-400">🎬</span>
+                                                        {prompt.referenceImages?.length > 0 && (
+                                                            <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                                                                {prompt.referenceImages.map((ref: any, idx: number) => {
+                                                                    const media = veo3Media.find((m: any) => m.mediaId === ref.mediaId)
+                                                                    return (
+                                                                        <div key={idx} className="flex items-center gap-1">
+                                                                            {media?.mediaFile?.url ? (
+                                                                                <img
+                                                                                    src={media.mediaFile.url}
+                                                                                    alt={ref.mediaId}
+                                                                                    className="w-6 h-6 rounded object-cover"
+                                                                                />
+                                                                            ) : (
+                                                                                <div className="w-6 h-6 rounded bg-gray-200 flex items-center justify-center">
+                                                                                    <span className="text-[8px] text-gray-400">🎬</span>
+                                                                                </div>
+                                                                            )}
+                                                                            <span className="text-xs text-blue-600 font-mono truncate max-w-[120px]">
+                                                                                {ref.mediaId}
+                                                                            </span>
                                                                         </div>
-                                                                    )}
-                                                                    <span className="text-xs text-blue-600 font-mono truncate max-w-[120px]">
-                                                                        {prompt.mediaId}
-                                                                    </span>
-                                                                </div>
-                                                            )
-                                                        })()}
+                                                                    )
+                                                                })}
+                                                            </div>
+                                                        )}
                                                         <p className="text-xs text-gray-600 line-clamp-3 whitespace-pre-wrap">
                                                             {prompt.content}
                                                         </p>
@@ -916,27 +920,31 @@ export default function TikTokAccountPage() {
                                                 </span>
                                             )}
                                         </div>
-                                        {prompt.mediaId && (() => {
-                                            const media = veo3Media.find((m: any) => m.mediaId === prompt.mediaId)
-                                            return (
-                                                <div className="flex items-center gap-1.5 mb-1">
-                                                    {media?.mediaFile?.url ? (
-                                                        <img
-                                                            src={media.mediaFile.url}
-                                                            alt={prompt.mediaId}
-                                                            className="w-6 h-6 rounded object-cover"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-6 h-6 rounded bg-gray-200 flex items-center justify-center">
-                                                            <span className="text-[8px] text-gray-400">🎬</span>
+                                        {prompt.referenceImages?.length > 0 && (
+                                            <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                                                {prompt.referenceImages.map((ref: any, idx: number) => {
+                                                    const media = veo3Media.find((m: any) => m.mediaId === ref.mediaId)
+                                                    return (
+                                                        <div key={idx} className="flex items-center gap-1">
+                                                            {media?.mediaFile?.url ? (
+                                                                <img
+                                                                    src={media.mediaFile.url}
+                                                                    alt={ref.mediaId}
+                                                                    className="w-6 h-6 rounded object-cover"
+                                                                />
+                                                            ) : (
+                                                                <div className="w-6 h-6 rounded bg-gray-200 flex items-center justify-center">
+                                                                    <span className="text-[8px] text-gray-400">🎬</span>
+                                                                </div>
+                                                            )}
+                                                            <span className="text-xs text-blue-600 font-mono truncate max-w-[120px]">
+                                                                {ref.mediaId}
+                                                            </span>
                                                         </div>
-                                                    )}
-                                                    <span className="text-xs text-blue-600 font-mono truncate max-w-[120px]">
-                                                        {prompt.mediaId}
-                                                    </span>
-                                                </div>
-                                            )
-                                        })()}
+                                                    )
+                                                })}
+                                            </div>
+                                        )}
                                         <p className="text-xs text-gray-600 line-clamp-2 whitespace-pre-wrap">
                                             {prompt.content}
                                         </p>
