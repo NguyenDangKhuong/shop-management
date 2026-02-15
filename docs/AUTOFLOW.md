@@ -1,20 +1,17 @@
-# ⚡ AutoFlow & 📝 Prompt Library
+# ⚡ AutoFlow
 
 ## 📋 Tổng quan
 
-Hệ thống AutoFlow/Prompt phục vụ việc tạo nội dung tự động cho sản phẩm TikTok.
+Hệ thống AutoFlow phục vụ việc tạo nội dung tự động cho sản phẩm TikTok.
 
 - **AutoFlow** — đại diện cho một sản phẩm, chứa cấu hình tự động hoá (webhook, API URL, bật/tắt)
-- **Prompt Library** — thư viện prompt độc lập, quản lý riêng biệt, được AutoFlow tham chiếu qua `promptIds`
+- **Prompt Library** — thư viện prompt độc lập, được AutoFlow tham chiếu qua `promptIds`. Xem [PROMPT.md](PROMPT.md)
 
 ### Kiến trúc
 
 ```
 TikTok Account
-  ├── 📝 Prompt Library (independent, per account)
-  │     ├── Prompt A (title, content, subPrompt, referenceImages[])
-  │     ├── Prompt B
-  │     └── Prompt C
+  ├── 📝 Prompt Library → xem PROMPT.md
   │
   └── ⚡ AutoFlow[] (1 per product)
         ├── productId, productTitle, productImage
@@ -28,9 +25,7 @@ TikTok Account
 
 ---
 
-## 🗄️ Database Models
-
-### AutoFlow Model (`src/models/AutoFlow.ts`)
+## 🗄️ Database Model (`src/models/AutoFlow.ts`)
 
 | Field | Type | Required | Mô tả |
 |-------|------|----------|-------|
@@ -49,34 +44,9 @@ TikTok Account
 
 **Collection:** `autoflows`
 
-### Prompt Model (`src/models/Prompt.ts`)
-
-| Field | Type | Required | Mô tả |
-|-------|------|----------|-------|
-| `accountId` | String | ✅ | ID của TikTok Account |
-| `title` | String | ✅ | Tiêu đề prompt |
-| `content` | String | ✅ | Nội dung prompt (max 90 từ) |
-| `type` | String | ❌ | Loại prompt: `hook` \| `describe` (default: `describe`) |
-| `subPrompt` | String | ❌ | Nội dung sub-prompt bổ sung |
-| `referenceImages` | Array | ❌ | Mảng reference images (chỉ dùng cho `describe`). Mỗi item: `{ imageUsageType, mediaId }` |
-| `order` | Number | ❌ | Thứ tự sắp xếp |
-
-**Collection:** `prompts`
-
-> [!NOTE]
-> Prompt **không** chứa thông tin sản phẩm. Mối liên hệ với sản phẩm được xác định qua AutoFlow.
-
-> [!IMPORTANT]
-> **`referenceImages` subdocument có `_id: false`** — Mongoose mặc định tự thêm `_id` vào mỗi item trong array subdocument, nhưng field này không cần thiết vì:
-> - Tất cả CRUD operations (GET/POST/PUT/DELETE) đều thao tác trên Prompt document chính qua `prompt._id`
-> - Mỗi reference image được xác định bằng `mediaId` (unique từ Veo3 Media), không cần `_id` riêng
-> - Loại bỏ `_id` giúp API response sạch hơn, đặc biệt khi tích hợp với n8n workflows
-
 ---
 
-## 🔌 API Endpoints
-
-### AutoFlow API (`/api/autoflows`)
+## 🔌 API Endpoints (`/api/autoflows`)
 
 #### GET — Lấy danh sách AutoFlow (kèm prompts)
 
@@ -92,13 +62,13 @@ GET /api/autoflows?accountId={accountId}&productId={productId}
 | `productId` | String | Lọc theo Product ID |
 | `randomPrompt` | `true` | Trả về **1 prompt hook random** + **tất cả prompt describe** và **1 video random** cho mỗi AutoFlow |
 
-##### Chế độ bình thường (trả về tất cả)
+##### Chế độ bình thường
 
 ```
 GET /api/autoflows?accountId=xxx&productId=yyy
 ```
 
-##### Chế độ random (cho n8n/auto flow)
+##### Chế độ random (cho n8n)
 
 ```
 GET /api/autoflows?accountId=xxx&productId=yyy&randomPrompt=true
@@ -182,57 +152,7 @@ DELETE /api/autoflows?id={autoflowId}
 
 ---
 
-### Prompt API (`/api/prompts`)
-
-#### GET — Lấy danh sách Prompt
-
-```
-GET /api/prompts?accountId={accountId}
-```
-
-#### POST — Tạo Prompt
-
-```json
-POST /api/prompts
-{
-  "accountId": "...",
-  "title": "...",
-  "content": "...",
-  "subPrompt": "...",
-  "referenceImages": [
-    { "imageUsageType": "IMAGE_USAGE_TYPE_ASSET", "mediaId": "CAMaJGJm..." }
-  ]
-}
-```
-
-#### PUT — Cập nhật Prompt
-
-```json
-PUT /api/prompts
-{ "id": "prompt_id", "title": "...", "content": "..." }
-```
-
-#### DELETE — Xóa Prompt
-
-```
-DELETE /api/prompts?id={promptId}
-```
-
----
-
-## 🖥️ UI Components
-
-### Trang TikTok Account (`src/app/(admin)/tiktok-accounts/[username]/page.tsx`)
-
-Layout từ trên xuống:
-1. **Account Header** — Thông tin tài khoản
-2. **Lịch đăng bài** — Scheduled posts
-3. **⚡ AutoFlow** — Danh sách AutoFlow cards
-4. **📝 Prompt Library** — Quản lý prompt độc lập (CRUD)
-5. **🎬 Veo3 Media** — Quản lý media
-6. **Danh sách sản phẩm** — Product grid
-
-### AutoFlowModal (`src/components/shop/tiktok-accounts/AutoFlowModal.tsx`)
+## 🖥️ UI — AutoFlowModal (`src/components/shop/tiktok-accounts/AutoFlowModal.tsx`)
 
 | Prop | Type | Mô tả |
 |------|------|-------|
@@ -246,18 +166,6 @@ Layout từ trên xuống:
 | `allPrompts` | `any[]` | Tất cả prompt (cho multi-select) |
 
 **Form fields:** Sản phẩm, Shopee Link, n8n URL, **Chọn Prompts** (multi-select), **Video** (Cloudinary upload)
-
-### PromptModal (`src/components/shop/tiktok-accounts/PromptModal.tsx`)
-
-| Prop | Type | Mô tả |
-|------|------|-------|
-| `isOpen` / `setIsOpen` | `boolean` / `fn` | Đóng/mở modal |
-| `accountId` | `string` | ID tài khoản |
-| `editingPrompt` | `any` | Prompt đang sửa (null = tạo mới) |
-| `onRefresh` | `fn` | Callback refresh |
-| `veo3Media` | `any[]` | Veo3 Media (dropdown chọn referenceImages) |
-
-**Form fields:** Tiêu đề, **Loại prompt** (select: Hook / Describe), **Reference Images** (multi-select từ Veo3, chỉ hiện khi type=describe), Nội dung (max 90 từ), **Sub Prompt** (text, optional)
 
 ---
 
@@ -281,39 +189,19 @@ Mỗi AutoFlow có thể đính kèm **nhiều video**, upload qua Cloudinary wi
 4. Có thể upload nhiều video lần lượt
 5. Submit → lưu `videoFiles: [{ url, publicId, type: 'video' }, ...]` vào AutoFlow
 
-**Hiển thị:** Danh sách video ở cuối mỗi AutoFlow card trên trang TikTok Account (với controls, max height 160px mỗi video).
-
 > [!NOTE]
 > **Backward compat:** API GET tự động migrate dữ liệu cũ `videoFile` → `videoFiles: [videoFile]`
 
 ---
 
-## 🔄 Luồng hoạt động
-
-```
-1. Vào trang TikTok Account
-2. Tạo prompt trong Prompt Library (title, content, referenceImages)
-3. Tạo AutoFlow → chọn sản phẩm + chọn prompts + upload video
-4. Bật/tắt AutoFlow bằng Switch
-5. Copy API URL / n8n URL để tích hợp service ngoài
-```
-
----
-
 ## 🧪 Testing
 
-Test files:
-- `src/components/shop/tiktok-accounts/__tests__/AutoFlowModal.test.tsx` — 24 tests
-- `src/components/shop/tiktok-accounts/__tests__/PromptModal.test.tsx` — 13 tests
+Test file: `src/components/shop/tiktok-accounts/__tests__/AutoFlowModal.test.tsx` — 26 tests
 
 ```bash
-npx jest --testPathPattern="tiktok-accounts/__tests__/(AutoFlowModal|PromptModal)"
+npx jest --testPathPattern="AutoFlowModal"
 ```
 
 ---
 
 *Tài liệu cập nhật: 15/02/2026*
-*Đổi `mediaId` thành `referenceImages[]` — multi-select chỉ dành cho prompt `describe`*
-*Thêm `randomPrompt=true` — random 1 prompt + 1 video cho n8n integration*
-*Thêm multi-video support cho AutoFlow (`videoFile` → `videoFiles`)*
-

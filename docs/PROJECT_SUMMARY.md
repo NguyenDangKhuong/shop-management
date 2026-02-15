@@ -302,6 +302,7 @@ MINIO_SECRET_KEY=...
 | [CICD.md](../CICD.md) | CI/CD Pipeline documentation |
 | [PRE_PUSH_HOOK.md](../PRE_PUSH_HOOK.md) | Git hooks documentation |
 | [AUTOFLOW.md](AUTOFLOW.md) | AutoFlow feature documentation |
+| [PROMPT.md](PROMPT.md) | Prompt Library, Veo3 templates & design notes |
 
 ---
 
