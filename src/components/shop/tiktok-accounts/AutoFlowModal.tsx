@@ -183,6 +183,26 @@ const AutoFlowModal = ({
                                 label: product.title
                             }))
                         }
+                        optionRender={(option) => {
+                            const product = products.find((p: any) => p.product_id === option.value)
+                            const imageUrl = product?.images?.[0]?.url_list?.[0]
+                            return (
+                                <div className="flex items-center gap-2 py-1">
+                                    {imageUrl ? (
+                                        <img
+                                            src={imageUrl}
+                                            alt={String(option.label)}
+                                            className="w-8 h-8 rounded object-cover flex-shrink-0"
+                                        />
+                                    ) : (
+                                        <div className="w-8 h-8 rounded bg-gray-200 flex-shrink-0 flex items-center justify-center">
+                                            <span className="text-xs text-gray-400">📦</span>
+                                        </div>
+                                    )}
+                                    <span className="text-sm truncate">{option.label}</span>
+                                </div>
+                            )
+                        }}
                     />
                 </Form.Item>
 
