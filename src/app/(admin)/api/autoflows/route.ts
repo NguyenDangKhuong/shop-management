@@ -10,7 +10,6 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const accountId = searchParams.get('accountId')
         const productId = searchParams.get('productId')
-        const randomPrompt = searchParams.get('randomPrompt') === 'true'
 
         const query: any = {}
         if (accountId) query.accountId = accountId
@@ -49,51 +48,20 @@ export async function GET(request: NextRequest) {
             // Strip _id from referenceImages subdocuments (backward compat with old data)
             const referenceImages = (a.referenceImages || []).map(({ _id, ...rest }: any) => rest)
 
-            const allPrompts = (a.promptIds || [])
+            const orderedPrompts = (a.promptIds || [])
                 .map((id: string) => promptsMap.get(id))
                 .filter(Boolean)
 
-            // If randomPrompt=true, randomly pick one mode:
-            // - hook mode: return 1 random hook prompt + 1 random video + NO referenceImages
-            // - describe mode: return all describe prompts + referenceImages + NO video
-            let selectedPrompts = allPrompts
-            let selectedVideos = videoFiles
-            let selectedReferenceImages = referenceImages
-
-            if (randomPrompt && allPrompts.length > 0) {
-                const hookPrompts = allPrompts.filter((p: any) => p.type === 'hook')
-                const describePrompts = allPrompts.filter((p: any) => p.type !== 'hook')
-
-                // Randomly choose between hook or describe mode
-                const useHook = hookPrompts.length > 0 && describePrompts.length > 0
-                    ? Math.random() < 0.5
-                    : hookPrompts.length > 0
-
-                if (useHook) {
-                    // Hook mode: pick 1 random hook + 1 random video, no referenceImages
-                    selectedPrompts = [hookPrompts[Math.floor(Math.random() * hookPrompts.length)]]
-                    selectedVideos = videoFiles.length > 0
-                        ? [videoFiles[Math.floor(Math.random() * videoFiles.length)]]
-                        : []
-                    selectedReferenceImages = []
-                } else {
-                    // Describe mode: return all describe prompts + referenceImages, no video
-                    selectedPrompts = describePrompts
-                    selectedVideos = []
-                    selectedReferenceImages = referenceImages
-                }
-            }
-
             // Inject autoflow's referenceImages into each prompt for API consumers
-            const enrichedPrompts = selectedPrompts.map((p: any) => ({
+            const enrichedPrompts = orderedPrompts.map((p: any) => ({
                 ...p,
-                referenceImages: selectedReferenceImages
+                referenceImages
             }))
 
             return {
                 ...a,
-                referenceImages: selectedReferenceImages,
-                videoFiles: selectedVideos,
+                referenceImages,
+                videoFiles,
                 prompts: enrichedPrompts
             }
         })

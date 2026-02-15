@@ -771,8 +771,7 @@ export default function TikTokAccountPage() {
 
                                     {/* API Endpoint */}
                                     {(() => {
-                                        const baseUrl = autoflow.autoFlowUrl || `${window.location.origin}/api/autoflows?accountId=${autoflow.accountId}&productId=${autoflow.productId}`
-                                        const fullUrl = baseUrl.includes('randomPrompt=') ? baseUrl : `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}randomPrompt=true`
+                                        const fullUrl = autoflow.autoFlowUrl || `${window.location.origin}/api/autoflows?accountId=${autoflow.accountId}&productId=${autoflow.productId}`
                                         return (
                                             <div className="flex items-center gap-2 mt-1.5 bg-white/50 px-2 py-1 rounded">
                                                 <a href={fullUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 font-mono truncate flex-1 hover:underline">

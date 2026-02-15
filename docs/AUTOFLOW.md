@@ -65,22 +65,10 @@ GET /api/autoflows?accountId={accountId}&productId={productId}
 |-------|------|-------|
 | `accountId` | String | Lọc theo TikTok Account ID |
 | `productId` | String | Lọc theo Product ID |
-| `randomPrompt` | `true` | Trả về **1 prompt hook random** + **tất cả prompt describe** và **1 video random** cho mỗi AutoFlow |
-
-##### Chế độ bình thường
 
 ```
 GET /api/autoflows?accountId=xxx&productId=yyy
 ```
-
-##### Chế độ random (cho n8n)
-
-```
-GET /api/autoflows?accountId=xxx&productId=yyy&randomPrompt=true
-```
-
-> [!TIP]
-> Dùng `randomPrompt=true` khi tích hợp n8n — API sẽ random chọn **hook mode** hoặc **describe mode**.
 
 Response trả về AutoFlow kèm danh sách Prompt đã được populate từ `promptIds`.
 `referenceImages` của AutoFlow được inject vào từng prompt trong response:
@@ -130,10 +118,7 @@ Response trả về AutoFlow kèm danh sách Prompt đã được populate từ 
 ```
 
 > [!NOTE]
-> - `referenceImages` được **lưu ở AutoFlow**, nhưng API inject vào **từng prompt** trong response để tiện cho n8n
-> - Khi `randomPrompt=true`, random chọn 1 trong 2 mode:
->   - **Hook mode**: 1 hook prompt random + 1 video random + **không có** `referenceImages`
->   - **Describe mode**: tất cả describe prompts + `referenceImages` + **không có** `videoFiles`
+> `referenceImages` được **lưu ở AutoFlow**, nhưng API inject vào **từng prompt** trong response để tiện cho n8n
 
 #### POST — Tạo AutoFlow
 
