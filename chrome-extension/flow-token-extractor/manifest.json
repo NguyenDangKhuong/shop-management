@@ -10,7 +10,8 @@
   ],
   "host_permissions": [
     "*://labs.google/*",
-    "*://*.googleapis.com/*"
+    "*://*.googleapis.com/*",
+    "*://shop.thetaphoa.store/*"
   ],
   "background": {
     "service_worker": "background.js"
