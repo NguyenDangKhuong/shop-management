@@ -24,10 +24,14 @@ const PromptSchema = new Schema({
     title: { type: String, required: true },
     content: { type: String, required: true },
     subPrompt: { type: String },
-    referenceImages: [{
-        imageUsageType: { type: String, default: 'IMAGE_USAGE_TYPE_ASSET' },
-        mediaId: { type: String }
-    }],
+    referenceImages: {
+        type: [{
+            imageUsageType: { type: String, default: 'IMAGE_USAGE_TYPE_ASSET' },
+            mediaId: { type: String },
+            _id: false
+        }],
+        default: undefined
+    },
     type: { type: String, enum: ['hook', 'describe'], default: 'describe' },
     order: { type: Number, default: 0 }
 }, {

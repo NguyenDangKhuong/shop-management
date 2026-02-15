@@ -65,6 +65,12 @@ TikTok Account
 > [!NOTE]
 > Prompt **không** chứa thông tin sản phẩm. Mối liên hệ với sản phẩm được xác định qua AutoFlow.
 
+> [!IMPORTANT]
+> **`referenceImages` subdocument có `_id: false`** — Mongoose mặc định tự thêm `_id` vào mỗi item trong array subdocument, nhưng field này không cần thiết vì:
+> - Tất cả CRUD operations (GET/POST/PUT/DELETE) đều thao tác trên Prompt document chính qua `prompt._id`
+> - Mỗi reference image được xác định bằng `mediaId` (unique từ Veo3 Media), không cần `_id` riêng
+> - Loại bỏ `_id` giúp API response sạch hơn, đặc biệt khi tích hợp với n8n workflows
+
 ---
 
 ## 🔌 API Endpoints
