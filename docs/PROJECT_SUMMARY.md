@@ -198,7 +198,7 @@ shop-management/
 | **ShopeeLink** | Link Shopee | productId, shopeeUrl |
 | **TikTokAccount** | TK TikTok | username, accessToken |
 | **TikTokScheduledPost** | Bài TikTok | content, scheduledTime |
-| **AutoFlow** | AutoFlow | accountId, productId, productTitle, autoFlowUrl, enabled, promptIds[], videoFile |
+| **AutoFlow** | AutoFlow | accountId, productId, productTitle, autoFlowUrl, shopeeLinkId, enabled, promptIds[], videoFiles[] |
 | **Prompt** | Prompt (độc lập) | accountId, title, content, referenceImages[] |
 | **Change** | Changelog | description, timestamp |
 

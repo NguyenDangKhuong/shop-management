@@ -18,7 +18,7 @@ TikTok Account
   │
   └── ⚡ AutoFlow[] (1 per product)
         ├── productId, productTitle, productImage
-        ├── autoFlowUrl, n8nUrl, description
+        ├── autoFlowUrl, n8nUrl, shopeeLinkId, description
         ├── enabled, status
         └── promptIds → [Prompt A._id, Prompt C._id]  (references)
 ```
@@ -40,6 +40,7 @@ TikTok Account
 | `productImage` | String | ❌ | URL ảnh sản phẩm |
 | `autoFlowUrl` | String | ❌ | URL API endpoint |
 | `n8nUrl` | String | ❌ | URL webhook n8n |
+| `shopeeLinkId` | String | ❌ | ID tham chiếu đến ShopeeLink (để hiển thị lại khi edit) |
 | `description` | String | ❌ | Mô tả (từ ShopeeLink) |
 | `enabled` | Boolean | ❌ | Bật/tắt (default: `false`) |
 | `status` | String | ❌ | `pending` \| `running` \| `done` \| `error` |

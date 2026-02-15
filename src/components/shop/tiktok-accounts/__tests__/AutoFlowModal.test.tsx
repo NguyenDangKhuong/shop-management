@@ -285,6 +285,39 @@ describe('AutoFlowModal', () => {
         expect(screen.getByTitle('Sản phẩm không có description')).toBeInTheDocument()
     })
 
+    it('populates shopeeLinkId when editing autoflow with shopeeLink', () => {
+        const editProps = {
+            ...defaultProps,
+            editingAutoFlow: {
+                _id: 'af_1',
+                productId: 'prod_1',
+                productTitle: 'Sản phẩm A',
+                shopeeLinkId: 'sl_1'
+            }
+        }
+
+        render(<AutoFlowModal {...editProps} />)
+
+        // The selected shopee link name should be displayed
+        expect(screen.getByTitle('Đèn hoàng hôn')).toBeInTheDocument()
+    })
+
+    it('shopeeLink field is empty when editing autoflow without shopeeLinkId', () => {
+        const editProps = {
+            ...defaultProps,
+            editingAutoFlow: {
+                _id: 'af_1',
+                productId: 'prod_1',
+                productTitle: 'Sản phẩm A'
+            }
+        }
+
+        render(<AutoFlowModal {...editProps} />)
+
+        // Shopee Link select should show placeholder, not a selected value
+        expect(screen.getByText('Chọn Shopee Link để lấy description...')).toBeInTheDocument()
+    })
+
     // --- Prompt Select ---
 
     it('displays prompt select as multi-select field', () => {

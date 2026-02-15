@@ -120,6 +120,7 @@ const AutoFlowModal = ({
                 productImage: selectedProduct?.images?.[0]?.url_list?.[0] || editingAutoFlow?.productImage || '',
                 autoFlowUrl: `${window.location.origin}/api/autoflows?accountId=${accountId}&productId=${values.productId}`,
                 n8nUrl: values.n8nUrl || '',
+                shopeeLinkId: values.shopeeLinkId || '',
                 description: selectedShopeeLink?.description || editingAutoFlow?.description || '',
                 enabled: editingAutoFlow?.enabled || false,
                 promptIds: values.promptIds || [],
