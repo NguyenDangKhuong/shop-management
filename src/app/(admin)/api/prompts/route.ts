@@ -18,6 +18,13 @@ export async function GET(request: NextRequest) {
             .sort({ order: 1, createdAt: 1 })
             .lean()
 
+        // Strip _id from referenceImages subdocuments
+        prompts.forEach((p: any) => {
+            if (p.referenceImages) {
+                p.referenceImages = p.referenceImages.map(({ _id, ...rest }: any) => rest)
+            }
+        })
+
         return NextResponse.json({ success: true, data: prompts })
     } catch (error: any) {
         return NextResponse.json({ success: false, error: error.message }, { status: 500 })

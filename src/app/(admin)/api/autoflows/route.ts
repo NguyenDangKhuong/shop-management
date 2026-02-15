@@ -31,9 +31,12 @@ export async function GET(request: NextRequest) {
                 .lean()
             : []
 
-        // Create a map for fast lookup
+        // Create a map for fast lookup, strip _id from referenceImages subdocuments
         const promptsMap = new Map<string, any>()
         prompts.forEach((p: any) => {
+            if (p.referenceImages) {
+                p.referenceImages = p.referenceImages.map(({ _id, ...rest }: any) => rest)
+            }
             promptsMap.set(p._id.toString(), p)
         })
 
