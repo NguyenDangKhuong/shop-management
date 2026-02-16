@@ -8,6 +8,7 @@ import {
     BarChartOutlined,
     BookOutlined,
     FacebookOutlined,
+    FileTextOutlined,
     KeyOutlined,
     ShoppingCartOutlined,
     ShoppingOutlined,
@@ -91,6 +92,11 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
             key: '/veo3-tokens',
             icon: <KeyOutlined />,
             label: <Link href='/veo3-tokens'>Veo3 Tokens</Link>
+          },
+          {
+            key: '/prompt-library',
+            icon: <FileTextOutlined />,
+            label: <Link href='/prompt-library'>Prompt Library</Link>
           },
           {
             key: '/tiktok-music',
