@@ -22,29 +22,30 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user
       const userRole = auth?.user?.role
 
-      // Admin routes that require role = 0
-      const adminRoutes = ['/products', '/orders', '/categories', '/carts']
-      const isOnAdminRoute = adminRoutes.some((route) =>
-        nextUrl.pathname.startsWith(route)
+      // Public routes that do not require authentication
+      const publicRoutes = ['/', '/cv', '/projects', '/login', '/register', '/privacy', '/terms', '/shopee-links']
+      const isPublicRoute = publicRoutes.some((route) =>
+        route === '/' ? nextUrl.pathname === '/' : nextUrl.pathname.startsWith(route)
       )
 
-
-      if (isOnAdminRoute) {
-        // Not logged in - redirect to login
-        if (!isLoggedIn) {
-          console.log('  ❌ NOT LOGGED IN - Will redirect to /login')
-          return false
-        }
-
-        // Logged in but not admin (role !== 0)
-        if (userRole !== 0) {
-          console.log('  ❌ NOT ADMIN - Will redirect to /')
-          return Response.redirect(new URL('/', nextUrl))
-        }
-
-        console.log('  ✅ ADMIN ACCESS GRANTED')
+      // Allow public routes without auth
+      if (isPublicRoute) {
+        return true
       }
 
+      // All other routes require authentication
+      if (!isLoggedIn) {
+        console.log('  ❌ NOT LOGGED IN - Will redirect to /login')
+        return false
+      }
+
+      // Require admin role (role === 0) for all protected routes
+      if (userRole !== 0) {
+        console.log('  ❌ NOT ADMIN - Will redirect to /')
+        return Response.redirect(new URL('/', nextUrl))
+      }
+
+      console.log('  ✅ ADMIN ACCESS GRANTED')
       return true
     },
     // JWT rotation: refresh token if within 7-day window
