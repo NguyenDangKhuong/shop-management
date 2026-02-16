@@ -134,6 +134,19 @@ Mỗi prompt `describe` sử dụng 2 reference images (đặt ở **AutoFlow**,
 
 ---
 
+## 🌱 Seed Prompts
+
+File: `scripts/seed-prompts.ts` — chứa toàn bộ prompt templates. Khi sửa prompt, sửa file này rồi chạy lệnh bên dưới để cập nhật DB.
+
+> [!CAUTION]
+> Lệnh này sẽ **xoá toàn bộ shared prompts cũ** (không có `accountId`) rồi insert lại từ đầu. Prompts gắn với account cụ thể sẽ không bị ảnh hưởng.
+
+```bash
+npx ts-node --compiler-options '{"module":"commonjs"}' -r tsconfig-paths/register scripts/seed-prompts.ts
+```
+
+---
+
 ## 🧪 Testing
 
 Test file: `src/components/shop/tiktok-accounts/__tests__/PromptModal.test.tsx` — 14 tests
