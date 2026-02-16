@@ -61,7 +61,7 @@ describe('LoginForm', () => {
 
         await waitFor(() => {
             expect(authenticate).toHaveBeenCalledWith('test@example.com', 'password123')
-            expect(mockPush).toHaveBeenCalledWith('/facebook-posts')
+            expect(mockPush).toHaveBeenCalledWith('/tiktok-accounts')
         })
     })
 

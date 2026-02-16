@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -8,11 +8,31 @@ import { authenticate } from '@/actions/auth'
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from '@/components/icons'
 import { Button, Input } from '@/components/ui'
 
+const REMEMBER_KEY = 'login_remember'
+
 const LoginForm = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
+  const [savedEmail, setSavedEmail] = useState('')
+  const [savedPassword, setSavedPassword] = useState('')
   const router = useRouter()
+
+  // Load saved credentials on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(REMEMBER_KEY)
+      if (saved) {
+        const { email, password } = JSON.parse(saved)
+        setSavedEmail(email || '')
+        setSavedPassword(password || '')
+        setRememberMe(true)
+      }
+    } catch {
+      // ignore parse errors
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -24,12 +44,19 @@ const LoginForm = () => {
     const password = formData.get('password') as string
 
     try {
+      // Save or clear credentials based on rememberMe
+      if (rememberMe) {
+        localStorage.setItem(REMEMBER_KEY, JSON.stringify({ email, password }))
+      } else {
+        localStorage.removeItem(REMEMBER_KEY)
+      }
+
       const result = await authenticate(email, password)
 
       if (result.success) {
         // Redirect based on role
         if (result.role === 0) {
-          router.push('/facebook-posts')
+          router.push('/tiktok-accounts')
         } else {
           router.push('/')
         }
@@ -70,6 +97,7 @@ const LoginForm = () => {
             name="email"
             placeholder="Email Address"
             leftIcon={<MailIcon />}
+            defaultValue={savedEmail}
             required
           />
 
@@ -81,13 +109,24 @@ const LoginForm = () => {
             leftIcon={<LockIcon />}
             rightIcon={showPassword ? <EyeOffIcon /> : <EyeIcon />}
             onRightIconClick={() => setShowPassword(!showPassword)}
+            defaultValue={savedPassword}
             required
           />
 
           {/* Remember Me & Forgot Password */}
           <div className="flex items-center justify-between text-sm">
             <label className="flex items-center text-gray-400 cursor-pointer hover:text-white transition-colors">
-              <input type="checkbox" className="mr-2 w-4 h-4 accent-[#00e5ff] rounded bg-white/5 border-white/10 cursor-pointer" />
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => {
+                  setRememberMe(e.target.checked)
+                  if (!e.target.checked) {
+                    localStorage.removeItem(REMEMBER_KEY)
+                  }
+                }}
+                className="mr-2 w-4 h-4 accent-[#00e5ff] rounded bg-white/5 border-white/10 cursor-pointer"
+              />
               Remember me
             </label>
             <Link href="#" className="font-semibold bg-gradient-to-r from-[#00e5ff] to-[#b927fc] bg-clip-text text-transparent hover:opacity-80 transition-opacity">
