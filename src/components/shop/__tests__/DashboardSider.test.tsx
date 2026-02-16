@@ -38,7 +38,7 @@ describe('DashboardSider', () => {
             'Shopee Links',
             'Facebook Posts',
             'Veo3 Tokens',
-            'Prompt Library',
+            'Prompts',
             'TikTok Music',
             'Thanh toán',
             'Sản phẩm',
@@ -56,7 +56,7 @@ describe('DashboardSider', () => {
         expect(links[2]).toHaveTextContent('Shopee Links')
         expect(links[3]).toHaveTextContent('Facebook Posts')
         expect(links[4]).toHaveTextContent('Veo3 Tokens')
-        expect(links[5]).toHaveTextContent('Prompt Library')
+        expect(links[5]).toHaveTextContent('Prompts')
         expect(links[6]).toHaveTextContent('TikTok Music')
         expect(links[7]).toHaveTextContent('Thanh toán')
         expect(links[8]).toHaveTextContent('Sản phẩm')
@@ -71,7 +71,7 @@ describe('DashboardSider', () => {
         expect(screen.getByText('Shopee Links').closest('a')).toHaveAttribute('href', '/shopee-links')
         expect(screen.getByText('Facebook Posts').closest('a')).toHaveAttribute('href', '/facebook-posts')
         expect(screen.getByText('Veo3 Tokens').closest('a')).toHaveAttribute('href', '/veo3-tokens')
-        expect(screen.getByText('Prompt Library').closest('a')).toHaveAttribute('href', '/prompt-library')
+        expect(screen.getByText('Prompts').closest('a')).toHaveAttribute('href', '/prompts')
         expect(screen.getByText('TikTok Music').closest('a')).toHaveAttribute('href', '/tiktok-music')
         expect(screen.getByText('Thanh toán').closest('a')).toHaveAttribute('href', '/carts')
         expect(screen.getByText('Sản phẩm').closest('a')).toHaveAttribute('href', '/products')

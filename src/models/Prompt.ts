@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose'
+import mongoose, { Document, Schema } from 'mongoose'
 
 export interface IReferenceImage {
     imageUsageType: string
@@ -6,7 +6,7 @@ export interface IReferenceImage {
 }
 
 export interface IPrompt extends Document {
-    accountId: string
+    accountId?: string
     title: string
     content: string
     subPrompt?: string
@@ -19,7 +19,7 @@ export interface IPrompt extends Document {
 export type Prompt = IPrompt
 
 const PromptSchema = new Schema({
-    accountId: { type: String, required: true },
+    accountId: { type: String },
     title: { type: String, required: true },
     content: { type: String, required: true },
     subPrompt: { type: String },

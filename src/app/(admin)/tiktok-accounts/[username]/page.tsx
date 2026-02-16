@@ -86,7 +86,7 @@ export default function TikTokAccountPage() {
                         fetchProducts(foundAccount.cookie)
                         fetchScheduledPosts(foundAccount._id)
                         fetchAutoFlows(foundAccount._id)
-                        fetchPrompts(foundAccount._id)
+                        fetchPrompts()
                         fetchVeo3Media(foundAccount._id)
                         fetchShopeeLinks()
                     } else {
@@ -213,10 +213,10 @@ export default function TikTokAccountPage() {
     }
 
     // Independent Prompt Library handlers
-    const fetchPrompts = async (accountId: string) => {
+    const fetchPrompts = async () => {
         try {
             setPromptsLoading(true)
-            const response = await fetch(`/api/prompts?accountId=${accountId}`)
+            const response = await fetch('/api/prompts')
             const data = await response.json()
             if (data.success) {
                 setAllPrompts(data.data)
@@ -248,7 +248,7 @@ export default function TikTokAccountPage() {
             if (data.success) {
                 message.success('Đã xóa prompt!')
                 if (account) {
-                    fetchPrompts(account._id)
+                    fetchPrompts()
                     fetchAutoFlows(account._id)
                 }
             } else {
@@ -265,7 +265,6 @@ export default function TikTokAccountPage() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    accountId: prompt.accountId,
                     title: `${prompt.title} (Copy)`,
                     content: prompt.content,
                     type: prompt.type || 'describe',
@@ -277,7 +276,7 @@ export default function TikTokAccountPage() {
             if (data.success) {
                 message.success('Đã nhân bản prompt!')
                 if (account) {
-                    fetchPrompts(account._id)
+                    fetchPrompts()
                 }
             } else {
                 message.error('Nhân bản thất bại: ' + data.error)
@@ -1247,10 +1246,9 @@ export default function TikTokAccountPage() {
                 <PromptModal
                     isOpen={isPromptModalOpen}
                     setIsOpen={setIsPromptModalOpen}
-                    accountId={account._id}
                     editingPrompt={editingPrompt}
                     onRefresh={() => {
-                        fetchPrompts(account._id)
+                        fetchPrompts()
                         fetchAutoFlows(account._id)
                     }}
                 />

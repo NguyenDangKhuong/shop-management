@@ -94,9 +94,9 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
             label: <Link href='/veo3-tokens'>Veo3 Tokens</Link>
           },
           {
-            key: '/prompt-library',
+            key: '/prompts',
             icon: <FileTextOutlined />,
-            label: <Link href='/prompt-library'>Prompt Library</Link>
+            label: <Link href='/prompts'>Prompts</Link>
           },
           {
             key: '/tiktok-music',

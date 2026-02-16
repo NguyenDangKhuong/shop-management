@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react'
 interface PromptModalProps {
     isOpen: boolean
     setIsOpen: (open: boolean) => void
-    accountId: string
     editingPrompt?: any
     onRefresh: () => void
 }
@@ -15,7 +14,6 @@ interface PromptModalProps {
 const PromptModal = ({
     isOpen,
     setIsOpen,
-    accountId,
     editingPrompt,
     onRefresh
 }: PromptModalProps) => {
@@ -44,7 +42,6 @@ const PromptModal = ({
             const values = await form.validateFields()
 
             const promptData: any = {
-                accountId,
                 title: values.title,
                 type: values.type || 'describe',
                 content: values.content,
