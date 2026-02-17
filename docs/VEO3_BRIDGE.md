@@ -25,6 +25,7 @@ Hệ thống sử dụng **WebSocket Bridge** để kết nối Chrome Extension
                                                │  Next.js Server   │
                                                │                   │
                                                │  POST /api/gen-video
+                                               │  GET  /api/gen-video
                                                │  GET  /api/veo3-recaptcha
                                                └───────────────────┘
 ```
@@ -59,18 +60,34 @@ npm run dev:all
 2. **Load unpacked** → chọn folder `chrome-extension/flow-token-extractor/`
 3. Mở [Flow page](https://labs.google/fx/vi/tools/flow/) và login Google
 4. Extension tự connect WS Bridge + push ya29
+5. **Gen 1 video trên Flow page** (để warm up reCAPTCHA + capture ya29 mới)
 
-### 4. Chạy 24/7 với PM2 (Ubuntu)
+---
+
+## � Các bước sử dụng
+
+### Bước 1: Check hệ thống sẵn sàng
 
 ```bash
-npm install -g pm2
-
-pm2 start scripts/ws-bridge.js --name ws-bridge
-pm2 start npm --name shop-dev -- run dev
-
-pm2 save
-pm2 startup   # tự start khi reboot
+curl -s https://shop.thetaphoa.store/api/gen-video
 ```
+
+Kết quả cần: `"ready": true`, `"connected": true`, `"hasToken": true`
+
+### Bước 2: Gọi API gen video
+
+```bash
+curl -s -X POST https://shop.thetaphoa.store/api/gen-video \
+  -H 'Content-Type: application/json' \
+  -d '{"prompt": "A cute cat sitting on the moon, cinematic"}'
+```
+
+Chỉ cần gửi `prompt` — server tự động:
+1. Lấy `ya29` token từ WS Bridge (hoặc DB fallback)
+2. Lấy `reCAPTCHA` token từ Extension
+3. Lấy `projectId`, `sessionId` từ Bridge/DB
+4. Gọi Veo3 API
+5. Nếu reCAPTCHA bị reject → **auto-retry** lên đến 3 lần (chờ 3s giữa mỗi lần)
 
 ---
 
@@ -78,46 +95,52 @@ pm2 startup   # tự start khi reboot
 
 ### POST `/api/gen-video` — Tạo video
 
-```bash
-curl -X POST http://localhost:3000/api/gen-video \
-  -H 'Content-Type: application/json' \
-  -d '{"prompt": "A cute cat sitting on the moon"}'
-```
-
 **Body params:**
 
 | Param | Bắt buộc | Default | Mô tả |
 |-------|---------|---------|-------|
 | `prompt` | ✅ | — | Nội dung video |
-| `aspectRatio` | ❌ | `VIDEO_ASPECT_RATIO_LANDSCAPE` | Hoặc `VIDEO_ASPECT_RATIO_PORTRAIT` |
+| `aspectRatio` | ❌ | `VIDEO_ASPECT_RATIO_PORTRAIT` | Hoặc `VIDEO_ASPECT_RATIO_LANDSCAPE` |
 | `seed` | ❌ | Random | Seed cho video |
 | `referenceImages` | ❌ | — | `[{imageUsageType, mediaId}]` |
 
 > [!NOTE]
-> `bearerToken`, `recaptchaToken`, `sessionId`, `projectId` đều tự lấy từ WS Bridge.
-> Không cần truyền thêm gì ngoài `prompt`.
+> Mặc định gen video **portrait** (dọc). Muốn landscape thêm `"aspectRatio": "VIDEO_ASPECT_RATIO_LANDSCAPE"`.
+> reCAPTCHA tự **auto-retry** 3 lần nếu bị Google reject.
 
 **Response thành công:**
 ```json
 {
   "success": true,
   "data": {
-    "operations": [{"operation": {"name": "abc123"}, "status": "MEDIA_GENERATION_STATUS_PENDING"}],
-    "remainingCredits": 10
+    "operations": [
+      {
+        "operation": { "name": "97dd0f76989f9288286fa1cf340b1e14" },
+        "sceneId": "6a091dfb-ba2e-4e23-807e-2c306e8d2c69",
+        "status": "MEDIA_GENERATION_STATUS_PENDING"
+      }
+    ],
+    "remainingCredits": 30
   },
   "meta": {
-    "tokenSource": "ws-bridge (5s old)",
-    "recaptchaSource": "ws-bridge (extension)",
-    "videoModelKey": "veo_3_1_t2v_fast_landscape",
-    "projectId": "a347e61f-..."
+    "tokenSource": "ws-bridge (4s old)",
+    "recaptchaSource": "extension",
+    "videoModelKey": "veo_3_1_t2v_fast",
+    "projectId": "13a515c2-59d7-42ae-a0f8-2ef4905e047f",
+    "attempt": 2
   }
 }
 ```
 
-### GET `/api/gen-video` — Check trạng thái
+> [!TIP]
+> `attempt: 2` nghĩa là lần 1 bị reCAPTCHA reject, retry lần 2 thành công.
+
+---
+
+### GET `/api/gen-video` — Check trạng thái hệ thống
 
 ```bash
-curl http://localhost:3000/api/gen-video
+curl https://shop.thetaphoa.store/api/gen-video
 ```
 
 ```json
@@ -128,36 +151,74 @@ curl http://localhost:3000/api/gen-video
     "connected": true,
     "hasToken": true,
     "tokenAge": 15,
-    "projectId": "a347e61f-...",
-    "sessionId": ";1771308792591"
+    "projectId": "13a515c2-...",
+    "sessionId": ";1771346145812"
   }
 }
 ```
 
-### GET `/api/veo3-recaptcha` — Lấy fresh reCAPTCHA token
+| Field | Ý nghĩa |
+|-------|---------|
+| `ready` | `true` = sẵn sàng gen video |
+| `connected` | Extension đã kết nối WS Bridge |
+| `hasToken` | Có ya29 token |
+| `tokenAge` | Token bao nhiêu giây rồi |
 
-```bash
-curl http://localhost:3000/api/veo3-recaptcha
-```
+---
 
+## 📮 Gọi từ Postman / n8n
+
+### Postman
+
+**Check trạng thái (GET):**
+- Method: `GET`
+- URL: `https://shop.thetaphoa.store/api/gen-video`
+
+**Gen video (POST):**
+- Method: `POST`
+- URL: `https://shop.thetaphoa.store/api/gen-video`
+- Headers: `Content-Type: application/json`
+- Body (raw JSON):
 ```json
 {
-  "success": true,
-  "token": "0cAFcWeA7a_pY6k4...",
-  "source": "extension",
-  "timestamp": "2026-02-17T06:15:00.000Z"
+  "prompt": "A cute cat on the moon, cinematic"
 }
 ```
 
-> [!NOTE]
-> Endpoint này gọi WS Bridge → Extension gen reCAPTCHA trên domain `labs.google` → trả token.
-> Thời gian chờ tối đa 16 giây.
+### n8n
+
+**Check trạng thái (HTTP Request node):**
+
+| Setting | Value |
+|---------|-------|
+| Method | `GET` |
+| URL | `https://shop.thetaphoa.store/api/gen-video` |
+
+Dùng `{{ $json.bridge.ready }}` để check trước khi gen.
+
+**Gen video (HTTP Request node):**
+
+| Setting | Value |
+|---------|-------|
+| Method | `POST` |
+| URL | `https://shop.thetaphoa.store/api/gen-video` |
+| Body Content Type | JSON |
+| Specify Body | Using Fields Below |
+
+Body fields:
+
+| Name | Value |
+|------|-------|
+| `prompt` | `{{ $json.prompt }}` |
+| `aspectRatio` | `VIDEO_ASPECT_RATIO_PORTRAIT` (hoặc bỏ trống = portrait) |
+
+Response: dùng `{{ $json.success }}` để check, `{{ $json.data.operations[0].operation.name }}` để lấy operation ID.
 
 ---
 
 ## 🌐 WS Bridge HTTP API (port 3002)
 
-Dùng internal, không expose ra ngoài trừ khi cần production.
+Dùng internal, chỉ expose qua tunnel nếu cần production.
 
 | Endpoint | Mô tả |
 |----------|-------|
@@ -173,7 +234,7 @@ Dùng internal, không expose ra ngoài trừ khi cần production.
 ### Chức năng chính
 
 1. **Auto-capture ya29** — Bắt token từ header Authorization khi Flow page gọi API
-2. **Push instant via WS** — Gửi token ngay lập tức qua WebSocket
+2. **Push instant via WS** — Gửi token ngay lập tức qua WebSocket (kèm sessionId, projectId)
 3. **On-demand reCAPTCHA** — Nhận yêu cầu từ WS Bridge, gen token bằng `grecaptcha.enterprise.execute()` trên domain `labs.google`
 4. **Auto-reconnect** — Tự kết nối lại WS Bridge nếu bị mất
 
@@ -187,17 +248,11 @@ Dùng internal, không expose ra ngoài trừ khi cần production.
 | `popup.html/js` | UI popup hiển thị trạng thái |
 | `manifest.json` | Permissions + config |
 
-### Popup UI
-
-- 🟢 **Connected** — Extension đã kết nối WS Bridge
-- 🟡 **No ext** — WS Bridge chạy nhưng extension chưa connect
-- 🔴 **Offline** — WS Bridge không chạy
-
 ---
 
 ## 🏭 Production Setup
 
-Nếu Next.js chạy trên server (Vercel, VPS) còn extension chạy trên máy Ubuntu local:
+Next.js deploy trên server, extension + WS Bridge chạy trên máy Ubuntu local.
 
 ### 1. Tạo Cloudflare Tunnel trên Ubuntu
 
@@ -222,10 +277,10 @@ WS_BRIDGE_URL=https://ws.thetaphoa.store
 
 ### 3. Code đã support env variable
 
-Route `/api/gen-video` và `/api/veo3-recaptcha` sẽ dùng `process.env.WS_BRIDGE_URL` thay vì hardcode `localhost:3002`.
+Route `/api/gen-video` và `/api/veo3-recaptcha` dùng `process.env.WS_BRIDGE_URL`, default `http://localhost:3002`.
 
 > [!TIP]
-> Domain `ws.thetaphoa.store` cố định, không đổi mỗi lần restart như free tunnel.
+> Domain `ws.thetaphoa.store` cố định, không đổi mỗi lần restart.
 
 ---
 
@@ -238,7 +293,6 @@ Route `/api/gen-video` và `/api/veo3-recaptcha` sẽ dùng `process.env.WS_BRID
 | `src/app/api/veo3-recaptcha/route.ts` | API lấy fresh reCAPTCHA token |
 | `src/app/api/veo3-tokens/route.ts` | CRUD ya29 tokens (DB) |
 | `src/models/Veo3Token.ts` | Mongoose model cho ya29 |
-| `src/models/Veo3Recaptcha.ts` | Mongoose model cho reCAPTCHA |
 | `chrome-extension/flow-token-extractor/` | Chrome Extension folder |
 | `package.json` | Scripts: `ws-bridge`, `dev:all` |
 
@@ -246,14 +300,32 @@ Route `/api/gen-video` và `/api/veo3-recaptcha` sẽ dùng `process.env.WS_BRID
 
 ## 💡 Lưu ý quan trọng
 
-1. **Flow page phải mở** — Extension cần ít nhất 1 tab Flow (`labs.google/fx/`) đang mở để capture ya29 và gen reCAPTCHA
+1. **Flow page phải mở** — Extension cần ít nhất 1 tab Flow (`labs.google/fx/`) đang mở
 2. **Google account đã login** — Flow page phải login Google account có quyền dùng Veo3
-3. **videoModelKey** — Tự derive từ `aspectRatio`:
-   - Landscape → `veo_3_1_t2v_fast_landscape`
-   - Portrait → `veo_3_1_t2v_fast_portrait`
-4. **reCAPTCHA phải gen trên `labs.google`** — Gen ở domain khác sẽ bị 403
+3. **Warm up** — Sau khi reload extension/refresh Flow page, **gen 1 video trên Flow page trước** để warm up reCAPTCHA
+4. **Auto-retry** — reCAPTCHA tự retry 3 lần (chờ 3s mỗi lần) nếu bị Google reject
 5. **ya29 token hết hạn ~1 giờ** — Extension auto-capture token mới khi Flow page gọi API
+6. **Mặc định portrait** — Không truyền `aspectRatio` → gen video dọc
 
 ---
 
-*Cập nhật: 17/02/2026*
+## 🧪 Test nhanh từ máy AI server
+
+```bash
+# 1. Check hệ thống sẵn sàng chưa
+curl -s https://shop.thetaphoa.store/api/gen-video | python3 -m json.tool
+
+# 2. Gen video portrait (mặc định)
+curl -s -X POST https://shop.thetaphoa.store/api/gen-video \
+  -H 'Content-Type: application/json' \
+  -d '{"prompt": "A cute cat on the moon, cinematic lighting"}' | python3 -m json.tool
+
+# 3. Gen video landscape
+curl -s -X POST https://shop.thetaphoa.store/api/gen-video \
+  -H 'Content-Type: application/json' \
+  -d '{"prompt": "A sunset over the ocean", "aspectRatio": "VIDEO_ASPECT_RATIO_LANDSCAPE"}' | python3 -m json.tool
+```
+
+---
+
+*Cập nhật: 18/02/2026 — Auto-retry reCAPTCHA, default portrait, verified ✅*
