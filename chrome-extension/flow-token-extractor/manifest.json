@@ -1,17 +1,20 @@
 {
   "manifest_version": 3,
   "name": "Flow Token Extractor",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Extract token data from Google Flow request headers and send to Veo3 Token API",
   "permissions": [
     "webRequest",
     "storage",
-    "alarms"
+    "alarms",
+    "scripting",
+    "activeTab"
   ],
   "host_permissions": [
     "*://labs.google/*",
     "*://*.googleapis.com/*",
-    "*://shop.thetaphoa.store/*"
+    "*://shop.thetaphoa.store/*",
+    "*://localhost/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -24,6 +27,27 @@
       "128": "icons/icon128.png"
     }
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://labs.google/fx/*"
+      ],
+      "js": [
+        "injector.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "*://labs.google/fx/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",

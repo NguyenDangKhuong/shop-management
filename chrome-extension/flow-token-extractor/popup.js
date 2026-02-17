@@ -14,12 +14,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const autoPostStatus = document.getElementById('autoPostStatus')
   const lastAutoPostEl = document.getElementById('lastAutoPost')
   const autoPostMinutes = document.getElementById('autoPostMinutes')
+  const generateBtn = document.getElementById('generateBtn')
+  const autoGenToggle = document.getElementById('autoGenToggle')
+  const autoGenStatus = document.getElementById('autoGenStatus')
+  const lastAutoGenEl = document.getElementById('lastAutoGen')
 
   let capturedTokens = []
   let selectedIndex = null
 
   // Load saved config, tokens, and auto-post state
-  chrome.storage.local.get(['apiUrl', 'capturedTokens', 'autoPostEnabled', 'lastAutoPost', 'autoPostMinutes'], (result) => {
+  chrome.storage.local.get(['apiUrl', 'capturedTokens', 'autoPostEnabled', 'lastAutoPost', 'autoPostMinutes', 'autoGenerateEnabled'], (result) => {
     if (result.apiUrl) {
       apiUrlInput.value = result.apiUrl
     }
@@ -28,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
       renderTokens()
     }
 
-    // Restore auto-post toggle state
     if (result.autoPostEnabled) {
       autoPostToggle.checked = true
       autoPostStatus.textContent = 'ON'
@@ -37,10 +40,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (result.autoPostMinutes) {
       autoPostMinutes.value = result.autoPostMinutes
     }
-
-    // Show last auto-post result
     if (result.lastAutoPost) {
       updateLastAutoPost(result.lastAutoPost)
+    }
+
+    // Restore auto-generate state
+    if (result.autoGenerateEnabled) {
+      autoGenToggle.checked = true
+      autoGenStatus.textContent = 'ON'
+      autoGenStatus.style.color = '#FF9800'
     }
   })
 
@@ -85,6 +93,21 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
+  // Generate reCAPTCHA token on demand
+  generateBtn.addEventListener('click', () => {
+    generateBtn.disabled = true
+    generateBtn.textContent = '⏳ Generating...'
+    chrome.runtime.sendMessage({ type: 'GENERATE_TOKEN_NOW' }, (response) => {
+      generateBtn.disabled = false
+      generateBtn.innerHTML = '<span>🛡️</span> Gen Token'
+      if (response && response.success) {
+        showToast('reCAPTCHA token generated!', 'success')
+      } else {
+        showToast(`Error: ${response?.error || 'Unknown'}`, 'error')
+      }
+    })
+  })
+
   // Send token to API (GET first, then PUT with id, or POST if none exist)
   async function sendTokenToApi(apiUrl, tokenData, silent = false) {
     try {
@@ -95,20 +118,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return false
       }
 
+      // Build payload with all captured fields
+      const payload = { value: tokenValue }
+      if (tokenData.sessionId) payload.sessionId = tokenData.sessionId
+      if (tokenData.projectId) payload.projectId = tokenData.projectId
+
       // Step 1: GET existing tokens to find id
       const getResponse = await fetch(apiUrl)
       const getResult = await getResponse.json()
 
       let response
       if (getResult.success && getResult.data && getResult.data.length > 0) {
-        // PUT — update existing token's value
+        // PUT — update existing token with all captured data
         const existingToken = getResult.data[0]
         response = await fetch(apiUrl, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             id: existingToken._id,
-            value: tokenValue
+            ...payload
           })
         })
       } else {
@@ -116,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         response = await fetch(apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ value: tokenValue })
+          body: JSON.stringify(payload)
         })
       }
 
@@ -164,18 +192,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     tokenList.innerHTML = capturedTokens.map((token, index) => {
       const url = token.url || 'Unknown URL'
-      const shortUrl = url.length > 50 ? '...' + url.slice(-47) : url
       const time = token.timestamp ? formatTime(token.timestamp) : ''
       const ya29Preview = token.tokenValue
         ? token.tokenValue.substring(0, 40) + '...'
         : 'N/A'
-      const headerEntries = Object.entries(token.headers || {})
+      const hasRecaptcha = !!token.recaptchaToken
       const isSelected = selectedIndex === index
+      const statusIcon = hasRecaptcha ? '🟠' : '🟢'
+      const statusTitle = hasRecaptcha ? 'ya29 + reCAPTCHA' : 'ya29 only'
 
       return `
         <div class="token-item ${isSelected ? 'expanded' : ''}" data-index="${index}">
           <div class="token-item-header" data-index="${index}">
-            <span class="method-badge method-${token.method || 'GET'}">${token.method || 'GET'}</span>
+            <span class="method-badge method-${token.method || 'GET'}" title="${statusTitle}">${statusIcon}</span>
             <span class="token-url" title="ya29 token">${escapeHtml(ya29Preview)}</span>
             <span class="token-time">${time}</span>
             <span class="expand-icon">▶</span>
@@ -183,18 +212,42 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="token-item-body">
             <div class="header-row">
               <span class="header-name" style="color:#e94560;font-weight:700">🔑 ya29 Token</span>
-              <span class="header-value copy-btn" data-copy="${escapeHtml(token.tokenValue || '')}" title="Click to copy" style="cursor:pointer;color:#4caf50">${escapeHtml(truncate(token.tokenValue || '', 120))}</span>
+              <span class="header-value copy-btn" data-copy="${escapeHtml(token.tokenValue || '')}" title="Click to copy" style="cursor:pointer;color:#4caf50">${escapeHtml(truncate(token.tokenValue || '', 80))}</span>
             </div>
+            ${token.recaptchaToken ? `
             <div class="header-row">
-              <span class="header-name">URL</span>
-              <span class="header-value">${escapeHtml(truncate(url, 200))}</span>
+              <span class="header-name" style="color:#FF9800;font-weight:700">🛡️ reCAPTCHA</span>
+              <span class="header-value copy-btn" data-copy="${escapeHtml(token.recaptchaToken)}" title="Click to copy" style="cursor:pointer;color:#FF9800">${escapeHtml(truncate(token.recaptchaToken, 60))}</span>
             </div>
-            ${headerEntries.filter(([name]) => name.toLowerCase() !== 'authorization').map(([name, value]) => `
-              <div class="header-row">
-                <span class="header-name">${escapeHtml(name)}</span>
-                <span class="header-value" title="${escapeHtml(String(value))}">${escapeHtml(truncate(String(value), 200))}</span>
-              </div>
-            `).join('')}
+            ` : ''}
+            ${token.sessionId ? `
+            <div class="header-row">
+              <span class="header-name">📋 Session ID</span>
+              <span class="header-value copy-btn" data-copy="${escapeHtml(token.sessionId)}" title="Click to copy" style="cursor:pointer">${escapeHtml(token.sessionId)}</span>
+            </div>
+            ` : ''}
+            ${token.projectId ? `
+            <div class="header-row">
+              <span class="header-name">📁 Project ID</span>
+              <span class="header-value copy-btn" data-copy="${escapeHtml(token.projectId)}" title="Click to copy" style="cursor:pointer">${escapeHtml(truncate(token.projectId, 40))}</span>
+            </div>
+            ` : ''}
+            ${token.prompt ? `
+            <div class="header-row">
+              <span class="header-name">💬 Prompt</span>
+              <span class="header-value" style="color:#aaa">${escapeHtml(truncate(token.prompt, 80))}</span>
+            </div>
+            ` : ''}
+            ${token.videoModelKey ? `
+            <div class="header-row">
+              <span class="header-name">🎬 Model</span>
+              <span class="header-value" style="color:#aaa">${escapeHtml(token.videoModelKey)}</span>
+            </div>
+            ` : ''}
+            <div class="header-row">
+              <span class="header-name">🔗 URL</span>
+              <span class="header-value">${escapeHtml(truncate(url, 80))}</span>
+            </div>
           </div>
         </div>
       `
@@ -278,6 +331,18 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
+  // Auto-generate toggle handler
+  autoGenToggle.addEventListener('change', () => {
+    const enabled = autoGenToggle.checked
+    chrome.runtime.sendMessage({ type: 'TOGGLE_AUTO_GENERATE', enabled }, (response) => {
+      if (response && response.success) {
+        autoGenStatus.textContent = enabled ? 'ON' : 'OFF'
+        autoGenStatus.style.color = enabled ? '#FF9800' : '#888'
+        showToast(enabled ? 'Auto-Gen reCAPTCHA enabled (every ~90s)' : 'Auto-Gen disabled', 'success')
+      }
+    })
+  })
+
   // Auto-refresh when storage changes
   chrome.storage.onChanged.addListener((changes) => {
     if (changes.capturedTokens) {
@@ -288,4 +353,41 @@ document.addEventListener('DOMContentLoaded', () => {
       updateLastAutoPost(changes.lastAutoPost.newValue)
     }
   })
+
+  // ==========================================
+  // WS Bridge status polling
+  // ==========================================
+  const wsStatusEl = document.getElementById('wsStatus')
+  const wsTokenAgeEl = document.getElementById('wsTokenAge')
+
+  async function checkWsBridgeStatus() {
+    try {
+      const resp = await fetch('http://localhost:3002/status')
+      const data = await resp.json()
+
+      if (data.extensionConnected) {
+        wsStatusEl.textContent = '🟢 Connected'
+        wsStatusEl.style.color = '#4caf50'
+      } else {
+        wsStatusEl.textContent = '🟡 No ext'
+        wsStatusEl.style.color = '#FF9800'
+      }
+
+      if (data.hasToken && data.tokenAge != null) {
+        const mins = Math.floor(data.tokenAge / 60)
+        const secs = data.tokenAge % 60
+        const fresh = data.tokenAge < 1800 ? '✅' : '⚠️'
+        wsTokenAgeEl.textContent = `${fresh} Token: ${mins}m${secs}s old`
+      } else {
+        wsTokenAgeEl.textContent = 'No token'
+      }
+    } catch {
+      wsStatusEl.textContent = '🔴 Offline'
+      wsStatusEl.style.color = '#ef5350'
+      wsTokenAgeEl.textContent = ''
+    }
+  }
+
+  checkWsBridgeStatus()
+  setInterval(checkWsBridgeStatus, 5000)
 })

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="popup.css">
   <title>Flow Token Extractor</title>
 </head>
+
 <body>
   <div class="header">
     <span class="header-icon">🔑</span>
@@ -16,13 +18,8 @@
   <div class="config-section">
     <label>API Endpoint</label>
     <div class="config-row">
-      <input
-        type="text"
-        class="config-input"
-        id="apiUrl"
-        value="https://shop.thetaphoa.store/api/veo3-tokens"
-        placeholder="https://shop.thetaphoa.store/api/veo3-tokens"
-      >
+      <input type="text" class="config-input" id="apiUrl" value="https://shop.thetaphoa.store/api/veo3-tokens"
+        placeholder="https://shop.thetaphoa.store/api/veo3-tokens">
       <button class="btn-save" id="saveConfigBtn">Save</button>
     </div>
   </div>
@@ -30,6 +27,9 @@
   <div class="actions-bar">
     <button class="btn btn-send" id="sendBtn" disabled>
       <span>📤</span> PUT
+    </button>
+    <button class="btn btn-generate" id="generateBtn" style="background:#FF9800;border-color:#FF9800">
+      <span>🛡️</span> Gen Token
     </button>
     <button class="btn btn-clear" id="clearBtn">
       <span>🗑️</span> Clear
@@ -52,6 +52,30 @@
     <div class="auto-post-last" id="lastAutoPost"></div>
   </div>
 
+  <div class="auto-post-section">
+    <div class="auto-post-row">
+      <div class="auto-post-info">
+        <span class="auto-post-label">🛡️ Auto-Gen reCAPTCHA</span>
+        <span class="auto-post-status" id="autoGenStatus">OFF</span>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="autoGenToggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="auto-post-last" id="lastAutoGen"></div>
+  </div>
+
+  <div class="auto-post-section">
+    <div class="auto-post-row">
+      <div class="auto-post-info">
+        <span class="auto-post-label">🌉 WS Bridge</span>
+        <span class="auto-post-status" id="wsStatus">—</span>
+      </div>
+      <span id="wsTokenAge" style="font-size:11px;color:#888"></span>
+    </div>
+  </div>
+
   <div id="tokenList" class="token-list">
     <div class="empty-state">
       <div class="icon">🔍</div>
@@ -64,4 +88,5 @@
 
   <script src="popup.js"></script>
 </body>
+
 </html>

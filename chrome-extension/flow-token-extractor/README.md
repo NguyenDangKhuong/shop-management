@@ -1,13 +1,14 @@
 # 🔑 Flow Token Extractor - Chrome Extension
 
-Chrome Extension tự động bắt token `ya29.*` từ Google Flow (Veo3) và gửi lên API.
+Chrome Extension tự động bắt token `ya29.*` và **reCAPTCHA Enterprise token** từ Google Flow (Veo3) và gửi lên API.
 
 ## Tính năng
 
-- **Bắt token tự động**: Lắng nghe tất cả request đến `*.googleapis.com`, tự động trích xuất token `ya29.*` từ header `Authorization`
+- **Bắt ya29 token tự động**: Lắng nghe request đến `*.googleapis.com`, trích xuất `ya29.*` từ header `Authorization`
+- **Bắt reCAPTCHA Enterprise token**: Content script inject vào trang Flow, intercept `fetch` calls tới `batchAsyncGenerateVideoText` để capture reCAPTCHA token, `sessionId`, `projectId`, prompt, model
 - **Auto-PUT**: Tự động gửi token mới nhất lên API theo chu kỳ (tuỳ chỉnh số phút)
 - **PUT thủ công**: Nhấn nút PUT để gửi token đang chọn lên API ngay lập tức
-- **Giao diện dark theme**: Popup hiện đại, dễ sử dụng
+- **Giao diện dark theme**: Popup hiện đại, hiển thị đầy đủ thông tin captured
 
 ## Cài đặt
 
@@ -23,51 +24,65 @@ Chrome Extension tự động bắt token `ya29.*` từ Google Flow (Veo3) và g
 - Có thể thay đổi URL trong ô **API Endpoint** → nhấn **Save**
 
 ### 2. Bắt token
-- Vào trang Google Flow / Veo3 (`labs.google` hoặc bất kỳ service nào dùng `googleapis.com`)
-- Extension tự động bắt token từ request headers
-- Số lượng token hiện trên badge góc phải
+- Vào trang Google Flow / Veo3 (`labs.google/fx/*`)
+- Extension tự động bắt `ya29.*` token từ request headers
+- Khi tạo video, content script tự động capture thêm:
+  - 🛡️ **reCAPTCHA Enterprise token** 
+  - 📋 **Session ID**
+  - 📁 **Project ID**
+  - 💬 **Prompt** và 🎬 **Model**
+- Badge: 🟢 = ya29 only, 🟠 = ya29 + reCAPTCHA
 
 ### 3. PUT thủ công
 - Chọn token trong danh sách → nhấn nút **PUT**
-- Extension sẽ GET token hiện tại từ API, lấy `_id`, rồi PUT update `value`
-- Nếu chưa có token trên server → tự động POST tạo mới
+- Extension gửi `value`, `sessionId`, `projectId` lên API
 
 ### 4. Auto-PUT
 - Nhập số phút (mặc định: 5) → bật toggle **Auto-PUT**
 - Mỗi chu kỳ, extension tự GET → PUT token mới nhất lên API
-- Trạng thái lần PUT gần nhất hiển thị bên dưới toggle
 
 ## Cấu trúc file
 
 ```
 flow-token-extractor/
-├── manifest.json      # Cấu hình extension (permissions, host_permissions)
-├── background.js      # Service worker: bắt request, auto-PUT alarm
+├── manifest.json      # Cấu hình extension (permissions, content_scripts)
+├── background.js      # Service worker: bắt headers, xử lý messages, auto-PUT
+├── content.js         # Content script: inject fetch interceptor vào trang Flow
 ├── popup.html         # Giao diện popup
 ├── popup.js           # Logic popup: hiển thị token, PUT, toggle auto
 ├── popup.css          # Style dark theme
 └── icons/             # Icon extension 16/48/128px
 ```
 
-## API Flow
+## Kiến trúc
 
 ```
-┌─────────────┐     GET /api/veo3-tokens      ┌─────────────┐
-│  Extension  │ ──────────────────────────────→│   Server    │
-│             │     ← { data: [{ _id, ... }] } │             │
-│             │                                │             │
-│             │     PUT /api/veo3-tokens       │             │
-│             │     { id: _id, value: ya29.* } │             │
-│             │ ──────────────────────────────→│             │
-└─────────────┘                                └─────────────┘
+┌────────────────────┐   window.postMessage    ┌──────────────┐
+│  Page Script       │ ──────────────────────→ │Content Script│
+│  (injected fetch)  │   VEO3_REQUEST_CAPTURED │  (content.js)│
+└────────────────────┘                         └──────┬───────┘
+                                                      │ chrome.runtime.sendMessage
+┌────────────────────┐   chrome.webRequest     ┌──────▼───────┐
+│  Network Requests  │ ──────────────────────→ │ Background   │
+│  (ya29.* headers)  │   onBeforeSendHeaders   │ (background  │
+└────────────────────┘                         │   .js)       │
+                                               └──────┬───────┘
+                                                      │ fetch PUT/POST
+                                               ┌──────▼───────┐
+                                               │  API Server  │
+                                               │/api/veo3-    │
+                                               │  tokens      │
+                                               └──────────────┘
 ```
 
 ## Permissions
 
 | Permission | Mục đích |
 |---|---|
-| `webRequest` | Lắng nghe request headers để bắt token |
+| `webRequest` | Lắng nghe request headers để bắt ya29 token |
 | `storage` | Lưu config, token, trạng thái auto-PUT |
 | `alarms` | Lên lịch auto-PUT theo chu kỳ |
 | `*://*.googleapis.com/*` | Bắt request đến Google APIs |
 | `*://shop.thetaphoa.store/*` | Gọi API server |
+| Content Script `labs.google/fx/*` | Inject fetch interceptor để bắt reCAPTCHA |
+
