@@ -69,6 +69,12 @@ shop-management/
 │   │   │   ├── 📁 orders/         # Order management UI
 │   │   │   ├── 📁 categories/     # Category UI
 │   │   │   ├── 📁 carts/          # Cart UI
+│   │   │   ├── 📁 tiktok-accounts/ # TikTok components
+│   │   │   │   ├── AutoFlowModal.tsx
+│   │   │   │   ├── PromptModal.tsx
+│   │   │   │   ├── PromptSection.tsx     # [NEW] Prompt list + CRUD
+│   │   │   │   ├── Veo3MediaSection.tsx  # [NEW] Media management
+│   │   │   │   └── TikTokScheduledPostModal.tsx
 │   │   │   ├── 📁 login/          # Login form
 │   │   │   └── 📁 register/       # Register form
 │   │   ├── 📁 ui/                 # Reusable UI components
@@ -217,9 +223,12 @@ shop-management/
 
 ### Test Files
 ```
-src/components/shop/login/__tests__/LoginForm.test.tsx     # 9 tests
-src/components/shop/register/__tests__/RegisterForm.test.tsx # 10 tests
-src/utils/__tests__/validateRegisterInput.test.ts          # 7 tests
+src/components/shop/login/__tests__/LoginForm.test.tsx          # 9 tests
+src/components/shop/register/__tests__/RegisterForm.test.tsx    # 10 tests
+src/utils/__tests__/validateRegisterInput.test.ts              # 7 tests
+src/components/shop/tiktok-accounts/__tests__/AutoFlowModal.test.tsx    # 34 tests
+src/components/shop/tiktok-accounts/__tests__/PromptSection.test.tsx    # 8 tests
+src/components/shop/tiktok-accounts/__tests__/Veo3MediaSection.test.tsx # 9 tests
 ```
 
 ### Commands
@@ -393,4 +402,4 @@ Sử dụng `react-device-detect` để tối ưu trải nghiệm trên từng t
 
 ---
 
-*Tài liệu cập nhật: 11/02/2026*
+*Tài liệu cập nhật: 19/02/2026*

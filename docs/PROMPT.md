@@ -73,6 +73,20 @@ DELETE /api/prompts?id={promptId}
 
 **Form fields:** Tiêu đề, **Loại prompt** (select: Hook / Describe), Nội dung (max 90 từ), **Sub Prompt** (text, optional)
 
+### PromptSection (`src/components/shop/tiktok-accounts/PromptSection.tsx`)
+
+Component tự chứa prompt list + PromptModal. Handlers (add, edit, delete, duplicate, copy) nằm trong component.
+
+| Prop | Type | Mô tả |
+|------|------|-------|
+| `allPrompts` | `any[]` | Danh sách prompt |
+| `promptsLoading` | `boolean` | Trạng thái loading |
+| `onRefresh` | `fn` | Callback fetchPrompts |
+| `onAutoFlowRefresh` | `fn` | Callback fetchAutoFlows |
+
+> [!NOTE]
+> **Lazy Load** — Prompt data chỉ fetch lần đầu khi expand section (hoặc khi mở AutoFlowModal). `useRef` flag ngăn fetch trùng lặp.
+
 > [!NOTE]
 > **Reference Images** đã chuyển sang **AutoFlowModal** — chọn 1 lần ở AutoFlow, tất cả prompts dùng chung.
 
@@ -194,12 +208,15 @@ npx ts-node --compiler-options '{"module":"commonjs"}' -r tsconfig-paths/registe
 
 ## 🧪 Testing
 
-Test file: `src/components/shop/tiktok-accounts/__tests__/PromptModal.test.tsx` — 14 tests
+| Test file | Tests |
+|-----------|-------|
+| `__tests__/PromptModal.test.tsx` | 14 |
+| `__tests__/PromptSection.test.tsx` | 8 |
 
 ```bash
-npx jest --testPathPattern="PromptModal"
+npx jest --testPathPattern="Prompt"
 ```
 
 ---
 
-*Tài liệu cập nhật: 19/02/2026 — Thêm Sunset Lamp prompts, đổi seed sang upsert-by-title*
+*Tài liệu cập nhật: 19/02/2026 — Tách component `PromptSection.tsx`, lazy load on expand*

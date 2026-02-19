@@ -203,7 +203,7 @@ Mỗi AutoFlow có thể đính kèm **nhiều video**, upload qua Cloudinary wi
 
 ## 🧪 Testing
 
-Test file: `src/components/shop/tiktok-accounts/__tests__/AutoFlowModal.test.tsx` — 30 tests
+Test file: `src/components/shop/tiktok-accounts/__tests__/AutoFlowModal.test.tsx` — 34 tests
 
 ```bash
 npx jest --testPathPattern="AutoFlowModal"
@@ -211,4 +211,4 @@ npx jest --testPathPattern="AutoFlowModal"
 
 ---
 
-*Tài liệu cập nhật: 16/02/2026*
+*Tài liệu cập nhật: 19/02/2026*

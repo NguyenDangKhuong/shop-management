@@ -123,9 +123,22 @@ DELETE /api/veo3-media?id={mediaId}
 
 ## 🖥️ UI
 
+### Component
+
+**File:** `src/components/shop/tiktok-accounts/Veo3MediaSection.tsx`
+
+Component tự chứa (self-contained): toàn bộ state, handlers, upload logic nằm trong component. Parent (`page.tsx`) chỉ truyền data + callback.
+
+| Prop | Type | Mô tả |
+|------|------|-------|
+| `accountId` | `string` | ID tài khoản TikTok |
+| `veo3Media` | `any[]` | Danh sách media |
+| `veo3MediaLoading` | `boolean` | Trạng thái loading |
+| `onRefresh` | `fn` | Callback refresh data |
+
 ### Vị trí trên trang
 
-Section **🎬 Veo3 Media** nằm trên trang chi tiết TikTok Account, giữa **AutoFlow** và **Danh sách sản phẩm**.
+Section **🎬 Veo3 Media** nằm trên trang chi tiết TikTok Account, giữa **Prompt Library** và **Danh sách sản phẩm**.
 
 ### Chức năng
 
@@ -135,7 +148,7 @@ Section **🎬 Veo3 Media** nằm trên trang chi tiết TikTok Account, giữa 
 4. **Xóa hình** — Nhấn 🗑️ xóa hình khỏi Cloudinary (giữ media ID)
 5. **Xóa media** — Nhấn Delete xóa toàn bộ record
 6. **Copy Media ID** — Nhấn icon copy
-7. **Collapsible** — Section 🎥 Veo3 Media có thể thu gọn/mở rộng bằng cách click header (mặc định: thu gọn). Icon ▶/▼ hiển thị trạng thái.
+7. **Collapsible + Lazy Load** — Section mặc định thu gọn. Data chỉ fetch lần đầu khi expand (hoặc khi mở AutoFlowModal). `useRef` flag ngăn fetch trùng lặp.
 
 ### Upload Config
 
@@ -185,7 +198,19 @@ Trên AutoFlow card và Prompt Library, mỗi prompt hiển thị danh sách thu
 ---
 
 *Tài liệu tạo: 08/02/2026*
-*Cập nhật: 15/02/2026 — Đổi `mediaId` thành `referenceImages[]` multi-select (chỉ cho prompt describe)*
+*Cập nhật: 19/02/2026 — Tách component `Veo3MediaSection.tsx`, lazy load on expand*
+
+---
+
+## 🧪 Testing
+
+### Veo3MediaSection
+
+Test file: `src/components/shop/tiktok-accounts/__tests__/Veo3MediaSection.test.tsx` — 9 tests
+
+```bash
+npx jest --testPathPattern="Veo3MediaSection"
+```
 
 ---
 
