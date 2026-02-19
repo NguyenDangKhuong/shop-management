@@ -1,11 +1,9 @@
 'use client'
 
-import { deleteCloudinaryImage } from '@/actions/cloudinary'
 import AutoFlowModal from '@/components/shop/tiktok-accounts/AutoFlowModal'
 import PromptModal from '@/components/shop/tiktok-accounts/PromptModal'
 import TikTokScheduledPostModal from '@/components/shop/tiktok-accounts/TikTokScheduledPostModal'
-import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload'
-import { veo3MediaUploadConfig } from '@/utils/cloudinaryConfig'
+import Veo3MediaSection from '@/components/shop/tiktok-accounts/Veo3MediaSection'
 import {
     CopyOutlined,
     DeleteOutlined,
@@ -18,7 +16,7 @@ import {
 import { App, Button, Input, Popconfirm, Spin, Switch } from 'antd'
 import dayjs from 'dayjs'
 import { useParams } from 'next/navigation'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 interface TikTokAccount {
     _id: string
@@ -61,10 +59,7 @@ export default function TikTokAccountPage() {
     const [editingPrompt, setEditingPrompt] = useState<any>(null)
     const [veo3Media, setVeo3Media] = useState<any[]>([])
     const [veo3MediaLoading, setVeo3MediaLoading] = useState(false)
-    const [newMediaId, setNewMediaId] = useState('')
-    const [newMediaFile, setNewMediaFile] = useState<{ url: string; type: string; publicId?: string } | null>(null)
-    const [editingMediaId, setEditingMediaId] = useState<string | null>(null)
-    const [editingMediaValue, setEditingMediaValue] = useState('')
+
     const [shopeeLinks, setShopeeLinks] = useState<any[]>([])
 
     // Extract username from params (decode URI and remove @ prefix if exists)
@@ -297,9 +292,7 @@ export default function TikTokAccountPage() {
         message.success('Đã copy nội dung prompt!')
     }
 
-    // Veo3 Media handlers
-    const uploadTargetIdRef = useRef<string | null>(null)
-
+    // Veo3 Media
     const fetchVeo3Media = async (accountId: string) => {
         try {
             setVeo3MediaLoading(true)
@@ -313,155 +306,6 @@ export default function TikTokAccountPage() {
         } finally {
             setVeo3MediaLoading(false)
         }
-    }
-
-    const handleAddVeo3Media = async () => {
-        if (!newMediaId.trim() || !account) return
-        try {
-            const body: any = {
-                accountId: account._id,
-                mediaId: newMediaId.trim()
-            }
-            if (newMediaFile) {
-                body.mediaFile = newMediaFile
-            }
-            const response = await fetch('/api/veo3-media', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            })
-            const data = await response.json()
-            if (data.success) {
-                message.success('Đã thêm media!')
-                setNewMediaId('')
-                setNewMediaFile(null)
-                fetchVeo3Media(account._id)
-            } else {
-                message.error('Thêm thất bại: ' + data.error)
-            }
-        } catch (error: any) {
-            message.error('Lỗi: ' + error.message)
-        }
-    }
-
-    // Upload for new media (in the add section)
-    const onNewMediaUploadSuccess = useCallback((result: any) => {
-        setNewMediaFile({
-            url: result.url,
-            type: result.resourceType === 'video' ? 'video' : 'image',
-            publicId: result.publicId
-        })
-        message.success('Upload thành công!')
-    }, [message])
-
-    const { openWidget: openNewMediaWidget } = useCloudinaryUpload(
-        veo3MediaUploadConfig,
-        onNewMediaUploadSuccess,
-        (err) => message.error('Upload thất bại: ' + err?.message)
-    )
-
-    const handleDeleteVeo3Media = async (mediaId: string, publicId?: string) => {
-        try {
-            if (publicId) {
-                await deleteCloudinaryImage(publicId)
-            }
-            const response = await fetch(`/api/veo3-media?id=${mediaId}`, {
-                method: 'DELETE'
-            })
-            const data = await response.json()
-            if (data.success) {
-                message.success('Đã xóa media!')
-                if (account) fetchVeo3Media(account._id)
-            } else {
-                message.error('Xóa thất bại')
-            }
-        } catch (error: any) {
-            message.error('Lỗi: ' + error.message)
-        }
-    }
-
-    const handleRemoveVeo3MediaImage = async (mediaDocId: string, publicId: string) => {
-        try {
-            await deleteCloudinaryImage(publicId)
-            const response = await fetch('/api/veo3-media', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id: mediaDocId,
-                    mediaFile: null
-                })
-            })
-            const data = await response.json()
-            if (data.success) {
-                message.success('Đã xóa hình!')
-                if (account) fetchVeo3Media(account._id)
-            }
-        } catch (error: any) {
-            message.error('Lỗi: ' + error.message)
-        }
-    }
-
-    const handleEditVeo3MediaId = async (mediaDocId: string) => {
-        if (!editingMediaValue.trim()) return
-        try {
-            const response = await fetch('/api/veo3-media', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id: mediaDocId,
-                    mediaId: editingMediaValue.trim()
-                })
-            })
-            const data = await response.json()
-            if (data.success) {
-                message.success('Đã cập nhật Media ID!')
-                setEditingMediaId(null)
-                setEditingMediaValue('')
-                if (account) fetchVeo3Media(account._id)
-            } else {
-                message.error('Cập nhật thất bại: ' + data.error)
-            }
-        } catch (error: any) {
-            message.error('Lỗi: ' + error.message)
-        }
-    }
-
-    const onUploadSuccess = useCallback(async (result: any) => {
-        const targetId = uploadTargetIdRef.current
-        if (!targetId) return
-        try {
-            const response = await fetch('/api/veo3-media', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id: targetId,
-                    mediaFile: {
-                        url: result.url,
-                        type: result.resourceType === 'video' ? 'video' : 'image',
-                        publicId: result.publicId
-                    }
-                })
-            })
-            const data = await response.json()
-            if (data.success) {
-                message.success('Upload thành công!')
-                if (account) fetchVeo3Media(account._id)
-            }
-        } catch (error: any) {
-            message.error('Lỗi khi lưu: ' + error.message)
-        }
-        uploadTargetIdRef.current = null
-    }, [account, message])
-
-    const { openWidget } = useCloudinaryUpload(
-        veo3MediaUploadConfig,
-        onUploadSuccess,
-        (err) => message.error('Upload thất bại: ' + err?.message)
-    )
-
-    const handleUploadVeo3Media = (mediaDocId: string) => {
-        uploadTargetIdRef.current = mediaDocId
-        openWidget()
     }
 
     const fetchScheduledPosts = async (accountId: string) => {
@@ -1053,198 +897,16 @@ export default function TikTokAccountPage() {
                     </h2>
                 </div>
 
-                {!veo3MediaCollapsed && (<div className="mt-3">
-                    {/* Add new media */}
-                    <div className="mb-3">
-                        <div className="flex gap-2 mb-2">
-                            <Input
-                                placeholder="Nhập Media ID..."
-                                value={newMediaId}
-                                onChange={(e) => setNewMediaId(e.target.value)}
-                                size="small"
-                                onPressEnter={handleAddVeo3Media}
-                            />
-                            <Button
-                                size="small"
-                                onClick={() => openNewMediaWidget()}
-                                title="Upload hình"
-                            >
-                                📷 Upload
-                            </Button>
-                            <Button
-                                type="primary"
-                                size="small"
-                                icon={<PlusOutlined />}
-                                onClick={handleAddVeo3Media}
-                                disabled={!newMediaId.trim()}
-                            >
-                                Thêm
-                            </Button>
-                        </div>
-                        {newMediaFile && (
-                            <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded">
-                                <img
-                                    src={newMediaFile.url}
-                                    alt="Preview"
-                                    className="w-12 h-12 object-cover rounded"
-                                />
-                                <span className="text-xs text-green-700 truncate flex-1">
-                                    {newMediaFile.url}
-                                </span>
-                                <Button
-                                    type="text"
-                                    size="small"
-                                    danger
-                                    onClick={() => setNewMediaFile(null)}
-                                >
-                                    ✕
-                                </Button>
-                            </div>
-                        )}
+                {!veo3MediaCollapsed && account && (
+                    <div className="mt-3">
+                        <Veo3MediaSection
+                            accountId={account._id}
+                            veo3Media={veo3Media}
+                            veo3MediaLoading={veo3MediaLoading}
+                            onRefresh={() => fetchVeo3Media(account._id)}
+                        />
                     </div>
-
-                    {veo3MediaLoading ? (
-                        <div className="text-center py-4">
-                            <Spin size="small" />
-                        </div>
-                    ) : veo3Media.length === 0 ? (
-                        <p className="text-sm text-gray-500 text-center py-4">
-                            Chưa có media nào
-                        </p>
-                    ) : (
-                        <div className="space-y-2">
-                            {veo3Media.map((media: any) => (
-                                <div key={media._id} className="border rounded-lg p-3 flex items-center gap-3">
-                                    {/* Thumbnail */}
-                                    <div className="w-16 h-16 flex-shrink-0 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
-                                        {media.mediaFile?.url ? (
-                                            <img
-                                                src={media.mediaFile.url}
-                                                alt={media.mediaId}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        ) : (
-                                            <span className="text-gray-400 text-xs">No image</span>
-                                        )}
-                                    </div>
-
-                                    {/* Info */}
-                                    <div className="flex-1 min-w-0">
-                                        {editingMediaId === media._id ? (
-                                            <div className="flex items-center gap-2">
-                                                <Input
-                                                    size="small"
-                                                    value={editingMediaValue}
-                                                    onChange={(e) => setEditingMediaValue(e.target.value)}
-                                                    onPressEnter={() => handleEditVeo3MediaId(media._id)}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === 'Escape') {
-                                                            setEditingMediaId(null)
-                                                            setEditingMediaValue('')
-                                                        }
-                                                    }}
-                                                    autoFocus
-                                                    className="font-mono text-sm"
-                                                />
-                                                <Button
-                                                    type="text"
-                                                    size="small"
-                                                    onClick={() => handleEditVeo3MediaId(media._id)}
-                                                    disabled={!editingMediaValue.trim()}
-                                                    title="Lưu"
-                                                >
-                                                    ✓
-                                                </Button>
-                                                <Button
-                                                    type="text"
-                                                    size="small"
-                                                    onClick={() => {
-                                                        setEditingMediaId(null)
-                                                        setEditingMediaValue('')
-                                                    }}
-                                                    title="Hủy"
-                                                >
-                                                    ✕
-                                                </Button>
-                                            </div>
-                                        ) : (
-                                            <>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-sm font-mono font-semibold text-gray-800 truncate">
-                                                        {media.mediaId}
-                                                    </span>
-                                                    <Button
-                                                        type="text"
-                                                        size="small"
-                                                        icon={<CopyOutlined />}
-                                                        onClick={() => {
-                                                            navigator.clipboard.writeText(media.mediaId)
-                                                            message.success('Đã copy Media ID!')
-                                                        }}
-                                                    />
-                                                </div>
-                                                {media.mediaFile?.url && (
-                                                    <p className="text-xs text-gray-500 truncate">
-                                                        {media.mediaFile.url}
-                                                    </p>
-                                                )}
-                                            </>
-                                        )}
-                                    </div>
-
-                                    {/* Actions */}
-                                    <div className="flex gap-1 flex-shrink-0">
-                                        <Button
-                                            type="text"
-                                            size="small"
-                                            icon={<EditOutlined />}
-                                            onClick={() => {
-                                                setEditingMediaId(media._id)
-                                                setEditingMediaValue(media.mediaId)
-                                            }}
-                                            title="Sửa Media ID"
-                                        />
-                                        <Button
-                                            type="text"
-                                            size="small"
-                                            onClick={() => handleUploadVeo3Media(media._id)}
-                                            title="Upload hình"
-                                        >
-                                            📷
-                                        </Button>
-                                        {media.mediaFile?.publicId && (
-                                            <Button
-                                                type="text"
-                                                size="small"
-                                                danger
-                                                onClick={() => handleRemoveVeo3MediaImage(media._id, media.mediaFile.publicId)}
-                                                title="Xóa hình"
-                                            >
-                                                🗑️
-                                            </Button>
-                                        )}
-                                        <Popconfirm
-                                            title="Xóa media?"
-                                            description="Bạn có chắc muốn xóa media này?"
-                                            onConfirm={() => handleDeleteVeo3Media(media._id, media.mediaFile?.publicId)}
-                                            okText="Xóa"
-                                            cancelText="Hủy"
-                                            okButtonProps={{ danger: true }}
-                                        >
-                                            <Button
-                                                type="text"
-                                                size="small"
-                                                danger
-                                                icon={<DeleteOutlined />}
-                                                title="Xóa"
-                                            />
-                                        </Popconfirm>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>)}
+                )}
             </div>
             {/* Content Area - Products */}
             <div className="bg-white rounded-lg shadow-sm p-4">
