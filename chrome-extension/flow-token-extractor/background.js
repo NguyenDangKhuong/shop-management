@@ -6,7 +6,6 @@ const FLOW_URL_PATTERNS = [
 ]
 
 const DEFAULT_API_URL = 'https://shop.thetaphoa.store/api/veo3-tokens'
-const DEFAULT_RECAPTCHA_API_URL = 'https://shop.thetaphoa.store/api/veo3-recaptcha'
 const DEFAULT_WS_URL = 'ws://localhost:3001'
 const AUTO_POST_ALARM = 'auto-post-tokens'
 const AUTO_GENERATE_ALARM = 'auto-generate-recaptcha'
@@ -218,6 +217,55 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
   },
   { urls: FLOW_URL_PATTERNS },
   ['requestHeaders', 'extraHeaders']
+)
+
+// ==========================================
+// AUTO-CAPTURE reCAPTCHA siteKey from page load
+// Listens for requests to google.com/recaptcha/enterprise/* and extracts k= param
+// ==========================================
+let lastCapturedSiteKey = ''
+
+chrome.webRequest.onBeforeRequest.addListener(
+  (details) => {
+    try {
+      const url = new URL(details.url)
+      const siteKey = url.searchParams.get('k')
+      if (!siteKey || siteKey === 'explicit' || siteKey === lastCapturedSiteKey) return
+
+      lastCapturedSiteKey = siteKey
+      console.log('🔑 Auto-captured reCAPTCHA siteKey:', siteKey)
+
+      // Store in local storage
+      chrome.storage.local.set({ capturedSiteKey: siteKey })
+
+      // Push to WS bridge
+      wsSend({ type: 'sitekey_push', siteKey })
+
+      // Auto-PUT to API — get latest token ID first, then update
+      fetch(DEFAULT_API_URL)
+        .then(r => r.json())
+        .then(data => {
+          const latest = data?.data?.[0]
+          if (latest?._id) {
+            return fetch(DEFAULT_API_URL, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: latest._id, siteKey })
+            })
+          }
+        })
+        .then(r => r?.json())
+        .then(result => {
+          if (result?.success) {
+            console.log('🔑 siteKey auto-saved to API:', siteKey)
+          }
+        })
+        .catch(err => console.warn('🔑 Failed to auto-save siteKey:', err.message))
+    } catch (err) {
+      // ignore parse errors
+    }
+  },
+  { urls: ['*://www.google.com/recaptcha/enterprise/*'] }
 )
 
 // ==========================================

@@ -26,7 +26,7 @@ Hệ thống sử dụng **WebSocket Bridge** để kết nối Chrome Extension
                                                │                   │
                                                │  POST /api/gen-video
                                                │  GET  /api/gen-video
-                                               │  GET  /api/veo3-recaptcha
+                                               │  GET  /api/veo3-tokens
                                                └───────────────────┘
 ```
 
@@ -302,7 +302,7 @@ WS_BRIDGE_URL=https://ws.thetaphoa.store
 
 ### 3. Code đã support env variable
 
-Route `/api/gen-video` và `/api/veo3-recaptcha` dùng `process.env.WS_BRIDGE_URL`, default `http://localhost:3002`.
+Route `/api/gen-video` dùng `process.env.WS_BRIDGE_URL`, default `http://localhost:3002`.
 
 > [!TIP]
 > Domain `ws.thetaphoa.store` cố định, không đổi mỗi lần restart.
@@ -315,7 +315,7 @@ Route `/api/gen-video` và `/api/veo3-recaptcha` dùng `process.env.WS_BRIDGE_UR
 |------|-------|
 | `scripts/ws-bridge.js` | WebSocket Bridge server |
 | `src/app/api/gen-video/route.ts` | API tạo video (POST) + check status (GET) |
-| `src/app/api/veo3-recaptcha/route.ts` | API lấy fresh reCAPTCHA token |
+
 | `src/app/api/veo3-tokens/route.ts` | CRUD ya29 tokens (DB) |
 | `src/models/Veo3Token.ts` | Mongoose model (ya29, projectId, sessionId, siteKey) |
 | `chrome-extension/flow-token-extractor/` | Chrome Extension folder |

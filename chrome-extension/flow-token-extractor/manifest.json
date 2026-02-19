@@ -13,6 +13,7 @@
   "host_permissions": [
     "*://labs.google/*",
     "*://*.googleapis.com/*",
+    "*://www.google.com/*",
     "*://shop.thetaphoa.store/*",
     "*://localhost/*"
   ],
