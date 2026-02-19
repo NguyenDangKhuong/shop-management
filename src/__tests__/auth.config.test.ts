@@ -7,7 +7,7 @@ global.Response = {
 import { authConfig } from '../../auth.config'
 
 // Extract callbacks for testing
-const { jwt, session, authorized } = authConfig.callbacks
+const { jwt, session: _session, authorized } = authConfig.callbacks
 
 describe('Auth Config', () => {
     describe('JWT Configuration', () => {

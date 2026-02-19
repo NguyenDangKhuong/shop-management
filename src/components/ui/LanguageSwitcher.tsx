@@ -1,6 +1,6 @@
 'use client'
 
-import { useTranslation, Language } from '@/i18n'
+import { useTranslation } from '@/i18n'
 
 const LanguageSwitcher = () => {
     const { language, setLanguage } = useTranslation()
