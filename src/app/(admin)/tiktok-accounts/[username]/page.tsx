@@ -59,6 +59,8 @@ export default function TikTokAccountPage() {
     const [veo3MediaLoading, setVeo3MediaLoading] = useState(false)
     const [newMediaId, setNewMediaId] = useState('')
     const [newMediaFile, setNewMediaFile] = useState<{ url: string; type: string; publicId?: string } | null>(null)
+    const [editingMediaId, setEditingMediaId] = useState<string | null>(null)
+    const [editingMediaValue, setEditingMediaValue] = useState('')
     const [shopeeLinks, setShopeeLinks] = useState<any[]>([])
 
     // Extract username from params (decode URI and remove @ prefix if exists)
@@ -389,6 +391,31 @@ export default function TikTokAccountPage() {
             if (data.success) {
                 message.success('Đã xóa hình!')
                 if (account) fetchVeo3Media(account._id)
+            }
+        } catch (error: any) {
+            message.error('Lỗi: ' + error.message)
+        }
+    }
+
+    const handleEditVeo3MediaId = async (mediaDocId: string) => {
+        if (!editingMediaValue.trim()) return
+        try {
+            const response = await fetch('/api/veo3-media', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: mediaDocId,
+                    mediaId: editingMediaValue.trim()
+                })
+            })
+            const data = await response.json()
+            if (data.success) {
+                message.success('Đã cập nhật Media ID!')
+                setEditingMediaId(null)
+                setEditingMediaValue('')
+                if (account) fetchVeo3Media(account._id)
+            } else {
+                message.error('Cập nhật thất bại: ' + data.error)
             }
         } catch (error: any) {
             message.error('Lỗi: ' + error.message)
@@ -1090,29 +1117,80 @@ export default function TikTokAccountPage() {
 
                                 {/* Info */}
                                 <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-sm font-mono font-semibold text-gray-800 truncate">
-                                            {media.mediaId}
-                                        </span>
-                                        <Button
-                                            type="text"
-                                            size="small"
-                                            icon={<CopyOutlined />}
-                                            onClick={() => {
-                                                navigator.clipboard.writeText(media.mediaId)
-                                                message.success('Đã copy Media ID!')
-                                            }}
-                                        />
-                                    </div>
-                                    {media.mediaFile?.url && (
-                                        <p className="text-xs text-gray-500 truncate">
-                                            {media.mediaFile.url}
-                                        </p>
+                                    {editingMediaId === media._id ? (
+                                        <div className="flex items-center gap-2">
+                                            <Input
+                                                size="small"
+                                                value={editingMediaValue}
+                                                onChange={(e) => setEditingMediaValue(e.target.value)}
+                                                onPressEnter={() => handleEditVeo3MediaId(media._id)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Escape') {
+                                                        setEditingMediaId(null)
+                                                        setEditingMediaValue('')
+                                                    }
+                                                }}
+                                                autoFocus
+                                                className="font-mono text-sm"
+                                            />
+                                            <Button
+                                                type="text"
+                                                size="small"
+                                                onClick={() => handleEditVeo3MediaId(media._id)}
+                                                disabled={!editingMediaValue.trim()}
+                                                title="Lưu"
+                                            >
+                                                ✓
+                                            </Button>
+                                            <Button
+                                                type="text"
+                                                size="small"
+                                                onClick={() => {
+                                                    setEditingMediaId(null)
+                                                    setEditingMediaValue('')
+                                                }}
+                                                title="Hủy"
+                                            >
+                                                ✕
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-mono font-semibold text-gray-800 truncate">
+                                                    {media.mediaId}
+                                                </span>
+                                                <Button
+                                                    type="text"
+                                                    size="small"
+                                                    icon={<CopyOutlined />}
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(media.mediaId)
+                                                        message.success('Đã copy Media ID!')
+                                                    }}
+                                                />
+                                            </div>
+                                            {media.mediaFile?.url && (
+                                                <p className="text-xs text-gray-500 truncate">
+                                                    {media.mediaFile.url}
+                                                </p>
+                                            )}
+                                        </>
                                     )}
                                 </div>
 
                                 {/* Actions */}
                                 <div className="flex gap-1 flex-shrink-0">
+                                    <Button
+                                        type="text"
+                                        size="small"
+                                        icon={<EditOutlined />}
+                                        onClick={() => {
+                                            setEditingMediaId(media._id)
+                                            setEditingMediaValue(media.mediaId)
+                                        }}
+                                        title="Sửa Media ID"
+                                    />
                                     <Button
                                         type="text"
                                         size="small"

@@ -130,10 +130,11 @@ Section **🎬 Veo3 Media** nằm trên trang chi tiết TikTok Account, giữa 
 ### Chức năng
 
 1. **Thêm media** — Nhập Media ID vào input, có thể upload hình ngay bằng nút "📷 Upload" (preview hiển thị bên dưới), nhấn "Thêm" để tạo media kèm hình
-2. **Upload hình (sau khi tạo)** — Nhấn 📷 trên item trong danh sách → Cloudinary widget mở ra → upload xong tự lưu
-3. **Xóa hình** — Nhấn 🗑️ xóa hình khỏi Cloudinary (giữ media ID)
-4. **Xóa media** — Nhấn Delete xóa toàn bộ record
-5. **Copy Media ID** — Nhấn icon copy
+2. **Edit Media ID** — Nhấn ✏️ trên item → mediaId chuyển thành input editable, nhấn ✓/Enter để lưu, ✕/Escape để hủy
+3. **Upload hình (sau khi tạo)** — Nhấn 📷 trên item trong danh sách → Cloudinary widget mở ra → upload xong tự lưu
+4. **Xóa hình** — Nhấn 🗑️ xóa hình khỏi Cloudinary (giữ media ID)
+5. **Xóa media** — Nhấn Delete xóa toàn bộ record
+6. **Copy Media ID** — Nhấn icon copy
 
 ### Upload Config
 
