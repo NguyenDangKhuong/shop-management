@@ -10,7 +10,7 @@ async function main() {
         icon: { emoji: '📅' },
         properties: {
             title: [{ text: { content: 'Ngày 1 – Tuần 1: Làm quen Shadowing & Self-talk' } }]
-        },
+        } as any,
         children: [
             // Mục tiêu
             { callout: { icon: { emoji: '🎯' }, rich_text: [{ text: { content: 'Mục tiêu hôm nay: Bắt đầu thói quen shadowing, tập self-talk lần đầu, và setup tools cần thiết.' } }] } },
@@ -160,7 +160,7 @@ async function main() {
         ] as any
     })
 
-    console.log(`✅ Đã tạo page: ${page.url}`)
+    console.log(`✅ Đã tạo page: ${(page as any).url}`)
 }
 
 main().catch(err => console.error('❌ Error:', err.message))

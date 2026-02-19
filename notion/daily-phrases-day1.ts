@@ -9,7 +9,7 @@ async function main() {
         icon: { emoji: '💬' },
         properties: {
             title: [{ text: { content: 'Day 1 — 20 câu giao tiếp với đồng nghiệp Úc (Workplace)' } }]
-        },
+        } as any,
         children: [
             { callout: { icon: { emoji: '🎯' }, rich_text: [{ text: { content: 'Mục tiêu: Học 20 mẫu câu thường dùng khi làm việc với đồng nghiệp Úc. Đọc to 3 lần mỗi câu → tập nói lại không nhìn.' } }] } },
 
