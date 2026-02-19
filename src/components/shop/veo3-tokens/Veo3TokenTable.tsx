@@ -1,21 +1,28 @@
 'use client'
 
 import { apiDelete, apiGet, apiPost, apiPut } from '@/utils/internalApi'
-import { CopyOutlined, DeleteTwoTone, EditTwoTone, PlusOutlined } from '@ant-design/icons'
-import { App, Button, Form, Input, Modal, Popconfirm, Table } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
+import { CopyOutlined, DeleteTwoTone, EditTwoTone, PlusOutlined, ReloadOutlined } from '@ant-design/icons'
+import { App, Button, Form, Input, Modal, Popconfirm, Spin, Tag } from 'antd'
 import { useEffect, useState } from 'react'
-import { isMobile } from 'react-device-detect'
 
 interface Veo3Token {
     _id: string
     value: string
     projectId?: string
     sessionId?: string
+    siteKey?: string
     apiKeyNanoAI?: string
     createdAt?: string
     updatedAt?: string
 }
+
+const FIELDS: { key: keyof Veo3Token; label: string; icon: string; color: string }[] = [
+    { key: 'value', label: 'Token (ya29)', icon: '🔑', color: '#e94560' },
+    { key: 'projectId', label: 'Project ID', icon: '📁', color: '#4caf50' },
+    { key: 'sessionId', label: 'Session ID', icon: '📋', color: '#FF9800' },
+    { key: 'siteKey', label: 'SiteKey (reCAPTCHA)', icon: '🛡️', color: '#9c27b0' },
+    { key: 'apiKeyNanoAI', label: 'API Key NanoAI', icon: '🤖', color: '#00bcd4' },
+]
 
 const Veo3TokenTable = () => {
     const { message } = App.useApp()
@@ -63,7 +70,13 @@ const Veo3TokenTable = () => {
 
     const handleEdit = (token: Veo3Token) => {
         setEditingToken(token)
-        form.setFieldsValue({ value: token.value, projectId: token.projectId || '', sessionId: token.sessionId || '', apiKeyNanoAI: token.apiKeyNanoAI || '' })
+        form.setFieldsValue({
+            value: token.value,
+            projectId: token.projectId || '',
+            sessionId: token.sessionId || '',
+            siteKey: token.siteKey || '',
+            apiKeyNanoAI: token.apiKeyNanoAI || ''
+        })
         setIsModalOpen(true)
     }
 
@@ -76,10 +89,17 @@ const Veo3TokenTable = () => {
     const handleSubmit = async () => {
         try {
             const values = await form.validateFields()
+            const payload = {
+                value: values.value,
+                projectId: values.projectId || '',
+                sessionId: values.sessionId || '',
+                siteKey: values.siteKey || '',
+                apiKeyNanoAI: values.apiKeyNanoAI || ''
+            }
 
             const result = editingToken
-                ? await apiPut('/api/veo3-tokens', { id: editingToken._id, value: values.value, projectId: values.projectId || '', sessionId: values.sessionId || '', apiKeyNanoAI: values.apiKeyNanoAI || '' })
-                : await apiPost('/api/veo3-tokens', { value: values.value, projectId: values.projectId || '', sessionId: values.sessionId || '', apiKeyNanoAI: values.apiKeyNanoAI || '' })
+                ? await apiPut('/api/veo3-tokens', { id: editingToken._id, ...payload })
+                : await apiPost('/api/veo3-tokens', payload)
 
             if (result.success) {
                 message.success(editingToken ? 'Đã cập nhật token!' : 'Đã thêm token!')
@@ -98,121 +118,28 @@ const Veo3TokenTable = () => {
         ? `${window.location.origin}/api/veo3-tokens`
         : '/api/veo3-tokens'
 
-    const columns: ColumnsType<Veo3Token> = [
-        {
-            title: 'Token',
-            dataIndex: 'value',
-            key: 'value',
-            ellipsis: true,
-            render: (value: string) => (
-                <div className="flex items-center gap-2">
-                    <CopyOutlined
-                        className="cursor-pointer text-gray-500 hover:text-blue-500 flex-shrink-0"
-                        onClick={() => handleCopy(value)}
-                    />
-                    <span className="font-mono text-xs">
-                        {value.length > 80 ? `${value.substring(0, 80)}...` : value}
-                    </span>
-                </div>
-            )
-        },
-        {
-            title: 'Project ID',
-            dataIndex: 'projectId',
-            key: 'projectId',
-            ellipsis: true,
-            width: 160,
-            render: (value: string) => value ? (
-                <div className="flex items-center gap-2">
-                    <CopyOutlined
-                        className="cursor-pointer text-gray-500 hover:text-blue-500 flex-shrink-0"
-                        onClick={() => handleCopy(value)}
-                    />
-                    <span className="font-mono text-xs">
-                        {value.length > 30 ? `${value.substring(0, 30)}...` : value}
-                    </span>
-                </div>
-            ) : <span className="text-gray-400 text-xs">—</span>
-        },
-        {
-            title: 'Session ID',
-            dataIndex: 'sessionId',
-            key: 'sessionId',
-            ellipsis: true,
-            width: 160,
-            render: (value: string) => value ? (
-                <div className="flex items-center gap-2">
-                    <CopyOutlined
-                        className="cursor-pointer text-gray-500 hover:text-blue-500 flex-shrink-0"
-                        onClick={() => handleCopy(value)}
-                    />
-                    <span className="font-mono text-xs">
-                        {value.length > 30 ? `${value.substring(0, 30)}...` : value}
-                    </span>
-                </div>
-            ) : <span className="text-gray-400 text-xs">—</span>
-        },
-        {
-            title: 'API Key NanoAI',
-            dataIndex: 'apiKeyNanoAI',
-            key: 'apiKeyNanoAI',
-            ellipsis: true,
-            width: 180,
-            render: (value: string) => value ? (
-                <div className="flex items-center gap-2">
-                    <CopyOutlined
-                        className="cursor-pointer text-gray-500 hover:text-blue-500 flex-shrink-0"
-                        onClick={() => handleCopy(value)}
-                    />
-                    <span className="font-mono text-xs">
-                        {value.length > 30 ? `${value.substring(0, 30)}...` : value}
-                    </span>
-                </div>
-            ) : <span className="text-gray-400 text-xs">—</span>
-        },
-        {
-            title: 'Cập nhật',
-            dataIndex: 'updatedAt',
-            key: 'updatedAt',
-            width: 180,
-            render: (date: string) => date ? new Date(date).toLocaleString('vi-VN') : '-'
-        },
-        {
-            title: 'Hành động',
-            key: 'actions',
-            align: 'center',
-            width: 120,
-            render: (_, record) => (
-                <div className="flex gap-2 justify-center">
-                    <EditTwoTone
-                        className="cursor-pointer text-lg"
-                        onClick={() => handleEdit(record)}
-                    />
-                    <Popconfirm
-                        title="Xóa token?"
-                        description="Bạn có chắc muốn xóa token này?"
-                        onConfirm={() => handleDelete(record._id.toString())}
-                        okText="Xóa"
-                        cancelText="Hủy"
-                    >
-                        <DeleteTwoTone className="cursor-pointer text-lg" twoToneColor="#ff4d4f" />
-                    </Popconfirm>
-                </div>
-            )
-        }
-    ]
+    const token = tokens[0]
 
     return (
-        <div className="p-4">
+        <div className="p-4 max-w-4xl mx-auto">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Veo3 Tokens ({tokens.length})</h2>
-                <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={handleAdd}
-                >
-                    Thêm Token
-                </Button>
+                <h2 className="text-xl font-semibold">Veo3 Token</h2>
+                <div className="flex gap-2">
+                    <Button
+                        icon={<ReloadOutlined />}
+                        onClick={loadTokens}
+                        loading={loading}
+                    />
+                    {!token && (
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            onClick={handleAdd}
+                        >
+                            Thêm Token
+                        </Button>
+                    )}
+                </div>
             </div>
 
             <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
@@ -229,80 +156,75 @@ const Veo3TokenTable = () => {
                 </div>
             </div>
 
-            {isMobile ? (
-                <div className="flex flex-col gap-3">
-                    {tokens.map((token) => (
-                        <div
-                            key={token._id}
-                            className="border rounded-lg p-3 bg-white shadow-sm"
-                        >
-                            <div className="flex justify-end items-start mb-2">
-                                <div className="flex gap-2">
-                                    <CopyOutlined
-                                        className="cursor-pointer text-gray-500"
-                                        onClick={() => handleCopy(token.value)}
-                                    />
-                                    <EditTwoTone
-                                        className="cursor-pointer"
-                                        onClick={() => handleEdit(token)}
-                                    />
-                                    <Popconfirm
-                                        title="Xóa token?"
-                                        onConfirm={() => handleDelete(token._id)}
-                                        okText="Xóa"
-                                        cancelText="Hủy"
-                                    >
-                                        <DeleteTwoTone twoToneColor="#ff4d4f" className="cursor-pointer" />
-                                    </Popconfirm>
-                                </div>
-                            </div>
-                            <div className="font-mono text-xs text-gray-600 break-all bg-gray-50 p-2 rounded">
-                                {token.value}
-                            </div>
-                            {token.projectId && (
-                                <div className="mt-2">
-                                    <span className="text-xs font-semibold text-green-600">Project ID:</span>
-                                    <div className="font-mono text-xs text-green-700 break-all bg-green-50 p-2 rounded mt-1">
-                                        {token.projectId}
-                                    </div>
-                                </div>
-                            )}
-                            {token.sessionId && (
-                                <div className="mt-2">
-                                    <span className="text-xs font-semibold text-orange-600">Session ID:</span>
-                                    <div className="font-mono text-xs text-orange-700 break-all bg-orange-50 p-2 rounded mt-1">
-                                        {token.sessionId}
-                                    </div>
-                                </div>
-                            )}
-                            {token.apiKeyNanoAI && (
-                                <div className="mt-2">
-                                    <span className="text-xs font-semibold text-cyan-600">API Key NanoAI:</span>
-                                    <div className="font-mono text-xs text-cyan-700 break-all bg-cyan-50 p-2 rounded mt-1">
-                                        {token.apiKeyNanoAI}
-                                    </div>
-                                </div>
-                            )}
-                            {token.updatedAt && (
-                                <div className="text-xs text-gray-400 mt-2">
-                                    {new Date(token.updatedAt).toLocaleString('vi-VN')}
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                    {tokens.length === 0 && !loading && (
-                        <div className="text-center text-gray-400 py-8">Chưa có token nào</div>
-                    )}
+            {loading ? (
+                <div className="flex justify-center py-16">
+                    <Spin size="large" />
+                </div>
+            ) : !token ? (
+                <div className="text-center py-16 text-gray-400">
+                    <div className="text-4xl mb-4">🔍</div>
+                    <p>Chưa có token nào</p>
+                    <p className="text-sm mt-1">Bấm &quot;Thêm Token&quot; hoặc gửi từ extension</p>
                 </div>
             ) : (
-                <Table
-                    rowKey="_id"
-                    loading={loading}
-                    bordered
-                    columns={columns}
-                    dataSource={tokens}
-                    pagination={{ pageSize: 20, showTotal: (total) => `Tổng ${total} tokens` }}
-                />
+                <div className="border rounded-xl bg-white shadow-sm overflow-hidden">
+                    {/* Header */}
+                    <div className="flex justify-between items-center px-4 py-3 bg-gray-50 border-b">
+                        <div className="flex items-center gap-2">
+                            <Tag color="green">Active</Tag>
+                            {token.updatedAt && (
+                                <span className="text-xs text-gray-400">
+                                    Cập nhật: {new Date(token.updatedAt).toLocaleString('vi-VN')}
+                                </span>
+                            )}
+                        </div>
+                        <div className="flex gap-3">
+                            <EditTwoTone
+                                className="cursor-pointer text-lg"
+                                onClick={() => handleEdit(token)}
+                            />
+                            <Popconfirm
+                                title="Xóa token?"
+                                description="Bạn có chắc muốn xóa token này?"
+                                onConfirm={() => handleDelete(token._id.toString())}
+                                okText="Xóa"
+                                cancelText="Hủy"
+                            >
+                                <DeleteTwoTone className="cursor-pointer text-lg" twoToneColor="#ff4d4f" />
+                            </Popconfirm>
+                        </div>
+                    </div>
+
+                    {/* Fields */}
+                    <div className="divide-y">
+                        {FIELDS.map(({ key, label, icon, color }) => {
+                            const value = token[key] as string | undefined
+                            return (
+                                <div key={key} className="px-4 py-3 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                                    <div className="flex items-center gap-2 sm:w-48 flex-shrink-0">
+                                        <span>{icon}</span>
+                                        <span className="text-sm font-medium" style={{ color }}>{label}</span>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        {value ? (
+                                            <div className="flex items-start gap-2 group">
+                                                <span className="font-mono text-xs break-all leading-relaxed bg-gray-50 px-2 py-1 rounded flex-1">
+                                                    {value}
+                                                </span>
+                                                <CopyOutlined
+                                                    className="cursor-pointer text-gray-400 hover:text-blue-500 flex-shrink-0 mt-1 opacity-60 group-hover:opacity-100 transition-opacity"
+                                                    onClick={() => handleCopy(value)}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <span className="text-gray-300 text-sm">—</span>
+                                        )}
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
             )}
 
             <Modal
@@ -328,32 +250,17 @@ const Veo3TokenTable = () => {
                             className="font-mono text-xs"
                         />
                     </Form.Item>
-                    <Form.Item
-                        name="projectId"
-                        label="Project ID"
-                    >
-                        <Input
-                            placeholder="Nhập project ID..."
-                            className="font-mono text-xs"
-                        />
+                    <Form.Item name="projectId" label="Project ID">
+                        <Input placeholder="Nhập project ID..." className="font-mono text-xs" />
                     </Form.Item>
-                    <Form.Item
-                        name="sessionId"
-                        label="Session ID"
-                    >
-                        <Input
-                            placeholder="Nhập session ID..."
-                            className="font-mono text-xs"
-                        />
+                    <Form.Item name="sessionId" label="Session ID">
+                        <Input placeholder="Nhập session ID..." className="font-mono text-xs" />
                     </Form.Item>
-                    <Form.Item
-                        name="apiKeyNanoAI"
-                        label="API Key NanoAI"
-                    >
-                        <Input
-                            placeholder="Nhập API Key NanoAI..."
-                            className="font-mono text-xs"
-                        />
+                    <Form.Item name="siteKey" label="SiteKey">
+                        <Input placeholder="reCAPTCHA Enterprise site key..." className="font-mono text-xs" />
+                    </Form.Item>
+                    <Form.Item name="apiKeyNanoAI" label="API Key NanoAI">
+                        <Input placeholder="Nhập API Key NanoAI..." className="font-mono text-xs" />
                     </Form.Item>
                 </Form>
             </Modal>
