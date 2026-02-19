@@ -40,8 +40,8 @@
       return true
     }
     if (message.type === 'GENERATE_RECAPTCHA_TOKEN') {
-      // Forward request to the injected page script (MAIN world)
-      window.postMessage({ type: 'GENERATE_RECAPTCHA_TOKEN' }, '*')
+      // Forward request to the injected page script (MAIN world), including siteKey if provided
+      window.postMessage({ type: 'GENERATE_RECAPTCHA_TOKEN', siteKey: message.siteKey || '' }, '*')
       sendResponse({ success: true, message: 'Token generation triggered' })
     }
     if (message.type === 'GENERATE_RECAPTCHA_BATCH') {

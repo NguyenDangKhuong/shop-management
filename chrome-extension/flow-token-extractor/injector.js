@@ -9,8 +9,11 @@
     if (window.__flowTokenExtractorInjected) return
     window.__flowTokenExtractorInjected = true
 
-    const SITE_KEY = '6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV'
     const TARGET_URL = 'aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText'
+
+    // Dynamically detected siteKey — NO fallback, must come from the page
+    let detectedSiteKey = null
+    let detectedAction = 'VIDEO_GENERATION'
 
     // =============================================
     // 1. Intercept fetch to capture request data
@@ -51,7 +54,7 @@
     // =============================================
     // 2. On-demand reCAPTCHA token generation
     // =============================================
-    function generateRecaptchaToken() {
+    function generateRecaptchaToken(overrideSiteKey) {
         if (!window.grecaptcha || !window.grecaptcha.enterprise || !window.grecaptcha.enterprise.execute) {
             window.postMessage({
                 type: 'VEO3_RECAPTCHA_ERROR',
@@ -61,13 +64,32 @@
             return
         }
 
-        window.grecaptcha.enterprise.execute(SITE_KEY, { action: 'VIDEO_GENERATION' })
+        // Try detecting siteKey again if not yet found
+        if (!detectedSiteKey) {
+            detectSiteKeyFromPage()
+        }
+
+        // Priority: overrideSiteKey from server > detectedSiteKey from page
+        var siteKey = overrideSiteKey || detectedSiteKey
+
+        if (!siteKey) {
+            window.postMessage({
+                type: 'VEO3_RECAPTCHA_ERROR',
+                error: 'No siteKey available. Please gen a video on Flow page first, or save siteKey in DB.',
+                timestamp: new Date().toISOString()
+            }, '*')
+            return
+        }
+
+        console.log('🔑 Generating reCAPTCHA with siteKey:', siteKey, 'action:', detectedAction)
+
+        window.grecaptcha.enterprise.execute(siteKey, { action: detectedAction })
             .then(function (token) {
                 window.postMessage({
                     type: 'VEO3_RECAPTCHA_GENERATED',
                     recaptchaToken: token,
-                    siteKey: SITE_KEY,
-                    action: 'VIDEO_GENERATION',
+                    siteKey: siteKey,
+                    action: detectedAction,
                     timestamp: new Date().toISOString()
                 }, '*')
                 console.log('🔑 reCAPTCHA token generated:', token.substring(0, 30) + '...')
@@ -76,6 +98,7 @@
                 window.postMessage({
                     type: 'VEO3_RECAPTCHA_ERROR',
                     error: err.message || String(err),
+                    siteKey: siteKey,
                     timestamp: new Date().toISOString()
                 }, '*')
             })
@@ -85,7 +108,7 @@
     window.addEventListener('message', function (event) {
         if (event.source !== window) return
         if (event.data && event.data.type === 'GENERATE_RECAPTCHA_TOKEN') {
-            generateRecaptchaToken()
+            generateRecaptchaToken(event.data.siteKey || '')
         }
         // Batch generation — generate N tokens sequentially
         if (event.data && event.data.type === 'GENERATE_RECAPTCHA_BATCH') {
@@ -100,14 +123,18 @@
                     window.postMessage({ type: 'VEO3_RECAPTCHA_ERROR', error: 'grecaptcha not available', timestamp: new Date().toISOString() }, '*')
                     return
                 }
-                window.grecaptcha.enterprise.execute(SITE_KEY, { action: 'VIDEO_GENERATION' })
+                if (!detectedSiteKey) {
+                    window.postMessage({ type: 'VEO3_RECAPTCHA_ERROR', error: 'No siteKey detected', timestamp: new Date().toISOString() }, '*')
+                    return
+                }
+                window.grecaptcha.enterprise.execute(detectedSiteKey, { action: detectedAction })
                     .then(function (token) {
                         generated++
                         window.postMessage({
                             type: 'VEO3_RECAPTCHA_GENERATED',
                             recaptchaToken: token,
-                            siteKey: SITE_KEY,
-                            action: 'VIDEO_GENERATION',
+                            siteKey: detectedSiteKey,
+                            action: detectedAction,
                             batchIndex: generated,
                             batchTotal: count,
                             timestamp: new Date().toISOString()
@@ -128,7 +155,7 @@
     })
 
     // =============================================
-    // 3. Hook grecaptcha.enterprise.execute
+    // 3. Hook grecaptcha.enterprise.execute to auto-detect siteKey
     // =============================================
     function hookRecaptcha() {
         if (window.grecaptcha && window.grecaptcha.enterprise && window.grecaptcha.enterprise.execute) {
@@ -136,6 +163,17 @@
             if (original.__hooked) return
 
             window.grecaptcha.enterprise.execute = function (...args) {
+                // Auto-detect siteKey and action from the page's real calls
+                if (args[0] && typeof args[0] === 'string') {
+                    if (!detectedSiteKey || detectedSiteKey !== args[0]) {
+                        detectedSiteKey = args[0]
+                        console.log('🔑 Auto-detected reCAPTCHA siteKey:', detectedSiteKey)
+                    }
+                }
+                if (args[1] && args[1].action) {
+                    detectedAction = args[1].action
+                }
+
                 const result = original.apply(this, args)
                 if (result && result.then) {
                     result.then(function (token) {
@@ -144,6 +182,7 @@
                             recaptchaToken: token,
                             siteKey: args[0] || '',
                             action: (args[1] && args[1].action) || '',
+                            autoDetected: true,
                             timestamp: new Date().toISOString()
                         }, '*')
                     })
@@ -151,14 +190,47 @@
                 return result
             }
             window.grecaptcha.enterprise.execute.__hooked = true
-            console.log('🔑 grecaptcha.enterprise.execute hooked')
+            console.log('🔑 grecaptcha.enterprise.execute hooked (auto-detect siteKey enabled)')
         }
     }
 
+    // Detect siteKey from the reCAPTCHA script tag on the page
+    function detectSiteKeyFromPage() {
+        var scripts = document.querySelectorAll('script[src*="recaptcha"]')
+        scripts.forEach(function (s) {
+            var match = s.src.match(/render=([^&]+)/)
+            if (match && match[1] && match[1] !== 'explicit') {
+                detectedSiteKey = match[1]
+                console.log('🔑 SiteKey from script tag:', detectedSiteKey)
+            }
+        })
+    }
+
+    // Retry detecting siteKey until found (page may load the script late)
+    function startSiteKeyDetection() {
+        detectSiteKeyFromPage()
+        if (!detectedSiteKey) {
+            var retryCount = 0
+            var interval = setInterval(function () {
+                detectSiteKeyFromPage()
+                retryCount++
+                if (detectedSiteKey || retryCount >= 15) { // max 30s
+                    clearInterval(interval)
+                    if (detectedSiteKey) {
+                        console.log('🔑 SiteKey detected after', retryCount * 2, 'seconds')
+                    } else {
+                        console.warn('🔑 Could not detect siteKey from page after 30s')
+                    }
+                }
+            }, 2000)
+        }
+    }
+
+    startSiteKeyDetection()
     hookRecaptcha()
     setTimeout(hookRecaptcha, 2000)
     setTimeout(hookRecaptcha, 5000)
     setTimeout(hookRecaptcha, 10000)
 
-    console.log('🔑 Flow Token Extractor: Page interceptor installed')
+    console.log('🔑 Flow Token Extractor: Page interceptor installed (siteKey:', detectedSiteKey || 'detecting...', ')')
 })()

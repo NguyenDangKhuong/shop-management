@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import connectDB from '@/utils/connectDb'
-import Veo3TokenModel from '@/models/Veo3Token'
 
 const VEO3_API_URL = 'https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText'
 const WS_BRIDGE_URL = process.env.WS_BRIDGE_URL || 'http://localhost:3002'
@@ -8,9 +6,12 @@ const MAX_RECAPTCHA_RETRIES = 3
 const RETRY_DELAY_MS = 3000
 
 // Helper: fetch fresh reCAPTCHA from WS bridge
-async function fetchRecaptcha(): Promise<{ token: string; source: string } | null> {
+async function fetchRecaptcha(siteKey?: string): Promise<{ token: string; source: string } | null> {
     try {
-        const wsResp = await fetch(`${WS_BRIDGE_URL}/recaptcha/fresh`, {
+        const url = siteKey
+            ? `${WS_BRIDGE_URL}/recaptcha/fresh?siteKey=${encodeURIComponent(siteKey)}`
+            : `${WS_BRIDGE_URL}/recaptcha/fresh`
+        const wsResp = await fetch(url, {
             signal: AbortSignal.timeout(16000)
         })
         if (wsResp.ok) {
@@ -39,7 +40,6 @@ const delay = (ms: number) => new Promise(r => setTimeout(r, ms))
 // are auto-fetched from WS bridge → DB fallback
 export async function POST(request: NextRequest) {
     try {
-        await connectDB()
         const body = await request.json()
 
         const {
@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
         let bearerToken = ''
         let sessionId = ''
         let projectId = ''
+        let siteKey = ''
         let tokenSource = ''
 
         try {
@@ -80,27 +81,45 @@ export async function POST(request: NextRequest) {
             console.log(`🌉 WS bridge unavailable: ${wsErr.message}, falling back to DB`)
         }
 
-        // DB fallback (for token, or just for sessionId/projectId if bridge has token but no project)
-        if (!bearerToken || !projectId) {
-            const tokenDoc = await Veo3TokenModel.findOne().sort({ updatedAt: -1 })
-            if (!bearerToken) {
-                if (!tokenDoc || !tokenDoc.value) {
-                    return NextResponse.json({
-                        success: false,
-                        error: 'No ya29 token available. Start WS bridge + extension.'
-                    }, { status: 400 })
+        // API fallback — fetch projectId/sessionId/siteKey/token from /api/veo3-tokens
+        if (!bearerToken || !projectId || !sessionId || !siteKey) {
+            try {
+                const apiBase = process.env.NEXT_PUBLIC_BASE_URL || 'https://shop.thetaphoa.store'
+                const tokensResp = await fetch(`${apiBase}/api/veo3-tokens`, {
+                    signal: AbortSignal.timeout(5000)
+                })
+                if (tokensResp.ok) {
+                    const tokensData = await tokensResp.json()
+                    const latest = tokensData?.data?.[0]
+                    if (latest) {
+                        if (!bearerToken && latest.value) {
+                            bearerToken = latest.value
+                            tokenSource = 'api'
+                            console.log('🌐 ya29 from /api/veo3-tokens')
+                        }
+                        if (!sessionId && latest.sessionId) {
+                            sessionId = latest.sessionId
+                            console.log('🌐 sessionId from /api/veo3-tokens:', sessionId)
+                        }
+                        if (!projectId && latest.projectId) {
+                            projectId = latest.projectId
+                            console.log('🌐 projectId from /api/veo3-tokens:', projectId)
+                        }
+                        if (!siteKey && latest.siteKey) {
+                            siteKey = latest.siteKey
+                            console.log('🌐 siteKey from /api/veo3-tokens:', siteKey)
+                        }
+                    }
                 }
-                bearerToken = tokenDoc.value
-                tokenSource = 'db'
-                console.log('💾 ya29 from DB (fallback)')
+            } catch (apiErr: any) {
+                console.log(`🌐 /api/veo3-tokens unavailable: ${apiErr.message}`)
             }
-            if (!sessionId && tokenDoc?.sessionId) {
-                sessionId = tokenDoc.sessionId
-                console.log('💾 sessionId from DB')
-            }
-            if (!projectId && tokenDoc?.projectId) {
-                projectId = tokenDoc.projectId
-                console.log('💾 projectId from DB')
+
+            if (!bearerToken) {
+                return NextResponse.json({
+                    success: false,
+                    error: 'No ya29 token available. Start WS bridge + extension.'
+                }, { status: 400 })
             }
         }
 
@@ -138,8 +157,8 @@ export async function POST(request: NextRequest) {
         let lastError: any = null
 
         for (let attempt = 1; attempt <= MAX_RECAPTCHA_RETRIES; attempt++) {
-            // Get fresh reCAPTCHA token
-            const recaptcha = await fetchRecaptcha()
+            // Get fresh reCAPTCHA token (pass siteKey if available)
+            const recaptcha = await fetchRecaptcha(siteKey || undefined)
             if (!recaptcha) {
                 return NextResponse.json({
                     success: false,

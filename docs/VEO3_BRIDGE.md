@@ -83,9 +83,9 @@ curl -s -X POST https://shop.thetaphoa.store/api/gen-video \
 ```
 
 Chỉ cần gửi `prompt` — server tự động:
-1. Lấy `ya29` token từ WS Bridge (hoặc DB fallback)
-2. Lấy `reCAPTCHA` token từ Extension
-3. Lấy `projectId`, `sessionId` từ Bridge/DB
+1. Lấy `ya29` token từ WS Bridge (hoặc API fallback)
+2. Lấy `reCAPTCHA` token từ Extension (truyền `siteKey` từ DB)
+3. Lấy `projectId`, `sessionId`, `siteKey` từ `/api/veo3-tokens`
 4. Gọi Veo3 API
 5. Nếu reCAPTCHA bị reject → **auto-retry** lên đến 3 lần (chờ 3s giữa mỗi lần)
 
@@ -250,6 +250,31 @@ Dùng internal, chỉ expose qua tunnel nếu cần production.
 
 ---
 
+## 🔑 Quản lý siteKey
+
+reCAPTCHA Enterprise cần `siteKey` để gen token. SiteKey được lưu trong `Veo3Token` model và tự truyền cho extension khi gen reCAPTCHA.
+
+### Lấy siteKey
+
+Mở DevTools trên Flow page → Network tab → tìm request tới `recaptcha/enterprise/reload` → param `k=` chính là siteKey.
+
+Hoặc gen 1 video trên Flow page, extension sẽ tự detect siteKey từ `<script>` tag.
+
+### Lưu siteKey vào DB
+
+```bash
+# Lưu siteKey cho token hiện có
+curl -X PUT http://localhost:3000/api/veo3-tokens \
+  -H 'Content-Type: application/json' \
+  -d '{"id": "TOKEN_ID", "siteKey": "6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV"}'
+```
+
+> [!IMPORTANT]
+> Không có `siteKey` trong DB → extension phải tự detect từ page (cần warm up).
+> Có `siteKey` trong DB → server truyền cho extension, **không cần warm up**.
+
+---
+
 ## 🏭 Production Setup
 
 Next.js deploy trên server, extension + WS Bridge chạy trên máy Ubuntu local.
@@ -292,7 +317,7 @@ Route `/api/gen-video` và `/api/veo3-recaptcha` dùng `process.env.WS_BRIDGE_UR
 | `src/app/api/gen-video/route.ts` | API tạo video (POST) + check status (GET) |
 | `src/app/api/veo3-recaptcha/route.ts` | API lấy fresh reCAPTCHA token |
 | `src/app/api/veo3-tokens/route.ts` | CRUD ya29 tokens (DB) |
-| `src/models/Veo3Token.ts` | Mongoose model cho ya29 |
+| `src/models/Veo3Token.ts` | Mongoose model (ya29, projectId, sessionId, siteKey) |
 | `chrome-extension/flow-token-extractor/` | Chrome Extension folder |
 | `package.json` | Scripts: `ws-bridge`, `dev:all` |
 
@@ -302,7 +327,7 @@ Route `/api/gen-video` và `/api/veo3-recaptcha` dùng `process.env.WS_BRIDGE_UR
 
 1. **Flow page phải mở** — Extension cần ít nhất 1 tab Flow (`labs.google/fx/`) đang mở
 2. **Google account đã login** — Flow page phải login Google account có quyền dùng Veo3
-3. **Warm up** — Sau khi reload extension/refresh Flow page, **gen 1 video trên Flow page trước** để warm up reCAPTCHA
+3. **siteKey trong DB** — Lưu `siteKey` vào `/api/veo3-tokens` để không cần warm up
 4. **Auto-retry** — reCAPTCHA tự retry 3 lần (chờ 3s mỗi lần) nếu bị Google reject
 5. **ya29 token hết hạn ~1 giờ** — Extension auto-capture token mới khi Flow page gọi API
 6. **Mặc định portrait** — Không truyền `aspectRatio` → gen video dọc
@@ -328,4 +353,4 @@ curl -s -X POST https://shop.thetaphoa.store/api/gen-video \
 
 ---
 
-*Cập nhật: 18/02/2026 — Auto-retry reCAPTCHA, default portrait, verified ✅*
+*Cập nhật: 19/02/2026 — Thêm siteKey flow, API fallback cho projectId/sessionId/siteKey*

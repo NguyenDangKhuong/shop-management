@@ -230,16 +230,20 @@ const httpServer = http.createServer((req, res) => {
         return
     }
 
-    // GET /recaptcha/fresh — request a fresh reCAPTCHA token from extension (generated on labs.google)
-    if (req.url === '/recaptcha/fresh') {
+    // GET /recaptcha/fresh?siteKey=xxx — request a fresh reCAPTCHA token from extension (generated on labs.google)
+    if (req.url.startsWith('/recaptcha/fresh')) {
         if (!extensionClient || extensionClient.readyState !== WebSocket.OPEN) {
             res.statusCode = 503
             res.end(JSON.stringify({ error: 'Extension not connected' }))
             return
         }
 
-        console.log('🛡️ Requesting fresh reCAPTCHA from extension...')
-        extensionClient.send(JSON.stringify({ type: 'request_recaptcha' }))
+        // Parse siteKey from query string
+        const urlObj = new URL(req.url, `http://localhost:${HTTP_PORT}`)
+        const siteKey = urlObj.searchParams.get('siteKey') || ''
+
+        console.log('🛡️ Requesting fresh reCAPTCHA from extension...' + (siteKey ? ` (siteKey: ${siteKey.substring(0, 10)}...)` : ''))
+        extensionClient.send(JSON.stringify({ type: 'request_recaptcha', siteKey }))
 
         const promise = new Promise((resolve) => {
             const timeout = setTimeout(() => {

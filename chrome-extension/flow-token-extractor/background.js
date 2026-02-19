@@ -115,8 +115,8 @@ function handleWsMessage(msg) {
       break
 
     case 'request_recaptcha':
-      console.log('🌉 WS Bridge: Server requesting fresh reCAPTCHA...')
-      triggerRecaptchaGeneration()
+      console.log('🌉 WS Bridge: Server requesting fresh reCAPTCHA...' + (msg.siteKey ? ` (siteKey: ${msg.siteKey.substring(0, 10)}...)` : ''))
+      triggerRecaptchaGeneration(msg.siteKey)
         .then(token => {
           wsSend({
             type: 'recaptcha_push',
@@ -262,7 +262,7 @@ async function ensureContentScriptInjected(tab) {
 // HELPER: Trigger reCAPTCHA token generation on a Veo3 tab
 // Returns a promise that resolves when the token is generated
 // ==========================================
-function triggerRecaptchaGeneration() {
+function triggerRecaptchaGeneration(siteKey) {
   return new Promise(async (resolve, reject) => {
     const tab = await findVeo3Tab()
     if (!tab) {
@@ -284,7 +284,7 @@ function triggerRecaptchaGeneration() {
     chrome.storage.local.remove(['_lastGeneratedRecaptcha'])
 
     try {
-      await chrome.tabs.sendMessage(tab.id, { type: 'GENERATE_RECAPTCHA_TOKEN' })
+      await chrome.tabs.sendMessage(tab.id, { type: 'GENERATE_RECAPTCHA_TOKEN', siteKey: siteKey || '' })
       const checkInterval = setInterval(async () => {
         const data = await chrome.storage.local.get(['_lastGeneratedRecaptcha'])
         if (data._lastGeneratedRecaptcha) {

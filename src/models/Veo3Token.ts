@@ -4,6 +4,7 @@ export interface IVeo3Token extends Document {
     value: string
     projectId?: string
     sessionId?: string
+    siteKey?: string
     apiKeyNanoAI?: string
     createdAt?: Date
     updatedAt?: Date
@@ -13,6 +14,7 @@ const Veo3TokenSchema = new Schema({
     value: { type: String, required: true },
     projectId: { type: String, default: '' },
     sessionId: { type: String, default: '' },
+    siteKey: { type: String, default: '' },
     apiKeyNanoAI: { type: String, default: '' }
 }, {
     timestamps: true,

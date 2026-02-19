@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
             value: body.value,
             ...(body.projectId !== undefined && { projectId: body.projectId }),
             ...(body.sessionId !== undefined && { sessionId: body.sessionId }),
+            ...(body.siteKey !== undefined && { siteKey: body.siteKey }),
             ...(body.apiKeyNanoAI !== undefined && { apiKeyNanoAI: body.apiKeyNanoAI })
         })
 
@@ -61,7 +62,7 @@ export async function PUT(request: NextRequest) {
     try {
         await connectDB()
         const body = await request.json()
-        const { id, value, projectId, sessionId, apiKeyNanoAI } = body
+        const { id, value, projectId, sessionId, siteKey, apiKeyNanoAI } = body
 
         if (!id) {
             return NextResponse.json({
@@ -74,6 +75,7 @@ export async function PUT(request: NextRequest) {
         if (value !== undefined) updateData.value = value
         if (projectId !== undefined) updateData.projectId = projectId
         if (sessionId !== undefined) updateData.sessionId = sessionId
+        if (siteKey !== undefined) updateData.siteKey = siteKey
         if (apiKeyNanoAI !== undefined) updateData.apiKeyNanoAI = apiKeyNanoAI
 
         const updatedToken = await Veo3TokenModel.findByIdAndUpdate(
