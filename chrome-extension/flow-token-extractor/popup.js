@@ -100,10 +100,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return false
       }
 
-      // Build payload with all captured fields
+      // Get siteKey from storage
+      const storage = await chrome.storage.local.get(['capturedSiteKey'])
+
+      // Build payload with all captured fields (only include non-empty)
       const payload = { value: tokenValue }
       if (tokenData.sessionId) payload.sessionId = tokenData.sessionId
       if (tokenData.projectId) payload.projectId = tokenData.projectId
+      if (storage.capturedSiteKey) payload.siteKey = storage.capturedSiteKey
 
       // Step 1: GET existing tokens to find id
       const getResponse = await fetch(apiUrl)
