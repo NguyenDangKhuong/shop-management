@@ -129,7 +129,7 @@ const LoginForm = () => {
               />
               Remember me
             </label>
-            <Link href="#" className="font-semibold bg-gradient-to-r from-[#00e5ff] to-[#b927fc] bg-clip-text text-transparent hover:opacity-80 transition-opacity">
+            <Link href="/forgot-password" className="font-semibold bg-gradient-to-r from-[#00e5ff] to-[#b927fc] bg-clip-text text-transparent hover:opacity-80 transition-opacity">
               Forgot Password?
             </Link>
           </div>

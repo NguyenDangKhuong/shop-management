@@ -316,6 +316,7 @@ MINIO_SECRET_KEY=...
 | [PRE_PUSH_HOOK.md](../PRE_PUSH_HOOK.md) | Git hooks documentation |
 | [AUTOFLOW.md](AUTOFLOW.md) | AutoFlow feature documentation |
 | [PROMPT.md](PROMPT.md) | Prompt Library, Veo3 templates & design notes |
+| [FORGOT_PASSWORD.md](FORGOT_PASSWORD.md) | Forgot Password feature |
 
 ---
 
@@ -399,6 +400,8 @@ Sử dụng `react-device-detect` để tối ưu trải nghiệm trên từng t
 | `/register` | Đăng ký |
 | `/privacy` | Chính sách bảo mật |
 | `/terms` | Điều khoản sử dụng |
+| `/forgot-password` | Quên mật khẩu |
+| `/reset-password` | Đặt lại mật khẩu |
 
 ---
 
