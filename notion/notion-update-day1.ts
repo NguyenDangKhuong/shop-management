@@ -1,0 +1,166 @@
+import { Client } from '@notionhq/client'
+
+const notion = new Client({ auth: process.env.NOTION_API_KEY })
+const PARENT_PAGE_ID = '1ed4098c-1ddc-80d9-9e7c-f6506f6a3ade' // Lộ trình học E:
+
+async function main() {
+    // Create child page
+    const page = await notion.pages.create({
+        parent: { page_id: PARENT_PAGE_ID },
+        icon: { emoji: '📅' },
+        properties: {
+            title: [{ text: { content: 'Ngày 1 – Tuần 1: Làm quen Shadowing & Self-talk' } }]
+        },
+        children: [
+            // Mục tiêu
+            { callout: { icon: { emoji: '🎯' }, rich_text: [{ text: { content: 'Mục tiêu hôm nay: Bắt đầu thói quen shadowing, tập self-talk lần đầu, và setup tools cần thiết.' } }] } },
+
+            // Setup
+            { heading_2: { rich_text: [{ text: { content: '🛠️ Setup (10 phút)' } }] } },
+            {
+                to_do: {
+                    rich_text: [
+                        { text: { content: 'Cài app ' } },
+                        { text: { content: 'ELSA Speak', link: { url: 'https://elsaspeak.com/' } }, annotations: { bold: true } },
+                        { text: { content: ' trên điện thoại — test phát âm 5 câu đầu tiên' } }
+                    ], checked: false
+                }
+            },
+            { to_do: { rich_text: [{ text: { content: 'Tạo folder "Speaking Practice" trên điện thoại để lưu file ghi âm' } }], checked: false } },
+            {
+                to_do: {
+                    rich_text: [
+                        { text: { content: 'Bookmark playlist ' } },
+                        { text: { content: 'BBC 6 Minute English', link: { url: 'https://www.youtube.com/playlist?list=PLcetZ6gSk96_zHuVg6zhPuJGlGQ4TKluv' } }, annotations: { bold: true } },
+                        { text: { content: ' trên YouTube' } }
+                    ], checked: false
+                }
+            },
+
+            { divider: {} },
+
+            // Shadowing
+            { heading_2: { rich_text: [{ text: { content: '🎧 Shadowing — 15 phút' } }] } },
+            { paragraph: { rich_text: [{ text: { content: 'Chọn 1 video BBC 6 Minute English (6 phút). Nghe từng câu → pause → lặp lại to, bắt chước ngữ điệu.' } }] } },
+            {
+                numbered_list_item: {
+                    rich_text: [
+                        { text: { content: 'Lần 1 (5 phút):' }, annotations: { bold: true } },
+                        { text: { content: ' Nghe toàn bộ video 1 lần, không pause. Chú ý nhịp nói, stress, intonation.' } }
+                    ]
+                }
+            },
+            {
+                numbered_list_item: {
+                    rich_text: [
+                        { text: { content: 'Lần 2 (10 phút):' }, annotations: { bold: true } },
+                        { text: { content: ' Nghe từng câu → pause → nói lại. Cố bắt chước giọng, tốc độ, nhấn nhá.' } }
+                    ]
+                }
+            },
+            {
+                callout: {
+                    icon: { emoji: '🎬' }, rich_text: [
+                        { text: { content: 'Video gợi ý: ' } },
+                        { text: { content: 'Is AI making us stupid?', link: { url: 'https://www.youtube.com/watch?v=VmGMsG3Kcxo' } }, annotations: { bold: true } },
+                        { text: { content: ' | ' } },
+                        { text: { content: 'Why do we procrastinate?', link: { url: 'https://www.youtube.com/watch?v=arj7oStGLkU' } }, annotations: { bold: true } },
+                    ]
+                }
+            },
+
+            { divider: {} },
+
+            // Self-talk
+            { heading_2: { rich_text: [{ text: { content: '🗣️ Self-talk — 15 phút' } }] } },
+            { paragraph: { rich_text: [{ text: { content: 'Bật ghi âm → nói tiếng Anh về 3 chủ đề sau (mỗi cái ~3-5 phút). Đừng sợ sai, cứ nói!' } }] } },
+            {
+                numbered_list_item: {
+                    rich_text: [
+                        { text: { content: '"What did I do today at work?"' }, annotations: { bold: true } },
+                        { text: { content: ' — Kể về ngày làm việc: code gì, fix bug gì, meeting gì...' } }
+                    ]
+                }
+            },
+            {
+                numbered_list_item: {
+                    rich_text: [
+                        { text: { content: '"What will I do tomorrow?"' }, annotations: { bold: true } },
+                        { text: { content: ' — Kế hoạch ngày mai: tasks, features, deadlines...' } }
+                    ]
+                }
+            },
+            {
+                numbered_list_item: {
+                    rich_text: [
+                        { text: { content: '"Describe my current project"' }, annotations: { bold: true } },
+                        { text: { content: ' — Giải thích project đang làm cho người không biết tech' } }
+                    ]
+                }
+            },
+            {
+                callout: {
+                    icon: { emoji: '🎙️' }, rich_text: [
+                        { text: { content: 'Ghi âm xong → nghe lại 1 lần. Có thể dùng ' } },
+                        { text: { content: 'Speechling', link: { url: 'https://speechling.com/' } }, annotations: { bold: true } },
+                        { text: { content: ' để nhờ coach sửa miễn phí.' } }
+                    ]
+                }
+            },
+
+            { divider: {} },
+
+            // Vocabulary
+            { heading_2: { rich_text: [{ text: { content: '📚 Vocabulary Chunks — 15 phút' } }] } },
+            { paragraph: { rich_text: [{ text: { content: 'Học 10 collocations dev hay dùng. Đọc to 3 lần mỗi cụm, rồi đặt 1 câu.' } }] } },
+            { numbered_list_item: { rich_text: [{ text: { content: 'run into a problem' }, annotations: { bold: true, code: true } }, { text: { content: ' — "I ran into a problem with the API endpoint."' } }] } },
+            { numbered_list_item: { rich_text: [{ text: { content: 'come up with a solution' }, annotations: { bold: true, code: true } }, { text: { content: ' — "We need to come up with a solution before the deadline."' } }] } },
+            { numbered_list_item: { rich_text: [{ text: { content: 'work on a feature' }, annotations: { bold: true, code: true } }, { text: { content: ' — "I\'m currently working on the authentication feature."' } }] } },
+            { numbered_list_item: { rich_text: [{ text: { content: 'look into an issue' }, annotations: { bold: true, code: true } }, { text: { content: ' — "Can you look into this performance issue?"' } }] } },
+            { numbered_list_item: { rich_text: [{ text: { content: 'figure out the root cause' }, annotations: { bold: true, code: true } }, { text: { content: ' — "It took me an hour to figure out the root cause."' } }] } },
+            { numbered_list_item: { rich_text: [{ text: { content: 'push changes to production' }, annotations: { bold: true, code: true } }, { text: { content: ' — "We\'ll push the changes to production tomorrow."' } }] } },
+            { numbered_list_item: { rich_text: [{ text: { content: 'set up the environment' }, annotations: { bold: true, code: true } }, { text: { content: ' — "First, let me set up the development environment."' } }] } },
+            { numbered_list_item: { rich_text: [{ text: { content: 'break down the task' }, annotations: { bold: true, code: true } }, { text: { content: ' — "Let\'s break down the task into smaller chunks."' } }] } },
+            { numbered_list_item: { rich_text: [{ text: { content: 'take care of the deployment' }, annotations: { bold: true, code: true } }, { text: { content: ' — "I\'ll take care of the deployment this afternoon."' } }] } },
+            { numbered_list_item: { rich_text: [{ text: { content: 'keep track of progress' }, annotations: { bold: true, code: true } }, { text: { content: ' — "We use Jira to keep track of our progress."' } }] } },
+            {
+                callout: {
+                    icon: { emoji: '💡' }, rich_text: [
+                        { text: { content: 'Dùng ' } },
+                        { text: { content: 'ChatGPT Voice Mode', link: { url: 'https://chatgpt.com/' } }, annotations: { bold: true } },
+                        { text: { content: ' để practice nói các câu vừa học.' } }
+                    ]
+                }
+            },
+
+            { divider: {} },
+
+            // Checklist
+            { heading_2: { rich_text: [{ text: { content: '✅ Checklist cuối ngày' } }] } },
+            { to_do: { rich_text: [{ text: { content: 'Đã shadowing 1 video BBC 6 Minute English' } }], checked: false } },
+            { to_do: { rich_text: [{ text: { content: 'Đã ghi âm self-talk ít nhất 5 phút' } }], checked: false } },
+            { to_do: { rich_text: [{ text: { content: 'Đã nghe lại bản ghi âm và ghi chú lỗi' } }], checked: false } },
+            { to_do: { rich_text: [{ text: { content: 'Đã học 10 collocations và đặt câu' } }], checked: false } },
+            { to_do: { rich_text: [{ text: { content: 'Đã dùng ELSA Speak check phát âm ít nhất 5 từ' } }], checked: false } },
+
+            { divider: {} },
+
+            // Links
+            { heading_2: { rich_text: [{ text: { content: '🔗 Links hữu ích' } }] } },
+            { bookmark: { url: 'https://www.youtube.com/playlist?list=PLcetZ6gSk96_zHuVg6zhPuJGlGQ4TKluv', caption: [{ text: { content: 'BBC 6 Minute English — Playlist YouTube' } }] } },
+            { bookmark: { url: 'https://elsaspeak.com/', caption: [{ text: { content: 'ELSA Speak — App sửa phát âm' } }] } },
+            { bookmark: { url: 'https://speechling.com/', caption: [{ text: { content: 'Speechling — Ghi âm & nhờ coach sửa miễn phí' } }] } },
+            { bookmark: { url: 'https://chatgpt.com/', caption: [{ text: { content: 'ChatGPT Voice Mode — Practice speaking mọi lúc' } }] } },
+            { bookmark: { url: 'https://www.cambly.com/', caption: [{ text: { content: 'Cambly — Nói chuyện với native speaker' } }] } },
+            { bookmark: { url: 'https://www.italki.com/', caption: [{ text: { content: 'italki — Tìm tutor 1-on-1' } }] } },
+
+            { divider: {} },
+            { heading_3: { rich_text: [{ text: { content: '📝 Ghi chú cá nhân' } }] } },
+            { paragraph: { rich_text: [{ text: { content: '(Viết lại những từ/câu khó nói, lỗi phát âm cần sửa, cảm nhận sau buổi luyện...)' }, annotations: { italic: true, color: 'gray' } }] } },
+        ] as any
+    })
+
+    console.log(`✅ Đã tạo page: ${page.url}`)
+}
+
+main().catch(err => console.error('❌ Error:', err.message))
