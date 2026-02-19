@@ -9,8 +9,10 @@ import { veo3MediaUploadConfig } from '@/utils/cloudinaryConfig'
 import {
     CopyOutlined,
     DeleteOutlined,
+    DownOutlined,
     EditOutlined,
     PlusOutlined,
+    RightOutlined,
     UserOutlined
 } from '@ant-design/icons'
 import { App, Button, Input, Popconfirm, Spin, Switch } from 'antd'
@@ -48,6 +50,8 @@ export default function TikTokAccountPage() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingPost, setEditingPost] = useState<any>(null)
     const [autoflows, setAutoflows] = useState<any[]>([])
+    const [promptsCollapsed, setPromptsCollapsed] = useState(true)
+    const [veo3MediaCollapsed, setVeo3MediaCollapsed] = useState(true)
     const [autoflowsLoading, setAutoflowsLoading] = useState(false)
     const [isAutoFlowModalOpen, setIsAutoFlowModalOpen] = useState(false)
     const [editingAutoFlow, setEditingAutoFlow] = useState<any>(null)
@@ -907,8 +911,10 @@ export default function TikTokAccountPage() {
                                     )}
                                 </div>
 
-                                {/* Videos */}
+                                {/* Videos — only show if first prompt is not describe type */}
                                 {(() => {
+                                    const firstPromptType = autoflow.prompts?.[0]?.type
+                                    if (firstPromptType === 'describe') return null
                                     const videos = autoflow.videoFiles?.length
                                         ? autoflow.videoFiles
                                         : autoflow.videoFile?.url
@@ -939,80 +945,288 @@ export default function TikTokAccountPage() {
 
             {/* Prompt Library Section */}
             <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-                <div className="flex items-center justify-between mb-3">
-                    <h2 className="text-base font-semibold">
+                <div className="flex items-center justify-between cursor-pointer select-none" onClick={() => setPromptsCollapsed(!promptsCollapsed)}>
+                    <h2 className="text-base font-semibold flex items-center gap-2">
+                        {promptsCollapsed ? <RightOutlined className="text-xs text-gray-400" /> : <DownOutlined className="text-xs text-gray-400" />}
                         📝 Prompt Library ({allPrompts.length})
                     </h2>
                     <Button
                         type="primary"
                         size="small"
                         icon={<PlusOutlined />}
-                        onClick={handleAddPrompt}
+                        onClick={(e) => { e.stopPropagation(); handleAddPrompt(); }}
                     >
                         Thêm
                     </Button>
                 </div>
 
-                {promptsLoading ? (
-                    <div className="text-center py-4">
-                        <Spin size="small" />
-                    </div>
-                ) : allPrompts.length === 0 ? (
-                    <p className="text-sm text-gray-500 text-center py-4">
-                        Chưa có prompt nào
-                    </p>
-                ) : (
-                    <div className="space-y-2">
-                        {allPrompts.map((prompt: any) => (
-                            <div key={prompt._id} className="border rounded-lg p-3">
-                                <div className="flex items-start gap-2">
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <h3 className="text-sm font-semibold text-gray-800">
-                                                {prompt.title}
-                                            </h3>
-                                            {prompt.type && (
-                                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${prompt.type === 'hook' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>
-                                                    {prompt.type === 'hook' ? '🪝 Hook' : '📝 Describe'}
-                                                </span>
-                                            )}
+                {!promptsCollapsed && (
+                    <div className="mt-3">
+                        {promptsLoading ? (
+                            <div className="text-center py-4">
+                                <Spin size="small" />
+                            </div>
+                        ) : allPrompts.length === 0 ? (
+                            <p className="text-sm text-gray-500 text-center py-4">
+                                Chưa có prompt nào
+                            </p>
+                        ) : (
+                            <div className="space-y-2">
+                                {allPrompts.map((prompt: any) => (
+                                    <div key={prompt._id} className="border rounded-lg p-3">
+                                        <div className="flex items-start gap-2">
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <h3 className="text-sm font-semibold text-gray-800">
+                                                        {prompt.title}
+                                                    </h3>
+                                                    {prompt.type && (
+                                                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${prompt.type === 'hook' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>
+                                                            {prompt.type === 'hook' ? '🪝 Hook' : '📝 Describe'}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <p className="text-xs text-gray-600 line-clamp-2 whitespace-pre-wrap">
+                                                    {prompt.content}
+                                                </p>
+                                                {prompt.subPrompt && (
+                                                    <p className="text-xs text-purple-600 mt-1 line-clamp-2 whitespace-pre-wrap italic">
+                                                        📝 {prompt.subPrompt}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <div className="flex gap-1 flex-shrink-0">
+                                                <Button
+                                                    type="text"
+                                                    size="small"
+                                                    icon={<CopyOutlined />}
+                                                    onClick={() => handleCopyPromptContent(prompt.content)}
+                                                    title="Copy nội dung"
+                                                />
+                                                <Button
+                                                    type="text"
+                                                    size="small"
+                                                    onClick={() => handleDuplicatePrompt(prompt)}
+                                                    title="Nhân bản"
+                                                >
+                                                    📋
+                                                </Button>
+                                                <Button
+                                                    type="text"
+                                                    size="small"
+                                                    icon={<EditOutlined />}
+                                                    onClick={() => handleEditPrompt(prompt)}
+                                                    title="Sửa"
+                                                />
+                                                <Popconfirm
+                                                    title="Xóa prompt?"
+                                                    description="Bạn có chắc muốn xóa prompt này?"
+                                                    onConfirm={() => handleDeletePrompt(prompt._id)}
+                                                    okText="Xóa"
+                                                    cancelText="Hủy"
+                                                    okButtonProps={{ danger: true }}
+                                                >
+                                                    <Button
+                                                        type="text"
+                                                        size="small"
+                                                        danger
+                                                        icon={<DeleteOutlined />}
+                                                        title="Xóa"
+                                                    />
+                                                </Popconfirm>
+                                            </div>
                                         </div>
-                                        <p className="text-xs text-gray-600 line-clamp-2 whitespace-pre-wrap">
-                                            {prompt.content}
-                                        </p>
-                                        {prompt.subPrompt && (
-                                            <p className="text-xs text-purple-600 mt-1 line-clamp-2 whitespace-pre-wrap italic">
-                                                📝 {prompt.subPrompt}
-                                            </p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            {/* Veo3 Media Section */}
+            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+                <div className="flex items-center justify-between cursor-pointer select-none" onClick={() => setVeo3MediaCollapsed(!veo3MediaCollapsed)}>
+                    <h2 className="text-base font-semibold flex items-center gap-2">
+                        {veo3MediaCollapsed ? <RightOutlined className="text-xs text-gray-400" /> : <DownOutlined className="text-xs text-gray-400" />}
+                        🎬 Veo3 Media ({veo3Media.length})
+                    </h2>
+                </div>
+
+                {!veo3MediaCollapsed && (<div className="mt-3">
+                    {/* Add new media */}
+                    <div className="mb-3">
+                        <div className="flex gap-2 mb-2">
+                            <Input
+                                placeholder="Nhập Media ID..."
+                                value={newMediaId}
+                                onChange={(e) => setNewMediaId(e.target.value)}
+                                size="small"
+                                onPressEnter={handleAddVeo3Media}
+                            />
+                            <Button
+                                size="small"
+                                onClick={() => openNewMediaWidget()}
+                                title="Upload hình"
+                            >
+                                📷 Upload
+                            </Button>
+                            <Button
+                                type="primary"
+                                size="small"
+                                icon={<PlusOutlined />}
+                                onClick={handleAddVeo3Media}
+                                disabled={!newMediaId.trim()}
+                            >
+                                Thêm
+                            </Button>
+                        </div>
+                        {newMediaFile && (
+                            <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded">
+                                <img
+                                    src={newMediaFile.url}
+                                    alt="Preview"
+                                    className="w-12 h-12 object-cover rounded"
+                                />
+                                <span className="text-xs text-green-700 truncate flex-1">
+                                    {newMediaFile.url}
+                                </span>
+                                <Button
+                                    type="text"
+                                    size="small"
+                                    danger
+                                    onClick={() => setNewMediaFile(null)}
+                                >
+                                    ✕
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+
+                    {veo3MediaLoading ? (
+                        <div className="text-center py-4">
+                            <Spin size="small" />
+                        </div>
+                    ) : veo3Media.length === 0 ? (
+                        <p className="text-sm text-gray-500 text-center py-4">
+                            Chưa có media nào
+                        </p>
+                    ) : (
+                        <div className="space-y-2">
+                            {veo3Media.map((media: any) => (
+                                <div key={media._id} className="border rounded-lg p-3 flex items-center gap-3">
+                                    {/* Thumbnail */}
+                                    <div className="w-16 h-16 flex-shrink-0 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
+                                        {media.mediaFile?.url ? (
+                                            <img
+                                                src={media.mediaFile.url}
+                                                alt={media.mediaId}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <span className="text-gray-400 text-xs">No image</span>
                                         )}
                                     </div>
+
+                                    {/* Info */}
+                                    <div className="flex-1 min-w-0">
+                                        {editingMediaId === media._id ? (
+                                            <div className="flex items-center gap-2">
+                                                <Input
+                                                    size="small"
+                                                    value={editingMediaValue}
+                                                    onChange={(e) => setEditingMediaValue(e.target.value)}
+                                                    onPressEnter={() => handleEditVeo3MediaId(media._id)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Escape') {
+                                                            setEditingMediaId(null)
+                                                            setEditingMediaValue('')
+                                                        }
+                                                    }}
+                                                    autoFocus
+                                                    className="font-mono text-sm"
+                                                />
+                                                <Button
+                                                    type="text"
+                                                    size="small"
+                                                    onClick={() => handleEditVeo3MediaId(media._id)}
+                                                    disabled={!editingMediaValue.trim()}
+                                                    title="Lưu"
+                                                >
+                                                    ✓
+                                                </Button>
+                                                <Button
+                                                    type="text"
+                                                    size="small"
+                                                    onClick={() => {
+                                                        setEditingMediaId(null)
+                                                        setEditingMediaValue('')
+                                                    }}
+                                                    title="Hủy"
+                                                >
+                                                    ✕
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm font-mono font-semibold text-gray-800 truncate">
+                                                        {media.mediaId}
+                                                    </span>
+                                                    <Button
+                                                        type="text"
+                                                        size="small"
+                                                        icon={<CopyOutlined />}
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText(media.mediaId)
+                                                            message.success('Đã copy Media ID!')
+                                                        }}
+                                                    />
+                                                </div>
+                                                {media.mediaFile?.url && (
+                                                    <p className="text-xs text-gray-500 truncate">
+                                                        {media.mediaFile.url}
+                                                    </p>
+                                                )}
+                                            </>
+                                        )}
+                                    </div>
+
+                                    {/* Actions */}
                                     <div className="flex gap-1 flex-shrink-0">
                                         <Button
                                             type="text"
                                             size="small"
-                                            icon={<CopyOutlined />}
-                                            onClick={() => handleCopyPromptContent(prompt.content)}
-                                            title="Copy nội dung"
-                                        />
-                                        <Button
-                                            type="text"
-                                            size="small"
-                                            onClick={() => handleDuplicatePrompt(prompt)}
-                                            title="Nhân bản"
-                                        >
-                                            📋
-                                        </Button>
-                                        <Button
-                                            type="text"
-                                            size="small"
                                             icon={<EditOutlined />}
-                                            onClick={() => handleEditPrompt(prompt)}
-                                            title="Sửa"
+                                            onClick={() => {
+                                                setEditingMediaId(media._id)
+                                                setEditingMediaValue(media.mediaId)
+                                            }}
+                                            title="Sửa Media ID"
                                         />
+                                        <Button
+                                            type="text"
+                                            size="small"
+                                            onClick={() => handleUploadVeo3Media(media._id)}
+                                            title="Upload hình"
+                                        >
+                                            📷
+                                        </Button>
+                                        {media.mediaFile?.publicId && (
+                                            <Button
+                                                type="text"
+                                                size="small"
+                                                danger
+                                                onClick={() => handleRemoveVeo3MediaImage(media._id, media.mediaFile.publicId)}
+                                                title="Xóa hình"
+                                            >
+                                                🗑️
+                                            </Button>
+                                        )}
                                         <Popconfirm
-                                            title="Xóa prompt?"
-                                            description="Bạn có chắc muốn xóa prompt này?"
-                                            onConfirm={() => handleDeletePrompt(prompt._id)}
+                                            title="Xóa media?"
+                                            description="Bạn có chắc muốn xóa media này?"
+                                            onConfirm={() => handleDeleteVeo3Media(media._id, media.mediaFile?.publicId)}
                                             okText="Xóa"
                                             cancelText="Hủy"
                                             okButtonProps={{ danger: true }}
@@ -1027,210 +1241,10 @@ export default function TikTokAccountPage() {
                                         </Popconfirm>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            {/* Veo3 Media Section */}
-            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-                <div className="flex items-center justify-between mb-3">
-                    <h2 className="text-base font-semibold">
-                        🎬 Veo3 Media ({veo3Media.length})
-                    </h2>
-                </div>
-
-                {/* Add new media */}
-                <div className="mb-3">
-                    <div className="flex gap-2 mb-2">
-                        <Input
-                            placeholder="Nhập Media ID..."
-                            value={newMediaId}
-                            onChange={(e) => setNewMediaId(e.target.value)}
-                            size="small"
-                            onPressEnter={handleAddVeo3Media}
-                        />
-                        <Button
-                            size="small"
-                            onClick={() => openNewMediaWidget()}
-                            title="Upload hình"
-                        >
-                            📷 Upload
-                        </Button>
-                        <Button
-                            type="primary"
-                            size="small"
-                            icon={<PlusOutlined />}
-                            onClick={handleAddVeo3Media}
-                            disabled={!newMediaId.trim()}
-                        >
-                            Thêm
-                        </Button>
-                    </div>
-                    {newMediaFile && (
-                        <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded">
-                            <img
-                                src={newMediaFile.url}
-                                alt="Preview"
-                                className="w-12 h-12 object-cover rounded"
-                            />
-                            <span className="text-xs text-green-700 truncate flex-1">
-                                {newMediaFile.url}
-                            </span>
-                            <Button
-                                type="text"
-                                size="small"
-                                danger
-                                onClick={() => setNewMediaFile(null)}
-                            >
-                                ✕
-                            </Button>
+                            ))}
                         </div>
                     )}
-                </div>
-
-                {veo3MediaLoading ? (
-                    <div className="text-center py-4">
-                        <Spin size="small" />
-                    </div>
-                ) : veo3Media.length === 0 ? (
-                    <p className="text-sm text-gray-500 text-center py-4">
-                        Chưa có media nào
-                    </p>
-                ) : (
-                    <div className="space-y-2">
-                        {veo3Media.map((media: any) => (
-                            <div key={media._id} className="border rounded-lg p-3 flex items-center gap-3">
-                                {/* Thumbnail */}
-                                <div className="w-16 h-16 flex-shrink-0 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
-                                    {media.mediaFile?.url ? (
-                                        <img
-                                            src={media.mediaFile.url}
-                                            alt={media.mediaId}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <span className="text-gray-400 text-xs">No image</span>
-                                    )}
-                                </div>
-
-                                {/* Info */}
-                                <div className="flex-1 min-w-0">
-                                    {editingMediaId === media._id ? (
-                                        <div className="flex items-center gap-2">
-                                            <Input
-                                                size="small"
-                                                value={editingMediaValue}
-                                                onChange={(e) => setEditingMediaValue(e.target.value)}
-                                                onPressEnter={() => handleEditVeo3MediaId(media._id)}
-                                                onKeyDown={(e) => {
-                                                    if (e.key === 'Escape') {
-                                                        setEditingMediaId(null)
-                                                        setEditingMediaValue('')
-                                                    }
-                                                }}
-                                                autoFocus
-                                                className="font-mono text-sm"
-                                            />
-                                            <Button
-                                                type="text"
-                                                size="small"
-                                                onClick={() => handleEditVeo3MediaId(media._id)}
-                                                disabled={!editingMediaValue.trim()}
-                                                title="Lưu"
-                                            >
-                                                ✓
-                                            </Button>
-                                            <Button
-                                                type="text"
-                                                size="small"
-                                                onClick={() => {
-                                                    setEditingMediaId(null)
-                                                    setEditingMediaValue('')
-                                                }}
-                                                title="Hủy"
-                                            >
-                                                ✕
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        <>
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-sm font-mono font-semibold text-gray-800 truncate">
-                                                    {media.mediaId}
-                                                </span>
-                                                <Button
-                                                    type="text"
-                                                    size="small"
-                                                    icon={<CopyOutlined />}
-                                                    onClick={() => {
-                                                        navigator.clipboard.writeText(media.mediaId)
-                                                        message.success('Đã copy Media ID!')
-                                                    }}
-                                                />
-                                            </div>
-                                            {media.mediaFile?.url && (
-                                                <p className="text-xs text-gray-500 truncate">
-                                                    {media.mediaFile.url}
-                                                </p>
-                                            )}
-                                        </>
-                                    )}
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex gap-1 flex-shrink-0">
-                                    <Button
-                                        type="text"
-                                        size="small"
-                                        icon={<EditOutlined />}
-                                        onClick={() => {
-                                            setEditingMediaId(media._id)
-                                            setEditingMediaValue(media.mediaId)
-                                        }}
-                                        title="Sửa Media ID"
-                                    />
-                                    <Button
-                                        type="text"
-                                        size="small"
-                                        onClick={() => handleUploadVeo3Media(media._id)}
-                                        title="Upload hình"
-                                    >
-                                        📷
-                                    </Button>
-                                    {media.mediaFile?.publicId && (
-                                        <Button
-                                            type="text"
-                                            size="small"
-                                            danger
-                                            onClick={() => handleRemoveVeo3MediaImage(media._id, media.mediaFile.publicId)}
-                                            title="Xóa hình"
-                                        >
-                                            🗑️
-                                        </Button>
-                                    )}
-                                    <Popconfirm
-                                        title="Xóa media?"
-                                        description="Bạn có chắc muốn xóa media này?"
-                                        onConfirm={() => handleDeleteVeo3Media(media._id, media.mediaFile?.publicId)}
-                                        okText="Xóa"
-                                        cancelText="Hủy"
-                                        okButtonProps={{ danger: true }}
-                                    >
-                                        <Button
-                                            type="text"
-                                            size="small"
-                                            danger
-                                            icon={<DeleteOutlined />}
-                                            title="Xóa"
-                                        />
-                                    </Popconfirm>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                </div>)}
             </div>
             {/* Content Area - Products */}
             <div className="bg-white rounded-lg shadow-sm p-4">

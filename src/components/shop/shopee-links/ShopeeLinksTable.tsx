@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DeleteTwoTone, EditTwoTone, CopyOutlined, HolderOutlined } from '@ant-design/icons'
 import { Button, Popconfirm, Table, Image, App, Card, Row, Col, Input } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -51,14 +51,27 @@ const SortableRow = ({ children, 'data-row-key': dataRowKey, ...props }: Sortabl
     const style: React.CSSProperties = {
         transform: CSS.Transform.toString(transform),
         transition,
-        cursor: 'move',
         opacity: isDragging ? 0.5 : 1,
         ...(props as any).style
     }
 
     return (
-        <tr ref={setNodeRef} style={style} {...props} {...attributes} {...listeners}>
-            {children}
+        <tr ref={setNodeRef} style={style} {...props} {...attributes}>
+            {Array.isArray(children)
+                ? children.map((child: any) => {
+                    if (child?.key === 'drag') {
+                        return React.cloneElement(child, {
+                            children: (
+                                <div {...listeners} className="cursor-move" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                                    {child.props.children}
+                                </div>
+                            )
+                        })
+                    }
+                    return child
+                })
+                : children
+            }
         </tr>
     )
 }

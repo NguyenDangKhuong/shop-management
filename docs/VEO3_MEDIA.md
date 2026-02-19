@@ -135,6 +135,7 @@ Section **🎬 Veo3 Media** nằm trên trang chi tiết TikTok Account, giữa 
 4. **Xóa hình** — Nhấn 🗑️ xóa hình khỏi Cloudinary (giữ media ID)
 5. **Xóa media** — Nhấn Delete xóa toàn bộ record
 6. **Copy Media ID** — Nhấn icon copy
+7. **Collapsible** — Section 🎥 Veo3 Media có thể thu gọn/mở rộng bằng cách click header (mặc định: thu gọn). Icon ▶/▼ hiển thị trạng thái.
 
 ### Upload Config
 
@@ -151,6 +152,19 @@ Upload sử dụng preset `CLOUDINARY_UPLOAD_TIKTOK_PRESET` (env: `NEXT_PUBLIC_C
 ## 🔗 Liên kết với Prompt
 
 Khi tạo/sửa Prompt loại **describe**, field **Reference Images** là dropdown multi-select `Select` chọn từ danh sách Veo3 Media của account đó (prompt loại **hook** không có field này). Mỗi option hiển thị:
+
+## 🎥 AutoFlow Video Visibility
+
+AutoFlow hiển thị/ẩn section Videos dựa trên loại prompt được chọn:
+
+| Prompt Type | Reference Images | Videos | Ghi chú |
+|-------------|-----------------|--------|--------|
+| `describe` | ✅ Hiển | ❌ Ẩn + xóa | Video tự xóa từ Cloudinary khi chuyển sang describe |
+| `hook` | ❌ Ẩn | ✅ Hiển | Chỉ cần video, không cần ref images |
+| No type | ✅ Hiển | ✅ Hiển | Hiển cả hai |
+
+> [!IMPORTANT]
+> Khi user chuyển prompt từ hook/null sang **describe** trong `AutoFlowModal`, video đã upload sẽ bị **tự động xóa** từ Cloudinary và clear khỏi state. Trên trang hiển thị AutoFlow card, section 🎥 Videos cũng ẩn nếu prompt đầu tiên là type `describe`.
 - Thumbnail hình ảnh (nếu có)
 - Media ID text
 

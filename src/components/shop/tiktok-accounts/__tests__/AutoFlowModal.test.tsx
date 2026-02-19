@@ -32,7 +32,7 @@ jest.mock('@/hooks/useCloudinaryUpload', () => ({
 
 // Mock cloudinary actions
 jest.mock('@/actions/cloudinary', () => ({
-    deleteCloudinaryImage: jest.fn()
+    deleteCloudinaryImage: jest.fn().mockResolvedValue(undefined)
 }))
 
 // Mock Ant Design App context
@@ -511,5 +511,106 @@ describe('AutoFlowModal', () => {
         render(<AutoFlowModal {...propsWithoutMedia} />)
 
         expect(screen.getByText('Reference Images')).toBeInTheDocument()
+    })
+
+    // --- Prompt Type Visibility ---
+
+    it('hides video section when first prompt is describe type', () => {
+        const describePrompts = [
+            { _id: 'pr_desc', title: 'Describe Prompt', content: '...', type: 'describe', accountId: 'acc_1' },
+            ...defaultProps.allPrompts!
+        ]
+        const editProps = {
+            ...defaultProps,
+            allPrompts: describePrompts,
+            editingAutoFlow: {
+                _id: 'af_1',
+                productId: 'prod_1',
+                productTitle: 'Sản phẩm A',
+                promptIds: ['pr_desc']
+            }
+        }
+
+        render(<AutoFlowModal {...editProps} />)
+
+        expect(screen.queryByText(/Videos/)).not.toBeInTheDocument()
+        expect(screen.queryByText('🎬 Thêm Video')).not.toBeInTheDocument()
+    })
+
+    it('shows video section when first prompt is hook type', () => {
+        const hookPrompts = [
+            { _id: 'pr_hook', title: 'Hook Prompt', content: '...', type: 'hook', accountId: 'acc_1' },
+            ...defaultProps.allPrompts!
+        ]
+        const editProps = {
+            ...defaultProps,
+            allPrompts: hookPrompts,
+            editingAutoFlow: {
+                _id: 'af_1',
+                productId: 'prod_1',
+                productTitle: 'Sản phẩm A',
+                promptIds: ['pr_hook']
+            }
+        }
+
+        render(<AutoFlowModal {...editProps} />)
+
+        expect(screen.getByText('🎬 Thêm Video')).toBeInTheDocument()
+    })
+
+    it('hides reference images when first prompt is hook type', () => {
+        const hookPrompts = [
+            { _id: 'pr_hook', title: 'Hook Prompt', content: '...', type: 'hook', accountId: 'acc_1' },
+            ...defaultProps.allPrompts!
+        ]
+        const editProps = {
+            ...defaultProps,
+            allPrompts: hookPrompts,
+            editingAutoFlow: {
+                _id: 'af_1',
+                productId: 'prod_1',
+                productTitle: 'Sản phẩm A',
+                promptIds: ['pr_hook']
+            }
+        }
+
+        render(<AutoFlowModal {...editProps} />)
+
+        expect(screen.queryByText('Reference Images')).not.toBeInTheDocument()
+    })
+
+    it('shows both video and reference images when no prompt type', () => {
+        render(<AutoFlowModal {...defaultProps} />)
+
+        expect(screen.getByText('Reference Images')).toBeInTheDocument()
+        expect(screen.getByText('Videos (0)')).toBeInTheDocument()
+        expect(screen.getByText('🎬 Thêm Video')).toBeInTheDocument()
+    })
+
+    it('calls deleteCloudinaryImage when switching to describe prompt with existing videos', () => {
+        const { deleteCloudinaryImage } = require('@/actions/cloudinary')
+        const describePrompts = [
+            { _id: 'pr_desc', title: 'Describe Prompt', content: '...', type: 'describe', accountId: 'acc_1' },
+            ...defaultProps.allPrompts!
+        ]
+        const editProps = {
+            ...defaultProps,
+            allPrompts: describePrompts,
+            editingAutoFlow: {
+                _id: 'af_1',
+                productId: 'prod_1',
+                productTitle: 'Sản phẩm A',
+                promptIds: ['pr_desc'],
+                videoFiles: [{
+                    url: 'https://cloudinary.com/test/video.mp4',
+                    publicId: 'test/video',
+                    type: 'video'
+                }]
+            }
+        }
+
+        render(<AutoFlowModal {...editProps} />)
+
+        expect(deleteCloudinaryImage).toHaveBeenCalledWith('test/video', 'video')
     })
 })

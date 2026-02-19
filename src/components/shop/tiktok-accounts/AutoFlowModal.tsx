@@ -49,6 +49,20 @@ const AutoFlowModal = ({
     const showReferenceImages = firstPromptType !== 'hook'
     const showVideo = firstPromptType !== 'describe'
 
+    // Auto-clear videos when switching to describe prompt
+    useEffect(() => {
+        if (firstPromptType === 'describe' && videoFiles.length > 0) {
+            // Delete uploaded videos from Cloudinary
+            for (const video of videoFiles) {
+                if (video.publicId) {
+                    deleteCloudinaryImage(video.publicId, 'video').catch(() => { })
+                }
+            }
+            setVideoFiles([])
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [firstPromptType])
+
     const { openWidget: openVideoWidget, isUploading: isVideoUploading } = useCloudinaryUpload(
         autoFlowVideoUploadConfig,
         async (result) => {
@@ -141,7 +155,7 @@ const AutoFlowModal = ({
                     imageUsageType: 'IMAGE_USAGE_TYPE_ASSET',
                     mediaId: mid
                 })),
-                videoFiles: videoFiles.length > 0 ? videoFiles : []
+                videoFiles: showVideo && videoFiles.length > 0 ? videoFiles : []
             }
 
             if (editingAutoFlow?._id) {
@@ -280,75 +294,75 @@ const AutoFlowModal = ({
                 </Form.Item>
 
                 {showReferenceImages && (
-                <Form.Item
-                    label="Reference Images"
-                    name="referenceImages"
-                >
-                    <Select
-                        mode="multiple"
-                        placeholder="Chọn Media IDs (optional)..."
-                        allowClear
-                        showSearch
-                        optionFilterProp="label"
-                        options={veo3Media.map((m: any) => ({
-                            value: m.mediaId,
-                            label: m.mediaId,
-                        }))}
-                        optionRender={(option) => {
-                            const media = veo3Media.find((m: any) => m.mediaId === option.value)
-                            return (
-                                <div className="flex items-center gap-2 py-1">
-                                    {media?.mediaFile?.url ? (
-                                        <img
-                                            src={media.mediaFile.url}
-                                            alt={String(option.value)}
-                                            className="w-8 h-8 rounded object-cover flex-shrink-0"
-                                        />
-                                    ) : (
-                                        <div className="w-8 h-8 rounded bg-gray-200 flex-shrink-0" />
-                                    )}
-                                    <span className="font-mono text-sm">{option.label}</span>
-                                </div>
-                            )
-                        }}
-                    />
-                </Form.Item>
+                    <Form.Item
+                        label="Reference Images"
+                        name="referenceImages"
+                    >
+                        <Select
+                            mode="multiple"
+                            placeholder="Chọn Media IDs (optional)..."
+                            allowClear
+                            showSearch
+                            optionFilterProp="label"
+                            options={veo3Media.map((m: any) => ({
+                                value: m.mediaId,
+                                label: m.mediaId,
+                            }))}
+                            optionRender={(option) => {
+                                const media = veo3Media.find((m: any) => m.mediaId === option.value)
+                                return (
+                                    <div className="flex items-center gap-2 py-1">
+                                        {media?.mediaFile?.url ? (
+                                            <img
+                                                src={media.mediaFile.url}
+                                                alt={String(option.value)}
+                                                className="w-8 h-8 rounded object-cover flex-shrink-0"
+                                            />
+                                        ) : (
+                                            <div className="w-8 h-8 rounded bg-gray-200 flex-shrink-0" />
+                                        )}
+                                        <span className="font-mono text-sm">{option.label}</span>
+                                    </div>
+                                )
+                            }}
+                        />
+                    </Form.Item>
                 )}
 
                 {showVideo && (
-                <Form.Item label={`Videos (${videoFiles.length})`}>
-                    {videoFiles.length > 0 && (
-                        <div className="space-y-2 mb-2">
-                            {videoFiles.map((video, index) => (
-                                <div key={video.publicId || index} className="flex items-center gap-3 p-2 border rounded-lg bg-gray-50">
-                                    <video
-                                        src={video.url}
-                                        className="w-24 h-16 rounded object-cover bg-black"
-                                        muted
-                                    />
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs text-gray-600 truncate">{video.url}</p>
+                    <Form.Item label={`Videos (${videoFiles.length})`}>
+                        {videoFiles.length > 0 && (
+                            <div className="space-y-2 mb-2">
+                                {videoFiles.map((video, index) => (
+                                    <div key={video.publicId || index} className="flex items-center gap-3 p-2 border rounded-lg bg-gray-50">
+                                        <video
+                                            src={video.url}
+                                            className="w-24 h-16 rounded object-cover bg-black"
+                                            muted
+                                        />
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-xs text-gray-600 truncate">{video.url}</p>
+                                        </div>
+                                        <Button
+                                            type="text"
+                                            danger
+                                            size="small"
+                                            icon={<DeleteOutlined />}
+                                            onClick={() => handleRemoveVideo(index)}
+                                            title="Xóa video"
+                                        />
                                     </div>
-                                    <Button
-                                        type="text"
-                                        danger
-                                        size="small"
-                                        icon={<DeleteOutlined />}
-                                        onClick={() => handleRemoveVideo(index)}
-                                        title="Xóa video"
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    <Button
-                        onClick={() => openVideoWidget()}
-                        loading={isVideoUploading}
-                        block
-                    >
-                        🎬 Thêm Video
-                    </Button>
-                </Form.Item>
+                                ))}
+                            </div>
+                        )}
+                        <Button
+                            onClick={() => openVideoWidget()}
+                            loading={isVideoUploading}
+                            block
+                        >
+                            🎬 Thêm Video
+                        </Button>
+                    </Form.Item>
                 )}
             </Form>
         </Modal>

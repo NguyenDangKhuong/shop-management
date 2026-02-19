@@ -41,12 +41,12 @@ async function main() {
 
             // Shadowing
             { heading_2: { rich_text: [{ text: { content: '🎧 Shadowing — 15 phút' } }] } },
-            { paragraph: { rich_text: [{ text: { content: 'Chọn 1 video BBC 6 Minute English (6 phút). Nghe từng câu → pause → lặp lại to, bắt chước ngữ điệu.' } }] } },
+            { paragraph: { rich_text: [{ text: { content: 'Chọn 1 video tech talk (5-10 phút). Nghe từng câu → pause → lặp lại to, bắt chước ngữ điệu.' } }] } },
             {
                 numbered_list_item: {
                     rich_text: [
                         { text: { content: 'Lần 1 (5 phút):' }, annotations: { bold: true } },
-                        { text: { content: ' Nghe toàn bộ video 1 lần, không pause. Chú ý nhịp nói, stress, intonation.' } }
+                        { text: { content: ' Nghe toàn bộ video 1 lần, không pause. Chú ý cách speaker diễn đạt technical concepts.' } }
                     ]
                 }
             },
@@ -54,7 +54,7 @@ async function main() {
                 numbered_list_item: {
                     rich_text: [
                         { text: { content: 'Lần 2 (10 phút):' }, annotations: { bold: true } },
-                        { text: { content: ' Nghe từng câu → pause → nói lại. Cố bắt chước giọng, tốc độ, nhấn nhá.' } }
+                        { text: { content: ' Nghe từng câu → pause → nói lại. Bắt chước giọng, tốc độ, cách nhấn technical terms.' } }
                     ]
                 }
             },
@@ -62,9 +62,9 @@ async function main() {
                 callout: {
                     icon: { emoji: '🎬' }, rich_text: [
                         { text: { content: 'Video gợi ý: ' } },
-                        { text: { content: 'Is AI making us stupid?', link: { url: 'https://www.youtube.com/watch?v=VmGMsG3Kcxo' } }, annotations: { bold: true } },
+                        { text: { content: 'The Art of Code — Dylan Beattie', link: { url: 'https://www.youtube.com/watch?v=6avJHaC3C2U' } }, annotations: { bold: true } },
                         { text: { content: ' | ' } },
-                        { text: { content: 'Why do we procrastinate?', link: { url: 'https://www.youtube.com/watch?v=arj7oStGLkU' } }, annotations: { bold: true } },
+                        { text: { content: 'How AI Could Empower Any Business — Andrew Ng', link: { url: 'https://www.youtube.com/watch?v=reUZRyXxUs4' } }, annotations: { bold: true } },
                     ]
                 }
             },
@@ -73,28 +73,28 @@ async function main() {
 
             // Self-talk
             { heading_2: { rich_text: [{ text: { content: '🗣️ Self-talk — 15 phút' } }] } },
-            { paragraph: { rich_text: [{ text: { content: 'Bật ghi âm → nói tiếng Anh về 3 chủ đề sau (mỗi cái ~3-5 phút). Đừng sợ sai, cứ nói!' } }] } },
+            { paragraph: { rich_text: [{ text: { content: 'Bật ghi âm → nói tiếng Anh về 3 chủ đề technical sau (mỗi cái ~3-5 phút). Đừng sợ sai, cứ nói!' } }] } },
             {
                 numbered_list_item: {
                     rich_text: [
-                        { text: { content: '"What did I do today at work?"' }, annotations: { bold: true } },
-                        { text: { content: ' — Kể về ngày làm việc: code gì, fix bug gì, meeting gì...' } }
+                        { text: { content: '"Explain a bug I fixed today"' }, annotations: { bold: true } },
+                        { text: { content: ' — Mô tả bug: root cause là gì, debug thế nào, fix ra sao, lesson learned...' } }
                     ]
                 }
             },
             {
                 numbered_list_item: {
                     rich_text: [
-                        { text: { content: '"What will I do tomorrow?"' }, annotations: { bold: true } },
-                        { text: { content: ' — Kế hoạch ngày mai: tasks, features, deadlines...' } }
+                        { text: { content: '"Walk through my system architecture"' }, annotations: { bold: true } },
+                        { text: { content: ' — Giải thích kiến trúc project: frontend, backend, database, API flow, deployment...' } }
                     ]
                 }
             },
             {
                 numbered_list_item: {
                     rich_text: [
-                        { text: { content: '"Describe my current project"' }, annotations: { bold: true } },
-                        { text: { content: ' — Giải thích project đang làm cho người không biết tech' } }
+                        { text: { content: '"Compare two technologies I know"' }, annotations: { bold: true } },
+                        { text: { content: ' — So sánh 2 tech (React vs Vue, SQL vs NoSQL, REST vs GraphQL): pros, cons, khi nào dùng...' } }
                     ]
                 }
             },
