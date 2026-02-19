@@ -8,11 +8,8 @@ const FLOW_URL_PATTERNS = [
 const DEFAULT_API_URL = 'https://shop.thetaphoa.store/api/veo3-tokens'
 const DEFAULT_WS_URL = 'ws://localhost:3001'
 const AUTO_POST_ALARM = 'auto-post-tokens'
-const AUTO_GENERATE_ALARM = 'auto-generate-recaptcha'
 const AUTO_POST_INTERVAL_MINUTES = 5
-const AUTO_GENERATE_INTERVAL_MINUTES = 1 // check pool every 1 min
-const POOL_MIN_AVAILABLE = 3
-const POOL_BATCH_SIZE = 5
+
 
 // ==========================================
 // WEBSOCKET BRIDGE CLIENT
@@ -350,33 +347,7 @@ function triggerRecaptchaGeneration(siteKey) {
   })
 }
 
-// ==========================================
-// HELPER: Trigger batch reCAPTCHA generation on a Veo3 tab
-// ==========================================
-async function triggerBatchRecaptchaGeneration(count) {
-  const tab = await findVeo3Tab()
-  if (!tab) {
-    console.warn('🛡️ Pool: No Veo3 tab open for batch generation')
-    return
-  }
 
-  try {
-    await ensureContentScriptInjected(tab)
-  } catch (err) {
-    console.warn('🛡️ Pool: Failed to inject scripts:', err.message)
-    return
-  }
-
-  try {
-    await chrome.tabs.sendMessage(tab.id, {
-      type: 'GENERATE_RECAPTCHA_BATCH',
-      count: count || POOL_BATCH_SIZE
-    })
-    console.log(`🛡️ Pool: Triggered batch generation of ${count || POOL_BATCH_SIZE} tokens`)
-  } catch (err) {
-    console.warn('🛡️ Pool: Failed to trigger batch:', err.message)
-  }
-}
 
 // ==========================================
 // AUTO-POST: Send latest token to API
@@ -472,50 +443,12 @@ async function autoPostLatestToken() {
   }
 }
 
-// ==========================================
-// AUTO-GENERATE: Check pool and refill if needed
-// ==========================================
-async function autoGenerateRecaptchaToken() {
-  const data = await chrome.storage.local.get(['autoGenerateEnabled', 'apiUrl'])
-  if (!data.autoGenerateEnabled) return
 
-  // Check pool stats from API
-  try {
-    const baseUrl = (data.apiUrl || DEFAULT_API_URL).replace('/veo3-tokens', '')
-    const resp = await fetch(baseUrl + '/veo3-recaptcha')
-    const result = await resp.json()
-
-    if (result.success) {
-      const { available, used, expired } = result.data
-      console.log(`🛡️ Pool stats: ${available} available, ${used} used, ${expired} expired`)
-
-      // Clean up used/expired tokens
-      if (used > 0 || expired > 0) {
-        await fetch(baseUrl + '/veo3-recaptcha', { method: 'DELETE' })
-        console.log('🛡️ Pool: Cleaned used/expired tokens')
-      }
-
-      // Refill if below threshold
-      if (available < POOL_MIN_AVAILABLE) {
-        const needed = POOL_BATCH_SIZE - available
-        console.log(`🛡️ Pool: ${available} available < ${POOL_MIN_AVAILABLE} min, generating ${needed} more`)
-        await triggerBatchRecaptchaGeneration(needed)
-      }
-    }
-  } catch (err) {
-    console.warn('🛡️ Pool: Error checking pool:', err.message)
-    // Fallback: just generate a batch
-    await triggerBatchRecaptchaGeneration(POOL_BATCH_SIZE)
-  }
-}
 
 // Handle alarm triggers
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === AUTO_POST_ALARM) {
     autoPostLatestToken()
-  }
-  if (alarm.name === AUTO_GENERATE_ALARM) {
-    autoGenerateRecaptchaToken()
   }
 })
 
@@ -627,27 +560,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true
   }
 
-  // Toggle auto-generate reCAPTCHA token
-  if (message.type === 'TOGGLE_AUTO_GENERATE') {
-    const enabled = message.enabled
-    chrome.storage.local.set({ autoGenerateEnabled: enabled })
-
-    if (enabled) {
-      chrome.alarms.create(AUTO_GENERATE_ALARM, {
-        delayInMinutes: 0.1, // Start almost immediately
-        periodInMinutes: AUTO_GENERATE_INTERVAL_MINUTES
-      })
-      // Also trigger immediately
-      triggerRecaptchaGeneration().catch(err => console.warn('🔑 Initial generate error:', err.message))
-      console.log(`🔑 Auto-generate: ENABLED (every ${AUTO_GENERATE_INTERVAL_MINUTES} min)`)
-    } else {
-      chrome.alarms.clear(AUTO_GENERATE_ALARM)
-      console.log('🔑 Auto-generate: DISABLED')
-    }
-
-    sendResponse({ success: true, enabled })
-    return true
-  }
 
   if (message.type === 'POST_NOW') {
     autoPostLatestToken().then(() => sendResponse({ success: true }))
@@ -656,7 +568,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 })
 
 // On startup, restore alarms if they were enabled
-chrome.storage.local.get(['autoPostEnabled', 'autoPostMinutes', 'autoGenerateEnabled'], (result) => {
+chrome.storage.local.get(['autoPostEnabled', 'autoPostMinutes'], (result) => {
   if (result.autoPostEnabled) {
     const minutes = result.autoPostMinutes || AUTO_POST_INTERVAL_MINUTES
     chrome.alarms.create(AUTO_POST_ALARM, {
@@ -664,13 +576,6 @@ chrome.storage.local.get(['autoPostEnabled', 'autoPostMinutes', 'autoGenerateEna
       periodInMinutes: minutes
     })
     console.log(`🔑 Auto-post: Restored alarm on startup (every ${minutes} min)`)
-  }
-  if (result.autoGenerateEnabled) {
-    chrome.alarms.create(AUTO_GENERATE_ALARM, {
-      delayInMinutes: 0.5,
-      periodInMinutes: AUTO_GENERATE_INTERVAL_MINUTES
-    })
-    console.log(`🔑 Auto-generate: Restored alarm on startup (every ${AUTO_GENERATE_INTERVAL_MINUTES} min)`)
   }
 })
 

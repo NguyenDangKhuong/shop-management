@@ -15,15 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const lastAutoPostEl = document.getElementById('lastAutoPost')
   const autoPostMinutes = document.getElementById('autoPostMinutes')
   const generateBtn = document.getElementById('generateBtn')
-  const autoGenToggle = document.getElementById('autoGenToggle')
-  const autoGenStatus = document.getElementById('autoGenStatus')
-  const lastAutoGenEl = document.getElementById('lastAutoGen')
 
   let capturedTokens = []
   let selectedIndex = null
 
   // Load saved config, tokens, and auto-post state
-  chrome.storage.local.get(['apiUrl', 'capturedTokens', 'autoPostEnabled', 'lastAutoPost', 'autoPostMinutes', 'autoGenerateEnabled', 'capturedSiteKey'], (result) => {
+  chrome.storage.local.get(['apiUrl', 'capturedTokens', 'autoPostEnabled', 'lastAutoPost', 'autoPostMinutes', 'capturedSiteKey'], (result) => {
     if (result.apiUrl) {
       apiUrlInput.value = result.apiUrl
     }
@@ -44,12 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
       updateLastAutoPost(result.lastAutoPost)
     }
 
-    // Restore auto-generate state
-    if (result.autoGenerateEnabled) {
-      autoGenToggle.checked = true
-      autoGenStatus.textContent = 'ON'
-      autoGenStatus.style.color = '#FF9800'
-    }
 
     // Load captured siteKey
     if (result.capturedSiteKey) {
@@ -336,17 +327,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
-  // Auto-generate toggle handler
-  autoGenToggle.addEventListener('change', () => {
-    const enabled = autoGenToggle.checked
-    chrome.runtime.sendMessage({ type: 'TOGGLE_AUTO_GENERATE', enabled }, (response) => {
-      if (response && response.success) {
-        autoGenStatus.textContent = enabled ? 'ON' : 'OFF'
-        autoGenStatus.style.color = enabled ? '#FF9800' : '#888'
-        showToast(enabled ? 'Auto-Gen reCAPTCHA enabled (every ~90s)' : 'Auto-Gen disabled', 'success')
-      }
-    })
-  })
 
   // Auto-refresh when storage changes
   chrome.storage.onChanged.addListener((changes) => {
