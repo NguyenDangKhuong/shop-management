@@ -4,6 +4,7 @@
 
 Hệ thống sử dụng **WebSocket Bridge** để kết nối Chrome Extension ↔ Next.js Server, cho phép:
 - Auto-lấy `ya29` bearer token từ extension (real-time)
+- Auto-capture `siteKey` từ reCAPTCHA Enterprise URL
 - On-demand gen reCAPTCHA token trên domain `labs.google` (tránh 403)
 - Chỉ cần gửi `prompt` → server tự lấy hết credentials → gọi Veo3 API
 
@@ -59,8 +60,8 @@ npm run dev:all
 1. Mở `chrome://extensions/` → bật **Developer mode**
 2. **Load unpacked** → chọn folder `chrome-extension/flow-token-extractor/`
 3. Mở [Flow page](https://labs.google/fx/vi/tools/flow/) và login Google
-4. Extension tự connect WS Bridge + push ya29
-5. **Gen 1 video trên Flow page** (để warm up reCAPTCHA + capture ya29 mới)
+4. Extension tự connect WS Bridge + push ya29 + auto-capture siteKey
+5. Bấm **📤 PUT** trên popup để đẩy tất cả data (ya29, projectId, sessionId, siteKey) lên server
 
 ---
 
@@ -234,9 +235,11 @@ Dùng internal, chỉ expose qua tunnel nếu cần production.
 ### Chức năng chính
 
 1. **Auto-capture ya29** — Bắt token từ header Authorization khi Flow page gọi API
-2. **Push instant via WS** — Gửi token ngay lập tức qua WebSocket (kèm sessionId, projectId)
-3. **On-demand reCAPTCHA** — Nhận yêu cầu từ WS Bridge, gen token bằng `grecaptcha.enterprise.execute()` trên domain `labs.google`
-4. **Auto-reconnect** — Tự kết nối lại WS Bridge nếu bị mất
+2. **Auto-capture siteKey** — Bắt siteKey từ reCAPTCHA Enterprise URL qua `webRequest` listener
+3. **Push instant via WS** — Gửi token ngay lập tức qua WebSocket (kèm sessionId, projectId)
+4. **On-demand reCAPTCHA** — Nhận yêu cầu từ WS Bridge, gen token bằng `grecaptcha.enterprise.execute()` trên domain `labs.google`
+5. **PUT all-in-one** — Nút 📤 PUT gửi tất cả data (ya29, projectId, sessionId, siteKey) lên `/api/veo3-tokens`
+6. **Auto-reconnect** — Tự kết nối lại WS Bridge nếu bị mất
 
 ### Files quan trọng
 
@@ -252,26 +255,28 @@ Dùng internal, chỉ expose qua tunnel nếu cần production.
 
 ## 🔑 Quản lý siteKey
 
-reCAPTCHA Enterprise cần `siteKey` để gen token. SiteKey được lưu trong `Veo3Token` model và tự truyền cho extension khi gen reCAPTCHA.
+reCAPTCHA Enterprise cần `siteKey` để gen token. Extension **tự động bắt siteKey** từ reCAPTCHA URL thông qua `webRequest` listener — không cần lấy thủ công.
 
-### Lấy siteKey
+### Auto-capture siteKey
 
-Mở DevTools trên Flow page → Network tab → tìm request tới `recaptcha/enterprise/reload` → param `k=` chính là siteKey.
+Khi Flow page load reCAPTCHA, extension bắt URL chứa `recaptcha/enterprise` và extract param `k=` → lưu vào `chrome.storage` → hiển thị trên popup.
 
-Hoặc gen 1 video trên Flow page, extension sẽ tự detect siteKey từ `<script>` tag.
+SiteKey được gửi lên server khi:
+- Bấm **📤 PUT** trên popup (gửi cùng ya29, projectId, sessionId)
+- Extension auto-POST qua WS bridge
 
-### Lưu siteKey vào DB
+### Lưu siteKey thủ công (backup)
 
 ```bash
-# Lưu siteKey cho token hiện có
+# Nếu cần lưu thủ công
 curl -X PUT http://localhost:3000/api/veo3-tokens \
   -H 'Content-Type: application/json' \
   -d '{"id": "TOKEN_ID", "siteKey": "6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV"}'
 ```
 
 > [!IMPORTANT]
-> Không có `siteKey` trong DB → extension phải tự detect từ page (cần warm up).
-> Có `siteKey` trong DB → server truyền cho extension, **không cần warm up**.
+> Extension auto-capture siteKey khi load Flow page → **không cần warm up**.
+> Nếu siteKey chưa được capture, gen reCAPTCHA sẽ dùng siteKey từ DB.
 
 ---
 
@@ -327,10 +332,11 @@ Route `/api/gen-video` dùng `process.env.WS_BRIDGE_URL`, default `http://localh
 
 1. **Flow page phải mở** — Extension cần ít nhất 1 tab Flow (`labs.google/fx/`) đang mở
 2. **Google account đã login** — Flow page phải login Google account có quyền dùng Veo3
-3. **siteKey trong DB** — Lưu `siteKey` vào `/api/veo3-tokens` để không cần warm up
+3. **siteKey auto-capture** — Extension tự bắt siteKey từ reCAPTCHA URL, không cần warm up
 4. **Auto-retry** — reCAPTCHA tự retry 3 lần (chờ 3s mỗi lần) nếu bị Google reject
 5. **ya29 token hết hạn ~1 giờ** — Extension auto-capture token mới khi Flow page gọi API
 6. **Mặc định portrait** — Không truyền `aspectRatio` → gen video dọc
+7. **Admin page** — Trang `/veo3-tokens` hiển thị detail card view với nút copy cho từng field
 
 ---
 
@@ -353,4 +359,4 @@ curl -s -X POST https://shop.thetaphoa.store/api/gen-video \
 
 ---
 
-*Cập nhật: 19/02/2026 — Thêm siteKey flow, API fallback cho projectId/sessionId/siteKey*
+*Cập nhật: 19/02/2026 — Auto-capture siteKey, bỏ auto-gen reCAPTCHA/Gen Token, PUT gửi kèm siteKey, admin page detail card view*
