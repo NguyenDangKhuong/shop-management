@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const autoPostStatus = document.getElementById('autoPostStatus')
   const lastAutoPostEl = document.getElementById('lastAutoPost')
   const autoPostMinutes = document.getElementById('autoPostMinutes')
-  const generateBtn = document.getElementById('generateBtn')
+
 
   let capturedTokens = []
   let selectedIndex = null
@@ -89,20 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
-  // Generate reCAPTCHA token on demand
-  generateBtn.addEventListener('click', () => {
-    generateBtn.disabled = true
-    generateBtn.textContent = '⏳ Generating...'
-    chrome.runtime.sendMessage({ type: 'GENERATE_TOKEN_NOW' }, (response) => {
-      generateBtn.disabled = false
-      generateBtn.innerHTML = '<span>🛡️</span> Gen Token'
-      if (response && response.success) {
-        showToast('reCAPTCHA token generated!', 'success')
-      } else {
-        showToast(`Error: ${response?.error || 'Unknown'}`, 'error')
-      }
-    })
-  })
 
   // Send token to API (GET first, then PUT with id, or POST if none exist)
   async function sendTokenToApi(apiUrl, tokenData, silent = false) {

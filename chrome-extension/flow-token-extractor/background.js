@@ -528,18 +528,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true
   }
 
-  // Trigger manual reCAPTCHA generation from popup
-  if (message.type === 'GENERATE_TOKEN_NOW') {
-    triggerRecaptchaGeneration()
-      .then(token => {
-        sendResponse({ success: true, token: token ? token.substring(0, 30) + '...' : null })
-      })
-      .catch(err => {
-        sendResponse({ success: false, error: err.message })
-      })
-    return true
-  }
-
   if (message.type === 'TOGGLE_AUTO_POST') {
     const enabled = message.enabled
     const minutes = message.minutes || AUTO_POST_INTERVAL_MINUTES
