@@ -16,7 +16,7 @@ import {
 import { App, Button, Input, Popconfirm, Spin, Switch } from 'antd'
 import dayjs from 'dayjs'
 import { useParams } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface TikTokAccount {
     _id: string
@@ -50,6 +50,9 @@ export default function TikTokAccountPage() {
     const [autoflows, setAutoflows] = useState<any[]>([])
     const [promptsCollapsed, setPromptsCollapsed] = useState(true)
     const [veo3MediaCollapsed, setVeo3MediaCollapsed] = useState(true)
+    const [productsCollapsed, setProductsCollapsed] = useState(true)
+    const promptsLoadedRef = useRef(false)
+    const veo3MediaLoadedRef = useRef(false)
     const [autoflowsLoading, setAutoflowsLoading] = useState(false)
     const [isAutoFlowModalOpen, setIsAutoFlowModalOpen] = useState(false)
     const [editingAutoFlow, setEditingAutoFlow] = useState<any>(null)
@@ -86,8 +89,6 @@ export default function TikTokAccountPage() {
                         fetchProducts(foundAccount.cookie)
                         fetchScheduledPosts(foundAccount._id)
                         fetchAutoFlows(foundAccount._id)
-                        fetchPrompts()
-                        fetchVeo3Media(foundAccount._id)
                         fetchShopeeLinks()
                     } else {
                         message.error('Không tìm thấy account này')
@@ -167,11 +168,15 @@ export default function TikTokAccountPage() {
     const handleAddAutoFlow = () => {
         setEditingAutoFlow(null)
         setIsAutoFlowModalOpen(true)
+        if (!promptsLoadedRef.current) fetchPrompts()
+        if (!veo3MediaLoadedRef.current && account) fetchVeo3Media(account._id)
     }
 
     const handleEditAutoFlow = (autoflow: any) => {
         setEditingAutoFlow(autoflow)
         setIsAutoFlowModalOpen(true)
+        if (!promptsLoadedRef.current) fetchPrompts()
+        if (!veo3MediaLoadedRef.current && account) fetchVeo3Media(account._id)
     }
 
     const handleDeleteAutoFlow = async (autoflowId: string) => {
@@ -220,11 +225,20 @@ export default function TikTokAccountPage() {
             const data = await response.json()
             if (data.success) {
                 setAllPrompts(data.data)
+                promptsLoadedRef.current = true
             }
         } catch (error: any) {
             console.error('❌ Prompts Error:', error)
         } finally {
             setPromptsLoading(false)
+        }
+    }
+
+    const handleTogglePrompts = () => {
+        const willExpand = promptsCollapsed
+        setPromptsCollapsed(!promptsCollapsed)
+        if (willExpand && !promptsLoadedRef.current) {
+            fetchPrompts()
         }
     }
 
@@ -236,11 +250,20 @@ export default function TikTokAccountPage() {
             const data = await response.json()
             if (data.success) {
                 setVeo3Media(data.data)
+                veo3MediaLoadedRef.current = true
             }
         } catch (error: any) {
             console.error('❌ Veo3 Media Error:', error)
         } finally {
             setVeo3MediaLoading(false)
+        }
+    }
+
+    const handleToggleVeo3Media = () => {
+        const willExpand = veo3MediaCollapsed
+        setVeo3MediaCollapsed(!veo3MediaCollapsed)
+        if (willExpand && !veo3MediaLoadedRef.current && account) {
+            fetchVeo3Media(account._id)
         }
     }
 
@@ -728,7 +751,7 @@ export default function TikTokAccountPage() {
 
             {/* Prompt Library Section */}
             <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-                <div className="flex items-center justify-between cursor-pointer select-none" onClick={() => setPromptsCollapsed(!promptsCollapsed)}>
+                <div className="flex items-center justify-between cursor-pointer select-none" onClick={handleTogglePrompts}>
                     <h2 className="text-base font-semibold flex items-center gap-2">
                         {promptsCollapsed ? <RightOutlined className="text-xs text-gray-400" /> : <DownOutlined className="text-xs text-gray-400" />}
                         📝 Prompt Library ({allPrompts.length})
@@ -749,7 +772,7 @@ export default function TikTokAccountPage() {
 
             {/* Veo3 Media Section */}
             <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-                <div className="flex items-center justify-between cursor-pointer select-none" onClick={() => setVeo3MediaCollapsed(!veo3MediaCollapsed)}>
+                <div className="flex items-center justify-between cursor-pointer select-none" onClick={handleToggleVeo3Media}>
                     <h2 className="text-base font-semibold flex items-center gap-2">
                         {veo3MediaCollapsed ? <RightOutlined className="text-xs text-gray-400" /> : <DownOutlined className="text-xs text-gray-400" />}
                         🎬 Veo3 Media ({veo3Media.length})
@@ -769,61 +792,68 @@ export default function TikTokAccountPage() {
             </div>
             {/* Content Area - Products */}
             <div className="bg-white rounded-lg shadow-sm p-4">
-                <h2 className="text-base font-semibold mb-3">
-                    Danh sách sản phẩm ({products.length})
-                </h2>
+                <div className="flex items-center justify-between cursor-pointer select-none" onClick={() => setProductsCollapsed(!productsCollapsed)}>
+                    <h2 className="text-base font-semibold flex items-center gap-2">
+                        {productsCollapsed ? <RightOutlined className="text-xs text-gray-400" /> : <DownOutlined className="text-xs text-gray-400" />}
+                        📦 Danh sách sản phẩm ({products.length})
+                    </h2>
+                </div>
 
-                {productsLoading ? (
-                    <div className="text-center py-8">
-                        <Spin />
-                        <p className="text-sm text-gray-500 mt-2">Đang tải sản phẩm...</p>
-                    </div>
-                ) : products.length === 0 ? (
-                    <p className="text-sm text-gray-500 text-center py-8">
-                        Chưa có sản phẩm nào
-                    </p>
-                ) : (
-                    <div className="grid grid-cols-2 gap-3">
-                        {products.map((product: any, index: number) => (
-                            <div key={index} className="border rounded-lg p-2 hover:shadow-md transition-shadow">
-                                {/* Product Image */}
-                                {product.images[0].url_list[0] && (
-                                    <img
-                                        src={product.images[0].url_list[0]}
-                                        alt={product.title}
-                                        className="w-full h-32 object-cover rounded mb-2"
-                                    />
-                                )}
-
-                                {/* Product Info */}
-                                <div className="flex items-start justify-between gap-2 mb-1">
-                                    <h3 className="text-sm font-medium line-clamp-2 flex-1">
-                                        {product.title}
-                                    </h3>
-                                    <Button
-                                        type="text"
-                                        size="small"
-                                        icon={<CopyOutlined />}
-                                        onClick={() => {
-                                            navigator.clipboard.writeText(product.title)
-                                            message.success('Đã copy tên sản phẩm!')
-                                        }}
-                                        className="flex-shrink-0"
-                                    />
-                                </div>
-
-                                <div className="flex items-center justify-between">
-                                    <span className="text-xs text-red-600 font-semibold">
-                                        {product.affiliate_info.commission_with_currency}
-                                    </span>
-                                    {product.stock_num && (
-                                        <span className="text-xs text-gray-500">
-                                            còn {product.stock_num}
-                                        </span>
-                                    )}
-                                </div>
+                {!productsCollapsed && (
+                    <div className="mt-3">
+                        {productsLoading ? (
+                            <div className="text-center py-8">
+                                <Spin />
+                                <p className="text-sm text-gray-500 mt-2">Đang tải sản phẩm...</p>
                             </div>
-                        ))}
+                        ) : products.length === 0 ? (
+                            <p className="text-sm text-gray-500 text-center py-8">
+                                Chưa có sản phẩm nào
+                            </p>
+                        ) : (
+                            <div className="grid grid-cols-2 gap-3">
+                                {products.map((product: any, index: number) => (
+                                    <div key={index} className="border rounded-lg p-2 hover:shadow-md transition-shadow">
+                                        {/* Product Image */}
+                                        {product.images[0].url_list[0] && (
+                                            <img
+                                                src={product.images[0].url_list[0]}
+                                                alt={product.title}
+                                                className="w-full h-32 object-cover rounded mb-2"
+                                            />
+                                        )}
+
+                                        {/* Product Info */}
+                                        <div className="flex items-start justify-between gap-2 mb-1">
+                                            <h3 className="text-sm font-medium line-clamp-2 flex-1">
+                                                {product.title}
+                                            </h3>
+                                            <Button
+                                                type="text"
+                                                size="small"
+                                                icon={<CopyOutlined />}
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(product.title)
+                                                    message.success('Đã copy tên sản phẩm!')
+                                                }}
+                                                className="flex-shrink-0"
+                                            />
+                                        </div>
+
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs text-red-600 font-semibold">
+                                                {product.affiliate_info.commission_with_currency}
+                                            </span>
+                                            {product.stock_num && (
+                                                <span className="text-xs text-gray-500">
+                                                    còn {product.stock_num}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
