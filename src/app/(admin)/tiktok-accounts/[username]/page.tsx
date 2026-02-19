@@ -1,7 +1,7 @@
 'use client'
 
 import AutoFlowModal from '@/components/shop/tiktok-accounts/AutoFlowModal'
-import PromptModal from '@/components/shop/tiktok-accounts/PromptModal'
+import PromptSection from '@/components/shop/tiktok-accounts/PromptSection'
 import TikTokScheduledPostModal from '@/components/shop/tiktok-accounts/TikTokScheduledPostModal'
 import Veo3MediaSection from '@/components/shop/tiktok-accounts/Veo3MediaSection'
 import {
@@ -55,8 +55,7 @@ export default function TikTokAccountPage() {
     const [editingAutoFlow, setEditingAutoFlow] = useState<any>(null)
     const [allPrompts, setAllPrompts] = useState<any[]>([])
     const [promptsLoading, setPromptsLoading] = useState(false)
-    const [isPromptModalOpen, setIsPromptModalOpen] = useState(false)
-    const [editingPrompt, setEditingPrompt] = useState<any>(null)
+
     const [veo3Media, setVeo3Media] = useState<any[]>([])
     const [veo3MediaLoading, setVeo3MediaLoading] = useState(false)
 
@@ -213,7 +212,7 @@ export default function TikTokAccountPage() {
         }
     }
 
-    // Independent Prompt Library handlers
+    // Prompt Library
     const fetchPrompts = async () => {
         try {
             setPromptsLoading(true)
@@ -227,69 +226,6 @@ export default function TikTokAccountPage() {
         } finally {
             setPromptsLoading(false)
         }
-    }
-
-    const handleAddPrompt = () => {
-        setEditingPrompt(null)
-        setIsPromptModalOpen(true)
-    }
-
-    const handleEditPrompt = (prompt: any) => {
-        setEditingPrompt(prompt)
-        setIsPromptModalOpen(true)
-    }
-
-    const handleDeletePrompt = async (promptId: string) => {
-        try {
-            const response = await fetch(`/api/prompts?id=${promptId}`, {
-                method: 'DELETE'
-            })
-            const data = await response.json()
-
-            if (data.success) {
-                message.success('Đã xóa prompt!')
-                if (account) {
-                    fetchPrompts()
-                    fetchAutoFlows(account._id)
-                }
-            } else {
-                message.error('Xóa thất bại')
-            }
-        } catch (error: any) {
-            message.error('Lỗi: ' + error.message)
-        }
-    }
-
-    const handleDuplicatePrompt = async (prompt: any) => {
-        try {
-            const response = await fetch('/api/prompts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    title: `${prompt.title} (Copy)`,
-                    content: prompt.content,
-                    type: prompt.type || 'describe',
-                    subPrompt: prompt.subPrompt || '',
-                    order: (prompt.order ?? 0) + 1
-                })
-            })
-            const data = await response.json()
-            if (data.success) {
-                message.success('Đã nhân bản prompt!')
-                if (account) {
-                    fetchPrompts()
-                }
-            } else {
-                message.error('Nhân bản thất bại: ' + data.error)
-            }
-        } catch (error: any) {
-            message.error('Lỗi: ' + error.message)
-        }
-    }
-
-    const handleCopyPromptContent = (content: string) => {
-        navigator.clipboard.writeText(content)
-        message.success('Đã copy nội dung prompt!')
     }
 
     // Veo3 Media
@@ -746,7 +682,10 @@ export default function TikTokAccountPage() {
                                                         type="text"
                                                         size="small"
                                                         icon={<CopyOutlined />}
-                                                        onClick={() => handleCopyPromptContent(prompt.content)}
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText(prompt.content)
+                                                            message.success('Đã copy nội dung prompt!')
+                                                        }}
                                                         title="Copy nội dung"
                                                     />
                                                 </div>
@@ -794,96 +733,16 @@ export default function TikTokAccountPage() {
                         {promptsCollapsed ? <RightOutlined className="text-xs text-gray-400" /> : <DownOutlined className="text-xs text-gray-400" />}
                         📝 Prompt Library ({allPrompts.length})
                     </h2>
-                    <Button
-                        type="primary"
-                        size="small"
-                        icon={<PlusOutlined />}
-                        onClick={(e) => { e.stopPropagation(); handleAddPrompt(); }}
-                    >
-                        Thêm
-                    </Button>
                 </div>
 
                 {!promptsCollapsed && (
                     <div className="mt-3">
-                        {promptsLoading ? (
-                            <div className="text-center py-4">
-                                <Spin size="small" />
-                            </div>
-                        ) : allPrompts.length === 0 ? (
-                            <p className="text-sm text-gray-500 text-center py-4">
-                                Chưa có prompt nào
-                            </p>
-                        ) : (
-                            <div className="space-y-2">
-                                {allPrompts.map((prompt: any) => (
-                                    <div key={prompt._id} className="border rounded-lg p-3">
-                                        <div className="flex items-start gap-2">
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <h3 className="text-sm font-semibold text-gray-800">
-                                                        {prompt.title}
-                                                    </h3>
-                                                    {prompt.type && (
-                                                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${prompt.type === 'hook' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>
-                                                            {prompt.type === 'hook' ? '🪝 Hook' : '📝 Describe'}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <p className="text-xs text-gray-600 line-clamp-2 whitespace-pre-wrap">
-                                                    {prompt.content}
-                                                </p>
-                                                {prompt.subPrompt && (
-                                                    <p className="text-xs text-purple-600 mt-1 line-clamp-2 whitespace-pre-wrap italic">
-                                                        📝 {prompt.subPrompt}
-                                                    </p>
-                                                )}
-                                            </div>
-                                            <div className="flex gap-1 flex-shrink-0">
-                                                <Button
-                                                    type="text"
-                                                    size="small"
-                                                    icon={<CopyOutlined />}
-                                                    onClick={() => handleCopyPromptContent(prompt.content)}
-                                                    title="Copy nội dung"
-                                                />
-                                                <Button
-                                                    type="text"
-                                                    size="small"
-                                                    onClick={() => handleDuplicatePrompt(prompt)}
-                                                    title="Nhân bản"
-                                                >
-                                                    📋
-                                                </Button>
-                                                <Button
-                                                    type="text"
-                                                    size="small"
-                                                    icon={<EditOutlined />}
-                                                    onClick={() => handleEditPrompt(prompt)}
-                                                    title="Sửa"
-                                                />
-                                                <Popconfirm
-                                                    title="Xóa prompt?"
-                                                    description="Bạn có chắc muốn xóa prompt này?"
-                                                    onConfirm={() => handleDeletePrompt(prompt._id)}
-                                                    okText="Xóa"
-                                                    cancelText="Hủy"
-                                                    okButtonProps={{ danger: true }}
-                                                >
-                                                    <Button
-                                                        type="text"
-                                                        size="small"
-                                                        danger
-                                                        icon={<DeleteOutlined />}
-                                                        title="Xóa"
-                                                    />
-                                                </Popconfirm>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                        <PromptSection
+                            allPrompts={allPrompts}
+                            promptsLoading={promptsLoading}
+                            onRefresh={fetchPrompts}
+                            onAutoFlowRefresh={() => account && fetchAutoFlows(account._id)}
+                        />
                     </div>
                 )}
             </div>
@@ -996,17 +855,6 @@ export default function TikTokAccountPage() {
                 />
             )}
 
-            {account && (
-                <PromptModal
-                    isOpen={isPromptModalOpen}
-                    setIsOpen={setIsPromptModalOpen}
-                    editingPrompt={editingPrompt}
-                    onRefresh={() => {
-                        fetchPrompts()
-                        fetchAutoFlows(account._id)
-                    }}
-                />
-            )}
         </div>
     )
 }
