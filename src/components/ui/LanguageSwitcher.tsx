@@ -1,46 +1,23 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { usePathname } from 'next/navigation'
-import { Select } from 'antd'
-import { GlobalOutlined } from '@ant-design/icons'
-
-const { Option } = Select
+import { useTranslation, Language } from '@/i18n'
 
 const LanguageSwitcher = () => {
-    const router = useRouter()
-    const pathname = usePathname()
+    const { language, setLanguage } = useTranslation()
 
-    // Get current locale from pathname
-    const currentLocale = pathname?.startsWith('/en') ? 'en' : 'vi'
-
-    const handleLanguageChange = (locale: string) => {
-        // Remove current locale prefix if exists
-        let newPath = pathname
-        if (pathname?.startsWith('/en') || pathname?.startsWith('/vi')) {
-            newPath = pathname.slice(3) || '/'
-        }
-
-        // Add new locale prefix (except for default 'vi')
-        const finalPath = locale === 'vi' ? newPath : `/${locale}${newPath}`
-
-        router.push(finalPath)
+    const toggle = () => {
+        setLanguage(language === 'en' ? 'vi' : 'en')
     }
 
     return (
-        <Select
-            value={currentLocale}
-            onChange={handleLanguageChange}
-            style={{ width: 100 }}
-            suffixIcon={<GlobalOutlined />}
+        <button
+            onClick={toggle}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-slate-300 hover:border-[#38bdf8]/50 hover:text-white transition-all cursor-pointer"
+            aria-label="Switch language"
         >
-            <Option value="vi">
-                🇻🇳 VN
-            </Option>
-            <Option value="en">
-                🇬🇧 EN
-            </Option>
-        </Select>
+            <span>{language === 'en' ? '🇬🇧' : '🇻🇳'}</span>
+            <span className="font-medium">{language === 'en' ? 'EN' : 'VN'}</span>
+        </button>
     )
 }
 

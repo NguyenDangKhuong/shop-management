@@ -7,10 +7,12 @@ import { useRouter } from 'next/navigation'
 import { authenticate } from '@/actions/auth'
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from '@/components/icons'
 import { Button, Input } from '@/components/ui'
+import { useTranslation } from '@/i18n'
 
 const REMEMBER_KEY = 'login_remember'
 
 const LoginForm = () => {
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -64,7 +66,7 @@ const LoginForm = () => {
         setError(result.error || 'Login failed')
       }
     } catch (error) {
-      setError('An error occurred during login')
+      setError(t('login.networkError'))
       console.error(error)
     } finally {
       setLoading(false)
@@ -80,8 +82,8 @@ const LoginForm = () => {
       {/* Login Card */}
       <div className="relative w-full max-w-md bg-[rgba(255,255,255,0.03)] backdrop-blur-2xl border border-[rgba(255,255,255,0.08)] rounded-3xl p-8 md:p-10 shadow-2xl z-10">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
-          <p className="text-gray-400 text-sm">Please enter your details to sign in</p>
+          <h2 className="text-3xl font-bold text-white mb-2">{t('login.title')}</h2>
+          <p className="text-gray-400 text-sm">{t('login.subtitle')}</p>
         </div>
 
         {error && (
@@ -95,7 +97,7 @@ const LoginForm = () => {
           <Input
             type="email"
             name="email"
-            placeholder="Email Address"
+            placeholder={t('login.email')}
             leftIcon={<MailIcon />}
             defaultValue={savedEmail}
             required
@@ -105,7 +107,7 @@ const LoginForm = () => {
           <Input
             type={showPassword ? 'text' : 'password'}
             name="password"
-            placeholder="Password"
+            placeholder={t('login.password')}
             leftIcon={<LockIcon />}
             rightIcon={showPassword ? <EyeOffIcon /> : <EyeIcon />}
             onRightIconClick={() => setShowPassword(!showPassword)}
@@ -127,24 +129,24 @@ const LoginForm = () => {
                 }}
                 className="mr-2 w-4 h-4 accent-[#00e5ff] rounded bg-white/5 border-white/10 cursor-pointer"
               />
-              Remember me
+              {t('login.rememberMe')}
             </label>
             <Link href="/forgot-password" className="font-semibold bg-gradient-to-r from-[#00e5ff] to-[#b927fc] bg-clip-text text-transparent hover:opacity-80 transition-opacity">
-              Forgot Password?
+              {t('login.forgotPassword')}
             </Link>
           </div>
 
           {/* Login Button */}
           <Button type="submit" loading={loading} fullWidth>
-            {loading ? 'LOGGING IN...' : 'LOGIN'}
+            {loading ? t('login.loading') : t('login.submit')}
           </Button>
         </form>
 
         {/* Sign Up Link */}
         <p className="text-center text-gray-500 mt-8 text-sm">
-          Don&apos;t have an account?{' '}
+          {t('login.noAccount')}{' '}
           <Link href="/register" className="font-bold bg-gradient-to-r from-[#00e5ff] to-[#b927fc] bg-clip-text text-transparent hover:opacity-80 transition-opacity ml-1">
-            Sign up
+            {t('login.signUp')}
           </Link>
         </p>
       </div>

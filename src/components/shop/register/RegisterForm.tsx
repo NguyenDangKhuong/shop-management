@@ -7,8 +7,10 @@ import { useRouter } from 'next/navigation'
 import { register } from '@/actions/auth'
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon } from '@/components/icons'
 import { Button, Input } from '@/components/ui'
+import { useTranslation } from '@/i18n'
 
 const RegisterForm = () => {
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -28,7 +30,7 @@ const RegisterForm = () => {
 
     // Validate password match
     if (password !== confirmPassword) {
-      setError('Passwords do not match!')
+      setError(t('register.passwordMismatch'))
       setLoading(false)
       return
     }
@@ -42,7 +44,7 @@ const RegisterForm = () => {
         setError(result.error || 'Registration failed')
       }
     } catch (error) {
-      setError('An error occurred during registration')
+      setError(t('register.networkError'))
       console.error(error)
     } finally {
       setLoading(false)
@@ -58,8 +60,8 @@ const RegisterForm = () => {
       {/* Register Card */}
       <div className="relative w-full max-w-md bg-[rgba(255,255,255,0.03)] backdrop-blur-2xl border border-[rgba(255,255,255,0.08)] rounded-3xl p-8 md:p-10 shadow-2xl z-10">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-white mb-2">Create Account</h2>
-          <p className="text-gray-400 text-sm">Sign up to get started</p>
+          <h2 className="text-3xl font-bold text-white mb-2">{t('register.title')}</h2>
+          <p className="text-gray-400 text-sm">{t('register.subtitle')}</p>
         </div>
 
         {error && (
@@ -73,7 +75,7 @@ const RegisterForm = () => {
           <Input
             type="text"
             name="name"
-            placeholder="Full Name"
+            placeholder={t('register.name')}
             leftIcon={<UserIcon />}
             required
             minLength={2}
@@ -83,7 +85,7 @@ const RegisterForm = () => {
           <Input
             type="email"
             name="email"
-            placeholder="Email Address"
+            placeholder={t('register.email')}
             leftIcon={<MailIcon />}
             required
           />
@@ -92,7 +94,7 @@ const RegisterForm = () => {
           <Input
             type={showPassword ? 'text' : 'password'}
             name="password"
-            placeholder="Password"
+            placeholder={t('register.password')}
             leftIcon={<LockIcon />}
             rightIcon={showPassword ? <EyeOffIcon /> : <EyeIcon />}
             onRightIconClick={() => setShowPassword(!showPassword)}
@@ -104,7 +106,7 @@ const RegisterForm = () => {
           <Input
             type={showConfirmPassword ? 'text' : 'password'}
             name="confirmPassword"
-            placeholder="Confirm Password"
+            placeholder={t('register.confirmPassword')}
             leftIcon={<LockIcon />}
             rightIcon={showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
             onRightIconClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -114,15 +116,15 @@ const RegisterForm = () => {
 
           {/* Register Button */}
           <Button type="submit" loading={loading} fullWidth>
-            {loading ? 'CREATING ACCOUNT...' : 'SIGN UP'}
+            {loading ? t('register.loading') : t('register.submit')}
           </Button>
         </form>
 
         {/* Login Link */}
         <p className="text-center text-gray-500 mt-8 text-sm">
-          Already have an account?{' '}
+          {t('register.hasAccount')}{' '}
           <Link href="/login" className="font-bold bg-gradient-to-r from-[#00e5ff] to-[#b927fc] bg-clip-text text-transparent hover:opacity-80 transition-opacity ml-1">
-            Login
+            {t('register.login')}
           </Link>
         </p>
       </div>

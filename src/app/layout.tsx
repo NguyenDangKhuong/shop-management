@@ -7,6 +7,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import NextAuthProvider from '@/components/providers/NextAuthProvider'
 import AntdProvider from '@/components/providers/AntdProvider'
+import { LanguageProvider } from '@/i18n'
 
 import './globals.css'
 
@@ -42,9 +43,11 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
     <html lang='en'>
       <body className={inter.className} suppressHydrationWarning={true}>
         <NextAuthProvider>
-          <AntdProvider>
-            {children}
-          </AntdProvider>
+          <LanguageProvider>
+            <AntdProvider>
+              {children}
+            </AntdProvider>
+          </LanguageProvider>
           <SpeedInsights />
           <Analytics />
         </NextAuthProvider>

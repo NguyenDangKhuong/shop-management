@@ -1,7 +1,13 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
+import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
+import { useTranslation } from '@/i18n'
 
 export default function LandingPage() {
+    const { t } = useTranslation()
+
     return (
         <>
             {/* Preconnect to external domains for faster loading */}
@@ -20,29 +26,32 @@ export default function LandingPage() {
                         </span>
                     </div>
 
-                    <Link
-                        href="/login"
-                        className="group relative px-6 py-2 rounded-full bg-slate-800/40 border border-white/10 overflow-hidden transition-all hover:border-[#38bdf8]/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]"
-                    >
-                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                        <span className="relative font-medium text-sm text-slate-300 group-hover:text-white flex items-center gap-2">
-                            Login
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="2"
-                                stroke="currentColor"
-                                className="w-4 h-4"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
-                                />
-                            </svg>
-                        </span>
-                    </Link>
+                    <div className="flex items-center gap-3">
+                        <LanguageSwitcher />
+                        <Link
+                            href="/login"
+                            className="group relative px-6 py-2 rounded-full bg-slate-800/40 border border-white/10 overflow-hidden transition-all hover:border-[#38bdf8]/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]"
+                        >
+                            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                            <span className="relative font-medium text-sm text-slate-300 group-hover:text-white flex items-center gap-2">
+                                {t('landing.login')}
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth="2"
+                                    stroke="currentColor"
+                                    className="w-4 h-4"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+                                    />
+                                </svg>
+                            </span>
+                        </Link>
+                    </div>
                 </header>
 
                 <main className="max-w-6xl w-full mx-auto relative z-10">
@@ -54,17 +63,17 @@ export default function LandingPage() {
                                 <div className="absolute -top-20 -left-20 w-64 h-64 bg-[#38bdf8]/20 rounded-full blur-3xl -z-10"></div>
 
                                 <div className="flex-1 space-y-4">
-                                    <span className="text-slate-400 font-medium">Hero Section</span>
+                                    <span className="text-slate-400 font-medium">{t('landing.heroSection')}</span>
                                     <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-                                        Hello, I&apos;m <span className="text-[#c084fc]">Khuong</span>.<br />
-                                        I build accessible web experiences.
+                                        {t('landing.heroGreeting')} <span className="text-[#c084fc]">{t('landing.heroName')}</span>.<br />
+                                        {t('landing.heroSub')}
                                     </h1>
                                     <div className="pt-4">
                                         <Link
                                             href="/projects"
                                             className="inline-block px-6 py-3 rounded-full bg-slate-800/50 border border-[#38bdf8]/50 text-white font-semibold transition hover:bg-[#38bdf8]/20 shadow-[0_0_15px_rgba(56,189,248,0.3)]"
                                         >
-                                            View Projects
+                                            {t('landing.viewProjects')}
                                         </Link>
                                     </div>
                                 </div>
@@ -89,11 +98,9 @@ export default function LandingPage() {
                             <div className="glass-card flex-1 space-y-6 relative overflow-hidden">
                                 <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-[#c084fc]/10 rounded-full blur-3xl -z-10"></div>
 
-                                <h2 className="text-xl font-semibold text-white">About Me</h2>
+                                <h2 className="text-xl font-semibold text-white">{t('landing.about')}</h2>
                                 <p className="text-slate-400 max-w-2xl">
-                                    I&apos;m Khuong, a front-end developer based in Ho Chi Minh City. I&apos;m passionate about creating
-                                    intuitive, dynamic user experiences and clean, efficient code. Currently focused on the React
-                                    ecosystem.
+                                    {t('landing.aboutText')}
                                 </p>
 
                                 <div className="pt-8 pb-4">
@@ -108,8 +115,8 @@ export default function LandingPage() {
                                         <div className="absolute top-4 left-0 text-xs text-slate-500">2018</div>
                                         <div className="absolute top-4 left-[30%] text-xs text-slate-500">2022</div>
                                         <div className="absolute top-4 left-[70%] -translate-x-1/2 text-center text-xs text-[#c084fc] font-bold">
-                                            Present<br />
-                                            Skiller
+                                            {t('landing.present')}<br />
+                                            {t('landing.skiller')}
                                         </div>
                                         <div className="absolute top-4 right-0 text-xs text-slate-500">2030</div>
                                     </div>
@@ -121,7 +128,7 @@ export default function LandingPage() {
                         <div className="flex flex-col gap-6">
                             {/* Tech Stack */}
                             <div className="glass-card space-y-4">
-                                <h2 className="text-xl font-semibold text-white">Tech Stack</h2>
+                                <h2 className="text-xl font-semibold text-white">{t('landing.techStack')}</h2>
                                 <div className="flex flex-wrap gap-3">
                                     <TechIcon name="React" color="#61DAFB">
                                         <ReactIcon />
@@ -158,7 +165,7 @@ export default function LandingPage() {
 
                                 <div className="p-6 space-y-3">
                                     <h3 className="text-lg font-semibold text-white group-hover:text-[#38bdf8] transition">
-                                        Featured Project: E-commerce App
+                                        {t('landing.featuredProject')}
                                     </h3>
                                     <div className="flex flex-wrap gap-2">
                                         <span className="px-2 py-1 text-xs rounded-full bg-slate-700/50 text-slate-300 border border-white/10">
@@ -173,10 +180,10 @@ export default function LandingPage() {
                                     </div>
                                     <div className="flex gap-4 pt-2 text-sm font-medium">
                                         <Link href="/products" className="text-[#38bdf8] hover:underline">
-                                            Live Demo
+                                            {t('landing.liveDemo')}
                                         </Link>
                                         <Link href="/login" className="text-slate-400 hover:text-white hover:underline">
-                                            Admin Panel
+                                            {t('landing.adminPanel')}
                                         </Link>
                                     </div>
                                 </div>
@@ -185,7 +192,7 @@ export default function LandingPage() {
                             {/* Contact & Performance Stats */}
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="glass-card space-y-3 flex flex-col justify-center">
-                                    <h2 className="text-base font-semibold text-white">Contact</h2>
+                                    <h2 className="text-base font-semibold text-white">{t('landing.contact')}</h2>
                                     <a
                                         href="mailto:nguyendangkhuong96@gmail.com"
                                         className="text-sm text-slate-400 flex items-center gap-2 hover:text-[#38bdf8] transition"
@@ -206,7 +213,7 @@ export default function LandingPage() {
                                 </div>
 
                                 <div className="glass-card space-y-3 flex flex-col justify-center items-center">
-                                    <h2 className="text-sm font-semibold text-white w-full text-left">Performance Stats</h2>
+                                    <h2 className="text-sm font-semibold text-white w-full text-left">{t('landing.performanceStats')}</h2>
                                     <div className="flex gap-2">
                                         <PerformanceBadge score="100" label="SEO" />
                                         <PerformanceBadge score="100" label="PERF" />
@@ -217,7 +224,7 @@ export default function LandingPage() {
 
                             {/* Dark Mode Toggle */}
                             <div className="glass-card flex items-center justify-between py-4">
-                                <span className="font-medium text-white">Dark Mode</span>
+                                <span className="font-medium text-white">{t('landing.darkMode')}</span>
                                 <div className="w-14 h-8 bg-[#38bdf8]/20 rounded-full p-1 relative border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.3)] cursor-pointer">
                                     <div className="w-6 h-6 bg-[#38bdf8] rounded-full shadow-sm absolute right-1 transition-all"></div>
                                 </div>
@@ -230,20 +237,20 @@ export default function LandingPage() {
                 <footer className="w-full max-w-6xl mx-auto mt-12 pt-8 pb-6 border-t border-slate-700/50 z-20">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
                         <p className="text-slate-400">
-                            © 2026 TheTapHoa. All rights reserved.
+                            {t('landing.footer')}
                         </p>
                         <div className="flex items-center gap-6">
                             <Link
                                 href="/privacy"
                                 className="text-slate-400 hover:text-[#38bdf8] transition-colors underline"
                             >
-                                Privacy Policy
+                                {t('landing.privacy')}
                             </Link>
                             <Link
                                 href="/terms"
                                 className="text-slate-400 hover:text-[#38bdf8] transition-colors underline"
                             >
-                                Terms of Service
+                                {t('landing.terms')}
                             </Link>
                         </div>
                     </div>

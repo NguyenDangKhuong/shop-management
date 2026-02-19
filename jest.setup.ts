@@ -1,5 +1,16 @@
 import '@testing-library/jest-dom'
 import React from 'react'
+import en from '@/i18n/en'
+
+// Mock i18n — return English translations by default
+jest.mock('@/i18n', () => ({
+    useTranslation: () => ({
+        language: 'en',
+        setLanguage: jest.fn(),
+        t: (key: string) => (en as Record<string, string>)[key] || key,
+    }),
+    LanguageProvider: ({ children }: { children: React.ReactNode }) => children,
+}))
 
 // Suppress console errors for expected React testing warnings
 const originalError = console.error

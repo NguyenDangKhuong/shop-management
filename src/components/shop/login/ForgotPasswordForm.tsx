@@ -5,8 +5,9 @@ import Link from 'next/link'
 
 import { MailIcon } from '@/components/icons'
 import { Button, Input } from '@/components/ui'
-
+import { useTranslation } from '@/i18n'
 const ForgotPasswordForm = () => {
+    const { t } = useTranslation()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [success, setSuccess] = useState(false)
@@ -34,7 +35,7 @@ const ForgotPasswordForm = () => {
                 setError(data.error || 'Something went wrong')
             }
         } catch {
-            setError('An error occurred. Please try again.')
+            setError(t('forgot.networkError'))
         } finally {
             setLoading(false)
         }
@@ -49,25 +50,25 @@ const ForgotPasswordForm = () => {
             {/* Card */}
             <div className="relative w-full max-w-md bg-[rgba(255,255,255,0.03)] backdrop-blur-2xl border border-[rgba(255,255,255,0.08)] rounded-3xl p-8 md:p-10 shadow-2xl z-10">
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-white mb-2">Forgot Password</h2>
+                    <h2 className="text-3xl font-bold text-white mb-2">{t('forgot.title')}</h2>
                     <p className="text-gray-400 text-sm">
-                        Enter your email and we&apos;ll send you a reset link
+                        {t('forgot.subtitle')}
                     </p>
                 </div>
 
                 {success ? (
                     <div className="text-center">
                         <div className="mb-6 p-4 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400 text-sm">
-                            ✅ Check your email! We&apos;ve sent you a password reset link.
+                            ✅ {t('forgot.success')}
                         </div>
                         <p className="text-gray-500 text-xs mb-6">
-                            Didn&apos;t receive the email? Check your spam folder or try again.
+                            {t('forgot.successHint')}
                         </p>
                         <Link
                             href="/login"
                             className="font-bold bg-gradient-to-r from-[#00e5ff] to-[#b927fc] bg-clip-text text-transparent hover:opacity-80 transition-opacity"
                         >
-                            ← Back to Login
+                            {t('forgot.backToLogin')}
                         </Link>
                     </div>
                 ) : (
@@ -82,23 +83,23 @@ const ForgotPasswordForm = () => {
                             <Input
                                 type="email"
                                 name="email"
-                                placeholder="Email Address"
+                                placeholder={t('forgot.email')}
                                 leftIcon={<MailIcon />}
                                 required
                             />
 
                             <Button type="submit" loading={loading} fullWidth>
-                                {loading ? 'SENDING...' : 'SEND RESET LINK'}
+                                {loading ? t('forgot.loading') : t('forgot.submit')}
                             </Button>
                         </form>
 
                         <p className="text-center text-gray-500 mt-8 text-sm">
-                            Remember your password?{' '}
+                            {t('forgot.rememberPassword')}{' '}
                             <Link
                                 href="/login"
                                 className="font-bold bg-gradient-to-r from-[#00e5ff] to-[#b927fc] bg-clip-text text-transparent hover:opacity-80 transition-opacity ml-1"
                             >
-                                Login
+                                {t('forgot.login')}
                             </Link>
                         </p>
                     </>

@@ -6,8 +6,10 @@ import { useRouter, useSearchParams } from 'next/navigation'
 
 import { LockIcon, EyeIcon, EyeOffIcon } from '@/components/icons'
 import { Button, Input } from '@/components/ui'
+import { useTranslation } from '@/i18n'
 
 const ResetPasswordForm = () => {
+    const { t } = useTranslation()
     const router = useRouter()
     const searchParams = useSearchParams()
     const token = searchParams.get('token')
@@ -29,13 +31,13 @@ const ResetPasswordForm = () => {
         const confirmPassword = formData.get('confirmPassword') as string
 
         if (password.length < 6) {
-            setError('Password must be at least 6 characters')
+            setError(t('reset.passwordTooShort'))
             setLoading(false)
             return
         }
 
         if (password !== confirmPassword) {
-            setError('Passwords do not match')
+            setError(t('reset.passwordMismatch'))
             setLoading(false)
             return
         }
@@ -56,7 +58,7 @@ const ResetPasswordForm = () => {
                 setError(data.error || 'Something went wrong')
             }
         } catch {
-            setError('An error occurred. Please try again.')
+            setError(t('reset.networkError'))
         } finally {
             setLoading(false)
         }
@@ -70,15 +72,15 @@ const ResetPasswordForm = () => {
                 <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-[#b927fc] rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-[float_6s_ease-in-out_3s_infinite]"></div>
 
                 <div className="relative w-full max-w-md bg-[rgba(255,255,255,0.03)] backdrop-blur-2xl border border-[rgba(255,255,255,0.08)] rounded-3xl p-8 md:p-10 shadow-2xl z-10 text-center">
-                    <h2 className="text-2xl font-bold text-white mb-4">Invalid Reset Link</h2>
+                    <h2 className="text-2xl font-bold text-white mb-4">{t('reset.invalidLink')}</h2>
                     <p className="text-gray-400 text-sm mb-6">
-                        This password reset link is invalid or has expired.
+                        {t('reset.invalidLinkText')}
                     </p>
                     <Link
                         href="/forgot-password"
                         className="font-bold bg-gradient-to-r from-[#00e5ff] to-[#b927fc] bg-clip-text text-transparent hover:opacity-80 transition-opacity"
                     >
-                        Request a new reset link →
+                        {t('reset.requestNew')}
                     </Link>
                 </div>
             </div>
@@ -94,14 +96,14 @@ const ResetPasswordForm = () => {
             {/* Card */}
             <div className="relative w-full max-w-md bg-[rgba(255,255,255,0.03)] backdrop-blur-2xl border border-[rgba(255,255,255,0.08)] rounded-3xl p-8 md:p-10 shadow-2xl z-10">
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-white mb-2">Reset Password</h2>
-                    <p className="text-gray-400 text-sm">Enter your new password below</p>
+                    <h2 className="text-3xl font-bold text-white mb-2">{t('reset.title')}</h2>
+                    <p className="text-gray-400 text-sm">{t('reset.subtitle')}</p>
                 </div>
 
                 {success ? (
                     <div className="text-center">
                         <div className="mb-6 p-4 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400 text-sm">
-                            ✅ Password reset successfully! Redirecting to login...
+                            ✅ {t('reset.success')}
                         </div>
                     </div>
                 ) : (
@@ -116,7 +118,7 @@ const ResetPasswordForm = () => {
                             <Input
                                 type={showPassword ? 'text' : 'password'}
                                 name="password"
-                                placeholder="New Password"
+                                placeholder={t('reset.newPassword')}
                                 leftIcon={<LockIcon />}
                                 rightIcon={showPassword ? <EyeOffIcon /> : <EyeIcon />}
                                 onRightIconClick={() => setShowPassword(!showPassword)}
@@ -126,7 +128,7 @@ const ResetPasswordForm = () => {
                             <Input
                                 type={showConfirm ? 'text' : 'password'}
                                 name="confirmPassword"
-                                placeholder="Confirm Password"
+                                placeholder={t('reset.confirmPassword')}
                                 leftIcon={<LockIcon />}
                                 rightIcon={showConfirm ? <EyeOffIcon /> : <EyeIcon />}
                                 onRightIconClick={() => setShowConfirm(!showConfirm)}
@@ -134,7 +136,7 @@ const ResetPasswordForm = () => {
                             />
 
                             <Button type="submit" loading={loading} fullWidth>
-                                {loading ? 'RESETTING...' : 'RESET PASSWORD'}
+                                {loading ? t('reset.loading') : t('reset.submit')}
                             </Button>
                         </form>
 
@@ -143,7 +145,7 @@ const ResetPasswordForm = () => {
                                 href="/login"
                                 className="font-bold bg-gradient-to-r from-[#00e5ff] to-[#b927fc] bg-clip-text text-transparent hover:opacity-80 transition-opacity"
                             >
-                                ← Back to Login
+                                {t('reset.backToLogin')}
                             </Link>
                         </p>
                     </>
