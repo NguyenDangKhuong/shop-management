@@ -11,6 +11,7 @@ Veo3 Token
   ├── value: string (bắt buộc - giá trị token)
   ├── projectId?: string (optional - ID project)
   ├── sessionId?: string (optional - ID session)
+  ├── siteKey?: string (optional - reCAPTCHA Enterprise site key)
   ├── apiKeyNanoAI?: string (optional - API Key NanoAI)
 ```
 
@@ -27,6 +28,7 @@ Veo3 Token
 | `value` | String | ✅ | Giá trị token |
 | `projectId` | String | ❌ | ID project (default: `''`) |
 | `sessionId` | String | ❌ | ID session (default: `''`) |
+| `siteKey` | String | ❌ | reCAPTCHA Enterprise site key (default: `''`) |
 | `apiKeyNanoAI` | String | ❌ | API Key NanoAI (default: `''`) |
 | `createdAt` | Date | Auto | Thời gian tạo |
 | `updatedAt` | Date | Auto | Thời gian cập nhật |
@@ -75,6 +77,7 @@ Content-Type: application/json
   "value": "your_token_here",
   "projectId": "optional_project_id",
   "sessionId": "optional_session_id",
+  "siteKey": "optional_recaptcha_site_key",
   "apiKeyNanoAI": "optional_api_key"
 }
 ```
@@ -84,6 +87,7 @@ Content-Type: application/json
 | `value` | ✅ | Giá trị token |
 | `projectId` | ❌ | ID project |
 | `sessionId` | ❌ | ID session |
+| `siteKey` | ❌ | reCAPTCHA Enterprise site key |
 | `apiKeyNanoAI` | ❌ | API Key NanoAI |
 
 ### PUT - Cập nhật token
@@ -97,6 +101,7 @@ Content-Type: application/json
   "value": "updated_token_value",
   "projectId": "updated_project_id",
   "sessionId": "updated_session_id",
+  "siteKey": "updated_site_key",
   "apiKeyNanoAI": "updated_api_key"
 }
 ```
@@ -107,6 +112,7 @@ Content-Type: application/json
 | `value` | ❌ | Giá trị token mới |
 | `projectId` | ❌ | ID project mới |
 | `sessionId` | ❌ | ID session mới |
+| `siteKey` | ❌ | reCAPTCHA site key mới |
 | `apiKeyNanoAI` | ❌ | API Key NanoAI mới |
 
 > [!NOTE]
@@ -170,4 +176,4 @@ Trên đầu trang hiển thị một banner chứa thông tin API endpoint:
 ---
 
 *Tài liệu tạo: 14/02/2026*
-*Cập nhật: 14/02/2026 — Thêm field `projectId`, `sessionId`, `apiKeyNanoAI`; xóa field `tokenCheckStatus`*
+*Cập nhật: 19/02/2026 — Thêm field `siteKey` (reCAPTCHA Enterprise site key)*
