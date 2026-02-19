@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedIndex = null
 
   // Load saved config, tokens, and auto-post state
-  chrome.storage.local.get(['apiUrl', 'capturedTokens', 'autoPostEnabled', 'lastAutoPost', 'autoPostMinutes', 'autoGenerateEnabled'], (result) => {
+  chrome.storage.local.get(['apiUrl', 'capturedTokens', 'autoPostEnabled', 'lastAutoPost', 'autoPostMinutes', 'autoGenerateEnabled', 'capturedSiteKey'], (result) => {
     if (result.apiUrl) {
       apiUrlInput.value = result.apiUrl
     }
@@ -49,6 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
       autoGenToggle.checked = true
       autoGenStatus.textContent = 'ON'
       autoGenStatus.style.color = '#FF9800'
+    }
+
+    // Load captured siteKey
+    if (result.capturedSiteKey) {
+      updateSiteKeyDisplay(result.capturedSiteKey)
     }
   })
 
@@ -352,6 +357,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (changes.lastAutoPost && changes.lastAutoPost.newValue) {
       updateLastAutoPost(changes.lastAutoPost.newValue)
     }
+    if (changes.capturedSiteKey && changes.capturedSiteKey.newValue) {
+      updateSiteKeyDisplay(changes.capturedSiteKey.newValue)
+    }
   })
 
   // ==========================================
@@ -390,4 +398,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   checkWsBridgeStatus()
   setInterval(checkWsBridgeStatus, 5000)
+
+  // ==========================================
+  // SiteKey display
+  // ==========================================
+  const siteKeyEl = document.getElementById('siteKeyValue')
+
+  function updateSiteKeyDisplay(siteKey) {
+    if (siteKey) {
+      siteKeyEl.textContent = siteKey
+      siteKeyEl.style.color = '#4caf50'
+      siteKeyEl.title = 'Click to copy: ' + siteKey
+    } else {
+      siteKeyEl.textContent = '—'
+      siteKeyEl.style.color = '#aaa'
+    }
+  }
+
+  siteKeyEl.addEventListener('click', () => {
+    const key = siteKeyEl.textContent
+    if (key && key !== '—') {
+      copyToClipboard(key)
+    }
+  })
 })
