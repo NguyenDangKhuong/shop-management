@@ -28,6 +28,14 @@ const SLOW_MOTION = 'All movements are slow gentle and deliberate — no sudden 
 const OUTFIT_COVERAGE = 'CRITICAL RULE — The outfit MUST match reference image 1 exactly in length and coverage. If the top in the reference covers the belly then the video outfit MUST also fully cover the belly and midsection at all times with ZERO skin showing between the top hem and the waistband. NEVER crop shorten or raise the top. NEVER expose the navel or midriff unless the reference image explicitly shows it. This is the highest priority instruction.'
 const OUTFIT_DETAILS = 'She must be wearing the identical outfit from reference image 1 preserving every detail including exact color exact pattern exact prints exact fabric texture exact neckline exact sleeve length exact hem length exact pants or skirt length exact fit exact silhouette and all decorative details such as bows ribbons ties buttons lace trim embroidery belts and any accessories as shown in the product photo. Do not alter modify or reinterpret any part of the clothing.'
 
+// === TOP (ÁO) ===
+const TOP_COVERAGE = 'CRITICAL RULE — The top MUST match reference image 1 exactly in length and coverage. If the top covers the belly then the video MUST also fully cover the belly and midsection at all times with ZERO skin showing below the top hem. NEVER crop shorten or raise the top. NEVER expose the navel midriff or cleavage unless the reference image explicitly shows it. Keep the neckline sleeve length and hem length identical to the reference. This is the highest priority instruction.'
+const TOP_DETAILS = 'She must be wearing the identical top from reference image 1 preserving every detail including exact color exact pattern exact prints exact fabric texture exact neckline exact collar shape exact sleeve length exact sleeve style exact hem length exact fit and all decorative details such as bows ribbons ties buttons lace trim embroidery and any accessories as shown in the product photo. Do not alter modify or reinterpret any part of the top.'
+
+// === BOTTOM (QUẦN/VÁY) ===
+const BOTTOM_COVERAGE = 'CRITICAL RULE — The bottom MUST match reference image 1 exactly in length and coverage. If the pants or skirt in the reference reaches the ankle then the video MUST show the same length. NEVER shorten the pants or skirt. NEVER raise the waistband or change the rise. Keep the waist fit leg width and hem length identical to the reference. This is the highest priority instruction.'
+const BOTTOM_DETAILS = 'She must be wearing the identical bottom from reference image 1 preserving every detail including exact color exact pattern exact prints exact fabric texture exact waistband style exact rise exact leg width exact hem length exact fit exact silhouette and all decorative details such as pockets zippers buttons belt loops pleats slits and any accessories as shown in the product photo. Do not alter modify or reinterpret any part of the bottom.'
+
 const FASHION_PROMPTS = [
     {
         title: 'Prompt 1 — Mirror selfie che mặt',
@@ -52,6 +60,56 @@ const FASHION_PROMPTS = [
     }
 ]
 
+// === TOP (ÁO) PROMPTS ===
+const TOP_PROMPTS = [
+    {
+        title: 'Áo — Mirror selfie che mặt',
+        type: 'describe',
+        order: 4,
+        subPrompt: SUB_PROMPT,
+        content: `A highly detailed cinematic video of the fashion model shown in reference image 2. ${TOP_COVERAGE} ${TOP_DETAILS} She has luminous snow-white porcelain skin, Douyin goddess aesthetic, long silky black hair with soft natural waves, wearing stylish feminine thin gold-framed round glasses. She has a slender figure with extremely long slender legs. ${BODY_INTEGRITY} She is standing [POSE] in front of a full-length mirror in a [BACKGROUND]. Soft golden morning sunlight streaming through sheer white curtains creating warm natural light and gentle shadows. ${SLOW_MOTION} She is holding an orange iPhone 17 Pro Max up in front of her face covering her face completely while recording a mirror selfie video so only the phone and her body are visible not her face. The phone camera angle moves naturally closer to zoom in on her upper body showing the top fabric texture neckline details sleeve design and fit then slowly pulls back to reveal her full silhouette. She speaks naturally in Vietnamese describing the top she is wearing focusing on the fabric quality neckline design and how it fits her body with a warm friendly tone like a real KOL selling fashion on livestream. No text no captions no animals. Ultra-realistic natural handheld phone movement. Shallow depth of field with model in sharp focus. Fashion editorial cinematic color grading`
+    },
+    {
+        title: 'Áo — Tay chạm show vải che mặt',
+        type: 'describe',
+        order: 5,
+        subPrompt: SUB_PROMPT,
+        content: `A highly detailed cinematic video of the fashion model shown in reference image 2. ${TOP_COVERAGE} ${TOP_DETAILS} She has luminous snow-white porcelain skin, Douyin goddess aesthetic, long silky black hair with soft natural waves, wearing stylish feminine thin gold-framed round glasses. She has a slender figure with extremely long slender legs. ${BODY_INTEGRITY} She is standing [POSE] in front of a full-length mirror in a [BACKGROUND]. Soft golden morning sunlight streaming through sheer white curtains creating warm natural light. ${SLOW_MOTION} She is holding an orange iPhone 17 Pro Max up in front of her face covering her face completely while recording herself so only the phone and her body are visible not her face. Her free hand gently touches the collar showing the neckline shape and stitching quality then slides down to the sleeve pinching the fabric slightly between her fingers highlighting the softness and texture of the material then moves to adjust the hem of the top showing how it drapes naturally. She speaks naturally in Vietnamese without greeting or saying hello just directly describing the fabric quality the collar design and how the top fits her body with a confident casual tone. No text no captions no animals. Ultra-realistic natural handheld phone movement. Shallow depth of field. Fashion editorial cinematic color grading`
+    },
+    {
+        title: 'Áo — Nghiêng nhẹ show dáng che mặt',
+        type: 'describe',
+        order: 6,
+        subPrompt: SUB_PROMPT,
+        content: `A highly detailed cinematic video of the fashion model shown in reference image 2. ${TOP_COVERAGE} ${TOP_DETAILS} She has luminous snow-white porcelain skin, Douyin goddess aesthetic, long silky black hair with soft natural waves, wearing stylish feminine thin gold-framed round glasses. She has a slender figure with extremely long slender legs. ${BODY_INTEGRITY} She is standing [POSE] in front of a full-length mirror in a [BACKGROUND]. Soft golden morning sunlight streaming through sheer white curtains creating warm natural light and gentle shadows. ${SLOW_MOTION} She is holding an orange iPhone 17 Pro Max up in front of her face covering her face completely while recording so only the phone and her body are visible not her face. She subtly shifts her weight and turns her upper body gently to the left showing the top from a slight side angle revealing the sleeve shape and side seam then back to center then gently to the right showing the back silhouette. Her free hand rests naturally on her hip then moves to adjust the collar. She speaks naturally in Vietnamese without greeting or saying hello just casually commenting on the top design the sleeve details and how it looks from different angles with a sweet relaxed voice. No text no captions no animals. Ultra-realistic natural handheld phone movement. Shallow depth of field with model in sharp focus. Fashion editorial cinematic color grading`
+    }
+]
+
+// === BOTTOM (QUẦN/VÁY) PROMPTS ===
+const BOTTOM_PROMPTS = [
+    {
+        title: 'Quần/Váy — Mirror selfie che mặt',
+        type: 'describe',
+        order: 7,
+        subPrompt: SUB_PROMPT,
+        content: `A highly detailed cinematic video of the fashion model shown in reference image 2. ${BOTTOM_COVERAGE} ${BOTTOM_DETAILS} She has luminous snow-white porcelain skin, Douyin goddess aesthetic, long silky black hair with soft natural waves, wearing stylish feminine thin gold-framed round glasses. She has a slender figure with extremely long slender legs. ${BODY_INTEGRITY} She is standing [POSE] in front of a full-length mirror in a [BACKGROUND]. Soft golden morning sunlight streaming through sheer white curtains creating warm natural light and gentle shadows. ${SLOW_MOTION} She is holding an orange iPhone 17 Pro Max up in front of her face covering her face completely while recording a mirror selfie video so only the phone and her body are visible not her face. The phone camera angle moves naturally to frame her lower body showing the waist fit the leg silhouette the fabric drape and the hem length then slowly tilts down to show the full length of the pants or skirt and her long legs then pulls back to reveal her full body. She speaks naturally in Vietnamese describing the bottom she is wearing focusing on the fit the fabric quality the waist design and how it flatters her legs with a warm friendly tone like a real KOL selling fashion on livestream. No text no captions no animals. Ultra-realistic natural handheld phone movement. Shallow depth of field with model in sharp focus. Fashion editorial cinematic color grading`
+    },
+    {
+        title: 'Quần/Váy — Tay chạm show vải che mặt',
+        type: 'describe',
+        order: 8,
+        subPrompt: SUB_PROMPT,
+        content: `A highly detailed cinematic video of the fashion model shown in reference image 2. ${BOTTOM_COVERAGE} ${BOTTOM_DETAILS} She has luminous snow-white porcelain skin, Douyin goddess aesthetic, long silky black hair with soft natural waves, wearing stylish feminine thin gold-framed round glasses. She has a slender figure with extremely long slender legs. ${BODY_INTEGRITY} She is standing [POSE] in front of a full-length mirror in a [BACKGROUND]. Soft golden morning sunlight streaming through sheer white curtains creating warm natural light. ${SLOW_MOTION} She is holding an orange iPhone 17 Pro Max up in front of her face covering her face completely while recording herself so only the phone and her body are visible not her face. Her free hand gently touches the fabric at her thigh showing the smooth quality material then slides down along the leg to show the fit and drape of the fabric. She pinches the fabric slightly at the knee area highlighting the softness and texture then moves her hand to the waistband showing the fit and closure details. She speaks naturally in Vietnamese without greeting or saying hello just directly describing the fabric quality the waist fit and how the bottom drapes on her legs with a confident casual tone. No text no captions no animals. Ultra-realistic natural handheld phone movement. Shallow depth of field. Fashion editorial cinematic color grading`
+    },
+    {
+        title: 'Quần/Váy — Nghiêng nhẹ show dáng che mặt',
+        type: 'describe',
+        order: 9,
+        subPrompt: SUB_PROMPT,
+        content: `A highly detailed cinematic video of the fashion model shown in reference image 2. ${BOTTOM_COVERAGE} ${BOTTOM_DETAILS} She has luminous snow-white porcelain skin, Douyin goddess aesthetic, long silky black hair with soft natural waves, wearing stylish feminine thin gold-framed round glasses. She has a slender figure with extremely long slender legs. ${BODY_INTEGRITY} She is standing [POSE] in front of a full-length mirror in a [BACKGROUND]. Soft golden morning sunlight streaming through sheer white curtains creating warm natural light and gentle shadows. ${SLOW_MOTION} She is holding an orange iPhone 17 Pro Max up in front of her face covering her face completely while recording so only the phone and her body are visible not her face. She subtly shifts her weight and sways her hips gently to the left showing the bottom from a slight side angle revealing the leg line and side seam then back to center then gently to the right showing the back pocket details and rear silhouette. Her free hand rests naturally on her thigh then moves to smooth the fabric along the hip. She speaks naturally in Vietnamese without greeting or saying hello just casually commenting on the bottom fit the leg shape and how it looks from different angles with a sweet relaxed voice. No text no captions no animals. Ultra-realistic natural handheld phone movement. Shallow depth of field with model in sharp focus. Fashion editorial cinematic color grading`
+    }
+]
+
 const PRODUCT_FIDELITY = 'CRITICAL RULE — The lamp shown in the video MUST be identical to reference image 1 in every detail. Preserve the exact shape exact proportions exact stand design exact base shape exact arm angle exact material finish and exact color of the product. The lamp must have the same matte black metal stand with round weighted base adjustable ball joint arm and circular projection head as shown in reference image 1. Do NOT alter resize reshape or reinterpret any part of the product. This is the highest priority instruction.'
 
 const LAMP_SUB_PROMPT = `You must replace [SETTING] and [ACTION] with a new unique combination each time this prompt is called. Never repeat the same combination twice. Choose naturally from these options and feel free to create new variations that match the style.
@@ -70,27 +128,27 @@ const LAMP_PROMPTS = [
     {
         title: 'Đèn Hoàng Hôn 1 — Bật đèn reveal ánh sáng',
         type: 'describe',
-        order: 4,
+        order: 10,
         subPrompt: LAMP_SUB_PROMPT,
         content: `A highly detailed cinematic product video showcasing the sunset projection lamp from reference image 1. ${PRODUCT_FIDELITY} The lamp is placed on [SETTING]. The room is dimly lit with soft ambient shadows. ${LAMP_SLOW} [ACTION]. The warm golden-orange sunset circle is projected on the wall behind creating a perfectly round gradient that transitions from deep amber at the center to soft warm orange at the edges exactly like a real sunset. The light casts a beautiful warm atmospheric glow across the entire room highlighting the product and its surroundings. The camera captures the lamp from a low angle emphasizing its sleek compact design and the premium matte black metal finish of the stand and base. Close-up shots show the quality of the metal material the smooth ball joint mechanism and the clean power cord. A voice speaks naturally in Vietnamese describing the lamp its warm cozy light effect how it transforms any room into a romantic sunset atmosphere and its quality build. No text no captions no animals. Ultra-realistic cinematic lighting with warm color temperature. Shallow depth of field with product in sharp focus. Premium product photography color grading`
     },
     {
         title: 'Đèn Hoàng Hôn 2 — Close-up chất liệu & chi tiết',
         type: 'describe',
-        order: 5,
+        order: 11,
         subPrompt: LAMP_SUB_PROMPT,
         content: `A highly detailed cinematic product video showcasing the sunset projection lamp from reference image 1. ${PRODUCT_FIDELITY} The lamp is placed on [SETTING]. ${LAMP_SLOW} The camera starts with an extreme close-up of the matte black metal base showing the smooth premium finish and weighted stability then slowly glides up along the adjustable metal arm revealing the ball joint connector and the circular projection head. [ACTION]. The warm sunset projection fills the wall behind with a perfectly round golden-orange gradient circle creating dreamy atmospheric lighting. The camera pulls back smoothly to show the full lamp in context with the warm glow illuminating the surrounding furniture and decor. A hand gently tilts the lamp head to a new angle and the sunset projection moves smoothly across the wall demonstrating the adjustable design. A voice speaks naturally in Vietnamese highlighting the premium metal build quality the adjustable angle feature the warm relaxing light and how this lamp is perfect for bedroom decoration or creating a cozy atmosphere for photos and videos. No text no captions no animals. Ultra-realistic macro lens detail shots transitioning to wider establishing shots. Warm cinematic color grading with rich amber tones`
     },
     {
         title: 'Đèn Hoàng Hôn 3 — Không gian & mood lighting',
         type: 'describe',
-        order: 6,
+        order: 12,
         subPrompt: LAMP_SUB_PROMPT,
         content: `A highly detailed cinematic product video showcasing the sunset projection lamp from reference image 1. ${PRODUCT_FIDELITY} The video opens on a dark room with [SETTING]. ${LAMP_SLOW} [ACTION]. The warm golden-orange sunset circle blooms beautifully on the wall creating a stunning focal point that transforms the entire room atmosphere from cold and plain to warm romantic and inviting. The camera slowly pans across the room showing how the sunset glow wraps around objects casting long warm shadows and creating depth. The projection is a perfectly round gradient transitioning from deep rich amber in the center to soft warm orange at the edges. The camera returns to the lamp showing its compact sleek silhouette against the warm backlight emphasizing the premium matte black metal finish the stable round base and the minimalist modern design. A hand enters frame and gently rotates the lamp projection head showing the light beam moving smoothly across the wall ceiling and corner of the room. A voice speaks naturally in Vietnamese describing how this one small lamp completely changes the mood of any space perfect for relaxing reading taking aesthetic photos or creating a romantic evening atmosphere. No text no captions no animals. Ultra-realistic cinematic warm lighting. Shallow depth of field. Lifestyle product videography color grading with rich golden tones`
     }
 ]
 
-const PROMPTS = [...FASHION_PROMPTS, ...LAMP_PROMPTS]
+const PROMPTS = [...FASHION_PROMPTS, ...TOP_PROMPTS, ...BOTTOM_PROMPTS, ...LAMP_PROMPTS]
 
 async function seed() {
     const username = process.env.NEXT_PUBLIC_MONGO_USER_NAME_DEV
