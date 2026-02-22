@@ -148,7 +148,46 @@ const LAMP_PROMPTS = [
     }
 ]
 
-const PROMPTS = [...FASHION_PROMPTS, ...TOP_PROMPTS, ...BOTTOM_PROMPTS, ...LAMP_PROMPTS]
+// === MANNEQUIN (MA NƠ CANH) ===
+const MANNEQUIN_FIDELITY = 'CRITICAL RULE — The outfit on the mannequin MUST be identical to reference image 1 in every detail. Preserve the exact color exact pattern exact prints exact fabric texture exact neckline exact sleeve length exact hem length exact pants or skirt length exact fit exact silhouette and all decorative details such as bows ribbons ties buttons lace trim embroidery belts and any accessories as shown in the product photo. Do NOT alter modify or reinterpret any part of the clothing. This is the highest priority instruction.'
+
+const MANNEQUIN_SUB_PROMPT = `You must replace [SHOP_SETTING] and [CAMERA_ACTION] with a new unique combination each time this prompt is called. Never repeat the same combination twice. Choose naturally from these options and feel free to create new variations that match the style.
+
+SHOP_SETTING options: modern minimalist boutique with white walls and warm spotlight track lighting, trendy streetwear shop with exposed brick walls and industrial hanging lights, elegant high-end fashion store with marble floor and soft ambient lighting, cozy Vietnamese clothing shop with wooden display racks and warm tone decor, chic showroom with full-length mirrors and neutral grey backdrop, stylish pop-up shop with neon accent lights and clean shelving
+
+CAMERA_ACTION options: the camera starts on the mannequin torso showing fabric texture then slowly pulls back to reveal the full outfit, the camera slowly orbits around the mannequin from front to side showing the outfit from multiple angles, the camera starts low at the hem and slowly tilts up revealing the full outfit from bottom to top, a hand reaches in and gently adjusts the collar then the camera pulls back to show the complete look, the camera starts on a wide shot of the shop then smoothly dollies in toward the mannequin focusing on the outfit, the camera captures the mannequin from a slight low angle then slowly rises to eye level showing the full silhouette
+
+Pick one SHOP_SETTING and one CAMERA_ACTION randomly and insert them naturally into the main prompt. The result must read as one seamless paragraph with no brackets or placeholder markers remaining.
+
+IMPORTANT: Output ONLY the final completed prompt text. Do not include any thinking, explanation, reasoning, commentary, notes, or additional text. Return nothing but the raw prompt ready to use.`
+
+const MANNEQUIN_SLOW = 'All camera movements are slow smooth and deliberate — no sudden fast motions.'
+
+const MANNEQUIN_PROMPTS = [
+    {
+        title: 'Ma nơ canh 1 — Full body reveal',
+        type: 'describe',
+        order: 13,
+        subPrompt: MANNEQUIN_SUB_PROMPT,
+        content: `A highly detailed cinematic product video showcasing the outfit from reference image 1 displayed on a sleek modern white full-body mannequin in a [SHOP_SETTING]. ${MANNEQUIN_FIDELITY} The mannequin is positioned naturally on a small display platform. ${MANNEQUIN_SLOW} [CAMERA_ACTION]. The lighting highlights the fabric texture color richness and stitching details of the outfit. The camera captures close-up details of the fabric weave the seam quality the button or zipper finish and how the garment drapes naturally on the mannequin form. A voice speaks naturally in Vietnamese like a shop owner casually introducing the outfit to customers describing the fabric quality the color the design details the fit and why this outfit is a great choice. The tone is warm friendly and authentic like a real clothing shop owner filming content for their social media. No real people visible in frame. No text no captions no logos no price tags no advertising overlays. Ultra-realistic boutique lighting with warm color temperature. Shallow depth of field with outfit in sharp focus and shop background softly blurred. Fashion retail cinematic color grading`
+    },
+    {
+        title: 'Ma nơ canh 2 — Close-up vải và chi tiết',
+        type: 'describe',
+        order: 14,
+        subPrompt: MANNEQUIN_SUB_PROMPT,
+        content: `A highly detailed cinematic product video showcasing the outfit from reference image 1 displayed on a sleek modern white full-body mannequin in a [SHOP_SETTING]. ${MANNEQUIN_FIDELITY} ${MANNEQUIN_SLOW} The camera starts with an extreme close-up of the fabric showing the texture weave and material quality then slowly glides along the garment revealing the stitching the seam details the collar or neckline design. [CAMERA_ACTION]. A hand wearing a simple bracelet gently reaches in and touches the fabric pinching it slightly between fingers to show the softness and thickness of the material then smooths it back into place. The hand then traces along the hem showing the clean finish and quality construction. The camera pulls back smoothly to reveal the full outfit on the mannequin in the shop setting. A voice speaks naturally in Vietnamese like a shop owner showing the outfit quality to a customer describing how the fabric feels the weight of the material the quality of the stitching and the attention to detail in the design. The tone is genuine and conversational. No real people visible in frame. No text no captions no logos no price tags no advertising overlays. Ultra-realistic macro lens detail shots transitioning to wider establishing shots. Warm boutique lighting. Fashion retail cinematic color grading`
+    },
+    {
+        title: 'Ma nơ canh 3 — Xoay quanh show dáng',
+        type: 'describe',
+        order: 15,
+        subPrompt: MANNEQUIN_SUB_PROMPT,
+        content: `A highly detailed cinematic product video showcasing the outfit from reference image 1 displayed on a sleek modern white full-body mannequin in a [SHOP_SETTING]. ${MANNEQUIN_FIDELITY} ${MANNEQUIN_SLOW} [CAMERA_ACTION]. The camera smoothly orbits around the mannequin in a slow 180-degree arc starting from the front showing the full outfit silhouette then moving to the side revealing the sleeve design the side seam and the fabric drape then continuing to the back showing the back design details pattern continuation and overall construction. The camera pauses at key angles to highlight important design features. The lighting shifts naturally as the camera moves creating beautiful highlights and shadows on the fabric surface showing the three-dimensional quality of the garment. The camera then returns to the front and slowly moves closer focusing on the overall styling and how all the pieces come together. A voice speaks naturally in Vietnamese like a shop owner giving a personal tour of the outfit pointing out the design highlights the versatility of the piece and suggesting styling tips. The tone is warm enthusiastic and authentic. No real people visible in frame. No text no captions no logos no price tags no advertising overlays. Ultra-realistic smooth orbital camera movement. Professional boutique lighting. Shallow depth of field. Fashion retail cinematic color grading`
+    }
+]
+
+const PROMPTS = [...FASHION_PROMPTS, ...TOP_PROMPTS, ...BOTTOM_PROMPTS, ...LAMP_PROMPTS, ...MANNEQUIN_PROMPTS]
 
 async function seed() {
     const username = process.env.NEXT_PUBLIC_MONGO_USER_NAME_DEV

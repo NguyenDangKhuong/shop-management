@@ -110,6 +110,7 @@ Mỗi prompt `describe` sử dụng 2 reference images (đặt ở **AutoFlow**,
 | 👗 **Nguyên bộ** | `OUTFIT_COVERAGE` + `OUTFIT_DETAILS` | Full body: neckline → hem → pants/skirt |
 | 👕 **Áo** | `TOP_COVERAGE` + `TOP_DETAILS` | Upper body: neckline, collar, sleeve, hem |
 | 👖 **Quần/Váy** | `BOTTOM_COVERAGE` + `BOTTOM_DETAILS` | Lower body: waist, leg width, length, fit |
+| 🧍 **Ma nơ canh** | `MANNEQUIN_FIDELITY` | Full outfit on mannequin, no model |
 
 ---
 
@@ -161,9 +162,33 @@ Mỗi prompt `describe` sử dụng 2 reference images (đặt ở **AutoFlow**,
 
 ---
 
-### Sub Prompt (dùng chung cho cả 9 fashion prompts)
+### 🧍 Ma nơ canh (Prompt 13–15)
+
+> Bộ đồ mặc trên mannequin trắng trong shop quần áo. Không có người thật, không chữ quảng cáo.
+> Chủ shop quay video giới thiệu sản phẩm tự nhiên bằng tiếng Việt.
+> Dùng `MANNEQUIN_FIDELITY` + `MANNEQUIN_SUB_PROMPT` (`[SHOP_SETTING]` + `[CAMERA_ACTION]`).
+
+#### Prompt 13 — Full body reveal
+
+> Camera zoom in/out show toàn bộ outfit trên mannequin, close-up fabric details.
+
+#### Prompt 14 — Close-up vải và chi tiết
+
+> Macro close-up vải, tay chạm show chất liệu, pinch fabric, show stitching.
+
+#### Prompt 15 — Xoay quanh show dáng
+
+> Camera orbit 180° quanh mannequin, show front/side/back silhouette.
+
+---
+
+### Sub Prompt — Fashion (dùng chung cho 9 fashion prompts)
 
 > Dùng `[POSE]` + `[BACKGROUND]` → Sub Prompt tự random mỗi lần gọi. Xem chi tiết trong `seed-prompts.ts`.
+
+### Sub Prompt — Mannequin (dùng chung cho 3 mannequin prompts)
+
+> Dùng `[SHOP_SETTING]` + `[CAMERA_ACTION]` → Sub Prompt tự random shop setting và camera action. Xem chi tiết trong `seed-prompts.ts`.
 
 ### Design Notes
 
@@ -178,6 +203,7 @@ Mỗi prompt `describe` sử dụng 2 reference images (đặt ở **AutoFlow**,
 
 > [!NOTE]
 > - Tất cả 9 fashion prompts đều **che mặt hoàn toàn** bằng điện thoại + có thoại tiếng Việt
+> - 3 mannequin prompts: **không có người thật**, chủ shop thoại tiếng Việt giới thiệu sản phẩm
 > - Không dùng `"no talking"` / `"no speaking"` → gây lỗi `PUBLIC_ERROR_AUDIO_FILTERED`
 > - Nội dung đầy đủ xem trong `seed-prompts.ts`
 
@@ -227,7 +253,7 @@ Product video prompts cho sản phẩm đèn chiếu hoàng hôn. Dùng 1 refere
 
 ## 🌱 Seed Prompts
 
-File: `scripts/seed-prompts.ts` — chứa toàn bộ prompt templates (9 fashion + 3 lamp). Khi sửa prompt, sửa file này rồi chạy lệnh bên dưới để cập nhật DB.
+File: `scripts/seed-prompts.ts` — chứa toàn bộ prompt templates (9 fashion + 3 mannequin + 3 lamp = **15 prompts**). Khi sửa prompt, sửa file này rồi chạy lệnh bên dưới để cập nhật DB.
 
 > [!IMPORTANT]
 > Lệnh seed dùng **upsert-by-title** — match prompt theo `title`, update nội dung nếu đã tồn tại, insert nếu mới. Bảo toàn `_id` cho prompt cũ (quan trọng vì AutoFlow tham chiếu qua `promptIds`).
@@ -251,4 +277,4 @@ npx jest --testPathPattern="Prompt"
 
 ---
 
-*Tài liệu cập nhật: 19/02/2026 — Tách component `PromptSection.tsx`, lazy load on expand*
+*Tài liệu cập nhật: 22/02/2026 — Thêm 3 mannequin prompts (Prompt 13–15)*
