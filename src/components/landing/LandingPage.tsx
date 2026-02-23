@@ -68,12 +68,18 @@ export default function LandingPage() {
                                         {t('landing.heroGreeting')} <span className="text-[#c084fc]">{t('landing.heroName')}</span>.<br />
                                         {t('landing.heroSub')}
                                     </h1>
-                                    <div className="pt-4">
+                                    <div className="pt-4 flex flex-wrap gap-3">
                                         <Link
                                             href="/projects"
                                             className="inline-block px-6 py-3 rounded-full bg-slate-800/50 border border-[#38bdf8]/50 text-white font-semibold transition hover:bg-[#38bdf8]/20 shadow-[0_0_15px_rgba(56,189,248,0.3)]"
                                         >
                                             {t('landing.viewProjects')}
+                                        </Link>
+                                        <Link
+                                            href="/blogs"
+                                            className="inline-block px-6 py-3 rounded-full bg-slate-800/50 border border-[#c084fc]/50 text-white font-semibold transition hover:bg-[#c084fc]/20 shadow-[0_0_15px_rgba(192,132,252,0.3)]"
+                                        >
+                                            📝 Blog
                                         </Link>
                                     </div>
                                 </div>
