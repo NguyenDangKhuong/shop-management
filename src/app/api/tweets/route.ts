@@ -128,7 +128,15 @@ export async function GET(req: NextRequest) {
             }
         }
 
-        // 2. Inject client-side script to replace video thumbnails with <video> elements
+        // 2. Inject dark background CSS
+        const darkCss = `<style>
+body, html { background: #0a0a0a !important; color: #e2e8f0 !important; }
+article, [data-testid="tweet"] { background: #0a0a0a !important; }
+div { border-color: rgba(255,255,255,0.1) !important; }
+</style>`
+        html = html.replace('</head>', darkCss + '</head>')
+
+        // 3. Inject client-side script to replace video thumbnails with <video> elements
         const videoMapJson = JSON.stringify(videoMap)
         const injectedScript = `<script>
 (function(){
