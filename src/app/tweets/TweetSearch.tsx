@@ -216,11 +216,6 @@ export function TweetSearch() {
                     <div className="space-y-6">
                         {displayUsers.map((user) => (
                             <div key={user._id}>
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="text-[#38bdf8] font-semibold text-sm">
-                                        @{user.username}
-                                    </span>
-                                </div>
                                 <div className="rounded-xl overflow-hidden border border-white/10">
                                     <iframe
                                         key={user.username}
