@@ -140,8 +140,8 @@ div { border-color: rgba(255,255,255,0.1) !important; }
         const videoMapJson = JSON.stringify(videoMap)
         const injectedScript = `<script>
 (function(){
-  // Bypass sensitive content warning
-  var t=setInterval(function(){var b=document.querySelector('[data-testid="interstitialViewButton"]')||document.querySelector('button');if(b&&b.textContent&&b.textContent.includes('Yes')){b.click();clearInterval(t);}},300);setTimeout(function(){clearInterval(t);},5000);
+  // Bypass sensitive content warning — auto-click Yes/View buttons
+  var t=setInterval(function(){document.querySelectorAll('button').forEach(function(b){if(b.textContent&&(b.textContent.includes('Yes')||b.textContent.trim()==='View'))b.click();});},300);setTimeout(function(){clearInterval(t);},8000);
 
   // Video map: videoId -> { url, w, h }
   var videoMap = ${videoMapJson};
