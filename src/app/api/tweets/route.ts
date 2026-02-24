@@ -133,6 +133,12 @@ export async function GET(req: NextRequest) {
 body, html { background: #0a0a0a !important; color: #e2e8f0 !important; }
 article, [data-testid="tweet"] { background: #0a0a0a !important; }
 div { border-color: rgba(255,255,255,0.1) !important; }
+/* macOS-style scrollbar */
+* { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
 </style>`
         html = html.replace('</head>', darkCss + '</head>')
 
