@@ -20,6 +20,8 @@ export function TweetSearch() {
     const [cookieStatus, setCookieStatus] = useState<string | null>(null)
     const [cookieSaving, setCookieSaving] = useState(false)
     const [cookieError, setCookieError] = useState('')
+    // Tags expand state (mobile)
+    const [tagsExpanded, setTagsExpanded] = useState(false)
 
     // Load saved users + cookie status on mount
     useEffect(() => {
@@ -160,10 +162,29 @@ export function TweetSearch() {
 
             {/* Saved Users Tags */}
             {users.length > 0 && (
-                <div className="w-full max-w-3xl mx-auto mb-6 z-10">
-                    <div className="flex flex-wrap gap-2">
+                <div className="w-full max-w-3xl mx-auto mb-6 z-30 md:relative md:top-auto sticky top-0 bg-[#0a0a0a]/95 backdrop-blur-md py-2 md:py-0 md:bg-transparent md:backdrop-blur-none -mx-4 px-4 md:mx-auto md:px-0">
+                    {/* Mobile: collapsed bar */}
+                    <div
+                        className="md:hidden flex items-center justify-between cursor-pointer"
+                        onClick={() => setTagsExpanded(!tagsExpanded)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <span className="text-slate-400 text-xs">
+                                {selectedUser ? `@${selectedUser}` : 'Mới nhất'}
+                            </span>
+                            <span className="text-slate-500 text-[10px]">
+                                ({users.length} users)
+                            </span>
+                        </div>
+                        <span className={`text-slate-400 text-xs transition-transform ${tagsExpanded ? 'rotate-180' : ''}`}>
+                            ▼
+                        </span>
+                    </div>
+
+                    {/* Tags - always visible on desktop, toggle on mobile */}
+                    <div className={`${tagsExpanded ? 'mt-2' : 'hidden'} md:flex flex-wrap gap-2`}>
                         <button
-                            onClick={() => setSelectedUser(null)}
+                            onClick={() => { setSelectedUser(null); setTagsExpanded(false) }}
                             className={`px-3 py-1.5 rounded-full text-sm transition-all ${!selectedUser
                                 ? 'bg-[#38bdf8]/20 text-[#38bdf8] border border-[#38bdf8]/40'
                                 : 'bg-slate-800/60 text-slate-300 border border-white/10 hover:border-white/20'
@@ -174,7 +195,7 @@ export function TweetSearch() {
                         {users.map((user) => (
                             <div
                                 key={user._id}
-                                onClick={() => setSelectedUser(selectedUser === user.username ? null : user.username)}
+                                onClick={() => { setSelectedUser(selectedUser === user.username ? null : user.username); setTagsExpanded(false) }}
                                 className={`flex items-center gap-1.5 pl-3 pr-1.5 py-1.5 rounded-full text-sm cursor-pointer transition-all ${selectedUser === user.username
                                     ? 'bg-[#38bdf8]/20 text-[#38bdf8] border border-[#38bdf8]/40'
                                     : 'bg-slate-800/60 text-slate-300 border border-white/10 hover:border-white/20'
