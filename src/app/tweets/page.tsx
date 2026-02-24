@@ -1,19 +1,11 @@
 import { Metadata } from 'next'
-import { Suspense } from 'react'
-import { Tweet } from 'react-tweet'
 import Link from 'next/link'
+import { TweetSearch } from './TweetSearch'
 
 export const metadata: Metadata = {
     title: 'Tweets - Nguyen Dang Khuong',
     description: 'Các bài viết nổi bật từ X (Twitter) về Frontend, JavaScript, React và công nghệ.',
 }
-
-// Add tweet IDs here — just paste the ID from the tweet URL
-// e.g. https://x.com/user/status/1234567890 → '1234567890'
-const TWEET_IDS = [
-    '1742983215473078559',
-    '1585032007560773632',
-]
 
 export default function TweetsPage() {
     return (
@@ -42,32 +34,18 @@ export default function TweetsPage() {
             </header>
 
             {/* Title */}
-            <div className="w-full max-w-3xl mx-auto mb-10 z-10">
+            <div className="w-full max-w-3xl mx-auto mb-8 z-10">
                 <div className="flex items-center gap-3 mb-2">
                     <span className="text-3xl">𝕏</span>
                     <h1 className="text-3xl md:text-4xl font-bold text-white">Tweets</h1>
                 </div>
                 <p className="text-slate-400">
-                    Các bài viết nổi bật từ X — Frontend, JavaScript, React và công nghệ.
+                    Paste link tweet từ X để xem trực tiếp trên trang.
                 </p>
             </div>
 
-            {/* Tweets */}
-            <div className="w-full max-w-3xl mx-auto z-10" data-theme="dark">
-                <div className="columns-1 md:columns-2 gap-4 space-y-4">
-                    {TWEET_IDS.map((id) => (
-                        <div key={id} className="break-inside-avoid">
-                            <Suspense fallback={
-                                <div className="animate-pulse rounded-xl bg-slate-800/50 border border-white/10 h-48 flex items-center justify-center">
-                                    <span className="text-slate-500">Loading tweet...</span>
-                                </div>
-                            }>
-                                <Tweet id={id} />
-                            </Suspense>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            {/* Tweet Search + Dynamic Tweets */}
+            <TweetSearch />
 
             {/* Footer */}
             <footer className="w-full max-w-3xl mx-auto mt-16 pt-8 pb-6 border-t border-slate-700/50 z-20 text-center">
