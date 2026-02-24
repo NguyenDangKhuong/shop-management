@@ -211,17 +211,17 @@ export function TweetSearch() {
             )}
 
             {/* Timelines */}
-            <div className="w-full max-w-3xl mx-auto z-10">
+            <div className="w-full max-w-3xl mx-auto z-10 md:px-0 -mx-4 md:mx-auto">
                 {users.length > 0 ? (
                     <div className="space-y-6">
                         {displayUsers.map((user) => (
                             <div key={user._id}>
-                                <div className="rounded-xl overflow-hidden border border-white/10">
+                                <div className="md:rounded-xl overflow-hidden md:border border-white/10">
                                     <iframe
                                         key={user.username}
                                         src={`/api/tweets?username=${encodeURIComponent(user.username)}`}
                                         className="w-full border-0"
-                                        style={{ minHeight: '600px', colorScheme: 'dark' }}
+                                        style={{ minHeight: 'calc(100vh - 80px)', colorScheme: 'dark' }}
                                         sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
                                         loading="lazy"
                                     />
