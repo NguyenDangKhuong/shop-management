@@ -82,11 +82,71 @@ export async function GET(req: NextRequest) {
 
         let html = await res.text()
 
-        // Auto-bypass "sensitive content" warning
-        const bypassScript = `<script>
-(function(){var t=setInterval(function(){var b=document.querySelector('[data-testid="interstitialViewButton"]')||document.querySelector('button');if(b&&b.textContent&&b.textContent.includes('Yes')){b.click();clearInterval(t);}},300);setTimeout(function(){clearInterval(t);},5000);})();
+        // 1. Extract video mp4 URLs and group by video ID (highest quality)
+        const mp4Regex = /https:\/\/video\.twimg\.com\/amplify_video\/(\d+)\/vid\/avc1\/(\d+)x(\d+)\/[^"\\]+\.mp4[^"\\]*/g
+        const videoMap: Record<string, { url: string; w: number; h: number }> = {}
+        let mp4Match
+        while ((mp4Match = mp4Regex.exec(html)) !== null) {
+            const [url, videoId, w, h] = mp4Match
+            const width = parseInt(w)
+            const height = parseInt(h)
+            if (!videoMap[videoId] || width > videoMap[videoId].w) {
+                videoMap[videoId] = { url, w: width, h: height }
+            }
+        }
+
+        // 2. Inject client-side script to replace video thumbnails with <video> elements
+        const videoMapJson = JSON.stringify(videoMap)
+        const injectedScript = `<script>
+(function(){
+  // Bypass sensitive content warning
+  var t=setInterval(function(){var b=document.querySelector('[data-testid="interstitialViewButton"]')||document.querySelector('button');if(b&&b.textContent&&b.textContent.includes('Yes')){b.click();clearInterval(t);}},300);setTimeout(function(){clearInterval(t);},5000);
+
+  // Video map: videoId -> { url, w, h }
+  var videoMap = ${videoMapJson};
+
+  // Replace video thumbnails with actual <video> elements
+  function replaceVideos() {
+    var links = document.querySelectorAll('a[aria-label="View video on X"]');
+    links.forEach(function(a) {
+      var img = a.querySelector('img');
+      if (!img) return;
+      var src = img.src || '';
+      var match = src.match(/amplify_video_thumb\\/(\\d+)/);
+      if (!match) return;
+      var videoId = match[1];
+      var info = videoMap[videoId];
+      if (!info) return;
+
+      var isPortrait = info.h > info.w;
+      var container = document.createElement('div');
+      container.style.cssText = 'position:relative;width:100%;border-radius:12px;overflow:hidden;' +
+        (isPortrait ? 'max-width:360px;margin:0 auto;' : '');
+      var video = document.createElement('video');
+      video.playsInline = true;
+      video.controls = true;
+      video.preload = 'metadata';
+      video.poster = src;
+      video.style.cssText = 'width:100%;display:block;border-radius:12px;aspect-ratio:' + info.w + '/' + info.h + ';object-fit:contain;';
+      var source = document.createElement('source');
+      source.src = '/api/tweets/video?url=' + encodeURIComponent(info.url);
+      source.type = 'video/mp4';
+      video.appendChild(source);
+      container.appendChild(video);
+      a.parentNode.replaceChild(container, a);
+    });
+  }
+
+  // Wait for Twitter JS to render DOM, then replace
+  var attempts = 0;
+  var replacer = setInterval(function() {
+    replaceVideos();
+    attempts++;
+    if (attempts > 20) clearInterval(replacer);
+  }, 500);
+})();
 </script>`
-        html = html.replace('</body>', bypassScript + '</body>')
+        html = html.replace('</body>', injectedScript + '</body>')
 
         // Store in cache
         cache.set(key, { html, ts: Date.now() })
