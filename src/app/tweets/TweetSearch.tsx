@@ -121,7 +121,7 @@ export function TweetSearch() {
 
     const displayUsers = selectedUser
         ? users.filter(u => u.username === selectedUser)
-        : users
+        : users.length > 0 ? [users[users.length - 1]] : []
 
     return (
         <>
@@ -169,7 +169,7 @@ export function TweetSearch() {
                                 : 'bg-slate-800/60 text-slate-300 border border-white/10 hover:border-white/20'
                                 }`}
                         >
-                            Tất cả
+                            Mới nhất
                         </button>
                         {users.map((user) => (
                             <div
