@@ -14,10 +14,17 @@ export function TweetSearch() {
     const [error, setError] = useState('')
     const [selectedUser, setSelectedUser] = useState<string | null>(null)
     const [deleteConfirm, setDeleteConfirm] = useState<SavedUser | null>(null)
+    // Cookie state
+    const [cookieModal, setCookieModal] = useState(false)
+    const [cookieInput, setCookieInput] = useState('')
+    const [cookieStatus, setCookieStatus] = useState<string | null>(null)
+    const [cookieSaving, setCookieSaving] = useState(false)
+    const [cookieError, setCookieError] = useState('')
 
-    // Load saved users on mount
+    // Load saved users + cookie status on mount
     useEffect(() => {
         fetchUsers()
+        fetchCookieStatus()
     }, [])
 
     const fetchUsers = async () => {
@@ -76,6 +83,42 @@ export function TweetSearch() {
         if (e.key === 'Enter') handleAdd()
     }, [handleAdd])
 
+    const fetchCookieStatus = async () => {
+        try {
+            const res = await fetch('/api/twitter-token')
+            const data = await res.json()
+            if (data.success && data.data) {
+                setCookieStatus(`auth_token: ${data.data.authToken}`)
+            } else {
+                setCookieStatus(null)
+            }
+        } catch { setCookieStatus(null) }
+    }
+
+    const handleSaveCookie = useCallback(async () => {
+        if (!cookieInput.trim()) return
+        setCookieSaving(true)
+        setCookieError('')
+        try {
+            const res = await fetch('/api/twitter-token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cookieText: cookieInput }),
+            })
+            const data = await res.json()
+            if (data.success) {
+                setCookieStatus(`auth_token: ${data.data.authToken}`)
+                setCookieInput('')
+                setCookieModal(false)
+            } else {
+                setCookieError(data.error)
+            }
+        } catch {
+            setCookieError('Lỗi kết nối')
+        }
+        setCookieSaving(false)
+    }, [cookieInput])
+
     const displayUsers = selectedUser
         ? users.filter(u => u.username === selectedUser)
         : users
@@ -99,6 +142,17 @@ export function TweetSearch() {
                         className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#38bdf8] to-[#c084fc] text-white font-semibold text-sm hover:opacity-90 active:scale-95 transition-all whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                         {adding ? '⏳' : '+'} Thêm
+                    </button>
+                    <button
+                        onClick={() => setCookieModal(true)}
+                        className={`relative px-3 py-3 rounded-xl text-sm transition-all ${cookieStatus
+                            ? 'bg-slate-800/60 border border-green-500/30 text-green-400 hover:border-green-500/50'
+                            : 'bg-slate-800/60 border border-white/10 text-slate-400 hover:border-white/20'
+                            }`}
+                        title={cookieStatus || 'Thêm cookie X'}
+                    >
+                        🍪
+                        {cookieStatus && <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full" />}
                     </button>
                 </div>
                 {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
@@ -202,6 +256,46 @@ export function TweetSearch() {
                                 className="px-4 py-2 rounded-lg text-sm bg-red-500 text-white hover:bg-red-600 transition"
                             >
                                 Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Cookie Modal */}
+            {cookieModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                    <div className="bg-slate-800 border border-white/10 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
+                        <h3 className="text-white font-semibold text-lg mb-1">🍪 Cookie X</h3>
+                        <p className="text-slate-400 text-xs mb-4">
+                            Paste cookie từ DevTools (Application → Cookies → x.com). Cần auth_token và ct0.
+                        </p>
+                        {cookieStatus && (
+                            <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg bg-green-500/10 border border-green-500/20">
+                                <span className="w-2 h-2 bg-green-500 rounded-full" />
+                                <span className="text-green-400 text-xs">{cookieStatus}</span>
+                            </div>
+                        )}
+                        <textarea
+                            value={cookieInput}
+                            onChange={(e) => { setCookieInput(e.target.value); setCookieError('') }}
+                            placeholder={'auth_token: xxx\nct0: yyy\natt: zzz (optional)'}
+                            rows={4}
+                            className="w-full px-3 py-2 rounded-lg bg-slate-900/80 border border-white/10 text-white text-xs font-mono placeholder:text-slate-600 focus:outline-none focus:border-[#38bdf8]/50 resize-none"
+                        />
+                        {cookieError && <p className="text-red-400 text-xs mt-2">{cookieError}</p>}
+                        <div className="flex gap-3 justify-end mt-4">
+                            <button
+                                onClick={() => { setCookieModal(false); setCookieError('') }}
+                                className="px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-700 transition"
+                            >
+                                Đóng
+                            </button>
+                            <button
+                                onClick={handleSaveCookie}
+                                disabled={!cookieInput.trim() || cookieSaving}
+                                className="px-4 py-2 rounded-lg text-sm bg-gradient-to-r from-[#38bdf8] to-[#c084fc] text-white hover:opacity-90 transition disabled:opacity-40"
+                            >
+                                {cookieSaving ? 'Đang lưu...' : 'Lưu'}
                             </button>
                         </div>
                     </div>
