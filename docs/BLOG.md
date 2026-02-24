@@ -13,21 +13,32 @@ Trang blog chia sẻ kiến thức Frontend (JavaScript, React, TypeScript, etc.
 
 ```
 src/app/blogs/
-├── blogData.tsx         # Data + nội dung bài viết (static TSX)
-├── page.tsx             # Trang listing
+├── blogData.tsx             # Re-export (barrel file, 14 dòng)
+├── types.ts                 # BlogPost interface
+├── components/
+│   └── BlogComponents.tsx   # Shared UI: CodeBlock, Heading, Callout...
+├── posts/
+│   ├── index.ts             # Import all posts & export blogPosts[]
+│   ├── callback-promise-async-await.tsx
+│   └── nextjs-khai-niem-moi.tsx
+├── page.tsx                 # Trang listing /blogs
 ├── [slug]/
-│   └── page.tsx         # Trang chi tiết (dynamic route)
+│   └── page.tsx             # Trang chi tiết /blogs/[slug]
 └── __tests__/
-    ├── page.test.tsx    # Test trang listing
-    └── blogData.test.tsx # Test data utilities
+    ├── page.test.tsx
+    └── blogData.test.tsx
 ```
 
 ## Thêm bài viết mới
 
-Mở `src/app/blogs/blogData.tsx`, thêm item vào mảng `blogPosts`:
+### 1. Tạo file mới trong `posts/`
 
 ```tsx
-{
+// src/app/blogs/posts/ten-bai-viet.tsx
+import { BlogPost } from '../types'
+import { CodeBlock, Heading2, Paragraph, Callout } from '../components/BlogComponents'
+
+const tenBaiViet: BlogPost = {
     slug: 'ten-bai-viet',           // URL: /blogs/ten-bai-viet
     title: 'Tiêu đề bài viết',
     description: 'Mô tả ngắn...',
@@ -44,6 +55,20 @@ Mở `src/app/blogs/blogData.tsx`, thêm item vào mảng `blogPosts`:
         </>
     ),
 }
+
+export default tenBaiViet
+```
+
+### 2. Import vào `posts/index.ts`
+
+```tsx
+import tenBaiViet from './ten-bai-viet'
+
+export const blogPosts: BlogPost[] = [
+    callbackPromiseAsyncAwait,
+    nextjsKhaiNiemMoi,
+    tenBaiViet,  // ← thêm ở đây
+]
 ```
 
 ## Components có sẵn cho content
