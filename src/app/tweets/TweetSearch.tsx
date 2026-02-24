@@ -217,14 +217,9 @@ export function TweetSearch() {
                         {displayUsers.map((user) => (
                             <div key={user._id}>
                                 <div className="flex items-center gap-2 mb-3">
-                                    <a
-                                        href={`https://x.com/${user.username}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-[#38bdf8] font-semibold text-sm hover:underline"
-                                    >
+                                    <span className="text-[#38bdf8] font-semibold text-sm">
                                         @{user.username}
-                                    </a>
+                                    </span>
                                 </div>
                                 <div className="rounded-xl overflow-hidden border border-white/10">
                                     <iframe
