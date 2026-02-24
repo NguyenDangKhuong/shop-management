@@ -1,92 +1,212 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+
+interface SavedUser {
+    _id: string
+    username: string
+}
 
 export function TweetSearch() {
     const [input, setInput] = useState('')
-    const [username, setUsername] = useState('')
+    const [users, setUsers] = useState<SavedUser[]>([])
+    const [adding, setAdding] = useState(false)
+    const [error, setError] = useState('')
+    const [selectedUser, setSelectedUser] = useState<string | null>(null)
+    const [deleteConfirm, setDeleteConfirm] = useState<SavedUser | null>(null)
 
-    const handleSearch = useCallback(() => {
+    // Load saved users on mount
+    useEffect(() => {
+        fetchUsers()
+    }, [])
+
+    const fetchUsers = async () => {
+        try {
+            const res = await fetch('/api/twitter-users')
+            const data = await res.json()
+            if (data.success) setUsers(data.data)
+        } catch {
+            console.error('Failed to load users')
+        }
+    }
+
+    const handleAdd = useCallback(async () => {
         const trimmed = input.trim().replace(/^@/, '')
         if (!trimmed) return
-        setUsername(trimmed)
-        setInput('')
+
+        setAdding(true)
+        setError('')
+        try {
+            const res = await fetch('/api/twitter-users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: trimmed }),
+            })
+            const data = await res.json()
+            if (data.success) {
+                setUsers(prev => [data.data, ...prev])
+                setInput('')
+                setSelectedUser(data.data.username)
+            } else {
+                setError(data.error || 'Error')
+            }
+        } catch {
+            setError('Lỗi kết nối')
+        }
+        setAdding(false)
     }, [input])
 
-    const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') handleSearch()
-    }, [handleSearch])
+    const handleDelete = useCallback(async (user: SavedUser) => {
+        try {
+            const res = await fetch(`/api/twitter-users?id=${user._id}`, { method: 'DELETE' })
+            const data = await res.json()
+            if (data.success) {
+                setUsers(prev => prev.filter(u => u._id !== user._id))
+                if (selectedUser === user.username) {
+                    setSelectedUser(null)
+                }
+            }
+        } catch {
+            console.error('Delete failed')
+        }
+        setDeleteConfirm(null)
+    }, [selectedUser])
 
-    const handleClear = useCallback(() => {
-        setUsername('')
-    }, [])
+    const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') handleAdd()
+    }, [handleAdd])
+
+    const displayUsers = selectedUser
+        ? users.filter(u => u.username === selectedUser)
+        : users
 
     return (
         <>
-            {/* Search Input */}
-            <div className="w-full max-w-3xl mx-auto mb-8 z-10">
+            {/* Add Input */}
+            <div className="w-full max-w-3xl mx-auto mb-6 z-10">
                 <div className="flex gap-2">
                     <input
                         type="text"
                         value={input}
-                        onChange={(e) => setInput(e.target.value)}
+                        onChange={(e) => { setInput(e.target.value); setError('') }}
                         onKeyDown={handleKeyDown}
-                        placeholder="Nhập username — vd: danabramov, elonmusk"
+                        placeholder="Nhập username — vd: vercel, reactjs, dan_abramov"
                         className="flex-1 px-4 py-3 rounded-xl bg-slate-800/60 border border-white/10 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-[#38bdf8]/50 focus:ring-1 focus:ring-[#38bdf8]/30 transition"
                     />
                     <button
-                        onClick={handleSearch}
-                        disabled={!input.trim()}
+                        onClick={handleAdd}
+                        disabled={!input.trim() || adding}
                         className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#38bdf8] to-[#c084fc] text-white font-semibold text-sm hover:opacity-90 active:scale-95 transition-all whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
                     >
-                        🔍 Tìm
+                        {adding ? '⏳' : '+'} Thêm
                     </button>
                 </div>
+                {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
             </div>
 
-            {/* Timeline via publish.twitter.com embed */}
-            <div className="w-full max-w-3xl mx-auto z-10">
-                {username ? (
-                    <div>
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2">
-                                <span className="text-slate-400 text-sm">Tweets của</span>
-                                <a
-                                    href={`https://x.com/${username}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-[#38bdf8] font-semibold text-sm hover:underline"
-                                >
-                                    @{username}
-                                </a>
-                            </div>
-                            <button
-                                onClick={handleClear}
-                                className="text-xs text-slate-500 hover:text-white transition"
+            {/* Saved Users Tags */}
+            {users.length > 0 && (
+                <div className="w-full max-w-3xl mx-auto mb-6 z-10">
+                    <div className="flex flex-wrap gap-2">
+                        <button
+                            onClick={() => setSelectedUser(null)}
+                            className={`px-3 py-1.5 rounded-full text-sm transition-all ${!selectedUser
+                                ? 'bg-[#38bdf8]/20 text-[#38bdf8] border border-[#38bdf8]/40'
+                                : 'bg-slate-800/60 text-slate-300 border border-white/10 hover:border-white/20'
+                                }`}
+                        >
+                            Tất cả
+                        </button>
+                        {users.map((user) => (
+                            <div
+                                key={user._id}
+                                onClick={() => setSelectedUser(selectedUser === user.username ? null : user.username)}
+                                className={`flex items-center gap-1.5 pl-3 pr-1.5 py-1.5 rounded-full text-sm cursor-pointer transition-all ${selectedUser === user.username
+                                    ? 'bg-[#38bdf8]/20 text-[#38bdf8] border border-[#38bdf8]/40'
+                                    : 'bg-slate-800/60 text-slate-300 border border-white/10 hover:border-white/20'
+                                    }`}
                             >
-                                ✕ Đóng
-                            </button>
-                        </div>
-                        <div className="rounded-xl overflow-hidden border border-white/10">
-                            <iframe
-                                key={username}
-                                src={`https://syndication.twitter.com/srv/timeline-profile/screen-name/${username}?dnt=true&embedId=twitter-widget-0&frame=false&hideBorder=true&hideFooter=true&hideHeader=true&hideScrollBar=false&lang=en&theme=dark&transparent=true`}
-                                className="w-full border-0"
-                                style={{ minHeight: '600px', colorScheme: 'dark' }}
-                                sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-                                loading="lazy"
-                            />
-                        </div>
+                                <span>@{user.username}</span>
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setDeleteConfirm(user) }}
+                                    className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] transition ${selectedUser === user.username
+                                        ? 'text-[#38bdf8]/60 hover:bg-red-500 hover:text-white'
+                                        : 'text-slate-500 hover:bg-red-500 hover:text-white'
+                                        }`}
+                                    title={`Xóa @${user.username}`}
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Timelines */}
+            <div className="w-full max-w-3xl mx-auto z-10">
+                {users.length > 0 ? (
+                    <div className="space-y-6">
+                        {displayUsers.map((user) => (
+                            <div key={user._id}>
+                                <div className="flex items-center gap-2 mb-3">
+                                    <a
+                                        href={`https://x.com/${user.username}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[#38bdf8] font-semibold text-sm hover:underline"
+                                    >
+                                        @{user.username}
+                                    </a>
+                                </div>
+                                <div className="rounded-xl overflow-hidden border border-white/10">
+                                    <iframe
+                                        key={user.username}
+                                        src={`/api/tweets?username=${encodeURIComponent(user.username)}`}
+                                        className="w-full border-0"
+                                        style={{ minHeight: '600px', colorScheme: 'dark' }}
+                                        sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                                        loading="lazy"
+                                    />
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 ) : (
                     <div className="text-center py-16">
                         <span className="text-5xl mb-4 block opacity-50">𝕏</span>
                         <p className="text-slate-500 text-sm">
-                            Nhập username X để xem tweets của họ
+                            Thêm username X để bắt đầu theo dõi tweets
                         </p>
                     </div>
                 )}
             </div>
+
+            {/* Delete Confirmation Popup */}
+            {deleteConfirm && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                    <div className="bg-slate-800 border border-white/10 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+                        <h3 className="text-white font-semibold text-lg mb-2">Xóa username?</h3>
+                        <p className="text-slate-400 text-sm mb-6">
+                            Bạn có chắc muốn xóa <span className="text-[#38bdf8] font-semibold">@{deleteConfirm.username}</span> khỏi danh sách?
+                        </p>
+                        <div className="flex gap-3 justify-end">
+                            <button
+                                onClick={() => setDeleteConfirm(null)}
+                                className="px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-700 transition"
+                            >
+                                Hủy
+                            </button>
+                            <button
+                                onClick={() => handleDelete(deleteConfirm)}
+                                className="px-4 py-2 rounded-lg text-sm bg-red-500 text-white hover:bg-red-600 transition"
+                            >
+                                Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     )
 }
