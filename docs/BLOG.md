@@ -71,3 +71,8 @@ Mở `src/app/blogs/blogData.tsx`, thêm item vào mảng `blogPosts`:
 1. **Callback, Promise và Async/Await** (`callback-promise-async-await`)
    - Callback Hell, Promise chain, Async/Await syntax
    - Code examples, bảng so sánh, ví dụ React useEffect
+
+2. **Next.js — Tổng quan các khái niệm mới nhất** (`nextjs-khai-niem-moi`)
+   - App Router, Server/Client Components, Server Actions
+   - Streaming & Suspense, Parallel & Intercepting Routes
+   - Caching, Middleware, Image & Font optimization
