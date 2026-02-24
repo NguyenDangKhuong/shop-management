@@ -1,8 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
+import connectDB from '@/utils/connectDb'
+import TwitterTokenModel from '@/models/TwitterToken'
 
 // In-memory cache: username -> { html, timestamp }
 const cache = new Map<string, { html: string; ts: number }>()
 const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+
+// Cache DB cookie in memory
+let cachedCookie: { value: string; ts: number } | null = null
+const COOKIE_CACHE_TTL = 5 * 60 * 1000
+
+async function getCookie(): Promise<string | null> {
+    if (cachedCookie && Date.now() - cachedCookie.ts < COOKIE_CACHE_TTL) {
+        return cachedCookie.value
+    }
+    try {
+        await connectDB()
+        const token = await TwitterTokenModel.findOne().sort({ createdAt: -1 })
+        if (token?.cookie) {
+            cachedCookie = { value: token.cookie, ts: Date.now() }
+            return token.cookie
+        }
+    } catch {
+        console.error('Failed to get cookie from DB')
+    }
+    return process.env.TWITTER_COOKIE || null // fallback to env
+}
 
 export async function GET(req: NextRequest) {
     const username = req.nextUrl.searchParams.get('username')
@@ -33,8 +56,7 @@ export async function GET(req: NextRequest) {
             'Accept-Language': 'en-US,en;q=0.9',
         }
 
-        // Add cookie for sensitive/NSFW content access
-        const cookie = process.env.TWITTER_COOKIE
+        const cookie = await getCookie()
         if (cookie) {
             headers['Cookie'] = cookie
         }
