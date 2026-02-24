@@ -4,6 +4,7 @@ import { TweetSearch } from './TweetSearch'
 export const metadata: Metadata = {
     title: 'X Tweets',
     description: 'Xem tweets từ X (Twitter).',
+    icons: [],
 }
 
 export default function TweetsPage() {
