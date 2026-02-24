@@ -169,10 +169,22 @@ export async function GET(req: NextRequest) {
     });
   }
 
+  // Remove all <a> tags — replace with <span> to prevent redirect
+  function stripLinks() {
+    document.querySelectorAll('a').forEach(function(a) {
+      var span = document.createElement('span');
+      span.innerHTML = a.innerHTML;
+      span.className = a.className;
+      span.style.cssText = a.style.cssText + ';cursor:default;';
+      if (a.parentNode) a.parentNode.replaceChild(span, a);
+    });
+  }
+
   // Wait for Twitter JS to render DOM, then replace
   var attempts = 0;
   var replacer = setInterval(function() {
     replaceVideos();
+    stripLinks();
     attempts++;
     if (attempts > 20) clearInterval(replacer);
   }, 500);
