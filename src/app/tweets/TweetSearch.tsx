@@ -170,7 +170,7 @@ export function TweetSearch() {
                     >
                         <div className="flex items-center gap-2">
                             <span className="text-slate-400 text-xs">
-                                {selectedUser ? `@${selectedUser}` : 'Mới nhất'}
+                                {selectedUser ? `@${selectedUser}` : `@${users[users.length - 1]?.username || ''}`}
                             </span>
                             <span className="text-slate-500 text-[10px]">
                                 ({users.length} users)
@@ -183,15 +183,7 @@ export function TweetSearch() {
 
                     {/* Tags - always visible on desktop, toggle on mobile */}
                     <div className={`${tagsExpanded ? 'mt-2' : 'hidden'} md:flex flex-wrap gap-2`}>
-                        <button
-                            onClick={() => { setSelectedUser(null); setTagsExpanded(false) }}
-                            className={`px-3 py-1.5 rounded-full text-sm transition-all ${!selectedUser
-                                ? 'bg-[#38bdf8]/20 text-[#38bdf8] border border-[#38bdf8]/40'
-                                : 'bg-slate-800/60 text-slate-300 border border-white/10 hover:border-white/20'
-                                }`}
-                        >
-                            Mới nhất
-                        </button>
+
                         {users.map((user) => (
                             <div
                                 key={user._id}
