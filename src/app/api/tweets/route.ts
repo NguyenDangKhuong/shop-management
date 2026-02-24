@@ -115,7 +115,8 @@ export async function GET(req: NextRequest) {
         let html = await res.text()
 
         // 1. Extract video mp4 URLs and group by video ID (highest quality)
-        const mp4Regex = /https:\/\/video\.twimg\.com\/amplify_video\/(\d+)\/vid\/avc1\/(\d+)x(\d+)\/[^"\\]+\.mp4[^"\\]*/g
+        // Matches both amplify_video and ext_tw_video formats
+        const mp4Regex = /https:\/\/video\.twimg\.com\/(?:amplify_video|ext_tw_video)\/(\d+)\/(?:vid|pu\/vid)\/avc1\/(\d+)x(\d+)\/[^"\\]+\.mp4[^"\\]*/g
         const videoMap: Record<string, { url: string; w: number; h: number }> = {}
         let mp4Match
         while ((mp4Match = mp4Regex.exec(html)) !== null) {
@@ -144,7 +145,7 @@ export async function GET(req: NextRequest) {
       var img = a.querySelector('img');
       if (!img) return;
       var src = img.src || '';
-      var match = src.match(/amplify_video_thumb\\/(\\d+)/);
+      var match = src.match(/(?:amplify_video_thumb|ext_tw_video_thumb)\\/(\\d+)/);
       if (!match) return;
       var videoId = match[1];
       var info = videoMap[videoId];
@@ -173,7 +174,7 @@ export async function GET(req: NextRequest) {
   document.addEventListener('click', function(e) {
     var el = e.target;
     while (el && el !== document.body) {
-      if (el.tagName === 'A' || el.tagName === 'ARTICLE' || el.getAttribute && el.getAttribute('role') === 'link') {
+      if (el.tagName === 'A' || el.getAttribute && el.getAttribute('role') === 'link') {
         e.preventDefault();
         e.stopPropagation();
         return false;
