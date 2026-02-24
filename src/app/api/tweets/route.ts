@@ -4,7 +4,10 @@ import TwitterTokenModel from '@/models/TwitterToken'
 
 // In-memory cache: username -> { html, timestamp }
 const cache = new Map<string, { html: string; ts: number }>()
-const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+const CACHE_TTL = 10 * 60 * 1000 // 10 minutes
+
+// Track rate limit cooldown
+let rateLimitUntil = 0
 
 // Cache DB cookie in memory
 let cachedCookie: { value: string; ts: number } | null = null
@@ -24,7 +27,26 @@ async function getCookie(): Promise<string | null> {
     } catch {
         console.error('Failed to get cookie from DB')
     }
-    return process.env.TWITTER_COOKIE || null // fallback to env
+    return process.env.TWITTER_COOKIE || null
+}
+
+async function fetchWithRetry(url: string, headers: Record<string, string>, maxRetries = 3): Promise<Response> {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+        const res = await fetch(url, { headers })
+
+        if (res.status !== 429) return res
+
+        // Respect Retry-After header
+        const retryAfter = res.headers.get('Retry-After')
+        const waitMs = retryAfter
+            ? parseInt(retryAfter) * 1000
+            : Math.pow(2, attempt) * 1000 // exponential backoff: 1s, 2s, 4s
+
+        rateLimitUntil = Date.now() + waitMs
+        await new Promise(r => setTimeout(r, waitMs))
+    }
+    // Return last 429 response if all retries fail
+    return fetch(url, { headers })
 }
 
 export async function GET(req: NextRequest) {
@@ -41,8 +63,18 @@ export async function GET(req: NextRequest) {
         return new NextResponse(cached.html, {
             headers: {
                 'Content-Type': 'text/html; charset=utf-8',
-                'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+                'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1200',
                 'X-Cache': 'HIT',
+            },
+        })
+    }
+
+    // If we're in rate limit cooldown, serve stale cache
+    if (Date.now() < rateLimitUntil && cached) {
+        return new NextResponse(cached.html, {
+            headers: {
+                'Content-Type': 'text/html; charset=utf-8',
+                'X-Cache': 'RATE-LIMITED',
             },
         })
     }
@@ -61,16 +93,16 @@ export async function GET(req: NextRequest) {
             headers['Cookie'] = cookie
         }
 
-        const res = await fetch(url, { headers })
+        const res = await fetchWithRetry(url, headers)
 
         if (!res.ok) {
-            // If rate limited but have stale cache, serve it
+            // If still rate limited after retries, serve stale cache
             if (res.status === 429 && cached) {
                 return new NextResponse(cached.html, {
                     headers: {
                         'Content-Type': 'text/html; charset=utf-8',
                         'Cache-Control': 'public, s-maxage=60',
-                        'X-Cache': 'STALE',
+                        'X-Cache': 'STALE-429',
                     },
                 })
             }
