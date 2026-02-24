@@ -188,7 +188,7 @@ export function TweetSearch() {
                             <div
                                 key={user._id}
                                 onClick={() => { setSelectedUser(selectedUser === user.username ? null : user.username); setTagsExpanded(false) }}
-                                className={`flex items-center gap-2 pl-4 pr-2 py-2.5 md:pl-3 md:pr-1.5 md:py-1.5 rounded-full text-base md:text-sm cursor-pointer transition-all ${selectedUser === user.username
+                                className={`flex items-center gap-2 pl-3.5 pr-2 py-2 md:pl-3 md:pr-1.5 md:py-1.5 rounded-full text-sm cursor-pointer transition-all ${selectedUser === user.username
                                     ? 'bg-[#38bdf8]/20 text-[#38bdf8] border border-[#38bdf8]/40'
                                     : 'bg-slate-800/60 text-slate-300 border border-white/10 hover:border-white/20'
                                     }`}
