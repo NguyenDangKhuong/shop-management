@@ -8,28 +8,45 @@ jest.mock('next/link', () => {
     }
 })
 
+// Mock LangContext
+jest.mock('@/app/blogs/components/LangContext', () => ({
+    LangProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    useLang: () => ({
+        lang: 'vi' as const,
+        setLang: jest.fn(),
+        t: (obj: Record<string, string>) => obj.vi,
+    }),
+}))
+
+// Mock LangSwitcher
+jest.mock('@/app/blogs/components/LangSwitcher', () => {
+    return function MockLangSwitcher() {
+        return <button>🇻🇳 / 🇬🇧</button>
+    }
+})
+
 // Mock blogData
 jest.mock('@/app/blogs/blogData', () => ({
     blogPosts: [
         {
             slug: 'test-post-1',
-            title: 'Test Blog Post 1',
-            description: 'Description for test post 1',
+            title: { vi: 'Test Blog Post 1', en: 'Test Blog Post 1 EN' },
+            description: { vi: 'Description for test post 1', en: 'Description for test post 1 EN' },
             date: '2026-01-01',
             tags: ['JavaScript', 'React'],
             emoji: '⚡',
             color: '#fbbf24',
-            content: <div>Test content 1</div>,
+            content: { vi: <div>Test content 1</div>, en: <div>Test content 1 EN</div> },
         },
         {
             slug: 'test-post-2',
-            title: 'Test Blog Post 2',
-            description: 'Description for test post 2',
+            title: { vi: 'Test Blog Post 2', en: 'Test Blog Post 2 EN' },
+            description: { vi: 'Description for test post 2', en: 'Description for test post 2 EN' },
             date: '2026-02-01',
             tags: ['TypeScript'],
             emoji: '🔷',
             color: '#3178C6',
-            content: <div>Test content 2</div>,
+            content: { vi: <div>Test content 2</div>, en: <div>Test content 2 EN</div> },
         },
     ],
 }))
@@ -42,7 +59,7 @@ describe('BlogsPage', () => {
         expect(heading).toBeInTheDocument()
     })
 
-    it('displays the blog description', () => {
+    it('displays the blog description in Vietnamese', () => {
         render(<BlogsPage />)
 
         expect(screen.getByText(/chia sẻ kiến thức frontend/i)).toBeInTheDocument()
@@ -96,14 +113,6 @@ describe('BlogsPage', () => {
         expect(screen.getByText('🔷')).toBeInTheDocument()
     })
 
-    it('has a back link to home page', () => {
-        render(<BlogsPage />)
-
-        const backLink = screen.getByText('← Back')
-        expect(backLink).toBeInTheDocument()
-        expect(backLink).toHaveAttribute('href', '/')
-    })
-
     it('renders the TheTapHoa logo link', () => {
         render(<BlogsPage />)
 
@@ -117,5 +126,11 @@ describe('BlogsPage', () => {
         render(<BlogsPage />)
 
         expect(screen.getByText(/built with next\.js/i)).toBeInTheDocument()
+    })
+
+    it('renders the language switcher', () => {
+        render(<BlogsPage />)
+
+        expect(screen.getByText('🇻🇳 / 🇬🇧')).toBeInTheDocument()
     })
 })

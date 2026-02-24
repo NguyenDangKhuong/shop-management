@@ -43,9 +43,10 @@ describe('blogData', () => {
         it('returns the correct blog post for a valid slug', () => {
             const post = getBlogBySlug('callback-promise-async-await')
             expect(post).toBeDefined()
-            expect(post?.title).toContain('Callback')
-            expect(post?.title).toContain('Promise')
-            expect(post?.title).toContain('Async/Await')
+            const title = typeof post?.title === 'string' ? post.title : (post?.title as { vi: string; en: string })?.vi
+            expect(title).toContain('Callback')
+            expect(title).toContain('Promise')
+            expect(title).toContain('Async/Await')
         })
 
         it('returns undefined for an invalid slug', () => {
