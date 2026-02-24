@@ -11,24 +11,46 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
     return (
         <div className="bg-[#0a0a0a] text-slate-200 font-sans min-h-screen flex flex-col items-center p-4 md:p-8 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-900 via-[#0a0a0a] to-[#0a0a0a] relative">
             {/* Header */}
-            <header className="w-full max-w-3xl mx-auto flex justify-between items-center mb-12 z-20">
-                <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg">
-                        Y
-                    </div>
-                    <span className="font-bold text-xl tracking-tight text-white">
-                        The<span className="text-[#38bdf8]">TapHoa</span>
-                    </span>
-                </Link>
-
-                <div className="flex items-center gap-3">
-                    <LangSwitcher />
+            <header className="w-full max-w-3xl mx-auto flex items-center mb-12 z-20">
+                {/* Mobile: back+lang left, logo center */}
+                <div className="flex md:hidden items-center w-full">
                     <Link
                         href="/blogs"
-                        className="text-sm text-slate-400 hover:text-white transition flex items-center gap-1"
+                        className="text-sm text-slate-400 hover:text-white transition"
                     >
-                        {lang === 'vi' ? '← Tất cả bài viết' : '← All posts'}
+                        ←
                     </Link>
+                    <div className="flex-1 flex justify-center">
+                        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg">
+                                Y
+                            </div>
+                            <span className="font-bold text-xl tracking-tight text-white">
+                                The<span className="text-[#38bdf8]">TapHoa</span>
+                            </span>
+                        </Link>
+                    </div>
+                    <LangSwitcher />
+                </div>
+                {/* Desktop: logo left, buttons right */}
+                <div className="hidden md:flex justify-between items-center w-full">
+                    <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg">
+                            Y
+                        </div>
+                        <span className="font-bold text-xl tracking-tight text-white">
+                            The<span className="text-[#38bdf8]">TapHoa</span>
+                        </span>
+                    </Link>
+                    <div className="flex items-center gap-3">
+                        <LangSwitcher />
+                        <Link
+                            href="/blogs"
+                            className="text-sm text-slate-400 hover:text-white transition flex items-center gap-1"
+                        >
+                            {lang === 'vi' ? '← Tất cả bài viết' : '← All posts'}
+                        </Link>
+                    </div>
                 </div>
             </header>
 

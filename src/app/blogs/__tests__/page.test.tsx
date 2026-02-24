@@ -131,6 +131,6 @@ describe('BlogsPage', () => {
     it('renders the language switcher', () => {
         render(<BlogsPage />)
 
-        expect(screen.getByText('🇻🇳 / 🇬🇧')).toBeInTheDocument()
+        expect(screen.getAllByText('🇻🇳 / 🇬🇧').length).toBeGreaterThanOrEqual(1)
     })
 })
