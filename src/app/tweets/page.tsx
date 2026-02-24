@@ -2,8 +2,8 @@ import { Metadata } from 'next'
 import { TweetSearch } from './TweetSearch'
 
 export const metadata: Metadata = {
-    title: 'Tweets - Nguyen Dang Khuong',
-    description: 'Các bài viết nổi bật từ X (Twitter) về Frontend, JavaScript, React và công nghệ.',
+    title: 'X Tweets',
+    description: 'Xem tweets từ X (Twitter).',
 }
 
 export default function TweetsPage() {
@@ -23,10 +23,7 @@ export default function TweetsPage() {
             {/* Tweet Search + Dynamic Tweets */}
             <TweetSearch />
 
-            {/* Footer */}
-            <footer className="w-full max-w-3xl mx-auto mt-16 pt-8 pb-6 border-t border-slate-700/50 z-20 text-center">
-                <p className="text-sm text-slate-500">Built with Next.js, TypeScript & MongoDB</p>
-            </footer>
+
 
             {/* Background */}
             <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
