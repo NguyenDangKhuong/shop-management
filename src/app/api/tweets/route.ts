@@ -169,7 +169,23 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  // Remove all <a> tags — replace with <span> to prevent redirect
+  // Block ALL navigation — intercept clicks and prevent redirect
+  document.addEventListener('click', function(e) {
+    var el = e.target;
+    while (el && el !== document.body) {
+      if (el.tagName === 'A' || el.tagName === 'ARTICLE' || el.getAttribute && el.getAttribute('role') === 'link') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+      el = el.parentElement;
+    }
+  }, true);
+
+  // Also block window.open
+  window.open = function() { return null; };
+
+  // Strip <a> tags to <span>
   function stripLinks() {
     document.querySelectorAll('a').forEach(function(a) {
       var span = document.createElement('span');
