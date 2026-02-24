@@ -1,12 +1,14 @@
 import React from 'react'
 
+export type Lang = 'vi' | 'en'
+
 export interface BlogPost {
     slug: string
-    title: string
-    description: string
+    title: Record<Lang, string>
+    description: Record<Lang, string>
     date: string
     tags: string[]
     emoji: string
     color: string
-    content: React.ReactNode
+    content: Record<Lang, React.ReactNode>
 }

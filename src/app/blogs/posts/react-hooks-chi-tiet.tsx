@@ -3,33 +3,39 @@ import { CodeBlock, Heading2, Heading3, Paragraph, Highlight, InlineCode, Callou
 
 const reactHooks: BlogPost = {
     slug: 'react-hooks-chi-tiet',
-    title: 'React Hooks — Hướng dẫn chi tiết từng Hook',
-    description:
-        'Tìm hiểu tất cả React Hooks: useState, useEffect, useRef, useMemo, useCallback, useContext, useReducer... và so sánh với lifecycle của Class Component.',
-    date: '2026-02-24',
+    title: {
+        vi: 'React Hooks — Hướng dẫn chi tiết từng Hook',
+        en: 'React Hooks — A Detailed Guide to Every Hook',
+    },
+    description: {
+        vi: 'Tìm hiểu tất cả React Hooks: useState, useEffect, useRef, useMemo, useCallback, useContext, useReducer... và so sánh với lifecycle của Class Component.',
+        en: 'Learn all React Hooks: useState, useEffect, useRef, useMemo, useCallback, useContext, useReducer... and compare with Class Component lifecycle methods.',
+    },
+    date: '2025-08-18',
     tags: ['React', 'Hooks', 'Fundamentals'],
     emoji: '🪝',
     color: '#61DAFB',
-    content: (
-        <>
-            <Paragraph>
-                <Highlight>React Hooks</Highlight> ra đời từ React 16.8 (2019), cho phép sử dụng state và các tính năng
-                React khác trong <Highlight>Function Component</Highlight> — không cần viết Class nữa.
-            </Paragraph>
+    content: {
+        vi: (
+            <>
+                <Paragraph>
+                    <Highlight>React Hooks</Highlight> ra đời từ React 16.8 (2019), cho phép sử dụng state và các tính năng
+                    React khác trong <Highlight>Function Component</Highlight> — không cần viết Class nữa.
+                </Paragraph>
 
-            <Callout type="info">
-                Bài viết này sẽ đi chi tiết từng Hook, cách dùng, best practices,
-                và so sánh với lifecycle methods của Class Component.
-            </Callout>
+                <Callout type="info">
+                    Bài viết này sẽ đi chi tiết từng Hook, cách dùng, best practices,
+                    và so sánh với lifecycle methods của Class Component.
+                </Callout>
 
-            {/* ===== useState ===== */}
-            <Heading2>1. useState — Quản lý State</Heading2>
+                {/* ===== useState ===== */}
+                <Heading2>1. useState — Quản lý State</Heading2>
 
-            <Paragraph>
-                <InlineCode>useState</InlineCode> là Hook cơ bản nhất — cho phép component &quot;nhớ&quot; dữ liệu giữa các lần render.
-            </Paragraph>
+                <Paragraph>
+                    <InlineCode>useState</InlineCode> là Hook cơ bản nhất — cho phép component &quot;nhớ&quot; dữ liệu giữa các lần render.
+                </Paragraph>
 
-            <CodeBlock title="useState.tsx">{`import { useState } from 'react'
+                <CodeBlock title="useState.tsx">{`import { useState } from 'react'
 
 function Counter() {
     const [count, setCount] = useState(0) // [giá trị, hàm cập nhật]
@@ -43,33 +49,33 @@ function Counter() {
     )
 }`}</CodeBlock>
 
-            <Heading3>Lazy Initialization</Heading3>
+                <Heading3>Lazy Initialization</Heading3>
 
-            <Paragraph>
-                Khi initial value tốn chi phí tính toán, truyền <Highlight>function</Highlight> thay vì giá trị:
-            </Paragraph>
+                <Paragraph>
+                    Khi initial value tốn chi phí tính toán, truyền <Highlight>function</Highlight> thay vì giá trị:
+                </Paragraph>
 
-            <CodeBlock title="lazy-init.tsx">{`// ❌ Chạy mỗi lần render (lãng phí)
+                <CodeBlock title="lazy-init.tsx">{`// ❌ Chạy mỗi lần render (lãng phí)
 const [data, setData] = useState(expensiveComputation())
 
 // ✅ Chỉ chạy 1 lần khi mount
 const [data, setData] = useState(() => expensiveComputation())`}</CodeBlock>
 
-            <Callout type="tip">
-                Khi update state dựa trên state cũ, luôn dùng callback form:{' '}
-                <InlineCode>setCount(prev =&gt; prev + 1)</InlineCode> thay vì{' '}
-                <InlineCode>setCount(count + 1)</InlineCode> để tránh stale closure.
-            </Callout>
+                <Callout type="tip">
+                    Khi update state dựa trên state cũ, luôn dùng callback form:{' '}
+                    <InlineCode>setCount(prev =&gt; prev + 1)</InlineCode> thay vì{' '}
+                    <InlineCode>setCount(count + 1)</InlineCode> để tránh stale closure.
+                </Callout>
 
-            {/* ===== useEffect ===== */}
-            <Heading2>2. useEffect — Side Effects</Heading2>
+                {/* ===== useEffect ===== */}
+                <Heading2>2. useEffect — Side Effects</Heading2>
 
-            <Paragraph>
-                <InlineCode>useEffect</InlineCode> xử lý các &quot;tác dụng phụ&quot;: gọi API, subscribe events,
-                thay đổi DOM, timer... Nó chạy <Highlight>sau khi render</Highlight>.
-            </Paragraph>
+                <Paragraph>
+                    <InlineCode>useEffect</InlineCode> xử lý các &quot;tác dụng phụ&quot;: gọi API, subscribe events,
+                    thay đổi DOM, timer... Nó chạy <Highlight>sau khi render</Highlight>.
+                </Paragraph>
 
-            <CodeBlock title="useEffect.tsx">{`import { useEffect, useState } from 'react'
+                <CodeBlock title="useEffect.tsx">{`import { useEffect, useState } from 'react'
 
 function UserProfile({ userId }) {
     const [user, setUser] = useState(null)
@@ -92,51 +98,51 @@ function UserProfile({ userId }) {
     return <div>{user?.name}</div>
 }`}</CodeBlock>
 
-            <Heading3>3 kiểu Dependency Array</Heading3>
+                <Heading3>3 kiểu Dependency Array</Heading3>
 
-            <div className="my-6 overflow-x-auto">
-                <table className="w-full text-sm border-collapse">
-                    <thead>
-                        <tr className="border-b border-white/10">
-                            <th className="text-left p-3 text-slate-400 font-medium">Cú pháp</th>
-                            <th className="text-left p-3 text-slate-400 font-medium">Khi nào chạy</th>
-                            <th className="text-left p-3 text-slate-400 font-medium">Class tương đương</th>
-                        </tr>
-                    </thead>
-                    <tbody className="text-slate-300">
-                        <tr className="border-b border-white/5">
-                            <td className="p-3"><InlineCode>useEffect(fn)</InlineCode></td>
-                            <td className="p-3">Mỗi lần render</td>
-                            <td className="p-3">componentDidUpdate (mỗi lần)</td>
-                        </tr>
-                        <tr className="border-b border-white/5">
-                            <td className="p-3"><InlineCode>useEffect(fn, [])</InlineCode></td>
-                            <td className="p-3">Chỉ 1 lần khi mount</td>
-                            <td className="p-3"><InlineCode>componentDidMount</InlineCode></td>
-                        </tr>
-                        <tr>
-                            <td className="p-3"><InlineCode>useEffect(fn, [a, b])</InlineCode></td>
-                            <td className="p-3">Khi a hoặc b thay đổi</td>
-                            <td className="p-3">componentDidUpdate + điều kiện</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                <div className="my-6 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead>
+                            <tr className="border-b border-white/10">
+                                <th className="text-left p-3 text-slate-400 font-medium">Cú pháp</th>
+                                <th className="text-left p-3 text-slate-400 font-medium">Khi nào chạy</th>
+                                <th className="text-left p-3 text-slate-400 font-medium">Class tương đương</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-slate-300">
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>useEffect(fn)</InlineCode></td>
+                                <td className="p-3">Mỗi lần render</td>
+                                <td className="p-3">componentDidUpdate (mỗi lần)</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>useEffect(fn, [])</InlineCode></td>
+                                <td className="p-3">Chỉ 1 lần khi mount</td>
+                                <td className="p-3"><InlineCode>componentDidMount</InlineCode></td>
+                            </tr>
+                            <tr>
+                                <td className="p-3"><InlineCode>useEffect(fn, [a, b])</InlineCode></td>
+                                <td className="p-3">Khi a hoặc b thay đổi</td>
+                                <td className="p-3">componentDidUpdate + điều kiện</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            <Callout type="warning">
-                Cleanup function (return) tương đương <InlineCode>componentWillUnmount</InlineCode>.
-                Luôn cleanup timers, subscriptions, event listeners để tránh memory leak!
-            </Callout>
+                <Callout type="warning">
+                    Cleanup function (return) tương đương <InlineCode>componentWillUnmount</InlineCode>.
+                    Luôn cleanup timers, subscriptions, event listeners để tránh memory leak!
+                </Callout>
 
-            {/* ===== useRef ===== */}
-            <Heading2>3. useRef — Tham chiếu không gây re-render</Heading2>
+                {/* ===== useRef ===== */}
+                <Heading2>3. useRef — Tham chiếu không gây re-render</Heading2>
 
-            <Paragraph>
-                <InlineCode>useRef</InlineCode> tạo một &quot;hộp&quot; chứa giá trị có thể thay đổi mà{' '}
-                <Highlight>không gây re-render</Highlight>. Thường dùng để truy cập DOM element hoặc giữ giá trị giữa các render.
-            </Paragraph>
+                <Paragraph>
+                    <InlineCode>useRef</InlineCode> tạo một &quot;hộp&quot; chứa giá trị có thể thay đổi mà{' '}
+                    <Highlight>không gây re-render</Highlight>. Thường dùng để truy cập DOM element hoặc giữ giá trị giữa các render.
+                </Paragraph>
 
-            <CodeBlock title="useRef.tsx">{`import { useRef, useEffect } from 'react'
+                <CodeBlock title="useRef.tsx">{`import { useRef, useEffect } from 'react'
 
 function TextInput() {
     const inputRef = useRef<HTMLInputElement>(null)
@@ -158,36 +164,36 @@ function TextInput() {
     )
 }`}</CodeBlock>
 
-            <Heading3>useRef vs useState</Heading3>
+                <Heading3>useRef vs useState</Heading3>
 
-            <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
-                    <div className="text-blue-400 font-bold text-sm mb-2">useState</div>
-                    <ul className="text-slate-300 text-sm space-y-1.5">
-                        <li>✅ Thay đổi → re-render</li>
-                        <li>✅ Hiển thị trên UI</li>
-                        <li>❌ Không nên dùng cho giá trị &quot;ẩn&quot;</li>
-                    </ul>
+                <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
+                        <div className="text-blue-400 font-bold text-sm mb-2">useState</div>
+                        <ul className="text-slate-300 text-sm space-y-1.5">
+                            <li>✅ Thay đổi → re-render</li>
+                            <li>✅ Hiển thị trên UI</li>
+                            <li>❌ Không nên dùng cho giá trị &quot;ẩn&quot;</li>
+                        </ul>
+                    </div>
+                    <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-4">
+                        <div className="text-purple-400 font-bold text-sm mb-2">useRef</div>
+                        <ul className="text-slate-300 text-sm space-y-1.5">
+                            <li>✅ Thay đổi → KHÔNG re-render</li>
+                            <li>✅ Truy cập DOM elements</li>
+                            <li>✅ Giữ timer IDs, previous values</li>
+                        </ul>
+                    </div>
                 </div>
-                <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-4">
-                    <div className="text-purple-400 font-bold text-sm mb-2">useRef</div>
-                    <ul className="text-slate-300 text-sm space-y-1.5">
-                        <li>✅ Thay đổi → KHÔNG re-render</li>
-                        <li>✅ Truy cập DOM elements</li>
-                        <li>✅ Giữ timer IDs, previous values</li>
-                    </ul>
-                </div>
-            </div>
 
-            {/* ===== useMemo ===== */}
-            <Heading2>4. useMemo — Ghi nhớ giá trị tính toán</Heading2>
+                {/* ===== useMemo ===== */}
+                <Heading2>4. useMemo — Ghi nhớ giá trị tính toán</Heading2>
 
-            <Paragraph>
-                <InlineCode>useMemo</InlineCode> lưu cache kết quả tính toán và chỉ tính lại khi dependencies thay đổi.
-                Dùng cho <Highlight>expensive computations</Highlight>.
-            </Paragraph>
+                <Paragraph>
+                    <InlineCode>useMemo</InlineCode> lưu cache kết quả tính toán và chỉ tính lại khi dependencies thay đổi.
+                    Dùng cho <Highlight>expensive computations</Highlight>.
+                </Paragraph>
 
-            <CodeBlock title="useMemo.tsx">{`import { useMemo, useState } from 'react'
+                <CodeBlock title="useMemo.tsx">{`import { useMemo, useState } from 'react'
 
 function ProductList({ products, searchTerm }) {
     // ❌ Tính lại mỗi lần render (kể cả khi products không đổi)
@@ -208,20 +214,20 @@ function ProductList({ products, searchTerm }) {
     )
 }`}</CodeBlock>
 
-            <Callout type="warning">
-                Đừng lạm dụng <InlineCode>useMemo</InlineCode>! Chỉ dùng khi tính toán thực sự tốn kém.
-                Nếu filter một mảng nhỏ (&lt;100 items), không cần memo.
-            </Callout>
+                <Callout type="warning">
+                    Đừng lạm dụng <InlineCode>useMemo</InlineCode>! Chỉ dùng khi tính toán thực sự tốn kém.
+                    Nếu filter một mảng nhỏ (&lt;100 items), không cần memo.
+                </Callout>
 
-            {/* ===== useCallback ===== */}
-            <Heading2>5. useCallback — Ghi nhớ function</Heading2>
+                {/* ===== useCallback ===== */}
+                <Heading2>5. useCallback — Ghi nhớ function</Heading2>
 
-            <Paragraph>
-                <InlineCode>useCallback</InlineCode> ghi nhớ tham chiếu function — tránh tạo function mới mỗi lần render.
-                Hữu ích khi truyền callback xuống <Highlight>child component đã memo</Highlight>.
-            </Paragraph>
+                <Paragraph>
+                    <InlineCode>useCallback</InlineCode> ghi nhớ tham chiếu function — tránh tạo function mới mỗi lần render.
+                    Hữu ích khi truyền callback xuống <Highlight>child component đã memo</Highlight>.
+                </Paragraph>
 
-            <CodeBlock title="useCallback.tsx">{`import { useCallback, useState, memo } from 'react'
+                <CodeBlock title="useCallback.tsx">{`import { useCallback, useState, memo } from 'react'
 
 // Child component đã memo — chỉ re-render khi props thay đổi
 const ExpensiveChild = memo(({ onClick, label }) => {
@@ -250,9 +256,9 @@ function Parent() {
     )
 }`}</CodeBlock>
 
-            <Heading3>useMemo vs useCallback</Heading3>
+                <Heading3>useMemo vs useCallback</Heading3>
 
-            <CodeBlock title="comparison.tsx">{`// useMemo — ghi nhớ GIÁ TRỊ
+                <CodeBlock title="comparison.tsx">{`// useMemo — ghi nhớ GIÁ TRỊ
 const memoizedValue = useMemo(() => computeExpensive(a, b), [a, b])
 
 // useCallback — ghi nhớ FUNCTION
@@ -261,15 +267,15 @@ const memoizedFn = useCallback(() => doSomething(a, b), [a, b])
 // Tương đương:
 // useCallback(fn, deps) === useMemo(() => fn, deps)`}</CodeBlock>
 
-            {/* ===== useContext ===== */}
-            <Heading2>6. useContext — Chia sẻ dữ liệu toàn cục</Heading2>
+                {/* ===== useContext ===== */}
+                <Heading2>6. useContext — Chia sẻ dữ liệu toàn cục</Heading2>
 
-            <Paragraph>
-                <InlineCode>useContext</InlineCode> cho phép component con truy cập dữ liệu từ component cha{' '}
-                <Highlight>mà không cần truyền props qua từng tầng</Highlight> (tránh prop drilling).
-            </Paragraph>
+                <Paragraph>
+                    <InlineCode>useContext</InlineCode> cho phép component con truy cập dữ liệu từ component cha{' '}
+                    <Highlight>mà không cần truyền props qua từng tầng</Highlight> (tránh prop drilling).
+                </Paragraph>
 
-            <CodeBlock title="useContext.tsx">{`import { createContext, useContext, useState } from 'react'
+                <CodeBlock title="useContext.tsx">{`import { createContext, useContext, useState } from 'react'
 
 // 1. Tạo Context
 const ThemeContext = createContext<{
@@ -300,20 +306,20 @@ function Header() {
     )
 }`}</CodeBlock>
 
-            <Callout type="tip">
-                Kết hợp <InlineCode>useContext</InlineCode> + <InlineCode>useReducer</InlineCode> để tạo global state
-                management đơn giản — thay thế Redux cho các app nhỏ/vừa.
-            </Callout>
+                <Callout type="tip">
+                    Kết hợp <InlineCode>useContext</InlineCode> + <InlineCode>useReducer</InlineCode> để tạo global state
+                    management đơn giản — thay thế Redux cho các app nhỏ/vừa.
+                </Callout>
 
-            {/* ===== useReducer ===== */}
-            <Heading2>7. useReducer — State phức tạp</Heading2>
+                {/* ===== useReducer ===== */}
+                <Heading2>7. useReducer — State phức tạp</Heading2>
 
-            <Paragraph>
-                <InlineCode>useReducer</InlineCode> thay thế <InlineCode>useState</InlineCode> khi state có{' '}
-                <Highlight>logic phức tạp</Highlight>, nhiều sub-values, hoặc next state phụ thuộc previous state.
-            </Paragraph>
+                <Paragraph>
+                    <InlineCode>useReducer</InlineCode> thay thế <InlineCode>useState</InlineCode> khi state có{' '}
+                    <Highlight>logic phức tạp</Highlight>, nhiều sub-values, hoặc next state phụ thuộc previous state.
+                </Paragraph>
 
-            <CodeBlock title="useReducer.tsx">{`import { useReducer } from 'react'
+                <CodeBlock title="useReducer.tsx">{`import { useReducer } from 'react'
 
 // State type
 type CartState = {
@@ -367,51 +373,51 @@ function Cart() {
     )
 }`}</CodeBlock>
 
-            <Heading3>useState vs useReducer</Heading3>
+                <Heading3>useState vs useReducer</Heading3>
 
-            <div className="my-6 overflow-x-auto">
-                <table className="w-full text-sm border-collapse">
-                    <thead>
-                        <tr className="border-b border-white/10">
-                            <th className="text-left p-3 text-slate-400 font-medium">Tiêu chí</th>
-                            <th className="text-left p-3 text-blue-400 font-medium">useState</th>
-                            <th className="text-left p-3 text-purple-400 font-medium">useReducer</th>
-                        </tr>
-                    </thead>
-                    <tbody className="text-slate-300">
-                        <tr className="border-b border-white/5">
-                            <td className="p-3 text-slate-400">State đơn giản</td>
-                            <td className="p-3">✅ Lý tưởng</td>
-                            <td className="p-3">Overkill</td>
-                        </tr>
-                        <tr className="border-b border-white/5">
-                            <td className="p-3 text-slate-400">State phức tạp</td>
-                            <td className="p-3">Khó maintain</td>
-                            <td className="p-3">✅ Lý tưởng</td>
-                        </tr>
-                        <tr className="border-b border-white/5">
-                            <td className="p-3 text-slate-400">Testing</td>
-                            <td className="p-3">Phải test component</td>
-                            <td className="p-3">✅ Test reducer riêng</td>
-                        </tr>
-                        <tr>
-                            <td className="p-3 text-slate-400">Debugging</td>
-                            <td className="p-3">Trung bình</td>
-                            <td className="p-3">✅ Action log rõ ràng</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                <div className="my-6 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead>
+                            <tr className="border-b border-white/10">
+                                <th className="text-left p-3 text-slate-400 font-medium">Tiêu chí</th>
+                                <th className="text-left p-3 text-blue-400 font-medium">useState</th>
+                                <th className="text-left p-3 text-purple-400 font-medium">useReducer</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-slate-300">
+                            <tr className="border-b border-white/5">
+                                <td className="p-3 text-slate-400">State đơn giản</td>
+                                <td className="p-3">✅ Lý tưởng</td>
+                                <td className="p-3">Overkill</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3 text-slate-400">State phức tạp</td>
+                                <td className="p-3">Khó maintain</td>
+                                <td className="p-3">✅ Lý tưởng</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3 text-slate-400">Testing</td>
+                                <td className="p-3">Phải test component</td>
+                                <td className="p-3">✅ Test reducer riêng</td>
+                            </tr>
+                            <tr>
+                                <td className="p-3 text-slate-400">Debugging</td>
+                                <td className="p-3">Trung bình</td>
+                                <td className="p-3">✅ Action log rõ ràng</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            {/* ===== useLayoutEffect ===== */}
-            <Heading2>8. useLayoutEffect — Chạy trước paint</Heading2>
+                {/* ===== useLayoutEffect ===== */}
+                <Heading2>8. useLayoutEffect — Chạy trước paint</Heading2>
 
-            <Paragraph>
-                Giống <InlineCode>useEffect</InlineCode> nhưng chạy <Highlight>đồng bộ sau DOM update, trước browser paint</Highlight>.
-                Dùng khi cần đo DOM hoặc tránh flickering.
-            </Paragraph>
+                <Paragraph>
+                    Giống <InlineCode>useEffect</InlineCode> nhưng chạy <Highlight>đồng bộ sau DOM update, trước browser paint</Highlight>.
+                    Dùng khi cần đo DOM hoặc tránh flickering.
+                </Paragraph>
 
-            <CodeBlock title="useLayoutEffect.tsx">{`import { useLayoutEffect, useRef, useState } from 'react'
+                <CodeBlock title="useLayoutEffect.tsx">{`import { useLayoutEffect, useRef, useState } from 'react'
 
 function Tooltip({ children }) {
     const ref = useRef<HTMLDivElement>(null)
@@ -432,25 +438,25 @@ function Tooltip({ children }) {
     )
 }`}</CodeBlock>
 
-            <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
-                    <div className="text-blue-400 font-bold text-sm mb-2">useEffect</div>
-                    <div className="text-slate-300 text-sm">Render → Paint → Effect (async)</div>
-                    <div className="text-slate-400 text-xs mt-1">99% trường hợp dùng cái này</div>
+                <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
+                        <div className="text-blue-400 font-bold text-sm mb-2">useEffect</div>
+                        <div className="text-slate-300 text-sm">Render → Paint → Effect (async)</div>
+                        <div className="text-slate-400 text-xs mt-1">99% trường hợp dùng cái này</div>
+                    </div>
+                    <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/20 p-4">
+                        <div className="text-yellow-400 font-bold text-sm mb-2">useLayoutEffect</div>
+                        <div className="text-slate-300 text-sm">Render → Effect (sync) → Paint</div>
+                        <div className="text-slate-400 text-xs mt-1">Chỉ dùng khi đo DOM / tránh flicker</div>
+                    </div>
                 </div>
-                <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/20 p-4">
-                    <div className="text-yellow-400 font-bold text-sm mb-2">useLayoutEffect</div>
-                    <div className="text-slate-300 text-sm">Render → Effect (sync) → Paint</div>
-                    <div className="text-slate-400 text-xs mt-1">Chỉ dùng khi đo DOM / tránh flicker</div>
-                </div>
-            </div>
 
-            {/* ===== React 18/19 Hooks ===== */}
-            <Heading2>9. Hooks mới (React 18+)</Heading2>
+                {/* ===== React 18/19 Hooks ===== */}
+                <Heading2>9. Hooks mới (React 18+)</Heading2>
 
-            <Heading3>useId — Tạo ID duy nhất</Heading3>
+                <Heading3>useId — Tạo ID duy nhất</Heading3>
 
-            <CodeBlock title="useId.tsx">{`import { useId } from 'react'
+                <CodeBlock title="useId.tsx">{`import { useId } from 'react'
 
 function FormField({ label }) {
     const id = useId() // Tạo ID unique, SSR-safe
@@ -463,9 +469,9 @@ function FormField({ label }) {
     )
 }`}</CodeBlock>
 
-            <Heading3>useTransition — UI không bị block</Heading3>
+                <Heading3>useTransition — UI không bị block</Heading3>
 
-            <CodeBlock title="useTransition.tsx">{`import { useTransition, useState } from 'react'
+                <CodeBlock title="useTransition.tsx">{`import { useTransition, useState } from 'react'
 
 function SearchPage() {
     const [query, setQuery] = useState('')
@@ -491,9 +497,9 @@ function SearchPage() {
     )
 }`}</CodeBlock>
 
-            <Heading3>useActionState — Form handling (React 19)</Heading3>
+                <Heading3>useActionState — Form handling (React 19)</Heading3>
 
-            <CodeBlock title="useActionState.tsx">{`import { useActionState } from 'react'
+                <CodeBlock title="useActionState.tsx">{`import { useActionState } from 'react'
 
 async function submitForm(prevState, formData) {
     const name = formData.get('name')
@@ -518,74 +524,74 @@ function MyForm() {
     )
 }`}</CodeBlock>
 
-            {/* ===== Lifecycle Comparison ===== */}
-            <Heading2>10. So sánh Hooks vs Class Lifecycle</Heading2>
+                {/* ===== Lifecycle Comparison ===== */}
+                <Heading2>10. So sánh Hooks vs Class Lifecycle</Heading2>
 
-            <Paragraph>
-                Đây là bảng so sánh toàn diện giữa <Highlight>Lifecycle methods</Highlight> của Class Component
-                và <Highlight>Hooks</Highlight> tương đương trong Function Component:
-            </Paragraph>
+                <Paragraph>
+                    Đây là bảng so sánh toàn diện giữa <Highlight>Lifecycle methods</Highlight> của Class Component
+                    và <Highlight>Hooks</Highlight> tương đương trong Function Component:
+                </Paragraph>
 
-            <div className="my-6 overflow-x-auto">
-                <table className="w-full text-sm border-collapse">
-                    <thead>
-                        <tr className="border-b border-white/10">
-                            <th className="text-left p-3 text-yellow-400 font-medium">Class Lifecycle</th>
-                            <th className="text-left p-3 text-blue-400 font-medium">Hook tương đương</th>
-                            <th className="text-left p-3 text-slate-400 font-medium">Ghi chú</th>
-                        </tr>
-                    </thead>
-                    <tbody className="text-slate-300">
-                        <tr className="border-b border-white/5">
-                            <td className="p-3"><InlineCode>constructor</InlineCode></td>
-                            <td className="p-3"><InlineCode>useState(initialValue)</InlineCode></td>
-                            <td className="p-3">Khởi tạo state</td>
-                        </tr>
-                        <tr className="border-b border-white/5">
-                            <td className="p-3"><InlineCode>componentDidMount</InlineCode></td>
-                            <td className="p-3"><InlineCode>useEffect(fn, [])</InlineCode></td>
-                            <td className="p-3">Chạy 1 lần sau mount</td>
-                        </tr>
-                        <tr className="border-b border-white/5">
-                            <td className="p-3"><InlineCode>componentDidUpdate</InlineCode></td>
-                            <td className="p-3"><InlineCode>useEffect(fn, [deps])</InlineCode></td>
-                            <td className="p-3">Chạy khi deps thay đổi</td>
-                        </tr>
-                        <tr className="border-b border-white/5">
-                            <td className="p-3"><InlineCode>componentWillUnmount</InlineCode></td>
-                            <td className="p-3"><InlineCode>useEffect(() =&gt; cleanup, [])</InlineCode></td>
-                            <td className="p-3">Return cleanup function</td>
-                        </tr>
-                        <tr className="border-b border-white/5">
-                            <td className="p-3"><InlineCode>shouldComponentUpdate</InlineCode></td>
-                            <td className="p-3"><InlineCode>React.memo</InlineCode></td>
-                            <td className="p-3">Memo wrapper (không phải hook)</td>
-                        </tr>
-                        <tr className="border-b border-white/5">
-                            <td className="p-3"><InlineCode>getDerivedStateFromProps</InlineCode></td>
-                            <td className="p-3">Tính toán trong render</td>
-                            <td className="p-3">Không cần hook riêng</td>
-                        </tr>
-                        <tr className="border-b border-white/5">
-                            <td className="p-3"><InlineCode>getSnapshotBeforeUpdate</InlineCode></td>
-                            <td className="p-3"><InlineCode>useLayoutEffect</InlineCode></td>
-                            <td className="p-3">Chạy trước paint</td>
-                        </tr>
-                        <tr>
-                            <td className="p-3"><InlineCode>this.setState</InlineCode></td>
-                            <td className="p-3"><InlineCode>setState từ useState</InlineCode></td>
-                            <td className="p-3">Cập nhật state</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                <div className="my-6 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead>
+                            <tr className="border-b border-white/10">
+                                <th className="text-left p-3 text-yellow-400 font-medium">Class Lifecycle</th>
+                                <th className="text-left p-3 text-blue-400 font-medium">Hook tương đương</th>
+                                <th className="text-left p-3 text-slate-400 font-medium">Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-slate-300">
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>constructor</InlineCode></td>
+                                <td className="p-3"><InlineCode>useState(initialValue)</InlineCode></td>
+                                <td className="p-3">Khởi tạo state</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>componentDidMount</InlineCode></td>
+                                <td className="p-3"><InlineCode>useEffect(fn, [])</InlineCode></td>
+                                <td className="p-3">Chạy 1 lần sau mount</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>componentDidUpdate</InlineCode></td>
+                                <td className="p-3"><InlineCode>useEffect(fn, [deps])</InlineCode></td>
+                                <td className="p-3">Chạy khi deps thay đổi</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>componentWillUnmount</InlineCode></td>
+                                <td className="p-3"><InlineCode>useEffect(() =&gt; cleanup, [])</InlineCode></td>
+                                <td className="p-3">Return cleanup function</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>shouldComponentUpdate</InlineCode></td>
+                                <td className="p-3"><InlineCode>React.memo</InlineCode></td>
+                                <td className="p-3">Memo wrapper (không phải hook)</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>getDerivedStateFromProps</InlineCode></td>
+                                <td className="p-3">Tính toán trong render</td>
+                                <td className="p-3">Không cần hook riêng</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>getSnapshotBeforeUpdate</InlineCode></td>
+                                <td className="p-3"><InlineCode>useLayoutEffect</InlineCode></td>
+                                <td className="p-3">Chạy trước paint</td>
+                            </tr>
+                            <tr>
+                                <td className="p-3"><InlineCode>this.setState</InlineCode></td>
+                                <td className="p-3"><InlineCode>setState từ useState</InlineCode></td>
+                                <td className="p-3">Cập nhật state</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            <Heading3>Ví dụ so sánh trực tiếp</Heading3>
+                <Heading3>Ví dụ so sánh trực tiếp</Heading3>
 
-            <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/20 p-4">
-                    <div className="text-yellow-400 font-bold text-sm mb-3">🏛️ Class Component</div>
-                    <CodeBlock title="ClassTimer.tsx">{`class Timer extends React.Component {
+                <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/20 p-4">
+                        <div className="text-yellow-400 font-bold text-sm mb-3">🏛️ Class Component</div>
+                        <CodeBlock title="ClassTimer.tsx">{`class Timer extends React.Component {
     state = { count: 0 }
     intervalId = null
 
@@ -605,10 +611,10 @@ function MyForm() {
         return <p>{this.state.count}s</p>
     }
 }`}</CodeBlock>
-                </div>
-                <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
-                    <div className="text-blue-400 font-bold text-sm mb-3">🪝 Function + Hooks</div>
-                    <CodeBlock title="HookTimer.tsx">{`function Timer() {
+                    </div>
+                    <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
+                        <div className="text-blue-400 font-bold text-sm mb-3">🪝 Function + Hooks</div>
+                        <CodeBlock title="HookTimer.tsx">{`function Timer() {
     const [count, setCount] = useState(0)
 
     useEffect(() => {
@@ -623,72 +629,217 @@ function MyForm() {
 
     return <p>{count}s</p>
 }`}</CodeBlock>
+                    </div>
                 </div>
-            </div>
 
-            <Callout type="info">
-                Hooks component ngắn hơn ~40%, logic liên quan gom lại một chỗ (setup + cleanup cùng useEffect),
-                thay vì rải rác qua nhiều lifecycle methods.
-            </Callout>
+                <Callout type="info">
+                    Hooks component ngắn hơn ~40%, logic liên quan gom lại một chỗ (setup + cleanup cùng useEffect),
+                    thay vì rải rác qua nhiều lifecycle methods.
+                </Callout>
 
-            {/* ===== Quy tắc ===== */}
-            <Heading2>11. Quy tắc sử dụng Hooks</Heading2>
+                {/* ===== Quy tắc ===== */}
+                <Heading2>11. Quy tắc sử dụng Hooks</Heading2>
 
-            <div className="my-6 space-y-3">
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                    <span className="text-red-400 mt-0.5">❌</span>
-                    <span className="text-slate-300">Không gọi Hooks trong điều kiện (<InlineCode>if</InlineCode>), vòng lặp (<InlineCode>for</InlineCode>), hoặc nested functions</span>
+                <div className="my-6 space-y-3">
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-slate-300">Không gọi Hooks trong điều kiện (<InlineCode>if</InlineCode>), vòng lặp (<InlineCode>for</InlineCode>), hoặc nested functions</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-slate-300">Không gọi Hooks trong Class Component hoặc regular JavaScript functions</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <span className="text-green-400 mt-0.5">✅</span>
+                        <span className="text-slate-300">Chỉ gọi Hooks ở top level của Function Component hoặc custom Hook</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <span className="text-green-400 mt-0.5">✅</span>
+                        <span className="text-slate-300">Custom Hook phải bắt đầu bằng <InlineCode>use</InlineCode> (ví dụ: <InlineCode>useAuth</InlineCode>, <InlineCode>useFetch</InlineCode>)</span>
+                    </div>
                 </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                    <span className="text-red-400 mt-0.5">❌</span>
-                    <span className="text-slate-300">Không gọi Hooks trong Class Component hoặc regular JavaScript functions</span>
-                </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                    <span className="text-green-400 mt-0.5">✅</span>
-                    <span className="text-slate-300">Chỉ gọi Hooks ở top level của Function Component hoặc custom Hook</span>
-                </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                    <span className="text-green-400 mt-0.5">✅</span>
-                    <span className="text-slate-300">Custom Hook phải bắt đầu bằng <InlineCode>use</InlineCode> (ví dụ: <InlineCode>useAuth</InlineCode>, <InlineCode>useFetch</InlineCode>)</span>
-                </div>
-            </div>
 
-            {/* ===== Tóm tắt ===== */}
-            <Heading2>📌 Tóm tắt</Heading2>
+                {/* ===== Tóm tắt ===== */}
+                <Heading2>📌 Tóm tắt</Heading2>
 
-            <div className="my-6 space-y-3">
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
-                    <span className="text-blue-400 mt-0.5">🔵</span>
-                    <span className="text-slate-300"><Highlight>useState</Highlight> — state đơn giản, re-render khi thay đổi</span>
+                <div className="my-6 space-y-3">
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
+                        <span className="text-blue-400 mt-0.5">🔵</span>
+                        <span className="text-slate-300"><Highlight>useState</Highlight> — state đơn giản, re-render khi thay đổi</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
+                        <span className="text-blue-400 mt-0.5">⚡</span>
+                        <span className="text-slate-300"><Highlight>useEffect</Highlight> — side effects (API, timers, subscriptions)</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
+                        <span className="text-blue-400 mt-0.5">📌</span>
+                        <span className="text-slate-300"><Highlight>useRef</Highlight> — DOM ref hoặc giá trị không gây re-render</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
+                        <span className="text-blue-400 mt-0.5">🧠</span>
+                        <span className="text-slate-300"><Highlight>useMemo / useCallback</Highlight> — performance optimization</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
+                        <span className="text-blue-400 mt-0.5">🌐</span>
+                        <span className="text-slate-300"><Highlight>useContext</Highlight> — global state, tránh prop drilling</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
+                        <span className="text-blue-400 mt-0.5">🔄</span>
+                        <span className="text-slate-300"><Highlight>useReducer</Highlight> — state phức tạp, Redux-like pattern</span>
+                    </div>
                 </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
-                    <span className="text-blue-400 mt-0.5">⚡</span>
-                    <span className="text-slate-300"><Highlight>useEffect</Highlight> — side effects (API, timers, subscriptions)</span>
-                </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
-                    <span className="text-blue-400 mt-0.5">📌</span>
-                    <span className="text-slate-300"><Highlight>useRef</Highlight> — DOM ref hoặc giá trị không gây re-render</span>
-                </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
-                    <span className="text-blue-400 mt-0.5">🧠</span>
-                    <span className="text-slate-300"><Highlight>useMemo / useCallback</Highlight> — performance optimization</span>
-                </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
-                    <span className="text-blue-400 mt-0.5">🌐</span>
-                    <span className="text-slate-300"><Highlight>useContext</Highlight> — global state, tránh prop drilling</span>
-                </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
-                    <span className="text-blue-400 mt-0.5">🔄</span>
-                    <span className="text-slate-300"><Highlight>useReducer</Highlight> — state phức tạp, Redux-like pattern</span>
-                </div>
-            </div>
 
-            <Callout type="tip">
-                Bắt đầu với <InlineCode>useState</InlineCode> + <InlineCode>useEffect</InlineCode> — đây là 2 hooks
-                cần thiết cho 90% trường hợp. Chỉ thêm các hooks khác khi thực sự cần optimize hoặc logic phức tạp.
-            </Callout>
-        </>
-    ),
+                <Callout type="tip">
+                    Bắt đầu với <InlineCode>useState</InlineCode> + <InlineCode>useEffect</InlineCode> — đây là 2 hooks
+                    cần thiết cho 90% trường hợp. Chỉ thêm các hooks khác khi thực sự cần optimize hoặc logic phức tạp.
+                </Callout>
+            </>
+        ),
+        en: (
+            <>
+                <Paragraph>
+                    <Highlight>React Hooks</Highlight> were introduced in React 16.8 (2019), allowing you to use state and other React features in <Highlight>Function Components</Highlight> — no more class components needed.
+                </Paragraph>
+
+                <Callout type="info">
+                    This article covers every Hook in detail with best practices and comparisons to Class Component lifecycle methods.
+                </Callout>
+
+                <Heading2>1. useState — State Management</Heading2>
+                <Paragraph>
+                    <InlineCode>useState</InlineCode> is the most basic Hook — lets a component &quot;remember&quot; data between renders.
+                    Use callback form <InlineCode>setCount(prev =&gt; prev + 1)</InlineCode> to avoid stale closures.
+                </Paragraph>
+
+                <Heading2>2. useEffect — Side Effects</Heading2>
+                <Paragraph>
+                    <InlineCode>useEffect</InlineCode> handles side effects: API calls, subscriptions, timers. It runs <Highlight>after render</Highlight>.
+                    Three dependency array patterns: no array (every render), empty <InlineCode>[]</InlineCode> (mount only), <InlineCode>[deps]</InlineCode> (when deps change).
+                </Paragraph>
+                <Callout type="warning">
+                    Always return a cleanup function for timers, subscriptions, and event listeners to avoid memory leaks!
+                </Callout>
+
+                <Heading2>3. useRef — References Without Re-render</Heading2>
+                <Paragraph>
+                    <InlineCode>useRef</InlineCode> creates a mutable &quot;box&quot; that <Highlight>doesn&apos;t cause re-renders</Highlight> when changed.
+                    Use for DOM element access or persisting values across renders.
+                </Paragraph>
+
+                <Heading2>4. useMemo — Memoize Values</Heading2>
+                <Paragraph>
+                    <InlineCode>useMemo</InlineCode> caches computed values, only recalculating when dependencies change.
+                    Use for <Highlight>expensive computations</Highlight> only — don&apos;t over-optimize.
+                </Paragraph>
+
+                <Heading2>5. useCallback — Memoize Functions</Heading2>
+                <Paragraph>
+                    <InlineCode>useCallback</InlineCode> memoizes function references — prevents creating new functions each render.
+                    Useful when passing callbacks to <Highlight>memoized child components</Highlight>.
+                </Paragraph>
+
+                <Heading2>6. useContext — Global Data Sharing</Heading2>
+                <Paragraph>
+                    <InlineCode>useContext</InlineCode> lets child components access data from parent components <Highlight>without prop drilling</Highlight>.
+                    Combine with <InlineCode>useReducer</InlineCode> for simple global state management.
+                </Paragraph>
+
+                <Heading2>7. useReducer — Complex State</Heading2>
+                <Paragraph>
+                    <InlineCode>useReducer</InlineCode> replaces <InlineCode>useState</InlineCode> when state has <Highlight>complex logic</Highlight>,
+                    multiple sub-values, or next state depends on previous state. Redux-like pattern.
+                </Paragraph>
+
+                <Heading2>8. useLayoutEffect — Before Paint</Heading2>
+                <Paragraph>
+                    Like <InlineCode>useEffect</InlineCode> but runs <Highlight>synchronously after DOM update, before browser paint</Highlight>.
+                    Use for DOM measurement or avoiding visual flickering. 99% of the time, use <InlineCode>useEffect</InlineCode> instead.
+                </Paragraph>
+
+                <Heading2>9. Newer Hooks (React 18+)</Heading2>
+                <Paragraph>
+                    <InlineCode>useId</InlineCode> — generates unique, SSR-safe IDs.
+                    <InlineCode>useTransition</InlineCode> — marks state updates as non-blocking for better UX.
+                    <InlineCode>useActionState</InlineCode> (React 19) — streamlined form handling with server actions.
+                </Paragraph>
+
+                <Heading2>10. Hooks vs Class Lifecycle</Heading2>
+                <div className="my-6 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead>
+                            <tr className="border-b border-white/10">
+                                <th className="text-left p-3 text-yellow-400 font-medium">Class Lifecycle</th>
+                                <th className="text-left p-3 text-blue-400 font-medium">Hook Equivalent</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-slate-300">
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>constructor</InlineCode></td>
+                                <td className="p-3"><InlineCode>useState(initialValue)</InlineCode></td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>componentDidMount</InlineCode></td>
+                                <td className="p-3"><InlineCode>useEffect(fn, [])</InlineCode></td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>componentDidUpdate</InlineCode></td>
+                                <td className="p-3"><InlineCode>useEffect(fn, [deps])</InlineCode></td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>componentWillUnmount</InlineCode></td>
+                                <td className="p-3"><InlineCode>useEffect(() =&gt; cleanup, [])</InlineCode></td>
+                            </tr>
+                            <tr>
+                                <td className="p-3"><InlineCode>shouldComponentUpdate</InlineCode></td>
+                                <td className="p-3"><InlineCode>React.memo</InlineCode></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <Heading2>11. Rules of Hooks</Heading2>
+                <div className="my-6 space-y-3">
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-slate-300">Don&apos;t call Hooks inside conditions, loops, or nested functions</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <span className="text-green-400 mt-0.5">✅</span>
+                        <span className="text-slate-300">Only call Hooks at the top level of Function Components or custom Hooks</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <span className="text-green-400 mt-0.5">✅</span>
+                        <span className="text-slate-300">Custom Hooks must start with <InlineCode>use</InlineCode> (e.g., <InlineCode>useAuth</InlineCode>, <InlineCode>useFetch</InlineCode>)</span>
+                    </div>
+                </div>
+
+                <Heading2>📌 Summary</Heading2>
+                <div className="my-6 space-y-3">
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
+                        <span className="text-blue-400 mt-0.5">🔵</span>
+                        <span className="text-slate-300"><Highlight>useState</Highlight> — simple state, re-renders on change</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
+                        <span className="text-blue-400 mt-0.5">⚡</span>
+                        <span className="text-slate-300"><Highlight>useEffect</Highlight> — side effects (APIs, timers, subscriptions)</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
+                        <span className="text-blue-400 mt-0.5">📌</span>
+                        <span className="text-slate-300"><Highlight>useRef</Highlight> — DOM refs or values without re-render</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
+                        <span className="text-blue-400 mt-0.5">🧠</span>
+                        <span className="text-slate-300"><Highlight>useMemo / useCallback</Highlight> — performance optimization</span>
+                    </div>
+                </div>
+
+                <Callout type="tip">
+                    Start with <InlineCode>useState</InlineCode> + <InlineCode>useEffect</InlineCode> — these 2 hooks cover 90% of use cases.
+                    Only add other hooks when you truly need optimization or complex logic.
+                </Callout>
+            </>
+        ),
+    },
 }
 
 export default reactHooks
