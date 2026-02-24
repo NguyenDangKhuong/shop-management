@@ -182,7 +182,7 @@ export function TweetSearch() {
                     </div>
 
                     {/* Tags - always visible on desktop, toggle on mobile */}
-                    <div className={`${tagsExpanded ? 'mt-2' : 'hidden'} md:flex flex-wrap gap-2`}>
+                    <div className={`${tagsExpanded ? 'mt-2 flex' : 'hidden'} md:flex flex-wrap gap-2`}>
 
                         {users.map((user) => (
                             <div
