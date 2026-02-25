@@ -2,6 +2,10 @@ import { BlogPost } from '../types'
 import { CodeBlock, Heading2, Heading3, Paragraph, Highlight, InlineCode, Callout } from '../components/BlogComponents'
 import { TopicModal } from '../components/TopicModal'
 
+/** Chuyển tên bài LeetCode thành slug URL, ví dụ: "167. Two Sum II - Input Array Is Sorted" → "two-sum-ii-input-array-is-sorted" */
+const toLeetCodeSlug = (name: string) =>
+    name.split('. ').slice(1).join('. ').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
 const viContent = (
     <>
         <Paragraph>
@@ -1002,12 +1006,12 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>
                     {[
-                        ['Easy', ['167. Two Sum II', '26. Remove Duplicates', '283. Move Zeroes', '344. Reverse String', '977. Squares of Sorted Array']],
+                        ['Easy', ['167. Two Sum II - Input Array Is Sorted', '26. Remove Duplicates from Sorted Array', '283. Move Zeroes', '344. Reverse String', '977. Squares of a Sorted Array']],
                         ['Medium', ['15. 3Sum', '11. Container With Most Water', '75. Sort Colors', '142. Linked List Cycle II', '238. Product of Array Except Self']],
                     ].map(([level, problems]) => (
                         <div key={level as string} className="p-2.5 rounded-lg bg-slate-800/40 border border-white/5">
                             <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : 'text-yellow-400'}`}>{level as string}</div>
-                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${(p as string).split('. ')[1]?.toLowerCase().replace(/ /g, '-')}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
+                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
                     ))}
                 </div>
@@ -1020,12 +1024,12 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>
                     {[
                         ['Easy', ['643. Maximum Average Subarray I', '219. Contains Duplicate II']],
-                        ['Medium', ['3. Longest Substring Without Repeating', '424. Longest Repeating Character Replacement', '567. Permutation in String', '209. Minimum Size Subarray Sum', '438. Find All Anagrams']],
+                        ['Medium', ['3. Longest Substring Without Repeating Characters', '424. Longest Repeating Character Replacement', '567. Permutation in String', '209. Minimum Size Subarray Sum', '438. Find All Anagrams in a String']],
                         ['Hard', ['76. Minimum Window Substring', '239. Sliding Window Maximum']],
                     ].map(([level, problems]) => (
                         <div key={level as string} className="p-2.5 rounded-lg bg-slate-800/40 border border-white/5">
                             <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : level === 'Medium' ? 'text-yellow-400' : 'text-red-400'}`}>{level as string}</div>
-                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${(p as string).split('. ')[1]?.toLowerCase().replace(/ /g, '-')}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
+                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
                     ))}
                 </div>
@@ -1038,12 +1042,12 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>
                     {[
                         ['Easy', ['104. Maximum Depth of Binary Tree', '226. Invert Binary Tree', '100. Same Tree', '572. Subtree of Another Tree', '617. Merge Two Binary Trees']],
-                        ['Medium', ['102. Binary Tree Level Order (BFS)', '200. Number of Islands (DFS)', '133. Clone Graph', '207. Course Schedule', '547. Number of Provinces', '994. Rotting Oranges']],
-                        ['Hard', ['124. Binary Tree Maximum Path Sum', '297. Serialize/Deserialize Binary Tree']],
+                        ['Medium', ['102. Binary Tree Level Order Traversal', '200. Number of Islands', '133. Clone Graph', '207. Course Schedule', '547. Number of Provinces', '994. Rotting Oranges']],
+                        ['Hard', ['124. Binary Tree Maximum Path Sum', '297. Serialize and Deserialize Binary Tree']],
                     ].map(([level, problems]) => (
                         <div key={level as string} className="p-2.5 rounded-lg bg-slate-800/40 border border-white/5">
                             <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : level === 'Medium' ? 'text-yellow-400' : 'text-red-400'}`}>{level as string}</div>
-                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${(p as string).split('. ')[1]?.toLowerCase().replace(/[()]/g, '').replace(/ /g, '-')}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
+                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
                     ))}
                 </div>
@@ -1056,11 +1060,11 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>
                     {[
                         ['Easy', ['704. Binary Search', '35. Search Insert Position', '278. First Bad Version']],
-                        ['Medium', ['33. Search in Rotated Sorted Array', '153. Find Minimum in Rotated', '74. Search a 2D Matrix', '875. Koko Eating Bananas', '34. Find First and Last Position']],
+                        ['Medium', ['33. Search in Rotated Sorted Array', '153. Find Minimum in Rotated Sorted Array', '74. Search a 2D Matrix', '875. Koko Eating Bananas', '34. Find First and Last Position of Element in Sorted Array']],
                     ].map(([level, problems]) => (
                         <div key={level as string} className="p-2.5 rounded-lg bg-slate-800/40 border border-white/5">
                             <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : 'text-yellow-400'}`}>{level as string}</div>
-                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${(p as string).split('. ')[1]?.toLowerCase().replace(/ /g, '-')}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
+                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
                     ))}
                 </div>
@@ -1071,12 +1075,12 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode gợi ý:</div>
                     {[
-                        ['Easy', ['70. Climbing Stairs', '746. Min Cost Climbing Stairs', '338. Counting Bits', '121. Best Time to Buy Stock']],
+                        ['Easy', ['70. Climbing Stairs', '746. Min Cost Climbing Stairs', '338. Counting Bits', '121. Best Time to Buy and Sell Stock']],
                         ['Medium', ['198. House Robber', '322. Coin Change', '300. Longest Increasing Subsequence', '152. Maximum Product Subarray', '62. Unique Paths', '139. Word Break', '5. Longest Palindromic Substring']],
                     ].map(([level, problems]) => (
                         <div key={level as string} className="p-2.5 rounded-lg bg-slate-800/40 border border-white/5">
                             <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : 'text-yellow-400'}`}>{level as string}</div>
-                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${(p as string).split('. ')[1]?.toLowerCase().replace(/ /g, '-')}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
+                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
                     ))}
                 </div>
@@ -1088,12 +1092,12 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>
                     {[
-                        ['Medium', ['78. Subsets', '46. Permutations', '39. Combination Sum', '77. Combinations', '22. Generate Parentheses', '79. Word Search', '17. Letter Combinations of Phone']],
+                        ['Medium', ['78. Subsets', '46. Permutations', '39. Combination Sum', '77. Combinations', '22. Generate Parentheses', '79. Word Search', '17. Letter Combinations of a Phone Number']],
                         ['Hard', ['51. N-Queens', '37. Sudoku Solver']],
                     ].map(([level, problems]) => (
                         <div key={level as string} className="p-2.5 rounded-lg bg-slate-800/40 border border-white/5">
                             <div className={`text-xs font-bold mb-1 ${level === 'Medium' ? 'text-yellow-400' : 'text-red-400'}`}>{level as string}</div>
-                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${(p as string).split('. ')[1]?.toLowerCase().replace(/ /g, '-')}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
+                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
                     ))}
                 </div>
@@ -1105,13 +1109,13 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>
                     {[
-                        ['Easy', ['20. Valid Parentheses', '155. Min Stack', '232. Queue using Stacks', '844. Backspace String Compare']],
-                        ['Medium', ['150. Evaluate Reverse Polish', '739. Daily Temperatures', '394. Decode String', '735. Asteroid Collision', '853. Car Fleet']],
+                        ['Easy', ['20. Valid Parentheses', '155. Min Stack', '232. Implement Queue using Stacks', '844. Backspace String Compare']],
+                        ['Medium', ['150. Evaluate Reverse Polish Notation', '739. Daily Temperatures', '394. Decode String', '735. Asteroid Collision', '853. Car Fleet']],
                         ['Hard', ['84. Largest Rectangle in Histogram']],
                     ].map(([level, problems]) => (
                         <div key={level as string} className="p-2.5 rounded-lg bg-slate-800/40 border border-white/5">
                             <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : level === 'Medium' ? 'text-yellow-400' : 'text-red-400'}`}>{level as string}</div>
-                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${(p as string).split('. ')[1]?.toLowerCase().replace(/ /g, '-')}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
+                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
                     ))}
                 </div>
