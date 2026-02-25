@@ -180,6 +180,16 @@ div { border-color: rgba(255,255,255,0.1) !important; }
       video.appendChild(source);
       container.appendChild(video);
       a.parentNode.replaceChild(container, a);
+      // Fix sibling div with padding-bottom:100% that forces square
+      var grandparent = container.parentElement && container.parentElement.parentElement;
+      if (grandparent) {
+        var siblings = grandparent.querySelectorAll('div');
+        siblings.forEach(function(sib) {
+          if (sib.style.paddingBottom && sib.style.paddingBottom.indexOf('100') !== -1) {
+            sib.style.paddingBottom = (info.h / info.w * 100).toFixed(2) + '%';
+          }
+        });
+      }
     });
   }
 
