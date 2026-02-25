@@ -211,11 +211,38 @@ div { border-color: rgba(255,255,255,0.1) !important; }
     });
   }
 
+  // Add copy button next to @usernames
+  function addCopyButtons() {
+    document.querySelectorAll('span').forEach(function(span) {
+      if (span.dataset.copyAdded) return;
+      var text = span.textContent || '';
+      if (!text.match(/^@[a-zA-Z0-9_]+$/) || span.closest('[data-copy-btn]')) return;
+      span.dataset.copyAdded = '1';
+      var btn = document.createElement('span');
+      btn.dataset.copyBtn = '1';
+      btn.textContent = '📋';
+      btn.style.cssText = 'cursor:pointer;font-size:10px;margin-left:4px;opacity:0.4;vertical-align:middle;';
+      btn.onmouseover = function() { btn.style.opacity = '1'; };
+      btn.onmouseout = function() { btn.style.opacity = '0.4'; };
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        navigator.clipboard.writeText(text).then(function() {
+          btn.textContent = '✓';
+          setTimeout(function() { btn.textContent = '📋'; }, 1000);
+        });
+        return false;
+      };
+      span.parentNode.insertBefore(btn, span.nextSibling);
+    });
+  }
+
   // Wait for Twitter JS to render DOM, then replace
   var attempts = 0;
   var replacer = setInterval(function() {
     replaceVideos();
     stripLinks();
+    addCopyButtons();
     attempts++;
     if (attempts > 20) clearInterval(replacer);
   }, 500);
