@@ -173,7 +173,7 @@ div { border-color: rgba(255,255,255,0.1) !important; }
       video.controls = true;
       video.preload = 'metadata';
       video.poster = src;
-      video.style.cssText = 'width:100%;display:block;border-radius:12px;aspect-ratio:' + info.w + '/' + info.h + ';object-fit:cover;';
+      video.style.cssText = 'width:100%;display:block;border-radius:12px;aspect-ratio:' + info.w + '/' + info.h + ';';
       var source = document.createElement('source');
       source.src = '/api/tweets/video?url=' + encodeURIComponent(info.url);
       source.type = 'video/mp4';
