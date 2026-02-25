@@ -14,13 +14,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const autoPostStatus = document.getElementById('autoPostStatus')
   const lastAutoPostEl = document.getElementById('lastAutoPost')
   const autoPostMinutes = document.getElementById('autoPostMinutes')
+  const autoRefreshToggle = document.getElementById('autoRefreshToggle')
+  const autoRefreshStatus = document.getElementById('autoRefreshStatus')
+  const autoRefreshMinutes = document.getElementById('autoRefreshMinutes')
 
 
   let capturedTokens = []
   let selectedIndex = null
 
-  // Load saved config, tokens, and auto-post state
-  chrome.storage.local.get(['apiUrl', 'capturedTokens', 'autoPostEnabled', 'lastAutoPost', 'autoPostMinutes', 'capturedSiteKey'], (result) => {
+  // Load saved config, tokens, and auto-post/refresh state
+  chrome.storage.local.get(['apiUrl', 'capturedTokens', 'autoPostEnabled', 'lastAutoPost', 'autoPostMinutes', 'capturedSiteKey', 'autoRefreshEnabled', 'autoRefreshMinutes'], (result) => {
     if (result.apiUrl) {
       apiUrlInput.value = result.apiUrl
     }
@@ -41,6 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
       updateLastAutoPost(result.lastAutoPost)
     }
 
+    if (result.autoRefreshEnabled) {
+      autoRefreshToggle.checked = true
+      autoRefreshStatus.textContent = 'ON'
+      autoRefreshStatus.style.color = '#4caf50'
+    }
+    if (result.autoRefreshMinutes) {
+      autoRefreshMinutes.value = result.autoRefreshMinutes
+    }
 
     // Load captured siteKey
     if (result.capturedSiteKey) {
@@ -313,6 +324,20 @@ document.addEventListener('DOMContentLoaded', () => {
         autoPostStatus.textContent = enabled ? 'ON' : 'OFF'
         autoPostStatus.style.color = enabled ? '#4caf50' : '#888'
         showToast(enabled ? `Auto-PUT enabled (every ${minutes}min)` : 'Auto-PUT disabled', 'success')
+      }
+    })
+  })
+
+  // Auto-refresh toggle handler
+  autoRefreshToggle.addEventListener('change', () => {
+    const enabled = autoRefreshToggle.checked
+    const minutes = parseInt(autoRefreshMinutes.value) || 5
+    chrome.storage.local.set({ autoRefreshMinutes: minutes })
+    chrome.runtime.sendMessage({ type: 'TOGGLE_AUTO_REFRESH', enabled, minutes }, (response) => {
+      if (response && response.success) {
+        autoRefreshStatus.textContent = enabled ? 'ON' : 'OFF'
+        autoRefreshStatus.style.color = enabled ? '#4caf50' : '#888'
+        showToast(enabled ? `Auto-Refresh enabled (every ${minutes}min)` : 'Auto-Refresh disabled', 'success')
       }
     })
   })
