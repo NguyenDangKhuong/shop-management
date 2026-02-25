@@ -327,6 +327,51 @@ for (var i = 0; i < 5; i++) {
                     </table>
                 </div>
                 <Paragraph><Highlight>Arrow function</Highlight> KHÔNG có this riêng — nó kế thừa this từ scope cha (lexical this). Đây là lý do arrow function phù hợp cho callbacks.</Paragraph>
+                <CodeBlock title="Ví dụ từng rule">{`// 1️⃣ Default binding — this = window (browser) / undefined (strict mode)
+function showThis() {
+    console.log(this);
+}
+showThis(); // window (non-strict) / undefined (strict)
+
+// 2️⃣ Implicit binding — this = object trước dấu chấm
+const user = {
+    name: 'Khuong',
+    greet() { console.log(this.name); }
+};
+user.greet(); // "Khuong" ✅
+const fn = user.greet;
+fn(); // undefined ❌ (bị mất context!)
+
+// 3️⃣ Explicit binding — call / apply / bind
+function greet(greeting) {
+    console.log(greeting + ', ' + this.name);
+}
+greet.call({ name: 'An' }, 'Hi');    // "Hi, An"
+greet.apply({ name: 'An' }, ['Hi']); // "Hi, An"
+const bound = greet.bind({ name: 'An' });
+bound('Hello'); // "Hello, An"
+
+// 4️⃣ new binding — this = object mới tạo
+function Person(name) {
+    this.name = name; // this = {} mới
+}
+const p = new Person('Binh');
+console.log(p.name); // "Binh"
+
+// 5️⃣ Arrow function — KHÔNG có this riêng
+const team = {
+    name: 'Frontend',
+    members: ['A', 'B'],
+    show() {
+        this.members.forEach((m) => {
+            console.log(m + ' thuộc ' + this.name);
+            // Arrow kế thừa this từ show() → team
+        });
+    }
+};
+team.show();
+// "A thuộc Frontend"
+// "B thuộc Frontend"`}</CodeBlock>
                 <Callout type="tip">Thứ tự ưu tiên: <strong>new &gt; explicit &gt; implicit &gt; default</strong>. Arrow function bỏ qua tất cả rules này.</Callout>
             </TopicModal>
 
