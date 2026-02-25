@@ -167,14 +167,13 @@ div { border-color: rgba(255,255,255,0.1) !important; }
 
       var isPortrait = info.h > info.w;
       var container = document.createElement('div');
-      container.style.cssText = 'position:relative;width:100%;border-radius:12px;overflow:hidden;' +
-        (isPortrait ? 'max-width:360px;margin:0 auto;' : '');
+      container.style.cssText = 'position:relative;width:100%;border-radius:12px;overflow:hidden;';
       var video = document.createElement('video');
       video.playsInline = true;
       video.controls = true;
       video.preload = 'metadata';
       video.poster = src;
-      video.style.cssText = 'width:100%;display:block;border-radius:12px;aspect-ratio:' + info.w + '/' + info.h + ';object-fit:contain;';
+      video.style.cssText = 'width:100%;display:block;border-radius:12px;aspect-ratio:' + info.w + '/' + info.h + ';object-fit:cover;';
       var source = document.createElement('source');
       source.src = '/api/tweets/video?url=' + encodeURIComponent(info.url);
       source.type = 'video/mp4';
