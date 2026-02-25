@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 
 export default function TweetsPage() {
     return (
-        <div className="bg-[#0a0a0a] text-slate-200 font-sans min-h-screen flex flex-col items-center p-4 md:p-8 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-900 via-[#0a0a0a] to-[#0a0a0a] relative">
+        <div className="bg-[#0a0a0a] text-slate-200 font-sans min-h-screen flex flex-col items-center px-0 py-4 md:p-8 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-900 via-[#0a0a0a] to-[#0a0a0a] relative">
             {/* Title */}
-            <div className="w-full max-w-3xl mx-auto mb-8 z-10">
+            <div className="w-full max-w-3xl mx-auto mb-8 z-10 px-4 md:px-0">
                 <div className="flex items-center gap-3 mb-2">
                     <span className="text-3xl">𝕏</span>
                     <h1 className="text-3xl md:text-4xl font-bold text-white">Tweets</h1>
