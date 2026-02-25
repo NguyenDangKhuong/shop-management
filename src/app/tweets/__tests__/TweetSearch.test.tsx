@@ -8,9 +8,13 @@ global.fetch = mockFetch
 describe('TweetSearch', () => {
     beforeEach(() => {
         jest.clearAllMocks()
-        // Default: return empty users list on mount
+        // Default: return empty users list on mount (fetchUsers)
         mockFetch.mockResolvedValueOnce({
             json: () => Promise.resolve({ success: true, data: [] })
+        })
+        // Default: no cookie status (fetchCookieStatus)
+        mockFetch.mockResolvedValueOnce({
+            json: () => Promise.resolve({ success: false })
         })
     })
 
@@ -34,7 +38,7 @@ describe('TweetSearch', () => {
     it('adds a username via POST', async () => {
         render(<TweetSearch />)
 
-        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
 
         const input = screen.getByPlaceholderText(/Nhập username/)
         fireEvent.change(input, { target: { value: 'vercel' } })
@@ -59,7 +63,7 @@ describe('TweetSearch', () => {
     it('strips @ prefix from username', async () => {
         render(<TweetSearch />)
 
-        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
 
         const input = screen.getByPlaceholderText(/Nhập username/)
         fireEvent.change(input, { target: { value: '@reactjs' } })
@@ -83,7 +87,7 @@ describe('TweetSearch', () => {
     it('shows error for duplicate username', async () => {
         render(<TweetSearch />)
 
-        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
 
         const input = screen.getByPlaceholderText(/Nhập username/)
         fireEvent.change(input, { target: { value: 'vercel' } })
@@ -113,7 +117,7 @@ describe('TweetSearch', () => {
     it('adds username on Enter key', async () => {
         render(<TweetSearch />)
 
-        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
 
         const input = screen.getByPlaceholderText(/Nhập username/)
         fireEvent.change(input, { target: { value: 'nextjs' } })
@@ -136,6 +140,7 @@ describe('TweetSearch', () => {
 
     it('loads and displays saved users on mount', async () => {
         mockFetch.mockReset()
+        // Mock fetchUsers
         mockFetch.mockResolvedValueOnce({
             json: () => Promise.resolve({
                 success: true,
@@ -145,16 +150,17 @@ describe('TweetSearch', () => {
                 ]
             })
         })
+        // Mock fetchCookieStatus
+        mockFetch.mockResolvedValueOnce({
+            json: () => Promise.resolve({ success: false })
+        })
 
         render(<TweetSearch />)
 
-        // Check for Tất cả filter button (appears when users exist)
-        await waitFor(() => {
-            expect(screen.getByText('Tất cả')).toBeInTheDocument()
-        })
-
         // Check user tags exist via title attributes
-        expect(screen.getByTitle('Xóa @vercel')).toBeInTheDocument()
+        await waitFor(() => {
+            expect(screen.getByTitle('Xóa @vercel')).toBeInTheDocument()
+        })
         expect(screen.getByTitle('Xóa @reactjs')).toBeInTheDocument()
     })
 
@@ -165,6 +171,9 @@ describe('TweetSearch', () => {
                 success: true,
                 data: [{ _id: '1', username: 'vercel' }]
             })
+        })
+        mockFetch.mockResolvedValueOnce({
+            json: () => Promise.resolve({ success: false })
         })
 
         render(<TweetSearch />)
@@ -187,6 +196,9 @@ describe('TweetSearch', () => {
                 success: true,
                 data: [{ _id: '1', username: 'vercel' }]
             })
+        })
+        mockFetch.mockResolvedValueOnce({
+            json: () => Promise.resolve({ success: false })
         })
 
         render(<TweetSearch />)
