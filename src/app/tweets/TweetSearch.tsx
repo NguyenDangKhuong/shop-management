@@ -128,7 +128,7 @@ export function TweetSearch() {
     return (
         <>
             {/* Add Input */}
-            <div className="w-full max-w-3xl mx-auto mb-6 z-10">
+            <div className="w-full max-w-3xl mx-auto mb-6 z-10 px-4 md:px-0">
                 <div className="flex gap-2">
                     <input
                         type="text"
@@ -211,7 +211,7 @@ export function TweetSearch() {
             )}
 
             {/* Timelines */}
-            <div className="w-full max-w-3xl mx-auto z-10 md:px-0 -mx-4 md:mx-auto">
+            <div className="w-full max-w-3xl mx-auto z-10 md:px-0">
                 {users.length > 0 ? (
                     <div className="space-y-6">
                         {displayUsers.map((user) => (
