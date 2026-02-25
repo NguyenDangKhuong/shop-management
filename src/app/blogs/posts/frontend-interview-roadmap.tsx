@@ -289,6 +289,28 @@ counter.increment(); // 2
 counter.getCount();  // 2
 // count KHÔNG truy cập trực tiếp được!`}</CodeBlock>
                 <Callout type="warning">Câu hỏi phỏng vấn kinh điển: &quot;Giải thích output của vòng for + setTimeout&quot; — đáp án liên quan đến closure + var vs let.</Callout>
+                <CodeBlock title="Ví dụ kinh điển: for + setTimeout">{`// ❌ Dùng var — in ra 5, 5, 5, 5, 5
+for (var i = 0; i < 5; i++) {
+    setTimeout(() => console.log(i), 100);
+}
+// Tại sao? var có function scope, không có block scope.
+// Khi setTimeout chạy, vòng for đã kết thúc, i = 5.
+// Tất cả 5 callback đều tham chiếu CÙNG MỘT biến i.
+
+// ✅ Dùng let — in ra 0, 1, 2, 3, 4
+for (let i = 0; i < 5; i++) {
+    setTimeout(() => console.log(i), 100);
+}
+// Tại sao? let có block scope — mỗi vòng lặp tạo
+// một biến i MỚI, callback closure "bắt" đúng giá trị.
+
+// ✅ Fix bằng IIFE (trước khi có let)
+for (var i = 0; i < 5; i++) {
+    (function(j) {
+        setTimeout(() => console.log(j), 100);
+    })(i);
+}
+// IIFE tạo scope mới, "copy" giá trị i vào j.`}</CodeBlock>
             </TopicModal>
 
             <TopicModal title="this keyword" emoji="👉" color="#f472b6" summary="4 rules binding: default, implicit, explicit, new">
