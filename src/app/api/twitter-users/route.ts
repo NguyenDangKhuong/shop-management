@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
-import connectDB from '@/utils/connectDb'
 import TwitterUserModel from '@/models/TwitterUser'
+import connectDB from '@/utils/connectDb'
+import { NextRequest, NextResponse } from 'next/server'
 
 // GET - Fetch all saved Twitter usernames
 export async function GET() {
@@ -35,7 +35,26 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: false, error: 'Username đã tồn tại' }, { status: 409 })
         }
 
-        const newUser = await TwitterUserModel.create({ username: clean })
+        // Fetch avatar from Twitter syndication (best-effort)
+        let avatarUrl = ''
+        try {
+            const res = await fetch(
+                `https://syndication.twitter.com/srv/timeline-profile/screen-name/${encodeURIComponent(clean)}?dnt=true&embedId=twitter-widget-0&theme=dark`,
+                {
+                    headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36' },
+                    signal: AbortSignal.timeout(5000),
+                }
+            )
+            if (res.ok) {
+                const html = await res.text()
+                const match = html.match(/https:\/\/pbs\.twimg\.com\/profile_images\/[^"\\]+/)
+                if (match) avatarUrl = match[0]
+            }
+        } catch {
+            // Avatar fetch failed — continue without it
+        }
+
+        const newUser = await TwitterUserModel.create({ username: clean, avatarUrl })
         return NextResponse.json({ success: true, data: newUser })
     } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Unknown error'
