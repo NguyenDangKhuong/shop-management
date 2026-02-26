@@ -28,10 +28,10 @@ export async function middleware(request: NextRequest) {
   const hostname = request.headers.get('host')?.split(':')[0] || ''
   const pathname = request.nextUrl.pathname
 
-  // 1. Domain chỉ cho phép /tweets — chặn tất cả page khác
+  // 1. Domain chỉ cho phép /tweets — redirect về /tweets
   if (TWEETS_ONLY_DOMAINS.includes(hostname)) {
     if (!pathname.startsWith('/tweets')) {
-      return NextResponse.rewrite(new URL('/not-found', request.url))
+      return NextResponse.redirect(new URL('/tweets', request.url))
     }
     return NextResponse.next()
   }
@@ -54,12 +54,24 @@ export async function middleware(request: NextRequest) {
 }
 
 /**
- * Matcher: match TẤT CẢ routes trừ static assets.
- * Logic phân quyền (auth vs public vs domain blocking) xử lý trong middleware code.
+ * Matcher: CHỈ match routes CẦN middleware để giảm Fast Origin Transfer.
+ * - Private paths (admin) → auth check
+ * - /tweets → domain blocking/routing
+ * - Public pages (blogs, landing, etc.) → KHÔNG chạy middleware
  */
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/carts/:path*',
+    '/categories/:path*',
+    '/facebook-posts/:path*',
+    '/orders/:path*',
+    '/products/:path*',
+    '/prompts/:path*',
+    '/tiktok-accounts/:path*',
+    '/tiktok-music/:path*',
+    '/veo3-tokens/:path*',
+    '/tweets/:path*',
+    '/shopee-links/:path*',
+    '/',
   ]
 }
-
