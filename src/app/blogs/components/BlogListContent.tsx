@@ -1,6 +1,8 @@
 'use client'
 
+import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { BlogPost } from '../types'
 import { useLang } from './LangContext'
 import LangSwitcher from './LangSwitcher'
@@ -8,6 +10,60 @@ import ThemeToggle from '@/components/ui/ThemeToggle'
 
 export function BlogListContent({ posts }: { posts: BlogPost[] }) {
     const { t, lang } = useLang()
+    const router = useRouter()
+    const [search, setSearch] = useState('')
+    const [isOpen, setIsOpen] = useState(false)
+    const [activeIndex, setActiveIndex] = useState(-1)
+    const wrapperRef = useRef<HTMLDivElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    const filtered = search.trim()
+        ? posts.filter((post) => {
+              const q = search.toLowerCase()
+              return (
+                  t(post.title).toLowerCase().includes(q) ||
+                  t(post.description).toLowerCase().includes(q) ||
+                  post.tags.some((tag) => tag.toLowerCase().includes(q))
+              )
+          })
+        : []
+
+    // Close dropdown on outside click
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+                setIsOpen(false)
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
+
+    const handleSelect = useCallback(
+        (slug: string) => {
+            setSearch('')
+            setIsOpen(false)
+            router.push(`/blogs/${slug}`)
+        },
+        [router]
+    )
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (!isOpen || filtered.length === 0) return
+        if (e.key === 'ArrowDown') {
+            e.preventDefault()
+            setActiveIndex((prev) => (prev < filtered.length - 1 ? prev + 1 : 0))
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault()
+            setActiveIndex((prev) => (prev > 0 ? prev - 1 : filtered.length - 1))
+        } else if (e.key === 'Enter' && activeIndex >= 0) {
+            e.preventDefault()
+            handleSelect(filtered[activeIndex].slug)
+        } else if (e.key === 'Escape') {
+            setIsOpen(false)
+            inputRef.current?.blur()
+        }
+    }
 
     return (
         <div className="bg-gray-50 dark:bg-[#0a0a0a] text-gray-800 dark:text-slate-200 font-sans min-h-screen flex flex-col items-center p-4 md:p-8 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-gray-100 dark:from-slate-900 via-gray-50 dark:via-[#0a0a0a] to-gray-50 dark:to-[#0a0a0a] relative transition-colors duration-300">
@@ -60,7 +116,7 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
             </header>
 
             {/* Title */}
-            <div className="w-full max-w-4xl mx-auto mb-10 z-10">
+            <div className="w-full max-w-4xl mx-auto mb-6 z-10">
                 <div className="flex items-center gap-3 mb-2">
                     <span className="text-3xl">📝</span>
                     <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
@@ -72,6 +128,81 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                         ? 'Chia sẻ kiến thức Frontend — JavaScript, React, TypeScript và nhiều hơn nữa.'
                         : 'Sharing Frontend knowledge — JavaScript, React, TypeScript and more.'}
                 </p>
+            </div>
+
+            {/* Search */}
+            <div className="w-full max-w-4xl mx-auto mb-8 z-30 relative" ref={wrapperRef}>
+                <div className="relative">
+                    <svg
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-500 pointer-events-none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="2"
+                        stroke="currentColor"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        value={search}
+                        onChange={(e) => {
+                            setSearch(e.target.value)
+                            setIsOpen(true)
+                            setActiveIndex(-1)
+                        }}
+                        onFocus={() => search.trim() && setIsOpen(true)}
+                        onKeyDown={handleKeyDown}
+                        placeholder={lang === 'vi' ? 'Tìm kiếm bài viết...' : 'Search posts...'}
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#38bdf8]/50 focus:border-[#38bdf8] dark:focus:border-[#38bdf8] transition-all duration-200 text-sm shadow-sm dark:shadow-none"
+                    />
+                    {search && (
+                        <button
+                            onClick={() => { setSearch(''); setIsOpen(false) }}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-gray-200 dark:bg-slate-600 flex items-center justify-center hover:bg-gray-300 dark:hover:bg-slate-500 transition text-gray-500 dark:text-slate-300 text-xs"
+                        >
+                            ✕
+                        </button>
+                    )}
+                </div>
+
+                {/* Dropdown Results */}
+                {isOpen && search.trim() && (
+                    <div className="absolute top-full left-0 right-0 mt-2 rounded-xl bg-white dark:bg-slate-800/95 border border-gray-200 dark:border-white/10 shadow-xl dark:shadow-2xl backdrop-blur-xl overflow-hidden max-h-80 overflow-y-auto">
+                        {filtered.length > 0 ? (
+                            filtered.map((post, idx) => (
+                                <button
+                                    key={post.slug}
+                                    onClick={() => handleSelect(post.slug)}
+                                    onMouseEnter={() => setActiveIndex(idx)}
+                                    className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors duration-100 ${
+                                        idx === activeIndex
+                                            ? 'bg-[#38bdf8]/10 dark:bg-[#38bdf8]/15'
+                                            : 'hover:bg-gray-50 dark:hover:bg-slate-700/40'
+                                    } ${idx > 0 ? 'border-t border-gray-100 dark:border-white/5' : ''}`}
+                                >
+                                    <span className="text-xl shrink-0">{post.emoji}</span>
+                                    <div className="min-w-0 flex-1">
+                                        <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                            {t(post.title)}
+                                        </div>
+                                        <div className="text-xs text-gray-400 dark:text-slate-500 flex items-center gap-2 mt-0.5">
+                                            <span>{post.date}</span>
+                                            <span>·</span>
+                                            <span>{post.tags.slice(0, 2).join(', ')}</span>
+                                        </div>
+                                    </div>
+                                    <span className="text-gray-300 dark:text-slate-600 text-xs shrink-0">↵</span>
+                                </button>
+                            ))
+                        ) : (
+                            <div className="px-4 py-6 text-center text-sm text-gray-400 dark:text-slate-500">
+                                {lang === 'vi' ? 'Không tìm thấy bài viết nào' : 'No posts found'}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* Blog Grid */}
