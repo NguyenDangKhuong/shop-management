@@ -8,35 +8,31 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-    isDarkMode: true,
+    isDarkMode: false,
     toggleTheme: () => { },
 })
 
-const STORAGE_KEY = 'theme-mode'
+const STORAGE_KEY = 'dashboard-theme-mode'
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const [isDarkMode, setIsDarkMode] = useState(true)
+    const [isDarkMode, setIsDarkMode] = useState(false)
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
         const saved = localStorage.getItem(STORAGE_KEY)
-        if (saved === 'light') {
-            setIsDarkMode(false)
-        } else if (saved === 'dark') {
+        if (saved === 'dark') {
             setIsDarkMode(true)
+            document.documentElement.classList.add('dark')
         }
-        // Default is dark (no saved preference = dark)
         setMounted(true)
     }, [])
 
-    // Sync dark class to <html> element
     useEffect(() => {
         if (!mounted) return
-        const root = document.documentElement
         if (isDarkMode) {
-            root.classList.add('dark')
+            document.documentElement.classList.add('dark')
         } else {
-            root.classList.remove('dark')
+            document.documentElement.classList.remove('dark')
         }
     }, [isDarkMode, mounted])
 
