@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import Link from 'next/link'
 import { BlogPost } from '../types'
 import { useLang } from './LangContext'
@@ -8,6 +9,19 @@ import ThemeToggle from '@/components/ui/ThemeToggle'
 
 export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; relatedPosts: BlogPost[] }) {
     const { t, lang } = useLang()
+
+    // Scroll to hash anchor on page load (for search deep-linking)
+    useEffect(() => {
+        const hash = window.location.hash.slice(1)
+        if (hash) {
+            // Small delay to allow content to render
+            const timer = setTimeout(() => {
+                const el = document.getElementById(hash)
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }, 100)
+            return () => clearTimeout(timer)
+        }
+    }, [])
 
     return (
         <div className="bg-gray-50 dark:bg-[#0a0a0a] text-gray-800 dark:text-slate-200 font-sans min-h-screen flex flex-col items-center p-4 md:p-8 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-gray-100 dark:from-slate-900 via-gray-50 dark:via-[#0a0a0a] to-gray-50 dark:to-[#0a0a0a] relative transition-colors duration-300">

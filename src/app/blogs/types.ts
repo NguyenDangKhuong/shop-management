@@ -11,4 +11,5 @@ export interface BlogPost {
     emoji: string
     color: string
     content: Record<Lang, React.ReactNode>
+    sections?: { id: string; title: Record<Lang, string> }[]
 }

@@ -7,6 +7,12 @@ import { BlogPost } from '../types'
 import { useLang } from './LangContext'
 import LangSwitcher from './LangSwitcher'
 import ThemeToggle from '@/components/ui/ThemeToggle'
+import { blogSections } from '../posts/sections'
+
+interface SearchResult {
+    post: BlogPost
+    matchedSections: { id: string; title: string }[]
+}
 
 export function BlogListContent({ posts }: { posts: BlogPost[] }) {
     const { t, lang } = useLang()
@@ -17,16 +23,35 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
     const wrapperRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
 
-    const filtered = search.trim()
-        ? posts.filter((post) => {
+    // Build flat list of search results: posts + matching sections
+    const results: SearchResult[] = search.trim()
+        ? posts.reduce<SearchResult[]>((acc, post) => {
               const q = search.toLowerCase()
-              return (
-                  t(post.title).toLowerCase().includes(q) ||
-                  t(post.description).toLowerCase().includes(q) ||
-                  post.tags.some((tag) => tag.toLowerCase().includes(q))
-              )
-          })
+              const titleMatch = t(post.title).toLowerCase().includes(q)
+              const descMatch = t(post.description).toLowerCase().includes(q)
+              const tagMatch = post.tags.some((tag) => tag.toLowerCase().includes(q))
+
+              // Check section matches
+              const sections = blogSections[post.slug] || []
+              const matchedSections = sections
+                  .filter((s) => s.title[lang].toLowerCase().includes(q))
+                  .map((s) => ({ id: s.id, title: s.title[lang] }))
+
+              if (titleMatch || descMatch || tagMatch || matchedSections.length > 0) {
+                  acc.push({ post, matchedSections })
+              }
+              return acc
+          }, [])
         : []
+
+    // Build flat navigation list for keyboard: each entry is either a post or a section
+    const navItems: { slug: string; hash?: string; label: string }[] = []
+    results.forEach((r) => {
+        navItems.push({ slug: r.post.slug, label: t(r.post.title) })
+        r.matchedSections.slice(0, 3).forEach((s) => {
+            navItems.push({ slug: r.post.slug, hash: s.id, label: s.title })
+        })
+    })
 
     // Close dropdown on outside click
     useEffect(() => {
@@ -39,26 +64,28 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
 
-    const handleSelect = useCallback(
-        (slug: string) => {
+    const handleNavigate = useCallback(
+        (slug: string, hash?: string) => {
             setSearch('')
             setIsOpen(false)
-            router.push(`/blogs/${slug}`)
+            const url = hash ? `/blogs/${slug}#${hash}` : `/blogs/${slug}`
+            router.push(url)
         },
         [router]
     )
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (!isOpen || filtered.length === 0) return
+        if (!isOpen || navItems.length === 0) return
         if (e.key === 'ArrowDown') {
             e.preventDefault()
-            setActiveIndex((prev) => (prev < filtered.length - 1 ? prev + 1 : 0))
+            setActiveIndex((prev) => (prev < navItems.length - 1 ? prev + 1 : 0))
         } else if (e.key === 'ArrowUp') {
             e.preventDefault()
-            setActiveIndex((prev) => (prev > 0 ? prev - 1 : filtered.length - 1))
+            setActiveIndex((prev) => (prev > 0 ? prev - 1 : navItems.length - 1))
         } else if (e.key === 'Enter' && activeIndex >= 0) {
             e.preventDefault()
-            handleSelect(filtered[activeIndex].slug)
+            const item = navItems[activeIndex]
+            handleNavigate(item.slug, item.hash)
         } else if (e.key === 'Escape') {
             setIsOpen(false)
             inputRef.current?.blur()
@@ -170,32 +197,61 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                 {/* Dropdown Results */}
                 {isOpen && search.trim() && (
                     <div className="absolute top-full left-0 right-0 mt-2 rounded-xl bg-white dark:bg-slate-800/95 border border-gray-200 dark:border-white/10 shadow-xl dark:shadow-2xl backdrop-blur-xl overflow-hidden max-h-80 overflow-y-auto">
-                        {filtered.length > 0 ? (
-                            filtered.map((post, idx) => (
-                                <button
-                                    key={post.slug}
-                                    onClick={() => handleSelect(post.slug)}
-                                    onMouseEnter={() => setActiveIndex(idx)}
-                                    className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors duration-100 ${
-                                        idx === activeIndex
-                                            ? 'bg-[#38bdf8]/10 dark:bg-[#38bdf8]/15'
-                                            : 'hover:bg-gray-50 dark:hover:bg-slate-700/40'
-                                    } ${idx > 0 ? 'border-t border-gray-100 dark:border-white/5' : ''}`}
-                                >
-                                    <span className="text-xl shrink-0">{post.emoji}</span>
-                                    <div className="min-w-0 flex-1">
-                                        <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                            {t(post.title)}
+                        {results.length > 0 ? (
+                            (() => {
+                                let navIndex = 0
+                                return results.map((result, rIdx) => {
+                                    const postNavIdx = navIndex++
+                                    const sectionItems = result.matchedSections.slice(0, 3)
+                                    return (
+                                        <div key={result.post.slug}>
+                                            {/* Post entry */}
+                                            <button
+                                                onClick={() => handleNavigate(result.post.slug)}
+                                                onMouseEnter={() => setActiveIndex(postNavIdx)}
+                                                className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors duration-100 ${
+                                                    postNavIdx === activeIndex
+                                                        ? 'bg-[#38bdf8]/10 dark:bg-[#38bdf8]/15'
+                                                        : 'hover:bg-gray-50 dark:hover:bg-slate-700/40'
+                                                } ${rIdx > 0 ? 'border-t border-gray-100 dark:border-white/5' : ''}`}
+                                            >
+                                                <span className="text-xl shrink-0">{result.post.emoji}</span>
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                                        {t(result.post.title)}
+                                                    </div>
+                                                    <div className="text-xs text-gray-400 dark:text-slate-500 flex items-center gap-2 mt-0.5">
+                                                        <span>{result.post.date}</span>
+                                                        <span>·</span>
+                                                        <span>{result.post.tags.slice(0, 2).join(', ')}</span>
+                                                    </div>
+                                                </div>
+                                                <span className="text-gray-300 dark:text-slate-600 text-xs shrink-0">↵</span>
+                                            </button>
+                                            {/* Section entries */}
+                                            {sectionItems.map((section) => {
+                                                const secNavIdx = navIndex++
+                                                return (
+                                                    <button
+                                                        key={section.id}
+                                                        onClick={() => handleNavigate(result.post.slug, section.id)}
+                                                        onMouseEnter={() => setActiveIndex(secNavIdx)}
+                                                        className={`w-full text-left pl-12 pr-4 py-2 flex items-center gap-2.5 transition-colors duration-100 ${
+                                                            secNavIdx === activeIndex
+                                                                ? 'bg-[#38bdf8]/10 dark:bg-[#38bdf8]/15'
+                                                                : 'hover:bg-gray-50 dark:hover:bg-slate-700/40'
+                                                        }`}
+                                                    >
+                                                        <span className="text-xs text-[#38bdf8] dark:text-[#38bdf8] shrink-0">§</span>
+                                                        <span className="text-xs text-gray-600 dark:text-slate-400 truncate">{section.title}</span>
+                                                        <span className="text-gray-300 dark:text-slate-600 text-xs shrink-0 ml-auto">↵</span>
+                                                    </button>
+                                                )
+                                            })}
                                         </div>
-                                        <div className="text-xs text-gray-400 dark:text-slate-500 flex items-center gap-2 mt-0.5">
-                                            <span>{post.date}</span>
-                                            <span>·</span>
-                                            <span>{post.tags.slice(0, 2).join(', ')}</span>
-                                        </div>
-                                    </div>
-                                    <span className="text-gray-300 dark:text-slate-600 text-xs shrink-0">↵</span>
-                                </button>
-                            ))
+                                    )
+                                })
+                            })()
                         ) : (
                             <div className="px-4 py-6 text-center text-sm text-gray-400 dark:text-slate-500">
                                 {lang === 'vi' ? 'Không tìm thấy bài viết nào' : 'No posts found'}
