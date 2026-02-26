@@ -16,8 +16,8 @@ const NotFoundPage = () => {
       title='404'
       subTitle='Sorry, the page you visited does not exist.'
       extra={
-        <Link href='/tweets'>
-          <Button type='primary'>Go to Tweets</Button>
+        <Link href='/'>
+          <Button type='primary'>Back to Home</Button>
         </Link>
       }
     />
