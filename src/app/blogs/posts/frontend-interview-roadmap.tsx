@@ -1,9 +1,10 @@
 import { BlogPost } from '../types'
 import { CodeBlock, Heading2, Heading3, Paragraph, Highlight, InlineCode, Callout } from '../components/BlogComponents'
 import { TopicModal } from '../components/TopicModal'
+import { enContent } from './frontend-interview-roadmap-en'
 
 /** Chuyển tên bài LeetCode thành slug URL, ví dụ: "167. Two Sum II - Input Array Is Sorted" → "two-sum-ii-input-array-is-sorted" */
-const toLeetCodeSlug = (name: string) =>
+export const toLeetCodeSlug = (name: string) =>
     name.split('. ').slice(1).join('. ').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
 const viContent = (
@@ -1400,9 +1401,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
     </>
 )
 
-// English content reuses the same interactive TopicModals as Vietnamese
-// All code examples, tables, and technical content are already in English
-const enContent = viContent
+// English content is imported from frontend-interview-roadmap-en.tsx
 
 
 const frontendInterviewRoadmap: BlogPost = {
