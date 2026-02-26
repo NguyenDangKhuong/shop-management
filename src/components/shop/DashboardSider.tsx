@@ -5,19 +5,21 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import {
-    BarChartOutlined,
-    BookOutlined,
-    FacebookOutlined,
-    FileTextOutlined,
-    KeyOutlined,
-    ShoppingCartOutlined,
-    ShoppingOutlined,
-    SoundOutlined,
-    TableOutlined,
-    TikTokOutlined,
-    UserOutlined
+  BarChartOutlined,
+  BookOutlined,
+  FacebookOutlined,
+  FileTextOutlined,
+  KeyOutlined,
+  ShoppingCartOutlined,
+  ShoppingOutlined,
+  SoundOutlined,
+  TableOutlined,
+  TikTokOutlined,
+  UserOutlined
 } from '@ant-design/icons'
 import { Layout, Menu } from 'antd'
+
+import { useThemeMode } from '@/contexts/ThemeContext'
 
 const { Sider } = Layout
 
@@ -33,6 +35,7 @@ interface TikTokAccount {
 const DashboardSider = ({ collapsed, onItemClick }: any) => {
   const pathname = usePathname()
   const [accounts, setAccounts] = useState<TikTokAccount[]>([])
+  const { isDarkMode } = useThemeMode()
 
   useEffect(() => {
     // Fetch TikTok accounts
@@ -62,7 +65,16 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
   }))
 
   return (
-    <Sider trigger={null} collapsedWidth='0' breakpoint='lg' collapsible collapsed={collapsed}>
+    <Sider
+      trigger={null}
+      collapsedWidth='0'
+      breakpoint='lg'
+      collapsible
+      collapsed={collapsed}
+      style={{
+        background: isDarkMode ? '#141414' : '#001529',
+      }}
+    >
       <Link href='/'>
         <img className='bg-white mb-5 w-full h-[65px] m-auto' src='/image/logo.png' alt='logo' />
       </Link>
@@ -71,6 +83,9 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
         mode='inline'
         defaultSelectedKeys={[pathname]}
         onClick={onItemClick}
+        style={{
+          background: isDarkMode ? '#141414' : undefined,
+        }}
         items={[
           {
             key: '/tiktok-accounts',
@@ -130,3 +145,4 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
 }
 
 export default DashboardSider
+

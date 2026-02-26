@@ -1,15 +1,16 @@
-import { UserOutlined } from '@ant-design/icons'
-import { Avatar, Dropdown, Flex, Layout, MenuProps, theme } from 'antd'
+'use client'
+
+import { MoonOutlined, SunOutlined, UserOutlined } from '@ant-design/icons'
+import { Avatar, Dropdown, Flex, Layout, MenuProps, Switch } from 'antd'
 
 import { logout } from '@/actions/auth'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
+import { useThemeMode } from '@/contexts/ThemeContext'
 
 const { Header } = Layout
 
 const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
-  const {
-    token: { colorBgContainer: _colorBgContainer }
-  } = theme.useToken()
+  const { isDarkMode, toggleTheme } = useThemeMode()
 
   const items: MenuProps['items'] = [
     {
@@ -38,8 +39,12 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
     <Header
       style={{
         padding: '0 24px',
-        background: 'linear-gradient(135deg, #0a1929 0%, #001e3c 50%, #0d47a1 100%)',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        background: isDarkMode
+          ? 'linear-gradient(135deg, #141414 0%, #1f1f1f 50%, #262626 100%)'
+          : 'linear-gradient(135deg, #0a1929 0%, #001e3c 50%, #0d47a1 100%)',
+        boxShadow: isDarkMode
+          ? '0 2px 8px rgba(0,0,0,0.4)'
+          : '0 2px 8px rgba(0,0,0,0.15)',
         position: 'sticky',
         top: 0,
         zIndex: 1000,
@@ -96,6 +101,12 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
           }} />
         </button>
         <Flex align='center' gap={16}>
+          <Switch
+            checked={isDarkMode}
+            onChange={toggleTheme}
+            checkedChildren={<MoonOutlined />}
+            unCheckedChildren={<SunOutlined />}
+          />
           <LanguageSwitcher />
           <Dropdown menu={{ items }}>
             <Avatar
