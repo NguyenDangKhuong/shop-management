@@ -1,7 +1,9 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer components {
   .glass-card {
-    @apply bg-[rgba(30,41,59,0.4)] backdrop-blur-xl border border-[rgba(255,255,255,0.1)] rounded-[2rem] p-6 lg:p-8;
+    @apply bg-white/80 dark:bg-[rgba(30,41,59,0.4)] backdrop-blur-xl border border-gray-200 dark:border-[rgba(255,255,255,0.1)] rounded-[2rem] p-6 lg:p-8;
   }
 }
