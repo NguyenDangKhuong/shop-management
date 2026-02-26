@@ -89,10 +89,10 @@ describe('LandingPage Component', () => {
         expect(a11yLabels.length).toBeGreaterThan(0)
     })
 
-    it('renders dark mode toggle', () => {
+    it('renders theme toggle button', () => {
         render(<LandingPage />)
 
-        expect(screen.getByText(/dark mode/i)).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /toggle.*mode|switch.*theme|dark.*mode|light.*mode/i })).toBeInTheDocument()
     })
 
     it('displays developer portrait image', () => {
