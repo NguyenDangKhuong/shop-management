@@ -1,5 +1,6 @@
 import { BlogPost } from '../types'
 import callbackPromiseAsyncAwait from './callback-promise-async-await'
+import coreWebVitals from './core-web-vitals'
 import csrSsrSsgIsr from './csr-ssr-ssg-isr'
 import eventLoop from './event-loop'
 import frontendInterviewRoadmap from './frontend-interview-roadmap'
@@ -18,6 +19,7 @@ export const blogPosts: BlogPost[] = [
     frontendInterviewRoadmap,
     reactHooks,
     reactPerformance,
+    coreWebVitals,
 ]
 
 
