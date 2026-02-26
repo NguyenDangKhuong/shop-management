@@ -1,5 +1,28 @@
 import React from 'react';
 
+// Extract text from ReactNode and generate a URL-safe slug
+function textToSlug(children: React.ReactNode): string {
+    const text = extractText(children)
+    return text
+        .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '') // strip emojis
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_]+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+}
+
+function extractText(node: React.ReactNode): string {
+    if (typeof node === 'string') return node
+    if (typeof node === 'number') return String(node)
+    if (Array.isArray(node)) return node.map(extractText).join('')
+    if (React.isValidElement(node) && node.props) {
+        return extractText((node.props as { children?: React.ReactNode }).children)
+    }
+    return ''
+}
+
 export const CodeBlock = ({ children, title }: { children: string; title?: string }) => (
     <div className="my-6 rounded-xl overflow-hidden border border-gray-200 dark:border-white/10">
         {title && (
@@ -13,17 +36,23 @@ export const CodeBlock = ({ children, title }: { children: string; title?: strin
     </div>
 )
 
-export const Heading2 = ({ children }: { children: React.ReactNode }) => (
-    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-10 mb-4 flex items-center gap-2">
-        {children}
-    </h2>
-)
+export const Heading2 = ({ children }: { children: React.ReactNode }) => {
+    const id = textToSlug(children)
+    return (
+        <h2 id={id} className="text-2xl font-bold text-gray-900 dark:text-white mt-10 mb-4 flex items-center gap-2 scroll-mt-8">
+            {children}
+        </h2>
+    )
+}
 
-export const Heading3 = ({ children }: { children: React.ReactNode }) => (
-    <h3 className="text-xl font-semibold text-[#9333ea] dark:text-[#c084fc] mt-8 mb-3">
-        {children}
-    </h3>
-)
+export const Heading3 = ({ children }: { children: React.ReactNode }) => {
+    const id = textToSlug(children)
+    return (
+        <h3 id={id} className="text-xl font-semibold text-[#9333ea] dark:text-[#c084fc] mt-8 mb-3 scroll-mt-8">
+            {children}
+        </h3>
+    )
+}
 
 export const Paragraph = ({ children }: { children: React.ReactNode }) => (
     <p className="text-gray-700 dark:text-slate-300 leading-relaxed mb-4">{children}</p>
