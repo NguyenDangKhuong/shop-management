@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
+import ThemeToggle from '@/components/ui/ThemeToggle'
 import { useTranslation } from '@/i18n'
 
 export default function LandingPage() {
@@ -14,26 +15,27 @@ export default function LandingPage() {
             <link rel="preconnect" href="https://images.unsplash.com" />
             <link rel="dns-prefetch" href="https://images.unsplash.com" />
 
-            <div className="bg-[#0a0a0a] text-slate-200 font-sans min-h-screen flex flex-col items-center p-4 md:p-8 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-900 via-[#0a0a0a] to-[#0a0a0a] relative">
+            <div className="bg-gray-50 dark:bg-[#0a0a0a] text-gray-800 dark:text-slate-200 font-sans min-h-screen flex flex-col items-center p-4 md:p-8 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-gray-100 dark:from-slate-900 via-gray-50 dark:via-[#0a0a0a] to-gray-50 dark:to-[#0a0a0a] relative transition-colors duration-300">
                 {/* Header with Login Button */}
                 <header className="w-full max-w-6xl mx-auto flex justify-between items-center mb-8 z-20">
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg">
                             Y
                         </div>
-                        <span className="font-bold text-xl tracking-tight text-white">
+                        <span className="font-bold text-xl tracking-tight text-gray-900 dark:text-white">
                             The<span className="text-[#38bdf8]">TapHoa</span>
                         </span>
                     </div>
 
                     <div className="flex items-center gap-3">
+                        <ThemeToggle />
                         <LanguageSwitcher />
                         <Link
                             href="/login"
-                            className="group relative px-6 py-2 rounded-full bg-slate-800/40 border border-white/10 overflow-hidden transition-all hover:border-[#38bdf8]/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]"
+                            className="group relative px-6 py-2 rounded-full bg-gray-100 dark:bg-slate-800/40 border border-gray-300 dark:border-white/10 overflow-hidden transition-all hover:border-[#38bdf8]/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]"
                         >
                             <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                            <span className="relative font-medium text-sm text-slate-300 group-hover:text-white flex items-center gap-2">
+                            <span className="relative font-medium text-sm text-gray-600 dark:text-slate-300 group-hover:text-gray-900 dark:group-hover:text-white flex items-center gap-2">
                                 {t('landing.login')}
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -63,21 +65,21 @@ export default function LandingPage() {
                                 <div className="absolute -top-20 -left-20 w-64 h-64 bg-[#38bdf8]/20 rounded-full blur-3xl -z-10"></div>
 
                                 <div className="flex-1 space-y-4">
-                                    <span className="text-slate-400 font-medium">{t('landing.heroSection')}</span>
-                                    <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+                                    <span className="text-gray-500 dark:text-slate-400 font-medium">{t('landing.heroSection')}</span>
+                                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
                                         {t('landing.heroGreeting')} <span className="text-[#c084fc]">{t('landing.heroName')}</span>.<br />
                                         {t('landing.heroSub')}
                                     </h1>
                                     <div className="pt-4 flex flex-wrap gap-3">
                                         <Link
                                             href="/projects"
-                                            className="inline-block px-6 py-3 rounded-full bg-slate-800/50 border border-[#38bdf8]/50 text-white font-semibold transition hover:bg-[#38bdf8]/20 shadow-[0_0_15px_rgba(56,189,248,0.3)]"
+                                            className="inline-block px-6 py-3 rounded-full bg-gray-100 dark:bg-slate-800/50 border border-[#38bdf8]/50 text-gray-900 dark:text-white font-semibold transition hover:bg-[#38bdf8]/20 shadow-[0_0_15px_rgba(56,189,248,0.3)]"
                                         >
                                             {t('landing.viewProjects')}
                                         </Link>
                                         <Link
                                             href="/blogs"
-                                            className="inline-block px-6 py-3 rounded-full bg-slate-800/50 border border-[#c084fc]/50 text-white font-semibold transition hover:bg-[#c084fc]/20 shadow-[0_0_15px_rgba(192,132,252,0.3)]"
+                                            className="inline-block px-6 py-3 rounded-full bg-gray-100 dark:bg-slate-800/50 border border-[#c084fc]/50 text-gray-900 dark:text-white font-semibold transition hover:bg-[#c084fc]/20 shadow-[0_0_15px_rgba(192,132,252,0.3)]"
                                         >
                                             📝 Blog
                                         </Link>
@@ -85,7 +87,7 @@ export default function LandingPage() {
                                 </div>
 
                                 <div className="relative shrink-0">
-                                    <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-slate-700/50 shadow-[0_0_15px_rgba(192,132,252,0.3)]">
+                                    <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-gray-300 dark:border-slate-700/50 shadow-[0_0_15px_rgba(192,132,252,0.3)]">
                                         <Image
                                             src="/image/home/avatar.jpg"
                                             alt="Khuong - Developer Portrait"
@@ -104,27 +106,27 @@ export default function LandingPage() {
                             <div className="glass-card flex-1 space-y-6 relative overflow-hidden">
                                 <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-[#c084fc]/10 rounded-full blur-3xl -z-10"></div>
 
-                                <h2 className="text-xl font-semibold text-white">{t('landing.about')}</h2>
-                                <p className="text-slate-400 max-w-2xl">
+                                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{t('landing.about')}</h2>
+                                <p className="text-gray-500 dark:text-slate-400 max-w-2xl">
                                     {t('landing.aboutText')}
                                 </p>
 
                                 <div className="pt-8 pb-4">
-                                    <div className="relative h-1 bg-slate-700/50 rounded-full">
+                                    <div className="relative h-1 bg-gray-300 dark:bg-slate-700/50 rounded-full">
                                         <div className="absolute top-0 left-0 h-full w-[70%] bg-gradient-to-r from-[#38bdf8] to-[#c084fc] rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)]"></div>
 
                                         <div className="absolute -top-1 left-[0%] w-3 h-3 bg-[#38bdf8] rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)]"></div>
                                         <div className="absolute -top-1 left-[30%] w-3 h-3 bg-[#38bdf8] rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)]"></div>
                                         <div className="absolute -top-1 left-[70%] w-3 h-3 bg-[#c084fc] rounded-full shadow-[0_0_15px_rgba(192,132,252,0.3)]"></div>
-                                        <div className="absolute -top-1 left-[100%] w-3 h-3 bg-slate-600 rounded-full"></div>
+                                        <div className="absolute -top-1 left-[100%] w-3 h-3 bg-gray-400 dark:bg-slate-600 rounded-full"></div>
 
-                                        <div className="absolute top-4 left-0 text-xs text-slate-500">2018</div>
-                                        <div className="absolute top-4 left-[30%] text-xs text-slate-500">2022</div>
+                                        <div className="absolute top-4 left-0 text-xs text-gray-400 dark:text-slate-500">2018</div>
+                                        <div className="absolute top-4 left-[30%] text-xs text-gray-400 dark:text-slate-500">2022</div>
                                         <div className="absolute top-4 left-[70%] -translate-x-1/2 text-center text-xs text-[#c084fc] font-bold">
                                             {t('landing.present')}<br />
                                             {t('landing.skiller')}
                                         </div>
-                                        <div className="absolute top-4 right-0 text-xs text-slate-500">2030</div>
+                                        <div className="absolute top-4 right-0 text-xs text-gray-400 dark:text-slate-500">2030</div>
                                     </div>
                                 </div>
                             </div>
@@ -134,7 +136,7 @@ export default function LandingPage() {
                         <div className="flex flex-col gap-6">
                             {/* Tech Stack */}
                             <div className="glass-card space-y-4">
-                                <h2 className="text-xl font-semibold text-white">{t('landing.techStack')}</h2>
+                                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{t('landing.techStack')}</h2>
                                 <div className="flex flex-wrap gap-3">
                                     <TechIcon name="React" color="#61DAFB">
                                         <ReactIcon />
@@ -156,7 +158,7 @@ export default function LandingPage() {
 
                             {/* Featured Project */}
                             <div className="glass-card p-0 overflow-hidden group cursor-pointer">
-                                <div className="bg-slate-800/50 h-40 w-full relative flex items-center justify-center overflow-hidden">
+                                <div className="bg-gray-200 dark:bg-slate-800/50 h-40 w-full relative flex items-center justify-center overflow-hidden">
                                     <Image
                                         src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&auto=format&fit=crop"
                                         alt="Project Mockup"
@@ -170,17 +172,17 @@ export default function LandingPage() {
                                 </div>
 
                                 <div className="p-6 space-y-3">
-                                    <h3 className="text-lg font-semibold text-white group-hover:text-[#38bdf8] transition">
+                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-[#38bdf8] transition">
                                         {t('landing.featuredProject')}
                                     </h3>
                                     <div className="flex flex-wrap gap-2">
-                                        <span className="px-2 py-1 text-xs rounded-full bg-slate-700/50 text-slate-300 border border-white/10">
+                                        <span className="px-2 py-1 text-xs rounded-full bg-gray-200 dark:bg-slate-700/50 text-gray-600 dark:text-slate-300 border border-gray-300 dark:border-white/10">
                                             React
                                         </span>
-                                        <span className="px-2 py-1 text-xs rounded-full bg-slate-700/50 text-slate-300 border border-white/10">
+                                        <span className="px-2 py-1 text-xs rounded-full bg-gray-200 dark:bg-slate-700/50 text-gray-600 dark:text-slate-300 border border-gray-300 dark:border-white/10">
                                             Next.js
                                         </span>
-                                        <span className="px-2 py-1 text-xs rounded-full bg-slate-700/50 text-slate-300 border border-white/10">
+                                        <span className="px-2 py-1 text-xs rounded-full bg-gray-200 dark:bg-slate-700/50 text-gray-600 dark:text-slate-300 border border-gray-300 dark:border-white/10">
                                             TypeScript
                                         </span>
                                     </div>
@@ -188,7 +190,7 @@ export default function LandingPage() {
                                         <Link href="/products" className="text-[#38bdf8] hover:underline">
                                             {t('landing.liveDemo')}
                                         </Link>
-                                        <Link href="/login" className="text-slate-400 hover:text-white hover:underline">
+                                        <Link href="/login" className="text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:underline">
                                             {t('landing.adminPanel')}
                                         </Link>
                                     </div>
@@ -198,28 +200,28 @@ export default function LandingPage() {
                             {/* Contact & Performance Stats */}
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="glass-card space-y-3 flex flex-col justify-center">
-                                    <h2 className="text-base font-semibold text-white">{t('landing.contact')}</h2>
+                                    <h2 className="text-base font-semibold text-gray-900 dark:text-white">{t('landing.contact')}</h2>
                                     <a
                                         href="mailto:nguyendangkhuong96@gmail.com"
-                                        className="text-sm text-slate-400 flex items-center gap-2 hover:text-[#38bdf8] transition"
+                                        className="text-sm text-gray-500 dark:text-slate-400 flex items-center gap-2 hover:text-[#38bdf8] transition"
                                     >
                                         <EmailIcon />
                                     </a>
-                                    <div className="flex gap-3 text-slate-400 pt-1">
-                                        <a href="#" className="hover:text-white transition">
+                                    <div className="flex gap-3 text-gray-500 dark:text-slate-400 pt-1">
+                                        <a href="#" className="hover:text-gray-900 dark:hover:text-white transition">
                                             <InstagramIcon />
                                         </a>
-                                        <a href="#" className="hover:text-white transition">
+                                        <a href="#" className="hover:text-gray-900 dark:hover:text-white transition">
                                             <TwitterIcon />
                                         </a>
-                                        <a href="https://github.com/NguyenDangKhuong" className="hover:text-white transition">
+                                        <a href="https://github.com/NguyenDangKhuong" className="hover:text-gray-900 dark:hover:text-white transition">
                                             <GitHubIcon />
                                         </a>
                                     </div>
                                 </div>
 
                                 <div className="glass-card space-y-3 flex flex-col justify-center items-center">
-                                    <h2 className="text-sm font-semibold text-white w-full text-left">{t('landing.performanceStats')}</h2>
+                                    <h2 className="text-sm font-semibold text-gray-900 dark:text-white w-full text-left">{t('landing.performanceStats')}</h2>
                                     <div className="flex gap-2">
                                         <PerformanceBadge score="100" label="SEO" />
                                         <PerformanceBadge score="100" label="PERF" />
@@ -227,34 +229,26 @@ export default function LandingPage() {
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Dark Mode Toggle */}
-                            <div className="glass-card flex items-center justify-between py-4">
-                                <span className="font-medium text-white">{t('landing.darkMode')}</span>
-                                <div className="w-14 h-8 bg-[#38bdf8]/20 rounded-full p-1 relative border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.3)] cursor-pointer">
-                                    <div className="w-6 h-6 bg-[#38bdf8] rounded-full shadow-sm absolute right-1 transition-all"></div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </main>
 
                 {/* Footer with Terms and Privacy Policy */}
-                <footer className="w-full max-w-6xl mx-auto mt-12 pt-8 pb-6 border-t border-slate-700/50 z-20">
+                <footer className="w-full max-w-6xl mx-auto mt-12 pt-8 pb-6 border-t border-gray-300 dark:border-slate-700/50 z-20">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
-                        <p className="text-slate-400">
+                        <p className="text-gray-500 dark:text-slate-400">
                             {t('landing.footer')}
                         </p>
                         <div className="flex items-center gap-6">
                             <Link
                                 href="/privacy"
-                                className="text-slate-400 hover:text-[#38bdf8] transition-colors underline"
+                                className="text-gray-500 dark:text-slate-400 hover:text-[#38bdf8] transition-colors underline"
                             >
                                 {t('landing.privacy')}
                             </Link>
                             <Link
                                 href="/terms"
-                                className="text-slate-400 hover:text-[#38bdf8] transition-colors underline"
+                                className="text-gray-500 dark:text-slate-400 hover:text-[#38bdf8] transition-colors underline"
                             >
                                 {t('landing.terms')}
                             </Link>
@@ -264,8 +258,8 @@ export default function LandingPage() {
 
                 {/* Background Gradients - Optimized */}
                 <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
-                    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[100px]" />
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[100px]" />
+                    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/5 dark:bg-blue-600/10 rounded-full blur-[100px]" />
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/5 dark:bg-purple-600/10 rounded-full blur-[100px]" />
                 </div>
             </div>
         </>
@@ -276,7 +270,7 @@ export default function LandingPage() {
 function TechIcon({ children, name }: { children: React.ReactNode; name: string; color: string }) {
     return (
         <div
-            className="w-14 h-14 rounded-2xl bg-slate-800/80 border border-white/20 flex items-center justify-center p-2 hover:scale-110 transition-transform shadow-sm"
+            className="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-slate-800/80 border border-gray-300 dark:border-white/20 flex items-center justify-center p-2 hover:scale-110 transition-transform shadow-sm"
             title={name}
         >
             {children}
@@ -309,7 +303,7 @@ function ReactIcon() {
 
 function NextJsIcon() {
     return (
-        <svg className="w-full h-full text-white fill-current" viewBox="0 0 128 128">
+        <svg className="w-full h-full text-gray-900 dark:text-white fill-current" viewBox="0 0 128 128">
             <path d="M64 0C28.7 0 0 28.7 0 64s28.7 64 64 64 64-28.7 64-64S99.3 0 64 0zm23 100.6L49.7 47.9H41v37.8h8.6v-27l33.1 46.5h10.3V42.3H87v58.3zM64 118c-29.8 0-54-24.2-54-54S34.2 10 64 10s54 24.2 54 54-24.2 54-54 54z"></path>
         </svg>
     )
