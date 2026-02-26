@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { DELETE, GET, PATCH, POST } from '@/app/api/twitter-users/route'
+import { DELETE, GET, POST } from '@/app/api/twitter-users/route'
 import { NextRequest } from 'next/server'
 
 // Mock connectDb
@@ -11,7 +11,6 @@ jest.mock('@/utils/connectDb', () => jest.fn().mockResolvedValue(undefined))
 const mockSort = jest.fn()
 const mockFindOne = jest.fn()
 const mockCreate = jest.fn()
-const mockFindByIdAndUpdate = jest.fn()
 const mockFindByIdAndDelete = jest.fn()
 
 jest.mock('@/models/TwitterUser', () => ({
@@ -20,7 +19,6 @@ jest.mock('@/models/TwitterUser', () => ({
         find: () => ({ sort: mockSort }),
         findOne: (...args: unknown[]) => mockFindOne(...args),
         create: (...args: unknown[]) => mockCreate(...args),
-        findByIdAndUpdate: (...args: unknown[]) => mockFindByIdAndUpdate(...args),
         findByIdAndDelete: (...args: unknown[]) => mockFindByIdAndDelete(...args),
     }
 }))
@@ -71,7 +69,7 @@ describe('Twitter Users API', () => {
             const data = await response.json()
 
             expect(data.success).toBe(true)
-            expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({ username: 'vercel' }))
+            expect(mockCreate).toHaveBeenCalledWith({ username: 'vercel' })
         })
 
         it('returns 409 for duplicate', async () => {
@@ -140,22 +138,6 @@ describe('Twitter Users API', () => {
 
             const response = await DELETE(request)
             expect(response.status).toBe(404)
-        })
-    })
-
-    describe('PATCH', () => {
-        it('refreshes avatars for all users', async () => {
-            const mockSort2 = jest.fn()
-            const TwitterUserModel = (await import('@/models/TwitterUser')).default
-            jest.spyOn(TwitterUserModel, 'find').mockResolvedValueOnce([
-                { _id: '1', username: 'vercel', avatarUrl: '' },
-            ] as never)
-            mockFindByIdAndUpdate.mockResolvedValue({})
-
-            const response = await PATCH()
-            const data = await response.json()
-
-            expect(data.success).toBe(true)
         })
     })
 })
