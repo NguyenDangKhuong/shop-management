@@ -5,8 +5,8 @@ const theme: ThemeConfig = {
   token: {
     fontSize: 16,
     // colorPrimary: 'blue',
-    colorBorder: '#000000'
   }
 }
 
 export default theme
+
