@@ -406,21 +406,227 @@ console.log('4'); // Call Stack
                 <Callout type="tip">This is the #1 JS interview question. Always remember: <Highlight>Sync → Microtask → Macrotask</Highlight>.</Callout>
             </TopicModal>
 
-            <TopicModal title="Async/Await & Promises" emoji="⚡" color="#fbbf24" summary="Promise.all, race, allSettled, error handling">
-                <Paragraph><Highlight>Promise</Highlight> = an object representing a future value. 3 states: <InlineCode>pending</InlineCode> → <InlineCode>fulfilled</InlineCode> / <InlineCode>rejected</InlineCode>.</Paragraph>
-                <Paragraph><InlineCode>async/await</InlineCode> is syntactic sugar — lets you write async code that looks synchronous.</Paragraph>
+            <TopicModal title="Async/Await & Promises" emoji="⚡" color="#fbbf24" summary="What is a Promise, 3 states, Promise.all/race/allSettled, async/await, error handling">
+                <Paragraph><Highlight>Promise</Highlight> is an object representing the eventual result (success or failure) of an asynchronous operation (like API calls, file reads). It solves the <Highlight>&quot;callback hell&quot;</Highlight> problem by providing <InlineCode>.then()</InlineCode> and <InlineCode>.catch()</InlineCode> syntax for cleaner, more maintainable code.</Paragraph>
+
+                <Heading3>3 States of a Promise</Heading3>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">⏳ Pending (Waiting)</div>
+                        <div className="text-slate-300 text-sm mt-1">Initial state — the async operation has not completed yet. The Promise is still &quot;waiting&quot; for a result.</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">✅ Fulfilled / Resolved (Success)</div>
+                        <div className="text-slate-300 text-sm mt-1">The operation completed successfully, the Promise has a result (value). Triggers the callback in <InlineCode>.then()</InlineCode>.</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">❌ Rejected (Failed)</div>
+                        <div className="text-slate-300 text-sm mt-1">The operation failed, the Promise returns an error (reason). Triggers the callback in <InlineCode>.catch()</InlineCode>.</div>
+                    </div>
+                </div>
+
+                <Heading3>How It Works</Heading3>
+                <CodeBlock title="Creating and using a Promise">{`const myPromise = new Promise((resolve, reject) => {
+  // Perform async operation
+  let success = true;
+  if (success) {
+    resolve("Data received"); // → Fulfilled
+  } else {
+    reject("Something failed"); // → Rejected
+  }
+});
+
+myPromise
+  .then((data) => console.log(data))   // Handle success
+  .catch((error) => console.error(error)) // Handle error
+  .finally(() => console.log("Done")); // Runs regardless`}</CodeBlock>
+
+                <Heading3>async/await — Syntactic Sugar</Heading3>
+                <Paragraph><InlineCode>async/await</InlineCode> was introduced in ES2017. It lets you write async code that looks synchronous — much easier to read and debug than <InlineCode>.then()</InlineCode> chains.</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">async — Marks a function as asynchronous</div>
+                        <div className="text-slate-300 text-sm mt-1">• Adding <InlineCode>async</InlineCode> before a function → it <strong>always returns a Promise</strong><br />• If you return a plain value, JS auto-wraps it as <InlineCode>Promise.resolve(value)</InlineCode><br />• If you throw an error, JS auto-wraps it as <InlineCode>Promise.reject(error)</InlineCode></div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">await — Pauses and waits for Promise to resolve</div>
+                        <div className="text-slate-300 text-sm mt-1">• <InlineCode>await</InlineCode> can only be used <strong>inside async functions</strong> (or top-level modules)<br />• When hitting <InlineCode>await</InlineCode>, JS <strong>pauses</strong> that function, returns control to the Event Loop<br />• When the Promise resolves → JS <strong>resumes</strong> from the next line<br />• When the Promise rejects → throws an error (catch with <InlineCode>try/catch</InlineCode>)</div>
+                    </div>
+                </div>
+
+                <CodeBlock title="async keyword explained">{`// async functions ALWAYS return a Promise
+async function getNumber() {
+  return 42; // Auto-wrapped → Promise.resolve(42)
+}
+getNumber().then(n => console.log(n)); // 42
+
+// Equivalent to:
+function getNumber() {
+  return Promise.resolve(42);
+}
+
+// async + throw = Promise.reject
+async function failHard() {
+  throw new Error("Oops!"); // → Promise.reject(Error("Oops!"))
+}
+failHard().catch(err => console.log(err.message)); // "Oops!"`}</CodeBlock>
+
+                <CodeBlock title="How await works">{`async function fetchUser() {
+  console.log("1. Starting fetch");
+
+  // await PAUSES the function here
+  // Event Loop keeps running, handling other tasks
+  const res = await fetch('/api/user'); // ⏸️ waiting...
+
+  // When fetch completes → RESUMES from here
+  console.log("2. Fetch done, parsing JSON");
+  const user = await res.json(); // ⏸️ waiting again...
+
+  console.log("3. Got data:", user.name);
+  return user;
+}
+
+// OUTSIDE, code runs normally (non-blocking)
+fetchUser();
+console.log("4. This runs IMMEDIATELY, doesn't wait");
+// Output: 1 → 4 → 2 → 3`}</CodeBlock>
+
+                <Heading3>⚠️ Common Mistake: Sequential vs Parallel</Heading3>
+                <CodeBlock title="Watch out: await sequential vs parallel">{`// ❌ WRONG: Runs sequentially — slow!
+async function slow() {
+  const users = await fetch('/api/users');  // 2s
+  const posts = await fetch('/api/posts');  // 2s
+  // Total: 4 seconds! Waits for users before fetching posts
+}
+
+// ✅ RIGHT: Runs in parallel — fast!
+async function fast() {
+  const [users, posts] = await Promise.all([
+    fetch('/api/users'),   // 2s
+    fetch('/api/posts'),   // 2s (runs simultaneously!)
+  ]);
+  // Total: 2 seconds! Both requests run concurrently
+}
+
+// ✅ Or: Start promises first, await later
+async function alsoFast() {
+  const usersPromise = fetch('/api/users');  // Starts immediately
+  const postsPromise = fetch('/api/posts');  // Starts immediately
+
+  const users = await usersPromise;  // Wait for result
+  const posts = await postsPromise;  // Already done (or nearly)
+}`}</CodeBlock>
+
+                <Heading3>Error Handling Patterns</Heading3>
+                <CodeBlock title="Different ways to handle errors">{`// Pattern 1: try/catch (most common)
+async function loadData() {
+  try {
+    const res = await fetch('/api/data');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json();
+  } catch (err) {
+    console.error('Failed:', err.message);
+    return null; // Fallback value
+  }
+}
+
+// Pattern 2: .catch() on individual awaits
+async function loadData() {
+  const data = await fetch('/api/data')
+    .then(r => r.json())
+    .catch(() => null); // No crash, returns null on error
+}
+
+// Pattern 3: Wrapper function (Go-style)
+async function to(promise) {
+  try {
+    const data = await promise;
+    return [null, data];
+  } catch (err) {
+    return [err, null];
+  }
+}
+
+// Usage:
+const [err, user] = await to(fetch('/api/user').then(r => r.json()));
+if (err) console.error('Error:', err);`}</CodeBlock>
+
+                <CodeBlock title="Comparing then() vs async/await">{`// ❌ Promise chain — hard to read when nested
+fetch('/api/user')
+  .then(res => res.json())
+  .then(user => fetch('/api/posts/' + user.id))
+  .then(res => res.json())
+  .then(posts => console.log(posts))
+  .catch(err => console.error(err));
+
+// ✅ async/await — clear and debuggable
+async function loadPosts() {
+  try {
+    const res = await fetch('/api/user');
+    const user = await res.json();
+    const postsRes = await fetch('/api/posts/' + user.id);
+    const posts = await postsRes.json();
+    console.log(posts);
+  } catch (err) {
+    console.error(err);
+  }
+}`}</CodeBlock>
+
+                <Heading3>Key Methods</Heading3>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-white/10"><th className="text-left p-2 text-slate-400">Method</th><th className="text-left p-2 text-slate-400">When to use</th></tr></thead>
+                        <thead><tr className="border-b border-white/10"><th className="text-left p-2 text-slate-400">Method</th><th className="text-left p-2 text-slate-400">Behavior</th><th className="text-left p-2 text-slate-400">When to use</th></tr></thead>
                         <tbody className="text-slate-300">
-                            <tr className="border-b border-white/5"><td className="p-2"><InlineCode>Promise.all</InlineCode></td><td className="p-2">Run in parallel, fail if any fails</td></tr>
-                            <tr className="border-b border-white/5"><td className="p-2"><InlineCode>Promise.allSettled</InlineCode></td><td className="p-2">Run in parallel, wait for all to finish</td></tr>
-                            <tr className="border-b border-white/5"><td className="p-2"><InlineCode>Promise.race</InlineCode></td><td className="p-2">Take the fastest result</td></tr>
-                            <tr><td className="p-2"><InlineCode>Promise.any</InlineCode></td><td className="p-2">Take the first fulfilled</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-2"><InlineCode>Promise.all</InlineCode></td><td className="p-2">Run in parallel, <strong>rejects if any fails</strong></td><td className="p-2">Fetch multiple APIs, all are required</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-2"><InlineCode>Promise.allSettled</InlineCode></td><td className="p-2">Run in parallel, <strong>waits for all</strong> (even failures)</td><td className="p-2">Batch operations where you need each result</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-2"><InlineCode>Promise.race</InlineCode></td><td className="p-2">Returns <strong>first result</strong> (fulfilled or rejected)</td><td className="p-2">Timeout patterns, fastest response</td></tr>
+                            <tr><td className="p-2"><InlineCode>Promise.any</InlineCode></td><td className="p-2">Returns <strong>first fulfilled</strong>, ignores rejected</td><td className="p-2">Fallback servers, first successful result</td></tr>
                         </tbody>
                     </table>
                 </div>
+                <CodeBlock title="Promise methods examples">{`// Promise.all — fail fast
+const [users, posts] = await Promise.all([
+  fetch('/api/users').then(r => r.json()),
+  fetch('/api/posts').then(r => r.json()),
+]); // If 1 fails → both are rejected!
+
+// Promise.allSettled — wait for all
+const results = await Promise.allSettled([
+  fetch('/api/a'), // fulfilled
+  fetch('/api/b'), // rejected
+]);
+// results = [
+//   { status: 'fulfilled', value: Response },
+//   { status: 'rejected', reason: Error }
+// ]
+
+// Promise.race — timeout pattern
+const result = await Promise.race([
+  fetch('/api/slow-endpoint'),
+  new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Timeout!')), 5000)
+  ),
+]);`}</CodeBlock>
+
+                <Heading3>Benefits of Promises</Heading3>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🧹 Avoid Callback Hell</div>
+                        <div className="text-slate-300 text-sm mt-1">Instead of 5-6 nested callbacks, use <InlineCode>.then()</InlineCode> chains or <InlineCode>async/await</InlineCode> — flat, readable code.</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🛡️ Better Error Handling</div>
+                        <div className="text-slate-300 text-sm mt-1">A single <InlineCode>.catch()</InlineCode> catches all errors in the chain. With <InlineCode>async/await</InlineCode>, use the familiar <InlineCode>try/catch</InlineCode>.</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">⚡ Easy Parallelism</div>
+                        <div className="text-slate-300 text-sm mt-1"><InlineCode>Promise.all</InlineCode> lets you run multiple async tasks concurrently — significantly faster than sequential execution.</div>
+                    </div>
+                </div>
+
                 <Callout type="warning">Always use <InlineCode>try/catch</InlineCode> with async/await. Unhandled Promise rejections will crash the Node.js process!</Callout>
+                <Callout type="tip">Interview tip: Being able to explain the difference between <InlineCode>Promise.all</InlineCode> vs <InlineCode>Promise.allSettled</InlineCode> and when to use each — very common question.</Callout>
             </TopicModal>
 
             <TopicModal title="ES6+ Features" emoji="✨" color="#38bdf8" summary="destructuring, spread, modules, optional chaining, nullish coalescing">
