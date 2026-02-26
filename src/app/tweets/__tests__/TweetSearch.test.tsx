@@ -5,6 +5,13 @@ import { TweetSearch } from '@/app/tweets/TweetSearch'
 const mockFetch = jest.fn()
 global.fetch = mockFetch
 
+// Helper: click ⚙️ toggle to show controls (input + Thêm button)
+const openControls = async () => {
+    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
+    const toggle = screen.getByTitle('Hiển thị/Ẩn controls')
+    fireEvent.click(toggle)
+}
+
 describe('TweetSearch', () => {
     beforeEach(() => {
         jest.clearAllMocks()
@@ -18,13 +25,13 @@ describe('TweetSearch', () => {
         })
     })
 
-    it('renders the add input and button', async () => {
+    it('renders the add input and button after toggling controls', async () => {
         render(<TweetSearch />)
 
-        await waitFor(() => {
-            expect(screen.getByPlaceholderText(/Nhập username/)).toBeInTheDocument()
-            expect(screen.getByRole('button', { name: /Thêm/ })).toBeInTheDocument()
-        })
+        await openControls()
+
+        expect(screen.getByPlaceholderText(/Nhập username/)).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /Thêm/ })).toBeInTheDocument()
     })
 
     it('shows empty state when no users saved', async () => {
@@ -38,7 +45,7 @@ describe('TweetSearch', () => {
     it('adds a username via POST', async () => {
         render(<TweetSearch />)
 
-        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
+        await openControls()
 
         const input = screen.getByPlaceholderText(/Nhập username/)
         fireEvent.change(input, { target: { value: 'vercel' } })
@@ -63,7 +70,7 @@ describe('TweetSearch', () => {
     it('strips @ prefix from username', async () => {
         render(<TweetSearch />)
 
-        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
+        await openControls()
 
         const input = screen.getByPlaceholderText(/Nhập username/)
         fireEvent.change(input, { target: { value: '@reactjs' } })
@@ -87,7 +94,7 @@ describe('TweetSearch', () => {
     it('shows error for duplicate username', async () => {
         render(<TweetSearch />)
 
-        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
+        await openControls()
 
         const input = screen.getByPlaceholderText(/Nhập username/)
         fireEvent.change(input, { target: { value: 'vercel' } })
@@ -109,15 +116,15 @@ describe('TweetSearch', () => {
     it('disables button when input is empty', async () => {
         render(<TweetSearch />)
 
-        await waitFor(() => {
-            expect(screen.getByRole('button', { name: /Thêm/ })).toBeDisabled()
-        })
+        await openControls()
+
+        expect(screen.getByRole('button', { name: /Thêm/ })).toBeDisabled()
     })
 
     it('adds username on Enter key', async () => {
         render(<TweetSearch />)
 
-        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
+        await openControls()
 
         const input = screen.getByPlaceholderText(/Nhập username/)
         fireEvent.change(input, { target: { value: 'nextjs' } })
