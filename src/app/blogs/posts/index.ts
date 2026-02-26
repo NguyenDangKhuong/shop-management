@@ -25,6 +25,18 @@ import unitTestingGuide from './unit-testing-guide'
 
 // Thêm bài viết mới: import rồi thêm vào mảng bên dưới
 export const blogPosts: BlogPost[] = [
+    frontendInterviewRoadmap,
+    jsCommonFunctions,
+    dataTypesStructures,
+    reactHooks,
+    callbackPromiseAsyncAwait,
+    reactPerformance,
+    unitTestingGuide,
+    monorepoMicroFe,
+    csrSsrSsgIsr,
+    eventLoop,
+    coreWebVitals,
+    nextjsKhaiNiemMoi,
     algorithmPatterns,
     hashMapPattern,
     twoPointersPattern,
@@ -33,21 +45,9 @@ export const blogPosts: BlogPost[] = [
     bfsDfsPattern,
     binarySearchPattern,
     dynamicProgrammingPattern,
-    jsCommonFunctions,
-    ecmascriptFeatures,
     reactFeatures,
     nextjsFeatures,
-    dataTypesStructures,
-    unitTestingGuide,
-    monorepoMicroFe,
-    csrSsrSsgIsr,
-    eventLoop,
-    callbackPromiseAsyncAwait,
-    nextjsKhaiNiemMoi,
-    frontendInterviewRoadmap,
-    reactHooks,
-    reactPerformance,
-    coreWebVitals,
+    ecmascriptFeatures,
 ]
 
 
