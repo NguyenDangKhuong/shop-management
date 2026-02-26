@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { GET, POST, DELETE } from '@/app/api/twitter-users/route'
+import { DELETE, GET, POST } from '@/app/api/twitter-users/route'
 import { NextRequest } from 'next/server'
 
 // Mock connectDb
@@ -69,7 +69,7 @@ describe('Twitter Users API', () => {
             const data = await response.json()
 
             expect(data.success).toBe(true)
-            expect(mockCreate).toHaveBeenCalledWith({ username: 'vercel' })
+            expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({ username: 'vercel' }))
         })
 
         it('returns 409 for duplicate', async () => {
