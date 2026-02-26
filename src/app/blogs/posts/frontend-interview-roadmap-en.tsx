@@ -1,6 +1,6 @@
 import { CodeBlock, Heading2, Heading3, Paragraph, Highlight, InlineCode, Callout } from '../components/BlogComponents'
 import { TopicModal } from '../components/TopicModal'
-import { toLeetCodeSlug } from './frontend-interview-roadmap'
+import { toLeetCodeSlug } from './utils'
 
 export const enContent = (
     <>
