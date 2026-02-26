@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 interface SavedUser {
     _id: string
     username: string
+    avatarUrl?: string
 }
 
 export function TweetSearch() {
@@ -193,6 +194,11 @@ export function TweetSearch() {
                                     : 'bg-slate-800/60 text-slate-300 border border-white/10 hover:border-white/20'
                                     }`}
                             >
+                                {user.avatarUrl ? (
+                                    <img src={user.avatarUrl} alt="" className="w-5 h-5 rounded-full object-cover" />
+                                ) : (
+                                    <span className="w-5 h-5 rounded-full bg-slate-600 flex items-center justify-center text-[10px] text-white">{user.username[0].toUpperCase()}</span>
+                                )}
                                 <span>@{user.username}</span>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); setDeleteConfirm(user) }}
