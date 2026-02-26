@@ -14,122 +14,122 @@ let cachedCookie: { value: string; ts: number } | null = null
 const COOKIE_CACHE_TTL = 5 * 60 * 1000
 
 async function getCookie(): Promise<string | null> {
-    if (cachedCookie && Date.now() - cachedCookie.ts < COOKIE_CACHE_TTL) {
-        return cachedCookie.value
+  if (cachedCookie && Date.now() - cachedCookie.ts < COOKIE_CACHE_TTL) {
+    return cachedCookie.value
+  }
+  try {
+    await connectDB()
+    const token = await TwitterTokenModel.findOne().sort({ createdAt: -1 })
+    if (token?.cookie) {
+      cachedCookie = { value: token.cookie, ts: Date.now() }
+      return token.cookie
     }
-    try {
-        await connectDB()
-        const token = await TwitterTokenModel.findOne().sort({ createdAt: -1 })
-        if (token?.cookie) {
-            cachedCookie = { value: token.cookie, ts: Date.now() }
-            return token.cookie
-        }
-    } catch {
-        console.error('Failed to get cookie from DB')
-    }
-    return process.env.TWITTER_COOKIE || null
+  } catch {
+    console.error('Failed to get cookie from DB')
+  }
+  return process.env.TWITTER_COOKIE || null
 }
 
 async function fetchWithRetry(url: string, headers: Record<string, string>, maxRetries = 3): Promise<Response> {
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-        const res = await fetch(url, { headers })
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const res = await fetch(url, { headers })
 
-        if (res.status !== 429) return res
+    if (res.status !== 429) return res
 
-        // Respect Retry-After header
-        const retryAfter = res.headers.get('Retry-After')
-        const waitMs = retryAfter
-            ? parseInt(retryAfter) * 1000
-            : Math.pow(2, attempt) * 1000 // exponential backoff: 1s, 2s, 4s
+    // Respect Retry-After header
+    const retryAfter = res.headers.get('Retry-After')
+    const waitMs = retryAfter
+      ? parseInt(retryAfter) * 1000
+      : Math.pow(2, attempt) * 1000 // exponential backoff: 1s, 2s, 4s
 
-        rateLimitUntil = Date.now() + waitMs
-        await new Promise(r => setTimeout(r, waitMs))
-    }
-    // Return last 429 response if all retries fail
-    return fetch(url, { headers })
+    rateLimitUntil = Date.now() + waitMs
+    await new Promise(r => setTimeout(r, waitMs))
+  }
+  // Return last 429 response if all retries fail
+  return fetch(url, { headers })
 }
 
 export async function GET(req: NextRequest) {
-    const username = req.nextUrl.searchParams.get('username')
-    if (!username) {
-        return NextResponse.json({ error: 'username required' }, { status: 400 })
+  const username = req.nextUrl.searchParams.get('username')
+  if (!username) {
+    return NextResponse.json({ error: 'username required' }, { status: 400 })
+  }
+
+  const key = username.toLowerCase()
+
+  // Check cache first
+  const cached = cache.get(key)
+  if (cached && Date.now() - cached.ts < CACHE_TTL) {
+    return new NextResponse(cached.html, {
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1200',
+        'X-Cache': 'HIT',
+      },
+    })
+  }
+
+  // If we're in rate limit cooldown, serve stale cache
+  if (Date.now() < rateLimitUntil && cached) {
+    return new NextResponse(cached.html, {
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'X-Cache': 'RATE-LIMITED',
+      },
+    })
+  }
+
+  try {
+    const url = `https://syndication.twitter.com/srv/timeline-profile/screen-name/${encodeURIComponent(key)}?dnt=true&embedId=twitter-widget-0&hideHeader=true&hideFooter=true&hideBorder=true&theme=dark&transparent=true&lang=en`
+
+    const headers: Record<string, string> = {
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept': 'text/html,application/xhtml+xml',
+      'Accept-Language': 'en-US,en;q=0.9',
     }
 
-    const key = username.toLowerCase()
+    const cookie = await getCookie()
+    if (cookie) {
+      headers['Cookie'] = cookie
+    }
 
-    // Check cache first
-    const cached = cache.get(key)
-    if (cached && Date.now() - cached.ts < CACHE_TTL) {
+    const res = await fetchWithRetry(url, headers)
+
+    if (!res.ok) {
+      // If still rate limited after retries, serve stale cache
+      if (res.status === 429 && cached) {
         return new NextResponse(cached.html, {
-            headers: {
-                'Content-Type': 'text/html; charset=utf-8',
-                'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1200',
-                'X-Cache': 'HIT',
-            },
+          headers: {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'public, s-maxage=60',
+            'X-Cache': 'STALE-429',
+          },
         })
+      }
+      return NextResponse.json(
+        { error: `Twitter returned ${res.status}` },
+        { status: res.status }
+      )
     }
 
-    // If we're in rate limit cooldown, serve stale cache
-    if (Date.now() < rateLimitUntil && cached) {
-        return new NextResponse(cached.html, {
-            headers: {
-                'Content-Type': 'text/html; charset=utf-8',
-                'X-Cache': 'RATE-LIMITED',
-            },
-        })
+    let html = await res.text()
+
+    // 1. Extract video mp4 URLs and group by video ID (highest quality)
+    // Matches both amplify_video and ext_tw_video formats
+    const mp4Regex = /https:\/\/video\.twimg\.com\/(?:amplify_video|ext_tw_video)\/(\d+)\/(?:vid|pu\/vid)\/avc1\/(\d+)x(\d+)\/[^"\\]+\.mp4[^"\\]*/g
+    const videoMap: Record<string, { url: string; w: number; h: number }> = {}
+    let mp4Match
+    while ((mp4Match = mp4Regex.exec(html)) !== null) {
+      const [url, videoId, w, h] = mp4Match
+      const width = parseInt(w)
+      const height = parseInt(h)
+      if (!videoMap[videoId] || width > videoMap[videoId].w) {
+        videoMap[videoId] = { url, w: width, h: height }
+      }
     }
 
-    try {
-        const url = `https://syndication.twitter.com/srv/timeline-profile/screen-name/${encodeURIComponent(key)}?dnt=true&embedId=twitter-widget-0&hideHeader=true&hideFooter=true&hideBorder=true&theme=dark&transparent=true&lang=en`
-
-        const headers: Record<string, string> = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml',
-            'Accept-Language': 'en-US,en;q=0.9',
-        }
-
-        const cookie = await getCookie()
-        if (cookie) {
-            headers['Cookie'] = cookie
-        }
-
-        const res = await fetchWithRetry(url, headers)
-
-        if (!res.ok) {
-            // If still rate limited after retries, serve stale cache
-            if (res.status === 429 && cached) {
-                return new NextResponse(cached.html, {
-                    headers: {
-                        'Content-Type': 'text/html; charset=utf-8',
-                        'Cache-Control': 'public, s-maxage=60',
-                        'X-Cache': 'STALE-429',
-                    },
-                })
-            }
-            return NextResponse.json(
-                { error: `Twitter returned ${res.status}` },
-                { status: res.status }
-            )
-        }
-
-        let html = await res.text()
-
-        // 1. Extract video mp4 URLs and group by video ID (highest quality)
-        // Matches both amplify_video and ext_tw_video formats
-        const mp4Regex = /https:\/\/video\.twimg\.com\/(?:amplify_video|ext_tw_video)\/(\d+)\/(?:vid|pu\/vid)\/avc1\/(\d+)x(\d+)\/[^"\\]+\.mp4[^"\\]*/g
-        const videoMap: Record<string, { url: string; w: number; h: number }> = {}
-        let mp4Match
-        while ((mp4Match = mp4Regex.exec(html)) !== null) {
-            const [url, videoId, w, h] = mp4Match
-            const width = parseInt(w)
-            const height = parseInt(h)
-            if (!videoMap[videoId] || width > videoMap[videoId].w) {
-                videoMap[videoId] = { url, w: width, h: height }
-            }
-        }
-
-        // 2. Inject dark background CSS
-        const darkCss = `<style>
+    // 2. Inject dark background CSS
+    const darkCss = `<style>
 body, html { background: #0a0a0a !important; color: #e2e8f0 !important; }
 article, [data-testid="tweet"] { background: #0a0a0a !important; }
 div { border-color: rgba(255,255,255,0.1) !important; }
@@ -140,11 +140,11 @@ div { border-color: rgba(255,255,255,0.1) !important; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
 </style>`
-        html = html.replace('</head>', darkCss + '</head>')
+    html = html.replace('</head>', darkCss + '</head>')
 
-        // 3. Inject client-side script to replace video thumbnails with <video> elements
-        const videoMapJson = JSON.stringify(videoMap)
-        const injectedScript = `<script>
+    // 3. Inject client-side script to replace video thumbnails with <video> elements
+    const videoMapJson = JSON.stringify(videoMap)
+    const injectedScript = `<script>
 (function(){
   // Bypass sensitive content warning — auto-click Yes/View buttons
   var t=setInterval(function(){document.querySelectorAll('button').forEach(function(b){if(b.textContent&&(b.textContent.includes('Yes')||b.textContent.trim()==='View'))b.click();});},300);setTimeout(function(){clearInterval(t);},8000);
@@ -175,7 +175,7 @@ div { border-color: rgba(255,255,255,0.1) !important; }
       video.poster = src;
       video.style.cssText = 'width:100%;display:block;border-radius:12px;aspect-ratio:' + info.w + '/' + info.h + ';';
       var source = document.createElement('source');
-      source.src = '/api/tweets/video?url=' + encodeURIComponent(info.url);
+      source.src = info.url;
       source.type = 'video/mp4';
       video.appendChild(source);
       container.appendChild(video);
@@ -257,28 +257,28 @@ div { border-color: rgba(255,255,255,0.1) !important; }
   }, 500);
 })();
 </script>`
-        html = html.replace('</body>', injectedScript + '</body>')
+    html = html.replace('</body>', injectedScript + '</body>')
 
-        // Store in cache
-        cache.set(key, { html, ts: Date.now() })
+    // Store in cache
+    cache.set(key, { html, ts: Date.now() })
 
-        return new NextResponse(html, {
-            headers: {
-                'Content-Type': 'text/html; charset=utf-8',
-                'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-                'X-Cache': 'MISS',
-            },
-        })
-    } catch {
-        // Serve stale cache on error
-        if (cached) {
-            return new NextResponse(cached.html, {
-                headers: {
-                    'Content-Type': 'text/html; charset=utf-8',
-                    'X-Cache': 'STALE-ERROR',
-                },
-            })
-        }
-        return NextResponse.json({ error: 'Failed to fetch tweets' }, { status: 500 })
+    return new NextResponse(html, {
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        'X-Cache': 'MISS',
+      },
+    })
+  } catch {
+    // Serve stale cache on error
+    if (cached) {
+      return new NextResponse(cached.html, {
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'X-Cache': 'STALE-ERROR',
+        },
+      })
     }
+    return NextResponse.json({ error: 'Failed to fetch tweets' }, { status: 500 })
+  }
 }
