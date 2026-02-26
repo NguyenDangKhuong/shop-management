@@ -23,6 +23,8 @@ export function TweetSearch() {
     const [cookieError, setCookieError] = useState('')
     // Tags expand state (mobile)
     const [tagsExpanded, setTagsExpanded] = useState(false)
+    // Toggle search + cookie controls
+    const [showControls, setShowControls] = useState(false)
 
     // Load saved users + cookie status on mount
     useEffect(() => {
@@ -128,38 +130,54 @@ export function TweetSearch() {
 
     return (
         <>
-            {/* Add Input */}
-            <div className="w-full max-w-3xl mx-auto mb-6 z-10 px-4 md:px-0">
-                <div className="flex gap-2">
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => { setInput(e.target.value); setError('') }}
-                        onKeyDown={handleKeyDown}
-                        placeholder="Nhập username — vd: vercel, reactjs, dan_abramov"
-                        className="flex-1 px-4 py-3 rounded-xl bg-slate-800/60 border border-white/10 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-[#38bdf8]/50 focus:ring-1 focus:ring-[#38bdf8]/30 transition"
-                    />
-                    <button
-                        onClick={handleAdd}
-                        disabled={!input.trim() || adding}
-                        className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#38bdf8] to-[#c084fc] text-white font-semibold text-sm hover:opacity-90 active:scale-95 transition-all whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                        {adding ? '⏳' : '+'} Thêm
-                    </button>
-                    <button
-                        onClick={() => setCookieModal(true)}
-                        className={`relative px-3 py-3 rounded-xl text-sm transition-all ${cookieStatus
-                            ? 'bg-slate-800/60 border border-green-500/30 text-green-400 hover:border-green-500/50'
-                            : 'bg-slate-800/60 border border-white/10 text-slate-400 hover:border-white/20'
-                            }`}
-                        title={cookieStatus || 'Thêm cookie X'}
-                    >
-                        🍪
-                        {cookieStatus && <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full" />}
-                    </button>
-                </div>
-                {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
+            {/* Toggle Controls Button */}
+            <div className="w-full max-w-3xl mx-auto mb-3 z-10 px-4 md:px-0 flex justify-end">
+                <button
+                    onClick={() => setShowControls(!showControls)}
+                    className={`px-3 py-2 rounded-xl text-sm transition-all ${showControls
+                        ? 'bg-[#38bdf8]/20 border border-[#38bdf8]/40 text-[#38bdf8]'
+                        : 'bg-slate-800/60 border border-white/10 text-slate-400 hover:border-white/20'
+                        }`}
+                    title="Hiển thị/Ẩn controls"
+                >
+                    ⚙️
+                </button>
             </div>
+
+            {/* Add Input + Cookie (toggleable) */}
+            {showControls && (
+                <div className="w-full max-w-3xl mx-auto mb-6 z-10 px-4 md:px-0">
+                    <div className="flex gap-2">
+                        <input
+                            type="text"
+                            value={input}
+                            onChange={(e) => { setInput(e.target.value); setError('') }}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Nhập username — vd: vercel, reactjs, dan_abramov"
+                            className="flex-1 px-4 py-3 rounded-xl bg-slate-800/60 border border-white/10 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-[#38bdf8]/50 focus:ring-1 focus:ring-[#38bdf8]/30 transition"
+                        />
+                        <button
+                            onClick={handleAdd}
+                            disabled={!input.trim() || adding}
+                            className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#38bdf8] to-[#c084fc] text-white font-semibold text-sm hover:opacity-90 active:scale-95 transition-all whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                            {adding ? '⏳' : '+'} Thêm
+                        </button>
+                        <button
+                            onClick={() => setCookieModal(true)}
+                            className={`relative px-3 py-3 rounded-xl text-sm transition-all ${cookieStatus
+                                ? 'bg-slate-800/60 border border-green-500/30 text-green-400 hover:border-green-500/50'
+                                : 'bg-slate-800/60 border border-white/10 text-slate-400 hover:border-white/20'
+                                }`}
+                            title={cookieStatus || 'Thêm cookie X'}
+                        >
+                            🍪
+                            {cookieStatus && <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full" />}
+                        </button>
+                    </div>
+                    {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
+                </div>
+            )}
 
             {/* Saved Users Tags */}
             {users.length > 0 && (
