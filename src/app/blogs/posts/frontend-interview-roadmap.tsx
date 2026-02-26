@@ -409,21 +409,227 @@ console.log('4'); // Call Stack
                 <Callout type="tip">Đây là câu hỏi phỏng vấn #1 về JS. Luôn nhớ: <Highlight>Sync → Microtask → Macrotask</Highlight>.</Callout>
             </TopicModal>
 
-            <TopicModal title="Async/Await & Promises" emoji="⚡" color="#fbbf24" summary="Promise.all, race, allSettled, error handling">
-                <Paragraph><Highlight>Promise</Highlight> = object đại diện cho giá trị tương lai. 3 trạng thái: <InlineCode>pending</InlineCode> → <InlineCode>fulfilled</InlineCode> / <InlineCode>rejected</InlineCode>.</Paragraph>
-                <Paragraph><InlineCode>async/await</InlineCode> là syntactic sugar — giúp viết async code nhìn như synchronous.</Paragraph>
+            <TopicModal title="Async/Await & Promises" emoji="⚡" color="#fbbf24" summary="Promise là gì, 3 trạng thái, Promise.all/race/allSettled, async/await, error handling">
+                <Paragraph><Highlight>Promise</Highlight> là một đối tượng đại diện cho kết quả (thành công hoặc thất bại) của một tác vụ bất đồng bộ (như gọi API, đọc file) trong tương lai. Nó giải quyết tình trạng <Highlight>&quot;callback hell&quot;</Highlight> bằng cách cung cấp cú pháp <InlineCode>.then()</InlineCode> và <InlineCode>.catch()</InlineCode> để quản lý code dễ đọc, dễ bảo trì hơn.</Paragraph>
+
+                <Heading3>3 Trạng thái của Promise</Heading3>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">⏳ Pending (Đang chờ)</div>
+                        <div className="text-slate-300 text-sm mt-1">Trạng thái ban đầu — tác vụ bất đồng bộ chưa hoàn tất. Promise vẫn đang &quot;chờ&quot; kết quả.</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">✅ Fulfilled / Resolved (Thành công)</div>
+                        <div className="text-slate-300 text-sm mt-1">Tác vụ hoàn thành thành công, Promise có kết quả (value). Gọi callback trong <InlineCode>.then()</InlineCode>.</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">❌ Rejected (Bị từ chối)</div>
+                        <div className="text-slate-300 text-sm mt-1">Tác vụ thất bại, Promise trả về lỗi (reason). Gọi callback trong <InlineCode>.catch()</InlineCode>.</div>
+                    </div>
+                </div>
+
+                <Heading3>Cách hoạt động</Heading3>
+                <CodeBlock title="Tạo và sử dụng Promise">{`const myPromise = new Promise((resolve, reject) => {
+  // Thực hiện tác vụ bất đồng bộ
+  let success = true;
+  if (success) {
+    resolve("Dữ liệu thành công"); // → Fulfilled
+  } else {
+    reject("Lỗi xảy ra");          // → Rejected
+  }
+});
+
+myPromise
+  .then((data) => console.log(data))   // Xử lý khi thành công
+  .catch((error) => console.error(error)) // Xử lý khi lỗi
+  .finally(() => console.log("Hoàn tất")); // Chạy dù thành công hay lỗi`}</CodeBlock>
+
+                <Heading3>async/await — Syntactic Sugar</Heading3>
+                <Paragraph><InlineCode>async/await</InlineCode> là cú pháp được giới thiệu trong ES2017, giúp viết async code nhìn như synchronous — dễ đọc, dễ debug hơn nhiều so với <InlineCode>.then()</InlineCode> chain.</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">async — Đánh dấu function là bất đồng bộ</div>
+                        <div className="text-slate-300 text-sm mt-1">• Thêm <InlineCode>async</InlineCode> trước function → function đó <strong>luôn trả về Promise</strong><br />• Nếu return giá trị bình thường, JS tự wrap thành <InlineCode>Promise.resolve(value)</InlineCode><br />• Nếu throw error, JS tự wrap thành <InlineCode>Promise.reject(error)</InlineCode></div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">await — Tạm dừng và chờ Promise resolve</div>
+                        <div className="text-slate-300 text-sm mt-1">• <InlineCode>await</InlineCode> chỉ dùng được <strong>bên trong async function</strong> (hoặc top-level modules)<br />• Khi gặp <InlineCode>await</InlineCode>, JS <strong>tạm dừng</strong> function đó, trả quyền điều khiển cho Event Loop<br />• Khi Promise resolve → JS <strong>tiếp tục chạy</strong> từ dòng tiếp theo<br />• Khi Promise reject → throw error (bắt bằng <InlineCode>try/catch</InlineCode>)</div>
+                    </div>
+                </div>
+
+                <CodeBlock title="async keyword giải thích">{`// async function LUÔN trả về Promise
+async function getNumber() {
+  return 42; // Tự động wrap → Promise.resolve(42)
+}
+getNumber().then(n => console.log(n)); // 42
+
+// Tương đương với:
+function getNumber() {
+  return Promise.resolve(42);
+}
+
+// async + throw = Promise.reject
+async function failHard() {
+  throw new Error("Oops!"); // → Promise.reject(Error("Oops!"))
+}
+failHard().catch(err => console.log(err.message)); // "Oops!"`}</CodeBlock>
+
+                <CodeBlock title="await hoạt động thế nào">{`async function fetchUser() {
+  console.log("1. Bắt đầu fetch");
+
+  // await TẠM DỪNG function tại đây
+  // Event Loop vẫn chạy, xử lý tasks khác
+  const res = await fetch('/api/user'); // ⏸️ chờ...
+
+  // Khi fetch xong → TIẾP TỤC từ đây
+  console.log("2. Fetch xong, parse JSON");
+  const user = await res.json(); // ⏸️ chờ tiếp...
+
+  console.log("3. Có data:", user.name);
+  return user;
+}
+
+// BÊN NGOÀI, code vẫn chạy bình thường (non-blocking)
+fetchUser();
+console.log("4. Dòng này chạy NGAY, không chờ fetchUser");
+// Output: 1 → 4 → 2 → 3`}</CodeBlock>
+
+                <Heading3>⚠️ Sai lầm phổ biến: Sequential vs Parallel</Heading3>
+                <CodeBlock title="Cẩn thận: await tuần tự vs song song">{`// ❌ SAI: Chạy tuần tự — chậm!
+async function slow() {
+  const users = await fetch('/api/users');  // 2s
+  const posts = await fetch('/api/posts');  // 2s
+  // Tổng: 4 giây! Vì chờ users xong mới fetch posts
+}
+
+// ✅ ĐÚNG: Chạy song song — nhanh!
+async function fast() {
+  const [users, posts] = await Promise.all([
+    fetch('/api/users'),   // 2s
+    fetch('/api/posts'),   // 2s (chạy cùng lúc!)
+  ]);
+  // Tổng: 2 giây! Hai requests chạy đồng thời
+}
+
+// ✅ Hoặc: Start promises trước, await sau
+async function alsoFast() {
+  const usersPromise = fetch('/api/users');  // Bắt đầu ngay
+  const postsPromise = fetch('/api/posts');  // Bắt đầu ngay
+
+  const users = await usersPromise;  // Chờ kết quả
+  const posts = await postsPromise;  // Đã xong rồi (hoặc gần xong)
+}`}</CodeBlock>
+
+                <Heading3>Error Handling Patterns</Heading3>
+                <CodeBlock title="Các cách xử lý lỗi">{`// Pattern 1: try/catch (phổ biến nhất)
+async function loadData() {
+  try {
+    const res = await fetch('/api/data');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json();
+  } catch (err) {
+    console.error('Failed:', err.message);
+    return null; // Fallback value
+  }
+}
+
+// Pattern 2: .catch() trên từng await
+async function loadData() {
+  const data = await fetch('/api/data')
+    .then(r => r.json())
+    .catch(() => null); // Không crash, trả null nếu lỗi
+}
+
+// Pattern 3: Wrapper function (Go-style)
+async function to(promise) {
+  try {
+    const data = await promise;
+    return [null, data];
+  } catch (err) {
+    return [err, null];
+  }
+}
+
+// Sử dụng:
+const [err, user] = await to(fetch('/api/user').then(r => r.json()));
+if (err) console.error('Error:', err);`}</CodeBlock>
+
+                <CodeBlock title="So sánh then() vs async/await">{`// ❌ Promise chain — khó đọc khi lồng nhiều
+fetch('/api/user')
+  .then(res => res.json())
+  .then(user => fetch('/api/posts/' + user.id))
+  .then(res => res.json())
+  .then(posts => console.log(posts))
+  .catch(err => console.error(err));
+
+// ✅ async/await — rõ ràng, dễ debug
+async function loadPosts() {
+  try {
+    const res = await fetch('/api/user');
+    const user = await res.json();
+    const postsRes = await fetch('/api/posts/' + user.id);
+    const posts = await postsRes.json();
+    console.log(posts);
+  } catch (err) {
+    console.error(err);
+  }
+}`}</CodeBlock>
+
+                <Heading3>Các phương thức quan trọng</Heading3>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-white/10"><th className="text-left p-2 text-slate-400">Method</th><th className="text-left p-2 text-slate-400">Khi nào dùng</th></tr></thead>
+                        <thead><tr className="border-b border-white/10"><th className="text-left p-2 text-slate-400">Method</th><th className="text-left p-2 text-slate-400">Hành vi</th><th className="text-left p-2 text-slate-400">Khi nào dùng</th></tr></thead>
                         <tbody className="text-slate-300">
-                            <tr className="border-b border-white/5"><td className="p-2"><InlineCode>Promise.all</InlineCode></td><td className="p-2">Chạy song song, fail nếu 1 fail</td></tr>
-                            <tr className="border-b border-white/5"><td className="p-2"><InlineCode>Promise.allSettled</InlineCode></td><td className="p-2">Chạy song song, chờ tất cả xong</td></tr>
-                            <tr className="border-b border-white/5"><td className="p-2"><InlineCode>Promise.race</InlineCode></td><td className="p-2">Lấy kết quả nhanh nhất</td></tr>
-                            <tr><td className="p-2"><InlineCode>Promise.any</InlineCode></td><td className="p-2">Lấy fulfilled đầu tiên</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-2"><InlineCode>Promise.all</InlineCode></td><td className="p-2">Chạy song song, <strong>reject nếu 1 fail</strong></td><td className="p-2">Fetch nhiều API cùng lúc, tất cả đều bắt buộc</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-2"><InlineCode>Promise.allSettled</InlineCode></td><td className="p-2">Chạy song song, <strong>chờ tất cả xong</strong> (kể cả fail)</td><td className="p-2">Batch operations mà vẫn muốn biết kết quả từng cái</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-2"><InlineCode>Promise.race</InlineCode></td><td className="p-2">Trả về <strong>kết quả đầu tiên</strong> (fulfill hoặc reject)</td><td className="p-2">Timeout pattern, lấy response nhanh nhất</td></tr>
+                            <tr><td className="p-2"><InlineCode>Promise.any</InlineCode></td><td className="p-2">Trả về <strong>fulfilled đầu tiên</strong>, ignore rejected</td><td className="p-2">Fallback servers, lấy kết quả thành công đầu tiên</td></tr>
                         </tbody>
                     </table>
                 </div>
+                <CodeBlock title="Ví dụ Promise methods">{`// Promise.all — fail fast
+const [users, posts] = await Promise.all([
+  fetch('/api/users').then(r => r.json()),
+  fetch('/api/posts').then(r => r.json()),
+]); // Nếu 1 cái fail → cả 2 đều bị reject!
+
+// Promise.allSettled — chờ tất cả
+const results = await Promise.allSettled([
+  fetch('/api/a'), // fulfilled
+  fetch('/api/b'), // rejected
+]);
+// results = [
+//   { status: 'fulfilled', value: Response },
+//   { status: 'rejected', reason: Error }
+// ]
+
+// Promise.race — timeout pattern
+const result = await Promise.race([
+  fetch('/api/slow-endpoint'),
+  new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Timeout!')), 5000)
+  ),
+]);`}</CodeBlock>
+
+                <Heading3>Lợi ích của Promise</Heading3>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🧹 Tránh Callback Hell</div>
+                        <div className="text-slate-300 text-sm mt-1">Thay vì callback lồng nhau 5-6 cấp, dùng <InlineCode>.then()</InlineCode> chain hoặc <InlineCode>async/await</InlineCode> — code phẳng, dễ đọc.</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🛡️ Error Handling tốt hơn</div>
+                        <div className="text-slate-300 text-sm mt-1">Một <InlineCode>.catch()</InlineCode> bắt tất cả lỗi trong chain. Với <InlineCode>async/await</InlineCode>, dùng <InlineCode>try/catch</InlineCode> quen thuộc.</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">⚡ Chạy song song dễ dàng</div>
+                        <div className="text-slate-300 text-sm mt-1"><InlineCode>Promise.all</InlineCode> cho phép chạy nhiều async tasks đồng thời — nhanh hơn đáng kể so với chạy tuần tự.</div>
+                    </div>
+                </div>
+
                 <Callout type="warning">Luôn dùng <InlineCode>try/catch</InlineCode> với async/await. Unhandled Promise rejection sẽ crash Node.js process!</Callout>
+                <Callout type="tip">Interview tip: Giải thích được sự khác nhau giữa <InlineCode>Promise.all</InlineCode> vs <InlineCode>Promise.allSettled</InlineCode> và khi nào dùng cái nào — câu hỏi rất phổ biến.</Callout>
             </TopicModal>
 
             <TopicModal title="ES6+ Features" emoji="✨" color="#38bdf8" summary="destructuring, spread, modules, optional chaining, nullish coalescing">
