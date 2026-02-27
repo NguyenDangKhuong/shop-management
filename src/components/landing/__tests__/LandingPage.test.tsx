@@ -18,7 +18,7 @@ describe('LandingPage Component', () => {
 
         expect(screen.getByText(/hello, i'm/i)).toBeInTheDocument()
         expect(screen.getAllByText(/khuong/i).length).toBeGreaterThan(0)
-        expect(screen.getByText(/i build accessible web experiences/i)).toBeInTheDocument()
+        expect(screen.getByText(/front-end developer · 8\+ years · react specialist/i)).toBeInTheDocument()
     })
 
     it('displays login button with correct link', () => {
@@ -50,11 +50,11 @@ describe('LandingPage Component', () => {
         expect(screen.getByRole('heading', { name: /tech stack/i })).toBeInTheDocument()
     })
 
-    it('shows about me section with description', () => {
+    it('shows about me section with professional summary', () => {
         render(<LandingPage />)
 
         expect(screen.getByRole('heading', { name: /about me/i })).toBeInTheDocument()
-        expect(screen.getByText(/i'm khuong, a front-end developer based in ho chi minh city/i)).toBeInTheDocument()
+        expect(screen.getByText(/front-end developer with 8 years of experience/i)).toBeInTheDocument()
     })
 
     it('renders featured project section', () => {
@@ -110,12 +110,12 @@ describe('LandingPage Component', () => {
         expect(mockup).toBeInTheDocument()
     })
 
-    it('displays timeline with dates', () => {
+    it('displays timeline with career dates', () => {
         render(<LandingPage />)
 
-        expect(screen.getByText(/2018/i)).toBeInTheDocument()
-        expect(screen.getByText(/2022/i)).toBeInTheDocument()
-        expect(screen.getByText(/present/i)).toBeInTheDocument()
+        expect(screen.getAllByText('2014').length).toBeGreaterThan(0)
+        expect(screen.getAllByText('2018').length).toBeGreaterThan(0)
+        expect(screen.getAllByText(/present/i).length).toBeGreaterThan(0)
     })
 
     it('renders technology tags for featured project', () => {
@@ -124,5 +124,51 @@ describe('LandingPage Component', () => {
         // Check that these technologies appear (they appear multiple times)
         expect(screen.getAllByText(/react/i).length).toBeGreaterThanOrEqual(1)
         expect(screen.getAllByText(/typescript/i).length).toBeGreaterThanOrEqual(1)
+    })
+
+    // ─── New sections ───────────────────────────────────────────────────
+
+    it('renders work experience section with all positions', () => {
+        render(<LandingPage />)
+
+        expect(screen.getByRole('heading', { name: /work experience/i })).toBeInTheDocument()
+        expect(screen.getByText(/technical lead/i)).toBeInTheDocument()
+        expect(screen.getByText(/senior frontend engineer/i)).toBeInTheDocument()
+        expect(screen.getByText(/ANZ Banking Group/i)).toBeInTheDocument()
+        expect(screen.getByText(/Asoview Vietnam/i)).toBeInTheDocument()
+        expect(screen.getByText(/VTech Web/i)).toBeInTheDocument()
+    })
+
+    it('renders education section with HCMUS', () => {
+        render(<LandingPage />)
+
+        expect(screen.getByRole('heading', { name: /education/i })).toBeInTheDocument()
+        expect(screen.getByText(/ho chi minh university of science/i)).toBeInTheDocument()
+        expect(screen.getByText(/faculty of information technology/i)).toBeInTheDocument()
+    })
+
+    it('renders skills section with categories from CV', () => {
+        render(<LandingPage />)
+
+        expect(screen.getByRole('heading', { name: /skills.*expertise/i })).toBeInTheDocument()
+        expect(screen.getByText(/core technologies/i)).toBeInTheDocument()
+        expect(screen.getAllByText(/testing/i).length).toBeGreaterThan(0)
+        expect(screen.getByText(/architecture.*devops/i)).toBeInTheDocument()
+    })
+
+
+    it('renders download CV link', () => {
+        render(<LandingPage />)
+
+        const cvLink = screen.getByRole('link', { name: /download cv/i })
+        expect(cvLink).toBeInTheDocument()
+        expect(cvLink).toHaveAttribute('href', '/cv')
+    })
+
+    it('renders LinkedIn link in contact section', () => {
+        render(<LandingPage />)
+
+        const linkedinLink = document.querySelector('a[href="https://linkedin.com/in/nguyendangkhuong"]')
+        expect(linkedinLink).toBeInTheDocument()
     })
 })

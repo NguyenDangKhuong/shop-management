@@ -2,14 +2,14 @@ const en = {
     // Landing
     'landing.heroGreeting': "Hello, I'm",
     'landing.heroName': 'Khuong',
-    'landing.heroSub': 'I build accessible web experiences.',
+    'landing.heroSub': 'Front-End Developer · 8+ Years · React Specialist',
     'landing.viewProjects': 'View Projects',
     'landing.heroSection': 'Hero Section',
     'landing.about': 'About Me',
     'landing.aboutText':
-        "I'm Khuong, a front-end developer based in Ho Chi Minh City. I'm passionate about creating intuitive, dynamic user experiences and clean, efficient code. Currently focused on the React ecosystem.",
+        'Front-End Developer with 8 years of experience specializing in React.js, Next.js and modern web technologies. Skilled in building responsive, user-friendly interfaces with strong attention to detail and performance. Passionate about UI/UX best practices and writing clean, maintainable code.',
     'landing.present': 'Present',
-    'landing.skiller': 'Skiller',
+    'landing.skiller': 'Tech Lead',
     'landing.techStack': 'Tech Stack',
     'landing.featuredProject': 'Featured Project: E-commerce App',
     'landing.liveDemo': 'Live Demo',
@@ -21,6 +21,15 @@ const en = {
     'landing.privacy': 'Privacy Policy',
     'landing.terms': 'Terms of Service',
     'landing.login': 'Login',
+    'landing.experience': 'Work Experience',
+    'landing.education': 'Education',
+    'landing.skills': 'Skills & Expertise',
+    'landing.achievements': 'Key Achievements',
+    'landing.yearsExp': 'Years Experience',
+    'landing.components': 'Design System Components',
+    'landing.a11yScore': 'Accessibility Score',
+    'landing.teamSize': 'Team Leadership',
+    'landing.downloadCV': 'Download CV',
 
     // Login
     'login.title': 'Welcome Back',

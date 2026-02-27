@@ -6,6 +6,130 @@ import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import { useTranslation } from '@/i18n'
 
+// ─── Data ────────────────────────────────────────────────────────────────────
+
+const experiences = [
+    {
+        company: 'HCL Technologies Vietnam',
+        client: 'ANZ Banking Group',
+        location: 'HCM, Vietnam & Melbourne, AU',
+        role: 'Technical Lead',
+        teamSize: 15,
+        period: 'Jun 2023 — Present',
+        color: '#38bdf8',
+        highlights: [
+            'Built production features with React 19 (Compiler, Server Actions, Suspense) and Next.js 15 App Router with SSR, Middleware & API Routes',
+            'Achieved zero-runtime CSS using Vanilla Extract — eliminating runtime style injection overhead',
+            'Developed and consumed 70+ components from internal Design System (Ocean Blue)',
+            'Implemented React Hook Form + Zod for type-safe runtime validation',
+            'Established testing pyramid: Jest + Testing Library, Playwright (E2E), Storybook, MSW',
+            'Achieved 98% accessibility score with jest-axe and @axe-core/playwright',
+            'Managed feature flag-driven releases with LaunchDarkly — progressive rollouts & kill switches',
+            'Integrated Segment Analytics for user behavior tracking & A/B testing',
+            'Built with TypeScript strict mode (300+ path aliases, noImplicitAny, strictNullChecks)',
+            'Experienced in Micro Frontend architecture — Module Federation, monorepo integration',
+            'ANZ Plus Home page: Key contributor to enterprise-scale design system on Adobe Experience Manager (AEM)',
+        ],
+        link: 'https://anz.com.au/plus',
+    },
+    {
+        company: 'HCL Technologies Vietnam',
+        client: 'Santen Pharmaceutical',
+        location: 'HCM, Vietnam & Tokyo, Japan',
+        role: 'Senior Frontend Engineer',
+        teamSize: 8,
+        period: 'Jun 2022 — Jun 2023',
+        color: '#c084fc',
+        highlights: [
+            'Developed HR management web application on SharePoint framework',
+            'Built reusable React components for dynamic UI rendering',
+            'Applied Test-Driven Development (TDD) methodology',
+            'Collaborated with cross-functional teams for enterprise HR requirements',
+        ],
+    },
+    {
+        company: 'LIG Technologies Vietnam',
+        client: 'Asoview (Outsource)',
+        location: 'HCM, Vietnam & Tokyo, Japan',
+        role: 'React / WordPress Developer',
+        teamSize: 4,
+        period: 'Jul 2021 — Feb 2022',
+        color: '#fbbf24',
+        highlights: [
+            'Developed responsive UIs using React, aligned with design and technical standards',
+            'Built and customized WordPress-based websites for clients',
+        ],
+    },
+    {
+        company: 'Asoview Vietnam',
+        client: null,
+        location: 'HCM, Vietnam & Tokyo, Japan',
+        role: 'React Developer',
+        teamSize: 6,
+        period: 'Jun 2018 — Jun 2021',
+        color: '#10b981',
+        highlights: [
+            'Developed high-performance e-commerce application using React, Next.js, Redux-thunk',
+            'Built custom API layer and hooks for CRUD transactions & JWT token management',
+            'Expertise in React state management: ImmutableJS, Redux, duck pattern',
+            'Worked closely with clients using Figma, XD for UX collaboration',
+        ],
+        link: 'https://asoview.com',
+    },
+    {
+        company: 'VTech Web',
+        client: null,
+        location: 'HCM, Vietnam',
+        role: 'Intern — Front-End / PHP Developer',
+        teamSize: 2,
+        period: 'Nov 2017 — May 2018',
+        color: '#f97316',
+        highlights: [
+            'Supported sales page creation and practiced web development with Laravel (PHP)',
+        ],
+    },
+]
+
+const skillCategories = [
+    {
+        title: 'Core Technologies',
+        color: '#38bdf8',
+        skills: ['React 19', 'Next.js 15', 'TypeScript', 'JavaScript ES6+', 'HTML5', 'CSS3/SCSS'],
+    },
+    {
+        title: 'State & Forms',
+        color: '#c084fc',
+        skills: ['Redux', 'Redux-Thunk', 'ImmutableJS', 'React Hook Form', 'Zod'],
+    },
+    {
+        title: 'Testing',
+        color: '#10b981',
+        skills: ['Jest', 'Testing Library', 'Playwright', 'Storybook', 'MSW', 'jest-axe', 'axe-core'],
+    },
+    {
+        title: 'Styling & Design',
+        color: '#f472b6',
+        skills: ['Vanilla Extract', 'Tailwind CSS', 'Ant Design', 'Figma', 'XD'],
+    },
+    {
+        title: 'Architecture & DevOps',
+        color: '#fbbf24',
+        skills: ['Micro Frontends', 'Module Federation', 'SSR/SSG', 'Monorepo', 'AEM', 'SharePoint'],
+    },
+    {
+        title: 'Tools & Analytics',
+        color: '#f97316',
+        skills: ['LaunchDarkly', 'Segment Analytics', 'ESLint', 'Prettier', 'syncpack', 'Git', 'JIRA'],
+    },
+    {
+        title: 'AI/ML Tools',
+        color: '#818cf8',
+        skills: ['Claude AI', 'Cursor IDE', 'GitHub Copilot'],
+    },
+]
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
 export default function LandingPage() {
     const { t } = useTranslation()
 
@@ -57,6 +181,7 @@ export default function LandingPage() {
                 </header>
 
                 <main className="max-w-6xl w-full mx-auto relative z-10">
+                    {/* ═══ TOP BENTO GRID ═══ */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Left Column - Hero & About */}
                         <div className="lg:col-span-2 flex flex-col gap-6">
@@ -84,6 +209,12 @@ export default function LandingPage() {
                                             📝 Blog
                                         </Link>
                                         <Link
+                                            href="/cv"
+                                            className="inline-block px-6 py-3 rounded-full bg-gray-100 dark:bg-slate-800/50 border border-[#10b981]/50 text-gray-900 dark:text-white font-semibold transition hover:bg-[#10b981]/20 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                                        >
+                                            📄 {t('landing.downloadCV')}
+                                        </Link>
+                                        <Link
                                             href="/leetcode"
                                             className="inline-block px-6 py-3 rounded-full bg-gray-100 dark:bg-slate-800/50 border border-[#ffa116]/50 text-gray-900 dark:text-white font-semibold transition hover:bg-[#ffa116]/20 shadow-[0_0_15px_rgba(255,161,22,0.3)]"
                                         >
@@ -108,27 +239,29 @@ export default function LandingPage() {
                                 </div>
                             </div>
 
-                            {/* About Section with Timeline */}
+                            {/* About Section */}
                             <div className="glass-card flex-1 space-y-6 relative overflow-hidden">
                                 <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-[#c084fc]/10 rounded-full blur-3xl -z-10"></div>
 
                                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{t('landing.about')}</h2>
-                                <p className="text-gray-500 dark:text-slate-400 max-w-2xl">
+                                <p className="text-gray-500 dark:text-slate-400 max-w-2xl leading-relaxed">
                                     {t('landing.aboutText')}
                                 </p>
 
                                 <div className="pt-8 pb-4">
                                     <div className="relative h-1 bg-gray-300 dark:bg-slate-700/50 rounded-full">
-                                        <div className="absolute top-0 left-0 h-full w-[70%] bg-gradient-to-r from-[#38bdf8] to-[#c084fc] rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)]"></div>
+                                        <div className="absolute top-0 left-0 h-full w-[80%] bg-gradient-to-r from-[#38bdf8] to-[#c084fc] rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)]"></div>
 
-                                        <div className="absolute -top-1 left-[0%] w-3 h-3 bg-[#38bdf8] rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)]"></div>
-                                        <div className="absolute -top-1 left-[30%] w-3 h-3 bg-[#38bdf8] rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)]"></div>
-                                        <div className="absolute -top-1 left-[70%] w-3 h-3 bg-[#c084fc] rounded-full shadow-[0_0_15px_rgba(192,132,252,0.3)]"></div>
+                                        <div className="absolute -top-1 left-[0%] w-3 h-3 bg-[#10b981] rounded-full shadow-[0_0_15px_rgba(16,185,129,0.3)]"></div>
+                                        <div className="absolute -top-1 left-[15%] w-3 h-3 bg-[#38bdf8] rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)]"></div>
+                                        <div className="absolute -top-1 left-[50%] w-3 h-3 bg-[#38bdf8] rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)]"></div>
+                                        <div className="absolute -top-1 left-[80%] w-3 h-3 bg-[#c084fc] rounded-full shadow-[0_0_15px_rgba(192,132,252,0.3)]"></div>
                                         <div className="absolute -top-1 left-[100%] w-3 h-3 bg-gray-400 dark:bg-slate-600 rounded-full"></div>
 
-                                        <div className="absolute top-4 left-0 text-xs text-gray-400 dark:text-slate-500">2018</div>
-                                        <div className="absolute top-4 left-[30%] text-xs text-gray-400 dark:text-slate-500">2022</div>
-                                        <div className="absolute top-4 left-[70%] -translate-x-1/2 text-center text-xs text-[#c084fc] font-bold">
+                                        <div className="absolute top-4 left-0 text-xs text-gray-400 dark:text-slate-500">2014</div>
+                                        <div className="absolute top-4 left-[15%] text-xs text-gray-400 dark:text-slate-500">2018</div>
+                                        <div className="absolute top-4 left-[50%] text-xs text-gray-400 dark:text-slate-500">2022</div>
+                                        <div className="absolute top-4 left-[80%] -translate-x-1/2 text-center text-xs text-[#c084fc] font-bold">
                                             {t('landing.present')}<br />
                                             {t('landing.skiller')}
                                         </div>
@@ -158,6 +291,15 @@ export default function LandingPage() {
                                     </TechIcon>
                                     <TechIcon name="Figma" color="#A259FF">
                                         <FigmaIcon />
+                                    </TechIcon>
+                                    <TechIcon name="Jest" color="#C21325">
+                                        <JestIcon />
+                                    </TechIcon>
+                                    <TechIcon name="Playwright" color="#45BA4B">
+                                        <PlaywrightIcon />
+                                    </TechIcon>
+                                    <TechIcon name="Git" color="#F05032">
+                                        <GitIcon />
                                     </TechIcon>
                                 </div>
                             </div>
@@ -214,13 +356,13 @@ export default function LandingPage() {
                                         <EmailIcon />
                                     </a>
                                     <div className="flex gap-3 text-gray-500 dark:text-slate-400 pt-1">
-                                        <a href="#" className="hover:text-gray-900 dark:hover:text-white transition">
-                                            <InstagramIcon />
+                                        <a href="https://linkedin.com/in/nguyendangkhuong" target="_blank" rel="noopener noreferrer" className="hover:text-[#0A66C2] transition">
+                                            <LinkedInIcon />
                                         </a>
-                                        <a href="#" className="hover:text-gray-900 dark:hover:text-white transition">
+                                        <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 dark:hover:text-white transition">
                                             <TwitterIcon />
                                         </a>
-                                        <a href="https://github.com/NguyenDangKhuong" className="hover:text-gray-900 dark:hover:text-white transition">
+                                        <a href="https://github.com/NguyenDangKhuong" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 dark:hover:text-white transition">
                                             <GitHubIcon />
                                         </a>
                                     </div>
@@ -237,6 +379,138 @@ export default function LandingPage() {
                             </div>
                         </div>
                     </div>
+
+
+
+                    {/* ═══ WORK EXPERIENCE ═══ */}
+                    <section className="mt-12">
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
+                            💼 {t('landing.experience')}
+                        </h2>
+
+                        <div className="relative">
+                            {/* Vertical line */}
+                            <div className="absolute left-4 md:left-6 top-0 bottom-0 w-px bg-gradient-to-b from-[#38bdf8] via-[#c084fc] to-[#10b981] opacity-30" />
+
+                            <div className="space-y-6">
+                                {experiences.map((exp, i) => (
+                                    <div key={i} className="relative pl-12 md:pl-16">
+                                        {/* Dot */}
+                                        <div
+                                            className="absolute left-2.5 md:left-4.5 top-8 w-3 h-3 rounded-full ring-4 ring-gray-50 dark:ring-[#0a0a0a]"
+                                            style={{ backgroundColor: exp.color }}
+                                        />
+
+                                        <div className="glass-card space-y-3 hover:border-white/20 transition-all duration-300">
+                                            {/* Header */}
+                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-1">
+                                                <div>
+                                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                                        {exp.role}
+                                                    </h3>
+                                                    <p className="text-sm text-gray-500 dark:text-slate-400">
+                                                        {exp.company}
+                                                        {exp.client && <span className="text-[#38bdf8]"> → {exp.client}</span>}
+                                                        {' · '}{exp.location}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center gap-2 shrink-0">
+                                                    <span
+                                                        className="text-xs px-2.5 py-1 rounded-full border font-medium"
+                                                        style={{ color: exp.color, borderColor: `${exp.color}40`, backgroundColor: `${exp.color}15` }}
+                                                    >
+                                                        {exp.period}
+                                                    </span>
+                                                    <span className="text-xs text-gray-400 dark:text-slate-500 bg-gray-100 dark:bg-slate-800/60 px-2 py-1 rounded-full">
+                                                        👥 {exp.teamSize}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            {/* Bullets */}
+                                            <ul className="space-y-1.5 text-sm text-gray-600 dark:text-slate-400">
+                                                {exp.highlights.map((h, j) => (
+                                                    <li key={j} className="flex items-start gap-2">
+                                                        <span className="text-[10px] mt-1.5 shrink-0" style={{ color: exp.color }}>▸</span>
+                                                        {h}
+                                                    </li>
+                                                ))}
+                                            </ul>
+
+                                            {/* Link */}
+                                            {exp.link && (
+                                                <a
+                                                    href={exp.link}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-1 text-sm font-medium hover:underline"
+                                                    style={{ color: exp.color }}
+                                                >
+                                                    🔗 {exp.link}
+                                                </a>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* ═══ EDUCATION ═══ */}
+                    <section className="mt-12">
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
+                            🎓 {t('landing.education')}
+                        </h2>
+
+                        <div className="glass-card flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative overflow-hidden">
+                            <div className="absolute -top-16 -right-16 w-48 h-48 bg-[#38bdf8]/10 rounded-full blur-3xl -z-10" />
+                            <div className="space-y-1">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                    Ho Chi Minh University of Science (HCMUS)
+                                </h3>
+                                <p className="text-sm text-gray-500 dark:text-slate-400">
+                                    Faculty of Information Technology
+                                </p>
+                                <p className="text-xs text-gray-400 dark:text-slate-500">
+                                    HCM, Vietnam
+                                </p>
+                            </div>
+                            <span className="text-xs px-3 py-1.5 rounded-full border border-[#38bdf8]/40 text-[#38bdf8] bg-[#38bdf8]/10 font-medium shrink-0">
+                                Jul 2014 — Jul 2018
+                            </span>
+                        </div>
+                    </section>
+
+                    {/* ═══ SKILLS & EXPERTISE ═══ */}
+                    <section className="mt-12">
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
+                            🛠️ {t('landing.skills')}
+                        </h2>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {skillCategories.map((cat) => (
+                                <div key={cat.title} className="glass-card space-y-3">
+                                    <h3
+                                        className="text-sm font-semibold uppercase tracking-wider"
+                                        style={{ color: cat.color }}
+                                    >
+                                        {cat.title}
+                                    </h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {cat.skills.map((skill) => (
+                                            <span
+                                                key={skill}
+                                                className="px-2.5 py-1 text-xs rounded-full border text-gray-700 dark:text-slate-300"
+                                                style={{ borderColor: `${cat.color}30`, backgroundColor: `${cat.color}10` }}
+                                            >
+                                                {skill}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
                 </main>
 
                 {/* Footer with Terms and Privacy Policy */}
@@ -272,7 +546,8 @@ export default function LandingPage() {
     )
 }
 
-// Helper Components
+// ─── Helper Components ───────────────────────────────────────────────────────
+
 function TechIcon({ children, name }: { children: React.ReactNode; name: string; color: string }) {
     return (
         <div
@@ -293,7 +568,8 @@ function PerformanceBadge({ score, label }: { score: string; label: string }) {
     )
 }
 
-// SVG Icons
+// ─── SVG Icons ───────────────────────────────────────────────────────────────
+
 function ReactIcon() {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="-11.5 -10.23174 23 20.46348" className="w-full h-full text-[#61DAFB] fill-current">
@@ -343,6 +619,32 @@ function FigmaIcon() {
     )
 }
 
+function JestIcon() {
+    return (
+        <svg className="w-full h-full" viewBox="0 0 128 128">
+            <path fill="#99425B" d="M124.129 63.02c0-7.218-5.854-13.073-13.073-13.073-.541 0-1.074.042-1.6.114l-6.86-34.833a5.14 5.14 0 001.629-3.746V5.14A5.14 5.14 0 0099.084 0H28.916a5.14 5.14 0 00-5.14 5.14v6.343a5.14 5.14 0 001.728 3.834l-6.846 34.769c-.477-.06-.962-.096-1.455-.096-7.218 0-13.072 5.855-13.072 13.073 0 5.078 2.905 9.477 7.13 11.636a13.04 13.04 0 00-.058 1.208c0 4.67 2.47 8.764 6.168 11.057a13.04 13.04 0 00-.054 1.182c0 7.218 5.855 13.073 13.073 13.073.693 0 1.37-.06 2.03-.17l1.567 7.96a5.14 5.14 0 00-1.728 3.834v6.343a5.14 5.14 0 005.14 5.14h42.168a5.14 5.14 0 005.14-5.14v-6.344a5.14 5.14 0 00-1.626-3.747l1.581-8.028c.608.091 1.227.152 1.862.152 7.218 0 13.073-5.855 13.073-13.073 0-.401-.025-.795-.06-1.187 3.756-2.283 6.283-6.413 6.283-11.13 0-.396-.025-.787-.06-1.174 4.152-2.18 6.997-6.54 6.997-11.57z" />
+            <path fill="#FFF" d="M95.634 4.903H32.366v6.782h63.268V4.903zm-3.984 9.906H36.35l-6.712 34.096a13.07 13.07 0 016.442 5.018l4.094-20.804c.328-1.667 1.458-5.157 5.093-5.157h37.467c3.631 0 4.763 3.488 5.093 5.16l4.088 20.768a13.074 13.074 0 016.442-5.05L91.649 14.81zM45.658 66.27l-2.6 13.206 1.23-.277a4.627 4.627 0 011.138-.121 5.207 5.207 0 013.9 1.72c.182.206.348.428.498.665l4.445-22.6c.469-2.384-.46-4.317-2.469-5.137a6.12 6.12 0 00-2.295-.452c-3.104 0-4.881 2.952-5.447 5.84-.606 3.097.268 5.603 1.6 7.156zm36.786 0c1.332-1.553 2.206-4.06 1.6-7.157-.565-2.887-2.343-5.839-5.447-5.839a6.128 6.128 0 00-2.294.452c-2.01.82-2.938 2.753-2.47 5.137l4.446 22.6a5.17 5.17 0 01.498-.665 5.207 5.207 0 013.9-1.72c.386 0 .767.04 1.138.121l1.229.277-2.6-13.206zm-5.084 25.833a5.207 5.207 0 01-3.9-1.72 5.207 5.207 0 01-3.9 1.72 4.627 4.627 0 01-1.137-.121 5.207 5.207 0 01-3.9 1.72 4.627 4.627 0 01-1.138-.121l-.313.07-.308 1.565h19.38l-.312-1.586-.313-.07a4.627 4.627 0 01-1.137.121 5.207 5.207 0 01-3.9-1.72 4.63 4.63 0 01-1.137.121 4.627 4.627 0 01-1.138-.121l.035.008a5.207 5.207 0 01-3.899 1.712 4.627 4.627 0 01-1.137-.121l.035.008a5.219 5.219 0 01.663.186 4.638 4.638 0 001.137.121 5.207 5.207 0 003.9-1.72 4.638 4.638 0 001.138.121 4.627 4.627 0 001.138-.121 5.207 5.207 0 003.9 1.72 4.627 4.627 0 001.137-.121c.232-.067.455-.118.663-.186a4.627 4.627 0 01-1.137.121zM95.634 113.418H32.366v6.78h63.268v-6.78z" />
+        </svg>
+    )
+}
+
+function PlaywrightIcon() {
+    return (
+        <svg className="w-full h-full" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 8C18.745 8 8 18.745 8 32s10.745 24 24 24 24-10.745 24-24S45.255 8 32 8z" fill="#2EAD33" />
+            <path d="M44 28c-2 0-4 1-5 3l-2-1c1-3 4-5 7-5 4 0 8 3 8 8s-4 8-8 8c-3 0-6-2-7-5l2-1c1 2 3 3 5 3 3 0 5-2 5-5s-2-5-5-5zM20 28c-3 0-5 2-5 5s2 5 5 5c2 0 4-1 5-3l2 1c-1 3-4 5-7 5-4 0-8-3-8-8s4-8 8-8c3 0 6 2 7 5l-2 1c-1-2-3-3-5-3z" fill="#fff" />
+        </svg>
+    )
+}
+
+function GitIcon() {
+    return (
+        <svg className="w-full h-full" viewBox="0 0 128 128">
+            <path fill="#F05032" d="M124.742 58.378l-55.117-55.117c-3.172-3.174-8.32-3.174-11.497 0l-11.444 11.446 14.518 14.518c3.375-1.139 7.243-.375 9.932 2.314 2.703 2.706 3.462 6.607 2.293 9.993l13.992 13.993c3.385-1.167 7.292-.413 9.994 2.295 3.78 3.777 3.78 9.9 0 13.679a9.673 9.673 0 01-13.683 0 9.677 9.677 0 01-2.105-10.521L68.574 45.818l-.002 34.341c.922.455 1.791 1.063 2.559 1.828 3.779 3.777 3.779 9.898 0 13.683-3.779 3.777-9.904 3.777-13.679 0-3.778-3.784-3.778-9.905 0-13.683a9.556 9.556 0 013.702-2.458V45.085a9.58 9.58 0 01-3.702-2.458c-2.726-2.728-3.468-6.66-2.259-10.053L40.818 18.2 3.266 55.765c-3.178 3.176-3.178 8.322 0 11.499l55.117 55.114c3.174 3.174 8.32 3.174 11.499 0l54.86-54.858c3.174-3.176 3.174-8.327 0-11.5v.358z" />
+        </svg>
+    )
+}
+
 function EmailIcon() {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4">
@@ -351,12 +653,12 @@ function EmailIcon() {
     )
 }
 
-function InstagramIcon() {
+function LinkedInIcon() {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+            <rect x="2" y="9" width="4" height="12" />
+            <circle cx="4" cy="4" r="2" />
         </svg>
     )
 }
