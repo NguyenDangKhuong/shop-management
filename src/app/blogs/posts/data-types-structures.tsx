@@ -95,6 +95,10 @@ const id: symbol = Symbol('id')
 const id2 = Symbol('id')
 id === id2  // false (luôn unique)`}</CodeBlock>
 
+                <Callout type="tip">
+                    <strong>🧠 Mẹo nhớ 7 Primitives:</strong> Nhớ câu <strong>&quot;SN B NU BS&quot;</strong> — <em>String, Number, Boolean, Null, Undefined, BigInt, Symbol</em>. Falsy values cũng có mẹo: <strong>&quot;0 rỗng null undefined NaN false&quot;</strong> — chỉ 6 giá trị, mọi thứ khác là truthy (kể cả <code>[]</code> và <code>{'{}'}</code>). <code>typeof null === &apos;object&apos;</code> là bug lịch sử — hỏi hoài trong phỏng vấn!
+                </Callout>
+
                 {/* ===== TYPESCRIPT TYPES ===== */}
                 <Heading2>🔷 TypeScript — Hệ thống kiểu nâng cao</Heading2>
 
@@ -178,6 +182,10 @@ type UserKeys = keyof User  // 'name' | 'age' | 'email' | 'id'
 const config = { host: 'localhost', port: 3000 } as const
 type Config = typeof config  // { readonly host: 'localhost'; readonly port: 3000 }`}</CodeBlock>
 
+                <Callout type="tip">
+                    <strong>🧠 Mẹo nhớ Utility Types:</strong> Nhớ <strong>&quot;PROP R&quot;</strong> — <em>Partial, Required, Omit, Pick, Record, Readonly</em>. Interface vs Type: Interface cho <strong>extends + merge</strong>, Type cho <strong>unions + mapped</strong>. Discriminated Union luôn cần field <code>kind</code> hoặc <code>type</code> làm tag — switch/case sẽ narrow type tự động!
+                </Callout>
+
                 {/* ===== ARRAY ===== */}
                 <Heading2>📦 Array — Cấu trúc dữ liệu nền tảng</Heading2>
 
@@ -236,6 +244,10 @@ const replaced = nums.with(2, 99)
 // Includes (tốt hơn indexOf cho checking)
 nums.includes(3)  // true — O(n)`}</CodeBlock>
 
+                <Callout type="tip">
+                    <strong>🧠 Mẹo nhớ Array Complexity:</strong> <strong>push/pop = O(1)</strong>, <strong>shift/unshift = O(n)</strong> — vì phải dịch toàn bộ index! Luôn dùng <code>push + pop</code> cho Stack. Cần queue thì dùng pointer thay vì <code>shift()</code>. ES2023 có <code>toSorted/toReversed/with</code> — immutable versions, không mutate mảng gốc.
+                </Callout>
+
                 {/* ===== OBJECT ===== */}
                 <Heading2>🗂️ Object — Key-Value cơ bản</Heading2>
 
@@ -270,6 +282,10 @@ const obj = { [key]: 'value' }  // { dynamic: 'value' }
 // - prototype chain interference
 // - không có .size
 // → Dùng Map thay cho hash map!`}</CodeBlock>
+
+                <Callout type="tip">
+                    <strong>🧠 Mẹo nhớ Object vs Map:</strong> Object = <strong>config/shape cố định</strong>. Map = <strong>hash map động</strong>. Object keys luôn là string → <code>{'{1: "a"}'}</code> thật ra key là <code>&quot;1&quot;</code>. Map giữ insertion order + có <code>.size</code> → dùng cho algorithm!
+                </Callout>
 
                 {/* ===== MAP ===== */}
                 <Heading2>🗺️ Map — Hash Map đúng nghĩa</Heading2>
@@ -359,6 +375,10 @@ class SimpleCache<K, V> {
     }
 }`}</CodeBlock>
 
+                <Callout type="tip">
+                    <strong>🧠 Mẹo nhớ Map patterns:</strong> 4 bài mẫu — <strong>&quot;F-T-G-L&quot;</strong>: <em>Frequency counter</em> (Two Sum, anagram), <em>Two pointer + Map</em> (complement), <em>Grouping</em> (anagram groups), <em>LRU Cache</em> (Map giữ order → delete rồi set lại = move to end). Công thức frequency: <code>map.set(x, (map.get(x) || 0) + 1)</code> — thuộc lòng!
+                </Callout>
+
                 {/* ===== SET ===== */}
                 <Heading2>🎯 Set — Tập hợp unique values</Heading2>
 
@@ -436,6 +456,10 @@ function hasCycle(head: ListNode | null): boolean {
     }
     return false
 }`}</CodeBlock>
+
+                <Callout type="tip">
+                    <strong>🧠 Mẹo nhớ Set patterns:</strong> 5 bài mẫu — <strong>&quot;D-C-I-S-F&quot;</strong>: <em>Deduplicate</em> (<code>new Set(arr)</code>), <em>Contains Duplicate</em> (size !== length), <em>Intersection/Union/Difference</em> (filter + has), <em>Sliding Window</em> (add/delete tracking unique), <em>Floyd&apos;s Cycle</em> (visited Set). Set vs Map: Set = <strong>chỉ cần check tồn tại</strong>, Map = <strong>cần lưu value đi kèm</strong>.
+                </Callout>
 
                 {/* ===== WEAKMAP & WEAKSET ===== */}
                 <Heading2>👻 WeakMap & WeakSet — Garbage Collection Friendly</Heading2>
@@ -523,6 +547,10 @@ class MinStack {
     getMin() { return this.minStack.at(-1)! }
 }`}</CodeBlock>
 
+                <Callout type="tip">
+                    <strong>🧠 Mẹo nhớ Stack:</strong> <strong>LIFO = Last In First Out</strong> — hình dung xếp chồng đĩa. 3 bài mẫu: <strong>&quot;V-M-N&quot;</strong> — <em>Valid Parentheses</em> (match cặp ngoặc), <em>Min Stack</em> (2 stack song song), <em>Next Greater</em> (monotonic stack giảm dần). Trick: <strong>khi gặp bài &quot;matching/nesting&quot; → nghĩ Stack ngay!</strong>
+                </Callout>
+
                 {/* ===== QUEUE & DEQUE ===== */}
                 <Heading2>🚶 Queue & Deque — FIFO (First In, First Out)</Heading2>
 
@@ -591,6 +619,10 @@ function maxSlidingWindow(nums: number[], k: number): number[] {
     }
     return result
 }`}</CodeBlock>
+
+                <Callout type="tip">
+                    <strong>🧠 Mẹo nhớ Queue:</strong> <strong>FIFO = First In First Out</strong> — hình dung xếp hàng mua vé. <strong>NEVER dùng <code>shift()</code> cho queue lớn</strong> — O(n)! Dùng pointer <code>head++</code> thay thế. Deque = <strong>2 đầu</strong>, dùng cho Sliding Window Maximum. Nhớ: <strong>BFS = Queue, DFS = Stack/Recursion</strong>.
+                </Callout>
 
                 {/* ===== LINKED LIST ===== */}
                 <Heading2>🔗 Linked List</Heading2>
@@ -666,6 +698,10 @@ class DoublyNode {
     constructor(val = 0) { this.val = val }
 }`}</CodeBlock>
 
+                <Callout type="tip">
+                    <strong>🧠 Mẹo nhớ LinkedList:</strong> 3 kỹ thuật vàng — <strong>&quot;D-F-R&quot;</strong>: <em>Dummy Head</em> (thêm node giả ở đầu để tránh edge cases), <em>Fast &amp; Slow</em> (tìm middle, detect cycle), <em>Reverse</em> (3 biến prev/curr/next). <strong>Khi gặp &quot;delete head&quot; hoặc &quot;return new head&quot; → luôn dùng Dummy!</strong>
+                </Callout>
+
                 {/* ===== HEAP / PRIORITY QUEUE ===== */}
                 <Heading2>⛰️ Heap / Priority Queue</Heading2>
 
@@ -738,6 +774,10 @@ function findKthLargest(nums: number[], k: number): number {
     return heap.peek() // phần tử nhỏ nhất trong k lớn nhất = kth largest
 }`}</CodeBlock>
 
+                <Callout type="tip">
+                    <strong>🧠 Mẹo nhớ Heap:</strong> <strong>JS không có Heap built-in</strong> — phải tự viết! Công thức vàng: <code>parent = (i-1)/2</code>, <code>left = 2i+1</code>, <code>right = 2i+2</code>. Nhớ <strong>&quot;K-M-T-D&quot;</strong>: <em>Kth Largest</em> (MinHeap size k), <em>Merge K Lists</em>, <em>Top K Frequent</em>, <em>Dijkstra</em>. MinHeap cho &quot;k lớn nhất&quot;, MaxHeap cho &quot;k nhỏ nhất&quot; — <strong>ngược lại!</strong>
+                </Callout>
+
                 {/* ===== TRIE ===== */}
                 <Heading2>🌳 Trie — Prefix Tree</Heading2>
 
@@ -781,6 +821,10 @@ class Trie {
 }
 
 // 🎯 Ứng dụng: autocomplete, word search, IP routing`}</CodeBlock>
+
+                <Callout type="tip">
+                    <strong>🧠 Mẹo nhớ Trie:</strong> Trie = <strong>Tree của từ</strong> (rú Triệu về). Mỗi node có <code>Map&lt;char, TrieNode&gt;</code> + <code>isEnd</code>. 3 thao tác: insert/search/startsWith — đều dùng loop qua từng ký tự O(m). <strong>Khi gặp &quot;prefix&quot;, &quot;autocomplete&quot;, &quot;word dictionary&quot; → nghĩ Trie!</strong>
+                </Callout>
 
                 {/* ===== GRAPH ===== */}
                 <Heading2>🕸️ Graph — Biểu diễn & Duyệt</Heading2>
@@ -843,6 +887,10 @@ function bfsGraph(graph: Map<number, number[]>, start: number): number[] {
 // - Shortest Path (BFS unweighted, Dijkstra weighted)
 // - Connected Components
 // - Detect Cycle`}</CodeBlock>
+
+                <Callout type="tip">
+                    <strong>🧠 Mẹo nhớ Graph:</strong> Adjacency List = <code>Map&lt;node, neighbors[]&gt;</code>. <strong>DFS = đi sâu (Stack/đệ quy)</strong>, <strong>BFS = lan rộng (Queue)</strong>. Nhớ <strong>&quot;I-C-S-C-D&quot;</strong>: <em>Islands</em> (2D grid), <em>Course Schedule</em> (topological sort), <em>Shortest Path</em> (BFS unwt / Dijkstra wt), <em>Connected Components</em>, <em>Detect Cycle</em>. BFS cho shortest path trên unweighted graph!
+                </Callout>
 
                 {/* ===== CHEAT SHEET ===== */}
                 <Heading2>📋 Big-O Cheat Sheet</Heading2>
@@ -924,6 +972,10 @@ parseInt('42px')   // 42
 // 6. bigint — arbitrary precision: 9007199254740991n
 // 7. symbol — unique identifier: Symbol('id')`}</CodeBlock>
 
+                <Callout type="tip">
+                    <strong>🧠 Remember 7 Primitives:</strong> Mnemonic <strong>&quot;SN B NU BS&quot;</strong> — <em>String, Number, Boolean, Null, Undefined, BigInt, Symbol</em>. Falsy values: <strong>0, empty string, null, undefined, NaN, false</strong> — only 6! Everything else is truthy (including <code>[]</code> and <code>{'{}'}</code>). <code>typeof null === &apos;object&apos;</code> is a historical bug — common interview question!
+                </Callout>
+
                 {/* ===== TYPESCRIPT TYPES ===== */}
                 <Heading2>🔷 TypeScript — Advanced Type System</Heading2>
 
@@ -961,6 +1013,10 @@ function area(shape: Shape): number {
 const config = { host: 'localhost', port: 3000 } as const
 type Config = typeof config`}</CodeBlock>
 
+                <Callout type="tip">
+                    <strong>🧠 Utility Types mnemonic:</strong> <strong>&quot;PROP R&quot;</strong> — <em>Partial, Required, Omit, Pick, Record, Readonly</em>. Interface = <strong>extends + declaration merge</strong>. Type = <strong>unions + mapped types</strong>. Discriminated Unions need a <code>kind</code>/<code>type</code> tag field — switch narrows automatically!
+                </Callout>
+
                 {/* ===== ARRAY ===== */}
                 <Heading2>📦 Array — Foundation Data Structure</Heading2>
 
@@ -995,6 +1051,10 @@ Array.from(new Set([1,2,2,3]))         // deduplicate
 nums.toSorted((a, b) => a - b)  // returns new array
 nums.toReversed()
 nums.with(2, 99)  // replace at index`}</CodeBlock>
+
+                <Callout type="tip">
+                    <strong>🧠 Array Complexity:</strong> <strong>push/pop = O(1)</strong>, <strong>shift/unshift = O(n)</strong> — because all indices shift! Always use <code>push + pop</code> for Stack. For Queue, use pointer not <code>shift()</code>. ES2023: <code>toSorted/toReversed/with</code> — immutable versions.
+                </Callout>
 
                 {/* ===== MAP ===== */}
                 <Heading2>🗺️ Map — True Hash Map</Heading2>
@@ -1042,6 +1102,10 @@ for (const word of words) {
     grouped.get(key)!.push(word)
 }`}</CodeBlock>
 
+                <Callout type="tip">
+                    <strong>🧠 Map patterns — &quot;F-T-G-L&quot;:</strong> <em>Frequency counter</em>, <em>Two Sum complement</em>, <em>Grouping</em> (anagrams), <em>LRU Cache</em>. Object keys are always strings. Map accepts any key type + has <code>.size</code> + keeps insertion order. Frequency formula: <code>map.set(x, (map.get(x) || 0) + 1)</code> — memorize it!
+                </Callout>
+
                 {/* ===== SET ===== */}
                 <Heading2>🎯 Set — Unique Value Collection</Heading2>
 
@@ -1078,6 +1142,10 @@ function lengthOfLongestSubstring(s: string): number {
     return maxLen
 }`}</CodeBlock>
 
+                <Callout type="tip">
+                    <strong>🧠 Set patterns — &quot;D-C-I-S-F&quot;:</strong> <em>Deduplicate</em> (<code>new Set(arr)</code>), <em>Contains Duplicate</em> (size !== length), <em>Intersection/Union/Difference</em> (filter + has), <em>Sliding Window</em> unique tracking, <em>Floyd&apos;s Cycle</em> detection. Set = <strong>existence check only</strong>, Map = <strong>need associated value</strong>.
+                </Callout>
+
                 {/* ===== STACK ===== */}
                 <Heading2>📚 Stack — LIFO (Last In, First Out)</Heading2>
 
@@ -1113,6 +1181,10 @@ function nextGreater(nums: number[]): number[] {
     return result
 }`}</CodeBlock>
 
+                <Callout type="tip">
+                    <strong>🧠 Stack — &quot;V-M-N&quot;:</strong> <em>Valid Parentheses</em> (bracket matching), <em>Min Stack</em> (parallel stack), <em>Next Greater</em> (monotonic decreasing). Trick: <strong>see &quot;matching/nesting/nested&quot; → think Stack!</strong> LIFO = like stacking plates.
+                </Callout>
+
                 {/* ===== QUEUE ===== */}
                 <Heading2>🚶 Queue — FIFO (First In, First Out)</Heading2>
 
@@ -1146,6 +1218,10 @@ function levelOrder(root: TreeNode | null): number[][] {
     }
     return result
 }`}</CodeBlock>
+
+                <Callout type="tip">
+                    <strong>🧠 Queue rule:</strong> <strong>NEVER use <code>shift()</code> for large queues</strong> — O(n)! Use <code>head++</code> pointer instead. Remember: <strong>BFS = Queue, DFS = Stack/Recursion</strong>. Deque (double-ended) is for Sliding Window Maximum.
+                </Callout>
 
                 {/* ===== HEAP ===== */}
                 <Heading2>⛰️ Heap / Priority Queue</Heading2>
@@ -1197,6 +1273,10 @@ function levelOrder(root: TreeNode | null): number[][] {
 }
 
 // Use: Kth largest, merge K sorted, top-K frequent, Dijkstra`}</CodeBlock>
+
+                <Callout type="tip">
+                    <strong>🧠 Heap formula:</strong> <code>parent = (i-1)/2</code>, <code>left = 2i+1</code>, <code>right = 2i+2</code>. <strong>&quot;K-M-T-D&quot;</strong>: <em>Kth Largest</em> (MinHeap size k), <em>Merge K Lists</em>, <em>Top K Frequent</em>, <em>Dijkstra</em>. Counter-intuitive: MinHeap for &quot;k largest&quot;, MaxHeap for &quot;k smallest&quot;!
+                </Callout>
 
                 {/* ===== TRIE & GRAPH ===== */}
                 <Heading2>🌳 Trie & 🕸️ Graph</Heading2>
@@ -1252,6 +1332,10 @@ function dfs(graph: Map<number, number[]>, start: number) {
     }
     explore(start)
 }`}</CodeBlock>
+
+                <Callout type="tip">
+                    <strong>🧠 Trie:</strong> Each node = <code>Map&lt;char, TrieNode&gt;</code> + <code>isEnd</code>. See &quot;prefix/autocomplete/dictionary&quot; → Trie! <strong>Graph:</strong> Adjacency List = <code>Map&lt;node, neighbors[]&gt;</code>. <strong>DFS = go deep (Stack/recursion), BFS = go wide (Queue)</strong>. BFS gives shortest path on unweighted graphs.
+                </Callout>
 
                 {/* ===== CHEAT SHEET ===== */}
                 <Heading2>📋 Big-O Cheat Sheet</Heading2>
