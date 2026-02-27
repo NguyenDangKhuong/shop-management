@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { TweetSearch } from './TweetSearch'
+import { GraphQLTimeline } from './GraphQLTimeline'
 
 export const metadata: Metadata = {
     title: 'X Tweets',
@@ -22,10 +23,11 @@ export default function TweetsPage() {
                 </p>
             </div>
 
-            {/* Tweet Search + Dynamic Tweets */}
+            {/* Tweet Search + Dynamic Tweets (Embed) */}
             <TweetSearch />
 
-
+            {/* GraphQL Tweets — Custom rendered with pagination */}
+            <GraphQLTimeline />
 
             {/* Background */}
             <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
