@@ -208,7 +208,12 @@ export default function LandingPage() {
                                         >
                                             📝 Blog
                                         </Link>
-
+                                        <Link
+                                            href="/cv"
+                                            className="inline-block px-6 py-3 rounded-full bg-gray-100 dark:bg-slate-800/50 border border-[#10b981]/50 text-gray-900 dark:text-white font-semibold transition hover:bg-[#10b981]/20 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                                        >
+                                            📄 {t('landing.downloadCV')}
+                                        </Link>
                                         <Link
                                             href="/leetcode"
                                             className="inline-block px-6 py-3 rounded-full bg-gray-100 dark:bg-slate-800/50 border border-[#ffa116]/50 text-gray-900 dark:text-white font-semibold transition hover:bg-[#ffa116]/20 shadow-[0_0_15px_rgba(255,161,22,0.3)]"
