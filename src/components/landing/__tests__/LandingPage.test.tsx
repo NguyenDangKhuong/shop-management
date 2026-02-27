@@ -157,7 +157,13 @@ describe('LandingPage Component', () => {
     })
 
 
+    it('renders download CV link', () => {
+        render(<LandingPage />)
 
+        const cvLink = screen.getByRole('link', { name: /download cv/i })
+        expect(cvLink).toBeInTheDocument()
+        expect(cvLink).toHaveAttribute('href', '/cv')
+    })
 
     it('renders LinkedIn link in contact section', () => {
         render(<LandingPage />)
