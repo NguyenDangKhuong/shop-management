@@ -24,6 +24,19 @@ const nextConfig = {
   },
   // i18n config không được hỗ trợ trong App Router
   // i18n,
+
+  // xvn.vercel.app: chỉ cho phép /tweets, redirect tất cả path khác về /tweets
+  // Chạy ở CDN level → không tốn Vercel Function transfer
+  async redirects() {
+    return [
+      {
+        source: '/:path((?!tweets|_next|api|favicon).*)',
+        has: [{ type: 'host', value: 'xvn.vercel.app' }],
+        destination: '/tweets',
+        permanent: false,
+      },
+    ]
+  },
   // async headers() {
   //   return [
   //     {
