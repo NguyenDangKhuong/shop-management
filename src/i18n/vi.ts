@@ -4,14 +4,14 @@ const vi: Record<TranslationKeys, string> = {
     // Landing
     'landing.heroGreeting': 'Xin chào, tôi là',
     'landing.heroName': 'Khương',
-    'landing.heroSub': 'Tôi xây dựng trải nghiệm web thân thiện.',
+    'landing.heroSub': 'Front-End Developer · 8+ Năm · React Specialist',
     'landing.viewProjects': 'Xem dự án',
     'landing.heroSection': 'Giới thiệu',
     'landing.about': 'Về tôi',
     'landing.aboutText':
-        'Tôi là Khương, lập trình viên front-end tại TP. Hồ Chí Minh. Tôi đam mê tạo ra trải nghiệm người dùng trực quan, năng động và code sạch, hiệu quả. Hiện đang tập trung vào hệ sinh thái React.',
+        'Lập trình viên Front-End với 8 năm kinh nghiệm chuyên về React.js, Next.js và các công nghệ web hiện đại. Thành thạo xây dựng giao diện responsive, thân thiện với người dùng, chú trọng chi tiết và hiệu năng. Đam mê UI/UX best practices và viết code sạch, dễ bảo trì.',
     'landing.present': 'Hiện tại',
-    'landing.skiller': 'Chuyên gia',
+    'landing.skiller': 'Tech Lead',
     'landing.techStack': 'Công nghệ',
     'landing.featuredProject': 'Dự án nổi bật: Ứng dụng E-commerce',
     'landing.liveDemo': 'Xem demo',
@@ -23,6 +23,15 @@ const vi: Record<TranslationKeys, string> = {
     'landing.privacy': 'Chính sách bảo mật',
     'landing.terms': 'Điều khoản sử dụng',
     'landing.login': 'Đăng nhập',
+    'landing.experience': 'Kinh nghiệm làm việc',
+    'landing.education': 'Học vấn',
+    'landing.skills': 'Kỹ năng chuyên môn',
+    'landing.achievements': 'Thành tựu nổi bật',
+    'landing.yearsExp': 'Năm kinh nghiệm',
+    'landing.components': 'Components Design System',
+    'landing.a11yScore': 'Điểm Accessibility',
+    'landing.teamSize': 'Quản lý đội nhóm',
+    'landing.downloadCV': 'Tải CV',
 
     // Login
     'login.title': 'Chào mừng trở lại',
