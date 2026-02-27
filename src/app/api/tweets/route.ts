@@ -149,6 +149,9 @@ div { border-color: rgba(255,255,255,0.1) !important; }
   // Bypass sensitive content warning — auto-click Yes/View buttons
   var t=setInterval(function(){document.querySelectorAll('button').forEach(function(b){if(b.textContent&&(b.textContent.includes('Yes')||b.textContent.trim()==='View'))b.click();});},300);setTimeout(function(){clearInterval(t);},8000);
 
+  // Video proxy URL (Cloudflare Worker or fallback to Vercel)
+  var videoProxyBase = '${process.env.NEXT_PUBLIC_VIDEO_PROXY_URL || ''}';
+
   // Video map: videoId -> { url, w, h }
   var videoMap = ${videoMapJson};
 
@@ -175,7 +178,9 @@ div { border-color: rgba(255,255,255,0.1) !important; }
       video.poster = src;
       video.style.cssText = 'width:100%;display:block;border-radius:12px;aspect-ratio:' + info.w + '/' + info.h + ';';
       var source = document.createElement('source');
-      source.src = info.url;
+      source.src = videoProxyBase
+        ? videoProxyBase + '/?url=' + encodeURIComponent(info.url)
+        : '/api/tweets/video?url=' + encodeURIComponent(info.url);
       source.type = 'video/mp4';
       video.appendChild(source);
       container.appendChild(video);

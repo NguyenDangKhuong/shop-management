@@ -1,0 +1,5 @@
+name = "twitter-video-proxy"
+main = "src/worker.ts"
+compatibility_date = "2024-01-01"
+
+# Deploy sẽ tạo URL dạng: https://twitter-video-proxy.<your-subdomain>.workers.dev
