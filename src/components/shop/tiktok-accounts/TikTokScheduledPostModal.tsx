@@ -105,7 +105,6 @@ const TikTokScheduledPostModal = ({
     const handleVideoUpload = async (file: File) => {
         try {
             setUploading(true)
-            const fileIndex = Date.now()
             const queueItem = { name: file.name, progress: 0, status: 'uploading' as const }
 
             setUploadQueue(prev => [...prev, queueItem])
