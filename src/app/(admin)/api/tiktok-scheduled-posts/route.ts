@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import TikTokScheduledPostModel from '@/models/TikTokScheduledPost'
 import connectDb from '@/utils/connectDb'
+import { Client } from 'minio'
+import { MINIO_ACCESS_KEY, MINIO_SECRET_KEY } from '@/utils/constants'
+
+const minioClient = new Client({
+    endPoint: 's3.thetaphoa.store',
+    port: 443,
+    useSSL: true,
+    accessKey: MINIO_ACCESS_KEY || '',
+    secretKey: MINIO_SECRET_KEY || '',
+})
 
 // GET all scheduled posts (optionally filter by accountId)
 export async function GET(request: NextRequest) {
@@ -80,12 +90,28 @@ export async function PUT(request: NextRequest) {
     }
 }
 
-// DELETE scheduled post
+// DELETE scheduled post + cleanup MinIO video
 export async function DELETE(request: NextRequest) {
     try {
         await connectDb()
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
+
+        // Fetch post first to get video info
+        const post = await TikTokScheduledPostModel.findById(id).lean() as any
+
+        if (post?.video?.publicId) {
+            // Delete video from MinIO
+            try {
+                const bucketName = process.env.NEXT_PUBLIC_MINIO_TIKTOK_BUCKET || 'tiktokpost'
+                await minioClient.removeObject(bucketName, post.video.publicId)
+                console.log('🗑️ Deleted MinIO video:', post.video.publicId)
+            } catch (err) {
+                console.error('Failed to delete MinIO video:', err)
+                // Continue with DB deletion even if MinIO fails
+            }
+        }
+
         await TikTokScheduledPostModel.findByIdAndDelete(id)
         return NextResponse.json({ success: true })
     } catch (error: any) {
