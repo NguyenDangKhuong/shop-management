@@ -4,7 +4,6 @@ import { MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_FACEBOOK_BUCKET } from '@/uti
 
 export const dynamic = 'force-dynamic'
 
-// MinIO Client Configuration
 const minioClient = new Client({
     endPoint: 's3.thetaphoa.store',
     port: 443,
@@ -13,10 +12,11 @@ const minioClient = new Client({
     secretKey: MINIO_SECRET_KEY || '',
 })
 
-// POST - Generate presigned PUT URL for direct upload
+// POST - Generate presigned PUT URL
 export async function POST(request: NextRequest) {
     try {
-        const { fileName, contentType, bucketName: customBucket } = await request.json()
+        const body = await request.json()
+        const { fileName, bucketName: customBucket } = body
         const bucketName = customBucket || MINIO_FACEBOOK_BUCKET || 'facebookpost'
 
         if (!fileName) {
@@ -26,19 +26,16 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // Generate unique filename
         const timestamp = Date.now()
         const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_')
         const objectName = `reel-${timestamp}-${sanitizedFileName}`
 
-        // Generate presigned PUT URL (valid for 10 minutes)
         const presignedUrl = await minioClient.presignedPutObject(
             bucketName,
             objectName,
-            600 // 10 minutes
+            600
         )
 
-        // Public URL after upload
         const publicUrl = `http://s3.thetaphoa.store/${bucketName}/${objectName}`
 
         return NextResponse.json({
@@ -48,9 +45,9 @@ export async function POST(request: NextRequest) {
             fileName: objectName,
         })
     } catch (error: any) {
-        console.error('MinIO presigned URL error:', error)
+        console.error('MinIO presign error:', error)
         return NextResponse.json(
-            { success: false, message: error.message || 'Failed to generate upload URL' },
+            { success: false, message: error.message || 'Failed to generate URL' },
             { status: 500 }
         )
     }
@@ -70,7 +67,6 @@ export async function DELETE(request: NextRequest) {
             )
         }
 
-        // Delete from MinIO
         await minioClient.removeObject(bucketName, fileName)
 
         return NextResponse.json({

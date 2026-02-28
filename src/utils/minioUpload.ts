@@ -1,28 +1,27 @@
 // MinIO S3 Video Upload Utility (via Presigned URL — direct upload to S3)
-export const uploadVideoToMinIO = async (file: File, bucketName?: string): Promise<{ url: string; fileName?: string; success: boolean; message?: string }> => {
+export const uploadVideoToMinIO = async (
+    file: File,
+    bucketName?: string,
+    onProgress?: (percent: number) => void
+): Promise<{ url: string; fileName?: string; success: boolean; message?: string }> => {
     try {
-        // Step 1: Get presigned PUT URL from API
+        onProgress?.(5)
+
+        // Step 1: Get presigned PUT URL from API (small JSON request)
         const response = await fetch('/api/minio-video', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                fileName: file.name,
-                contentType: file.type,
-                bucketName,
-            }),
+            body: JSON.stringify({ fileName: file.name, contentType: file.type, bucketName }),
         })
 
         const result = await response.json()
-
-        if (!response.ok || !result.success || !result.presignedUrl) {
-            return {
-                success: false,
-                message: result.message || 'Failed to get upload URL',
-                url: ''
-            }
+        if (!response.ok || !result.success) {
+            return { success: false, message: result.message || 'Failed to get upload URL', url: '' }
         }
 
-        // Step 2: Upload directly to MinIO using presigned URL
+        onProgress?.(10)
+
+        // Step 2: PUT file directly to MinIO via presigned URL
         const uploadResponse = await fetch(result.presignedUrl, {
             method: 'PUT',
             headers: { 'Content-Type': file.type },
@@ -36,6 +35,8 @@ export const uploadVideoToMinIO = async (file: File, bucketName?: string): Promi
                 url: ''
             }
         }
+
+        onProgress?.(100)
 
         return {
             success: true,
@@ -51,32 +52,20 @@ export const uploadVideoToMinIO = async (file: File, bucketName?: string): Promi
     }
 }
 
-// MinIO S3 Video Delete Utility (via API Route)
+// MinIO S3 Video Delete Utility
 export const deleteVideoFromMinIO = async (fileName: string, bucketName?: string): Promise<{ success: boolean; message?: string }> => {
     try {
         const url = `/api/minio-video?fileName=${encodeURIComponent(fileName)}`
         const finalUrl = bucketName ? `${url}&bucketName=${encodeURIComponent(bucketName)}` : url
-        const response = await fetch(finalUrl, {
-            method: 'DELETE',
-        })
-
+        const response = await fetch(finalUrl, { method: 'DELETE' })
         const result = await response.json()
 
         if (response.ok && result.success) {
-            return {
-                success: true,
-                message: result.message
-            }
+            return { success: true, message: result.message }
         } else {
-            return {
-                success: false,
-                message: result.message || 'Delete failed'
-            }
+            return { success: false, message: result.message || 'Delete failed' }
         }
     } catch (error: any) {
-        return {
-            success: false,
-            message: error.message || 'Network error'
-        }
+        return { success: false, message: error.message || 'Network error' }
     }
 }
