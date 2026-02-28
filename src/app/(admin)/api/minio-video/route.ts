@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Client } from 'minio'
 import { MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_FACEBOOK_BUCKET } from '@/utils/constants'
 
-// Route Segment Config - Increase body size limit for video uploads
-export const maxDuration = 60 // 60 seconds timeout
 export const dynamic = 'force-dynamic'
 
 // MinIO Client Configuration
@@ -15,53 +13,44 @@ const minioClient = new Client({
     secretKey: MINIO_SECRET_KEY || '',
 })
 
-// POST - Upload video to MinIO
+// POST - Generate presigned PUT URL for direct upload
 export async function POST(request: NextRequest) {
     try {
-        const formData = await request.formData()
-        const file = formData.get('video') as File
-        const bucketName = (formData.get('bucketName') as string) || MINIO_FACEBOOK_BUCKET || 'facebookpost'
+        const { fileName, contentType, bucketName: customBucket } = await request.json()
+        const bucketName = customBucket || MINIO_FACEBOOK_BUCKET || 'facebookpost'
 
-        if (!file) {
+        if (!fileName) {
             return NextResponse.json(
-                { success: false, message: 'No file provided' },
+                { success: false, message: 'No fileName provided' },
                 { status: 400 }
             )
         }
 
-        // Convert File to Buffer
-        const bytes = await file.arrayBuffer()
-        const buffer = Buffer.from(bytes)
-
         // Generate unique filename
         const timestamp = Date.now()
-        // Sanitize filename: remove special characters, spaces, etc.
-        const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
-        const fileName = `reel-${timestamp}-${sanitizedFileName}`
+        const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_')
+        const objectName = `reel-${timestamp}-${sanitizedFileName}`
 
-        // Upload to MinIO
-        await minioClient.putObject(
+        // Generate presigned PUT URL (valid for 10 minutes)
+        const presignedUrl = await minioClient.presignedPutObject(
             bucketName,
-            fileName,
-            buffer,
-            buffer.length,
-            {
-                'Content-Type': file.type,
-            }
+            objectName,
+            600 // 10 minutes
         )
 
-        // Generate public URL
-        const url = `http://s3.thetaphoa.store/${bucketName}/${fileName}`
+        // Public URL after upload
+        const publicUrl = `http://s3.thetaphoa.store/${bucketName}/${objectName}`
 
         return NextResponse.json({
             success: true,
-            url,
-            fileName,
+            presignedUrl,
+            publicUrl,
+            fileName: objectName,
         })
     } catch (error: any) {
-        console.error('MinIO upload error:', error)
+        console.error('MinIO presigned URL error:', error)
         return NextResponse.json(
-            { success: false, message: error.message || 'Upload failed' },
+            { success: false, message: error.message || 'Failed to generate upload URL' },
             { status: 500 }
         )
     }

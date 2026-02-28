@@ -383,7 +383,7 @@ export default function TikTokAccountPage() {
 
             {/* Scheduled Posts */}
             <div className="bg-white dark:bg-[#1f1f1f] rounded-lg shadow-sm p-4 mb-4">
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center justify-between mb-2">
                     <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">
                         Lịch đăng bài ({scheduledPosts.length})
                     </h2>
@@ -396,6 +396,26 @@ export default function TikTokAccountPage() {
                         Thêm
                     </Button>
                 </div>
+                {(() => {
+                    const apiUrl = `${window.location.origin}/api/tiktok-scheduled-posts?accountId=${account._id}`
+                    return (
+                        <div className="flex items-center gap-2 mb-3 bg-gray-50 dark:bg-black/30 px-2 py-1 rounded">
+                            <a href={apiUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 dark:text-blue-400 font-mono truncate flex-1 hover:underline">
+                                {apiUrl}
+                            </a>
+                            <Button
+                                type="text"
+                                size="small"
+                                icon={<CopyOutlined />}
+                                onClick={() => {
+                                    navigator.clipboard.writeText(apiUrl)
+                                    message.success('Đã copy API URL!')
+                                }}
+                                className="!p-0 !h-5 !w-5 !min-w-0 text-blue-700 dark:text-blue-400"
+                            />
+                        </div>
+                    )
+                })()}
 
                 {postsLoading ? (
                     <div className="text-center py-4">
