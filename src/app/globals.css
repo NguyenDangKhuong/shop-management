@@ -1,9 +1,33 @@
 @import 'tailwindcss';
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:is(.dark, .dark *));
+
+:root {
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: #e5e7eb;
+}
+
+.dark {
+  --card-bg: #1f1f1f;
+  --card-border: #374151;
+  --glass-bg: rgba(30, 41, 59, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
 
 @layer components {
   .glass-card {
-    @apply bg-white/80 dark:bg-[rgba(30,41,59,0.4)] backdrop-blur-xl border border-gray-200 dark:border-[rgba(255,255,255,0.1)] rounded-[2rem] p-6 lg:p-8;
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    border-radius: 2rem;
+    padding: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .glass-card {
+      padding: 2rem;
+    }
   }
 }
