@@ -1,30 +1,46 @@
-// MinIO S3 Video Upload Utility (via API Route)
+// MinIO S3 Video Upload Utility (via Presigned URL — direct upload to S3)
 export const uploadVideoToMinIO = async (file: File, bucketName?: string): Promise<{ url: string; fileName?: string; success: boolean; message?: string }> => {
     try {
-        const formData = new FormData()
-        formData.append('video', file)
-        if (bucketName) formData.append('bucketName', bucketName)
-
-        // Upload via Next.js API route (which handles MinIO connection)
+        // Step 1: Get presigned PUT URL from API
         const response = await fetch('/api/minio-video', {
             method: 'POST',
-            body: formData,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                fileName: file.name,
+                contentType: file.type,
+                bucketName,
+            }),
         })
 
         const result = await response.json()
 
-        if (response.ok && result.success && result.url) {
-            return {
-                success: true,
-                url: result.url,
-                fileName: result.fileName
-            }
-        } else {
+        if (!response.ok || !result.success || !result.presignedUrl) {
             return {
                 success: false,
-                message: result.message || 'Upload failed',
+                message: result.message || 'Failed to get upload URL',
                 url: ''
             }
+        }
+
+        // Step 2: Upload directly to MinIO using presigned URL
+        const uploadResponse = await fetch(result.presignedUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': file.type },
+            body: file,
+        })
+
+        if (!uploadResponse.ok) {
+            return {
+                success: false,
+                message: `Upload failed: ${uploadResponse.status} ${uploadResponse.statusText}`,
+                url: ''
+            }
+        }
+
+        return {
+            success: true,
+            url: result.publicUrl,
+            fileName: result.fileName
         }
     } catch (error: any) {
         return {
