@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Form, Input, Modal, Button, App, DatePicker, Select, Upload, TimePicker } from 'antd'
-import { UploadOutlined } from '@ant-design/icons'
+import { UploadOutlined, DeleteOutlined } from '@ant-design/icons'
 import { apiPost, apiPut } from '@/utils/internalApi'
 import { uploadVideoToMinIO, deleteVideoFromMinIO } from '@/utils/minioUpload'
 import { MINIO_TIKTOK_BUCKET } from '@/utils/constants'
@@ -28,13 +28,16 @@ const TikTokScheduledPostModal = ({
     const { message } = App.useApp()
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
-    const [video, setVideo] = useState<any>(null)
+    const [video, setVideo] = useState<any>(null) // Single video for edit mode
+    const [videos, setVideos] = useState<any[]>([]) // Multiple videos for create mode
     const [uploading, setUploading] = useState(false)
     const [shopeeLinks, setShopeeLinks] = useState<any[]>([])
     const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null)
 
-    // Track newly uploaded video this session (not existing from editing)
-    const uploadedThisSessionRef = useRef<{ url: string; type: string; publicId?: string } | null>(null)
+    // Track newly uploaded videos this session
+    const uploadedThisSessionRef = useRef<{ url: string; type: string; publicId?: string }[]>([])
+
+    const isEditMode = !!editingPost
 
     // Fetch Shopee Links
     useEffect(() => {
@@ -54,8 +57,7 @@ const TikTokScheduledPostModal = ({
 
     useEffect(() => {
         if (isOpen) {
-            // Clear tracker when modal opens - don't track existing video as "new"
-            uploadedThisSessionRef.current = null
+            uploadedThisSessionRef.current = []
 
             if (editingPost) {
                 form.setFieldsValue({
@@ -66,29 +68,28 @@ const TikTokScheduledPostModal = ({
                     status: editingPost.status || 'scheduled'
                 })
                 setVideo(editingPost.video || null)
+                setVideos([])
             } else {
                 form.resetFields()
-                form.setFieldsValue({ status: 'scheduled' }) // Default to scheduled
+                form.setFieldsValue({ status: 'scheduled' })
                 setVideo(null)
+                setVideos([])
             }
         } else {
-            // Reset when closing
             setVideo(null)
+            setVideos([])
         }
     }, [isOpen, editingPost, form])
 
     const handleShopeeSelect = (shopeeId: string) => {
         if (!shopeeId) {
-            // Clear description when deselecting
             form.setFieldsValue({ description: '' })
             return
         }
 
         const selected = shopeeLinks.find(link => link._id === shopeeId)
-        console.log('Selected Shopee Link:', selected)
 
         if (selected) {
-            // Use description if available, otherwise use name as fallback
             const descriptionText = selected.description || selected.name
             form.setFieldsValue({ description: descriptionText })
 
@@ -109,9 +110,15 @@ const TikTokScheduledPostModal = ({
                     type: 'video',
                     publicId: result.fileName || file.name
                 }
-                setVideo(newVideo)
-                uploadedThisSessionRef.current = newVideo
-                message.success('Đã upload video!')
+
+                if (isEditMode) {
+                    setVideo(newVideo)
+                    uploadedThisSessionRef.current = [newVideo]
+                } else {
+                    setVideos(prev => [...prev, newVideo])
+                    uploadedThisSessionRef.current.push(newVideo)
+                }
+                message.success(`Đã upload ${file.name}!`)
             } else {
                 message.error('Upload failed: ' + result.message)
             }
@@ -121,7 +128,16 @@ const TikTokScheduledPostModal = ({
         } finally {
             setUploading(false)
         }
-        return false // Prevent auto upload
+        return false
+    }
+
+    const handleRemoveVideo = async (index: number) => {
+        const vid = videos[index]
+        if (vid?.publicId) {
+            await deleteVideoFromMinIO(vid.publicId, MINIO_TIKTOK_BUCKET)
+        }
+        setVideos(prev => prev.filter((_, i) => i !== index))
+        uploadedThisSessionRef.current = uploadedThisSessionRef.current.filter(v => v.publicId !== vid?.publicId)
     }
 
     const handleSubmit = async () => {
@@ -129,63 +145,86 @@ const TikTokScheduledPostModal = ({
             setLoading(true)
             const values = await form.validateFields()
 
-            if (!video) {
-                message.error('Vui lòng upload video!')
-                return
-            }
-
             const selectedProduct = products.find(p => p.product_id === values.productId)
 
-            // Calculate Unix timestamp from scheduledDate + scheduledTime
-            let scheduledUnixTime: number | null = null
-            // Random minutes from 0-59
-            const randomMinutes = Math.floor(Math.random() * 60)
+            if (isEditMode) {
+                // Edit mode: single post
+                if (!video) {
+                    message.error('Vui lòng upload video!')
+                    return
+                }
 
-            if (values.scheduledDate && values.scheduledTime) {
-                const dateStr = values.scheduledDate.format('DD/MM/YYYY')
-                const hours = values.scheduledTime.format('HH')
+                // Calculate Unix timestamp from scheduledDate + scheduledTime
+                let scheduledUnixTime: number | null = null
+                const randomMinutes = Math.floor(Math.random() * 60)
 
-                // Parse DD/MM/YYYY HH:mm to Unix timestamp
-                const [day, month, year] = dateStr.split('/')
-                const combinedDate = new Date(
-                    parseInt(year),
-                    parseInt(month) - 1, // Month is 0-indexed
-                    parseInt(day),
-                    parseInt(hours),
-                    randomMinutes
-                )
-                scheduledUnixTime = Math.floor(combinedDate.getTime() / 1000) // Convert to Unix timestamp (seconds)
-            }
+                if (values.scheduledDate && values.scheduledTime) {
+                    const dateStr = values.scheduledDate.format('DD/MM/YYYY')
+                    const hours = values.scheduledTime.format('HH')
+                    const [day, month, year] = dateStr.split('/')
+                    const combinedDate = new Date(
+                        parseInt(year),
+                        parseInt(month) - 1,
+                        parseInt(day),
+                        parseInt(hours),
+                        randomMinutes
+                    )
+                    scheduledUnixTime = Math.floor(combinedDate.getTime() / 1000)
+                }
 
-            // Format time with random minutes
-            const formattedTime = values.scheduledTime ? `${values.scheduledTime.format('HH')}:${String(randomMinutes).padStart(2, '0')}` : null
+                const formattedTime = values.scheduledTime ? `${values.scheduledTime.format('HH')}:${String(randomMinutes).padStart(2, '0')}` : null
 
-            const postData = {
-                accountId,
-                scheduledDate: values.scheduledDate?.format('DD/MM/YYYY'),
-                scheduledTime: formattedTime,
-                scheduledUnixTime: scheduledUnixTime, // Auto-calculated Unix timestamp
-                productId: values.productId || null,
-                productTitle: selectedProduct?.title || null,
-                description: values.description,
-                video: video,
-                status: values.status || 'scheduled'
-            }
+                const postData = {
+                    accountId,
+                    scheduledDate: values.scheduledDate?.format('DD/MM/YYYY'),
+                    scheduledTime: formattedTime,
+                    scheduledUnixTime,
+                    productId: values.productId || null,
+                    productTitle: selectedProduct?.title || null,
+                    description: values.description,
+                    video: video,
+                    status: values.status || 'scheduled'
+                }
 
-            if (editingPost?._id) {
                 const result = await apiPut('/api/tiktok-scheduled-posts', { id: editingPost._id, ...postData })
                 console.log('✏️ Update result:', result)
                 message.success('Đã cập nhật bài đăng!')
             } else {
-                const result = await apiPost('/api/tiktok-scheduled-posts', postData)
-                console.log('✅ Create result:', result)
-                message.success('Đã tạo bài đăng mới!')
+                // Create mode: one post per video
+                if (videos.length === 0) {
+                    message.error('Vui lòng upload ít nhất 1 video!')
+                    return
+                }
+
+                const basePostData = {
+                    accountId,
+                    scheduledDate: values.scheduledDate?.format('DD/MM/YYYY'),
+                    scheduledTime: values.scheduledTime ? `${values.scheduledTime.format('HH')}:00` : undefined,
+                    productId: values.productId || null,
+                    productTitle: selectedProduct?.title || null,
+                    description: values.description,
+                    status: values.status || 'scheduled'
+                }
+
+                let created = 0
+                for (const vid of videos) {
+                    const postData = {
+                        ...basePostData,
+                        video: vid,
+                        // Only pass date/time for first post, API auto-calculates the rest
+                        ...(created > 0 ? { scheduledDate: undefined, scheduledTime: undefined } : {})
+                    }
+
+                    const result = await apiPost('/api/tiktok-scheduled-posts', postData)
+                    console.log(`✅ Created post ${created + 1}:`, result)
+                    created++
+                }
+
+                message.success(`Đã tạo ${created} bài đăng mới!`)
             }
 
-            // Clear tracker on successful submit (video is now saved)
-            uploadedThisSessionRef.current = null
+            uploadedThisSessionRef.current = []
             setIsOpen(false)
-            console.log('🔄 Calling onRefresh...')
             onRefresh()
         } catch (error: any) {
             message.error('Lỗi: ' + error.message)
@@ -195,26 +234,24 @@ const TikTokScheduledPostModal = ({
     }
 
     const handleCancel = async () => {
-        // Delete uploaded video if it wasn't saved
-        if (uploadedThisSessionRef.current?.publicId) {
-            try {
-                const result = await deleteVideoFromMinIO(uploadedThisSessionRef.current.publicId, MINIO_TIKTOK_BUCKET)
-                if (result.success) {
-                    console.log('🗑️ Cleaned up unsaved video:', uploadedThisSessionRef.current.publicId)
-                } else {
-                    console.error('Failed to cleanup video:', result.message)
+        // Delete all uploaded videos that weren't saved
+        for (const vid of uploadedThisSessionRef.current) {
+            if (vid.publicId) {
+                try {
+                    await deleteVideoFromMinIO(vid.publicId, MINIO_TIKTOK_BUCKET)
+                    console.log('🗑️ Cleaned up:', vid.publicId)
+                } catch (error) {
+                    console.error('Failed to cleanup video:', error)
                 }
-            } catch (error) {
-                console.error('Failed to cleanup video:', error)
             }
-            uploadedThisSessionRef.current = null
         }
+        uploadedThisSessionRef.current = []
         setIsOpen(false)
     }
 
     return (
         <Modal
-            title={editingPost ? 'Chỉnh sửa bài đăng' : 'Thêm bài đăng mới'}
+            title={editingPost ? 'Chỉnh sửa bài đăng' : `Thêm bài đăng mới${videos.length > 0 ? ` (${videos.length} video)` : ''}`}
             open={isOpen}
             onCancel={handleCancel}
             footer={[
@@ -222,7 +259,7 @@ const TikTokScheduledPostModal = ({
                     Hủy
                 </Button>,
                 <Button key="submit" type="primary" loading={loading} onClick={handleSubmit}>
-                    {editingPost ? 'Cập nhật' : 'Tạo'}
+                    {editingPost ? 'Cập nhật' : videos.length > 1 ? `Tạo ${videos.length} bài` : 'Tạo'}
                 </Button>
             ]}
             width={400}
@@ -232,7 +269,6 @@ const TikTokScheduledPostModal = ({
                     <Form.Item
                         label="Ngày đăng"
                         name="scheduledDate"
-                        rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}
                         className="flex-1"
                     >
                         <DatePicker
@@ -241,7 +277,6 @@ const TikTokScheduledPostModal = ({
                             disabledDate={(current) => current && current < dayjs().startOf('day')}
                             onChange={(date) => {
                                 setSelectedDate(date)
-                                // Reset time if date changes to today and current time is in the past
                                 if (date && date.isSame(dayjs(), 'day')) {
                                     const currentTime = form.getFieldValue('scheduledTime')
                                     if (currentTime && currentTime.hour() <= dayjs().hour()) {
@@ -255,7 +290,6 @@ const TikTokScheduledPostModal = ({
                     <Form.Item
                         label="Giờ đăng"
                         name="scheduledTime"
-                        rules={[{ required: true, message: 'Vui lòng chọn giờ' }]}
                         className="flex-1"
                     >
                         <TimePicker
@@ -277,6 +311,11 @@ const TikTokScheduledPostModal = ({
                         />
                     </Form.Item>
                 </div>
+                {!isEditMode && (
+                    <p className="text-xs text-gray-400 -mt-4 mb-3">
+                        💡 Bỏ trống = tự tính từ bài gần nhất + 2h + random phút
+                    </p>
+                )}
 
                 <Form.Item
                     label="Sản phẩm"
@@ -356,20 +395,44 @@ const TikTokScheduledPostModal = ({
                     />
                 </Form.Item>
 
-                <Form.Item label="Video" required>
+                <Form.Item label={isEditMode ? 'Video' : `Video${videos.length > 0 ? ` (${videos.length})` : ''}`} required>
                     <Upload
                         beforeUpload={handleVideoUpload}
-                        maxCount={1}
+                        maxCount={isEditMode ? 1 : undefined}
+                        multiple={!isEditMode}
                         accept="video/*"
                         showUploadList={false}
                     >
                         <Button icon={<UploadOutlined />} loading={uploading}>
-                            {uploading ? 'Đang upload...' : video ? 'Đổi video' : 'Upload video'}
+                            {uploading ? 'Đang upload...' : isEditMode
+                                ? (video ? 'Đổi video' : 'Upload video')
+                                : 'Upload video (chọn nhiều)'}
                         </Button>
                     </Upload>
-                    {video && (
+
+                    {/* Edit mode: single video */}
+                    {isEditMode && video && (
                         <div className="mt-2">
                             <video src={video.url} className="w-full h-32 object-cover rounded" controls />
+                        </div>
+                    )}
+
+                    {/* Create mode: multiple videos */}
+                    {!isEditMode && videos.length > 0 && (
+                        <div className="mt-2 space-y-2 max-h-48 overflow-y-auto">
+                            {videos.map((vid, index) => (
+                                <div key={index} className="flex items-center gap-2 p-1.5 rounded border border-gray-200 dark:border-gray-700">
+                                    <video src={vid.url} className="w-16 h-12 object-cover rounded" />
+                                    <span className="text-xs truncate flex-1 text-gray-500">{vid.publicId}</span>
+                                    <Button
+                                        type="text"
+                                        size="small"
+                                        danger
+                                        icon={<DeleteOutlined />}
+                                        onClick={() => handleRemoveVideo(index)}
+                                    />
+                                </div>
+                            ))}
                         </div>
                     )}
                 </Form.Item>
