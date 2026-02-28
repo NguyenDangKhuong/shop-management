@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Form, Input, Modal, Button, App, DatePicker, Select, Upload, TimePicker } from 'antd'
-import { UploadOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Form, Input, Modal, Button, App, DatePicker, Select, Upload, TimePicker, Progress } from 'antd'
+import { UploadOutlined, DeleteOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { apiPost, apiPut } from '@/utils/internalApi'
 import { uploadVideoToMinIO, deleteVideoFromMinIO } from '@/utils/minioUpload'
 import { MINIO_TIKTOK_BUCKET } from '@/utils/constants'
@@ -31,8 +31,11 @@ const TikTokScheduledPostModal = ({
     const [video, setVideo] = useState<any>(null) // Single video for edit mode
     const [videos, setVideos] = useState<any[]>([]) // Multiple videos for create mode
     const [uploading, setUploading] = useState(false)
+    const [uploadQueue, setUploadQueue] = useState<{ name: string; progress: number; status: 'uploading' | 'done' | 'error' }[]>([])
     const [shopeeLinks, setShopeeLinks] = useState<any[]>([])
     const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null)
+
+    const uploadAbortRef = useRef<(() => void) | null>(null)
 
     // Track newly uploaded videos this session
     const uploadedThisSessionRef = useRef<{ url: string; type: string; publicId?: string }[]>([])
@@ -102,8 +105,33 @@ const TikTokScheduledPostModal = ({
     const handleVideoUpload = async (file: File) => {
         try {
             setUploading(true)
+            const fileIndex = Date.now()
+            const queueItem = { name: file.name, progress: 0, status: 'uploading' as const }
 
-            const result = await uploadVideoToMinIO(file, MINIO_TIKTOK_BUCKET)
+            setUploadQueue(prev => [...prev, queueItem])
+
+            let cancelled = false
+            uploadAbortRef.current = () => { cancelled = true }
+
+            const result = await uploadVideoToMinIO(file, MINIO_TIKTOK_BUCKET, (percent) => {
+                if (!cancelled) {
+                    setUploadQueue(prev => prev.map(item =>
+                        item.name === file.name && item.status === 'uploading'
+                            ? { ...item, progress: percent }
+                            : item
+                    ))
+                }
+            })
+
+            uploadAbortRef.current = null
+            if (cancelled) {
+                if (result.fileName) {
+                    await deleteVideoFromMinIO(result.fileName, MINIO_TIKTOK_BUCKET)
+                }
+                setUploadQueue(prev => prev.filter(item => !(item.name === file.name && item.status === 'uploading')))
+                return false
+            }
+
             if (result.success) {
                 const newVideo = {
                     url: result.url,
@@ -118,8 +146,22 @@ const TikTokScheduledPostModal = ({
                     setVideos(prev => [...prev, newVideo])
                     uploadedThisSessionRef.current.push(newVideo)
                 }
-                message.success(`Đã upload ${file.name}!`)
+
+                setUploadQueue(prev => prev.map(item =>
+                    item.name === file.name && item.status === 'uploading'
+                        ? { ...item, progress: 100, status: 'done' }
+                        : item
+                ))
+                // Remove done items after 1s
+                setTimeout(() => {
+                    setUploadQueue(prev => prev.filter(item => item.status !== 'done'))
+                }, 1000)
             } else {
+                setUploadQueue(prev => prev.map(item =>
+                    item.name === file.name && item.status === 'uploading'
+                        ? { ...item, status: 'error' }
+                        : item
+                ))
                 message.error('Upload failed: ' + result.message)
             }
         } catch (error: any) {
@@ -409,6 +451,36 @@ const TikTokScheduledPostModal = ({
                                 : 'Upload video (chọn nhiều)'}
                         </Button>
                     </Upload>
+
+                    {/* Upload progress queue */}
+                    {uploadQueue.length > 0 && (
+                        <div className="mt-2 space-y-1.5 max-h-32 overflow-y-auto">
+                            {uploadQueue.map((item, idx) => (
+                                <div key={`${item.name}-${idx}`} className="flex items-center gap-2">
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-xs text-gray-500 truncate">{item.name}</p>
+                                        <Progress
+                                            percent={item.progress}
+                                            size="small"
+                                            status={item.status === 'error' ? 'exception' : item.status === 'done' ? 'success' : 'active'}
+                                        />
+                                    </div>
+                                    {item.status === 'uploading' && (
+                                        <Button
+                                            type="text"
+                                            size="small"
+                                            danger
+                                            icon={<CloseCircleOutlined />}
+                                            onClick={() => {
+                                                uploadAbortRef.current?.()
+                                                message.info('Đã huỷ upload')
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
                     {/* Edit mode: single video */}
                     {isEditMode && video && (
