@@ -9,7 +9,7 @@ import { isMobile } from 'react-device-detect'
 import { FacebookPost } from '@/models/FacebookPost'
 import FacebookPostModal from './FacebookPostModal'
 import { deleteCloudinaryImages } from '@/actions/cloudinary'
-import { deleteVideoFromMinIO } from '@/utils/minioUpload'
+import { deleteVideoFromR2 } from '@/utils/r2Upload'
 import { apiGet, apiDelete } from '@/utils/internalApi'
 
 // Constants
@@ -39,7 +39,7 @@ const deleteMediaFiles = async (post: FacebookPost) => {
         // Delete videos from R2
         for (const file of post.mediaFiles) {
             if (file.type === 'video' && file.publicId) {
-                await deleteVideoFromMinIO(file.publicId)
+                await deleteVideoFromR2(file.publicId)
             }
         }
     } else if (post.postType === 'post' || post.postType === 'reel-link') {

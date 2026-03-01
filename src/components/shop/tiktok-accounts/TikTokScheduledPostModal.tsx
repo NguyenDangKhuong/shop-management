@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Form, Input, Modal, Button, App, DatePicker, Select, Upload, TimePicker, Progress } from 'antd'
 import { UploadOutlined, DeleteOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { apiPost, apiPut } from '@/utils/internalApi'
-import { uploadVideoToMinIO, deleteVideoFromMinIO } from '@/utils/minioUpload'
+import { uploadVideoToR2, deleteVideoFromR2 } from '@/utils/r2Upload'
 
 const R2_TIKTOK_BUCKET = 'tiktok-videos'
 import dayjs from 'dayjs'
@@ -112,7 +112,7 @@ const TikTokScheduledPostModal = ({
             let cancelled = false
             uploadAbortRef.current = () => { cancelled = true }
 
-            const result = await uploadVideoToMinIO(file, R2_TIKTOK_BUCKET, (percent) => {
+            const result = await uploadVideoToR2(file, R2_TIKTOK_BUCKET, (percent) => {
                 if (!cancelled) {
                     setUploadQueue(prev => prev.map(item =>
                         item.name === file.name && item.status === 'uploading'
@@ -125,7 +125,7 @@ const TikTokScheduledPostModal = ({
             uploadAbortRef.current = null
             if (cancelled) {
                 if (result.fileName) {
-                    await deleteVideoFromMinIO(result.fileName, R2_TIKTOK_BUCKET)
+                    await deleteVideoFromR2(result.fileName, R2_TIKTOK_BUCKET)
                 }
                 setUploadQueue(prev => prev.filter(item => !(item.name === file.name && item.status === 'uploading')))
                 return false
@@ -175,7 +175,7 @@ const TikTokScheduledPostModal = ({
     const handleRemoveVideo = async (index: number) => {
         const vid = videos[index]
         if (vid?.publicId) {
-            await deleteVideoFromMinIO(vid.publicId, R2_TIKTOK_BUCKET)
+            await deleteVideoFromR2(vid.publicId, R2_TIKTOK_BUCKET)
         }
         setVideos(prev => prev.filter((_, i) => i !== index))
         uploadedThisSessionRef.current = uploadedThisSessionRef.current.filter(v => v.publicId !== vid?.publicId)
@@ -279,7 +279,7 @@ const TikTokScheduledPostModal = ({
         for (const vid of uploadedThisSessionRef.current) {
             if (vid.publicId) {
                 try {
-                    await deleteVideoFromMinIO(vid.publicId, R2_TIKTOK_BUCKET)
+                    await deleteVideoFromR2(vid.publicId, R2_TIKTOK_BUCKET)
                     console.log('🗑️ Cleaned up:', vid.publicId)
                 } catch (error) {
                     console.error('Failed to cleanup video:', error)
