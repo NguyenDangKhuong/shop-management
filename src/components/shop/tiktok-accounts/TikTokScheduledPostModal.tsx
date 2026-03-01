@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Form, Input, Modal, Button, App, DatePicker, Select, Upload, TimePicker, Progress } from 'antd'
+import { Form, Input, Modal, Button, App, DatePicker, Select, Upload, TimePicker, Progress, Collapse } from 'antd'
 import { UploadOutlined, DeleteOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { apiPost, apiPut } from '@/utils/internalApi'
 import { uploadVideoToR2, deleteVideoFromR2 } from '@/utils/r2Upload'
@@ -237,27 +237,66 @@ const TikTokScheduledPostModal = ({
                     return
                 }
 
-                const basePostData = {
-                    accountId,
-                    scheduledDate: values.scheduledDate?.format('DD/MM/YYYY'),
-                    scheduledTime: values.scheduledTime ? `${values.scheduledTime.format('HH')}:00` : undefined,
-                    productId: values.productId || null,
-                    productTitle: selectedProduct?.title || null,
-                    description: values.description,
-                    status: values.status || 'scheduled'
+                // ===== LOGIC TÍNH GIỜ SCHEDULE =====
+                // Ưu tiên 1: User chọn ngày + giờ cụ thể → dùng luôn
+                // Ưu tiên 2: Không chọn → lấy bài gần nhất của account + 2h
+                // Ưu tiên 3: Không có bài nào → dùng giờ hiện tại (NOW)
+                // Mỗi video tiếp theo trong batch: +2h + random 0-59 phút
+                // =====================================
+                const now = dayjs()
+                let baseTime: ReturnType<typeof dayjs>
+
+                if (values.scheduledDate && values.scheduledTime) {
+                    // Ưu tiên 1: User đã chọn giờ → dùng giờ đó
+                    baseTime = values.scheduledDate
+                        .hour(values.scheduledTime.hour())
+                        .minute(values.scheduledTime.minute())
+                        .second(0)
+                } else {
+                    // Ưu tiên 2 & 3: Auto-tính từ bài gần nhất hoặc NOW
+                    try {
+                        const res = await fetch(`/api/tiktok-scheduled-posts?accountId=${accountId}`)
+                        const data = await res.json()
+                        if (data.success && data.data?.length > 0) {
+                            // Tìm bài có giờ schedule trễ nhất (so sánh dayjs, không phải string sort)
+                            const latest = data.data.reduce((max: any, post: any) => {
+                                const postTime = dayjs(`${post.scheduledDate} ${post.scheduledTime}`, 'DD/MM/YYYY HH:mm')
+                                const maxTime = dayjs(`${max.scheduledDate} ${max.scheduledTime}`, 'DD/MM/YYYY HH:mm')
+                                return postTime.isAfter(maxTime) ? post : max
+                            })
+                            // Base = bài trễ nhất + 2 tiếng
+                            baseTime = dayjs(`${latest.scheduledDate} ${latest.scheduledTime}`, 'DD/MM/YYYY HH:mm').add(2, 'hour')
+                            console.log(`📅 Base from latest post: ${latest.scheduledDate} ${latest.scheduledTime} → +2h = ${baseTime.format('HH:mm')}`)
+                        } else {
+                            // Không có bài nào → dùng NOW
+                            baseTime = now
+                        }
+                    } catch {
+                        baseTime = now
+                    }
                 }
 
+                // Tạo bài cho từng video, cách nhau 2h + random 0-59 phút
+                // VD: baseTime = 10:00 → video 1: 10:XX, video 2: 12:XX, video 3: 14:XX
                 let created = 0
                 for (const vid of videos) {
+                    const postTime = baseTime.add(created * 2, 'hour')       // +0h, +2h, +4h, ...
+                    const randomMinutes = Math.floor(Math.random() * 60)     // random 0-59 phút
+                    const finalTime = postTime.add(randomMinutes, 'minute')   // giờ cuối cùng
+
                     const postData = {
-                        ...basePostData,
+                        accountId,
+                        scheduledDate: finalTime.format('DD/MM/YYYY'),
+                        scheduledTime: finalTime.format('HH:mm'),
+                        productId: values.productId || null,
+                        productTitle: selectedProduct?.title || null,
+                        description: values.description,
+                        status: values.status || 'scheduled',
                         video: vid,
-                        // Only pass date/time for first post, API auto-calculates the rest
-                        ...(created > 0 ? { scheduledDate: undefined, scheduledTime: undefined } : {})
                     }
 
                     const result = await apiPost('/api/tiktok-scheduled-posts', postData)
-                    console.log(`✅ Created post ${created + 1}:`, result)
+                    console.log(`✅ Created post ${created + 1}: ${finalTime.format('DD/MM/YYYY HH:mm')}`, result)
                     created++
                 }
 
@@ -306,57 +345,83 @@ const TikTokScheduledPostModal = ({
             width={400}
         >
             <Form form={form} layout="vertical" className="mt-4">
-                <div className="flex gap-2">
-                    <Form.Item
-                        label="Ngày đăng"
-                        name="scheduledDate"
-                        className="flex-1"
-                    >
-                        <DatePicker
-                            className="w-full"
-                            format="DD/MM/YYYY"
-                            disabledDate={(current) => current && current < dayjs().startOf('day')}
-                            onChange={(date) => {
-                                setSelectedDate(date)
-                                if (date && date.isSame(dayjs(), 'day')) {
-                                    const currentTime = form.getFieldValue('scheduledTime')
-                                    if (currentTime && currentTime.hour() <= dayjs().hour()) {
-                                        form.setFieldValue('scheduledTime', null)
-                                    }
-                                }
-                            }}
-                        />
-                    </Form.Item>
+                <Collapse
+                    size="small"
+                    className="mb-4"
+                    items={[{
+                        key: 'schedule',
+                        label: '⏰ Ngày giờ đăng & Trạng thái',
+                        children: (
+                            <>
+                                <div className="flex gap-2">
+                                    <Form.Item
+                                        label="Ngày đăng"
+                                        name="scheduledDate"
+                                        className="flex-1"
+                                    >
+                                        <DatePicker
+                                            className="w-full"
+                                            format="DD/MM/YYYY"
+                                            disabledDate={(current) => current && current < dayjs().startOf('day')}
+                                            onChange={(date) => {
+                                                setSelectedDate(date)
+                                                if (date && date.isSame(dayjs(), 'day')) {
+                                                    const currentTime = form.getFieldValue('scheduledTime')
+                                                    if (currentTime && currentTime.hour() <= dayjs().hour()) {
+                                                        form.setFieldValue('scheduledTime', null)
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    </Form.Item>
 
-                    <Form.Item
-                        label="Giờ đăng"
-                        name="scheduledTime"
-                        className="flex-1"
-                    >
-                        <TimePicker
-                            className="w-full"
-                            format="HH"
-                            showMinute={false}
-                            showSecond={false}
-                            defaultOpenValue={dayjs()}
-                            disabledTime={() => {
-                                const isToday = selectedDate && selectedDate.isSame(dayjs(), 'day')
-                                if (isToday) {
-                                    const currentHour = dayjs().hour()
-                                    return {
-                                        disabledHours: () => Array.from({ length: currentHour + 1 }, (_, i) => i)
-                                    }
-                                }
-                                return {}
-                            }}
-                        />
-                    </Form.Item>
-                </div>
-                {!isEditMode && (
-                    <p className="text-xs text-gray-400 -mt-4 mb-3">
-                        💡 Bỏ trống = tự tính từ bài gần nhất + 2h + random phút
-                    </p>
-                )}
+                                    <Form.Item
+                                        label="Giờ đăng"
+                                        name="scheduledTime"
+                                        className="flex-1"
+                                    >
+                                        <TimePicker
+                                            className="w-full"
+                                            format="HH"
+                                            showMinute={false}
+                                            showSecond={false}
+                                            defaultOpenValue={dayjs()}
+                                            disabledTime={() => {
+                                                const isToday = selectedDate && selectedDate.isSame(dayjs(), 'day')
+                                                if (isToday) {
+                                                    const currentHour = dayjs().hour()
+                                                    return {
+                                                        disabledHours: () => Array.from({ length: currentHour + 1 }, (_, i) => i)
+                                                    }
+                                                }
+                                                return {}
+                                            }}
+                                        />
+                                    </Form.Item>
+                                </div>
+                                {!isEditMode && (
+                                    <p className="text-xs text-gray-400 -mt-4 mb-1">
+                                        💡 Bỏ trống = tự tính từ bài gần nhất + 2h + random phút
+                                    </p>
+                                )}
+                                <Form.Item
+                                    label="Trạng thái"
+                                    name="status"
+                                    rules={[{ required: true, message: 'Vui lòng chọn trạng thái' }]}
+                                    initialValue="scheduled"
+                                    className="mb-0"
+                                >
+                                    <Select placeholder="Chọn trạng thái">
+                                        <Select.Option value="draft">Nháp</Select.Option>
+                                        <Select.Option value="scheduled">Lên bài</Select.Option>
+                                        <Select.Option value="posted">Đã đăng</Select.Option>
+                                        <Select.Option value="failed">Thất bại</Select.Option>
+                                    </Select>
+                                </Form.Item>
+                            </>
+                        )
+                    }]}
+                />
 
                 <Form.Item
                     label="Sản phẩm"
@@ -508,19 +573,7 @@ const TikTokScheduledPostModal = ({
                     )}
                 </Form.Item>
 
-                <Form.Item
-                    label="Trạng thái"
-                    name="status"
-                    rules={[{ required: true, message: 'Vui lòng chọn trạng thái' }]}
-                    initialValue="scheduled"
-                >
-                    <Select placeholder="Chọn trạng thái">
-                        <Select.Option value="draft">Nháp</Select.Option>
-                        <Select.Option value="scheduled">Lên bài</Select.Option>
-                        <Select.Option value="posted">Đã đăng</Select.Option>
-                        <Select.Option value="failed">Thất bại</Select.Option>
-                    </Select>
-                </Form.Item>
+
             </Form>
         </Modal>
     )
