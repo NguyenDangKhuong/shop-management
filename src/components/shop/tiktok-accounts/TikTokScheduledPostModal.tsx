@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Form, Input, Modal, Button, App, DatePicker, Select, Upload, TimePicker, Progress } from 'antd'
-import { UploadOutlined, DeleteOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import { Form, Input, Modal, Button, App, DatePicker, Select, Upload, TimePicker, Progress, Switch } from 'antd'
+import { UploadOutlined, DeleteOutlined, CloseCircleOutlined, CompressOutlined } from '@ant-design/icons'
 import { apiPost, apiPut } from '@/utils/internalApi'
 import { uploadVideoToMinIO, deleteVideoFromMinIO } from '@/utils/minioUpload'
+import { compressVideo, isCompressionSupported, formatFileSize } from '@/utils/videoCompress'
 import { MINIO_TIKTOK_BUCKET } from '@/utils/constants'
 import dayjs from 'dayjs'
 
@@ -31,7 +32,10 @@ const TikTokScheduledPostModal = ({
     const [video, setVideo] = useState<any>(null) // Single video for edit mode
     const [videos, setVideos] = useState<any[]>([]) // Multiple videos for create mode
     const [uploading, setUploading] = useState(false)
-    const [uploadQueue, setUploadQueue] = useState<{ name: string; progress: number; status: 'uploading' | 'done' | 'error' }[]>([])
+    const [compressing, setCompressing] = useState(false)
+    const [compressProgress, setCompressProgress] = useState(0)
+    const [compressEnabled, setCompressEnabled] = useState(true)
+    const [uploadQueue, setUploadQueue] = useState<{ name: string; progress: number; status: 'uploading' | 'done' | 'error' | 'compressing'; info?: string }[]>([])
     const [shopeeLinks, setShopeeLinks] = useState<any[]>([])
     const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null)
 
@@ -105,14 +109,53 @@ const TikTokScheduledPostModal = ({
     const handleVideoUpload = async (file: File) => {
         try {
             setUploading(true)
-            const queueItem = { name: file.name, progress: 0, status: 'uploading' as const }
+            let fileToUpload = file
+            let compressInfo = ''
 
-            setUploadQueue(prev => [...prev, queueItem])
+            // Compress if enabled and file > 10MB
+            if (compressEnabled && file.size > 10 * 1024 * 1024) {
+                const queueItem = { name: file.name, progress: 0, status: 'compressing' as const, info: `Đang nén ${formatFileSize(file.size)}...` }
+                setUploadQueue(prev => [...prev, queueItem])
+                setCompressing(true)
+
+                const compressed = await compressVideo(file, {
+                    onProgress: (pct) => {
+                        setUploadQueue(prev => prev.map(item =>
+                            item.name === file.name && item.status === 'compressing'
+                                ? { ...item, progress: pct }
+                                : item
+                        ))
+                    },
+                })
+
+                setCompressing(false)
+
+                if (compressed) {
+                    fileToUpload = compressed.file
+                    compressInfo = `${formatFileSize(compressed.originalSize)} → ${formatFileSize(compressed.compressedSize)} (-${compressed.ratio}%)`
+                    // Update queue item to show compression result
+                    setUploadQueue(prev => prev.map(item =>
+                        item.name === file.name && item.status === 'compressing'
+                            ? { ...item, status: 'uploading', progress: 0, info: compressInfo }
+                            : item
+                    ))
+                } else {
+                    // Compression failed, upload original
+                    setUploadQueue(prev => prev.map(item =>
+                        item.name === file.name && item.status === 'compressing'
+                            ? { ...item, status: 'uploading', progress: 0, info: 'Nén lỗi, upload gốc' }
+                            : item
+                    ))
+                }
+            } else {
+                const queueItem = { name: file.name, progress: 0, status: 'uploading' as const }
+                setUploadQueue(prev => [...prev, queueItem])
+            }
 
             let cancelled = false
             uploadAbortRef.current = () => { cancelled = true }
 
-            const result = await uploadVideoToMinIO(file, MINIO_TIKTOK_BUCKET, (percent) => {
+            const result = await uploadVideoToMinIO(fileToUpload, MINIO_TIKTOK_BUCKET, (percent) => {
                 if (!cancelled) {
                     setUploadQueue(prev => prev.map(item =>
                         item.name === file.name && item.status === 'uploading'
@@ -437,6 +480,17 @@ const TikTokScheduledPostModal = ({
                 </Form.Item>
 
                 <Form.Item label={isEditMode ? 'Video' : `Video${videos.length > 0 ? ` (${videos.length})` : ''}`} required>
+                    <div className="flex items-center gap-2 mb-2">
+                        <Switch
+                            size="small"
+                            checked={compressEnabled}
+                            onChange={setCompressEnabled}
+                        />
+                        <span className="text-xs text-gray-500">
+                            <CompressOutlined /> Nén video ({'>'}10MB → ~720p)
+                        </span>
+                    </div>
+
                     <Upload
                         beforeUpload={handleVideoUpload}
                         maxCount={isEditMode ? 1 : undefined}
@@ -444,8 +498,8 @@ const TikTokScheduledPostModal = ({
                         accept="video/*"
                         showUploadList={false}
                     >
-                        <Button icon={<UploadOutlined />} loading={uploading}>
-                            {uploading ? 'Đang upload...' : isEditMode
+                        <Button icon={<UploadOutlined />} loading={uploading || compressing}>
+                            {compressing ? 'Đang nén...' : uploading ? 'Đang upload...' : isEditMode
                                 ? (video ? 'Đổi video' : 'Upload video')
                                 : 'Upload video (chọn nhiều)'}
                         </Button>
@@ -453,18 +507,22 @@ const TikTokScheduledPostModal = ({
 
                     {/* Upload progress queue */}
                     {uploadQueue.length > 0 && (
-                        <div className="mt-2 space-y-1.5 max-h-32 overflow-y-auto">
+                        <div className="mt-2 space-y-1.5 max-h-40 overflow-y-auto">
                             {uploadQueue.map((item, idx) => (
                                 <div key={`${item.name}-${idx}`} className="flex items-center gap-2">
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-xs text-gray-500 truncate">{item.name}</p>
+                                        <div className="flex items-center gap-1">
+                                            <p className="text-xs text-gray-500 truncate">{item.name}</p>
+                                            {item.info && <span className="text-xs text-blue-500 whitespace-nowrap">({item.info})</span>}
+                                        </div>
                                         <Progress
                                             percent={item.progress}
                                             size="small"
                                             status={item.status === 'error' ? 'exception' : item.status === 'done' ? 'success' : 'active'}
+                                            format={(pct) => item.status === 'compressing' ? `🗜 ${pct}%` : `${pct}%`}
                                         />
                                     </div>
-                                    {item.status === 'uploading' && (
+                                    {(item.status === 'uploading' || item.status === 'compressing') && (
                                         <Button
                                             type="text"
                                             size="small"
