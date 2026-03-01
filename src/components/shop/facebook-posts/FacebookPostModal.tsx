@@ -8,7 +8,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat'
 import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload'
 import { FacebookPost, MediaFile } from '@/models/FacebookPost'
 import { facebookPostUploadConfig } from '@/utils/cloudinaryConfig'
-import { uploadVideoToMinIO, deleteVideoFromMinIO } from '@/utils/minioUpload'
+import { uploadVideoToR2, deleteVideoFromR2 } from '@/utils/r2Upload'
 import { deleteCloudinaryImage } from '@/actions/cloudinary'
 import { apiPost, apiPut } from '@/utils/internalApi'
 
@@ -162,7 +162,7 @@ const FacebookPostModal = ({
 
         setVideoUploading(true)
         try {
-            const result = await uploadVideoToMinIO(file, R2_BUCKET)
+            const result = await uploadVideoToR2(file, R2_BUCKET)
             if (result.success) {
                 const newFile: MediaFile = {
                     url: result.url,
@@ -195,7 +195,7 @@ const FacebookPostModal = ({
         // For reels (R2 videos), delete from R2
         if (postType === 'reel-video' && mediaFile.type === 'video') {
             try {
-                const result = await deleteVideoFromMinIO(mediaFile.publicId!, R2_BUCKET)
+                const result = await deleteVideoFromR2(mediaFile.publicId!, R2_BUCKET)
                 if (result.success) {
                     message.success('Video deleted from storage')
                 } else {
@@ -243,7 +243,7 @@ const FacebookPostModal = ({
             if (mediaFile.type === 'video') {
                 // R2 cleanup for reel-video
                 cleanupPromises.push(
-                    deleteVideoFromMinIO(mediaFile.publicId, R2_BUCKET)
+                    deleteVideoFromR2(mediaFile.publicId, R2_BUCKET)
                         .then(() => { /* void */ })
                         .catch(err => console.error('Cleanup error (R2):', err))
                 )

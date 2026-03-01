@@ -92,7 +92,7 @@ export async function PUT(request: NextRequest) {
     }
 }
 
-// DELETE scheduled post + cleanup MinIO video
+// DELETE scheduled post + cleanup R2 video
 export async function DELETE(request: NextRequest) {
     try {
         await connectDb()
