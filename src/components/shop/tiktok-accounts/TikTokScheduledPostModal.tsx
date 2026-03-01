@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Form, Input, Modal, Button, App, DatePicker, Select, Upload, TimePicker, Progress, Collapse } from 'antd'
+import { Form, Input, Modal, Button, App, DatePicker, Select, Upload, TimePicker, Progress, Collapse, Switch } from 'antd'
 import { UploadOutlined, DeleteOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { apiPost, apiPut } from '@/utils/internalApi'
 import { uploadVideoToR2, deleteVideoFromR2 } from '@/utils/r2Upload'
@@ -69,13 +69,14 @@ const TikTokScheduledPostModal = ({
                     scheduledTime: editingPost.scheduledTime ? dayjs(editingPost.scheduledTime, 'HH:mm') : null,
                     productId: editingPost.productId || '',
                     description: editingPost.description || '',
-                    status: editingPost.status || 'scheduled'
+                    status: editingPost.status || 'scheduled',
+                    hasMusic: editingPost.hasMusic ?? false
                 })
                 setVideo(editingPost.video || null)
                 setVideos([])
             } else {
                 form.resetFields()
-                form.setFieldsValue({ status: 'scheduled' })
+                form.setFieldsValue({ status: 'scheduled', hasMusic: false })
                 setVideo(null)
                 setVideos([])
             }
@@ -224,6 +225,7 @@ const TikTokScheduledPostModal = ({
                     productTitle: selectedProduct?.title || null,
                     description: values.description,
                     video: video,
+                    hasMusic: values.hasMusic ?? false,
                     status: values.status || 'scheduled'
                 }
 
@@ -292,6 +294,7 @@ const TikTokScheduledPostModal = ({
                         productTitle: selectedProduct?.title || null,
                         description: values.description,
                         status: values.status || 'scheduled',
+                        hasMusic: values.hasMusic ?? false,
                         video: vid,
                     }
 
@@ -417,6 +420,14 @@ const TikTokScheduledPostModal = ({
                                         <Select.Option value="posted">Đã đăng</Select.Option>
                                         <Select.Option value="failed">Thất bại</Select.Option>
                                     </Select>
+                                </Form.Item>
+                                <Form.Item
+                                    label="Có nhạc"
+                                    name="hasMusic"
+                                    valuePropName="checked"
+                                    className="mb-0"
+                                >
+                                    <Switch checkedChildren="Có" unCheckedChildren="Không" />
                                 </Form.Item>
                             </>
                         )

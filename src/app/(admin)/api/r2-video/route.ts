@@ -39,7 +39,8 @@ export async function POST(request: NextRequest) {
             600
         )
 
-        const publicUrl = `${R2_PUBLIC_URL}/${objectName}`
+        const r2PublicUrl = R2_PUBLIC_URL || process.env.NEXT_PUBLIC_R2_PUBLIC_URL || 'https://pub-105b411e9219481986379bfce642a4ae.r2.dev'
+        const publicUrl = `${r2PublicUrl}/${objectName}`
 
         return NextResponse.json({
             success: true,
