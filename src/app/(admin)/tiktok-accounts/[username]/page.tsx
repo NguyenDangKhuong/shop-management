@@ -398,21 +398,53 @@ export default function TikTokAccountPage() {
                 </div>
                 {(() => {
                     const apiUrl = `${window.location.origin}/api/tiktok-scheduled-posts?accountId=${account._id}`
+                    const cleanupUrl = `${window.location.origin}/api/tiktok-scheduled-posts?cleanup=expired&accountId=${account._id}`
                     return (
-                        <div className="flex items-center gap-2 mb-3 bg-gray-50 dark:bg-black/30 px-2 py-1 rounded">
-                            <a href={apiUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 dark:text-blue-400 font-mono truncate flex-1 hover:underline">
-                                {apiUrl}
-                            </a>
-                            <Button
-                                type="text"
-                                size="small"
-                                icon={<CopyOutlined />}
-                                onClick={() => {
-                                    navigator.clipboard.writeText(apiUrl)
-                                    message.success('Đã copy API URL!')
-                                }}
-                                className="!p-0 !h-5 !w-5 !min-w-0 text-blue-700 dark:text-blue-400"
-                            />
+                        <div className="space-y-1 mb-3">
+                            <div className="flex items-center gap-2 bg-gray-50 dark:bg-black/30 px-2 py-1 rounded">
+                                <span className="text-xs text-gray-400">GET</span>
+                                <a href={apiUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 dark:text-blue-400 font-mono truncate flex-1 hover:underline">
+                                    {apiUrl}
+                                </a>
+                                <Button
+                                    type="text"
+                                    size="small"
+                                    icon={<CopyOutlined />}
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(apiUrl)
+                                        message.success('Đã copy API URL!')
+                                    }}
+                                    className="!p-0 !h-5 !w-5 !min-w-0 text-blue-700 dark:text-blue-400"
+                                />
+                            </div>
+                            <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded">
+                                <span className="text-xs text-red-400">DEL</span>
+                                <span className="text-xs text-red-700 dark:text-red-400 font-mono truncate flex-1">
+                                    ?cleanup=expired&accountId=...
+                                </span>
+                                <Button
+                                    type="text"
+                                    size="small"
+                                    danger
+                                    onClick={async () => {
+                                        try {
+                                            const res = await fetch(cleanupUrl, { method: 'DELETE' })
+                                            const data = await res.json()
+                                            if (data.success) {
+                                                message.success(data.message)
+                                                fetchScheduledPosts(account._id)
+                                            } else {
+                                                message.error(data.error || 'Lỗi')
+                                            }
+                                        } catch {
+                                            message.error('Lỗi kết nối')
+                                        }
+                                    }}
+                                    className="!p-0 !px-1 !h-5 !min-w-0 text-xs"
+                                >
+                                    🗑 Dọn bài cũ
+                                </Button>
+                            </div>
                         </div>
                     )
                 })()}

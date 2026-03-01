@@ -454,6 +454,7 @@ const TikTokScheduledPostModal = ({
                         placeholder="Chọn sản phẩm"
                         allowClear
                         showSearch
+                        size="large"
                         optionFilterProp="children"
                         filterOption={(input, option) =>
                             String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
@@ -465,15 +466,15 @@ const TikTokScheduledPostModal = ({
                                 value={product.product_id}
                                 label={product.title}
                             >
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 py-1">
                                     {product.images?.[0]?.url_list?.[0] && (
                                         <img
                                             src={product.images[0].url_list[0]}
                                             alt={product.title}
-                                            className="w-8 h-8 rounded object-cover"
+                                            className="w-10 h-10 rounded object-cover"
                                         />
                                     )}
-                                    <span className="truncate text-xs">{product.title}</span>
+                                    <span className="truncate text-sm">{product.title}</span>
                                 </div>
                             </Select.Option>
                         ))}
@@ -485,6 +486,7 @@ const TikTokScheduledPostModal = ({
                         placeholder="Chọn Shopee Link để lấy mô tả"
                         allowClear
                         showSearch
+                        size="large"
                         optionFilterProp="children"
                         filterOption={(input, option) =>
                             String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
@@ -497,15 +499,15 @@ const TikTokScheduledPostModal = ({
                                 value={link._id}
                                 label={link.name}
                             >
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 py-1">
                                     {link.mediaFile?.url && (
                                         <img
                                             src={link.mediaFile.url}
                                             alt={link.name}
-                                            className="w-8 h-8 rounded object-cover"
+                                            className="w-10 h-10 rounded object-cover"
                                         />
                                     )}
-                                    <span className="truncate text-xs">{link.name}</span>
+                                    <span className="truncate text-sm">{link.name}</span>
                                 </div>
                             </Select.Option>
                         ))}

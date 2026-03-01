@@ -93,24 +93,68 @@ export async function PUT(request: NextRequest) {
 }
 
 // DELETE scheduled post + cleanup R2 video
+// ?id=xxx → xoá 1 bài cụ thể
+// ?cleanup=expired&accountId=xxx → xoá tất cả bài đã quá hạn của account
 export async function DELETE(request: NextRequest) {
     try {
         await connectDb()
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
+        const cleanup = searchParams.get('cleanup')
+        const accountId = searchParams.get('accountId')
 
-        // Fetch post first to get video info
+        // Cleanup expired posts for an account
+        if (cleanup === 'expired' && accountId) {
+            const now = new Date()
+            const allPosts = await TikTokScheduledPostModel.find({ accountId }).lean() as any[]
+
+            // Filter posts that are in the past (scheduledDate DD/MM/YYYY + scheduledTime HH:mm < now)
+            const expiredPosts = allPosts.filter((post: any) => {
+                if (!post.scheduledDate || !post.scheduledTime) return false
+                const [day, month, year] = post.scheduledDate.split('/')
+                const [hour, minute] = post.scheduledTime.split(':')
+                const postDate = new Date(+year, +month - 1, +day, +hour, +minute)
+                return postDate < now
+            })
+
+            // Delete R2 videos + DB records
+            let deleted = 0
+            for (const post of expiredPosts) {
+                if (post.video?.publicId) {
+                    try {
+                        const bucketName = R2_BUCKET_NAME || 'tiktok-videos'
+                        await r2Client.removeObject(bucketName, post.video.publicId)
+                        console.log('🗑️ Cleanup R2:', post.video.publicId)
+                    } catch (err) {
+                        console.error('Failed to delete R2 video:', err)
+                    }
+                }
+                await TikTokScheduledPostModel.findByIdAndDelete(post._id)
+                deleted++
+            }
+
+            return NextResponse.json({
+                success: true,
+                message: `Đã xoá ${deleted} bài quá hạn (tổng ${allPosts.length} bài)`,
+                deleted,
+                total: allPosts.length
+            })
+        }
+
+        // Single post delete by id
+        if (!id) {
+            return NextResponse.json({ success: false, error: 'Missing id or cleanup parameter' }, { status: 400 })
+        }
+
         const post = await TikTokScheduledPostModel.findById(id).lean() as any
 
         if (post?.video?.publicId) {
-            // Delete video from R2
             try {
                 const bucketName = R2_BUCKET_NAME || 'tiktok-videos'
                 await r2Client.removeObject(bucketName, post.video.publicId)
                 console.log('🗑️ Deleted R2 video:', post.video.publicId)
             } catch (err) {
                 console.error('Failed to delete R2 video:', err)
-                // Continue with DB deletion even if R2 fails
             }
         }
 
