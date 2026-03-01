@@ -21,7 +21,7 @@ describe('FacebookPostModal - Smoke Tests', () => {
         const mockUpload = uploadVideoToMinIO as jest.MockedFunction<typeof uploadVideoToMinIO>
         mockUpload.mockResolvedValue({
             success: true,
-            url: 'https://s3.thetaphoa.store/test.mov',
+            url: 'https://pub-105b411e9219481986379bfce642a4ae.r2.dev/test.mov',
             fileName: 'test.mov'
         })
 
@@ -29,7 +29,7 @@ describe('FacebookPostModal - Smoke Tests', () => {
         const result = await uploadVideoToMinIO(mockFile)
 
         expect(result.success).toBe(true)
-        expect(result.url).toContain('s3.thetaphoa.store')
+        expect(result.url).toContain('r2.dev')
     })
 
     it('deleteVideoFromMinIO is mockable', async () => {

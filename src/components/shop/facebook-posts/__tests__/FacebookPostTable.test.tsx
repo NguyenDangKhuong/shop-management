@@ -99,7 +99,7 @@ describe('FacebookPostTable - Basic Tests', () => {
             status: 'published',
             postType: 'reel',
             mediaFiles: [
-                { url: 'https://s3.thetaphoa.store/video/reel.mov', type: 'video', publicId: 'reel.mov' }
+                { url: 'https://pub-105b411e9219481986379bfce642a4ae.r2.dev/video/reel.mov', type: 'video', publicId: 'reel.mov' }
             ],
             scheduledAt: '2026-01-04T15:00:00Z',
             createdAt: '2026-01-02T10:00:00Z'

@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Client } from 'minio'
-import { MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_FACEBOOK_BUCKET } from '@/utils/constants'
+import { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_URL } from '@/utils/constants'
 
 export const dynamic = 'force-dynamic'
 
-const minioClient = new Client({
-    endPoint: 's3.thetaphoa.store',
-    port: 443,
+// Cloudflare R2 client (S3-compatible)
+const r2Client = new Client({
+    endPoint: `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    region: 'auto',
     useSSL: true,
-    accessKey: MINIO_ACCESS_KEY || '',
-    secretKey: MINIO_SECRET_KEY || '',
+    accessKey: R2_ACCESS_KEY_ID || '',
+    secretKey: R2_SECRET_ACCESS_KEY || '',
+    port: 443,
+    pathStyle: true,
 })
 
 // POST - Generate presigned PUT URL
@@ -17,7 +20,7 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json()
         const { fileName, bucketName: customBucket } = body
-        const bucketName = customBucket || MINIO_FACEBOOK_BUCKET || 'facebookpost'
+        const bucketName = customBucket || R2_BUCKET_NAME || 'tiktok-videos'
 
         if (!fileName) {
             return NextResponse.json(
@@ -30,13 +33,13 @@ export async function POST(request: NextRequest) {
         const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_')
         const objectName = `reel-${timestamp}-${sanitizedFileName}`
 
-        const presignedUrl = await minioClient.presignedPutObject(
+        const presignedUrl = await r2Client.presignedPutObject(
             bucketName,
             objectName,
             600
         )
 
-        const publicUrl = `http://s3.thetaphoa.store/${bucketName}/${objectName}`
+        const publicUrl = `${R2_PUBLIC_URL}/${objectName}`
 
         return NextResponse.json({
             success: true,
@@ -45,7 +48,7 @@ export async function POST(request: NextRequest) {
             fileName: objectName,
         })
     } catch (error: any) {
-        console.error('MinIO presign error:', error)
+        console.error('R2 presign error:', error)
         return NextResponse.json(
             { success: false, message: error.message || 'Failed to generate URL' },
             { status: 500 }
@@ -53,12 +56,12 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// DELETE - Delete video from MinIO
+// DELETE - Delete video from R2
 export async function DELETE(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
         const fileName = searchParams.get('fileName')
-        const bucketName = searchParams.get('bucketName') || MINIO_FACEBOOK_BUCKET || 'facebookpost'
+        const bucketName = searchParams.get('bucketName') || R2_BUCKET_NAME || 'tiktok-videos'
 
         if (!fileName) {
             return NextResponse.json(
@@ -67,14 +70,14 @@ export async function DELETE(request: NextRequest) {
             )
         }
 
-        await minioClient.removeObject(bucketName, fileName)
+        await r2Client.removeObject(bucketName, fileName)
 
         return NextResponse.json({
             success: true,
             message: 'Video deleted successfully',
         })
     } catch (error: any) {
-        console.error('MinIO delete error:', error)
+        console.error('R2 delete error:', error)
         return NextResponse.json(
             { success: false, message: error.message || 'Delete failed' },
             { status: 500 }

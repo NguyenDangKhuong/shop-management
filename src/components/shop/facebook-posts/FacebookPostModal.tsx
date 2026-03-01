@@ -11,7 +11,8 @@ import { facebookPostUploadConfig } from '@/utils/cloudinaryConfig'
 import { uploadVideoToMinIO, deleteVideoFromMinIO } from '@/utils/minioUpload'
 import { deleteCloudinaryImage } from '@/actions/cloudinary'
 import { apiPost, apiPut } from '@/utils/internalApi'
-import { MINIO_FACEBOOK_BUCKET } from '@/utils/constants'
+
+const R2_BUCKET = 'tiktok-videos'
 
 dayjs.extend(customParseFormat)
 
@@ -161,7 +162,7 @@ const FacebookPostModal = ({
 
         setVideoUploading(true)
         try {
-            const result = await uploadVideoToMinIO(file, MINIO_FACEBOOK_BUCKET)
+            const result = await uploadVideoToMinIO(file, R2_BUCKET)
             if (result.success) {
                 const newFile: MediaFile = {
                     url: result.url,
@@ -191,10 +192,10 @@ const FacebookPostModal = ({
 
         if (!mediaFile) return
 
-        // For reels (MinIO videos), delete from S3
+        // For reels (R2 videos), delete from R2
         if (postType === 'reel-video' && mediaFile.type === 'video') {
             try {
-                const result = await deleteVideoFromMinIO(mediaFile.publicId!, MINIO_FACEBOOK_BUCKET)
+                const result = await deleteVideoFromMinIO(mediaFile.publicId!, R2_BUCKET)
                 if (result.success) {
                     message.success('Video deleted from storage')
                 } else {
@@ -240,11 +241,11 @@ const FacebookPostModal = ({
 
             // Cleanup based on file type
             if (mediaFile.type === 'video') {
-                // MinIO cleanup for reel-video
+                // R2 cleanup for reel-video
                 cleanupPromises.push(
-                    deleteVideoFromMinIO(mediaFile.publicId, MINIO_FACEBOOK_BUCKET)
+                    deleteVideoFromMinIO(mediaFile.publicId, R2_BUCKET)
                         .then(() => { /* void */ })
-                        .catch(err => console.error('Cleanup error (MinIO):', err))
+                        .catch(err => console.error('Cleanup error (R2):', err))
                 )
             } else if (mediaFile.type === 'image' && mediaFile.publicId) {
                 // Cloudinary cleanup for post images
@@ -473,7 +474,7 @@ const FacebookPostModal = ({
                             </div>
                         )}
                         <div className="text-xs text-gray-500 mt-2">
-                            Video sẽ được lưu tại: s3.thetaphoa.store
+                            Video sẽ được lưu tại: Cloudflare R2
                         </div>
                     </div>
                 ) : (postType === 'reel-link') && (
