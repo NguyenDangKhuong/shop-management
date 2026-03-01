@@ -37,18 +37,6 @@ const nextConfig = {
       },
     ]
   },
-  async headers() {
-    return [
-      {
-        // Enable SharedArrayBuffer for FFmpeg.wasm
-        source: '/((?!api).*)',
-        headers: [
-          { key: 'Cross-Origin-Embedder-Policy', value: 'require-corp' },
-          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
-        ],
-      },
-    ]
-  },
 }
 
 module.exports = withBundleAnalyzer({ ...nextConfig })
