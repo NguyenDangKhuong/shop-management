@@ -429,6 +429,17 @@ const TikTokScheduledPostModal = ({
                                 >
                                     <Switch checkedChildren="Có" unCheckedChildren="Không" />
                                 </Form.Item>
+                                <Form.Item
+                                    label="Mô tả"
+                                    name="description"
+                                    rules={[{ required: true, message: 'Vui lòng nhập mô tả' }]}
+                                    className="mb-0"
+                                >
+                                    <Input.TextArea
+                                        rows={4}
+                                        placeholder="Mô tả bài viết (tự động điền từ Shopee Link hoặc nhập thủ công)..."
+                                    />
+                                </Form.Item>
                             </>
                         )
                     }]}
@@ -501,16 +512,7 @@ const TikTokScheduledPostModal = ({
                     </Select>
                 </Form.Item>
 
-                <Form.Item
-                    label="Mô tả"
-                    name="description"
-                    rules={[{ required: true, message: 'Vui lòng nhập mô tả' }]}
-                >
-                    <Input.TextArea
-                        rows={4}
-                        placeholder="Mô tả bài viết (tự động điền từ Shopee Link hoặc nhập thủ công)..."
-                    />
-                </Form.Item>
+
 
                 <Form.Item label={isEditMode ? 'Video' : `Video${videos.length > 0 ? ` (${videos.length})` : ''}`} required>
                     <Upload
