@@ -23,10 +23,12 @@ export const CLOUDINARY_UPLOAD_SHOPEE_LINK_PRESET = process.env.NEXT_PUBLIC_CLOU
 export const CLOUDINARY_UPLOAD_TIKTOK_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_TIKTOK_PRESET
 export const NEXT_AUTH_SECRET = process.env.NEXT_PUBLIC_AUTH_SECRET
 
-export const MINIO_ACCESS_KEY = process.env.NEXT_PUBLIC_MINIO_ACCESS_KEY
-export const MINIO_SECRET_KEY = process.env.NEXT_PUBLIC_MINIO_SECRET_KEY
-export const MINIO_FACEBOOK_BUCKET = process.env.NEXT_PUBLIC_MINIO_FACEBOOK_BUCKET
-export const MINIO_TIKTOK_BUCKET = process.env.NEXT_PUBLIC_MINIO_TIKTOK_BUCKET
+// Cloudflare R2 (S3-compatible)
+export const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID
+export const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID
+export const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY
+export const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME || 'tiktok-videos'
+export const R2_PUBLIC_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
 
 export const NOTION_API_KEY = process.env.NEXT_PUBLIC_NOTION_API_KEY
 

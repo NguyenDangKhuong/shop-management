@@ -2,14 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import TikTokScheduledPostModel from '@/models/TikTokScheduledPost'
 import connectDb from '@/utils/connectDb'
 import { Client } from 'minio'
-import { MINIO_ACCESS_KEY, MINIO_SECRET_KEY } from '@/utils/constants'
+import { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME } from '@/utils/constants'
 
-const minioClient = new Client({
-    endPoint: 's3.thetaphoa.store',
-    port: 443,
+const r2Client = new Client({
+    endPoint: `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    region: 'auto',
     useSSL: true,
-    accessKey: MINIO_ACCESS_KEY || '',
-    secretKey: MINIO_SECRET_KEY || '',
+    accessKey: R2_ACCESS_KEY_ID || '',
+    secretKey: R2_SECRET_ACCESS_KEY || '',
+    port: 443,
+    pathStyle: true,
 })
 
 // GET all scheduled posts (optionally filter by accountId)
@@ -101,14 +103,14 @@ export async function DELETE(request: NextRequest) {
         const post = await TikTokScheduledPostModel.findById(id).lean() as any
 
         if (post?.video?.publicId) {
-            // Delete video from MinIO
+            // Delete video from R2
             try {
-                const bucketName = process.env.NEXT_PUBLIC_MINIO_TIKTOK_BUCKET || 'tiktokpost'
-                await minioClient.removeObject(bucketName, post.video.publicId)
-                console.log('🗑️ Deleted MinIO video:', post.video.publicId)
+                const bucketName = R2_BUCKET_NAME || 'tiktok-videos'
+                await r2Client.removeObject(bucketName, post.video.publicId)
+                console.log('🗑️ Deleted R2 video:', post.video.publicId)
             } catch (err) {
-                console.error('Failed to delete MinIO video:', err)
-                // Continue with DB deletion even if MinIO fails
+                console.error('Failed to delete R2 video:', err)
+                // Continue with DB deletion even if R2 fails
             }
         }
 

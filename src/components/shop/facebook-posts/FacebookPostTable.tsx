@@ -36,7 +36,7 @@ const deleteMediaFiles = async (post: FacebookPost) => {
     if (!post.mediaFiles || post.mediaFiles.length === 0) return
 
     if (post.postType === 'reel-video') {
-        // Delete videos from MinIO
+        // Delete videos from R2
         for (const file of post.mediaFiles) {
             if (file.type === 'video' && file.publicId) {
                 await deleteVideoFromMinIO(file.publicId)

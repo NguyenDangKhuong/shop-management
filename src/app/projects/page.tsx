@@ -19,8 +19,8 @@ const projects = [
     },
     {
         title: 'TikTok Automation',
-        description: 'Manage TikTok accounts, schedule posts automatically, and integrate showcase products. Supports video upload via Cloudinary & MinIO.',
-        tech: ['TikTok API', 'Cloudinary', 'MinIO', 'n8n'],
+        description: 'Manage TikTok accounts, schedule posts automatically, and integrate showcase products. Supports video upload via Cloudinary & Cloudflare R2.',
+        tech: ['TikTok API', 'Cloudinary', 'Cloudflare R2', 'n8n'],
         color: '#c084fc',
         emoji: '🎵',
         image: '/image/projects/tiktok.png',
@@ -35,7 +35,7 @@ const projects = [
     {
         title: 'Facebook Posts Manager',
         description: 'Manage Facebook posts: supports post, reel-video, and reel-link types. Upload media via Cloudinary with scheduled publishing.',
-        tech: ['Facebook API', 'Cloudinary', 'MinIO'],
+        tech: ['Facebook API', 'Cloudinary', 'Cloudflare R2'],
         color: '#3b82f6',
         emoji: '📱',
         image: '/image/projects/facebook.png',
