@@ -181,6 +181,8 @@ type Config = typeof config  // { readonly host: 'localhost'; readonly port: 300
                 {/* ===== ARRAY ===== */}
                 <Heading2>📦 Array — Cấu trúc dữ liệu nền tảng</Heading2>
 
+                <Callout type="tip">🚂 <strong>Hình dung:</strong> Array giống <strong>toa tàu lửa</strong> — các toa nối nhau liên tục, mỗi toa có số thứ tự (index). Muốn tìm toa số 5 → đi thẳng đến ngay (O(1)). Nhưng muốn chèn toa mới vào giữa → phải dồn tất cả toa phía sau ra (O(n)).</Callout>
+
                 <CodeBlock title="array.ts">{`// Array trong JS là dynamic, có thể chứa mixed types
 const nums: number[] = [1, 2, 3, 4, 5]
 const mixed: (string | number)[] = [1, 'two', 3]
@@ -274,6 +276,8 @@ const obj = { [key]: 'value' }  // { dynamic: 'value' }
                 {/* ===== MAP ===== */}
                 <Heading2>🗺️ Map — Hash Map đúng nghĩa</Heading2>
 
+                <Callout type="tip">🗄️ <strong>Hình dung:</strong> Map giống <strong>tủ locker trường học</strong> — mỗi locker có số (key) và bên trong có đồ (value). Biết số locker → mở ra lấy đồ ngay O(1). Hỏi &quot;ai tương ứng cái gì?&quot; → dùng Map!</Callout>
+
                 <Paragraph>
                     <InlineCode>Map</InlineCode> tốt hơn Object cho hash map vì keys{' '}
                     <Highlight>bất kỳ kiểu nào</Highlight>, có <InlineCode>.size</InlineCode>, giữ insertion order.
@@ -361,6 +365,8 @@ class SimpleCache<K, V> {
 
                 {/* ===== SET ===== */}
                 <Heading2>🎯 Set — Tập hợp unique values</Heading2>
+
+                <Callout type="tip">🪣 <strong>Hình dung:</strong> Set giống <strong>xô bi màu</strong> — bỏ bi xanh vào ✅, bỏ bi đỏ vào ✅, bỏ bi xanh lần nữa → rớt ra ngoài ❌ (đã có rồi!). Hỏi &quot;cái này đã gặp chưa?&quot; → dùng Set!</Callout>
 
                 <CodeBlock title="set.ts">{`// Set — chỉ chứa giá trị unique, O(1) add/has/delete
 const set = new Set<number>()
@@ -465,6 +471,8 @@ processed.has(someObj)  // true
                 {/* ===== STACK ===== */}
                 <Heading2>📚 Stack — LIFO (Last In, First Out)</Heading2>
 
+                <Callout type="tip">🥞 <strong>Hình dung:</strong> Stack giống <strong>chồng bánh pancake</strong> — chiếc cuối cùng đặt lên trên cùng, ăn từ trên xuống. Ctrl+Z (undo) chính là Stack!</Callout>
+
                 <CodeBlock title="stack.ts">{`// Stack dùng Array — đủ cho hầu hết bài LeetCode
 // push() & pop() đều O(1)
 
@@ -525,6 +533,8 @@ class MinStack {
 
                 {/* ===== QUEUE & DEQUE ===== */}
                 <Heading2>🚶 Queue & Deque — FIFO (First In, First Out)</Heading2>
+
+                <Callout type="tip">🏧 <strong>Hình dung:</strong> Queue giống <strong>xếp hàng ATM</strong> — ai đến trước phục vụ trước. Deque (Double-Ended Queue) giống <strong>ống trượt hai đầu</strong> — vào/ra được cả hai phía.</Callout>
 
                 <CodeBlock title="queue.ts">{`// ⚠️ Array.shift() là O(n) — không hiệu quả cho queue lớn
 // Dùng index pointer thay shift() cho performance
@@ -594,6 +604,8 @@ function maxSlidingWindow(nums: number[], k: number): number[] {
 
                 {/* ===== LINKED LIST ===== */}
                 <Heading2>🔗 Linked List</Heading2>
+
+                <Callout type="tip">🔗 <strong>Hình dung:</strong> Linked List giống <strong>đoàn tàu nối bằng móc</strong> — mỗi toa chỉ biết toa kế tiếp. Muốn tháo/gắn toa ở giữa → chỉ cần đổi móc nối, không cần dồn toa (O(1) insert). Nhưng muốn tìm toa số 5 → phải đi từ đầu đếm từng toa (O(n)).</Callout>
 
                 <CodeBlock title="linked-list.ts">{`// Singly Linked List
 class ListNode {
@@ -669,6 +681,8 @@ class DoublyNode {
                 {/* ===== HEAP / PRIORITY QUEUE ===== */}
                 <Heading2>⛰️ Heap / Priority Queue</Heading2>
 
+                <Callout type="tip">🏔️ <strong>Hình dung:</strong> Min-Heap giống <strong>kim tự tháp viên bi</strong> — viên nhỏ nhất luôn ở đỉnh. Lấy viên nhỏ nhất → O(1), bỏ viên mới vào → tự lăn xuống vị trí đúng O(log n). &quot;Tìm K phần tử lớn/nhỏ nhất&quot; → dùng Heap!</Callout>
+
                 <Paragraph>
                     JavaScript không có built-in Heap. Phải tự implement — <Highlight>rất quan trọng cho LeetCode</Highlight>.
                 </Paragraph>
@@ -741,6 +755,8 @@ function findKthLargest(nums: number[], k: number): number {
                 {/* ===== TRIE ===== */}
                 <Heading2>🌳 Trie — Prefix Tree</Heading2>
 
+                <Callout type="tip">📱 <strong>Hình dung:</strong> Trie giống <strong>gợi ý từ trên bàn phím điện thoại</strong> — gõ &quot;hel&quot; → gợi ý &quot;hello&quot;, &quot;help&quot;, &quot;helmet&quot;. Mỗi ký tự là một nhánh cây, đi theo nhánh = tìm prefix.</Callout>
+
                 <CodeBlock title="trie.ts">{`// Trie — tìm kiếm prefix hiệu quả O(m) với m = length of word
 class TrieNode {
     children = new Map<string, TrieNode>()
@@ -784,6 +800,8 @@ class Trie {
 
                 {/* ===== GRAPH ===== */}
                 <Heading2>🕸️ Graph — Biểu diễn & Duyệt</Heading2>
+
+                <Callout type="tip">🗺️ <strong>Hình dung:</strong> Graph giống <strong>bản đồ Google Maps</strong> — các thành phố là nodes, đường đi là edges. BFS = đi theo vòng tròn ra ngoài (tìm đường ngắn nhất). DFS = đi sâu hết 1 ngõ rồi quay lại (tìm tất cả đường đi).</Callout>
 
                 <CodeBlock title="graph.ts">{`// Adjacency List — phổ biến nhất cho giải thuật
 // Dùng Map<number, number[]>
@@ -964,6 +982,8 @@ type Config = typeof config`}</CodeBlock>
                 {/* ===== ARRAY ===== */}
                 <Heading2>📦 Array — Foundation Data Structure</Heading2>
 
+                <Callout type="tip">🚂 <strong>Visualize:</strong> Array is like a <strong>train with numbered cars</strong> — jump to car #5 instantly (O(1)). But inserting a car in the middle means shifting all cars behind it (O(n)).</Callout>
+
                 <CodeBlock title="array.ts">{`// Array — dynamic, O(1) push/pop, O(n) shift/unshift
 const nums: number[] = [1, 2, 3, 4, 5]
 
@@ -998,6 +1018,8 @@ nums.with(2, 99)  // replace at index`}</CodeBlock>
 
                 {/* ===== MAP ===== */}
                 <Heading2>🗺️ Map — True Hash Map</Heading2>
+
+                <Callout type="tip">🗄️ <strong>Visualize:</strong> Map is like <strong>school lockers</strong> — each locker has a number (key) with stuff inside (value). Know the locker number → open and grab instantly O(1). Ask &quot;what goes with what?&quot; → use Map!</Callout>
 
                 <Paragraph>
                     <InlineCode>Map</InlineCode> is better than Object for hash maps: keys can be{' '}
@@ -1045,6 +1067,8 @@ for (const word of words) {
                 {/* ===== SET ===== */}
                 <Heading2>🎯 Set — Unique Value Collection</Heading2>
 
+                <Callout type="tip">🪣 <strong>Visualize:</strong> Set is like a <strong>bucket of colored marbles</strong> — drop blue marble ✅, drop red marble ✅, drop blue again → bounces out ❌ (already exists!). Ask &quot;have I seen this before?&quot; → use Set!</Callout>
+
                 <CodeBlock title="set.ts">{`// Set — unique values only, O(1) add/has/delete
 const set = new Set<number>([1, 2, 3])
 
@@ -1081,6 +1105,8 @@ function lengthOfLongestSubstring(s: string): number {
                 {/* ===== STACK ===== */}
                 <Heading2>📚 Stack — LIFO (Last In, First Out)</Heading2>
 
+                <Callout type="tip">🥞 <strong>Visualize:</strong> Stack is like a <strong>pile of pancakes</strong> — last one placed on top gets eaten first. Ctrl+Z (undo) is a Stack!</Callout>
+
                 <CodeBlock title="stack.ts">{`// Stack using Array — push() & pop() are O(1)
 const stack: number[] = []
 stack.push(1)    // add to top
@@ -1116,6 +1142,8 @@ function nextGreater(nums: number[]): number[] {
                 {/* ===== QUEUE ===== */}
                 <Heading2>🚶 Queue — FIFO (First In, First Out)</Heading2>
 
+                <Callout type="tip">🏧 <strong>Visualize:</strong> Queue is like <strong>standing in line at an ATM</strong> — first to arrive gets served first.</Callout>
+
                 <CodeBlock title="queue.ts">{`// ⚠️ Array.shift() is O(n), use index pointer instead
 class Queue<T> {
     private items: T[] = []
@@ -1149,6 +1177,8 @@ function levelOrder(root: TreeNode | null): number[][] {
 
                 {/* ===== HEAP ===== */}
                 <Heading2>⛰️ Heap / Priority Queue</Heading2>
+
+                <Callout type="tip">🏔️ <strong>Visualize:</strong> Min-Heap is like a <strong>marble pyramid</strong> — smallest marble always on top. Grab the smallest → O(1), drop a new one → it rolls to the right spot O(log n). &quot;Find K smallest/largest elements&quot; → use Heap!</Callout>
 
                 <Paragraph>
                     JavaScript has no built-in Heap. Must self-implement — <Highlight>critical for LeetCode</Highlight>.
@@ -1200,6 +1230,9 @@ function levelOrder(root: TreeNode | null): number[][] {
 
                 {/* ===== TRIE & GRAPH ===== */}
                 <Heading2>🌳 Trie & 🕸️ Graph</Heading2>
+
+                <Callout type="tip">📱 <strong>Trie:</strong> Like <strong>phone keyboard autocomplete</strong> — type &quot;hel&quot; → suggests &quot;hello&quot;, &quot;help&quot;. Each character is a branch.
+                    <br />🗺️ <strong>Graph:</strong> Like <strong>Google Maps</strong> — cities are nodes, roads are edges. BFS = ripple outward (shortest path). DFS = explore one road fully before backtracking.</Callout>
 
                 <CodeBlock title="trie-graph.ts">{`// Trie — prefix search O(m)
 class TrieNode {
