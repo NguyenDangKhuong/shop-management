@@ -263,6 +263,233 @@ class MinStack {
             Khi bài hỏi &quot;tìm phần tử lớn/nhỏ hơn <Highlight>gần nhất</Highlight>&quot; hoặc &quot;cho mỗi phần tử, tìm phần tử tiếp theo thỏa điều kiện&quot;
             → nghĩ ngay <InlineCode>Monotonic Stack</InlineCode>.
         </Callout>
+
+        {/* ───────── BÀI 4: IMPLEMENT QUEUE USING STACKS ───────── */}
+        <Heading2>Bài 4: Implement Queue using Stacks (LeetCode #232)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Implement <Highlight>FIFO queue</Highlight> chỉ dùng 2 stacks.</Paragraph>
+        <CodeBlock title="queue-using-stacks.js">{`// LeetCode #232: Implement Queue using Stacks — Amortized O(1)
+class MyQueue {
+    constructor() {
+        this.pushStack = []     // Stack để push
+        this.popStack = []      // Stack để pop/peek
+    }
+
+    push(x) {
+        this.pushStack.push(x)
+    }
+
+    pop() {
+        this._transfer()
+        return this.popStack.pop()
+    }
+
+    peek() {
+        this._transfer()
+        return this.popStack.at(-1)
+    }
+
+    empty() {
+        return this.pushStack.length === 0 && this.popStack.length === 0
+    }
+
+    _transfer() {
+        // Chỉ transfer khi popStack rỗng
+        if (this.popStack.length === 0) {
+            while (this.pushStack.length) {
+                this.popStack.push(this.pushStack.pop())
+            }
+        }
+    }
+}
+
+// push(1), push(2), peek()→1, pop()→1, empty()→false ✓
+// pushStack→popStack: [1,2] → pop→[2,1] → peek=1, pop=1`}</CodeBlock>
+
+        {/* ───────── BÀI 5: BACKSPACE STRING COMPARE ───────── */}
+        <Heading2>Bài 5: Backspace String Compare (LeetCode #844)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>So sánh hai chuỗi trong đó <InlineCode>#</InlineCode> là <Highlight>backspace</Highlight>.</Paragraph>
+        <CodeBlock title="backspace-compare.js">{`// LeetCode #844: Backspace String Compare — O(n)
+function backspaceCompare(s, t) {
+    const build = (str) => {
+        const stack = []
+        for (const c of str) {
+            if (c === '#') stack.pop()    // Backspace → xóa ký tự cuối
+            else stack.push(c)
+        }
+        return stack.join('')
+    }
+
+    return build(s) === build(t)
+}
+
+// Ví dụ: s = "ab#c", t = "ad#c"
+// build("ab#c"): a→[a], b→[a,b], #→[a], c→[a,c] → "ac"
+// build("ad#c"): a→[a], d→[a,d], #→[a], c→[a,c] → "ac"
+// "ac" === "ac" → true ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 6: EVALUATE RPN ───────── */}
+        <Heading2>Bài 6: Evaluate Reverse Polish Notation (LeetCode #150)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Tính giá trị biểu thức <Highlight>Reverse Polish Notation</Highlight> (hậu tố).</Paragraph>
+        <CodeBlock title="eval-rpn.js">{`// LeetCode #150: Evaluate RPN — O(n)
+function evalRPN(tokens) {
+    const stack = []
+    const ops = {
+        '+': (a, b) => a + b,
+        '-': (a, b) => a - b,
+        '*': (a, b) => a * b,
+        '/': (a, b) => Math.trunc(a / b),  // Chia lấy phần nguyên
+    }
+
+    for (const token of tokens) {
+        if (ops[token]) {
+            const b = stack.pop()           // Toán hạng phải
+            const a = stack.pop()           // Toán hạng trái
+            stack.push(ops[token](a, b))
+        } else {
+            stack.push(Number(token))       // Số → push
+        }
+    }
+
+    return stack[0]
+}
+
+// Ví dụ: ["2","1","+","3","*"]
+// 2→[2], 1→[2,1], +→pop 1,2 → push 3→[3]
+// 3→[3,3], *→pop 3,3 → push 9→[9]
+// → 9 ✓   (tương đương (2+1)*3 = 9)`}</CodeBlock>
+
+        {/* ───────── BÀI 7: DECODE STRING ───────── */}
+        <Heading2>Bài 7: Decode String (LeetCode #394)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Decode chuỗi encode dạng <InlineCode>k[encoded_string]</InlineCode>. Ví dụ: <InlineCode>3[a2[c]]</InlineCode> = <Highlight>accaccacc</Highlight>.</Paragraph>
+        <CodeBlock title="decode-string.js">{`// LeetCode #394: Decode String — O(n)
+function decodeString(s) {
+    const countStack = []
+    const strStack = []
+    let currentStr = ''
+    let currentNum = 0
+
+    for (const c of s) {
+        if (c >= '0' && c <= '9') {
+            currentNum = currentNum * 10 + Number(c)
+        } else if (c === '[') {
+            countStack.push(currentNum)     // Lưu số lặp
+            strStack.push(currentStr)       // Lưu chuỗi trước [
+            currentStr = ''
+            currentNum = 0
+        } else if (c === ']') {
+            const num = countStack.pop()
+            const prevStr = strStack.pop()
+            currentStr = prevStr + currentStr.repeat(num)
+        } else {
+            currentStr += c
+        }
+    }
+
+    return currentStr
+}
+
+// Ví dụ: "3[a2[c]]"
+// 3→num=3, [→push(3,""), a→str="a"
+// 2→num=2, [→push(2,"a"), c→str="c"
+// ]→pop(2,"a"), str="a"+"cc"="acc"
+// ]→pop(3,""), str=""+"accaccacc"="accaccacc" ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 8: ASTEROID COLLISION ───────── */}
+        <Heading2>Bài 8: Asteroid Collision (LeetCode #735)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Các asteroid di chuyển cùng tốc độ. Dương đi phải, âm đi trái. Va chạm → <Highlight>nhỏ hơn nổ</Highlight>, bằng nhau → cả hai nổ.</Paragraph>
+        <CodeBlock title="asteroid-collision.js">{`// LeetCode #735: Asteroid Collision — O(n)
+function asteroidCollision(asteroids) {
+    const stack = []
+
+    for (const ast of asteroids) {
+        let alive = true
+
+        while (alive && ast < 0 && stack.length && stack.at(-1) > 0) {
+            // Va chạm: ast đi trái (<0) gặp stack top đi phải (>0)
+            if (stack.at(-1) < -ast) {
+                stack.pop()                 // Stack top nhỏ hơn → nổ
+            } else if (stack.at(-1) === -ast) {
+                stack.pop()                 // Bằng nhau → cả hai nổ
+                alive = false
+            } else {
+                alive = false               // Stack top lớn hơn → ast nổ
+            }
+        }
+
+        if (alive) stack.push(ast)
+    }
+
+    return stack
+}
+
+// Ví dụ: [5, 10, -5]
+// 5→[5], 10→[5,10], -5: |-5|<10 → -5 nổ → [5,10] ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 9: CAR FLEET ───────── */}
+        <Heading2>Bài 9: Car Fleet (LeetCode #853)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Cho vị trí và tốc độ các xe, đếm số <Highlight>car fleet</Highlight> (nhóm xe đến đích cùng lúc).</Paragraph>
+        <CodeBlock title="car-fleet.js">{`// LeetCode #853: Car Fleet — O(n log n)
+function carFleet(target, position, speed) {
+    // Ghép (position, time_to_target), sort giảm dần theo position
+    const cars = position
+        .map((pos, i) => [pos, (target - pos) / speed[i]])
+        .sort((a, b) => b[0] - a[0])
+
+    const stack = []            // Stack lưu thời gian đến đích
+
+    for (const [, time] of cars) {
+        // Xe phía sau đến sớm hơn → nó sẽ hợp fleet với xe phía trước
+        // Xe phía sau đến muộn hơn → fleet mới
+        if (!stack.length || time > stack.at(-1)) {
+            stack.push(time)    // Fleet mới
+        }
+    }
+
+    return stack.length         // Số fleet
+}
+
+// Ví dụ: target=12, position=[10,8,0,5,3], speed=[2,4,1,1,3]
+// Sorted by pos desc: (10,1), (8,1), (5,2.33), (3,3), (0,4)
+// 1→[1], 1≤1→skip, 2.33>1→[1,2.33], 3>2.33→[1,2.33,3], 4>3→[1,2.33,3,4]
+// Nhưng wait - xe ở pos=8 mất 1s(=xe ở 10), merge! → 3 fleets ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 10: LARGEST RECT IN HISTOGRAM ───────── */}
+        <Heading2>Bài 10: Largest Rectangle in Histogram (LeetCode #84)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Tìm <Highlight>hình chữ nhật lớn nhất</Highlight> trong histogram.</Paragraph>
+        <CodeBlock title="largest-rectangle.js">{`// LeetCode #84: Largest Rectangle in Histogram — O(n)
+function largestRectangleArea(heights) {
+    const stack = []            // Monotonic increasing stack (indices)
+    let maxArea = 0
+
+    for (let i = 0; i <= heights.length; i++) {
+        const h = i === heights.length ? 0 : heights[i]
+
+        while (stack.length && h < heights[stack.at(-1)]) {
+            const height = heights[stack.pop()]
+            const width = stack.length ? i - stack.at(-1) - 1 : i
+            maxArea = Math.max(maxArea, height * width)
+        }
+
+        stack.push(i)
+    }
+
+    return maxArea
+}
+
+// Ví dụ: heights = [2,1,5,6,2,3]
+// i=0(2): push→[0]
+// i=1(1): 1<2→pop 0, area=2*1=2, max=2 → push→[1]
+// i=2(5): push→[1,2]
+// i=3(6): push→[1,2,3]
+// i=4(2): 2<6→pop 3, area=6*1=6; 2<5→pop 2, area=5*2=10, max=10
+// → maxArea = 10 ✓`}</CodeBlock>
     </>
 )
 
@@ -490,6 +717,140 @@ class MinStack {
             When a problem asks for &quot;nearest greater/smaller&quot; or &quot;for each element, find the next element matching condition&quot;
             → think <InlineCode>Monotonic Stack</InlineCode>.
         </Callout>
+
+        <Heading2>Problem 4: Implement Queue using Stacks (LeetCode #232)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Implement <Highlight>FIFO queue</Highlight> using only 2 stacks.</Paragraph>
+        <CodeBlock title="queue-using-stacks.js">{`// LeetCode #232: Implement Queue using Stacks — Amortized O(1)
+class MyQueue {
+    constructor() { this.pushStack = []; this.popStack = [] }
+    push(x) { this.pushStack.push(x) }
+    pop() { this._transfer(); return this.popStack.pop() }
+    peek() { this._transfer(); return this.popStack.at(-1) }
+    empty() { return !this.pushStack.length && !this.popStack.length }
+    _transfer() {
+        if (!this.popStack.length)
+            while (this.pushStack.length)
+                this.popStack.push(this.pushStack.pop())
+    }
+}
+// push(1),push(2),peek()→1,pop()→1 ✓`}</CodeBlock>
+
+        <Heading2>Problem 5: Backspace String Compare (LeetCode #844)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Compare two strings where <InlineCode>#</InlineCode> is <Highlight>backspace</Highlight>.</Paragraph>
+        <CodeBlock title="backspace-compare.js">{`// LeetCode #844: Backspace String Compare — O(n)
+function backspaceCompare(s, t) {
+    const build = (str) => {
+        const stack = []
+        for (const c of str) {
+            if (c === '#') stack.pop()
+            else stack.push(c)
+        }
+        return stack.join('')
+    }
+    return build(s) === build(t)
+}
+// Example: "ab#c" vs "ad#c" → "ac"="ac" → true ✓`}</CodeBlock>
+
+        <Heading2>Problem 6: Evaluate Reverse Polish Notation (LeetCode #150)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Evaluate a <Highlight>Reverse Polish Notation</Highlight> (postfix) expression.</Paragraph>
+        <CodeBlock title="eval-rpn.js">{`// LeetCode #150: Evaluate RPN — O(n)
+function evalRPN(tokens) {
+    const stack = []
+    const ops = {
+        '+': (a,b) => a+b, '-': (a,b) => a-b,
+        '*': (a,b) => a*b, '/': (a,b) => Math.trunc(a/b),
+    }
+    for (const t of tokens) {
+        if (ops[t]) {
+            const b = stack.pop(), a = stack.pop()
+            stack.push(ops[t](a, b))
+        } else stack.push(Number(t))
+    }
+    return stack[0]
+}
+// Example: ["2","1","+","3","*"] → (2+1)*3 = 9 ✓`}</CodeBlock>
+
+        <Heading2>Problem 7: Decode String (LeetCode #394)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Decode encoded string like <InlineCode>k[encoded_string]</InlineCode>. Example: <InlineCode>3[a2[c]]</InlineCode> = <Highlight>accaccacc</Highlight>.</Paragraph>
+        <CodeBlock title="decode-string.js">{`// LeetCode #394: Decode String — O(n)
+function decodeString(s) {
+    const countStack = [], strStack = []
+    let str = '', num = 0
+
+    for (const c of s) {
+        if (c >= '0' && c <= '9') {
+            num = num * 10 + Number(c)
+        } else if (c === '[') {
+            countStack.push(num); strStack.push(str)
+            str = ''; num = 0
+        } else if (c === ']') {
+            str = strStack.pop() + str.repeat(countStack.pop())
+        } else str += c
+    }
+    return str
+}
+// "3[a2[c]]" → "accaccacc" ✓`}</CodeBlock>
+
+        <Heading2>Problem 8: Asteroid Collision (LeetCode #735)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Asteroids move at same speed. Positive goes right, negative left. Collision → <Highlight>smaller explodes</Highlight>, equal → both explode.</Paragraph>
+        <CodeBlock title="asteroid-collision.js">{`// LeetCode #735: Asteroid Collision — O(n)
+function asteroidCollision(asteroids) {
+    const stack = []
+    for (const ast of asteroids) {
+        let alive = true
+        while (alive && ast < 0 && stack.length && stack.at(-1) > 0) {
+            if (stack.at(-1) < -ast) stack.pop()
+            else if (stack.at(-1) === -ast) { stack.pop(); alive = false }
+            else alive = false
+        }
+        if (alive) stack.push(ast)
+    }
+    return stack
+}
+// [5, 10, -5] → -5 < 10 → -5 explodes → [5, 10] ✓`}</CodeBlock>
+
+        <Heading2>Problem 9: Car Fleet (LeetCode #853)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Given positions and speeds, count the number of <Highlight>car fleets</Highlight> arriving at target.</Paragraph>
+        <CodeBlock title="car-fleet.js">{`// LeetCode #853: Car Fleet — O(n log n)
+function carFleet(target, position, speed) {
+    const cars = position
+        .map((pos, i) => [pos, (target - pos) / speed[i]])
+        .sort((a, b) => b[0] - a[0])
+
+    const stack = []
+    for (const [, time] of cars) {
+        if (!stack.length || time > stack.at(-1)) stack.push(time)
+    }
+    return stack.length
+}
+// Cars that arrive faster merge with slower car ahead → fewer fleets`}</CodeBlock>
+
+        <Heading2>Problem 10: Largest Rectangle in Histogram (LeetCode #84)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Find the <Highlight>largest rectangle</Highlight> in a histogram.</Paragraph>
+        <CodeBlock title="largest-rectangle.js">{`// LeetCode #84: Largest Rectangle in Histogram — O(n)
+function largestRectangleArea(heights) {
+    const stack = []
+    let maxArea = 0
+
+    for (let i = 0; i <= heights.length; i++) {
+        const h = i === heights.length ? 0 : heights[i]
+        while (stack.length && h < heights[stack.at(-1)]) {
+            const height = heights[stack.pop()]
+            const width = stack.length ? i - stack.at(-1) - 1 : i
+            maxArea = Math.max(maxArea, height * width)
+        }
+        stack.push(i)
+    }
+    return maxArea
+}
+// [2,1,5,6,2,3] → maxArea = 10 (5×2) ✓`}</CodeBlock>
     </>
 )
 

@@ -278,25 +278,178 @@ function exist(board, word) {
 //   k=6 === word.length → return true ✓
 // Mỗi bước backtrack khôi phục ô đã dùng`}</CodeBlock>
 
-        <Heading2>So sánh BFS vs DFS</Heading2>
+        <Heading2>Bài 4: Flood Fill (LeetCode #733)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Tô màu lại tất cả ô <Highlight>cùng màu và kề nhau</Highlight> với ô gốc.</Paragraph>
+        <CodeBlock title="flood-fill.js">{`// LeetCode #733: Flood Fill — O(m×n)
+function floodFill(image, sr, sc, color) {
+    const original = image[sr][sc]
+    if (original === color) return image
 
-        <div className="my-4 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
-                <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Tiêu chí</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">BFS</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">DFS</th>
-                    </tr>
-                </thead>
-                <tbody className="text-gray-600 dark:text-slate-300">
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Cấu trúc dữ liệu</td><td className="p-3">Queue (FIFO)</td><td className="p-3">Stack / Đệ quy</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Đường đi ngắn nhất</td><td className="p-3">✅ Đảm bảo</td><td className="p-3">❌ Không</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Bộ nhớ (cây rộng)</td><td className="p-3">Nhiều (lưu cả tầng)</td><td className="p-3">Ít (chỉ lưu path)</td></tr>
-                    <tr><td className="p-3 font-medium">Dùng khi</td><td className="p-3">Shortest path, level order</td><td className="p-3">Explore all, backtracking</td></tr>
-                </tbody>
-            </table>
-        </div>
+    function dfs(r, c) {
+        if (r < 0 || c < 0 || r >= image.length || c >= image[0].length) return
+        if (image[r][c] !== original) return
+        image[r][c] = color
+        dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1)
+    }
+
+    dfs(sr, sc)
+    return image
+}
+// Tương tự "paint bucket" trong Photoshop ✓`}</CodeBlock>
+
+        <Heading2>Bài 5: Rotting Oranges (LeetCode #994)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Cam thối lây lan sang cam tươi kề bên. Tìm <Highlight>số phút nhỏ nhất</Highlight> để tất cả cam thối. BFS multi-source.</Paragraph>
+        <CodeBlock title="rotting-oranges.js">{`// LeetCode #994: Rotting Oranges — O(m×n) BFS
+function orangesRotting(grid) {
+    const queue = []
+    let fresh = 0, minutes = 0
+    const rows = grid.length, cols = grid[0].length
+
+    for (let i = 0; i < rows; i++)
+        for (let j = 0; j < cols; j++) {
+            if (grid[i][j] === 2) queue.push([i, j])   // Tất cả cam thối
+            if (grid[i][j] === 1) fresh++
+        }
+
+    const dirs = [[1,0],[-1,0],[0,1],[0,-1]]
+    while (queue.length && fresh > 0) {
+        const size = queue.length
+        for (let i = 0; i < size; i++) {
+            const [r, c] = queue.shift()
+            for (const [dr, dc] of dirs) {
+                const nr = r + dr, nc = c + dc
+                if (nr >= 0 && nc >= 0 && nr < rows && nc < cols && grid[nr][nc] === 1) {
+                    grid[nr][nc] = 2
+                    fresh--
+                    queue.push([nr, nc])
+                }
+            }
+        }
+        minutes++
+    }
+    return fresh === 0 ? minutes : -1
+}
+// BFS lan từ nhiều nguồn cùng lúc → tìm thời gian ngắn nhất ✓`}</CodeBlock>
+
+        <Heading2>Bài 6: Max Area of Island (LeetCode #695)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Tìm <Highlight>diện tích đảo lớn nhất</Highlight> trong lưới 2D.</Paragraph>
+        <CodeBlock title="max-area-island.js">{`// LeetCode #695: Max Area of Island — O(m×n)
+function maxAreaOfIsland(grid) {
+    let maxArea = 0
+    const rows = grid.length, cols = grid[0].length
+
+    function dfs(i, j) {
+        if (i < 0 || j < 0 || i >= rows || j >= cols || grid[i][j] !== 1) return 0
+        grid[i][j] = 0  // Đánh dấu
+        return 1 + dfs(i+1,j) + dfs(i-1,j) + dfs(i,j+1) + dfs(i,j-1)
+    }
+
+    for (let i = 0; i < rows; i++)
+        for (let j = 0; j < cols; j++)
+            if (grid[i][j] === 1) maxArea = Math.max(maxArea, dfs(i, j))
+
+    return maxArea
+}
+// DFS trả về số ô đất của mỗi đảo ✓`}</CodeBlock>
+
+        <Heading2>Bài 7: Course Schedule (LeetCode #207)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Kiểm tra có thể hoàn thành tất cả môn học không (phát hiện <Highlight>chu trình trong đồ thị có hướng</Highlight>).</Paragraph>
+        <CodeBlock title="course-schedule.js">{`// LeetCode #207: Course Schedule — O(V + E)
+function canFinish(numCourses, prerequisites) {
+    const graph = Array.from({ length: numCourses }, () => [])
+    const state = new Array(numCourses).fill(0)  // 0: chưa, 1: đang, 2: xong
+
+    for (const [a, b] of prerequisites) graph[b].push(a)
+
+    function hasCycle(node) {
+        if (state[node] === 1) return true   // Chu trình!
+        if (state[node] === 2) return false
+        state[node] = 1
+        for (const next of graph[node])
+            if (hasCycle(next)) return true
+        state[node] = 2
+        return false
+    }
+
+    for (let i = 0; i < numCourses; i++)
+        if (hasCycle(i)) return false
+    return true
+}
+// Topological sort: nếu có cycle → không thể hoàn thành ✓`}</CodeBlock>
+
+        <Heading2>Bài 8: Surrounded Regions (LeetCode #130)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Bắt tất cả vùng 'O' <Highlight>bị bao quanh</Highlight> bởi 'X'. Vùng 'O' chạm biên không bị bắt.</Paragraph>
+        <CodeBlock title="surrounded-regions.js">{`// LeetCode #130: Surrounded Regions — O(m×n)
+function solve(board) {
+    const m = board.length, n = board[0].length
+
+    function dfs(i, j) {
+        if (i < 0 || j < 0 || i >= m || j >= n || board[i][j] !== 'O') return
+        board[i][j] = 'S'  // Safe (không bị bắt)
+        dfs(i+1,j); dfs(i-1,j); dfs(i,j+1); dfs(i,j-1)
+    }
+
+    // DFS từ biên: đánh dấu 'O' an toàn
+    for (let i = 0; i < m; i++) { dfs(i, 0); dfs(i, n-1) }
+    for (let j = 0; j < n; j++) { dfs(0, j); dfs(m-1, j) }
+
+    // 'O' còn lại → bị bao quanh → chuyển thành 'X'
+    for (let i = 0; i < m; i++)
+        for (let j = 0; j < n; j++) {
+            if (board[i][j] === 'O') board[i][j] = 'X'
+            if (board[i][j] === 'S') board[i][j] = 'O'
+        }
+}
+// Key: DFS từ biên, không phải DFS từ giữa ✓`}</CodeBlock>
+
+        <Heading2>Bài 9: Nearest Exit from Entrance (LeetCode #1926)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Tìm <Highlight>đường ngắn nhất</Highlight> từ lối vào đến lối ra gần nhất (BFS).</Paragraph>
+        <CodeBlock title="nearest-exit.js">{`// LeetCode #1926: Nearest Exit from Entrance — O(m×n)
+function nearestExit(maze, entrance) {
+    const m = maze.length, n = maze[0].length
+    const queue = [[entrance[0], entrance[1], 0]]
+    maze[entrance[0]][entrance[1]] = '+'
+    const dirs = [[1,0],[-1,0],[0,1],[0,-1]]
+
+    while (queue.length) {
+        const [r, c, steps] = queue.shift()
+        for (const [dr, dc] of dirs) {
+            const nr = r + dr, nc = c + dc
+            if (nr < 0 || nc < 0 || nr >= m || nc >= n || maze[nr][nc] === '+') continue
+            if (nr === 0 || nc === 0 || nr === m-1 || nc === n-1) return steps + 1
+            maze[nr][nc] = '+'
+            queue.push([nr, nc, steps + 1])
+        }
+    }
+    return -1
+}
+// BFS đảm bảo đường ngắn nhất ✓`}</CodeBlock>
+
+        <Heading2>Bài 10: Diameter of Binary Tree (LeetCode #543)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Tìm <Highlight>đường kính</Highlight> của cây nhị phân (đường dài nhất giữa 2 node bất kỳ).</Paragraph>
+        <CodeBlock title="diameter-tree.js">{`// LeetCode #543: Diameter of Binary Tree — O(n)
+function diameterOfBinaryTree(root) {
+    let diameter = 0
+
+    function depth(node) {
+        if (!node) return 0
+        const left = depth(node.left)
+        const right = depth(node.right)
+        diameter = Math.max(diameter, left + right)  // Cập nhật đường kính
+        return 1 + Math.max(left, right)             // Chiều sâu
+    }
+
+    depth(root)
+    return diameter
+}
+// Đường kính = chiều sâu trái + chiều sâu phải tại mỗi node ✓`}</CodeBlock>
 
         <Callout type="tip">
             Mẹo: Bài toán trên <Highlight>ma trận</Highlight> (grid) thường dùng DFS vì code ngắn gọn.
@@ -517,25 +670,156 @@ function exist(board, word) {
 //       → (1,0) 'C' matches word[3]
 //         k=4 === word.length → return true ✓`}</CodeBlock>
 
-        <Heading2>BFS vs DFS Comparison</Heading2>
+        <Heading2>Problem 4: Flood Fill (LeetCode #733)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Recolor all <Highlight>same-colored adjacent cells</Highlight> starting from a source cell.</Paragraph>
+        <CodeBlock title="flood-fill.js">{`// LeetCode #733: Flood Fill — O(m×n)
+function floodFill(image, sr, sc, color) {
+    const original = image[sr][sc]
+    if (original === color) return image
+    function dfs(r, c) {
+        if (r < 0 || c < 0 || r >= image.length || c >= image[0].length) return
+        if (image[r][c] !== original) return
+        image[r][c] = color
+        dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1)
+    }
+    dfs(sr, sc)
+    return image
+}
+// Like "paint bucket" tool ✓`}</CodeBlock>
 
-        <div className="my-4 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
-                <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Criteria</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">BFS</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">DFS</th>
-                    </tr>
-                </thead>
-                <tbody className="text-gray-600 dark:text-slate-300">
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Data structure</td><td className="p-3">Queue (FIFO)</td><td className="p-3">Stack / Recursion</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Shortest path</td><td className="p-3">✅ Guaranteed</td><td className="p-3">❌ No</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Memory (wide tree)</td><td className="p-3">High (stores level)</td><td className="p-3">Low (stores path)</td></tr>
-                    <tr><td className="p-3 font-medium">Use when</td><td className="p-3">Shortest path, level order</td><td className="p-3">Explore all, backtracking</td></tr>
-                </tbody>
-            </table>
-        </div>
+        <Heading2>Problem 5: Rotting Oranges (LeetCode #994)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Rotten oranges spread to fresh neighbors. Find <Highlight>minimum minutes</Highlight> until all rotten. Multi-source BFS.</Paragraph>
+        <CodeBlock title="rotting-oranges.js">{`// LeetCode #994: Rotting Oranges — O(m×n)
+function orangesRotting(grid) {
+    const queue = []; let fresh = 0, mins = 0
+    const m = grid.length, n = grid[0].length
+    for (let i = 0; i < m; i++)
+        for (let j = 0; j < n; j++) {
+            if (grid[i][j] === 2) queue.push([i, j])
+            if (grid[i][j] === 1) fresh++
+        }
+    const dirs = [[1,0],[-1,0],[0,1],[0,-1]]
+    while (queue.length && fresh) {
+        const size = queue.length
+        for (let i = 0; i < size; i++) {
+            const [r, c] = queue.shift()
+            for (const [dr, dc] of dirs) {
+                const nr = r+dr, nc = c+dc
+                if (nr>=0 && nc>=0 && nr<m && nc<n && grid[nr][nc]===1) {
+                    grid[nr][nc] = 2; fresh--; queue.push([nr, nc])
+                }
+            }
+        }
+        mins++
+    }
+    return fresh === 0 ? mins : -1
+}
+// Multi-source BFS spreads from all rotten simultaneously ✓`}</CodeBlock>
+
+        <Heading2>Problem 6: Max Area of Island (LeetCode #695)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Find <Highlight>largest island area</Highlight> in a 2D grid.</Paragraph>
+        <CodeBlock title="max-area-island.js">{`// LeetCode #695: Max Area of Island — O(m×n)
+function maxAreaOfIsland(grid) {
+    let max = 0
+    const m = grid.length, n = grid[0].length
+    function dfs(i, j) {
+        if (i<0 || j<0 || i>=m || j>=n || grid[i][j]!==1) return 0
+        grid[i][j] = 0
+        return 1 + dfs(i+1,j) + dfs(i-1,j) + dfs(i,j+1) + dfs(i,j-1)
+    }
+    for (let i = 0; i < m; i++)
+        for (let j = 0; j < n; j++)
+            if (grid[i][j] === 1) max = Math.max(max, dfs(i, j))
+    return max
+}
+// DFS returns count of land cells per island ✓`}</CodeBlock>
+
+        <Heading2>Problem 7: Course Schedule (LeetCode #207)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Can you finish all courses? Detect <Highlight>cycle in directed graph</Highlight>.</Paragraph>
+        <CodeBlock title="course-schedule.js">{`// LeetCode #207: Course Schedule — O(V + E)
+function canFinish(numCourses, prerequisites) {
+    const graph = Array.from({ length: numCourses }, () => [])
+    const state = new Array(numCourses).fill(0)
+    for (const [a, b] of prerequisites) graph[b].push(a)
+    function hasCycle(node) {
+        if (state[node] === 1) return true
+        if (state[node] === 2) return false
+        state[node] = 1
+        for (const next of graph[node])
+            if (hasCycle(next)) return true
+        state[node] = 2
+        return false
+    }
+    for (let i = 0; i < numCourses; i++)
+        if (hasCycle(i)) return false
+    return true
+}
+// Cycle detection via DFS coloring ✓`}</CodeBlock>
+
+        <Heading2>Problem 8: Surrounded Regions (LeetCode #130)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Capture all 'O' regions <Highlight>surrounded by 'X'</Highlight>. Border 'O' regions are safe.</Paragraph>
+        <CodeBlock title="surrounded-regions.js">{`// LeetCode #130: Surrounded Regions — O(m×n)
+function solve(board) {
+    const m = board.length, n = board[0].length
+    function dfs(i, j) {
+        if (i<0 || j<0 || i>=m || j>=n || board[i][j]!=='O') return
+        board[i][j] = 'S'
+        dfs(i+1,j); dfs(i-1,j); dfs(i,j+1); dfs(i,j-1)
+    }
+    for (let i = 0; i < m; i++) { dfs(i, 0); dfs(i, n-1) }
+    for (let j = 0; j < n; j++) { dfs(0, j); dfs(m-1, j) }
+    for (let i = 0; i < m; i++)
+        for (let j = 0; j < n; j++) {
+            if (board[i][j]==='O') board[i][j]='X'
+            if (board[i][j]==='S') board[i][j]='O'
+        }
+}
+// Key: DFS from borders, not from center ✓`}</CodeBlock>
+
+        <Heading2>Problem 9: Nearest Exit from Entrance (LeetCode #1926)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Find <Highlight>shortest path</Highlight> from entrance to nearest exit in a maze (BFS).</Paragraph>
+        <CodeBlock title="nearest-exit.js">{`// LeetCode #1926: Nearest Exit — O(m×n)
+function nearestExit(maze, entrance) {
+    const m = maze.length, n = maze[0].length
+    const queue = [[entrance[0], entrance[1], 0]]
+    maze[entrance[0]][entrance[1]] = '+'
+    const dirs = [[1,0],[-1,0],[0,1],[0,-1]]
+    while (queue.length) {
+        const [r, c, steps] = queue.shift()
+        for (const [dr, dc] of dirs) {
+            const nr = r+dr, nc = c+dc
+            if (nr<0||nc<0||nr>=m||nc>=n||maze[nr][nc]==='+') continue
+            if (nr===0||nc===0||nr===m-1||nc===n-1) return steps+1
+            maze[nr][nc] = '+'
+            queue.push([nr, nc, steps+1])
+        }
+    }
+    return -1
+}
+// BFS guarantees shortest path ✓`}</CodeBlock>
+
+        <Heading2>Problem 10: Diameter of Binary Tree (LeetCode #543)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Find <Highlight>diameter</Highlight> of a binary tree (longest path between any two nodes).</Paragraph>
+        <CodeBlock title="diameter-tree.js">{`// LeetCode #543: Diameter of Binary Tree — O(n)
+function diameterOfBinaryTree(root) {
+    let diameter = 0
+    function depth(node) {
+        if (!node) return 0
+        const left = depth(node.left), right = depth(node.right)
+        diameter = Math.max(diameter, left + right)
+        return 1 + Math.max(left, right)
+    }
+    depth(root)
+    return diameter
+}
+// Diameter = left depth + right depth at each node ✓`}</CodeBlock>
 
         <Callout type="tip">
             Tip: <Highlight>Grid</Highlight> problems typically use DFS for cleaner code.
