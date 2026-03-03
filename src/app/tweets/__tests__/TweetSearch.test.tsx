@@ -5,11 +5,27 @@ import { TweetSearch } from '@/app/tweets/TweetSearch'
 const mockFetch = jest.fn()
 global.fetch = mockFetch
 
-// Helper: click ⚙️ toggle to show controls (input + Thêm button)
+/**
+ * Helper: expand the collapsed "Embed Tweets" section.
+ * In jsdom, both mobile overlay + desktop section render (no CSS media queries),
+ * so `mainContent` appears twice. We use getAllBy and pick the last toggle (desktop).
+ */
+const expandSection = () => {
+    const toggles = screen.getAllByRole('button', { name: /Embed Tweets/ })
+    fireEvent.click(toggles[toggles.length - 1])
+}
+
+/**
+ * Helper: click ⚙️ toggle to show controls (input + Thêm button).
+ * Must wait for fetch calls to complete first, then expand section.
+ */
 const openControls = async () => {
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
-    const toggle = screen.getByTitle('Hiển thị/Ẩn controls')
-    fireEvent.click(toggle)
+    expandSection()
+    // After expanding, mainContent renders in BOTH mobile + desktop views in jsdom.
+    // The controls toggle will also appear twice — grab all and click the first.
+    const toggles = screen.getAllByTitle('Hiển thị/Ẩn controls')
+    fireEvent.click(toggles[0])
 }
 
 describe('TweetSearch', () => {
@@ -30,15 +46,19 @@ describe('TweetSearch', () => {
 
         await openControls()
 
-        expect(screen.getByPlaceholderText(/Nhập username/)).toBeInTheDocument()
-        expect(screen.getByRole('button', { name: /Thêm/ })).toBeInTheDocument()
+        // mainContent renders twice (mobile+desktop), so use getAllBy
+        expect(screen.getAllByPlaceholderText(/Nhập username/)[0]).toBeInTheDocument()
+        expect(screen.getAllByRole('button', { name: /Thêm/ })[0]).toBeInTheDocument()
     })
 
     it('shows empty state when no users saved', async () => {
         render(<TweetSearch />)
 
+        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
+        expandSection()
+
         await waitFor(() => {
-            expect(screen.getByText(/Thêm username X/)).toBeInTheDocument()
+            expect(screen.getAllByText(/Thêm username X/)[0]).toBeInTheDocument()
         })
     })
 
@@ -47,7 +67,7 @@ describe('TweetSearch', () => {
 
         await openControls()
 
-        const input = screen.getByPlaceholderText(/Nhập username/)
+        const input = screen.getAllByPlaceholderText(/Nhập username/)[0]
         fireEvent.change(input, { target: { value: 'vercel' } })
 
         mockFetch.mockResolvedValueOnce({
@@ -57,7 +77,7 @@ describe('TweetSearch', () => {
             })
         })
 
-        fireEvent.click(screen.getByRole('button', { name: /Thêm/ }))
+        fireEvent.click(screen.getAllByRole('button', { name: /Thêm/ })[0])
 
         await waitFor(() => {
             expect(mockFetch).toHaveBeenCalledWith('/api/twitter-users', expect.objectContaining({
@@ -72,7 +92,7 @@ describe('TweetSearch', () => {
 
         await openControls()
 
-        const input = screen.getByPlaceholderText(/Nhập username/)
+        const input = screen.getAllByPlaceholderText(/Nhập username/)[0]
         fireEvent.change(input, { target: { value: '@reactjs' } })
 
         mockFetch.mockResolvedValueOnce({
@@ -82,7 +102,7 @@ describe('TweetSearch', () => {
             })
         })
 
-        fireEvent.click(screen.getByRole('button', { name: /Thêm/ }))
+        fireEvent.click(screen.getAllByRole('button', { name: /Thêm/ })[0])
 
         await waitFor(() => {
             expect(mockFetch).toHaveBeenCalledWith('/api/twitter-users', expect.objectContaining({
@@ -96,7 +116,7 @@ describe('TweetSearch', () => {
 
         await openControls()
 
-        const input = screen.getByPlaceholderText(/Nhập username/)
+        const input = screen.getAllByPlaceholderText(/Nhập username/)[0]
         fireEvent.change(input, { target: { value: 'vercel' } })
 
         mockFetch.mockResolvedValueOnce({
@@ -106,10 +126,10 @@ describe('TweetSearch', () => {
             })
         })
 
-        fireEvent.click(screen.getByRole('button', { name: /Thêm/ }))
+        fireEvent.click(screen.getAllByRole('button', { name: /Thêm/ })[0])
 
         await waitFor(() => {
-            expect(screen.getByText('Username đã tồn tại')).toBeInTheDocument()
+            expect(screen.getAllByText('Username đã tồn tại')[0]).toBeInTheDocument()
         })
     })
 
@@ -118,7 +138,7 @@ describe('TweetSearch', () => {
 
         await openControls()
 
-        expect(screen.getByRole('button', { name: /Thêm/ })).toBeDisabled()
+        expect(screen.getAllByRole('button', { name: /Thêm/ })[0]).toBeDisabled()
     })
 
     it('adds username on Enter key', async () => {
@@ -126,7 +146,7 @@ describe('TweetSearch', () => {
 
         await openControls()
 
-        const input = screen.getByPlaceholderText(/Nhập username/)
+        const input = screen.getAllByPlaceholderText(/Nhập username/)[0]
         fireEvent.change(input, { target: { value: 'nextjs' } })
 
         mockFetch.mockResolvedValueOnce({
@@ -164,11 +184,15 @@ describe('TweetSearch', () => {
 
         render(<TweetSearch />)
 
-        // Check user tags exist via title attributes
+        // Wait for fetches to complete, then expand to see content
+        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
+        expandSection()
+
+        // Check user tags exist (may appear twice due to mobile+desktop rendering)
         await waitFor(() => {
-            expect(screen.getByTitle('Xóa @vercel')).toBeInTheDocument()
+            expect(screen.getAllByTitle('Xóa @vercel')[0]).toBeInTheDocument()
         })
-        expect(screen.getByTitle('Xóa @reactjs')).toBeInTheDocument()
+        expect(screen.getAllByTitle('Xóa @reactjs')[0]).toBeInTheDocument()
     })
 
     it('shows confirm popup when clicking delete', async () => {
@@ -185,11 +209,14 @@ describe('TweetSearch', () => {
 
         render(<TweetSearch />)
 
+        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
+        expandSection()
+
         await waitFor(() => {
-            expect(screen.getByTitle('Xóa @vercel')).toBeInTheDocument()
+            expect(screen.getAllByTitle('Xóa @vercel')[0]).toBeInTheDocument()
         })
 
-        fireEvent.click(screen.getByTitle('Xóa @vercel'))
+        fireEvent.click(screen.getAllByTitle('Xóa @vercel')[0])
 
         expect(screen.getByText('Xóa username?')).toBeInTheDocument()
         expect(screen.getByRole('button', { name: 'Hủy' })).toBeInTheDocument()
@@ -210,14 +237,17 @@ describe('TweetSearch', () => {
 
         render(<TweetSearch />)
 
+        await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
+        expandSection()
+
         await waitFor(() => {
-            expect(screen.getByTitle('Xóa @vercel')).toBeInTheDocument()
+            expect(screen.getAllByTitle('Xóa @vercel')[0]).toBeInTheDocument()
         })
 
-        fireEvent.click(screen.getByTitle('Xóa @vercel'))
+        fireEvent.click(screen.getAllByTitle('Xóa @vercel')[0])
         fireEvent.click(screen.getByRole('button', { name: 'Hủy' }))
 
         expect(screen.queryByText('Xóa username?')).not.toBeInTheDocument()
-        expect(screen.getByTitle('Xóa @vercel')).toBeInTheDocument()
+        expect(screen.getAllByTitle('Xóa @vercel')[0]).toBeInTheDocument()
     })
 })

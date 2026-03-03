@@ -13,7 +13,7 @@ export function TweetSearch() {
     const [users, setUsers] = useState<SavedUser[]>([])
     const [adding, setAdding] = useState(false)
     const [error, setError] = useState('')
-    const [selectedUser, setSelectedUser] = useState<string | null>(null)
+    const [selectedUser, setSelectedUser] = useState<string | null>('linhnhi_69')
     const [deleteConfirm, setDeleteConfirm] = useState<SavedUser | null>(null)
     // Cookie state
     const [cookieModal, setCookieModal] = useState(false)
@@ -25,6 +25,8 @@ export function TweetSearch() {
     const [tagsExpanded, setTagsExpanded] = useState(false)
     // Toggle search + cookie controls
     const [showControls, setShowControls] = useState(false)
+    // Section collapse (mirroring GraphQLTimeline pattern)
+    const [sectionExpanded, setSectionExpanded] = useState(false)
 
     // Load saved users + cookie status on mount
     useEffect(() => {
@@ -128,10 +130,10 @@ export function TweetSearch() {
         ? users.filter(u => u.username === selectedUser)
         : users.length > 0 ? [users[users.length - 1]] : []
 
-    return (
+    const mainContent = (
         <>
             {/* Toggle Controls Button */}
-            <div className="w-full max-w-3xl mx-auto mb-3 z-10 px-4 md:px-0 flex justify-end">
+            <div className="mb-3 flex justify-end">
                 <button
                     onClick={() => setShowControls(!showControls)}
                     className={`px-3 py-2 rounded-xl text-sm transition-all ${showControls
@@ -146,7 +148,7 @@ export function TweetSearch() {
 
             {/* Add Input + Cookie (toggleable) */}
             {showControls && (
-                <div className="w-full max-w-3xl mx-auto mb-6 z-10 px-4 md:px-0">
+                <div className="mb-6">
                     <div className="flex gap-2">
                         <input
                             type="text"
@@ -181,7 +183,7 @@ export function TweetSearch() {
 
             {/* Saved Users Tags */}
             {users.length > 0 && (
-                <div className="w-full max-w-3xl mx-auto mb-6 z-30 md:relative md:top-auto sticky top-0 bg-[#0a0a0a]/95 backdrop-blur-md py-2 md:py-0 md:bg-transparent md:backdrop-blur-none -mx-4 px-4 md:mx-auto md:px-0">
+                <div className="mb-6">
                     {/* Mobile: collapsed bar */}
                     <div
                         className="md:hidden flex items-center justify-between cursor-pointer"
@@ -235,7 +237,7 @@ export function TweetSearch() {
             )}
 
             {/* Timelines */}
-            <div className="w-full max-w-3xl mx-auto z-10 md:px-0">
+            <div>
                 {users.length > 0 ? (
                     <div className="space-y-6">
                         {displayUsers.map((user) => (
@@ -259,6 +261,69 @@ export function TweetSearch() {
                         <p className="text-slate-500 text-sm">
                             Thêm username X để bắt đầu theo dõi tweets
                         </p>
+                    </div>
+                )}
+            </div>
+        </>
+    )
+
+    return (
+        <>
+            {/* ===== MOBILE: Fixed button + overlay panel ===== */}
+            {!sectionExpanded && (
+                <button
+                    onClick={() => setSectionExpanded(true)}
+                    className="md:hidden fixed bottom-4 left-4 z-50 w-11 h-11 rounded-full bg-gradient-to-r from-[#38bdf8] to-[#c084fc] text-white shadow-lg shadow-[#38bdf8]/30 flex items-center justify-center text-lg hover:scale-110 active:scale-95 transition-transform"
+                    aria-label="Open Embed Tweets"
+                >
+                    🔗
+                </button>
+            )}
+
+            {sectionExpanded && (
+                <div className="md:hidden fixed inset-0 z-50 bg-[#0a0a0a]/95 backdrop-blur-sm flex flex-col">
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-slate-900/80">
+                        <div className="flex items-center gap-2">
+                            <span className="text-lg">🔗</span>
+                            <h2 className="text-base font-bold text-white">Embed Tweets</h2>
+                            <span className="text-[10px] text-slate-500 bg-slate-900/60 px-1.5 py-0.5 rounded-full border border-white/5">
+                                REST
+                            </span>
+                        </div>
+                        <button
+                            onClick={() => setSectionExpanded(false)}
+                            className="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition"
+                            aria-label="Close"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                    <div className="flex-1 overflow-y-auto px-4 py-4">
+                        {mainContent}
+                    </div>
+                </div>
+            )}
+
+            {/* ===== DESKTOP: Inline collapse/expand ===== */}
+            <div className="hidden md:block w-full max-w-3xl mx-auto z-10 px-0 mt-10">
+                <button
+                    onClick={() => setSectionExpanded(!sectionExpanded)}
+                    className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-slate-800/40 border border-white/10 hover:border-white/20 transition group"
+                >
+                    <div className="flex items-center gap-3">
+                        <h2 className="text-lg font-bold text-white">🔗 Embed Tweets</h2>
+                        <span className="text-xs text-slate-500 bg-slate-900/60 px-2 py-0.5 rounded-full border border-white/5">
+                            REST
+                        </span>
+                    </div>
+                    <span className={`text-slate-400 text-sm transition-transform ${sectionExpanded ? 'rotate-180' : ''}`}>
+                        ▼
+                    </span>
+                </button>
+
+                {sectionExpanded && (
+                    <div className="mt-4">
+                        {mainContent}
                     </div>
                 )}
             </div>

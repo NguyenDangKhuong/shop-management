@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/utils/connectDb'
 import TwitterTokenModel from '@/models/TwitterToken'
+import { ParsedTweet, parseTweetResult } from './tweetParser'
 
 /**
  * Twitter GraphQL API Proxy — Hỗ trợ pagination
@@ -119,123 +120,6 @@ async function getUserId(username: string, headers: Record<string, string>): Pro
         }
     } catch { }
     return null
-}
-
-interface ParsedTweet {
-    id: string
-    text: string
-    createdAt: string
-    user: {
-        name: string
-        screenName: string
-        avatar: string
-        verified: boolean
-    }
-    metrics: {
-        replies: number
-        retweets: number
-        likes: number
-        views: number
-    }
-    media: {
-        type: 'photo' | 'video' | 'animated_gif'
-        url: string
-        width: number
-        height: number
-        videoUrl?: string
-    }[]
-    isRetweet: boolean
-    retweetUser?: {
-        name: string
-        screenName: string
-    }
-    quotedTweet?: ParsedTweet
-}
-
-function parseTweetResult(result: any): ParsedTweet | null {
-    try {
-        // Handle TweetWithVisibilityResults wrapper
-        if (result?.__typename === 'TweetWithVisibilityResults') {
-            result = result.tweet
-        }
-        if (!result?.legacy) return null
-
-        const legacy = result.legacy
-        const user = result.core?.user_results?.result?.legacy
-        if (!user) return null
-
-        // Check if retweet
-        const isRetweet = !!legacy.retweeted_status_result
-        let tweetLegacy = legacy
-        let tweetUser = user
-        let retweetUser = undefined
-
-        if (isRetweet) {
-            retweetUser = { name: user.name, screenName: user.screen_name }
-            const rtResult = legacy.retweeted_status_result?.result
-            if (rtResult?.__typename === 'TweetWithVisibilityResults') {
-                tweetLegacy = rtResult.tweet?.legacy || legacy
-                tweetUser = rtResult.tweet?.core?.user_results?.result?.legacy || user
-            } else if (rtResult) {
-                tweetLegacy = rtResult.legacy || legacy
-                tweetUser = rtResult.core?.user_results?.result?.legacy || user
-            }
-        }
-
-        // Parse media
-        const extMedia = tweetLegacy.extended_entities?.media || []
-        const media = extMedia.map((m: any) => {
-            const item: any = {
-                type: m.type,
-                url: m.media_url_https,
-                width: m.original_info?.width || 0,
-                height: m.original_info?.height || 0,
-            }
-            if (m.type === 'video' || m.type === 'animated_gif') {
-                const variants = m.video_info?.variants || []
-                const mp4s = variants.filter((v: any) => v.content_type === 'video/mp4')
-                if (mp4s.length > 0) {
-                    const best = mp4s.reduce((a: any, b: any) => (b.bitrate || 0) > (a.bitrate || 0) ? b : a)
-                    item.videoUrl = best.url
-                }
-            }
-            return item
-        })
-
-        // Parse quoted tweet
-        let quotedTweet = undefined
-        const qtResult = tweetLegacy.quoted_status_result?.result || result.quoted_status_result?.result
-        if (qtResult) {
-            quotedTweet = parseTweetResult(qtResult) || undefined
-        }
-
-        // Views
-        const views = parseInt(result.views?.count || '0')
-
-        return {
-            id: tweetLegacy.id_str || result.rest_id,
-            text: tweetLegacy.full_text || '',
-            createdAt: tweetLegacy.created_at || '',
-            user: {
-                name: tweetUser.name,
-                screenName: tweetUser.screen_name,
-                avatar: tweetUser.profile_image_url_https?.replace('_normal', '_bigger') || '',
-                verified: tweetUser.verified || result.core?.user_results?.result?.is_blue_verified || false,
-            },
-            metrics: {
-                replies: tweetLegacy.reply_count || 0,
-                retweets: tweetLegacy.retweet_count || 0,
-                likes: tweetLegacy.favorite_count || 0,
-                views,
-            },
-            media,
-            isRetweet,
-            retweetUser,
-            quotedTweet,
-        }
-    } catch {
-        return null
-    }
 }
 
 export async function GET(req: NextRequest) {

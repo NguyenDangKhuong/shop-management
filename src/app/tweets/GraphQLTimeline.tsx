@@ -10,158 +10,123 @@ interface SavedUser {
 
 /**
  * GraphQLTimeline — Hiển thị tweets từ GraphQL API với pagination
- * Mobile: fixed button bottom-left, expand thành overlay panel
- * Desktop: inline collapse/expand như cũ
+ * Luôn hiện, không collapse
  */
 export function GraphQLTimeline() {
-    const [expanded, setExpanded] = useState(false)
     const [users, setUsers] = useState<SavedUser[]>([])
-    const [selectedUser, setSelectedUser] = useState<string | null>(null)
+    const [selectedUser, setSelectedUser] = useState<string | null>('linhnhi_69')
     const [inputUser, setInputUser] = useState('')
+    const [tagsExpanded, setTagsExpanded] = useState(false)
 
-    // Only load users when expanded
+    // Load saved users from DB on mount
     useEffect(() => {
-        if (!expanded) return
         fetch('/api/twitter-users')
             .then(r => r.json())
             .then(d => { if (d.success) setUsers(d.data) })
             .catch(() => { })
-    }, [expanded])
+    }, [])
 
-    // Lock body scroll on mobile when panel is open
-    useEffect(() => {
-        if (expanded && window.innerWidth < 768) {
-            document.body.style.overflow = 'hidden'
-            return () => { document.body.style.overflow = '' }
-        }
-    }, [expanded])
-
-    const handleQuickAdd = () => {
-        const name = inputUser.trim().replace(/^@/, '')
+    /**
+     * Handle adding a username via the quick-browse input.
+     * 1. Set selectedUser immediately → UI switches to the new user's timeline without waiting
+     * 2. If user is not already in the saved list, POST to DB in the background
+     * 3. On success, prepend the new user to the local list so it appears in tags
+     */
+    const handleQuickAdd = async () => {
+        const name = inputUser.trim().replace(/^@/, '') // Strip @ prefix if present
         if (!name) return
-        setSelectedUser(name)
-        setInputUser('')
+        setSelectedUser(name) // Switch timeline immediately (optimistic)
+        setInputUser('') // Clear input
+
+        // Save to DB if not already in list (case-insensitive check)
+        if (!users.some(u => u.username.toLowerCase() === name.toLowerCase())) {
+            try {
+                const res = await fetch('/api/twitter-users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: name }),
+                })
+                const data = await res.json()
+                if (data.success) {
+                    setUsers(prev => [data.data, ...prev]) // Prepend to tag list
+                }
+            } catch { }
+        }
     }
 
+    // Determine which user's tweets to display: explicit selection > last saved user
     const activeUser = selectedUser || (users.length > 0 ? users[users.length - 1]?.username : null)
 
-    const content = (
-        <div className="space-y-4">
-            {/* Quick username input */}
-            <div className="flex gap-2">
-                <input
-                    type="text"
-                    value={inputUser}
-                    onChange={e => setInputUser(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleQuickAdd()}
-                    placeholder="Enter @username to browse..."
-                    className="flex-1 px-4 py-2.5 rounded-xl bg-slate-800/60 border border-white/10 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-[#1d9bf0]/50 transition"
-                />
-                <button
-                    onClick={handleQuickAdd}
-                    disabled={!inputUser.trim()}
-                    className="px-4 py-2.5 rounded-xl bg-[#1d9bf0] text-white text-sm font-semibold hover:bg-[#1a8cd8] transition disabled:opacity-40"
-                >
-                    Browse
-                </button>
-            </div>
-
-            {/* User quick-select */}
-            {users.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
-                    {users.map(u => (
-                        <button
-                            key={u._id}
-                            onClick={() => setSelectedUser(u.username)}
-                            className={`px-3 py-1 rounded-full text-xs transition ${activeUser === u.username
-                                ? 'bg-[#1d9bf0]/20 text-[#1d9bf0] border border-[#1d9bf0]/40'
-                                : 'bg-slate-800/60 text-slate-400 border border-white/10 hover:border-white/20'
-                                }`}
-                        >
-                            @{u.username}
-                        </button>
-                    ))}
-                </div>
-            )}
-
-            {/* Tweet Timeline */}
-            {activeUser ? (
-                <GraphQLTweets key={activeUser} username={activeUser} />
-            ) : (
-                <div className="text-center py-12 text-slate-500 text-sm">
-                    Enter a username to browse their tweets
-                </div>
-            )}
-        </div>
-    )
-
     return (
-        <>
-            {/* ===== MOBILE: Fixed button + overlay panel ===== */}
+        <div className="w-full max-w-3xl mx-auto z-10 px-4 md:px-0">
+            <div className="space-y-4">
+                {/* Quick username input */}
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        value={inputUser}
+                        onChange={e => setInputUser(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && handleQuickAdd()}
+                        placeholder="Enter @username to browse..."
+                        className="flex-1 px-4 py-2.5 rounded-xl bg-slate-800/60 border border-white/10 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-[#1d9bf0]/50 transition"
+                    />
+                    <button
+                        onClick={handleQuickAdd}
+                        disabled={!inputUser.trim()}
+                        className="px-4 py-2.5 rounded-xl bg-[#1d9bf0] text-white text-sm font-semibold hover:bg-[#1a8cd8] transition disabled:opacity-40"
+                    >
+                        Browse
+                    </button>
+                </div>
 
-            {/* Small fixed button — bottom-left, only on mobile */}
-            {!expanded && (
-                <button
-                    onClick={() => setExpanded(true)}
-                    className="md:hidden fixed bottom-4 left-4 z-50 w-11 h-11 rounded-full bg-[#1d9bf0] text-white shadow-lg shadow-[#1d9bf0]/30 flex items-center justify-center text-lg hover:scale-110 active:scale-95 transition-transform"
-                    aria-label="Open GraphQL Tweets"
-                >
-                    📡
-                </button>
-            )}
-
-            {/* Overlay panel — full screen on mobile */}
-            {expanded && (
-                <div className="md:hidden fixed inset-0 z-50 bg-[#0a0a0a]/95 backdrop-blur-sm flex flex-col">
-                    {/* Panel header */}
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-slate-900/80">
-                        <div className="flex items-center gap-2">
-                            <span className="text-lg">📡</span>
-                            <h2 className="text-base font-bold text-white">GraphQL Tweets</h2>
-                            <span className="text-[10px] text-slate-500 bg-slate-900/60 px-1.5 py-0.5 rounded-full border border-white/5">
-                                Pagination
+                {/* User quick-select */}
+                {users.length > 0 && (
+                    <div>
+                        {/* Mobile: collapsed bar */}
+                        <div
+                            className="md:hidden flex items-center justify-between cursor-pointer"
+                            onClick={() => setTagsExpanded(!tagsExpanded)}
+                        >
+                            <div className="flex items-center gap-2">
+                                <span className="text-slate-400 text-xs">
+                                    {activeUser ? `@${activeUser}` : `@${users[users.length - 1]?.username || ''}`}
+                                </span>
+                                <span className="text-slate-500 text-[10px]">
+                                    ({users.length} users)
+                                </span>
+                            </div>
+                            <span className={`text-slate-400 text-xs transition-transform ${tagsExpanded ? 'rotate-180' : ''}`}>
+                                ▼
                             </span>
                         </div>
-                        <button
-                            onClick={() => setExpanded(false)}
-                            className="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition"
-                            aria-label="Close"
-                        >
-                            ✕
-                        </button>
-                    </div>
-                    {/* Panel content — scrollable */}
-                    <div className="flex-1 overflow-y-auto px-4 py-4">
-                        {content}
-                    </div>
-                </div>
-            )}
 
-            {/* ===== DESKTOP: Inline collapse/expand (unchanged) ===== */}
-            <div className="hidden md:block w-full max-w-3xl mx-auto z-10 px-0 mt-10">
-                {/* Collapse/Expand Header */}
-                <button
-                    onClick={() => setExpanded(!expanded)}
-                    className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-slate-800/40 border border-white/10 hover:border-white/20 transition group"
-                >
-                    <div className="flex items-center gap-3">
-                        <h2 className="text-lg font-bold text-white">📡 GraphQL Tweets</h2>
-                        <span className="text-xs text-slate-500 bg-slate-900/60 px-2 py-0.5 rounded-full border border-white/5">
-                            Pagination
-                        </span>
+                        {/* Tags - always visible on desktop, toggle on mobile */}
+                        <div className={`${tagsExpanded ? 'mt-2 flex' : 'hidden'} md:flex flex-wrap gap-1.5`}>
+                            {users.map(u => (
+                                <button
+                                    key={u._id}
+                                    onClick={() => { setSelectedUser(u.username); setTagsExpanded(false) }}
+                                    className={`px-3 py-1 rounded-full text-xs transition ${activeUser === u.username
+                                        ? 'bg-[#1d9bf0]/20 text-[#1d9bf0] border border-[#1d9bf0]/40'
+                                        : 'bg-slate-800/60 text-slate-400 border border-white/10 hover:border-white/20'
+                                        }`}
+                                >
+                                    @{u.username}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                    <span className={`text-slate-400 text-sm transition-transform ${expanded ? 'rotate-180' : ''}`}>
-                        ▼
-                    </span>
-                </button>
+                )}
 
-                {/* Content — only rendered when expanded */}
-                {expanded && (
-                    <div className="mt-4">
-                        {content}
+                {/* Tweet Timeline — onUserClick allows clicking @username in tweets to navigate */}
+                {activeUser ? (
+                    <GraphQLTweets key={activeUser} username={activeUser} onUserClick={(u) => setSelectedUser(u)} />
+                ) : (
+                    <div className="text-center py-12 text-slate-500 text-sm">
+                        Enter a username to browse their tweets
                     </div>
                 )}
             </div>
-        </>
+        </div>
     )
 }
