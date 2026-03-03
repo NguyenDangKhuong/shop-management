@@ -17,6 +17,7 @@ export function GraphQLTimeline() {
     const [selectedUser, setSelectedUser] = useState<string | null>('linhnhi_69')
     const [inputUser, setInputUser] = useState('')
     const [tagsExpanded, setTagsExpanded] = useState(false)
+    const [userHistory, setUserHistory] = useState<string[]>([])
 
     // Load saved users from DB on mount
     useEffect(() => {
@@ -25,6 +26,22 @@ export function GraphQLTimeline() {
             .then(d => { if (d.success) setUsers(d.data) })
             .catch(() => { })
     }, [])
+
+    /** Navigate to a new user from clicking @username inside a tweet */
+    const handleUserClick = (newUser: string) => {
+        if (selectedUser && newUser !== selectedUser) {
+            setUserHistory(prev => [...prev, selectedUser])
+        }
+        setSelectedUser(newUser)
+    }
+
+    /** Go back to previous user */
+    const handleBack = () => {
+        if (userHistory.length === 0) return
+        const prev = userHistory[userHistory.length - 1]
+        setUserHistory(h => h.slice(0, -1))
+        setSelectedUser(prev)
+    }
 
     /**
      * Handle adding a username via the quick-browse input.
@@ -37,6 +54,7 @@ export function GraphQLTimeline() {
         if (!name) return
         setSelectedUser(name) // Switch timeline immediately (optimistic)
         setInputUser('') // Clear input
+        setUserHistory([]) // Clear navigation history on manual browse
 
         // Save to DB if not already in list (case-insensitive check)
         if (!users.some(u => u.username.toLowerCase() === name.toLowerCase())) {
@@ -105,7 +123,7 @@ export function GraphQLTimeline() {
                             {users.map(u => (
                                 <button
                                     key={u._id}
-                                    onClick={() => { setSelectedUser(u.username); setTagsExpanded(false) }}
+                                    onClick={() => { setSelectedUser(u.username); setTagsExpanded(false); setUserHistory([]) }}
                                     className={`px-3 py-1 rounded-full text-xs transition ${activeUser === u.username
                                         ? 'bg-[#1d9bf0]/20 text-[#1d9bf0] border border-[#1d9bf0]/40'
                                         : 'bg-slate-800/60 text-slate-400 border border-white/10 hover:border-white/20'
@@ -118,9 +136,22 @@ export function GraphQLTimeline() {
                     </div>
                 )}
 
+                {/* Back button — shows when navigated via @username click */}
+                {userHistory.length > 0 && (
+                    <button
+                        onClick={handleBack}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/60 border border-white/10 text-slate-400 text-xs hover:text-white hover:border-white/20 transition cursor-pointer"
+                    >
+                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current">
+                            <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z" />
+                        </svg>
+                        ← Back to @{userHistory[userHistory.length - 1]}
+                    </button>
+                )}
+
                 {/* Tweet Timeline — onUserClick allows clicking @username in tweets to navigate */}
                 {activeUser ? (
-                    <GraphQLTweets key={activeUser} username={activeUser} onUserClick={(u) => setSelectedUser(u)} />
+                    <GraphQLTweets key={activeUser} username={activeUser} onUserClick={handleUserClick} />
                 ) : (
                     <div className="text-center py-12 text-slate-500 text-sm">
                         Enter a username to browse their tweets
@@ -130,3 +161,4 @@ export function GraphQLTimeline() {
         </div>
     )
 }
+
