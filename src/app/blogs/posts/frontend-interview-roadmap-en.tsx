@@ -1408,6 +1408,27 @@ class Trie {
         <div className="my-4 space-y-2">
             <TopicModal title="Hash Map / Hash Set" emoji="🗂️" color="#4ade80" summary="~15 problems — the most used pattern, almost every interview includes it">
                 <Paragraph>Use when: you need <Highlight>O(1) lookup</Highlight>, frequency counting, finding pair/complement, removing duplicates, or grouping by key.</Paragraph>
+                <CodeBlock title="hash-map-patterns.js">{`// 1. Count frequency
+const freq = new Map()
+for (const c of str) freq.set(c, (freq.get(c) || 0) + 1)
+
+// 2. Check duplicates
+const hasDup = arr => new Set(arr).size !== arr.length
+
+// 3. Two Sum — find complement
+const map = new Map()
+for (let i = 0; i < nums.length; i++) {
+    const comp = target - nums[i]
+    if (map.has(comp)) return [map.get(comp), i]
+    map.set(nums[i], i)
+}
+
+// 4. Group Anagrams — sort as key
+const groups = new Map()
+for (const s of strs) {
+    const key = s.split('').sort().join('')
+    groups.set(key, [...(groups.get(key) || []), s])
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 LeetCode Problems:</div>
                     {[
@@ -1420,12 +1441,32 @@ class Trie {
                         </div>
                     ))}
                 </div>
-                <Callout type="tip">When a problem requires &quot;find in O(n)&quot; or &quot;count frequency&quot; → think HashMap immediately. This is the <Highlight>most fundamental pattern</Highlight> — most other patterns combine with HashMap.</Callout>
+                <Callout type="tip">When a problem requires &quot;find in O(n)&quot; or &quot;count frequency&quot; → think HashMap. This is the <Highlight>most fundamental pattern</Highlight> — most other patterns combine with HashMap.</Callout>
                 <a href="/blogs/hash-map-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Two Pointers" emoji="👉👈" color="#4ade80" summary="~15 problems — use 2 pointers moving on sorted array or linked list">
                 <Paragraph>Use when: array is <Highlight>sorted</Highlight>, finding pair/triplet meeting a condition, or removing duplicates.</Paragraph>
+                <CodeBlock title="two-pointers-patterns.js">{`// 1. Opposite ends — find pair in sorted array
+let left = 0, right = arr.length - 1
+while (left < right) {
+    const sum = arr[left] + arr[right]
+    if (sum === target) return [left, right]
+    sum < target ? left++ : right--
+}
+
+// 2. Same direction — remove duplicates in-place
+let slow = 0
+for (let fast = 1; fast < nums.length; fast++) {
+    if (nums[fast] !== nums[slow]) nums[++slow] = nums[fast]
+}
+
+// 3. Container With Most Water
+let maxArea = 0, l = 0, r = height.length - 1
+while (l < r) {
+    maxArea = Math.max(maxArea, Math.min(height[l], height[r]) * (r - l))
+    height[l] < height[r] ? l++ : r--
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 LeetCode Problems:</div>
                     {[
@@ -1438,12 +1479,40 @@ class Trie {
                         </div>
                     ))}
                 </div>
-                <Callout type="tip">Template: left = 0, right = length-1, move based on condition. Always think: &quot;Which element can I eliminate?&quot;</Callout>
+                <Callout type="tip">2 main types: <Highlight>Opposite ends</Highlight> (sorted, find pair) and <Highlight>Same direction</Highlight> (fast/slow, remove duplicates). Think: &quot;Which element can I eliminate?&quot;</Callout>
                 <a href="/blogs/two-pointers-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Sliding Window" emoji="🪟" color="#4ade80" summary="~10 problems — find optimal substring/subarray with fixed or variable window">
                 <Paragraph>Use when: finding a <Highlight>contiguous subarray/substring</Highlight> meeting a condition (max sum, min length, contains all chars).</Paragraph>
+                <CodeBlock title="sliding-window-patterns.js">{`// 1. Fixed window — max average subarray
+let sum = 0, maxSum = -Infinity
+for (let i = 0; i < arr.length; i++) {
+    sum += arr[i]
+    if (i >= k - 1) {
+        maxSum = Math.max(maxSum, sum / k)
+        sum -= arr[i - k + 1]
+    }
+}
+
+// 2. Variable window — longest substring without repeating
+const seen = new Map()
+let left = 0, maxLen = 0
+for (let right = 0; right < s.length; right++) {
+    if (seen.has(s[right])) left = Math.max(left, seen.get(s[right]) + 1)
+    seen.set(s[right], right)
+    maxLen = Math.max(maxLen, right - left + 1)
+}
+
+// 3. Variable window — minimum size subarray ≥ target
+let windowSum = 0, minLen = Infinity
+for (let l = 0, r = 0; r < nums.length; r++) {
+    windowSum += nums[r]
+    while (windowSum >= target) {
+        minLen = Math.min(minLen, r - l + 1)
+        windowSum -= nums[l++]
+    }
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 LeetCode Problems:</div>
                     {[
@@ -1457,12 +1526,42 @@ class Trie {
                         </div>
                     ))}
                 </div>
-                <Callout type="tip">Template: expand right pointer, when window is invalid shrink left. Use HashMap to track frequency.</Callout>
+                <Callout type="tip">2 types: <Highlight>Fixed window</Highlight> (size k) and <Highlight>Variable window</Highlight> (expand right, shrink left when invalid). Often combined with HashMap for frequency tracking.</Callout>
                 <a href="/blogs/sliding-window-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="BFS / DFS" emoji="🌲" color="#4ade80" summary="~20 problems — graph and tree traversal, most important for Frontend (DOM tree!)">
                 <Paragraph>Frontend engineers <Highlight>must be good at BFS/DFS</Highlight> because the DOM is a tree! Flatten DOM, find element, traverse components.</Paragraph>
+                <CodeBlock title="bfs-dfs-patterns.js">{`// 1. DFS on tree (recursive)
+function dfs(root) {
+    if (!root) return // base case
+    dfs(root.left)    // process left
+    dfs(root.right)   // process right
+}
+
+// 2. BFS — level order / shortest path
+function bfs(root) {
+    const queue = [root]
+    while (queue.length) {
+        const node = queue.shift()
+        if (node.left) queue.push(node.left)
+        if (node.right) queue.push(node.right)
+    }
+}
+
+// 3. Number of Islands — DFS on grid
+function numIslands(grid) {
+    let count = 0
+    for (let i = 0; i < grid.length; i++)
+        for (let j = 0; j < grid[0].length; j++)
+            if (grid[i][j] === '1') { count++; sink(grid, i, j) }
+    return count
+}
+function sink(grid, i, j) {
+    if (i < 0 || j < 0 || i >= grid.length || j >= grid[0].length || grid[i][j] === '0') return
+    grid[i][j] = '0' // mark visited
+    sink(grid, i+1, j); sink(grid, i-1, j); sink(grid, i, j+1); sink(grid, i, j-1)
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 LeetCode Problems:</div>
                     {[
@@ -1476,12 +1575,40 @@ class Trie {
                         </div>
                     ))}
                 </div>
-                <Callout type="tip"><strong>BFS</strong> = use Queue (level order, shortest path). <strong>DFS</strong> = use Stack/Recursion (explore deep, backtrack). FE interviews prefer DFS as it relates to DOM traversal.</Callout>
+                <Callout type="tip"><strong>BFS</strong> = Queue (level order, shortest path). <strong>DFS</strong> = Recursion (tree, backtrack). Grid: DFS + mark visited. FE interviews prefer DFS — relates to DOM.</Callout>
                 <a href="/blogs/bfs-dfs-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Binary Search" emoji="🔍" color="#4ade80" summary="~10 problems — O(log n) search, not just on sorted arrays">
                 <Paragraph>Binary search isn&apos;t just finding an element — it&apos;s also used for <Highlight>search space reduction</Highlight> on any monotonic function.</Paragraph>
+                <CodeBlock title="binary-search-patterns.js">{`// 1. Classic binary search
+let left = 0, right = arr.length - 1
+while (left <= right) {
+    const mid = Math.floor((left + right) / 2)
+    if (arr[mid] === target) return mid
+    arr[mid] < target ? left = mid + 1 : right = mid - 1
+}
+
+// 2. Find first/last position (bisect left/right)
+function bisectLeft(arr, target) {
+    let lo = 0, hi = arr.length
+    while (lo < hi) {
+        const mid = (lo + hi) >> 1
+        arr[mid] < target ? lo = mid + 1 : hi = mid
+    }
+    return lo
+}
+
+// 3. Search on answer — Koko eating bananas
+function minEatingSpeed(piles, h) {
+    let lo = 1, hi = Math.max(...piles)
+    while (lo < hi) {
+        const mid = (lo + hi) >> 1
+        const hours = piles.reduce((sum, p) => sum + Math.ceil(p / mid), 0)
+        hours <= h ? hi = mid : lo = mid + 1
+    }
+    return lo
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 LeetCode Problems:</div>
                     {[
@@ -1494,11 +1621,44 @@ class Trie {
                         </div>
                     ))}
                 </div>
+                <Callout type="tip">3 types: <Highlight>Classic</Highlight> (find exact), <Highlight>Bisect left/right</Highlight> (find boundary), <Highlight>Search on answer</Highlight> (binary search on result). When you see O(log n) → think Binary Search.</Callout>
                 <a href="/blogs/binary-search-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Dynamic Programming" emoji="📊" color="#4ade80" summary="~15 Easy-Medium problems — hardest part but has clear patterns">
                 <Paragraph>DP = break a problem into <Highlight>subproblems</Highlight>, store results to avoid recalculation. Frontend rarely encounters Hard DP.</Paragraph>
+                <CodeBlock title="dp-patterns.js">{`// 1. Climbing Stairs — basic 1D DP
+function climbStairs(n) {
+    let a = 1, b = 1
+    for (let i = 2; i <= n; i++) [a, b] = [b, a + b]
+    return b
+}
+
+// 2. House Robber — take/skip pattern
+function rob(nums) {
+    let prev = 0, curr = 0
+    for (const n of nums) [prev, curr] = [curr, Math.max(curr, prev + n)]
+    return curr
+}
+
+// 3. Coin Change — unbounded knapsack
+function coinChange(coins, amount) {
+    const dp = Array(amount + 1).fill(Infinity)
+    dp[0] = 0
+    for (let i = 1; i <= amount; i++)
+        for (const c of coins)
+            if (c <= i) dp[i] = Math.min(dp[i], dp[i - c] + 1)
+    return dp[amount] === Infinity ? -1 : dp[amount]
+}
+
+// 4. Longest Increasing Subsequence — O(n²)
+function lengthOfLIS(nums) {
+    const dp = Array(nums.length).fill(1)
+    for (let i = 1; i < nums.length; i++)
+        for (let j = 0; j < i; j++)
+            if (nums[j] < nums[i]) dp[i] = Math.max(dp[i], dp[j] + 1)
+    return Math.max(...dp)
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Suggested LeetCode Problems:</div>
                     {[
@@ -1511,12 +1671,54 @@ class Trie {
                         </div>
                     ))}
                 </div>
-                <Callout type="tip">Approach: 1) Identify the state, 2) Write the recurrence relation, 3) Bottom-up or top-down + memo. Start with <strong>1D DP</strong> first.</Callout>
+                <Callout type="tip">4 common DP types: <Highlight>1D linear</Highlight> (Climbing Stairs), <Highlight>Take/Skip</Highlight> (House Robber), <Highlight>Knapsack</Highlight> (Coin Change), <Highlight>Subsequence</Highlight> (LIS). Start with 1D DP first.</Callout>
                 <a href="/blogs/dynamic-programming-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Backtracking" emoji="🔙" color="#4ade80" summary="~10 problems — generate all combinations, permutations, subsets">
                 <Paragraph>Pattern: try each option → if invalid, <Highlight>go back (backtrack)</Highlight> → try the next option.</Paragraph>
+                <CodeBlock title="backtracking-patterns.js">{`// 1. Subsets — basic template
+function subsets(nums) {
+    const result = []
+    function backtrack(start, path) {
+        result.push([...path])
+        for (let i = start; i < nums.length; i++) {
+            path.push(nums[i])
+            backtrack(i + 1, path)
+            path.pop() // backtrack!
+        }
+    }
+    backtrack(0, [])
+    return result
+}
+
+// 2. Permutations — using used set
+function permute(nums) {
+    const result = []
+    function backtrack(path, used) {
+        if (path.length === nums.length) { result.push([...path]); return }
+        for (let i = 0; i < nums.length; i++) {
+            if (used.has(i)) continue
+            used.add(i); path.push(nums[i])
+            backtrack(path, used)
+            path.pop(); used.delete(i)
+        }
+    }
+    backtrack([], new Set())
+    return result
+}
+
+// 3. Generate Parentheses
+function generateParenthesis(n) {
+    const result = []
+    function bt(s, open, close) {
+        if (s.length === 2 * n) { result.push(s); return }
+        if (open < n) bt(s + '(', open + 1, close)
+        if (close < open) bt(s + ')', open, close + 1)
+    }
+    bt('', 0, 0)
+    return result
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 LeetCode Problems:</div>
                     {[
@@ -1529,11 +1731,49 @@ class Trie {
                         </div>
                     ))}
                 </div>
-                <Callout type="tip">Template: <InlineCode>{`function backtrack(path, choices) { if (done) result.push([...path]); for (choice of choices) { path.push(choice); backtrack(...); path.pop(); } }`}</InlineCode></Callout>
+                <Callout type="tip">Template: <InlineCode>backtrack(start, path)</InlineCode> → push → recurse → pop. 3 types: <Highlight>Subsets</Highlight> (start = i+1), <Highlight>Permutations</Highlight> (used set), <Highlight>Combinations</Highlight> (count to k).</Callout>
             </TopicModal>
 
             <TopicModal title="Stack-based" emoji="📚" color="#4ade80" summary="~10 problems — monotonic stack, valid parentheses, expression eval">
                 <Paragraph>Stack = <Highlight>LIFO</Highlight>. Very useful for: matching brackets, next greater element, expression parsing.</Paragraph>
+                <CodeBlock title="stack-patterns.js">{`// 1. Valid Parentheses
+function isValid(s) {
+    const stack = [], map = { ')': '(', ']': '[', '}': '{' }
+    for (const c of s) {
+        if ('([{'.includes(c)) stack.push(c)
+        else if (stack.pop() !== map[c]) return false
+    }
+    return stack.length === 0
+}
+
+// 2. Daily Temperatures — Monotonic Stack
+function dailyTemperatures(temps) {
+    const result = Array(temps.length).fill(0)
+    const stack = [] // store indices
+    for (let i = 0; i < temps.length; i++) {
+        while (stack.length && temps[i] > temps[stack.at(-1)]) {
+            const j = stack.pop()
+            result[j] = i - j
+        }
+        stack.push(i)
+    }
+    return result
+}
+
+// 3. Decode String — nested brackets
+function decodeString(s) {
+    const stack = []
+    for (const c of s) {
+        if (c !== ']') { stack.push(c); continue }
+        let str = ''
+        while (stack.at(-1) !== '[') str = stack.pop() + str
+        stack.pop() // remove '['
+        let num = ''
+        while (stack.length && !isNaN(stack.at(-1))) num = stack.pop() + num
+        stack.push(str.repeat(+num))
+    }
+    return stack.join('')
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 LeetCode Problems:</div>
                     {[
@@ -1547,7 +1787,7 @@ class Trie {
                         </div>
                     ))}
                 </div>
-                <Callout type="tip"><strong>Monotonic Stack</strong>: keep the stack always increasing/decreasing. Trick: when pushing a new element smaller/larger than top → pop and process. Classic for &quot;Next Greater Element&quot;.</Callout>
+                <Callout type="tip">3 types: <Highlight>Matching</Highlight> (brackets, tags), <Highlight>Monotonic stack</Highlight> (next greater/smaller), <Highlight>Expression eval</Highlight> (decode, RPN). Trick: when pushing new &gt; top → pop and process.</Callout>
                 <a href="/blogs/stack-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
         </div>

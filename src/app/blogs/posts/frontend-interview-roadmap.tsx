@@ -1411,6 +1411,27 @@ class Trie {
         <div className="my-4 space-y-2">
             <TopicModal title="Hash Map / Hash Set" emoji="🗂️" color="#4ade80" summary="~15 bài — pattern dùng nhiều nhất, gần như mọi interview đều có">
                 <Paragraph>Dùng khi: cần <Highlight>lookup O(1)</Highlight>, đếm frequency, tìm pair/complement, loại bỏ duplicates, hoặc group theo key.</Paragraph>
+                <CodeBlock title="hash-map-patterns.js">{`// 1. Đếm frequency
+const freq = new Map()
+for (const c of str) freq.set(c, (freq.get(c) || 0) + 1)
+
+// 2. Check duplicate
+const hasDup = arr => new Set(arr).size !== arr.length
+
+// 3. Two Sum — tìm complement
+const map = new Map()
+for (let i = 0; i < nums.length; i++) {
+    const comp = target - nums[i]
+    if (map.has(comp)) return [map.get(comp), i]
+    map.set(nums[i], i)
+}
+
+// 4. Group Anagrams — sort làm key
+const groups = new Map()
+for (const s of strs) {
+    const key = s.split('').sort().join('')
+    groups.set(key, [...(groups.get(key) || []), s])
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>
                     {[
@@ -1429,6 +1450,26 @@ class Trie {
 
             <TopicModal title="Two Pointers" emoji="👉👈" color="#4ade80" summary="~15 bài — dùng 2 con trỏ di chuyển trên sorted array hoặc linked list">
                 <Paragraph>Dùng khi: array đã <Highlight>sorted</Highlight>, tìm pair/triplet thỏa điều kiện, hoặc loại bỏ duplicates.</Paragraph>
+                <CodeBlock title="two-pointers-patterns.js">{`// 1. Opposite ends — sorted array tìm pair
+let left = 0, right = arr.length - 1
+while (left < right) {
+    const sum = arr[left] + arr[right]
+    if (sum === target) return [left, right]
+    sum < target ? left++ : right--
+}
+
+// 2. Same direction — remove duplicates in-place
+let slow = 0
+for (let fast = 1; fast < nums.length; fast++) {
+    if (nums[fast] !== nums[slow]) nums[++slow] = nums[fast]
+}
+
+// 3. Container With Most Water
+let maxArea = 0, l = 0, r = height.length - 1
+while (l < r) {
+    maxArea = Math.max(maxArea, Math.min(height[l], height[r]) * (r - l))
+    height[l] < height[r] ? l++ : r--
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>
                     {[
@@ -1441,12 +1482,40 @@ class Trie {
                         </div>
                     ))}
                 </div>
-                <Callout type="tip">Template: left = 0, right = length-1, di chuyển dựa trên condition. Luôn nghĩ: &quot;Phần tử nào tôi có thể loại bỏ?&quot;</Callout>
+                <Callout type="tip">2 dạng chính: <Highlight>Opposite ends</Highlight> (sorted, tìm pair) và <Highlight>Same direction</Highlight> (fast/slow, remove duplicates). Luôn nghĩ: &quot;Phần tử nào tôi có thể loại bỏ?&quot;</Callout>
                 <a href="/blogs/two-pointers-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Sliding Window" emoji="🪟" color="#4ade80" summary="~10 bài — tìm substring/subarray tối ưu với fixed hoặc variable window">
                 <Paragraph>Dùng khi: tìm <Highlight>contiguous subarray/substring</Highlight> thỏa điều kiện (max sum, min length, contains all chars).</Paragraph>
+                <CodeBlock title="sliding-window-patterns.js">{`// 1. Fixed window — max average subarray
+let sum = 0, maxSum = -Infinity
+for (let i = 0; i < arr.length; i++) {
+    sum += arr[i]
+    if (i >= k - 1) {
+        maxSum = Math.max(maxSum, sum / k)
+        sum -= arr[i - k + 1]
+    }
+}
+
+// 2. Variable window — longest substring without repeating
+const seen = new Map()
+let left = 0, maxLen = 0
+for (let right = 0; right < s.length; right++) {
+    if (seen.has(s[right])) left = Math.max(left, seen.get(s[right]) + 1)
+    seen.set(s[right], right)
+    maxLen = Math.max(maxLen, right - left + 1)
+}
+
+// 3. Variable window — minimum size subarray ≥ target
+let windowSum = 0, minLen = Infinity
+for (let l = 0, r = 0; r < nums.length; r++) {
+    windowSum += nums[r]
+    while (windowSum >= target) {
+        minLen = Math.min(minLen, r - l + 1)
+        windowSum -= nums[l++]
+    }
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>
                     {[
@@ -1460,12 +1529,42 @@ class Trie {
                         </div>
                     ))}
                 </div>
-                <Callout type="tip">Template: expand right pointer, khi window invalid thì shrink left. Dùng HashMap để track frequency.</Callout>
+                <Callout type="tip">2 dạng: <Highlight>Fixed window</Highlight> (size k cố định) và <Highlight>Variable window</Highlight> (expand right, shrink left khi invalid). Thường kết hợp HashMap track frequency.</Callout>
                 <a href="/blogs/sliding-window-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="BFS / DFS" emoji="🌲" color="#4ade80" summary="~20 bài — duyệt đồ thị và cây, quan trọng nhất cho Frontend (DOM tree!)">
                 <Paragraph>Frontend engineer <Highlight>phải giỏi BFS/DFS</Highlight> vì DOM là tree! Flatten DOM, find element, traverse components.</Paragraph>
+                <CodeBlock title="bfs-dfs-patterns.js">{`// 1. DFS trên tree (recursive) — hầu hết bài tree
+function dfs(root) {
+    if (!root) return // base case
+    dfs(root.left)    // xử lý trái
+    dfs(root.right)   // xử lý phải
+}
+
+// 2. BFS — level order / shortest path
+function bfs(root) {
+    const queue = [root]
+    while (queue.length) {
+        const node = queue.shift()
+        if (node.left) queue.push(node.left)
+        if (node.right) queue.push(node.right)
+    }
+}
+
+// 3. Number of Islands — DFS trên grid
+function numIslands(grid) {
+    let count = 0
+    for (let i = 0; i < grid.length; i++)
+        for (let j = 0; j < grid[0].length; j++)
+            if (grid[i][j] === '1') { count++; sink(grid, i, j) }
+    return count
+}
+function sink(grid, i, j) {
+    if (i < 0 || j < 0 || i >= grid.length || j >= grid[0].length || grid[i][j] === '0') return
+    grid[i][j] = '0' // mark visited
+    sink(grid, i+1, j); sink(grid, i-1, j); sink(grid, i, j+1); sink(grid, i, j-1)
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>
                     {[
@@ -1479,12 +1578,40 @@ class Trie {
                         </div>
                     ))}
                 </div>
-                <Callout type="tip"><strong>BFS</strong> = dùng Queue (level order, shortest path). <strong>DFS</strong> = dùng Stack/Recursion (explore deep, backtrack). FE interview thích DFS hơn vì liên quan DOM traversal.</Callout>
+                <Callout type="tip"><strong>BFS</strong> = Queue (level order, shortest path). <strong>DFS</strong> = Recursion (tree, backtrack). Grid problems: DFS + mark visited. FE interview thích DFS vì liên quan DOM.</Callout>
                 <a href="/blogs/bfs-dfs-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Binary Search" emoji="🔍" color="#4ade80" summary="~10 bài — O(log n) search, không chỉ trên sorted array">
                 <Paragraph>Binary search không chỉ tìm element — còn dùng cho <Highlight>search space reduction</Highlight> trên bất kỳ monotonic function nào.</Paragraph>
+                <CodeBlock title="binary-search-patterns.js">{`// 1. Classic binary search
+let left = 0, right = arr.length - 1
+while (left <= right) {
+    const mid = Math.floor((left + right) / 2)
+    if (arr[mid] === target) return mid
+    arr[mid] < target ? left = mid + 1 : right = mid - 1
+}
+
+// 2. Find first/last position (bisect left/right)
+function bisectLeft(arr, target) {
+    let lo = 0, hi = arr.length
+    while (lo < hi) {
+        const mid = (lo + hi) >> 1
+        arr[mid] < target ? lo = mid + 1 : hi = mid
+    }
+    return lo
+}
+
+// 3. Search on answer — Koko eating bananas
+function minEatingSpeed(piles, h) {
+    let lo = 1, hi = Math.max(...piles)
+    while (lo < hi) {
+        const mid = (lo + hi) >> 1
+        const hours = piles.reduce((sum, p) => sum + Math.ceil(p / mid), 0)
+        hours <= h ? hi = mid : lo = mid + 1
+    }
+    return lo
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>
                     {[
@@ -1497,11 +1624,44 @@ class Trie {
                         </div>
                     ))}
                 </div>
+                <Callout type="tip">3 dạng: <Highlight>Classic</Highlight> (tìm exact), <Highlight>Bisect left/right</Highlight> (tìm boundary), <Highlight>Search on answer</Highlight> (binary search trên kết quả). Khi thấy O(log n) → nghĩ Binary Search.</Callout>
                 <a href="/blogs/binary-search-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Dynamic Programming" emoji="📊" color="#4ade80" summary="~15 bài Easy-Medium — phần khó nhất nhưng có pattern rõ ràng">
                 <Paragraph>DP = chia bài toán thành <Highlight>subproblems</Highlight>, lưu kết quả tránh tính lại. Frontend ít gặp Hard DP.</Paragraph>
+                <CodeBlock title="dp-patterns.js">{`// 1. Climbing Stairs — 1D DP cơ bản
+function climbStairs(n) {
+    let a = 1, b = 1
+    for (let i = 2; i <= n; i++) [a, b] = [b, a + b]
+    return b
+}
+
+// 2. House Robber — chọn/không chọn
+function rob(nums) {
+    let prev = 0, curr = 0
+    for (const n of nums) [prev, curr] = [curr, Math.max(curr, prev + n)]
+    return curr
+}
+
+// 3. Coin Change — unbounded knapsack
+function coinChange(coins, amount) {
+    const dp = Array(amount + 1).fill(Infinity)
+    dp[0] = 0
+    for (let i = 1; i <= amount; i++)
+        for (const c of coins)
+            if (c <= i) dp[i] = Math.min(dp[i], dp[i - c] + 1)
+    return dp[amount] === Infinity ? -1 : dp[amount]
+}
+
+// 4. Longest Increasing Subsequence — O(n²)
+function lengthOfLIS(nums) {
+    const dp = Array(nums.length).fill(1)
+    for (let i = 1; i < nums.length; i++)
+        for (let j = 0; j < i; j++)
+            if (nums[j] < nums[i]) dp[i] = Math.max(dp[i], dp[j] + 1)
+    return Math.max(...dp)
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode gợi ý:</div>
                     {[
@@ -1514,12 +1674,54 @@ class Trie {
                         </div>
                     ))}
                 </div>
-                <Callout type="tip">Cách tiếp cận: 1) Xác định state, 2) Viết recurrence relation, 3) Bottom-up hoặc top-down + memo. Bắt đầu từ <strong>1D DP</strong> trước.</Callout>
+                <Callout type="tip">4 dạng DP phổ biến: <Highlight>1D linear</Highlight> (Climbing Stairs), <Highlight>Chọn/không chọn</Highlight> (House Robber), <Highlight>Knapsack</Highlight> (Coin Change), <Highlight>Subsequence</Highlight> (LIS). Bắt đầu từ 1D DP trước.</Callout>
                 <a href="/blogs/dynamic-programming-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Backtracking" emoji="🔙" color="#4ade80" summary="~10 bài — generate all combinations, permutations, subsets">
                 <Paragraph>Pattern: thử từng option → nếu không hợp lệ thì <Highlight>quay lại (backtrack)</Highlight> → thử option tiếp.</Paragraph>
+                <CodeBlock title="backtracking-patterns.js">{`// 1. Subsets — template cơ bản
+function subsets(nums) {
+    const result = []
+    function backtrack(start, path) {
+        result.push([...path])
+        for (let i = start; i < nums.length; i++) {
+            path.push(nums[i])
+            backtrack(i + 1, path)
+            path.pop() // backtrack!
+        }
+    }
+    backtrack(0, [])
+    return result
+}
+
+// 2. Permutations — dùng used set
+function permute(nums) {
+    const result = []
+    function backtrack(path, used) {
+        if (path.length === nums.length) { result.push([...path]); return }
+        for (let i = 0; i < nums.length; i++) {
+            if (used.has(i)) continue
+            used.add(i); path.push(nums[i])
+            backtrack(path, used)
+            path.pop(); used.delete(i)
+        }
+    }
+    backtrack([], new Set())
+    return result
+}
+
+// 3. Generate Parentheses
+function generateParenthesis(n) {
+    const result = []
+    function bt(s, open, close) {
+        if (s.length === 2 * n) { result.push(s); return }
+        if (open < n) bt(s + '(', open + 1, close)
+        if (close < open) bt(s + ')', open, close + 1)
+    }
+    bt('', 0, 0)
+    return result
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>
                     {[
@@ -1532,11 +1734,49 @@ class Trie {
                         </div>
                     ))}
                 </div>
-                <Callout type="tip">Template: <InlineCode>{`function backtrack(path, choices) { if (done) result.push([...path]); for (choice of choices) { path.push(choice); backtrack(...); path.pop(); } }`}</InlineCode></Callout>
+                <Callout type="tip">Template: <InlineCode>backtrack(start, path)</InlineCode> → push → recurse → pop. 3 dạng: <Highlight>Subsets</Highlight> (start = i+1), <Highlight>Permutations</Highlight> (used set), <Highlight>Combinations</Highlight> (đếm đủ k).</Callout>
             </TopicModal>
 
             <TopicModal title="Stack-based" emoji="📚" color="#4ade80" summary="~10 bài — monotonic stack, valid parentheses, expression eval">
                 <Paragraph>Stack = <Highlight>LIFO</Highlight>. Rất hữu ích cho: matching brackets, next greater element, expression parsing.</Paragraph>
+                <CodeBlock title="stack-patterns.js">{`// 1. Valid Parentheses
+function isValid(s) {
+    const stack = [], map = { ')': '(', ']': '[', '}': '{' }
+    for (const c of s) {
+        if ('([{'.includes(c)) stack.push(c)
+        else if (stack.pop() !== map[c]) return false
+    }
+    return stack.length === 0
+}
+
+// 2. Daily Temperatures — Monotonic Stack
+function dailyTemperatures(temps) {
+    const result = Array(temps.length).fill(0)
+    const stack = [] // store indices
+    for (let i = 0; i < temps.length; i++) {
+        while (stack.length && temps[i] > temps[stack.at(-1)]) {
+            const j = stack.pop()
+            result[j] = i - j
+        }
+        stack.push(i)
+    }
+    return result
+}
+
+// 3. Decode String — nested brackets
+function decodeString(s) {
+    const stack = []
+    for (const c of s) {
+        if (c !== ']') { stack.push(c); continue }
+        let str = ''
+        while (stack.at(-1) !== '[') str = stack.pop() + str
+        stack.pop() // remove '['
+        let num = ''
+        while (stack.length && !isNaN(stack.at(-1))) num = stack.pop() + num
+        stack.push(str.repeat(+num))
+    }
+    return stack.join('')
+}`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>
                     {[
@@ -1550,7 +1790,7 @@ class Trie {
                         </div>
                     ))}
                 </div>
-                <Callout type="tip"><strong>Monotonic Stack</strong>: giữ stack luôn tăng/giảm. Trick: khi push element mới mà nhỏ/lớn hơn top → pop và xử lý. Classic cho &quot;Next Greater Element&quot;.</Callout>
+                <Callout type="tip">3 dạng: <Highlight>Matching</Highlight> (brackets, tags), <Highlight>Monotonic stack</Highlight> (next greater/smaller element), <Highlight>Expression eval</Highlight> (decode, RPN). Trick: khi push mới mà &gt; top → pop và xử lý.</Callout>
                 <a href="/blogs/stack-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
         </div>
