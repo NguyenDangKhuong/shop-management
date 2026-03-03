@@ -315,6 +315,278 @@ function merge(nums1, m, nums2, n) {
             Nếu mảng chưa sorted, cân nhắc <InlineCode>Hash Map</InlineCode> thay thế.
         </Callout>
 
+        {/* ───────── BÀI 5: REMOVE DUPLICATES ───────── */}
+        <Heading2>Bài 5: Remove Duplicates from Sorted Array (LeetCode #26)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Cho mảng sorted <InlineCode>nums</InlineCode>, loại bỏ <Highlight>các phần tử trùng lặp in-place</Highlight>.
+            Trả về số lượng phần tử unique. Không dùng mảng phụ.
+        </Paragraph>
+
+        <CodeBlock title="remove-duplicates.js">{`// LeetCode #26: Remove Duplicates — O(n) time, O(1) space
+function removeDuplicates(nums) {
+    let slow = 0                    // Vị trí ghi phần tử unique tiếp theo
+
+    for (let fast = 1; fast < nums.length; fast++) {
+        if (nums[fast] !== nums[slow]) {
+            slow++                  // Tìm thấy phần tử mới → ghi vào vị trí tiếp
+            nums[slow] = nums[fast]
+        }
+    }
+
+    return slow + 1                 // Số phần tử unique
+}
+
+// Ví dụ: nums = [1, 1, 2]
+// fast=1: nums[1]=1 === nums[0]=1 → skip
+// fast=2: nums[2]=2 !== nums[0]=1 → slow=1, nums[1]=2
+// → nums = [1, 2, _], return 2 ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 6: MOVE ZEROES ───────── */}
+        <Heading2>Bài 6: Move Zeroes (LeetCode #283)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Di chuyển tất cả <InlineCode>0</InlineCode> về cuối mảng, giữ nguyên thứ tự các phần tử khác.
+            Thực hiện <Highlight>in-place</Highlight>.
+        </Paragraph>
+
+        <CodeBlock title="move-zeroes.js">{`// LeetCode #283: Move Zeroes — O(n) time, O(1) space
+function moveZeroes(nums) {
+    let slow = 0                    // Vị trí ghi phần tử != 0
+
+    for (let fast = 0; fast < nums.length; fast++) {
+        if (nums[fast] !== 0) {
+            // Swap: đưa phần tử != 0 về vị trí slow
+            [nums[slow], nums[fast]] = [nums[fast], nums[slow]]
+            slow++
+        }
+    }
+}
+
+// Ví dụ: nums = [0, 1, 0, 3, 12]
+// fast=0: 0 → skip
+// fast=1: 1 → swap(0,1) → [1,0,0,3,12], slow=1
+// fast=2: 0 → skip
+// fast=3: 3 → swap(1,3) → [1,3,0,0,12], slow=2
+// fast=4: 12 → swap(2,4) → [1,3,12,0,0], slow=3 ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 7: REVERSE STRING ───────── */}
+        <Heading2>Bài 7: Reverse String (LeetCode #344)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Đảo ngược mảng ký tự <Highlight>in-place</Highlight> với O(1) extra memory.
+        </Paragraph>
+
+        <CodeBlock title="reverse-string.js">{`// LeetCode #344: Reverse String — O(n) time, O(1) space
+function reverseString(s) {
+    let left = 0, right = s.length - 1
+
+    while (left < right) {
+        [s[left], s[right]] = [s[right], s[left]]  // Swap hai đầu
+        left++
+        right--
+    }
+}
+
+// Ví dụ: s = ['h','e','l','l','o']
+// swap(0,4): ['o','e','l','l','h']
+// swap(1,3): ['o','l','l','e','h']
+// left=2 === right=2 → done → ['o','l','l','e','h'] ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 8: SQUARES OF A SORTED ARRAY ───────── */}
+        <Heading2>Bài 8: Squares of a Sorted Array (LeetCode #977)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Cho mảng sorted (có thể số âm), trả về <Highlight>mảng bình phương đã sorted</Highlight>.
+        </Paragraph>
+
+        <CodeBlock title="sorted-squares.js">{`// LeetCode #977: Squares of a Sorted Array — O(n) time
+function sortedSquares(nums) {
+    const result = new Array(nums.length)
+    let left = 0, right = nums.length - 1
+    let pos = right                         // Ghi từ cuối (giá trị lớn nhất)
+
+    while (left <= right) {
+        const lSq = nums[left] ** 2
+        const rSq = nums[right] ** 2
+
+        if (lSq > rSq) {
+            result[pos] = lSq               // Số âm lớn hơn → lấy bên trái
+            left++
+        } else {
+            result[pos] = rSq               // Số dương lớn hơn → lấy bên phải
+            right--
+        }
+        pos--
+    }
+
+    return result
+}
+
+// Ví dụ: nums = [-4, -1, 0, 3, 10]
+// left=0(-4²=16), right=4(10²=100): 16<100 → result[4]=100, right--
+// left=0(-4²=16), right=3(3²=9): 16>9 → result[3]=16, left++
+// left=1(-1²=1), right=3(3²=9): 1<9 → result[2]=9, right--
+// → [0, 1, 9, 16, 100] ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 9: 3SUM ───────── */}
+        <Heading2>Bài 9: 3Sum (LeetCode #15)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Tìm tất cả bộ ba <InlineCode>[nums[i], nums[j], nums[k]]</InlineCode> sao cho
+            <Highlight>tổng bằng 0</Highlight>. Kết quả không chứa bộ ba trùng lặp.
+        </Paragraph>
+
+        <CodeBlock title="three-sum.js">{`// LeetCode #15: 3Sum — O(n²) time, O(1) space
+function threeSum(nums) {
+    nums.sort((a, b) => a - b)              // Sort để dùng Two Pointers
+    const result = []
+
+    for (let i = 0; i < nums.length - 2; i++) {
+        if (i > 0 && nums[i] === nums[i - 1]) continue  // Skip trùng
+
+        let left = i + 1, right = nums.length - 1
+
+        while (left < right) {
+            const sum = nums[i] + nums[left] + nums[right]
+
+            if (sum === 0) {
+                result.push([nums[i], nums[left], nums[right]])
+                while (left < right && nums[left] === nums[left + 1]) left++
+                while (left < right && nums[right] === nums[right - 1]) right--
+                left++; right--
+            } else if (sum < 0) {
+                left++                      // Tổng nhỏ → tăng left
+            } else {
+                right--                     // Tổng lớn → giảm right
+            }
+        }
+    }
+
+    return result
+}
+
+// Ví dụ: nums = [-1, 0, 1, 2, -1, -4]
+// Sorted: [-4, -1, -1, 0, 1, 2]
+// i=0(-4): left=1, right=5 → -4+(-1)+2=-3<0 → left++ ...
+// i=1(-1): left=2, right=5 → -1+(-1)+2=0 → found! [-1,-1,2]
+//          left=3, right=4 → -1+0+1=0 → found! [-1,0,1]
+// → [[-1,-1,2], [-1,0,1]] ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 10: SORT COLORS ───────── */}
+        <Heading2>Bài 10: Sort Colors (LeetCode #75)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Sắp xếp mảng chỉ chứa 0, 1, 2 <Highlight>in-place</Highlight> trong một lần duyệt (Dutch National Flag).
+        </Paragraph>
+
+        <CodeBlock title="sort-colors.js">{`// LeetCode #75: Sort Colors — O(n) time, O(1) space
+function sortColors(nums) {
+    let low = 0                     // Ranh giới vùng 0
+    let mid = 0                     // Con trỏ hiện tại
+    let high = nums.length - 1      // Ranh giới vùng 2
+
+    while (mid <= high) {
+        if (nums[mid] === 0) {
+            [nums[low], nums[mid]] = [nums[mid], nums[low]]
+            low++; mid++
+        } else if (nums[mid] === 1) {
+            mid++                   // 1 nằm đúng vị trí giữa
+        } else {
+            [nums[mid], nums[high]] = [nums[high], nums[mid]]
+            high--                  // Không mid++ vì cần kiểm tra phần tử swap về
+        }
+    }
+}
+
+// Ví dụ: nums = [2, 0, 2, 1, 1, 0]
+// mid=0(2): swap(0,5) → [0,0,2,1,1,2], high=4
+// mid=0(0): swap(0,0) → low=1, mid=1
+// mid=1(0): swap(1,1) → low=2, mid=2
+// mid=2(2): swap(2,4) → [0,0,1,1,2,2], high=3
+// mid=2(1): mid=3
+// mid=3(1): mid=4 > high=3 → done → [0,0,1,1,2,2] ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 11: LINKED LIST CYCLE II ───────── */}
+        <Heading2>Bài 11: Linked List Cycle II (LeetCode #142)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Cho linked list, tìm <Highlight>node bắt đầu cycle</Highlight>. Nếu không có cycle, return null.
+        </Paragraph>
+
+        <CodeBlock title="linked-list-cycle.js">{`// LeetCode #142: Linked List Cycle II — O(n) time, O(1) space
+function detectCycle(head) {
+    let slow = head, fast = head
+
+    // Bước 1: Tìm điểm gặp nhau (Floyd's algorithm)
+    while (fast && fast.next) {
+        slow = slow.next
+        fast = fast.next.next
+        if (slow === fast) break
+    }
+
+    // Không có cycle
+    if (!fast || !fast.next) return null
+
+    // Bước 2: Tìm điểm bắt đầu cycle
+    // Di chuyển slow về head, giữ fast tại điểm gặp
+    // Cả hai đi 1 bước → gặp nhau tại cycle start
+    slow = head
+    while (slow !== fast) {
+        slow = slow.next
+        fast = fast.next
+    }
+
+    return slow                     // Điểm bắt đầu cycle
+}
+
+// Key insight (Floyd's Tortoise & Hare):
+// Khi slow và fast gặp nhau: khoảng cách từ head đến cycle start
+// = khoảng cách từ meeting point đến cycle start (đi theo cycle)`}</CodeBlock>
+
+        {/* ───────── BÀI 12: PRODUCT OF ARRAY EXCEPT SELF ───────── */}
+        <Heading2>Bài 12: Product of Array Except Self (LeetCode #238)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Cho mảng <InlineCode>nums</InlineCode>, trả về mảng <InlineCode>result</InlineCode> trong đó
+            <InlineCode>result[i]</InlineCode> = <Highlight>tích tất cả phần tử trừ nums[i]</Highlight>. Không dùng phép chia.
+        </Paragraph>
+
+        <CodeBlock title="product-except-self.js">{`// LeetCode #238: Product of Array Except Self — O(n) time, O(1) extra space
+function productExceptSelf(nums) {
+    const n = nums.length
+    const result = new Array(n).fill(1)
+
+    // Pass 1 (→): tích tất cả phần tử BÊN TRÁI
+    let leftProduct = 1
+    for (let i = 0; i < n; i++) {
+        result[i] = leftProduct
+        leftProduct *= nums[i]
+    }
+
+    // Pass 2 (←): nhân thêm tích tất cả phần tử BÊN PHẢI
+    let rightProduct = 1
+    for (let i = n - 1; i >= 0; i--) {
+        result[i] *= rightProduct
+        rightProduct *= nums[i]
+    }
+
+    return result
+}
+
+// Ví dụ: nums = [1, 2, 3, 4]
+// Pass 1 (→): result = [1, 1, 2, 6] (leftProduct tích lũy)
+// Pass 2 (←): result = [24, 12, 8, 6] (nhân thêm rightProduct)
+// Kiểm tra: result[0] = 2*3*4=24, result[1] = 1*3*4=12 ✓`}</CodeBlock>
+
         <Heading2>Tổng kết các biến thể Two Pointers</Heading2>
 
         <div className="my-4 overflow-x-auto">
@@ -574,6 +846,198 @@ function merge(nums1, m, nums2, n) {
 // p1=2(3), p2=0(2): 3>2 → nums1[3]=3
 // p1=1(2), p2=0(2): 2=2 → nums1[2]=2
 // → [1, 2, 2, 3, 5, 6] ✓`}</CodeBlock>
+
+        <Heading2>Problem 5: Remove Duplicates from Sorted Array (LeetCode #26)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Given a sorted array <InlineCode>nums</InlineCode>, remove <Highlight>duplicates in-place</Highlight>. Return the number of unique elements.
+        </Paragraph>
+
+        <CodeBlock title="remove-duplicates.js">{`// LeetCode #26: Remove Duplicates — O(n) time, O(1) space
+function removeDuplicates(nums) {
+    let slow = 0
+
+    for (let fast = 1; fast < nums.length; fast++) {
+        if (nums[fast] !== nums[slow]) {
+            slow++
+            nums[slow] = nums[fast]
+        }
+    }
+    return slow + 1
+}
+
+// Example: nums = [1, 1, 2] → return 2, nums = [1, 2, _] ✓`}</CodeBlock>
+
+        <Heading2>Problem 6: Move Zeroes (LeetCode #283)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Move all <InlineCode>0</InlineCode>s to end, keep order of non-zero elements. <Highlight>In-place</Highlight>.
+        </Paragraph>
+
+        <CodeBlock title="move-zeroes.js">{`// LeetCode #283: Move Zeroes — O(n) time, O(1) space
+function moveZeroes(nums) {
+    let slow = 0
+    for (let fast = 0; fast < nums.length; fast++) {
+        if (nums[fast] !== 0) {
+            [nums[slow], nums[fast]] = [nums[fast], nums[slow]]
+            slow++
+        }
+    }
+}
+
+// Example: [0, 1, 0, 3, 12] → [1, 3, 12, 0, 0] ✓`}</CodeBlock>
+
+        <Heading2>Problem 7: Reverse String (LeetCode #344)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Reverse a character array <Highlight>in-place</Highlight> with O(1) extra memory.
+        </Paragraph>
+
+        <CodeBlock title="reverse-string.js">{`// LeetCode #344: Reverse String — O(n) time, O(1) space
+function reverseString(s) {
+    let left = 0, right = s.length - 1
+    while (left < right) {
+        [s[left], s[right]] = [s[right], s[left]]
+        left++; right--
+    }
+}
+
+// Example: ['h','e','l','l','o'] → ['o','l','l','e','h'] ✓`}</CodeBlock>
+
+        <Heading2>Problem 8: Squares of a Sorted Array (LeetCode #977)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Given a sorted array (may contain negatives), return <Highlight>sorted array of squares</Highlight>.
+        </Paragraph>
+
+        <CodeBlock title="sorted-squares.js">{`// LeetCode #977: Squares of a Sorted Array — O(n) time
+function sortedSquares(nums) {
+    const result = new Array(nums.length)
+    let left = 0, right = nums.length - 1, pos = right
+
+    while (left <= right) {
+        const lSq = nums[left] ** 2, rSq = nums[right] ** 2
+        if (lSq > rSq) { result[pos] = lSq; left++ }
+        else { result[pos] = rSq; right-- }
+        pos--
+    }
+    return result
+}
+
+// Example: [-4, -1, 0, 3, 10] → [0, 1, 9, 16, 100] ✓`}</CodeBlock>
+
+        <Heading2>Problem 9: 3Sum (LeetCode #15)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Find all triplets that <Highlight>sum to zero</Highlight>. No duplicate triplets.
+        </Paragraph>
+
+        <CodeBlock title="three-sum.js">{`// LeetCode #15: 3Sum — O(n²) time, O(1) space
+function threeSum(nums) {
+    nums.sort((a, b) => a - b)
+    const result = []
+
+    for (let i = 0; i < nums.length - 2; i++) {
+        if (i > 0 && nums[i] === nums[i - 1]) continue
+        let left = i + 1, right = nums.length - 1
+
+        while (left < right) {
+            const sum = nums[i] + nums[left] + nums[right]
+            if (sum === 0) {
+                result.push([nums[i], nums[left], nums[right]])
+                while (left < right && nums[left] === nums[left + 1]) left++
+                while (left < right && nums[right] === nums[right - 1]) right--
+                left++; right--
+            } else if (sum < 0) left++
+            else right--
+        }
+    }
+    return result
+}
+
+// Example: [-1,0,1,2,-1,-4] → [[-1,-1,2], [-1,0,1]] ✓`}</CodeBlock>
+
+        <Heading2>Problem 10: Sort Colors (LeetCode #75)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Sort array of 0, 1, 2 <Highlight>in-place</Highlight> in one pass (Dutch National Flag).
+        </Paragraph>
+
+        <CodeBlock title="sort-colors.js">{`// LeetCode #75: Sort Colors — O(n) time, O(1) space
+function sortColors(nums) {
+    let low = 0, mid = 0, high = nums.length - 1
+
+    while (mid <= high) {
+        if (nums[mid] === 0) {
+            [nums[low], nums[mid]] = [nums[mid], nums[low]]
+            low++; mid++
+        } else if (nums[mid] === 1) {
+            mid++
+        } else {
+            [nums[mid], nums[high]] = [nums[high], nums[mid]]
+            high--
+        }
+    }
+}
+
+// Example: [2, 0, 2, 1, 1, 0] → [0, 0, 1, 1, 2, 2] ✓`}</CodeBlock>
+
+        <Heading2>Problem 11: Linked List Cycle II (LeetCode #142)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Find the <Highlight>node where the cycle begins</Highlight>. Return null if no cycle.
+        </Paragraph>
+
+        <CodeBlock title="linked-list-cycle.js">{`// LeetCode #142: Linked List Cycle II — O(n) time, O(1) space
+function detectCycle(head) {
+    let slow = head, fast = head
+
+    while (fast && fast.next) {
+        slow = slow.next
+        fast = fast.next.next
+        if (slow === fast) break
+    }
+
+    if (!fast || !fast.next) return null
+
+    slow = head
+    while (slow !== fast) {
+        slow = slow.next
+        fast = fast.next
+    }
+    return slow
+}
+
+// Floyd's algorithm: distance head→cycle start = meeting point→cycle start`}</CodeBlock>
+
+        <Heading2>Problem 12: Product of Array Except Self (LeetCode #238)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Return array where <InlineCode>result[i]</InlineCode> = <Highlight>product of all elements except nums[i]</Highlight>. No division.
+        </Paragraph>
+
+        <CodeBlock title="product-except-self.js">{`// LeetCode #238: Product of Array Except Self — O(n) time, O(1) extra space
+function productExceptSelf(nums) {
+    const n = nums.length, result = new Array(n).fill(1)
+
+    let left = 1
+    for (let i = 0; i < n; i++) { result[i] = left; left *= nums[i] }
+
+    let right = 1
+    for (let i = n - 1; i >= 0; i--) { result[i] *= right; right *= nums[i] }
+
+    return result
+}
+
+// Example: [1, 2, 3, 4] → [24, 12, 8, 6] ✓`}</CodeBlock>
 
         <Heading2>Two Pointers Variants Summary</Heading2>
 

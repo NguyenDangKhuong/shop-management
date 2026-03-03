@@ -407,6 +407,7 @@ console.log('4'); // Call Stack
 
 // Output: 1 → 4 → 3 → 2`}</CodeBlock>
                 <Callout type="tip">Đây là câu hỏi phỏng vấn #1 về JS. Luôn nhớ: <Highlight>Sync → Microtask → Macrotask</Highlight>.</Callout>
+                <a href="/blogs/event-loop" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Async/Await & Promises" emoji="⚡" color="#fbbf24" summary="Promise là gì, 3 trạng thái, Promise.all/race/allSettled, async/await, error handling">
@@ -630,6 +631,7 @@ const result = await Promise.race([
 
                 <Callout type="warning">Luôn dùng <InlineCode>try/catch</InlineCode> với async/await. Unhandled Promise rejection sẽ crash Node.js process!</Callout>
                 <Callout type="tip">Interview tip: Giải thích được sự khác nhau giữa <InlineCode>Promise.all</InlineCode> vs <InlineCode>Promise.allSettled</InlineCode> và khi nào dùng cái nào — câu hỏi rất phổ biến.</Callout>
+                <a href="/blogs/callback-promise-async-await" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="ES6+ Features" emoji="✨" color="#38bdf8" summary="destructuring, spread, modules, optional chaining, nullish coalescing">
@@ -649,6 +651,7 @@ const result = await Promise.race([
                         </div>
                     ))}
                 </div>
+                <a href="/blogs/ecmascript-features" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== vs ===, truthy/falsy, implicit conversion traps">
@@ -671,6 +674,7 @@ const result = await Promise.race([
         </div>
 
         <Heading3>2.2 Implement từ scratch (click xem code mẫu)</Heading3>
+        <a href="/blogs/js-common-functions" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem tổng hợp JS Common Functions →</a>
         <div className="my-4 space-y-2">
             <TopicModal title="Array.map / filter / reduce" emoji="💻" color="#fbbf24" summary="Implement lại 3 higher-order functions phổ biến nhất của Array">
                 <CodeBlock title="myMap">{`Array.prototype.myMap = function(callback) {
@@ -1010,6 +1014,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                     ))}
                 </div>
                 <Callout type="warning"><strong>Rules of Hooks:</strong> 1) Chỉ gọi ở top level (không trong if/for/nested function) 2) Chỉ gọi trong React components hoặc custom hooks.</Callout>
+                <a href="/blogs/react-hooks-chi-tiet" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Component Patterns" emoji="🧩" color="#61DAFB" summary="HOC, Render Props, Compound, Controlled/Uncontrolled — khi nào dùng pattern nào">
@@ -1058,6 +1063,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
 // 5. Virtualization — chỉ render visible items
 // react-window, react-virtuoso cho danh sách 10k+ items`}</CodeBlock>
                 <Callout type="warning">Đừng premature optimize! Chỉ optimize khi React DevTools Profiler chỉ ra bottleneck thật sự.</Callout>
+                <a href="/blogs/react-performance" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
         </div>
 
@@ -1136,6 +1142,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     </table>
                 </div>
                 <Callout type="tip">Tools đo: <strong>Lighthouse</strong> (Chrome DevTools), <strong>web.dev/measure</strong>, <strong>PageSpeed Insights</strong>.</Callout>
+                <a href="/blogs/core-web-vitals" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
         </div>
 
@@ -1205,6 +1212,24 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
 
         <Heading3>4.2 Patterns cần luyện (click xem bài LeetCode gợi ý)</Heading3>
         <div className="my-4 space-y-2">
+            <TopicModal title="Hash Map / Hash Set" emoji="🗂️" color="#4ade80" summary="~15 bài — pattern dùng nhiều nhất, gần như mọi interview đều có">
+                <Paragraph>Dùng khi: cần <Highlight>lookup O(1)</Highlight>, đếm frequency, tìm pair/complement, loại bỏ duplicates, hoặc group theo key.</Paragraph>
+                <div className="my-3 space-y-1.5">
+                    <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>
+                    {[
+                        ['Easy', ['1. Two Sum', '217. Contains Duplicate', '242. Valid Anagram', '383. Ransom Note', '349. Intersection of Two Arrays']],
+                        ['Medium', ['49. Group Anagrams', '347. Top K Frequent Elements', '128. Longest Consecutive Sequence', '560. Subarray Sum Equals K', '36. Valid Sudoku', '438. Find All Anagrams in a String']],
+                    ].map(([level, problems]) => (
+                        <div key={level as string} className="p-2.5 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+                            <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : 'text-yellow-400'}`}>{level as string}</div>
+                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
+                        </div>
+                    ))}
+                </div>
+                <Callout type="tip">Khi thấy bài yêu cầu &quot;tìm trong O(n)&quot; hoặc &quot;count frequency&quot; → nghĩ ngay HashMap. Đây là pattern <Highlight>nền tảng nhất</Highlight> — hầu hết patterns khác đều kết hợp với HashMap.</Callout>
+                <a href="/blogs/hash-map-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+            </TopicModal>
+
             <TopicModal title="Two Pointers" emoji="👉👈" color="#4ade80" summary="~15 bài — dùng 2 con trỏ di chuyển trên sorted array hoặc linked list">
                 <Paragraph>Dùng khi: array đã <Highlight>sorted</Highlight>, tìm pair/triplet thỏa điều kiện, hoặc loại bỏ duplicates.</Paragraph>
                 <div className="my-3 space-y-1.5">
@@ -1220,6 +1245,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     ))}
                 </div>
                 <Callout type="tip">Template: left = 0, right = length-1, di chuyển dựa trên condition. Luôn nghĩ: &quot;Phần tử nào tôi có thể loại bỏ?&quot;</Callout>
+                <a href="/blogs/two-pointers-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Sliding Window" emoji="🪟" color="#4ade80" summary="~10 bài — tìm substring/subarray tối ưu với fixed hoặc variable window">
@@ -1238,6 +1264,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     ))}
                 </div>
                 <Callout type="tip">Template: expand right pointer, khi window invalid thì shrink left. Dùng HashMap để track frequency.</Callout>
+                <a href="/blogs/sliding-window-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="BFS / DFS" emoji="🌲" color="#4ade80" summary="~20 bài — duyệt đồ thị và cây, quan trọng nhất cho Frontend (DOM tree!)">
@@ -1256,6 +1283,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     ))}
                 </div>
                 <Callout type="tip"><strong>BFS</strong> = dùng Queue (level order, shortest path). <strong>DFS</strong> = dùng Stack/Recursion (explore deep, backtrack). FE interview thích DFS hơn vì liên quan DOM traversal.</Callout>
+                <a href="/blogs/bfs-dfs-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Binary Search" emoji="🔍" color="#4ade80" summary="~10 bài — O(log n) search, không chỉ trên sorted array">
@@ -1272,6 +1300,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                         </div>
                     ))}
                 </div>
+                <a href="/blogs/binary-search-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Dynamic Programming" emoji="📊" color="#4ade80" summary="~15 bài Easy-Medium — phần khó nhất nhưng có pattern rõ ràng">
@@ -1289,6 +1318,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     ))}
                 </div>
                 <Callout type="tip">Cách tiếp cận: 1) Xác định state, 2) Viết recurrence relation, 3) Bottom-up hoặc top-down + memo. Bắt đầu từ <strong>1D DP</strong> trước.</Callout>
+                <a href="/blogs/dynamic-programming-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Backtracking" emoji="🔙" color="#4ade80" summary="~10 bài — generate all combinations, permutations, subsets">
@@ -1324,6 +1354,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     ))}
                 </div>
                 <Callout type="tip"><strong>Monotonic Stack</strong>: giữ stack luôn tăng/giảm. Trick: khi push element mới mà nhỏ/lớn hơn top → pop và xử lý. Classic cho &quot;Next Greater Element&quot;.</Callout>
+                <a href="/blogs/stack-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
         </div>
 

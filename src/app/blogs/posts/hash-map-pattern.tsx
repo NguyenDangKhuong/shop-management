@@ -210,6 +210,260 @@ function containsDuplicate(nums) {
 // Cách ngắn hơn (nhưng không early return):
 // const containsDuplicate = nums => new Set(nums).size !== nums.length`}</CodeBlock>
 
+        {/* ───────── BÀI 4: VALID ANAGRAM ───────── */}
+        <Heading2>Bài 4: Valid Anagram (LeetCode #242)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Cho hai chuỗi <InlineCode>s</InlineCode> và <InlineCode>t</InlineCode>,
+            kiểm tra xem <InlineCode>t</InlineCode> có phải là <Highlight>anagram</Highlight> của <InlineCode>s</InlineCode> không
+            (cùng ký tự, cùng tần suất).
+        </Paragraph>
+
+        <Heading3>Giải pháp với Hash Map</Heading3>
+        <CodeBlock title="valid-anagram.js">{`// LeetCode #242: Valid Anagram — O(n) time, O(1) space (26 chữ cái)
+function isAnagram(s, t) {
+    if (s.length !== t.length) return false  // Khác độ dài → không thể là anagram
+
+    const count = {}                         // Đếm tần suất ký tự
+
+    for (const c of s) {
+        count[c] = (count[c] || 0) + 1       // Tăng count cho s
+    }
+
+    for (const c of t) {
+        if (!count[c]) return false           // Ký tự không có hoặc hết → false
+        count[c]--                            // Giảm count cho t
+    }
+
+    return true                              // Mọi ký tự khớp
+}
+
+// Ví dụ: s = "anagram", t = "nagaram"
+// Sau vòng 1: count = { a:3, n:1, g:1, r:1, m:1 }
+// Sau vòng 2: mỗi ký tự trong t trừ đi → tất cả = 0 → true ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 5: RANSOM NOTE ───────── */}
+        <Heading2>Bài 5: Ransom Note (LeetCode #383)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Cho hai chuỗi <InlineCode>ransomNote</InlineCode> và <InlineCode>magazine</InlineCode>,
+            kiểm tra xem có thể <Highlight>tạo ransomNote từ các ký tự trong magazine</Highlight> không
+            (mỗi ký tự trong magazine chỉ dùng một lần).
+        </Paragraph>
+
+        <Heading3>Giải pháp với Hash Map</Heading3>
+        <CodeBlock title="ransom-note.js">{`// LeetCode #383: Ransom Note — O(n + m) time, O(1) space
+function canConstruct(ransomNote, magazine) {
+    const charCount = {}                     // Đếm ký tự có sẵn trong magazine
+
+    for (const c of magazine) {
+        charCount[c] = (charCount[c] || 0) + 1  // Xây kho ký tự
+    }
+
+    for (const c of ransomNote) {
+        if (!charCount[c]) return false      // Không đủ ký tự → false
+        charCount[c]--                       // Dùng 1 ký tự
+    }
+
+    return true                              // Đủ tất cả ký tự
+}
+
+// Ví dụ: ransomNote = "aa", magazine = "aab"
+// charCount sau magazine: { a:2, b:1 }
+// Duyệt ransomNote: 'a' → {a:1,b:1}, 'a' → {a:0,b:1} → true ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 6: INTERSECTION OF TWO ARRAYS ───────── */}
+        <Heading2>Bài 6: Intersection of Two Arrays (LeetCode #349)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Cho hai mảng số nguyên, trả về <Highlight>mảng các phần tử chung</Highlight> (mỗi phần tử chỉ xuất hiện 1 lần trong kết quả).
+        </Paragraph>
+
+        <Heading3>Giải pháp với Hash Set</Heading3>
+        <CodeBlock title="intersection.js">{`// LeetCode #349: Intersection of Two Arrays — O(n + m) time
+function intersection(nums1, nums2) {
+    const set1 = new Set(nums1)              // Chuyển nums1 thành Set
+    const result = new Set()                 // Lưu kết quả (tự loại trùng)
+
+    for (const num of nums2) {
+        if (set1.has(num)) {                 // Nếu num có trong nums1
+            result.add(num)                  // Thêm vào kết quả
+        }
+    }
+
+    return [...result]                       // Chuyển Set → Array
+}
+
+// Ví dụ: nums1 = [1,2,2,1], nums2 = [2,2]
+// set1 = {1, 2}
+// num=2: set1 has 2 → result = {2}
+// num=2: result already has 2 (Set tự loại trùng)
+// → [2] ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 7: TOP K FREQUENT ELEMENTS ───────── */}
+        <Heading2>Bài 7: Top K Frequent Elements (LeetCode #347)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Cho mảng số nguyên <InlineCode>nums</InlineCode> và số <InlineCode>k</InlineCode>,
+            trả về <Highlight>k phần tử xuất hiện nhiều nhất</Highlight>.
+        </Paragraph>
+
+        <Heading3>Giải pháp: HashMap + Bucket Sort</Heading3>
+        <CodeBlock title="top-k-frequent.js">{`// LeetCode #347: Top K Frequent Elements — O(n) time
+function topKFrequent(nums, k) {
+    // Bước 1: Đếm tần suất bằng HashMap
+    const freq = new Map()
+    for (const num of nums) {
+        freq.set(num, (freq.get(num) || 0) + 1)
+    }
+
+    // Bước 2: Bucket sort — bucket[i] = các số xuất hiện i lần
+    const buckets = Array.from({ length: nums.length + 1 }, () => [])
+    for (const [num, count] of freq) {
+        buckets[count].push(num)
+    }
+
+    // Bước 3: Duyệt từ bucket lớn nhất → lấy k phần tử
+    const result = []
+    for (let i = buckets.length - 1; i >= 0 && result.length < k; i--) {
+        result.push(...buckets[i])
+    }
+
+    return result.slice(0, k)
+}
+
+// Ví dụ: nums = [1,1,1,2,2,3], k = 2
+// freq = { 1:3, 2:2, 3:1 }
+// buckets = [[], [3], [2], [1], ...]
+// Duyệt ngược: bucket[3]=[1], bucket[2]=[2] → [1, 2] ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 8: LONGEST CONSECUTIVE SEQUENCE ───────── */}
+        <Heading2>Bài 8: Longest Consecutive Sequence (LeetCode #128)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Cho mảng số nguyên <Highlight>chưa sắp xếp</Highlight>, tìm độ dài của
+            <Highlight>dãy số liên tiếp dài nhất</Highlight>. Yêu cầu O(n) time.
+        </Paragraph>
+
+        <Heading3>Giải pháp với Hash Set</Heading3>
+        <CodeBlock title="longest-consecutive.js">{`// LeetCode #128: Longest Consecutive Sequence — O(n) time
+function longestConsecutive(nums) {
+    const set = new Set(nums)                // O(1) lookup
+    let maxLen = 0
+
+    for (const num of set) {
+        // Chỉ bắt đầu đếm từ SỐ ĐẦU TIÊN của dãy
+        // (không có num - 1 trong set → num là đầu dãy)
+        if (!set.has(num - 1)) {
+            let current = num
+            let length = 1
+
+            // Đếm tiếp các số liên tiếp
+            while (set.has(current + 1)) {
+                current++
+                length++
+            }
+
+            maxLen = Math.max(maxLen, length)
+        }
+    }
+
+    return maxLen
+}
+
+// Ví dụ: nums = [100, 4, 200, 1, 3, 2]
+// set = {100, 4, 200, 1, 3, 2}
+// num=100: 99 không có → đầu dãy → 100,101? không → length=1
+// num=4: 3 có → SKIP (không phải đầu dãy)
+// num=1: 0 không có → đầu dãy → 1,2,3,4 → length=4 ✓
+// maxLen = 4`}</CodeBlock>
+
+        {/* ───────── BÀI 9: SUBARRAY SUM EQUALS K ───────── */}
+        <Heading2>Bài 9: Subarray Sum Equals K (LeetCode #560)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Cho mảng số nguyên <InlineCode>nums</InlineCode> và số <InlineCode>k</InlineCode>,
+            đếm <Highlight>số lượng subarray có tổng bằng k</Highlight>.
+        </Paragraph>
+
+        <Heading3>Giải pháp: Prefix Sum + Hash Map</Heading3>
+        <CodeBlock title="subarray-sum.js">{`// LeetCode #560: Subarray Sum Equals K — O(n) time
+function subarraySum(nums, k) {
+    // Key insight: sum(i..j) = prefixSum[j] - prefixSum[i-1] = k
+    // → prefixSum[i-1] = prefixSum[j] - k
+    // → Đếm bao nhiêu prefix sum trước đó = currentSum - k
+
+    const prefixCount = new Map()            // { prefixSum → số lần xuất hiện }
+    prefixCount.set(0, 1)                    // Base case: prefix sum 0 xuất hiện 1 lần
+    let currentSum = 0
+    let count = 0
+
+    for (const num of nums) {
+        currentSum += num                    // Tính prefix sum tại vị trí hiện tại
+        const target = currentSum - k        // Cần tìm prefix sum = target
+
+        if (prefixCount.has(target)) {
+            count += prefixCount.get(target)  // Có bao nhiêu cách tạo subarray sum = k
+        }
+
+        prefixCount.set(currentSum, (prefixCount.get(currentSum) || 0) + 1)
+    }
+
+    return count
+}
+
+// Ví dụ: nums = [1, 2, 3], k = 3
+// num=1: sum=1, target=1-3=-2, no → prefixCount={0:1, 1:1}
+// num=2: sum=3, target=3-3=0, count+=1 → prefixCount={0:1, 1:1, 3:1}
+// num=3: sum=6, target=6-3=3, count+=1 → count=2 (subarray [1,2] và [3]) ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 10: VALID SUDOKU ───────── */}
+        <Heading2>Bài 10: Valid Sudoku (LeetCode #36)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Kiểm tra bảng Sudoku 9x9 có <Highlight>hợp lệ</Highlight> không: mỗi hàng, cột, và box 3x3
+            không chứa số trùng lặp. Ô trống ký hiệu bằng <InlineCode>&apos;.&apos;</InlineCode>.
+        </Paragraph>
+
+        <Heading3>Giải pháp: 3 Hash Sets</Heading3>
+        <CodeBlock title="valid-sudoku.js">{`// LeetCode #36: Valid Sudoku — O(81) = O(1) time
+function isValidSudoku(board) {
+    const rows = Array.from({ length: 9 }, () => new Set())
+    const cols = Array.from({ length: 9 }, () => new Set())
+    const boxes = Array.from({ length: 9 }, () => new Set())
+
+    for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+            const val = board[r][c]
+            if (val === '.') continue        // Bỏ qua ô trống
+
+            // Tính index của box 3x3 (0-8)
+            const boxIdx = Math.floor(r / 3) * 3 + Math.floor(c / 3)
+
+            // Kiểm tra trùng trong hàng, cột, hoặc box
+            if (rows[r].has(val) || cols[c].has(val) || boxes[boxIdx].has(val)) {
+                return false                 // Trùng lặp → không hợp lệ
+            }
+
+            rows[r].add(val)
+            cols[c].add(val)
+            boxes[boxIdx].add(val)
+        }
+    }
+
+    return true                              // Không trùng → hợp lệ
+}
+
+// Key insight: dùng 27 Sets (9 rows + 9 cols + 9 boxes)
+// Mỗi số chỉ cần kiểm tra 3 Sets → O(1) per cell`}</CodeBlock>
+
         {/* ───────── OBJECT vs MAP ───────── */}
         <Heading2>Object vs Map vs Set — Khi nào dùng gì?</Heading2>
 
@@ -465,6 +719,253 @@ function containsDuplicate(nums) {
 // num=2: seen = {1} → not found → seen = {1,2}
 // num=3: seen = {1,2} → not found → seen = {1,2,3}
 // num=1: seen = {1,2,3} → HAS 1! → return true ✓`}</CodeBlock>
+
+        <Heading2>Problem 4: Valid Anagram (LeetCode #242)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Given two strings <InlineCode>s</InlineCode> and <InlineCode>t</InlineCode>,
+            determine if <InlineCode>t</InlineCode> is an <Highlight>anagram</Highlight> of <InlineCode>s</InlineCode>
+            (same characters, same frequency).
+        </Paragraph>
+
+        <Heading3>Hash Map Solution</Heading3>
+        <CodeBlock title="valid-anagram.js">{`// LeetCode #242: Valid Anagram — O(n) time, O(1) space (26 letters)
+function isAnagram(s, t) {
+    if (s.length !== t.length) return false  // Different length → not anagram
+
+    const count = {}                         // Character frequency counter
+
+    for (const c of s) {
+        count[c] = (count[c] || 0) + 1       // Increment for s
+    }
+
+    for (const c of t) {
+        if (!count[c]) return false           // Char missing or exhausted → false
+        count[c]--                            // Decrement for t
+    }
+
+    return true                              // All chars matched
+}
+
+// Example: s = "anagram", t = "nagaram"
+// After loop 1: count = { a:3, n:1, g:1, r:1, m:1 }
+// After loop 2: each char in t decrements → all = 0 → true ✓`}</CodeBlock>
+
+        <Heading2>Problem 5: Ransom Note (LeetCode #383)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Given two strings <InlineCode>ransomNote</InlineCode> and <InlineCode>magazine</InlineCode>,
+            check if you can <Highlight>construct ransomNote using characters from magazine</Highlight>
+            (each character in magazine used at most once).
+        </Paragraph>
+
+        <Heading3>Hash Map Solution</Heading3>
+        <CodeBlock title="ransom-note.js">{`// LeetCode #383: Ransom Note — O(n + m) time, O(1) space
+function canConstruct(ransomNote, magazine) {
+    const charCount = {}                     // Available chars from magazine
+
+    for (const c of magazine) {
+        charCount[c] = (charCount[c] || 0) + 1  // Build char inventory
+    }
+
+    for (const c of ransomNote) {
+        if (!charCount[c]) return false      // Not enough chars → false
+        charCount[c]--                       // Use one char
+    }
+
+    return true                              // All chars available
+}
+
+// Example: ransomNote = "aa", magazine = "aab"
+// charCount after magazine: { a:2, b:1 }
+// Loop ransomNote: 'a' → {a:1,b:1}, 'a' → {a:0,b:1} → true ✓`}</CodeBlock>
+
+        <Heading2>Problem 6: Intersection of Two Arrays (LeetCode #349)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Given two integer arrays, return <Highlight>an array of their intersection</Highlight> (each element appears only once in the result).
+        </Paragraph>
+
+        <Heading3>Hash Set Solution</Heading3>
+        <CodeBlock title="intersection.js">{`// LeetCode #349: Intersection of Two Arrays — O(n + m) time
+function intersection(nums1, nums2) {
+    const set1 = new Set(nums1)              // Convert nums1 to Set
+    const result = new Set()                 // Store result (auto-dedup)
+
+    for (const num of nums2) {
+        if (set1.has(num)) {                 // If num exists in nums1
+            result.add(num)                  // Add to result
+        }
+    }
+
+    return [...result]                       // Convert Set → Array
+}
+
+// Example: nums1 = [1,2,2,1], nums2 = [2,2]
+// set1 = {1, 2}
+// num=2: set1 has 2 → result = {2}
+// num=2: result already has 2 (Set auto-dedup)
+// → [2] ✓`}</CodeBlock>
+
+        <Heading2>Problem 7: Top K Frequent Elements (LeetCode #347)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Given an integer array <InlineCode>nums</InlineCode> and integer <InlineCode>k</InlineCode>,
+            return the <Highlight>k most frequent elements</Highlight>.
+        </Paragraph>
+
+        <Heading3>Solution: HashMap + Bucket Sort</Heading3>
+        <CodeBlock title="top-k-frequent.js">{`// LeetCode #347: Top K Frequent Elements — O(n) time
+function topKFrequent(nums, k) {
+    // Step 1: Count frequency with HashMap
+    const freq = new Map()
+    for (const num of nums) {
+        freq.set(num, (freq.get(num) || 0) + 1)
+    }
+
+    // Step 2: Bucket sort — bucket[i] = numbers appearing i times
+    const buckets = Array.from({ length: nums.length + 1 }, () => [])
+    for (const [num, count] of freq) {
+        buckets[count].push(num)
+    }
+
+    // Step 3: Iterate from largest bucket → collect k elements
+    const result = []
+    for (let i = buckets.length - 1; i >= 0 && result.length < k; i--) {
+        result.push(...buckets[i])
+    }
+
+    return result.slice(0, k)
+}
+
+// Example: nums = [1,1,1,2,2,3], k = 2
+// freq = { 1:3, 2:2, 3:1 }
+// buckets = [[], [3], [2], [1], ...]
+// Reverse: bucket[3]=[1], bucket[2]=[2] → [1, 2] ✓`}</CodeBlock>
+
+        <Heading2>Problem 8: Longest Consecutive Sequence (LeetCode #128)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Given an <Highlight>unsorted</Highlight> integer array, find the length of the
+            <Highlight>longest consecutive elements sequence</Highlight>. Must be O(n) time.
+        </Paragraph>
+
+        <Heading3>Hash Set Solution</Heading3>
+        <CodeBlock title="longest-consecutive.js">{`// LeetCode #128: Longest Consecutive Sequence — O(n) time
+function longestConsecutive(nums) {
+    const set = new Set(nums)                // O(1) lookup
+    let maxLen = 0
+
+    for (const num of set) {
+        // Only start counting from the FIRST number of a sequence
+        // (num - 1 not in set → num is the start)
+        if (!set.has(num - 1)) {
+            let current = num
+            let length = 1
+
+            // Count consecutive numbers
+            while (set.has(current + 1)) {
+                current++
+                length++
+            }
+
+            maxLen = Math.max(maxLen, length)
+        }
+    }
+
+    return maxLen
+}
+
+// Example: nums = [100, 4, 200, 1, 3, 2]
+// set = {100, 4, 200, 1, 3, 2}
+// num=100: 99 not in set → start → 100,101? no → length=1
+// num=4: 3 in set → SKIP (not start of sequence)
+// num=1: 0 not in set → start → 1,2,3,4 → length=4 ✓
+// maxLen = 4`}</CodeBlock>
+
+        <Heading2>Problem 9: Subarray Sum Equals K (LeetCode #560)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Given an integer array <InlineCode>nums</InlineCode> and integer <InlineCode>k</InlineCode>,
+            count the <Highlight>number of subarrays with sum equal to k</Highlight>.
+        </Paragraph>
+
+        <Heading3>Solution: Prefix Sum + Hash Map</Heading3>
+        <CodeBlock title="subarray-sum.js">{`// LeetCode #560: Subarray Sum Equals K — O(n) time
+function subarraySum(nums, k) {
+    // Key insight: sum(i..j) = prefixSum[j] - prefixSum[i-1] = k
+    // → prefixSum[i-1] = prefixSum[j] - k
+    // → Count how many previous prefix sums = currentSum - k
+
+    const prefixCount = new Map()            // { prefixSum → occurrence count }
+    prefixCount.set(0, 1)                    // Base case: prefix sum 0 occurs once
+    let currentSum = 0
+    let count = 0
+
+    for (const num of nums) {
+        currentSum += num                    // Running prefix sum
+        const target = currentSum - k        // Need to find this prefix sum
+
+        if (prefixCount.has(target)) {
+            count += prefixCount.get(target)  // How many ways to form subarray sum = k
+        }
+
+        prefixCount.set(currentSum, (prefixCount.get(currentSum) || 0) + 1)
+    }
+
+    return count
+}
+
+// Example: nums = [1, 2, 3], k = 3
+// num=1: sum=1, target=1-3=-2, no → prefixCount={0:1, 1:1}
+// num=2: sum=3, target=3-3=0, count+=1 → prefixCount={0:1, 1:1, 3:1}
+// num=3: sum=6, target=6-3=3, count+=1 → count=2 (subarrays [1,2] and [3]) ✓`}</CodeBlock>
+
+        <Heading2>Problem 10: Valid Sudoku (LeetCode #36)</Heading2>
+
+        <Heading3>Problem</Heading3>
+        <Paragraph>
+            Check if a 9x9 Sudoku board is <Highlight>valid</Highlight>: each row, column, and 3x3 box
+            must not contain duplicate numbers. Empty cells are marked with <InlineCode>&apos;.&apos;</InlineCode>.
+        </Paragraph>
+
+        <Heading3>Solution: 3 Hash Sets</Heading3>
+        <CodeBlock title="valid-sudoku.js">{`// LeetCode #36: Valid Sudoku — O(81) = O(1) time
+function isValidSudoku(board) {
+    const rows = Array.from({ length: 9 }, () => new Set())
+    const cols = Array.from({ length: 9 }, () => new Set())
+    const boxes = Array.from({ length: 9 }, () => new Set())
+
+    for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+            const val = board[r][c]
+            if (val === '.') continue        // Skip empty cells
+
+            // Calculate 3x3 box index (0-8)
+            const boxIdx = Math.floor(r / 3) * 3 + Math.floor(c / 3)
+
+            // Check for duplicates in row, column, or box
+            if (rows[r].has(val) || cols[c].has(val) || boxes[boxIdx].has(val)) {
+                return false                 // Duplicate → invalid
+            }
+
+            rows[r].add(val)
+            cols[c].add(val)
+            boxes[boxIdx].add(val)
+        }
+    }
+
+    return true                              // No duplicates → valid
+}
+
+// Key insight: use 27 Sets (9 rows + 9 cols + 9 boxes)
+// Each number only checks 3 Sets → O(1) per cell`}</CodeBlock>
 
         <Heading2>Complexity Analysis</Heading2>
         <div className="my-4 overflow-x-auto">

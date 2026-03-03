@@ -248,22 +248,135 @@ function search(nums, target) {
 //   target=0 >= 0 && 0 < 1 → target trong nửa trái → right=4
 // left=4, right=4: mid=4, nums[4]=0 === 0 → return 4 ✓`}</CodeBlock>
 
-        <Heading2>Lỗi thường gặp với Binary Search</Heading2>
+        {/* ───────── BÀI 4: SEARCH INSERT POSITION ───────── */}
+        <Heading2>Bài 4: Search Insert Position (LeetCode #35)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Cho mảng sorted và target, trả về index nếu tìm thấy hoặc <Highlight>vị trí chèn</Highlight> nếu không.</Paragraph>
+        <CodeBlock title="search-insert.js">{`// LeetCode #35: Search Insert Position — O(log n)
+function searchInsert(nums, target) {
+    let left = 0, right = nums.length
 
-        <div className="my-4 space-y-2 text-sm text-gray-600 dark:text-slate-300">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/5 border border-red-500/20">
-                <span className="text-red-400 font-bold">❌</span>
-                <span><InlineCode>left {'<'} right</InlineCode> vs <InlineCode>left {'<='} right</InlineCode> — dùng sai sẽ bỏ sót phần tử hoặc vòng lặp vô hạn.</span>
-            </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/5 border border-red-500/20">
-                <span className="text-red-400 font-bold">❌</span>
-                <span><InlineCode>right = mid</InlineCode> vs <InlineCode>right = mid - 1</InlineCode> — phụ thuộc vào đang tìm giá trị cụ thể hay tìm biên.</span>
-            </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/5 border border-red-500/20">
-                <span className="text-red-400 font-bold">❌</span>
-                <span>Overflow khi tính mid: <InlineCode>(left + right) / 2</InlineCode> có thể overflow trong ngôn ngữ khác. Dùng <InlineCode>left + (right - left) / 2</InlineCode>.</span>
-            </div>
-        </div>
+    while (left < right) {
+        const mid = Math.floor((left + right) / 2)
+        if (nums[mid] < target) left = mid + 1
+        else right = mid
+    }
+
+    return left
+}
+
+// Ví dụ: nums = [1,3,5,6], target = 5 → return 2
+// target = 2 → return 1 (chèn vào giữa 1 và 3)
+// target = 7 → return 4 (chèn vào cuối) ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 5: FIRST BAD VERSION ───────── */}
+        <Heading2>Bài 5: First Bad Version (LeetCode #278)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Tìm <Highlight>version lỗi đầu tiên</Highlight>. API <InlineCode>isBadVersion(n)</InlineCode> cho biết version n có lỗi không.</Paragraph>
+        <CodeBlock title="first-bad-version.js">{`// LeetCode #278: First Bad Version — O(log n)
+function firstBadVersion(n) {
+    let left = 1, right = n
+
+    while (left < right) {
+        const mid = Math.floor((left + right) / 2)
+        if (isBadVersion(mid)) {
+            right = mid         // mid là bad → đáp án ≤ mid
+        } else {
+            left = mid + 1      // mid là good → đáp án > mid
+        }
+    }
+
+    return left                 // left === right = first bad version
+}
+
+// Ví dụ: n = 5, bad = 4
+// mid=3: good → left=4
+// mid=4: bad → right=4
+// left=4=right → return 4 ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 6: FIND MINIMUM IN ROTATED SORTED ARRAY ───────── */}
+        <Heading2>Bài 6: Find Minimum in Rotated Sorted Array (LeetCode #153)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Tìm <Highlight>giá trị nhỏ nhất</Highlight> trong mảng sorted bị xoay.</Paragraph>
+        <CodeBlock title="find-minimum.js">{`// LeetCode #153: Find Minimum in Rotated Sorted Array — O(log n)
+function findMin(nums) {
+    let left = 0, right = nums.length - 1
+
+    while (left < right) {
+        const mid = Math.floor((left + right) / 2)
+
+        if (nums[mid] > nums[right]) {
+            left = mid + 1      // Min ở nửa phải
+        } else {
+            right = mid         // Min ở nửa trái (hoặc tại mid)
+        }
+    }
+
+    return nums[left]
+}
+
+// Ví dụ: [3,4,5,1,2]
+// mid=2(5): 5>2 → min ở phải → left=3
+// mid=3(1): 1<2 → right=3
+// left=3=right → return nums[3]=1 ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 7: SEARCH A 2D MATRIX ───────── */}
+        <Heading2>Bài 7: Search a 2D Matrix (LeetCode #74)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Tìm target trong ma trận m×n sorted (mỗi hàng sorted, hàng sau lớn hơn hàng trước).</Paragraph>
+        <CodeBlock title="search-matrix.js">{`// LeetCode #74: Search a 2D Matrix — O(log(m*n))
+function searchMatrix(matrix, target) {
+    const m = matrix.length, n = matrix[0].length
+    let left = 0, right = m * n - 1
+
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2)
+        const val = matrix[Math.floor(mid / n)][mid % n]  // Chuyển index 1D → 2D
+
+        if (val === target) return true
+        else if (val < target) left = mid + 1
+        else right = mid - 1
+    }
+
+    return false
+}
+
+// Key insight: coi ma trận m×n như mảng 1D có m*n phần tử
+// index 1D → row = floor(i/n), col = i%n ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 8: FIND FIRST AND LAST POSITION ───────── */}
+        <Heading2>Bài 8: Find First and Last Position (LeetCode #34)</Heading2>
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>Tìm <Highlight>vị trí đầu và cuối</Highlight> của target trong mảng sorted.</Paragraph>
+        <CodeBlock title="find-first-last.js">{`// LeetCode #34: Find First and Last Position — O(log n)
+function searchRange(nums, target) {
+    return [findBound(nums, target, true), findBound(nums, target, false)]
+}
+
+function findBound(nums, target, isFirst) {
+    let left = 0, right = nums.length - 1, result = -1
+
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2)
+
+        if (nums[mid] === target) {
+            result = mid
+            if (isFirst) right = mid - 1    // Tìm tiếp bên trái
+            else left = mid + 1             // Tìm tiếp bên phải
+        } else if (nums[mid] < target) {
+            left = mid + 1
+        } else {
+            right = mid - 1
+        }
+    }
+
+    return result
+}
+
+// Ví dụ: nums = [5,7,7,8,8,10], target = 8
+// findBound(first): tìm 8 ở mid=4, tiếp tục trái → mid=3 → [3,...]
+// findBound(last): tìm 8 ở mid=3, tiếp tục phải → mid=4 → [...,4]
+// → [3, 4] ✓`}</CodeBlock>
 
         <Callout type="tip">
             Quy tắc: tìm <Highlight>giá trị cụ thể</Highlight> → <InlineCode>left {'<='} right</InlineCode>, <InlineCode>right = mid - 1</InlineCode>.
@@ -469,18 +582,91 @@ function search(nums, target) {
 // mid=5(1): left half [0,1] sorted, 0 in [0,1) → right=4
 // mid=4(0): found! return 4 ✓`}</CodeBlock>
 
-        <Heading2>Common Binary Search Mistakes</Heading2>
+        <Heading2>Problem 4: Search Insert Position (LeetCode #35)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Given sorted array and target, return index if found or <Highlight>insert position</Highlight> if not.</Paragraph>
+        <CodeBlock title="search-insert.js">{`// LeetCode #35: Search Insert Position — O(log n)
+function searchInsert(nums, target) {
+    let left = 0, right = nums.length
+    while (left < right) {
+        const mid = Math.floor((left + right) / 2)
+        if (nums[mid] < target) left = mid + 1
+        else right = mid
+    }
+    return left
+}
+// [1,3,5,6], target=5→2, target=2→1, target=7→4 ✓`}</CodeBlock>
 
-        <div className="my-4 space-y-2 text-sm text-gray-600 dark:text-slate-300">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/5 border border-red-500/20">
-                <span className="text-red-400 font-bold">❌</span>
-                <span><InlineCode>left {'<'} right</InlineCode> vs <InlineCode>left {'<='} right</InlineCode> — wrong choice causes missed elements or infinite loops.</span>
-            </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/5 border border-red-500/20">
-                <span className="text-red-400 font-bold">❌</span>
-                <span><InlineCode>right = mid</InlineCode> vs <InlineCode>right = mid - 1</InlineCode> — depends on finding exact value vs boundary.</span>
-            </div>
-        </div>
+        <Heading2>Problem 5: First Bad Version (LeetCode #278)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Find the <Highlight>first bad version</Highlight>. API <InlineCode>isBadVersion(n)</InlineCode> checks if version n is bad.</Paragraph>
+        <CodeBlock title="first-bad-version.js">{`// LeetCode #278: First Bad Version — O(log n)
+function firstBadVersion(n) {
+    let left = 1, right = n
+    while (left < right) {
+        const mid = Math.floor((left + right) / 2)
+        if (isBadVersion(mid)) right = mid
+        else left = mid + 1
+    }
+    return left
+}
+// n=5, bad=4: mid=3(good)→left=4, mid=4(bad)→right=4, return 4 ✓`}</CodeBlock>
+
+        <Heading2>Problem 6: Find Minimum in Rotated Sorted Array (LeetCode #153)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Find the <Highlight>minimum value</Highlight> in a rotated sorted array.</Paragraph>
+        <CodeBlock title="find-minimum.js">{`// LeetCode #153: Find Minimum in Rotated Sorted Array — O(log n)
+function findMin(nums) {
+    let left = 0, right = nums.length - 1
+    while (left < right) {
+        const mid = Math.floor((left + right) / 2)
+        if (nums[mid] > nums[right]) left = mid + 1
+        else right = mid
+    }
+    return nums[left]
+}
+// [3,4,5,1,2]: mid=2(5)>2→left=3, mid=3(1)<2→right=3, return 1 ✓`}</CodeBlock>
+
+        <Heading2>Problem 7: Search a 2D Matrix (LeetCode #74)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Find target in m×n sorted matrix (each row sorted, first element {'>'} last of previous row).</Paragraph>
+        <CodeBlock title="search-matrix.js">{`// LeetCode #74: Search a 2D Matrix — O(log(m*n))
+function searchMatrix(matrix, target) {
+    const m = matrix.length, n = matrix[0].length
+    let left = 0, right = m * n - 1
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2)
+        const val = matrix[Math.floor(mid / n)][mid % n]
+        if (val === target) return true
+        else if (val < target) left = mid + 1
+        else right = mid - 1
+    }
+    return false
+}
+// Treat m×n matrix as 1D array: row=floor(i/n), col=i%n ✓`}</CodeBlock>
+
+        <Heading2>Problem 8: Find First and Last Position (LeetCode #34)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Find <Highlight>first and last position</Highlight> of target in sorted array.</Paragraph>
+        <CodeBlock title="find-first-last.js">{`// LeetCode #34: Find First and Last Position — O(log n)
+function searchRange(nums, target) {
+    return [findBound(nums, target, true), findBound(nums, target, false)]
+}
+
+function findBound(nums, target, isFirst) {
+    let left = 0, right = nums.length - 1, result = -1
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2)
+        if (nums[mid] === target) {
+            result = mid
+            if (isFirst) right = mid - 1
+            else left = mid + 1
+        } else if (nums[mid] < target) left = mid + 1
+        else right = mid - 1
+    }
+    return result
+}
+// [5,7,7,8,8,10], target=8 → [3, 4] ✓`}</CodeBlock>
 
         <Callout type="tip">
             Rule: finding <Highlight>exact value</Highlight> → <InlineCode>left {'<='} right</InlineCode>, <InlineCode>right = mid - 1</InlineCode>.

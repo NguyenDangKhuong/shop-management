@@ -404,6 +404,7 @@ console.log('4'); // Call Stack
 
 // Output: 1 → 4 → 3 → 2`}</CodeBlock>
                 <Callout type="tip">This is the #1 JS interview question. Always remember: <Highlight>Sync → Microtask → Macrotask</Highlight>.</Callout>
+                <a href="/blogs/event-loop" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Async/Await & Promises" emoji="⚡" color="#fbbf24" summary="What is a Promise, 3 states, Promise.all/race/allSettled, async/await, error handling">
@@ -627,6 +628,7 @@ const result = await Promise.race([
 
                 <Callout type="warning">Always use <InlineCode>try/catch</InlineCode> with async/await. Unhandled Promise rejections will crash the Node.js process!</Callout>
                 <Callout type="tip">Interview tip: Being able to explain the difference between <InlineCode>Promise.all</InlineCode> vs <InlineCode>Promise.allSettled</InlineCode> and when to use each — very common question.</Callout>
+                <a href="/blogs/callback-promise-async-await" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="ES6+ Features" emoji="✨" color="#38bdf8" summary="destructuring, spread, modules, optional chaining, nullish coalescing">
@@ -646,6 +648,7 @@ const result = await Promise.race([
                         </div>
                     ))}
                 </div>
+                <a href="/blogs/ecmascript-features" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== vs ===, truthy/falsy, implicit conversion traps">
@@ -668,6 +671,7 @@ const result = await Promise.race([
         </div>
 
         <Heading3>2.2 Implement from Scratch (click for sample code)</Heading3>
+        <a href="/blogs/js-common-functions" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 See JS Common Functions collection →</a>
         <div className="my-4 space-y-2">
             <TopicModal title="Array.map / filter / reduce" emoji="💻" color="#fbbf24" summary="Re-implement the 3 most popular Array higher-order functions">
                 <CodeBlock title="myMap">{`Array.prototype.myMap = function(callback) {
@@ -1007,6 +1011,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                     ))}
                 </div>
                 <Callout type="warning"><strong>Rules of Hooks:</strong> 1) Only call at top level (not inside if/for/nested functions) 2) Only call in React components or custom hooks.</Callout>
+                <a href="/blogs/react-hooks-chi-tiet" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Component Patterns" emoji="🧩" color="#61DAFB" summary="HOC, Render Props, Compound, Controlled/Uncontrolled — when to use which">
@@ -1055,6 +1060,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
 // 5. Virtualization — only render visible items
 // react-window, react-virtuoso for lists with 10k+ items`}</CodeBlock>
                 <Callout type="warning">Don&apos;t premature optimize! Only optimize when React DevTools Profiler shows a real bottleneck.</Callout>
+                <a href="/blogs/react-performance" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
         </div>
 
@@ -1133,6 +1139,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     </table>
                 </div>
                 <Callout type="tip">Tools: <strong>Lighthouse</strong> (Chrome DevTools), <strong>web.dev/measure</strong>, <strong>PageSpeed Insights</strong>.</Callout>
+                <a href="/blogs/core-web-vitals" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
         </div>
 
@@ -1202,6 +1209,24 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
 
         <Heading3>4.2 Patterns to Practice (click for suggested LeetCode problems)</Heading3>
         <div className="my-4 space-y-2">
+            <TopicModal title="Hash Map / Hash Set" emoji="🗂️" color="#4ade80" summary="~15 problems — the most used pattern, almost every interview includes it">
+                <Paragraph>Use when: you need <Highlight>O(1) lookup</Highlight>, frequency counting, finding pair/complement, removing duplicates, or grouping by key.</Paragraph>
+                <div className="my-3 space-y-1.5">
+                    <div className="text-green-400 font-bold text-sm mb-2">📋 LeetCode Problems:</div>
+                    {[
+                        ['Easy', ['1. Two Sum', '217. Contains Duplicate', '242. Valid Anagram', '383. Ransom Note', '349. Intersection of Two Arrays']],
+                        ['Medium', ['49. Group Anagrams', '347. Top K Frequent Elements', '128. Longest Consecutive Sequence', '560. Subarray Sum Equals K', '36. Valid Sudoku', '438. Find All Anagrams in a String']],
+                    ].map(([level, problems]) => (
+                        <div key={level as string} className="p-2.5 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+                            <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : 'text-yellow-400'}`}>{level as string}</div>
+                            <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
+                        </div>
+                    ))}
+                </div>
+                <Callout type="tip">When a problem requires &quot;find in O(n)&quot; or &quot;count frequency&quot; → think HashMap immediately. This is the <Highlight>most fundamental pattern</Highlight> — most other patterns combine with HashMap.</Callout>
+                <a href="/blogs/hash-map-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+            </TopicModal>
+
             <TopicModal title="Two Pointers" emoji="👉👈" color="#4ade80" summary="~15 problems — use 2 pointers moving on sorted array or linked list">
                 <Paragraph>Use when: array is <Highlight>sorted</Highlight>, finding pair/triplet meeting a condition, or removing duplicates.</Paragraph>
                 <div className="my-3 space-y-1.5">
@@ -1217,6 +1242,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     ))}
                 </div>
                 <Callout type="tip">Template: left = 0, right = length-1, move based on condition. Always think: &quot;Which element can I eliminate?&quot;</Callout>
+                <a href="/blogs/two-pointers-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Sliding Window" emoji="🪟" color="#4ade80" summary="~10 problems — find optimal substring/subarray with fixed or variable window">
@@ -1235,6 +1261,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     ))}
                 </div>
                 <Callout type="tip">Template: expand right pointer, when window is invalid shrink left. Use HashMap to track frequency.</Callout>
+                <a href="/blogs/sliding-window-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="BFS / DFS" emoji="🌲" color="#4ade80" summary="~20 problems — graph and tree traversal, most important for Frontend (DOM tree!)">
@@ -1253,6 +1280,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     ))}
                 </div>
                 <Callout type="tip"><strong>BFS</strong> = use Queue (level order, shortest path). <strong>DFS</strong> = use Stack/Recursion (explore deep, backtrack). FE interviews prefer DFS as it relates to DOM traversal.</Callout>
+                <a href="/blogs/bfs-dfs-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Binary Search" emoji="🔍" color="#4ade80" summary="~10 problems — O(log n) search, not just on sorted arrays">
@@ -1269,6 +1297,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                         </div>
                     ))}
                 </div>
+                <a href="/blogs/binary-search-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Dynamic Programming" emoji="📊" color="#4ade80" summary="~15 Easy-Medium problems — hardest part but has clear patterns">
@@ -1286,6 +1315,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     ))}
                 </div>
                 <Callout type="tip">Approach: 1) Identify the state, 2) Write the recurrence relation, 3) Bottom-up or top-down + memo. Start with <strong>1D DP</strong> first.</Callout>
+                <a href="/blogs/dynamic-programming-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Backtracking" emoji="🔙" color="#4ade80" summary="~10 problems — generate all combinations, permutations, subsets">
@@ -1321,6 +1351,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     ))}
                 </div>
                 <Callout type="tip"><strong>Monotonic Stack</strong>: keep the stack always increasing/decreasing. Trick: when pushing a new element smaller/larger than top → pop and process. Classic for &quot;Next Greater Element&quot;.</Callout>
+                <a href="/blogs/stack-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
         </div>
 

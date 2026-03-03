@@ -288,6 +288,248 @@ function slidingWindow(s) {
 
     return result
 }`}</CodeBlock>
+
+        {/* ───────── BÀI 4: MAX AVERAGE SUBARRAY ───────── */}
+        <Heading2>Bài 4: Maximum Average Subarray I (LeetCode #643)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Cho mảng <InlineCode>nums</InlineCode> và số <InlineCode>k</InlineCode>, tìm <Highlight>subarray liên tiếp có trung bình lớn nhất</Highlight> (kích thước k).
+        </Paragraph>
+
+        <CodeBlock title="max-average.js">{`// LeetCode #643: Maximum Average Subarray I — O(n)
+function findMaxAverage(nums, k) {
+    let sum = 0
+    for (let i = 0; i < k; i++) sum += nums[i]
+    let maxSum = sum
+
+    for (let i = k; i < nums.length; i++) {
+        sum += nums[i] - nums[i - k]       // Slide: thêm mới, bỏ cũ
+        maxSum = Math.max(maxSum, sum)
+    }
+
+    return maxSum / k
+}
+
+// Ví dụ: nums = [1,12,-5,-6,50,3], k = 4
+// Window [1,12,-5,-6] sum=2, max=2
+// Slide: [12,-5,-6,50] sum=51, max=51
+// → maxSum/k = 51/4 = 12.75 ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 5: CONTAINS DUPLICATE II ───────── */}
+        <Heading2>Bài 5: Contains Duplicate II (LeetCode #219)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Kiểm tra xem có hai phần tử trùng <InlineCode>nums[i] === nums[j]</InlineCode> mà
+            <Highlight>|i - j| &lt;= k</Highlight> không.
+        </Paragraph>
+
+        <CodeBlock title="contains-duplicate-ii.js">{`// LeetCode #219: Contains Duplicate II — O(n)
+function containsNearbyDuplicate(nums, k) {
+    const window = new Set()                // Giữ tối đa k phần tử
+
+    for (let i = 0; i < nums.length; i++) {
+        if (window.has(nums[i])) return true  // Trùng trong window!
+        window.add(nums[i])
+        if (window.size > k) {
+            window.delete(nums[i - k])       // Window chỉ giữ k phần tử
+        }
+    }
+
+    return false
+}
+
+// Ví dụ: nums = [1,2,3,1], k = 3
+// i=0: window={1}
+// i=1: window={1,2}
+// i=2: window={1,2,3}
+// i=3: 1 có trong window! → return true ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 6: LONGEST REPEATING ───────── */}
+        <Heading2>Bài 6: Longest Repeating Character Replacement (LeetCode #424)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Cho chuỗi <InlineCode>s</InlineCode> và số <InlineCode>k</InlineCode>,
+            bạn được thay tối đa k ký tự. Tìm <Highlight>substring dài nhất chứa cùng ký tự</Highlight>.
+        </Paragraph>
+
+        <CodeBlock title="longest-repeating.js">{`// LeetCode #424: Longest Repeating Character Replacement — O(n)
+function characterReplacement(s, k) {
+    const count = {}
+    let left = 0, maxFreq = 0, maxLen = 0
+
+    for (let right = 0; right < s.length; right++) {
+        count[s[right]] = (count[s[right]] || 0) + 1
+        maxFreq = Math.max(maxFreq, count[s[right]])
+
+        // Window size - max frequency = số ký tự cần thay
+        // Nếu > k → thu hẹp
+        while ((right - left + 1) - maxFreq > k) {
+            count[s[left]]--
+            left++
+        }
+
+        maxLen = Math.max(maxLen, right - left + 1)
+    }
+
+    return maxLen
+}
+
+// Key insight: giữ ký tự xuất hiện nhiều nhất, thay đổi phần còn lại
+// Ví dụ: s = "AABABBA", k = 1
+// Window "AABA" → maxFreq=3(A), cần thay 1 → ok (k=1)
+// → maxLen = 4 ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 7: PERMUTATION IN STRING ───────── */}
+        <Heading2>Bài 7: Permutation in String (LeetCode #567)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Cho hai chuỗi <InlineCode>s1</InlineCode> và <InlineCode>s2</InlineCode>,
+            kiểm tra xem <Highlight>s2 chứa permutation của s1</Highlight> không.
+        </Paragraph>
+
+        <CodeBlock title="permutation-in-string.js">{`// LeetCode #567: Permutation in String — O(n)
+function checkInclusion(s1, s2) {
+    if (s1.length > s2.length) return false
+
+    const count = new Array(26).fill(0)
+    const a = 'a'.charCodeAt(0)
+
+    // Đếm ký tự s1 và trừ đi window đầu tiên của s2
+    for (let i = 0; i < s1.length; i++) {
+        count[s1.charCodeAt(i) - a]++
+        count[s2.charCodeAt(i) - a]--
+    }
+
+    if (count.every(c => c === 0)) return true
+
+    // Slide window trên s2
+    for (let i = s1.length; i < s2.length; i++) {
+        count[s2.charCodeAt(i) - a]--           // Thêm ký tự mới
+        count[s2.charCodeAt(i - s1.length) - a]++ // Bỏ ký tự cũ
+
+        if (count.every(c => c === 0)) return true
+    }
+
+    return false
+}
+
+// Ví dụ: s1 = "ab", s2 = "eidbaooo"
+// Window "ei": count khác 0 → slide
+// Window "id": count khác 0 → slide
+// Window "ba": count = tất cả 0 → true ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 8: MIN SIZE SUBARRAY SUM ───────── */}
+        <Heading2>Bài 8: Minimum Size Subarray Sum (LeetCode #209)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Cho mảng số dương và <InlineCode>target</InlineCode>, tìm <Highlight>subarray ngắn nhất</Highlight> có tổng
+            ≥ target.
+        </Paragraph>
+
+        <CodeBlock title="min-size-subarray.js">{`// LeetCode #209: Minimum Size Subarray Sum — O(n)
+function minSubArrayLen(target, nums) {
+    let left = 0, sum = 0, minLen = Infinity
+
+    for (let right = 0; right < nums.length; right++) {
+        sum += nums[right]                  // Mở rộng window
+
+        while (sum >= target) {
+            minLen = Math.min(minLen, right - left + 1)
+            sum -= nums[left]               // Thu hẹp window
+            left++
+        }
+    }
+
+    return minLen === Infinity ? 0 : minLen
+}
+
+// Ví dụ: target = 7, nums = [2,3,1,2,4,3]
+// right=3: sum=2+3+1+2=8 ≥ 7 → minLen=4, shrink
+// right=4: sum=3+1+2+4=10 ≥ 7 → minLen=3, shrink → sum=1+2+4=7 → minLen=3
+// right=5: sum=2+4+3=9 ≥ 7 → minLen=2 (subarray [4,3]) ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 9: FIND ALL ANAGRAMS ───────── */}
+        <Heading2>Bài 9: Find All Anagrams in a String (LeetCode #438)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Tìm <Highlight>tất cả vị trí bắt đầu</Highlight> của anagram của <InlineCode>p</InlineCode> trong <InlineCode>s</InlineCode>.
+        </Paragraph>
+
+        <CodeBlock title="find-anagrams.js">{`// LeetCode #438: Find All Anagrams — O(n)
+function findAnagrams(s, p) {
+    if (p.length > s.length) return []
+
+    const count = new Array(26).fill(0)
+    const a = 'a'.charCodeAt(0)
+    const result = []
+
+    for (let i = 0; i < p.length; i++) {
+        count[p.charCodeAt(i) - a]++
+        count[s.charCodeAt(i) - a]--
+    }
+
+    if (count.every(c => c === 0)) result.push(0)
+
+    for (let i = p.length; i < s.length; i++) {
+        count[s.charCodeAt(i) - a]--
+        count[s.charCodeAt(i - p.length) - a]++
+        if (count.every(c => c === 0)) result.push(i - p.length + 1)
+    }
+
+    return result
+}
+
+// Ví dụ: s = "cbaebabacd", p = "abc"
+// Window "cba" → anagram! push(0)
+// Window "bae" → no
+// ... Window "bac" → anagram! push(6)
+// → [0, 6] ✓`}</CodeBlock>
+
+        {/* ───────── BÀI 10: SLIDING WINDOW MAXIMUM ───────── */}
+        <Heading2>Bài 10: Sliding Window Maximum (LeetCode #239)</Heading2>
+
+        <Heading3>Đề bài</Heading3>
+        <Paragraph>
+            Trả về <Highlight>giá trị lớn nhất</Highlight> trong mỗi window kích thước <InlineCode>k</InlineCode>
+            khi trượt từ trái sang phải.
+        </Paragraph>
+
+        <CodeBlock title="sliding-window-max.js">{`// LeetCode #239: Sliding Window Maximum — O(n)
+function maxSlidingWindow(nums, k) {
+    const deque = []                        // Monotonic decreasing deque (lưu index)
+    const result = []
+
+    for (let i = 0; i < nums.length; i++) {
+        // Bỏ phần tử ngoài window
+        if (deque.length && deque[0] <= i - k) deque.shift()
+
+        // Bỏ phần tử nhỏ hơn nums[i] (giữ deque giảm dần)
+        while (deque.length && nums[deque[deque.length - 1]] <= nums[i]) {
+            deque.pop()
+        }
+
+        deque.push(i)
+
+        // Thêm max vào result khi window đủ k phần tử
+        if (i >= k - 1) {
+            result.push(nums[deque[0]])     // Đầu deque luôn là max
+        }
+    }
+
+    return result
+}
+
+// Ví dụ: nums = [1,3,-1,-3,5,3,6,7], k = 3
+// Window [1,3,-1] → max = 3
+// Window [3,-1,-3] → max = 3
+// Window [-1,-3,5] → max = 5
+// → [3, 3, 5, 5, 6, 7] ✓`}</CodeBlock>
     </>
 )
 
@@ -532,6 +774,144 @@ function slidingWindow(s) {
             <InlineCode>&quot;contiguous&quot;</InlineCode>, <InlineCode>&quot;consecutive&quot;</InlineCode> → think Sliding Window.
             Fixed size → Fixed Window. Variable size → Variable Window.
         </Callout>
+
+        <Heading2>Problem 4: Maximum Average Subarray I (LeetCode #643)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Given array <InlineCode>nums</InlineCode> and <InlineCode>k</InlineCode>, find the <Highlight>contiguous subarray with maximum average</Highlight> (size k).</Paragraph>
+        <CodeBlock title="max-average.js">{`// LeetCode #643: Maximum Average Subarray I — O(n)
+function findMaxAverage(nums, k) {
+    let sum = 0
+    for (let i = 0; i < k; i++) sum += nums[i]
+    let maxSum = sum
+
+    for (let i = k; i < nums.length; i++) {
+        sum += nums[i] - nums[i - k]
+        maxSum = Math.max(maxSum, sum)
+    }
+    return maxSum / k
+}
+// Example: [1,12,-5,-6,50,3], k=4 → maxSum=51, 51/4=12.75 ✓`}</CodeBlock>
+
+        <Heading2>Problem 5: Contains Duplicate II (LeetCode #219)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Check if there are two equal elements <InlineCode>nums[i] === nums[j]</InlineCode> with <Highlight>|i - j| &lt;= k</Highlight>.</Paragraph>
+        <CodeBlock title="contains-duplicate-ii.js">{`// LeetCode #219: Contains Duplicate II — O(n)
+function containsNearbyDuplicate(nums, k) {
+    const window = new Set()
+    for (let i = 0; i < nums.length; i++) {
+        if (window.has(nums[i])) return true
+        window.add(nums[i])
+        if (window.size > k) window.delete(nums[i - k])
+    }
+    return false
+}
+// Example: [1,2,3,1], k=3 → true ✓`}</CodeBlock>
+
+        <Heading2>Problem 6: Longest Repeating Character Replacement (LeetCode #424)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Given string <InlineCode>s</InlineCode> and <InlineCode>k</InlineCode>, you can replace at most k characters. Find the <Highlight>longest substring with same character</Highlight>.</Paragraph>
+        <CodeBlock title="longest-repeating.js">{`// LeetCode #424: Longest Repeating Character Replacement — O(n)
+function characterReplacement(s, k) {
+    const count = {}
+    let left = 0, maxFreq = 0, maxLen = 0
+
+    for (let right = 0; right < s.length; right++) {
+        count[s[right]] = (count[s[right]] || 0) + 1
+        maxFreq = Math.max(maxFreq, count[s[right]])
+
+        while ((right - left + 1) - maxFreq > k) {
+            count[s[left]]--; left++
+        }
+        maxLen = Math.max(maxLen, right - left + 1)
+    }
+    return maxLen
+}
+// Key: keep the most frequent char, replace the rest
+// Example: s = "AABABBA", k = 1 → maxLen = 4 ✓`}</CodeBlock>
+
+        <Heading2>Problem 7: Permutation in String (LeetCode #567)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Check if <InlineCode>s2</InlineCode> contains a <Highlight>permutation of s1</Highlight>.</Paragraph>
+        <CodeBlock title="permutation-in-string.js">{`// LeetCode #567: Permutation in String — O(n)
+function checkInclusion(s1, s2) {
+    if (s1.length > s2.length) return false
+    const count = new Array(26).fill(0)
+    const a = 'a'.charCodeAt(0)
+
+    for (let i = 0; i < s1.length; i++) {
+        count[s1.charCodeAt(i) - a]++
+        count[s2.charCodeAt(i) - a]--
+    }
+    if (count.every(c => c === 0)) return true
+
+    for (let i = s1.length; i < s2.length; i++) {
+        count[s2.charCodeAt(i) - a]--
+        count[s2.charCodeAt(i - s1.length) - a]++
+        if (count.every(c => c === 0)) return true
+    }
+    return false
+}
+// Example: s1="ab", s2="eidbaooo" → window "ba" matches → true ✓`}</CodeBlock>
+
+        <Heading2>Problem 8: Minimum Size Subarray Sum (LeetCode #209)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Given array of positive integers and <InlineCode>target</InlineCode>, find the <Highlight>shortest subarray</Highlight> with sum ≥ target.</Paragraph>
+        <CodeBlock title="min-size-subarray.js">{`// LeetCode #209: Minimum Size Subarray Sum — O(n)
+function minSubArrayLen(target, nums) {
+    let left = 0, sum = 0, minLen = Infinity
+
+    for (let right = 0; right < nums.length; right++) {
+        sum += nums[right]
+        while (sum >= target) {
+            minLen = Math.min(minLen, right - left + 1)
+            sum -= nums[left]; left++
+        }
+    }
+    return minLen === Infinity ? 0 : minLen
+}
+// Example: target=7, [2,3,1,2,4,3] → minLen=2 ([4,3]) ✓`}</CodeBlock>
+
+        <Heading2>Problem 9: Find All Anagrams in a String (LeetCode #438)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Find <Highlight>all start indices</Highlight> of anagrams of <InlineCode>p</InlineCode> in <InlineCode>s</InlineCode>.</Paragraph>
+        <CodeBlock title="find-anagrams.js">{`// LeetCode #438: Find All Anagrams — O(n)
+function findAnagrams(s, p) {
+    if (p.length > s.length) return []
+    const count = new Array(26).fill(0)
+    const a = 'a'.charCodeAt(0), result = []
+
+    for (let i = 0; i < p.length; i++) {
+        count[p.charCodeAt(i) - a]++
+        count[s.charCodeAt(i) - a]--
+    }
+    if (count.every(c => c === 0)) result.push(0)
+
+    for (let i = p.length; i < s.length; i++) {
+        count[s.charCodeAt(i) - a]--
+        count[s.charCodeAt(i - p.length) - a]++
+        if (count.every(c => c === 0)) result.push(i - p.length + 1)
+    }
+    return result
+}
+// Example: s="cbaebabacd", p="abc" → [0, 6] ✓`}</CodeBlock>
+
+        <Heading2>Problem 10: Sliding Window Maximum (LeetCode #239)</Heading2>
+        <Heading3>Problem</Heading3>
+        <Paragraph>Return the <Highlight>maximum value</Highlight> in each window of size <InlineCode>k</InlineCode> as it slides left to right.</Paragraph>
+        <CodeBlock title="sliding-window-max.js">{`// LeetCode #239: Sliding Window Maximum — O(n)
+function maxSlidingWindow(nums, k) {
+    const deque = []    // Monotonic decreasing deque (stores indices)
+    const result = []
+
+    for (let i = 0; i < nums.length; i++) {
+        if (deque.length && deque[0] <= i - k) deque.shift()
+        while (deque.length && nums[deque[deque.length - 1]] <= nums[i]) deque.pop()
+        deque.push(i)
+        if (i >= k - 1) result.push(nums[deque[0]])
+    }
+    return result
+}
+// Example: [1,3,-1,-3,5,3,6,7], k=3 → [3,3,5,5,6,7] ✓`}</CodeBlock>
     </>
 )
 
