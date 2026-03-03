@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
 
 interface TweetMedia {
     type: 'photo' | 'video' | 'animated_gif'
@@ -71,7 +71,41 @@ function formatTweetText(text: string): string {
     return cleaned
 }
 
-function MediaGrid({ media, videoProxyUrl }: { media: TweetMedia[]; videoProxyUrl: string }) {
+function ImagePreview({ src, onClose }: { src: string; onClose: () => void }) {
+    const overlayRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+        document.addEventListener('keydown', handleKey)
+        document.body.style.overflow = 'hidden'
+        return () => {
+            document.removeEventListener('keydown', handleKey)
+            document.body.style.overflow = ''
+        }
+    }, [onClose])
+
+    return (
+        <div
+            ref={overlayRef}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm animate-[fadeIn_0.15s_ease-out]"
+            onClick={(e) => { if (e.target === overlayRef.current) onClose() }}
+        >
+            <button
+                onClick={onClose}
+                className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white text-xl transition cursor-pointer z-10"
+            >
+                ✕
+            </button>
+            <img
+                src={src}
+                alt=""
+                className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl animate-[scaleIn_0.2s_ease-out]"
+            />
+        </div>
+    )
+}
+
+function MediaGrid({ media, videoProxyUrl, onImageClick }: { media: TweetMedia[]; videoProxyUrl: string; onImageClick?: (url: string) => void }) {
     if (media.length === 0) return null
 
     const gridClass = media.length === 1
@@ -91,13 +125,14 @@ function MediaGrid({ media, videoProxyUrl }: { media: TweetMedia[]; videoProxyUr
                             key={i}
                             src={m.url}
                             alt=""
-                            className={`w-full object-cover ${media.length === 1
+                            className={`w-full object-cover cursor-pointer hover:brightness-90 transition ${media.length === 1
                                 ? 'max-h-[500px] rounded-2xl'
                                 : media.length === 3 && i === 0
                                     ? 'row-span-2 h-full'
                                     : 'aspect-square'
                                 }`}
                             loading="lazy"
+                            onClick={() => onImageClick?.(m.url)}
                         />
                     )
                 }
@@ -130,7 +165,7 @@ function MediaGrid({ media, videoProxyUrl }: { media: TweetMedia[]; videoProxyUr
     )
 }
 
-function TweetCard({ tweet, videoProxyUrl, onUserClick }: { tweet: TweetData; videoProxyUrl: string; onUserClick?: (username: string) => void }) {
+function TweetCard({ tweet, videoProxyUrl, onUserClick, onImageClick }: { tweet: TweetData; videoProxyUrl: string; onUserClick?: (username: string) => void; onImageClick?: (url: string) => void }) {
     return (
         <article className="px-4 py-3 border-b border-white/5 hover:bg-white/[0.02] transition">
             {/* Retweet indicator */}
@@ -168,7 +203,7 @@ function TweetCard({ tweet, videoProxyUrl, onUserClick }: { tweet: TweetData; vi
                     />
 
                     {/* Media */}
-                    <MediaGrid media={tweet.media} videoProxyUrl={videoProxyUrl} />
+                    <MediaGrid media={tweet.media} videoProxyUrl={videoProxyUrl} onImageClick={onImageClick} />
 
                     {/* Quoted tweet */}
                     {tweet.quotedTweet && (
@@ -180,7 +215,7 @@ function TweetCard({ tweet, videoProxyUrl, onUserClick }: { tweet: TweetData; vi
                                     <button onClick={() => onUserClick?.(tweet.quotedTweet!.user.screenName)} className="text-slate-500 text-xs hover:text-[#1d9bf0] hover:underline transition cursor-pointer">@{tweet.quotedTweet.user.screenName}</button>
                                 </div>
                                 <p className="text-sm text-slate-300 mt-1" dangerouslySetInnerHTML={{ __html: formatTweetText(tweet.quotedTweet.text) }} />
-                                <MediaGrid media={tweet.quotedTweet.media} videoProxyUrl={videoProxyUrl} />
+                                <MediaGrid media={tweet.quotedTweet.media} videoProxyUrl={videoProxyUrl} onImageClick={onImageClick} />
                             </div>
                         </div>
                     )}
@@ -222,6 +257,7 @@ export function GraphQLTweets({ username, onUserClick }: GraphQLTweetsProps) {
     const [error, setError] = useState('')
     const [cursorBottom, setCursorBottom] = useState('')
     const [hasMore, setHasMore] = useState(true)
+    const [previewImage, setPreviewImage] = useState<string | null>(null)
 
     const videoProxyUrl = process.env.NEXT_PUBLIC_VIDEO_PROXY_URL || ''
 
@@ -291,39 +327,56 @@ export function GraphQLTweets({ username, onUserClick }: GraphQLTweetsProps) {
     if (tweets.length === 0) return null
 
     return (
-        <div className="bg-slate-900/40 rounded-2xl border border-white/10 overflow-hidden">
-            {/* Header */}
-            <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
-                <img src={tweets[0].user.avatar} alt="" className="w-8 h-8 rounded-full" />
-                <div>
-                    <span className="font-bold text-white text-sm">{tweets[0].user.name}</span>
-                    <span className="text-slate-500 text-sm ml-1.5">@{username}</span>
+        <>
+            <div className="bg-slate-900/40 rounded-2xl border border-white/10 overflow-hidden">
+                {/* Header */}
+                <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
+                    <img src={tweets[0].user.avatar} alt="" className="w-8 h-8 rounded-full" />
+                    <div>
+                        <span className="font-bold text-white text-sm">{tweets[0].user.name}</span>
+                        <span className="text-slate-500 text-sm ml-1.5">@{username}</span>
+                    </div>
+                    <span className="ml-auto text-slate-600 text-xs">{tweets.length} tweets</span>
                 </div>
-                <span className="ml-auto text-slate-600 text-xs">{tweets.length} tweets</span>
+
+                {/* Tweets */}
+                {tweets.map(tweet => (
+                    <TweetCard key={tweet.id} tweet={tweet} videoProxyUrl={videoProxyUrl} onUserClick={onUserClick} onImageClick={setPreviewImage} />
+                ))}
+
+                {/* Load More */}
+                {hasMore && (
+                    <div className="px-4 py-4 text-center">
+                        <button
+                            onClick={() => fetchTweets(cursorBottom)}
+                            disabled={loadingMore}
+                            className="px-6 py-2.5 rounded-full bg-[#1d9bf0] text-white text-sm font-semibold hover:bg-[#1a8cd8] transition disabled:opacity-50"
+                        >
+                            {loadingMore ? (
+                                <span className="flex items-center gap-2">
+                                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    Loading...
+                                </span>
+                            ) : 'Load more tweets'}
+                        </button>
+                    </div>
+                )}
             </div>
 
-            {/* Tweets */}
-            {tweets.map(tweet => (
-                <TweetCard key={tweet.id} tweet={tweet} videoProxyUrl={videoProxyUrl} onUserClick={onUserClick} />
-            ))}
+            {/* Image Preview Lightbox */}
+            {previewImage && <ImagePreview src={previewImage} onClose={() => setPreviewImage(null)} />}
 
-            {/* Load More */}
-            {hasMore && (
-                <div className="px-4 py-4 text-center">
-                    <button
-                        onClick={() => fetchTweets(cursorBottom)}
-                        disabled={loadingMore}
-                        className="px-6 py-2.5 rounded-full bg-[#1d9bf0] text-white text-sm font-semibold hover:bg-[#1a8cd8] transition disabled:opacity-50"
-                    >
-                        {loadingMore ? (
-                            <span className="flex items-center gap-2">
-                                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                Loading...
-                            </span>
-                        ) : 'Load more tweets'}
-                    </button>
-                </div>
-            )}
-        </div>
+            {/* Keyframe animations for lightbox */}
+            <style jsx global>{`
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes scaleIn {
+                from { opacity: 0; transform: scale(0.9); }
+                to { opacity: 1; transform: scale(1); }
+            }
+        `}</style>
+        </>
     )
 }
