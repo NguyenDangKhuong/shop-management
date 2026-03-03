@@ -1157,54 +1157,251 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
             Frontend engineers also do DSA — but difficulty is usually one level easier than backend.
         </Paragraph>
 
-        <Heading3>4.1 Data Structures (must master)</Heading3>
-        <div className="my-4 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
-                <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Data Structure</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Priority</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">When to use</th>
-                    </tr>
-                </thead>
-                <tbody className="text-gray-600 dark:text-slate-300">
-                    <tr className="border-b border-gray-100 dark:border-white/5">
-                        <td className="p-3 font-semibold text-green-400">Array / String</td>
-                        <td className="p-3">⭐ Must know</td>
-                        <td className="p-3">Two pointers, sliding window</td>
-                    </tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5">
-                        <td className="p-3 font-semibold text-green-400">HashMap / HashSet</td>
-                        <td className="p-3">⭐ Must know</td>
-                        <td className="p-3">Frequency count, cache, lookup</td>
-                    </tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5">
-                        <td className="p-3 font-semibold text-green-400">Stack / Queue</td>
-                        <td className="p-3">⭐ Must know</td>
-                        <td className="p-3">Valid parentheses, BFS</td>
-                    </tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5">
-                        <td className="p-3 font-semibold text-blue-400">Linked List</td>
-                        <td className="p-3">⭐⭐ Important</td>
-                        <td className="p-3">Reverse, cycle detect, merge</td>
-                    </tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5">
-                        <td className="p-3 font-semibold text-blue-400">Tree / Binary Tree</td>
-                        <td className="p-3">⭐⭐ Important</td>
-                        <td className="p-3">DFS, BFS, DOM tree!</td>
-                    </tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5">
-                        <td className="p-3 font-semibold text-blue-400">Graph</td>
-                        <td className="p-3">⭐⭐ Important</td>
-                        <td className="p-3">BFS/DFS, dependency resolution</td>
-                    </tr>
-                    <tr>
-                        <td className="p-3 font-semibold text-purple-400">Heap / Trie</td>
-                        <td className="p-3">⭐⭐⭐ Advanced</td>
-                        <td className="p-3">Top K, autocomplete</td>
-                    </tr>
-                </tbody>
-            </table>
+        <Heading3>4.1 Data Structures (click for details)</Heading3>
+        <a href="/blogs/data-types-structures" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read Data Types &amp; Structures article →</a>
+        <div className="my-4 space-y-2">
+            <TopicModal title="Array / String" emoji="📦" color="#4ade80" summary="⭐ Must know — foundation of all DSA problems, two pointers, sliding window">
+                <Paragraph><Highlight>Array</Highlight> stores elements contiguously in memory → O(1) access by index. <Highlight>String</Highlight> in JS is immutable — each change creates a new string.</Paragraph>
+                <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-gray-200 dark:border-white/10"><th className="text-left p-2 text-slate-400">Operation</th><th className="text-left p-2 text-slate-400">Time</th><th className="text-left p-2 text-slate-400">Note</th></tr></thead>
+                        <tbody className="text-gray-600 dark:text-slate-300">
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Access [i]</td><td className="p-2 text-green-400">O(1)</td><td className="p-2">Random access</td></tr>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Push / Pop (end)</td><td className="p-2 text-green-400">O(1)</td><td className="p-2">Add/remove from end</td></tr>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Shift / Unshift (start)</td><td className="p-2 text-red-400">O(n)</td><td className="p-2">Must shift all elements</td></tr>
+                            <tr><td className="p-2">Search / includes</td><td className="p-2 text-yellow-400">O(n)</td><td className="p-2">Linear scan</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <CodeBlock title="common-array-patterns.js">{`// Swap elements
+[arr[i], arr[j]] = [arr[j], arr[i]]
+
+// Remove duplicates (preserve order)
+const unique = [...new Set(arr)]
+
+// Flatten nested arrays
+arr.flat(Infinity)
+
+// Check palindrome
+const isPalin = s => s === s.split('').reverse().join('')`}</CodeBlock>
+                <Callout type="tip">Interview: 80% of LeetCode problems involve Arrays/Strings. Master <Highlight>Two Pointers</Highlight> and <Highlight>Sliding Window</Highlight> to solve most of them.</Callout>
+            </TopicModal>
+
+            <TopicModal title="HashMap / HashSet" emoji="🗂️" color="#4ade80" summary="⭐ Must know — frequency count, cache, O(1) lookup">
+                <Paragraph><Highlight>HashMap</Highlight> (Map) stores key→value, <Highlight>HashSet</Highlight> (Set) stores unique keys only. Both allow add/remove/find in average <Highlight>O(1)</Highlight>.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">JS: Object vs Map vs Set</div>
+                        <div className="text-slate-300 text-sm mt-1"><strong>Object</strong>: keys must be string/symbol, no guaranteed order.<br /><strong>Map</strong>: any key type, insertion order, has <InlineCode>.size</InlineCode>.<br /><strong>Set</strong>: unique values only, perfect for duplicate checks.</div>
+                    </div>
+                </div>
+                <CodeBlock title="hashmap-patterns.js">{`// Count frequency
+const freq = new Map()
+for (const c of str) freq.set(c, (freq.get(c) || 0) + 1)
+
+// Check duplicates
+const hasDup = arr => new Set(arr).size !== arr.length
+
+// Two Sum pattern
+const map = new Map()
+for (let i = 0; i < nums.length; i++) {
+    const comp = target - nums[i]
+    if (map.has(comp)) return [map.get(comp), i]
+    map.set(nums[i], i)
+}`}</CodeBlock>
+                <Callout type="tip">If brute force is O(n²), think HashMap — usually reduces to <Highlight>O(n)</Highlight>.</Callout>
+                <a href="/blogs/hash-map-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+            </TopicModal>
+
+            <TopicModal title="Stack / Queue" emoji="📚" color="#4ade80" summary="⭐ Must know — valid parentheses, BFS, monotonic stack">
+                <Paragraph><Highlight>Stack</Highlight> = LIFO (Last In First Out), <Highlight>Queue</Highlight> = FIFO (First In First Out). Simple yet powerful.</Paragraph>
+                <div className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
+                        <div className="text-blue-400 font-bold text-sm mb-2">📚 Stack (LIFO)</div>
+                        <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                            <li>• push / pop: O(1)</li>
+                            <li>• Valid Parentheses</li>
+                            <li>• Undo / Redo</li>
+                            <li>• Call Stack, DFS</li>
+                        </ul>
+                    </div>
+                    <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
+                        <div className="text-green-400 font-bold text-sm mb-2">🚶 Queue (FIFO)</div>
+                        <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                            <li>• enqueue / dequeue: O(1)*</li>
+                            <li>• BFS traversal</li>
+                            <li>• Task scheduling</li>
+                            <li>• Event Loop!</li>
+                        </ul>
+                    </div>
+                </div>
+                <CodeBlock title="stack-queue-js.js">{`// Stack in JS (using Array)
+const stack = []
+stack.push(1); stack.push(2)
+stack.pop()      // 2, stack = [1]
+
+// Queue in JS (shift() is O(n)!)
+const queue = []
+queue.push(1); queue.push(2)
+queue.shift()    // 1, queue = [2]
+
+// ⚠️ O(1) queue: use Linked List or obj+pointer`}</CodeBlock>
+                <Callout type="warning">JS Array <InlineCode>shift()</InlineCode> is <Highlight>O(n)</Highlight>! In interviews, mention Linked List-based queue for optimal performance.</Callout>
+                <a href="/blogs/stack-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+            </TopicModal>
+
+            <TopicModal title="Linked List" emoji="🔗" color="#60a5fa" summary="⭐⭐ Important — reverse, cycle detect, merge sorted lists">
+                <Paragraph>Each node contains <InlineCode>value</InlineCode> + <InlineCode>next</InlineCode> pointer. No random access (O(n)), but insert/delete at head is <Highlight>O(1)</Highlight>.</Paragraph>
+                <CodeBlock title="linked-list.js">{`class ListNode {
+    constructor(val, next = null) {
+        this.val = val; this.next = next
+    }
+}
+
+// Reverse Linked List — O(n)
+function reverseList(head) {
+    let prev = null, curr = head
+    while (curr) {
+        const next = curr.next
+        curr.next = prev
+        prev = curr
+        curr = next
+    }
+    return prev
+}
+
+// Detect Cycle — Floyd's Tortoise & Hare
+function hasCycle(head) {
+    let slow = head, fast = head
+    while (fast && fast.next) {
+        slow = slow.next
+        fast = fast.next.next
+        if (slow === fast) return true
+    }
+    return false
+}`}</CodeBlock>
+                <Callout type="tip">Key techniques: <Highlight>Dummy node</Highlight> (avoid edge cases), <Highlight>Fast/Slow pointers</Highlight>, <Highlight>Reverse</Highlight> (3 vars: prev/curr/next).</Callout>
+            </TopicModal>
+
+            <TopicModal title="Tree / Binary Tree" emoji="🌳" color="#60a5fa" summary="⭐⭐ Important — DFS, BFS, DOM tree, BST">
+                <Paragraph>Tree = acyclic graph. <Highlight>Binary Tree</Highlight> = max 2 children per node. <Highlight>BST</Highlight> = left &lt; root &lt; right.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">3 DFS Traversals</div>
+                        <div className="text-slate-300 text-sm mt-1"><strong>Inorder</strong> (L→Root→R): BST → sorted<br /><strong>Preorder</strong> (Root→L→R): copy/serialize<br /><strong>Postorder</strong> (L→R→Root): delete/size</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">Frontend connection</div>
+                        <div className="text-slate-300 text-sm mt-1"><strong>DOM</strong> is a tree! React Virtual DOM is also a tree. Understanding trees = understanding React diff.</div>
+                    </div>
+                </div>
+                <CodeBlock title="tree-traversal.js">{`// DFS — Max Depth (classic interview question)
+function maxDepth(root) {
+    if (!root) return 0
+    return 1 + Math.max(maxDepth(root.left), maxDepth(root.right))
+}
+
+// BFS — Level Order
+function levelOrder(root) {
+    if (!root) return []
+    const result = [], queue = [root]
+    while (queue.length) {
+        const level = []
+        for (let i = queue.length; i > 0; i--) {
+            const node = queue.shift()
+            level.push(node.val)
+            if (node.left) queue.push(node.left)
+            if (node.right) queue.push(node.right)
+        }
+        result.push(level)
+    }
+    return result
+}`}</CodeBlock>
+                <Callout type="tip">Most tree problems use <Highlight>recursion</Highlight>. Base case: <InlineCode>if (!root) return</InlineCode>. Think: &quot;if I know left+right results, how do I compute root?&quot;</Callout>
+                <a href="/blogs/bfs-dfs-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read BFS/DFS article →</a>
+            </TopicModal>
+
+            <TopicModal title="Graph" emoji="🕸️" color="#60a5fa" summary="⭐⭐ Important — BFS/DFS, cycle detection, topological sort">
+                <Paragraph>Graph = vertices + edges. Represented using <Highlight>adjacency list</Highlight> (most common).</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">Graph Types</div>
+                        <div className="text-slate-300 text-sm mt-1"><strong>Directed</strong>: A→B — dependencies, courses<br /><strong>Undirected</strong>: A↔B — social networks<br /><strong>Weighted</strong>: edges have costs — Dijkstra</div>
+                    </div>
+                </div>
+                <CodeBlock title="graph-basics.js">{`// Adjacency List
+const graph = { A: ['B','C'], B: ['D'], C: ['D'], D: [] }
+
+// DFS on graph (NEED visited set!)
+function dfs(graph, start) {
+    const visited = new Set()
+    function explore(node) {
+        if (visited.has(node)) return
+        visited.add(node)
+        for (const next of graph[node]) explore(next)
+    }
+    explore(start)
+}
+
+// BFS on graph
+function bfs(graph, start) {
+    const visited = new Set([start]), queue = [start]
+    while (queue.length) {
+        const node = queue.shift()
+        for (const next of graph[node])
+            if (!visited.has(next)) { visited.add(next); queue.push(next) }
+    }
+}`}</CodeBlock>
+                <Callout type="warning">Graphs can have <Highlight>cycles</Highlight> → always use a <InlineCode>visited</InlineCode> set. Forgetting = infinite loop!</Callout>
+            </TopicModal>
+
+            <TopicModal title="Heap / Trie" emoji="⛰️" color="#a78bfa" summary="⭐⭐⭐ Advanced — Top K elements, autocomplete, priority queue">
+                <Paragraph><Highlight>Heap</Highlight> = get min/max O(1), insert/delete O(log n). <Highlight>Trie</Highlight> = prefix-based search.</Paragraph>
+                <div className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/20 p-4">
+                        <div className="text-yellow-400 font-bold text-sm mb-2">⛰️ Heap</div>
+                        <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                            <li>• Top K elements</li>
+                            <li>• Merge K sorted lists</li>
+                            <li>• Median of stream</li>
+                            <li>• JS: no built-in!</li>
+                        </ul>
+                    </div>
+                    <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-4">
+                        <div className="text-purple-400 font-bold text-sm mb-2">🔤 Trie</div>
+                        <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                            <li>• Autocomplete</li>
+                            <li>• Spell checker</li>
+                            <li>• Word search</li>
+                            <li>• IP routing</li>
+                        </ul>
+                    </div>
+                </div>
+                <CodeBlock title="trie.js">{`// Trie — Prefix Tree
+class TrieNode {
+    constructor() { this.children = {}; this.isEnd = false }
+}
+class Trie {
+    constructor() { this.root = new TrieNode() }
+    insert(word) {
+        let node = this.root
+        for (const c of word) {
+            if (!node.children[c]) node.children[c] = new TrieNode()
+            node = node.children[c]
+        }
+        node.isEnd = true
+    }
+    search(word) {
+        let node = this.root
+        for (const c of word) {
+            if (!node.children[c]) return false
+            node = node.children[c]
+        }
+        return node.isEnd
+    }
+}`}</CodeBlock>
+                <Callout type="tip">JS has no built-in Heap. In interviews: &quot;I&apos;ll use a MinHeap, assuming it&apos;s available&quot; then focus on the main logic.</Callout>
+            </TopicModal>
         </div>
 
         <Heading3>4.2 Patterns to Practice (click for suggested LeetCode problems)</Heading3>

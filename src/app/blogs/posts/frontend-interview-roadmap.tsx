@@ -1160,54 +1160,251 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
             Frontend cũng phải code DSA — nhưng mức độ thường dễ hơn backend 1 bậc.
         </Paragraph>
 
-        <Heading3>4.1 Data Structures (phải thành thạo)</Heading3>
-        <div className="my-4 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
-                <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Data Structure</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Mức độ</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Khi nào dùng</th>
-                    </tr>
-                </thead>
-                <tbody className="text-gray-600 dark:text-slate-300">
-                    <tr className="border-b border-gray-100 dark:border-white/5">
-                        <td className="p-3 font-semibold text-green-400">Array / String</td>
-                        <td className="p-3">⭐ Bắt buộc</td>
-                        <td className="p-3">Two pointers, sliding window</td>
-                    </tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5">
-                        <td className="p-3 font-semibold text-green-400">HashMap / HashSet</td>
-                        <td className="p-3">⭐ Bắt buộc</td>
-                        <td className="p-3">Frequency count, cache, lookup</td>
-                    </tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5">
-                        <td className="p-3 font-semibold text-green-400">Stack / Queue</td>
-                        <td className="p-3">⭐ Bắt buộc</td>
-                        <td className="p-3">Valid parentheses, BFS</td>
-                    </tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5">
-                        <td className="p-3 font-semibold text-blue-400">Linked List</td>
-                        <td className="p-3">⭐⭐ Quan trọng</td>
-                        <td className="p-3">Reverse, cycle detect, merge</td>
-                    </tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5">
-                        <td className="p-3 font-semibold text-blue-400">Tree / Binary Tree</td>
-                        <td className="p-3">⭐⭐ Quan trọng</td>
-                        <td className="p-3">DFS, BFS, DOM tree!</td>
-                    </tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5">
-                        <td className="p-3 font-semibold text-blue-400">Graph</td>
-                        <td className="p-3">⭐⭐ Quan trọng</td>
-                        <td className="p-3">BFS/DFS, dependency resolution</td>
-                    </tr>
-                    <tr>
-                        <td className="p-3 font-semibold text-purple-400">Heap / Trie</td>
-                        <td className="p-3">⭐⭐⭐ Nâng cao</td>
-                        <td className="p-3">Top K, autocomplete</td>
-                    </tr>
-                </tbody>
-            </table>
+        <Heading3>4.1 Data Structures (click để xem chi tiết)</Heading3>
+        <a href="/blogs/data-types-structures" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết Data Types &amp; Structures →</a>
+        <div className="my-4 space-y-2">
+            <TopicModal title="Array / String" emoji="📦" color="#4ade80" summary="⭐ Bắt buộc — nền tảng của mọi bài DSA, two pointers, sliding window">
+                <Paragraph><Highlight>Array</Highlight> lưu phần tử liền kề trong bộ nhớ → truy cập O(1) bằng index. <Highlight>String</Highlight> trong JS là immutable — mỗi lần thay đổi tạo string mới.</Paragraph>
+                <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-gray-200 dark:border-white/10"><th className="text-left p-2 text-slate-400">Thao tác</th><th className="text-left p-2 text-slate-400">Time</th><th className="text-left p-2 text-slate-400">Ghi chú</th></tr></thead>
+                        <tbody className="text-gray-600 dark:text-slate-300">
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Access [i]</td><td className="p-2 text-green-400">O(1)</td><td className="p-2">Random access</td></tr>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Push / Pop (cuối)</td><td className="p-2 text-green-400">O(1)</td><td className="p-2">Thêm/xóa cuối mảng</td></tr>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Shift / Unshift (đầu)</td><td className="p-2 text-red-400">O(n)</td><td className="p-2">Phải dịch toàn bộ</td></tr>
+                            <tr><td className="p-2">Search / includes</td><td className="p-2 text-yellow-400">O(n)</td><td className="p-2">Linear scan</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <CodeBlock title="common-array-patterns.js">{`// Swap hai phần tử
+[arr[i], arr[j]] = [arr[j], arr[i]]
+
+// Remove duplicates (giữ thứ tự)
+const unique = [...new Set(arr)]
+
+// Flatten nested arrays
+arr.flat(Infinity)
+
+// Check palindrome
+const isPalin = s => s === s.split('').reverse().join('')`}</CodeBlock>
+                <Callout type="tip">Interview: 80% bài LeetCode liên quan đến Array/String. Thành thạo <Highlight>Two Pointers</Highlight> và <Highlight>Sliding Window</Highlight> sẽ giải được phần lớn.</Callout>
+            </TopicModal>
+
+            <TopicModal title="HashMap / HashSet" emoji="🗂️" color="#4ade80" summary="⭐ Bắt buộc — frequency count, cache, lookup O(1)">
+                <Paragraph><Highlight>HashMap</Highlight> (Map) lưu key→value, <Highlight>HashSet</Highlight> (Set) chỉ lưu key unique. Cả hai cho phép thêm/xóa/tìm trong <Highlight>O(1)</Highlight> trung bình.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">JS: Object vs Map vs Set</div>
+                        <div className="text-slate-300 text-sm mt-1"><strong>Object</strong>: key phải là string/symbol, không đảm bảo thứ tự.<br /><strong>Map</strong>: key bất kỳ, giữ insertion order, có <InlineCode>.size</InlineCode>.<br /><strong>Set</strong>: chỉ lưu unique values, perfect cho check duplicates.</div>
+                    </div>
+                </div>
+                <CodeBlock title="hashmap-patterns.js">{`// Đếm frequency
+const freq = new Map()
+for (const c of str) freq.set(c, (freq.get(c) || 0) + 1)
+
+// Check duplicate
+const hasDup = arr => new Set(arr).size !== arr.length
+
+// Two Sum pattern
+const map = new Map()
+for (let i = 0; i < nums.length; i++) {
+    const comp = target - nums[i]
+    if (map.has(comp)) return [map.get(comp), i]
+    map.set(nums[i], i)
+}`}</CodeBlock>
+                <Callout type="tip">Nếu brute force là O(n²), hãy nghĩ đến HashMap — thường giảm xuống <Highlight>O(n)</Highlight>.</Callout>
+                <a href="/blogs/hash-map-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+            </TopicModal>
+
+            <TopicModal title="Stack / Queue" emoji="📚" color="#4ade80" summary="⭐ Bắt buộc — valid parentheses, BFS, monotonic stack">
+                <Paragraph><Highlight>Stack</Highlight> = LIFO (Last In First Out), <Highlight>Queue</Highlight> = FIFO (First In First Out). Hai cấu trúc đơn giản nhưng cực mạnh.</Paragraph>
+                <div className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
+                        <div className="text-blue-400 font-bold text-sm mb-2">📚 Stack (LIFO)</div>
+                        <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                            <li>• push / pop: O(1)</li>
+                            <li>• Valid Parentheses</li>
+                            <li>• Undo / Redo</li>
+                            <li>• Call Stack, DFS</li>
+                        </ul>
+                    </div>
+                    <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
+                        <div className="text-green-400 font-bold text-sm mb-2">🚶 Queue (FIFO)</div>
+                        <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                            <li>• enqueue / dequeue: O(1)*</li>
+                            <li>• BFS traversal</li>
+                            <li>• Task scheduling</li>
+                            <li>• Event Loop!</li>
+                        </ul>
+                    </div>
+                </div>
+                <CodeBlock title="stack-queue-js.js">{`// Stack in JS (dùng Array)
+const stack = []
+stack.push(1); stack.push(2)
+stack.pop()      // 2, stack = [1]
+
+// Queue in JS (shift() là O(n)!)
+const queue = []
+queue.push(1); queue.push(2)
+queue.shift()    // 1, queue = [2]
+
+// ⚠️ Queue O(1): dùng Linked List hoặc obj+pointer`}</CodeBlock>
+                <Callout type="warning">JS Array <InlineCode>shift()</InlineCode> là <Highlight>O(n)</Highlight>! Interview nếu cần optimal queue, dùng Linked List-based queue.</Callout>
+                <a href="/blogs/stack-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+            </TopicModal>
+
+            <TopicModal title="Linked List" emoji="🔗" color="#60a5fa" summary="⭐⭐ Quan trọng — reverse, cycle detect, merge sorted lists">
+                <Paragraph>Mỗi node chứa <InlineCode>value</InlineCode> + <InlineCode>next</InlineCode> pointer. Không có random access (O(n)), nhưng insert/delete ở đầu là <Highlight>O(1)</Highlight>.</Paragraph>
+                <CodeBlock title="linked-list.js">{`class ListNode {
+    constructor(val, next = null) {
+        this.val = val; this.next = next
+    }
+}
+
+// Reverse Linked List — O(n)
+function reverseList(head) {
+    let prev = null, curr = head
+    while (curr) {
+        const next = curr.next
+        curr.next = prev
+        prev = curr
+        curr = next
+    }
+    return prev
+}
+
+// Detect Cycle — Floyd's Tortoise & Hare
+function hasCycle(head) {
+    let slow = head, fast = head
+    while (fast && fast.next) {
+        slow = slow.next
+        fast = fast.next.next
+        if (slow === fast) return true
+    }
+    return false
+}`}</CodeBlock>
+                <Callout type="tip">Kỹ thuật: <Highlight>Dummy node</Highlight> (tránh edge case), <Highlight>Fast/Slow pointers</Highlight>, <Highlight>Reverse</Highlight> (3 biến prev/curr/next).</Callout>
+            </TopicModal>
+
+            <TopicModal title="Tree / Binary Tree" emoji="🌳" color="#60a5fa" summary="⭐⭐ Quan trọng — DFS, BFS, DOM tree, BST">
+                <Paragraph>Tree là đồ thị không chu trình. <Highlight>Binary Tree</Highlight> = mỗi node tối đa 2 con. <Highlight>BST</Highlight> = left &lt; root &lt; right.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">3 loại DFS traversal</div>
+                        <div className="text-slate-300 text-sm mt-1"><strong>Inorder</strong> (L→Root→R): BST → sorted<br /><strong>Preorder</strong> (Root→L→R): copy/serialize<br /><strong>Postorder</strong> (L→R→Root): delete/size</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">Frontend connection</div>
+                        <div className="text-slate-300 text-sm mt-1"><strong>DOM</strong> chính là tree! React Virtual DOM cũng là tree. Hiểu tree = hiểu React diff.</div>
+                    </div>
+                </div>
+                <CodeBlock title="tree-traversal.js">{`// DFS — Max Depth (câu hỏi kinh điển)
+function maxDepth(root) {
+    if (!root) return 0
+    return 1 + Math.max(maxDepth(root.left), maxDepth(root.right))
+}
+
+// BFS — Level Order
+function levelOrder(root) {
+    if (!root) return []
+    const result = [], queue = [root]
+    while (queue.length) {
+        const level = []
+        for (let i = queue.length; i > 0; i--) {
+            const node = queue.shift()
+            level.push(node.val)
+            if (node.left) queue.push(node.left)
+            if (node.right) queue.push(node.right)
+        }
+        result.push(level)
+    }
+    return result
+}`}</CodeBlock>
+                <Callout type="tip">Phần lớn bài tree dùng <Highlight>đệ quy</Highlight>. Base case: <InlineCode>if (!root) return</InlineCode>. Think: &quot;biết left+right → tính root thế nào?&quot;</Callout>
+                <a href="/blogs/bfs-dfs-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài BFS/DFS chi tiết →</a>
+            </TopicModal>
+
+            <TopicModal title="Graph" emoji="🕸️" color="#60a5fa" summary="⭐⭐ Quan trọng — BFS/DFS, cycle detection, topological sort">
+                <Paragraph>Graph = đỉnh + cạnh. Biểu diễn bằng <Highlight>adjacency list</Highlight> (phổ biến nhất).</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">Các loại Graph</div>
+                        <div className="text-slate-300 text-sm mt-1"><strong>Directed</strong>: A→B — dependency, courses<br /><strong>Undirected</strong>: A↔B — social network<br /><strong>Weighted</strong>: cạnh có trọng số — Dijkstra</div>
+                    </div>
+                </div>
+                <CodeBlock title="graph-basics.js">{`// Adjacency List
+const graph = { A: ['B','C'], B: ['D'], C: ['D'], D: [] }
+
+// DFS trên graph (CẦN visited set!)
+function dfs(graph, start) {
+    const visited = new Set()
+    function explore(node) {
+        if (visited.has(node)) return
+        visited.add(node)
+        for (const next of graph[node]) explore(next)
+    }
+    explore(start)
+}
+
+// BFS trên graph
+function bfs(graph, start) {
+    const visited = new Set([start]), queue = [start]
+    while (queue.length) {
+        const node = queue.shift()
+        for (const next of graph[node])
+            if (!visited.has(next)) { visited.add(next); queue.push(next) }
+    }
+}`}</CodeBlock>
+                <Callout type="warning">Graph có thể có <Highlight>cycle</Highlight> → luôn cần <InlineCode>visited</InlineCode> set. Quên = infinite loop!</Callout>
+            </TopicModal>
+
+            <TopicModal title="Heap / Trie" emoji="⛰️" color="#a78bfa" summary="⭐⭐⭐ Nâng cao — Top K elements, autocomplete, priority queue">
+                <Paragraph><Highlight>Heap</Highlight> = lấy min/max O(1), insert/delete O(log n). <Highlight>Trie</Highlight> = tìm kiếm theo prefix.</Paragraph>
+                <div className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/20 p-4">
+                        <div className="text-yellow-400 font-bold text-sm mb-2">⛰️ Heap</div>
+                        <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                            <li>• Top K elements</li>
+                            <li>• Merge K sorted lists</li>
+                            <li>• Median of stream</li>
+                            <li>• JS: không có built-in!</li>
+                        </ul>
+                    </div>
+                    <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-4">
+                        <div className="text-purple-400 font-bold text-sm mb-2">🔤 Trie</div>
+                        <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                            <li>• Autocomplete</li>
+                            <li>• Spell checker</li>
+                            <li>• Word search</li>
+                            <li>• IP routing</li>
+                        </ul>
+                    </div>
+                </div>
+                <CodeBlock title="trie.js">{`// Trie — Prefix Tree
+class TrieNode {
+    constructor() { this.children = {}; this.isEnd = false }
+}
+class Trie {
+    constructor() { this.root = new TrieNode() }
+    insert(word) {
+        let node = this.root
+        for (const c of word) {
+            if (!node.children[c]) node.children[c] = new TrieNode()
+            node = node.children[c]
+        }
+        node.isEnd = true
+    }
+    search(word) {
+        let node = this.root
+        for (const c of word) {
+            if (!node.children[c]) return false
+            node = node.children[c]
+        }
+        return node.isEnd
+    }
+}`}</CodeBlock>
+                <Callout type="tip">JS không có Heap built-in. Interview: &quot;Tôi sẽ dùng MinHeap, giả sử có sẵn&quot; rồi focus vào logic chính.</Callout>
+            </TopicModal>
         </div>
 
         <Heading3>4.2 Patterns cần luyện (click xem bài LeetCode gợi ý)</Heading3>
