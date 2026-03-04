@@ -423,6 +423,87 @@ function rob(nums) {
             </div>
         </div>
 
+        {/* ===== REAL-WORLD EXAMPLES ===== */}
+        <Heading2>🏭 Ví dụ thực tế từ dự án này</Heading2>
+
+        <Paragraph>
+            Không chỉ LeetCode — các pattern này xuất hiện <Highlight>hàng ngày</Highlight> trong code thực tế của dự án này:
+        </Paragraph>
+
+        <CodeBlock title="Hash Map — O(1) lookup">{`// 📁 ProductTable.tsx — Map thay vì find()
+// Thay vì: categories.find(c => c._id === id)?.name  // O(n) mỗi lần render
+const categoryMap = useMemo(() => {
+    const map = new Map<string, string>()
+    categories?.forEach(cat => {
+        if (cat._id) map.set(String(cat._id), cat.name)
+    })
+    return map
+}, [categories])
+// Dùng: categoryMap.get(categoryId) // O(1)!`}</CodeBlock>
+
+        <CodeBlock title="Greedy / Reduce — Tìm max, tính tổng">{`// 📁 TikTokScheduledPostModal.tsx — Tìm bài schedule trễ nhất (Greedy)
+const latest = data.data.reduce((max, post) => {
+    const postTime = dayjs(post.scheduledDate + ' ' + post.scheduledTime, 'DD/MM/YYYY HH:mm')
+    const maxTime = dayjs(max.scheduledDate + ' ' + max.scheduledTime, 'DD/MM/YYYY HH:mm')
+    return postTime.isAfter(maxTime) ? post : max
+})
+// Giống bài "Maximum Subarray" — reduce tìm phần tử tối ưu!
+
+// 📁 OrderTable.tsx — Tính tổng doanh thu (Accumulator)
+const totalRevenue = orders.reduce(
+    (acc, curr) => acc + Number(curr.totalPrice), 0
+)
+
+// 📁 CartPage.tsx — Tính tổng giỏ hàng (Multi-reduce)
+const totalCart = cartList.reduce((acc, { quantity }) => acc + quantity, 0)
+const totalPrice = 
+    cartList.reduce((acc, curr) => acc + curr.product.price * curr.quantity, 0) +
+    addMoreList.reduce((acc, curr) => acc + curr, 0)`}</CodeBlock>
+
+        <CodeBlock title="findIndex + arrayMove — Drag & Drop Reorder">{`// 📁 ShopeeLinksTable.tsx — Kéo thả đổi thứ tự
+const handleDragEnd = async (event) => {
+    const { active, over } = event
+
+    // 1. Tìm vị trí cũ và mới bằng findIndex — O(n)
+    const oldIndex = links.findIndex(link => link._id.toString() === active.id)
+    const newIndex = links.findIndex(link => link._id.toString() === over.id)
+
+    // 2. Dời phần tử trong mảng (giống bài Rotate Array!)
+    const newLinks = arrayMove(links, oldIndex, newIndex)
+    setLinks(newLinks)
+
+    // 3. Cập nhật order cho từng item bằng map + index
+    const items = newLinks.map((link, index) => ({
+        id: link._id.toString(),
+        order: index  // Vị trí mới
+    }))
+    await apiPost('/api/shopee-links/reorder', { items })
+}`}</CodeBlock>
+
+        <CodeBlock title="Sandbox + Timeout — Safe Code Execution">{`// 📁 LeetCodePlayground.tsx — Chạy code an toàn trong iframe
+function executeCode(code, testCases) {
+    return new Promise((resolve) => {
+        const iframe = document.createElement('iframe')
+        iframe.sandbox.add('allow-scripts')  // Chỉ cho chạy JS, không truy cập DOM cha
+
+        // ⏰ Time limit — giống bài TLE trên LeetCode!
+        const timeout = setTimeout(() => {
+            document.body.removeChild(iframe)
+            resolve(testCases.map(tc => ({
+                passed: false, error: '⏱️ Time Limit Exceeded (5s)'
+            })))
+        }, 5000)
+
+        // 📨 Nhận kết quả qua postMessage (Inter-process communication)
+        window.addEventListener('message', (event) => {
+            if (event.data?.type === 'leetcode-result') {
+                clearTimeout(timeout)
+                resolve(event.data.results)
+            }
+        })
+    })
+}`}</CodeBlock>
+
         <Callout type="tip">
             Luyện tập tại{' '}
             <a href="https://neetcode.io/roadmap" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline hover:text-blue-300">NeetCode Roadmap</a>
@@ -677,6 +758,87 @@ function coinChange(coins, amount) {
                 <span className="text-slate-300">Start with <Highlight>NeetCode 150</Highlight> — the best list for pattern recognition</span>
             </div>
         </div>
+
+        {/* ===== REAL-WORLD EXAMPLES ===== */}
+        <Heading2>🏭 Real-World Examples from This Project</Heading2>
+
+        <Paragraph>
+            Not just LeetCode — these patterns appear <Highlight>daily</Highlight> in this project&#39;s actual code:
+        </Paragraph>
+
+        <CodeBlock title="Hash Map — O(1) Lookup">{`// 📁 ProductTable.tsx — Map instead of find()
+// Instead of: categories.find(c => c._id === id)?.name  // O(n) each render
+const categoryMap = useMemo(() => {
+    const map = new Map<string, string>()
+    categories?.forEach(cat => {
+        if (cat._id) map.set(String(cat._id), cat.name)
+    })
+    return map
+}, [categories])
+// Usage: categoryMap.get(categoryId) // O(1)!`}</CodeBlock>
+
+        <CodeBlock title="Greedy / Reduce — Find Max, Calculate Totals">{`// 📁 TikTokScheduledPostModal.tsx — Find latest scheduled post (Greedy)
+const latest = data.data.reduce((max, post) => {
+    const postTime = dayjs(post.scheduledDate + ' ' + post.scheduledTime, 'DD/MM/YYYY HH:mm')
+    const maxTime = dayjs(max.scheduledDate + ' ' + max.scheduledTime, 'DD/MM/YYYY HH:mm')
+    return postTime.isAfter(maxTime) ? post : max
+})
+// Like "Maximum Subarray" — reduce to find the optimal element!
+
+// 📁 OrderTable.tsx — Calculate total revenue (Accumulator)
+const totalRevenue = orders.reduce(
+    (acc, curr) => acc + Number(curr.totalPrice), 0
+)
+
+// 📁 CartPage.tsx — Cart totals (Multi-reduce)
+const totalCart = cartList.reduce((acc, { quantity }) => acc + quantity, 0)
+const totalPrice = 
+    cartList.reduce((acc, curr) => acc + curr.product.price * curr.quantity, 0) +
+    addMoreList.reduce((acc, curr) => acc + curr, 0)`}</CodeBlock>
+
+        <CodeBlock title="findIndex + arrayMove — Drag & Drop Reorder">{`// 📁 ShopeeLinksTable.tsx — Drag-and-drop reordering
+const handleDragEnd = async (event) => {
+    const { active, over } = event
+
+    // 1. Find old and new positions using findIndex — O(n)
+    const oldIndex = links.findIndex(link => link._id.toString() === active.id)
+    const newIndex = links.findIndex(link => link._id.toString() === over.id)
+
+    // 2. Move element in array (like Rotate Array problem!)
+    const newLinks = arrayMove(links, oldIndex, newIndex)
+    setLinks(newLinks)
+
+    // 3. Update order for each item using map + index
+    const items = newLinks.map((link, index) => ({
+        id: link._id.toString(),
+        order: index  // New position
+    }))
+    await apiPost('/api/shopee-links/reorder', { items })
+}`}</CodeBlock>
+
+        <CodeBlock title="Sandbox + Timeout — Safe Code Execution">{`// 📁 LeetCodePlayground.tsx — Execute code safely in iframe
+function executeCode(code, testCases) {
+    return new Promise((resolve) => {
+        const iframe = document.createElement('iframe')
+        iframe.sandbox.add('allow-scripts')  // Only allow JS, no parent DOM access
+
+        // ⏰ Time limit — just like TLE on LeetCode!
+        const timeout = setTimeout(() => {
+            document.body.removeChild(iframe)
+            resolve(testCases.map(tc => ({
+                passed: false, error: '⏱️ Time Limit Exceeded (5s)'
+            })))
+        }, 5000)
+
+        // 📨 Receive results via postMessage (Inter-process communication)
+        window.addEventListener('message', (event) => {
+            if (event.data?.type === 'leetcode-result') {
+                clearTimeout(timeout)
+                resolve(event.data.results)
+            }
+        })
+    })
+}`}</CodeBlock>
 
         <Callout type="tip">
             Practice at{' '}
