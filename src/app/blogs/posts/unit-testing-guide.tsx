@@ -883,7 +883,7 @@ export default createJestConfig(config)
 # src/components/__tests__/Button.test.tsx`}</CodeBlock>
 
                 {/* ===== BASIC JEST ===== */}
-                <Heading2>📝 Jest Basics — Matchers & Assertions</Heading2>
+                <Heading2>📝 Jest Basics — Matchers &amp; Assertions</Heading2>
 
                 <CodeBlock title="matchers.test.ts">{`describe('Math Utils', () => {
     test('adds two numbers', () => {
@@ -976,49 +976,127 @@ beforeEach(() => jest.clearAllMocks())`}</CodeBlock>
                     Principle: if the user can&#39;t see or interact with it, don&#39;t test it.
                 </Paragraph>
 
-                <CodeBlock title="component.test.tsx">{`import { render, screen } from '@testing-library/react'
+                <CodeBlock title="component.test.tsx">{`import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-// Rendering & Queries
+// Simple component
+function Greeting({ name }: { name: string }) {
+    return <h1>Hello, {name}!</h1>
+}
+
 test('renders greeting', () => {
-    render(<Greeting name="World" />)
-    expect(screen.getByText('Hello, World!')).toBeInTheDocument()
+    render(<Greeting name="Khuong" />)
+    expect(screen.getByText('Hello, Khuong!')).toBeInTheDocument()
 })
 
-// Query priority (prefer top):
-// 1. getByRole('button', { name: 'Submit' })
-// 2. getByLabelText('Email')
-// 3. getByPlaceholderText('Search')
-// 4. getByText('Hello')
-// 5. getByTestId('custom-id') — last resort
+// === Queries — finding elements ===
 
-// queryBy* → returns null if not found
+// getBy* — throws if not found (use when element is expected)
+screen.getByText('Hello')              // text content
+screen.getByRole('button', { name: 'Submit' })  // ARIA role
+screen.getByLabelText('Email')         // form label
+screen.getByPlaceholderText('Search')  // placeholder
+screen.getByTestId('custom-id')        // data-testid (last resort)
+screen.getByAltText('Logo')           // img alt
+screen.getByDisplayValue('current value') // input value
+
+// queryBy* — returns null if not found (test absence)
 expect(screen.queryByText('Error')).not.toBeInTheDocument()
 
-// findBy* → async, waits for element
-const el = await screen.findByText('Loaded data')
+// findBy* — async, waits for element to appear (for async render)
+const element = await screen.findByText('Loaded data')
 
-// User interactions
-test('form submission', async () => {
+// getAllBy*, queryAllBy*, findAllBy* — return array
+
+// 🎯 Query priority (per RTL docs):
+// 1. getByRole
+// 2. getByLabelText
+// 3. getByPlaceholderText
+// 4. getByText
+// 5. getByDisplayValue
+// 6. getByAltText
+// 7. getByTitle
+// 8. getByTestId (last resort)`}</CodeBlock>
+
+                <CodeBlock title="interaction.test.tsx">{`import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+
+// === User Events ===
+test('form interaction', async () => {
     const user = userEvent.setup()
     const onSubmit = jest.fn()
+
     render(<LoginForm onSubmit={onSubmit} />)
 
-    await user.type(screen.getByLabelText('Email'), 'test@mail.com')
-    await user.click(screen.getByRole('button', { name: /submit/i }))
+    // Type into input
+    const emailInput = screen.getByLabelText('Email')
+    await user.type(emailInput, 'test@mail.com')
+    expect(emailInput).toHaveValue('test@mail.com')
 
+    // Clear & type
+    await user.clear(emailInput)
+    await user.type(emailInput, 'new@mail.com')
+
+    // Click button
+    const submitBtn = screen.getByRole('button', { name: /submit/i })
+    await user.click(submitBtn)
     expect(onSubmit).toHaveBeenCalledTimes(1)
+
+    // Double click, right click
+    await user.dblClick(element)
+
+    // Keyboard
+    await user.keyboard('{Enter}')
+    await user.keyboard('{Tab}')
+
+    // Select option
+    const select = screen.getByRole('combobox')
+    await user.selectOptions(select, 'option-value')
+
+    // Checkbox / Radio
+    const checkbox = screen.getByRole('checkbox')
+    await user.click(checkbox)
+    expect(checkbox).toBeChecked()
+
+    // Hover
+    await user.hover(element)
+    await user.unhover(element)
 })
 
-// DOM matchers
-expect(el).toBeVisible()
-expect(el).toBeEnabled()
-expect(el).toBeChecked()
-expect(el).toHaveClass('active')
-expect(el).toHaveAttribute('href', '/home')
-expect(el).toHaveTextContent('Hello')`}</CodeBlock>
+// === DOM Matchers (jest-dom) ===
+expect(element).toBeInTheDocument()
+expect(element).toBeVisible()
+expect(element).toBeEnabled()
+expect(element).toBeDisabled()
+expect(element).toBeChecked()
+expect(element).toHaveClass('active')
+expect(element).toHaveStyle({ color: 'red' })
+expect(element).toHaveAttribute('href', '/home')
+expect(element).toHaveTextContent('Hello')
+expect(element).toHaveFocus()
+expect(form).toHaveFormValues({ email: 'test@mail.com' })`}</CodeBlock>
 
-                <CodeBlock title="async-component.test.tsx">{`// Testing async components
+                <CodeBlock title="async-component.test.tsx">{`// Test component with async data
+function UserList() {
+    const [users, setUsers] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetchUsers().then(data => {
+            setUsers(data)
+            setLoading(false)
+        })
+    }, [])
+
+    if (loading) return <div>Loading...</div>
+    return (
+        <ul>
+            {users.map(u => <li key={u.id}>{u.name}</li>)}
+        </ul>
+    )
+}
+
+// Test
 jest.mock('./api')
 
 test('loads and displays users', async () => {
@@ -1029,120 +1107,357 @@ test('loads and displays users', async () => {
 
     render(<UserList />)
 
+    // Loading state
     expect(screen.getByText('Loading...')).toBeInTheDocument()
+
+    // Wait for data
     expect(await screen.findByText('Alice')).toBeInTheDocument()
+    expect(screen.getByText('Bob')).toBeInTheDocument()
     expect(screen.queryByText('Loading...')).not.toBeInTheDocument()
+})
+
+test('handles error state', async () => {
+    ;(fetchUsers as jest.Mock).mockRejectedValue(new Error('Network error'))
+
+    render(<UserList />)
+
+    expect(await screen.findByText(/error/i)).toBeInTheDocument()
 })`}</CodeBlock>
 
-                {/* ===== HOOKS ===== */}
+                {/* ===== TESTING HOOKS ===== */}
                 <Heading2>🪝 Testing Custom Hooks</Heading2>
 
                 <CodeBlock title="hooks.test.ts">{`import { renderHook, act } from '@testing-library/react'
 
-test('useCounter increments', () => {
-    const { result } = renderHook(() => useCounter(0))
+// Custom hook
+function useCounter(initial = 0) {
+    const [count, setCount] = useState(initial)
+    const increment = () => setCount(c => c + 1)
+    const decrement = () => setCount(c => c - 1)
+    const reset = () => setCount(initial)
+    return { count, increment, decrement, reset }
+}
 
-    act(() => result.current.increment())
+// Test
+describe('useCounter', () => {
+    it('starts with initial value', () => {
+        const { result } = renderHook(() => useCounter(10))
+        expect(result.current.count).toBe(10)
+    })
 
-    expect(result.current.count).toBe(1)
+    it('defaults to 0', () => {
+        const { result } = renderHook(() => useCounter())
+        expect(result.current.count).toBe(0)
+    })
+
+    it('increments counter', () => {
+        const { result } = renderHook(() => useCounter())
+
+        act(() => {
+            result.current.increment()
+        })
+
+        expect(result.current.count).toBe(1)
+    })
+
+    it('decrements counter', () => {
+        const { result } = renderHook(() => useCounter(5))
+
+        act(() => {
+            result.current.decrement()
+            result.current.decrement()
+        })
+
+        expect(result.current.count).toBe(3)
+    })
+
+    it('resets to initial value', () => {
+        const { result } = renderHook(() => useCounter(10))
+
+        act(() => {
+            result.current.increment()
+            result.current.increment()
+            result.current.reset()
+        })
+
+        expect(result.current.count).toBe(10)
+    })
 })
 
-test('useDebounce delays value', () => {
-    jest.useFakeTimers()
-    const { result, rerender } = renderHook(
-        ({ value }) => useDebounce(value, 300),
-        { initialProps: { value: 'hello' } }
-    )
+// Hook with dependencies (rerender test)
+function useDebounce<T>(value: T, delay: number): T {
+    const [debounced, setDebounced] = useState(value)
+    useEffect(() => {
+        const timer = setTimeout(() => setDebounced(value), delay)
+        return () => clearTimeout(timer)
+    }, [value, delay])
+    return debounced
+}
 
-    rerender({ value: 'world' })
-    expect(result.current).toBe('hello')
+describe('useDebounce', () => {
+    beforeEach(() => jest.useFakeTimers())
+    afterEach(() => jest.useRealTimers())
 
-    act(() => jest.advanceTimersByTime(300))
-    expect(result.current).toBe('world')
+    it('returns initial value immediately', () => {
+        const { result } = renderHook(() => useDebounce('hello', 300))
+        expect(result.current).toBe('hello')
+    })
+
+    it('updates value after delay', () => {
+        const { result, rerender } = renderHook(
+            ({ value, delay }) => useDebounce(value, delay),
+            { initialProps: { value: 'hello', delay: 300 } }
+        )
+
+        rerender({ value: 'world', delay: 300 })
+        expect(result.current).toBe('hello') // not yet
+
+        act(() => jest.advanceTimersByTime(300))
+        expect(result.current).toBe('world') // updated!
+    })
 })`}</CodeBlock>
 
-                {/* ===== API ROUTES ===== */}
+                {/* ===== TESTING API ROUTES ===== */}
                 <Heading2>🌐 Testing API Routes (Next.js)</Heading2>
 
-                <CodeBlock title="api.test.ts">{`import { NextRequest } from 'next/server'
-import { GET, POST } from '@/app/api/products/route'
+                <CodeBlock title="api-route.test.ts">{`import { NextRequest } from 'next/server'
+import { GET, POST, DELETE } from '@/app/api/products/route'
 
-jest.mock('@/utils/connectDb')
-jest.mock('@/models/Product')
+// Mock database
+jest.mock('@/utils/connectDb', () => ({
+    __esModule: true,
+    default: jest.fn(),
+}))
 
-test('GET returns products', async () => {
-    ;(ProductModel.find as jest.Mock).mockReturnValue({
-        sort: jest.fn().mockResolvedValue([{ name: 'A' }])
-    })
-
-    const response = await GET()
-    const data = await response.json()
-
-    expect(data.success).toBe(true)
-    expect(data.data).toHaveLength(1)
+jest.mock('@/models/Product', () => {
+    const mockModel = {
+        find: jest.fn(),
+        findById: jest.fn(),
+        create: jest.fn(),
+        findByIdAndUpdate: jest.fn(),
+        findByIdAndDelete: jest.fn(),
+    }
+    return { __esModule: true, default: mockModel }
 })
 
-test('POST creates product', async () => {
-    ;(ProductModel.create as jest.Mock).mockResolvedValue({ name: 'B' })
+import ProductModel from '@/models/Product'
+const mockProduct = ProductModel as jest.Mocked<typeof ProductModel>
 
-    const request = new NextRequest('http://localhost/api/products', {
-        method: 'POST',
-        body: JSON.stringify({ name: 'B', price: 100 }),
+describe('GET /api/products', () => {
+    beforeEach(() => jest.clearAllMocks())
+
+    it('returns all products', async () => {
+        const products = [
+            { _id: '1', name: 'Product A', price: 100 },
+            { _id: '2', name: 'Product B', price: 200 },
+        ]
+        mockProduct.find.mockReturnValue({
+            sort: jest.fn().mockResolvedValue(products),
+        } as any)
+
+        const response = await GET()
+        const data = await response.json()
+
+        expect(data.success).toBe(true)
+        expect(data.data).toHaveLength(2)
+        expect(data.data[0].name).toBe('Product A')
     })
 
-    const response = await POST(request)
-    expect(response.status).toBe(200)
+    it('handles database error', async () => {
+        mockProduct.find.mockReturnValue({
+            sort: jest.fn().mockRejectedValue(new Error('DB Error')),
+        } as any)
+
+        const response = await GET()
+        const data = await response.json()
+
+        expect(response.status).toBe(500)
+        expect(data.success).toBe(false)
+    })
+})
+
+describe('POST /api/products', () => {
+    it('creates a product', async () => {
+        const newProduct = { _id: '3', name: 'Product C', price: 300 }
+        mockProduct.create.mockResolvedValue(newProduct as any)
+
+        const request = new NextRequest('http://localhost/api/products', {
+            method: 'POST',
+            body: JSON.stringify({ name: 'Product C', price: 300 }),
+        })
+
+        const response = await POST(request)
+        const data = await response.json()
+
+        expect(data.success).toBe(true)
+        expect(data.data.name).toBe('Product C')
+        expect(mockProduct.create).toHaveBeenCalledWith(
+            expect.objectContaining({ name: 'Product C', price: 300 })
+        )
+    })
+
+    it('validates required fields', async () => {
+        const request = new NextRequest('http://localhost/api/products', {
+            method: 'POST',
+            body: JSON.stringify({}),
+        })
+
+        const response = await POST(request)
+        expect(response.status).toBe(400)
+    })
 })`}</CodeBlock>
 
-                {/* ===== BEST PRACTICES ===== */}
-                <Heading2>📊 Best Practices</Heading2>
+                {/* ===== COVERAGE & BEST PRACTICES ===== */}
+                <Heading2>📊 Coverage &amp; Best Practices</Heading2>
 
-                <CodeBlock title="best-practices.ts">{`// 1. AAA Pattern: Arrange → Act → Assert
+                <CodeBlock title="coverage.sh">{`# Run coverage report
+npx jest --coverage
+
+# Output:
+# ----------------------|---------|----------|---------|---------
+# File                  | % Stmts | % Branch | % Funcs | % Lines
+# ----------------------|---------|----------|---------|---------
+# All files             |   85.71 |    83.33 |      90 |   85.71
+#  utils.ts             |     100 |      100 |     100 |     100
+#  ProductList.tsx       |   71.43 |    66.67 |      80 |   71.43
+# ----------------------|---------|----------|---------|---------
+
+# Target: >= 80% lines & branches
+# Focus on business logic, don't need 100%`}</CodeBlock>
+
+                <CodeBlock title="best-practices.ts">{`// 🎯 BEST PRACTICES
+
+// 1. Arrange - Act - Assert (AAA pattern)
 test('adds item to cart', () => {
-    const cart = new Cart()                  // Arrange
-    cart.addItem({ id: 1, price: 200 })      // Act
-    expect(cart.items).toHaveLength(1)        // Assert
+    // Arrange
+    const cart = new Cart()
+    const product = { id: 1, name: 'Shirt', price: 200 }
+
+    // Act
+    cart.addItem(product)
+
+    // Assert
+    expect(cart.items).toHaveLength(1)
+    expect(cart.total).toBe(200)
 })
 
 // 2. Test behavior, NOT implementation
-// ❌ test('sets internal state')
-// ✅ test('displays count and increments on click')
+// ❌ Bad — test implementation details
+test('sets state correctly', () => {
+    const { result } = renderHook(() => useCounter())
+    expect(result.current.count).toBe(0) // testing internal state
+})
+
+// ✅ Good — test what user sees
+test('displays count and can increment', async () => {
+    render(<Counter />)
+    expect(screen.getByText('Count: 0')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: '+' }))
+    expect(screen.getByText('Count: 1')).toBeInTheDocument()
+})
 
 // 3. Descriptive test names
 // ❌ test('test 1')
 // ✅ test('returns empty array when input is empty')
+// ✅ test('throws error when user is not authenticated')
 
-// 4. One assertion per test (ideally)
-// 5. Don't test third-party libraries
-// 6. Test edge cases: empty, null, negative, large
+// 4. One test per behavior
+// ❌ 1 test checking add + remove + update
+// ✅ 3 separate tests
 
-// 7. Organize with describe blocks
+// 5. Don't test third-party code
+// ❌ test Ant Design's Button renders correctly
+// ✅ test your component uses Button with correct props
+
+// 6. Test edge cases
+test('handles empty input', () => { })
+test('handles null/undefined', () => { })
+test('handles very long strings', () => { })
+test('handles negative numbers', () => { })
+test('handles concurrent calls', () => { })
+
+// 7. Use describe blocks to organize
 describe('CartService', () => {
     describe('addItem', () => {
         it('adds new item', () => { })
-        it('increments quantity if exists', () => { })
+        it('increments quantity if item exists', () => { })
+        it('throws if item is invalid', () => { })
+    })
+
+    describe('removeItem', () => {
+        it('removes item by id', () => { })
+        it('returns false if item not found', () => { })
     })
 })
 
-// 8. Setup/cleanup
-beforeEach(() => jest.clearAllMocks())
+// 8. beforeEach/afterEach for setup/cleanup
+describe('UserService', () => {
+    let db: MockDB
 
-// 9. Coverage goal: >= 80% lines & branches
-// Focus on business logic, not 100% coverage`}</CodeBlock>
+    beforeEach(() => {
+        db = new MockDB()
+        jest.clearAllMocks()
+    })
+
+    afterEach(() => {
+        db.close()
+    })
+})
+
+// 9. Snapshot testing — use with caution
+test('renders correctly', () => {
+    const { container } = render(<ProductCard name="Shirt" price={200} />)
+    expect(container.firstChild).toMatchSnapshot()
+    // ⚠️ Easy to "approve all" without reviewing
+    // → Only use for components that rarely change
+})
+
+// 10. Testing error boundaries
+test('displays fallback UI on error', () => {
+    const ThrowError = () => { throw new Error('Test') }
+    const spy = jest.spyOn(console, 'error').mockImplementation()
+
+    render(
+        <ErrorBoundary fallback={<div>Error!</div>}>
+            <ThrowError />
+        </ErrorBoundary>
+    )
+
+    expect(screen.getByText('Error!')).toBeInTheDocument()
+    spy.mockRestore()
+})`}</CodeBlock>
 
                 <Heading2>📋 Cheat Sheet</Heading2>
 
-                <CodeBlock title="cheat-sheet.ts">{`// Jest:       describe, test, expect, jest.fn(), jest.mock()
-// RTL:        render, screen.getByRole, userEvent.setup()
-// Queries:    getBy (throws), queryBy (null), findBy (async)
-// Events:     user.click(), user.type(), user.keyboard()
-// Matchers:   toBe, toEqual, toHaveBeenCalled, toBeInTheDocument
-// Hooks:      renderHook, act
-// File:       __tests__/file.test.ts
-// Commands:   jest --watch, jest --coverage`}</CodeBlock>
+                <CodeBlock title="cheat-sheet.ts">{`// === Jest ===
+// describe('group', () => { })     — group tests
+// test('name', () => { })          — 1 test case
+// expect(x).toBe(y)               — ===
+// expect(x).toEqual(y)            — deep equal
+// expect(fn).toHaveBeenCalled()   — function was called
+// jest.fn()                        — mock function
+// jest.mock('module')              — mock module
+// jest.spyOn(obj, 'method')       — spy on method
+// jest.useFakeTimers()             — fake timers
+
+// === React Testing Library ===
+// render(<Comp />)                 — render component
+// screen.getByRole('button')      — find element
+// screen.queryByText('x')         — null if not found
+// await screen.findByText('x')    — wait for element
+// userEvent.setup()                — setup user events
+// await user.click(el)            — click
+// await user.type(input, 'text')  — type text
+// expect(el).toBeInTheDocument()  — check existence
+
+// === File patterns ===
+// __tests__/file.test.ts           — test file
+// __mocks__/module.ts              — manual mock
+// jest.config.ts                   — configuration
+// jest.setup.ts                    — setup (jest-dom)`}</CodeBlock>
 
                 <Callout type="tip">
-                    <strong>Golden rule:</strong> Tests should be easier to read than the code they test.
+                    <strong>Golden rule:</strong> Tests should be easier to read than the code they test. If tests are hard to understand, refactor the tests first.
                     Focus on <strong>happy path + edge cases</strong>, don&#39;t test everything.
                 </Callout>
             </>

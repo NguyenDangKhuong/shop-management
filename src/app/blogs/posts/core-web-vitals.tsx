@@ -1,5 +1,5 @@
 import { BlogPost } from '../types'
-import { CodeBlock, Heading2, Heading3, Paragraph, Highlight, InlineCode, Callout } from '../components/BlogComponents'
+import { CodeBlock, Heading2, Heading3, Paragraph, Highlight, Callout } from '../components/BlogComponents'
 
 const coreWebVitals: BlogPost = {
     slug: 'core-web-vitals',
@@ -645,87 +645,614 @@ observer.observe({ type: 'longtask', buffered: true })
                 </Paragraph>
 
                 <Callout type="info">
-                    Since March 2024, Google replaced <strong>FID</strong> with <strong>INP</strong> (Interaction to Next Paint) as an official Core Web Vital.
+                    Since March 2024, Google replaced <strong>FID</strong> (First Input Delay) with <strong>INP</strong> (Interaction to Next Paint)
+                    as an official Core Web Vital. This article follows the latest standards.
                 </Callout>
 
-                <Heading2>The 3 Core Web Vitals</Heading2>
+                {/* ===== Overview ===== */}
+                <Heading2>🎯 Overview of 3 Core Web Vitals</Heading2>
+
+                <div className="my-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-5">
+                        <div className="text-3xl mb-2">🖼️</div>
+                        <div className="text-green-400 font-bold text-sm mb-1">LCP</div>
+                        <div className="text-gray-800 dark:text-slate-300 text-sm">Largest Contentful Paint</div>
+                        <div className="text-gray-600 dark:text-slate-400 text-xs mt-1">Loading speed of main content</div>
+                        <div className="mt-3 text-green-400 font-mono text-lg">≤ 2.5s</div>
+                    </div>
+                    <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-5">
+                        <div className="text-3xl mb-2">👆</div>
+                        <div className="text-blue-400 font-bold text-sm mb-1">INP</div>
+                        <div className="text-gray-800 dark:text-slate-300 text-sm">Interaction to Next Paint</div>
+                        <div className="text-gray-600 dark:text-slate-400 text-xs mt-1">Response to user interaction</div>
+                        <div className="mt-3 text-blue-400 font-mono text-lg">≤ 200ms</div>
+                    </div>
+                    <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-5">
+                        <div className="text-3xl mb-2">📐</div>
+                        <div className="text-purple-400 font-bold text-sm mb-1">CLS</div>
+                        <div className="text-gray-800 dark:text-slate-300 text-sm">Cumulative Layout Shift</div>
+                        <div className="text-gray-600 dark:text-slate-400 text-xs mt-1">Page layout stability</div>
+                        <div className="mt-3 text-purple-400 font-mono text-lg">≤ 0.1</div>
+                    </div>
+                </div>
+
                 <div className="my-6 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                         <thead>
                             <tr className="border-b border-gray-300 dark:border-white/10">
                                 <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Metric</th>
-                                <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Measures</th>
                                 <th className="text-left p-3 text-green-500 dark:text-green-400 font-medium">Good</th>
+                                <th className="text-left p-3 text-yellow-500 dark:text-yellow-400 font-medium">Needs Improvement</th>
+                                <th className="text-left p-3 text-red-500 dark:text-red-400 font-medium">Poor</th>
                             </tr>
                         </thead>
                         <tbody className="text-gray-700 dark:text-slate-300">
                             <tr className="border-b border-gray-200 dark:border-white/5">
                                 <td className="p-3 font-medium">LCP</td>
-                                <td className="p-3">Loading — time to render largest element</td>
                                 <td className="p-3">≤ 2.5s</td>
+                                <td className="p-3">2.5s – 4.0s</td>
+                                <td className="p-3">&gt; 4.0s</td>
                             </tr>
                             <tr className="border-b border-gray-200 dark:border-white/5">
                                 <td className="p-3 font-medium">INP</td>
-                                <td className="p-3">Interactivity — response to user input</td>
                                 <td className="p-3">≤ 200ms</td>
+                                <td className="p-3">200ms – 500ms</td>
+                                <td className="p-3">&gt; 500ms</td>
                             </tr>
                             <tr>
                                 <td className="p-3 font-medium">CLS</td>
-                                <td className="p-3">Visual stability — unexpected layout shifts</td>
                                 <td className="p-3">≤ 0.1</td>
+                                <td className="p-3">0.1 – 0.25</td>
+                                <td className="p-3">&gt; 0.25</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <Heading2>How to Measure</Heading2>
+                {/* ===== How to Measure ===== */}
+                <Heading2>🔬 How to Measure Core Web Vitals</Heading2>
+
+                <Heading3>1. Google PageSpeed Insights (Online)</Heading3>
                 <Paragraph>
-                    <strong>1. PageSpeed Insights</strong> — pagespeed.web.dev (field + lab data).{' '}
-                    <strong>2. Lighthouse</strong> — Chrome DevTools or CLI (lab data).{' '}
-                    <strong>3. web-vitals library</strong> — measure in code and send to analytics.{' '}
-                    <strong>4. Chrome Web Vitals Extension</strong> — real-time overlay.
+                    Go to <Highlight>pagespeed.web.dev</Highlight> → enter URL → get detailed report.
+                    Data from <Highlight>CrUX</Highlight> (Chrome User Experience Report) — measured from real users on Chrome.
                 </Paragraph>
 
-                <Heading2>LCP — Largest Contentful Paint</Heading2>
+                <Heading3>2. Lighthouse (Chrome DevTools)</Heading3>
+                <CodeBlock title="lighthouse-cli.sh">{`# Run in Chrome DevTools:
+# F12 → "Lighthouse" tab → Analyze page load
+
+# Or use CLI:
+npx lighthouse https://yoursite.com --view
+
+# CI/CD integration:
+npx lighthouse https://yoursite.com \\
+  --output=json \\
+  --output-path=./lighthouse-report.json \\
+  --chrome-flags="--headless"
+
+# Check results:
+# LCP < 2.5s ✅
+# INP < 200ms ✅
+# CLS < 0.1 ✅`}</CodeBlock>
+
+                <Heading3>3. Web Vitals Library (Measure in Code)</Heading3>
+                <CodeBlock title="web-vitals.tsx">{`// npm install web-vitals
+import { onLCP, onINP, onCLS, onFCP, onTTFB } from 'web-vitals'
+
+// Measure and send to analytics
+function reportWebVitals() {
+    onLCP((metric) => {
+        console.log('LCP:', metric.value, 'ms')
+        // Send to analytics server
+        sendToAnalytics({ name: 'LCP', value: metric.value, rating: metric.rating })
+    })
+
+    onINP((metric) => {
+        console.log('INP:', metric.value, 'ms')
+        sendToAnalytics({ name: 'INP', value: metric.value, rating: metric.rating })
+    })
+
+    onCLS((metric) => {
+        console.log('CLS:', metric.value)
+        sendToAnalytics({ name: 'CLS', value: metric.value, rating: metric.rating })
+    })
+
+    onFCP((metric) => console.log('FCP:', metric.value, 'ms'))
+    onTTFB((metric) => console.log('TTFB:', metric.value, 'ms'))
+}
+
+// Next.js — built-in integration in app/layout.tsx
+// or pages/_app.tsx:
+export function reportWebVitals(metric) {
+    switch (metric.name) {
+        case 'LCP': case 'INP': case 'CLS':
+            // Core Web Vitals
+            analytics.track(metric.name, { value: metric.value })
+            break
+        case 'FCP': case 'TTFB':
+            // Secondary metrics
+            analytics.track(metric.name, { value: metric.value })
+            break
+    }
+}`}</CodeBlock>
+
+                <Heading3>4. Chrome DevTools — Performance Tab</Heading3>
+                <CodeBlock title="performance-tab.sh">{`# Step 1: F12 → "Performance" tab
+# Step 2: Click Record (⏺️) → Interact with page → Stop
+# Step 3: Examine timeline:
+#   - Main thread: JavaScript execution time
+#   - Layout shifts: CLS events (red frames)
+#   - Long tasks: > 50ms blocks (cause poor INP)
+
+# Step 4: "Performance Insights" tab (newer)
+#   → Automatically highlights LCP, CLS, Long Tasks issues
+
+# Web Vitals Extension (Chrome):
+# → Install "Web Vitals" extension
+# → Shows LCP, INP, CLS in real-time on every page`}</CodeBlock>
+
+                <Callout type="tip">
+                    <strong>Lab data</strong> (Lighthouse) vs <strong>Field data</strong> (CrUX): Lab data is measured in a simulated environment,
+                    field data is from real users. Google uses <strong>field data</strong> for SEO ranking.
+                </Callout>
+
+                {/* ===== LCP ===== */}
+                <Heading2>🖼️ LCP — Largest Contentful Paint</Heading2>
+
                 <Paragraph>
-                    Measures time to render the largest element in viewport. Improve by: preloading hero images with <InlineCode>priority</InlineCode>,
-                    using SSR/SSG, serving optimized WebP/AVIF images, using CDN, and inlining critical CSS.
+                    LCP measures the <Highlight>time to render the largest element</Highlight> in the viewport (hero image, large heading, video poster).
+                    Target: <Highlight>≤ 2.5 seconds</Highlight>.
                 </Paragraph>
 
-                <Heading2>INP — Interaction to Next Paint</Heading2>
+                <Heading3>Common Causes of Poor LCP</Heading3>
+                <div className="my-4 space-y-2">
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-gray-800 dark:text-slate-300">Slow server response (high TTFB)</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-gray-800 dark:text-slate-300">Render-blocking CSS/JS</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-gray-800 dark:text-slate-300">Unoptimized hero images (too large)</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-gray-800 dark:text-slate-300">Client-side rendering (CSR) — must wait for JS to load</span>
+                    </div>
+                </div>
+
+                <Heading3>How to Improve LCP</Heading3>
+                <CodeBlock title="improve-lcp.tsx">{`// ✅ 1. Preload LCP image (hero image)
+// In <head> or Next.js metadata:
+<link rel="preload" as="image" href="/hero-banner.webp" />
+
+// Next.js Image with priority (auto preload)
+import Image from 'next/image'
+<Image
+    src="/hero.webp"
+    alt="Hero"
+    width={1200}
+    height={600}
+    priority  // ← Preload! No lazy loading
+    sizes="100vw"
+/>
+
+// ✅ 2. Use modern image formats
+// WebP: 25-35% lighter than JPEG
+// AVIF: 50%+ lighter than JPEG (but slower encoding)
+<picture>
+    <source srcSet="/hero.avif" type="image/avif" />
+    <source srcSet="/hero.webp" type="image/webp" />
+    <img src="/hero.jpg" alt="Hero" />
+</picture>
+
+// ✅ 3. SSR/SSG instead of CSR
+// Next.js App Router: Server Components by default → HTML sent immediately
+// No need to wait for JS hydration
+
+// ✅ 4. Inline critical CSS
+// next.config.js
+module.exports = {
+    experimental: {
+        optimizeCss: true, // Auto extract inline critical CSS
+    },
+}
+
+// ✅ 5. Reduce server response time (TTFB)
+// - Use CDN (Vercel Edge, CloudFlare)
+// - Cache database queries
+// - Use ISR (Incremental Static Regeneration)
+export const revalidate = 3600 // Cache for 1 hour
+
+// ✅ 6. Don't lazy load the LCP element
+// ❌ <img loading="lazy" /> for hero image (slower!)
+// ✅ <img fetchpriority="high" /> for hero image`}</CodeBlock>
+
+                {/* ===== INP ===== */}
+                <Heading2>👆 INP — Interaction to Next Paint</Heading2>
+
                 <Paragraph>
-                    Measures responsiveness to ALL user interactions (replaced FID). Improve by: breaking long tasks with <InlineCode>scheduler.yield()</InlineCode>,
-                    using <InlineCode>useTransition</InlineCode>, debouncing inputs, reducing DOM size, and deferring third-party scripts.
+                    INP measures <Highlight>the time from user interaction (click, tap, keypress) to UI update</Highlight>.
+                    Replaced FID since 3/2024. Target: <Highlight>≤ 200ms</Highlight>.
                 </Paragraph>
 
-                <Heading2>CLS — Cumulative Layout Shift</Heading2>
+                <Callout type="warning">
+                    INP differs from FID: <strong>FID</strong> only measured delay of the FIRST interaction.{' '}
+                    <strong>INP</strong> measures ALL interactions throughout the session — takes the worst value (p98).
+                </Callout>
+
+                <Heading3>Common Causes of Poor INP</Heading3>
+                <div className="my-4 space-y-2">
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-gray-800 dark:text-slate-300">Long tasks (&gt;50ms) on main thread</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-gray-800 dark:text-slate-300">Too many component re-renders on click</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-gray-800 dark:text-slate-300">Heavy third-party scripts (analytics, ads, chat widgets)</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-gray-800 dark:text-slate-300">DOM too large (&gt;1,500 nodes)</span>
+                    </div>
+                </div>
+
+                <Heading3>How to Improve INP</Heading3>
+                <CodeBlock title="improve-inp.tsx">{`// ✅ 1. Break long tasks — use scheduler
+// Split long tasks into smaller chunks
+
+// Method 1: setTimeout (old but effective)
+function processLargeArray(items) {
+    const CHUNK_SIZE = 100
+    let index = 0
+
+    function processChunk() {
+        const end = Math.min(index + CHUNK_SIZE, items.length)
+        for (let i = index; i < end; i++) {
+            processItem(items[i]) // Process each item
+        }
+        index = end
+        if (index < items.length) {
+            setTimeout(processChunk, 0) // Yield for browser paint
+        }
+    }
+    processChunk()
+}
+
+// Method 2: scheduler.yield() (newer, better)
+async function processItems(items) {
+    for (const item of items) {
+        processItem(item)
+        // Yield so browser can handle user input
+        if ('scheduler' in globalThis) {
+            await scheduler.yield()
+        }
+    }
+}
+
+// ✅ 2. useTransition — don't block UI when updating state
+import { useTransition } from 'react'
+
+function FilterPanel({ onFilter }) {
+    const [isPending, startTransition] = useTransition()
+
+    const handleFilter = (value) => {
+        startTransition(() => {
+            onFilter(value) // Non-blocking update
+        })
+    }
+
+    return (
+        <div style={{ opacity: isPending ? 0.6 : 1 }}>
+            <select onChange={e => handleFilter(e.target.value)}>
+                {/* options */}
+            </select>
+        </div>
+    )
+}
+
+// ✅ 3. Debounce input handlers
+const handleSearch = useMemo(
+    () => debounce((value) => {
+        setFilteredResults(filterData(value))
+    }, 150),
+    []
+)
+
+// ✅ 4. Reduce DOM size
+// ❌ Rendering 10,000 items at once
+// ✅ Use virtualization (react-virtual)
+// ✅ Use pagination or infinite scroll
+
+// ✅ 5. Defer third-party scripts
+<script src="https://analytics.com/script.js" defer />
+// Or load after page is interactive:
+useEffect(() => {
+    const timer = setTimeout(() => {
+        const script = document.createElement('script')
+        script.src = 'https://chat-widget.com/widget.js'
+        document.body.appendChild(script)
+    }, 3000) // Load after 3 seconds
+    return () => clearTimeout(timer)
+}, [])`}</CodeBlock>
+
+                {/* ===== CLS ===== */}
+                <Heading2>📐 CLS — Cumulative Layout Shift</Heading2>
+
                 <Paragraph>
-                    Measures unexpected layout shifts. Improve by: always setting <InlineCode>width/height</InlineCode> on images,
-                    using <InlineCode>font-display: optional</InlineCode>, reserving space for dynamic content,
-                    and using CSS <InlineCode>transform</InlineCode> instead of position changes.
+                    CLS measures <Highlight>unexpected content shifting</Highlight>. Example: reading text when an ad loads and
+                    pushes content down → user clicks wrong button. Target: <Highlight>≤ 0.1</Highlight>.
                 </Paragraph>
 
-                <Heading2>FCP — First Contentful Paint</Heading2>
+                <Heading3>Common Causes of Poor CLS</Heading3>
+                <div className="my-4 space-y-2">
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-gray-800 dark:text-slate-300">Images/videos without width/height — size unknown until loaded</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-gray-800 dark:text-slate-300">Web fonts replacing fallback fonts (FOUT)</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-gray-800 dark:text-slate-300">Dynamic content injection (ads, banners, popups)</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <span className="text-red-400 mt-0.5">❌</span>
+                        <span className="text-gray-800 dark:text-slate-300">Skeleton/placeholder with different dimensions than actual content</span>
+                    </div>
+                </div>
+
+                <Heading3>How to Improve CLS</Heading3>
+                <CodeBlock title="improve-cls.tsx">{`// ✅ 1. ALWAYS set width/height on images
+// ❌ No dimensions → layout shift when image loads
+<img src="/product.jpg" alt="Product" />
+
+// ✅ Has dimensions → browser reserves space beforehand
+<img src="/product.jpg" alt="Product" width={400} height={300} />
+
+// Next.js Image handles this automatically
+<Image src="/product.jpg" alt="Product" width={400} height={300} />
+
+// ✅ 2. CSS aspect-ratio for responsive images
+.image-container {
+    aspect-ratio: 16 / 9; /* Browser auto-calculates height */
+    width: 100%;
+}
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+// ✅ 3. Font loading strategy
+// Preload the most important font
+<link
+    rel="preload"
+    href="/fonts/Inter-Regular.woff2"
+    as="font"
+    type="font/woff2"
+    crossOrigin="anonymous"
+/>
+
+// CSS: use font-display
+@font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-Regular.woff2') format('woff2');
+    font-display: swap;    /* Show fallback immediately, swap when font loads */
+    /* font-display: optional;  Better for CLS — skip if slow */
+}
+
+// Next.js: auto-optimizes fonts
+import { Inter } from 'next/font/google'
+const inter = Inter({ subsets: ['latin'] }) // Zero layout shift!
+
+// ✅ 4. Reserve space for dynamic content
+// Ads, banners, embeds — set min-height before loading
+.ad-container {
+    min-height: 250px; /* Reserve space for ad */
+    contain: layout;   /* CSS Containment — isolate layout shifts */
+}
+
+// ✅ 5. Use CSS transform instead of changing position
+// ❌ Changing top/left → causes layout shift
+.notification { top: 100px; } /* Layout shift! */
+
+// ✅ Use transform → no layout shift
+.notification { transform: translateY(100px); } /* Smooth! */
+
+// ✅ 6. Content-visibility: auto (for long content)
+.below-fold {
+    content-visibility: auto;   /* Browser skips render when off-screen */
+    contain-intrinsic-size: 500px; /* Estimated height */
+}`}</CodeBlock>
+
+                {/* ===== FCP ===== */}
+                <Heading2>🎨 FCP — First Contentful Paint (Secondary Metric)</Heading2>
+
                 <Paragraph>
-                    Time to render first pixel of content. Improve by: eliminating render-blocking resources,
-                    using SSR, preconnecting to external origins, and using CDN with Brotli compression.
+                    FCP measures <Highlight>time to render the first pixel</Highlight> (text, image, SVG, canvas).
+                    It&apos;s the first impression — user knows the page is loading. Target: <Highlight>≤ 1.8s</Highlight>.
                 </Paragraph>
 
-                <Heading2>TTFB — Time to First Byte</Heading2>
+                <Heading3>How to Improve FCP</Heading3>
+                <CodeBlock title="improve-fcp.tsx">{`// ✅ 1. Remove render-blocking CSS/JS
+// CSS: inline critical CSS, defer non-critical
+<style>{/* inline critical CSS here */}</style>
+<link rel="preload" href="/styles.css" as="style" onLoad="this.rel='stylesheet'" />
+
+// JS: defer or async
+<script src="/app.js" defer />  // Load in parallel, run after HTML parse
+<script src="/analytics.js" async />  // Load in parallel, run when ready
+
+// ✅ 2. SSR — send HTML with content immediately
+// Next.js App Router: Server Components by default
+// → HTML has content immediately, no waiting for JS
+
+// ✅ 3. Preconnect to external origins
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://cdn.yourapi.com" crossOrigin="anonymous" />
+<link rel="dns-prefetch" href="https://analytics.google.com" />
+
+// ✅ 4. Use CDN — edge server closer to users
+// Vercel, CloudFlare Pages, Netlify — auto deploy to edge
+
+// ✅ 5. Compression: Brotli > Gzip
+// next.config.js — Next.js auto-enables Gzip
+// Vercel/CloudFlare auto-enables Brotli (15-25% smaller than Gzip)`}</CodeBlock>
+
+                {/* ===== TTFB ===== */}
+                <Heading2>⏱️ TTFB — Time to First Byte (Secondary Metric)</Heading2>
+
                 <Paragraph>
-                    Time from request to first byte. Improve by: using CDN, caching responses with ISR,
-                    streaming SSR with <InlineCode>Suspense</InlineCode>, and optimizing database queries.
+                    TTFB measures <Highlight>time from request to receiving the first byte</Highlight> from the server.
+                    If TTFB is slow, all other metrics will be slow too. Target: <Highlight>≤ 800ms</Highlight>.
                 </Paragraph>
 
-                <Heading2>Monitoring</Heading2>
-                <Paragraph>
-                    Use <InlineCode>web-vitals</InlineCode> library to track real user metrics. Monitor via Google Search Console (free),
-                    PageSpeed Insights API, or Vercel/Sentry Analytics. Use <InlineCode>PerformanceObserver</InlineCode> to detect long tasks.
-                </Paragraph>
+                <Heading3>How to Improve TTFB</Heading3>
+                <CodeBlock title="improve-ttfb.tsx">{`// ✅ 1. Use CDN — nearest server to user
+// Vercel Edge Functions, CloudFlare Workers
+// → Response time: 50-100ms (vs 500ms+ from origin)
+
+// ✅ 2. Cache responses
+// Next.js ISR — static page + background revalidation
+export const revalidate = 3600 // Revalidate every 1 hour
+
+// API Route caching
+export async function GET() {
+    const data = await db.products.findMany()
+    return Response.json(data, {
+        headers: {
+            'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+            // Cache 60s, serve stale up to 5 min while revalidating
+        },
+    })
+}
+
+// ✅ 3. Database optimization
+// - Add INDEX for frequently queried columns
+// - Use connection pooling (Prisma, pg-pool)
+// - Cache heavy queries with Redis
+
+// ✅ 4. Streaming SSR (React 18+)
+// Next.js App Router auto-streams
+// → Sends HTML in chunks → ultra-fast TTFB
+import { Suspense } from 'react'
+
+async function Page() {
+    return (
+        <>
+            <Header />  {/* Sent immediately */}
+            <Suspense fallback={<Loading />}>
+                <SlowDataSection />  {/* Streamed when data ready */}
+            </Suspense>
+        </>
+    )
+}
+
+// ✅ 5. HTTP/2 or HTTP/3
+// → Multiplexing: multiple requests on 1 connection
+// → Header compression: reduce overhead
+// Vercel, CloudFlare auto-use HTTP/2+`}</CodeBlock>
+
+                {/* ===== Monitoring ===== */}
+                <Heading2>📈 Continuous Monitoring</Heading2>
+
+                <CodeBlock title="monitoring.tsx">{`// ✅ Real-time monitoring with web-vitals + analytics
+import { onLCP, onINP, onCLS } from 'web-vitals'
+
+function initWebVitalsMonitoring() {
+    onLCP(sendToAnalytics)
+    onINP(sendToAnalytics)
+    onCLS(sendToAnalytics)
+}
+
+function sendToAnalytics(metric) {
+    const body = JSON.stringify({
+        name: metric.name,
+        value: metric.value,
+        rating: metric.rating,  // "good" | "needs-improvement" | "poor"
+        delta: metric.delta,
+        id: metric.id,
+        url: window.location.href,
+        // Add context
+        connection: navigator.connection?.effectiveType, // "4g", "3g"
+        deviceMemory: navigator.deviceMemory,
+    })
+
+    // Use sendBeacon to avoid blocking unload
+    if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/analytics', body)
+    } else {
+        fetch('/api/analytics', { body, method: 'POST', keepalive: true })
+    }
+}
+
+// ✅ Performance Observer — detect long tasks
+const observer = new PerformanceObserver((list) => {
+    for (const entry of list.getEntries()) {
+        if (entry.duration > 50) {
+            console.warn('Long Task detected:', entry.duration, 'ms')
+        }
+    }
+})
+observer.observe({ type: 'longtask', buffered: true })
+
+// ✅ Monitoring tools with dashboards:
+// - Google Search Console (free) — Core Web Vitals report
+// - PageSpeed Insights API (free) — batch testing
+// - WebPageTest.org (free) — detailed waterfall analysis
+// - Vercel Analytics (if using Vercel)
+// - Sentry Performance (paid)`}</CodeBlock>
+
+                {/* ===== Quick Reference ===== */}
+                <Heading2>📋 Quick Reference — Improvement Checklist</Heading2>
+
+                <div className="my-6 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead>
+                            <tr className="border-b border-gray-300 dark:border-white/10">
+                                <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Metric</th>
+                                <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Top 3 Improvements</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-gray-700 dark:text-slate-300">
+                            <tr className="border-b border-gray-200 dark:border-white/5">
+                                <td className="p-3 font-medium text-green-500 dark:text-green-400">LCP</td>
+                                <td className="p-3">1. Preload LCP image &nbsp;2. SSR/SSG &nbsp;3. CDN + optimize images</td>
+                            </tr>
+                            <tr className="border-b border-gray-200 dark:border-white/5">
+                                <td className="p-3 font-medium text-blue-500 dark:text-blue-400">INP</td>
+                                <td className="p-3">1. Break long tasks &nbsp;2. useTransition &nbsp;3. Reduce DOM size</td>
+                            </tr>
+                            <tr className="border-b border-gray-200 dark:border-white/5">
+                                <td className="p-3 font-medium text-purple-500 dark:text-purple-400">CLS</td>
+                                <td className="p-3">1. Set image dimensions &nbsp;2. Font-display: optional &nbsp;3. Reserve ad space</td>
+                            </tr>
+                            <tr className="border-b border-gray-200 dark:border-white/5">
+                                <td className="p-3 font-medium text-orange-500 dark:text-orange-400">FCP</td>
+                                <td className="p-3">1. Inline critical CSS &nbsp;2. SSR &nbsp;3. Preconnect</td>
+                            </tr>
+                            <tr>
+                                <td className="p-3 font-medium text-red-500 dark:text-red-400">TTFB</td>
+                                <td className="p-3">1. CDN &nbsp;2. Cache responses &nbsp;3. Streaming SSR</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 <Callout type="tip">
                     Optimization cycle: <strong>Measure → Identify bottleneck → Fix → Re-measure → Repeat</strong>.
-                    Use field data (CrUX) for SEO, lab data (Lighthouse) for debugging.
+                    Use PageSpeed Insights for field data, Lighthouse for lab data. Monitor via Google Search Console weekly.
                 </Callout>
             </>
         ),

@@ -1139,12 +1139,9 @@ function nextGreater(nums: number[]): number[] {
     return result
 }`}</CodeBlock>
 
-                {/* ===== QUEUE ===== */}
-                <Heading2>🚶 Queue — FIFO (First In, First Out)</Heading2>
-
-                <Callout type="tip">🏧 <strong>Visualize:</strong> Queue is like <strong>standing in line at an ATM</strong> — first to arrive gets served first.</Callout>
-
                 <CodeBlock title="queue.ts">{`// ⚠️ Array.shift() is O(n), use index pointer instead
+
+// Simple Queue with pointer (O(1) amortized)
 class Queue<T> {
     private items: T[] = []
     private head = 0
@@ -1163,8 +1160,10 @@ function levelOrder(root: TreeNode | null): number[][] {
     queue.enqueue(root)
 
     while (!queue.isEmpty) {
+        const levelSize = queue.size
         const level: number[] = []
-        for (let i = queue.size; i > 0; i--) {
+
+        for (let i = 0; i < levelSize; i++) {
             const node = queue.dequeue()!
             level.push(node.val)
             if (node.left) queue.enqueue(node.left)
@@ -1173,6 +1172,111 @@ function levelOrder(root: TreeNode | null): number[][] {
         result.push(level)
     }
     return result
+}
+
+// Deque (Double-ended Queue)
+class Deque<T> {
+    private items: T[] = []
+
+    pushFront(item: T) { this.items.unshift(item) }  // O(n)
+    pushBack(item: T) { this.items.push(item) }       // O(1)
+    popFront(): T | undefined { return this.items.shift() }  // O(n)
+    popBack(): T | undefined { return this.items.pop() }     // O(1)
+    peekFront(): T | undefined { return this.items[0] }
+    peekBack(): T | undefined { return this.items.at(-1) }
+    get size() { return this.items.length }
+}
+
+// 🎯 Sliding Window Maximum — uses Deque
+function maxSlidingWindow(nums: number[], k: number): number[] {
+    const result: number[] = []
+    const deque: number[] = [] // stores indices, decreasing order
+
+    for (let i = 0; i < nums.length; i++) {
+        // Remove elements outside window
+        while (deque.length && deque[0] <= i - k) deque.shift()
+        // Remove smaller elements
+        while (deque.length && nums[deque.at(-1)!] <= nums[i]) deque.pop()
+        deque.push(i)
+        if (i >= k - 1) result.push(nums[deque[0]])
+    }
+    return result
+}`}</CodeBlock>
+
+                {/* ===== LINKED LIST ===== */}
+                <Heading2>🔗 Linked List</Heading2>
+
+                <Callout type="tip">🔗 <strong>Visualize:</strong> Linked List is like a <strong>train connected by hooks</strong> — each car only knows the next car. To detach/attach a car in the middle → just change the hook connection (O(1) insert). But to find car #5 → must walk from the front counting each car (O(n)).</Callout>
+
+                <CodeBlock title="linked-list.ts">{`// Singly Linked List
+class ListNode {
+    val: number
+    next: ListNode | null
+    constructor(val = 0, next: ListNode | null = null) {
+        this.val = val
+        this.next = next
+    }
+}
+
+// Create linked list from array
+function createList(arr: number[]): ListNode | null {
+    const dummy = new ListNode(0)
+    let current = dummy
+    for (const val of arr) {
+        current.next = new ListNode(val)
+        current = current.next
+    }
+    return dummy.next
+}
+
+// 🎯 Algorithm techniques:
+
+// 1. Dummy Head — avoid edge cases
+function removeElements(head: ListNode | null, val: number): ListNode | null {
+    const dummy = new ListNode(0, head)
+    let prev = dummy
+    let curr = head
+
+    while (curr) {
+        if (curr.val === val) {
+            prev.next = curr.next
+        } else {
+            prev = curr
+        }
+        curr = curr.next
+    }
+    return dummy.next
+}
+
+// 2. Fast & Slow Pointers — find middle, detect cycle
+function findMiddle(head: ListNode | null): ListNode | null {
+    let slow = head, fast = head
+    while (fast?.next) {
+        slow = slow!.next
+        fast = fast.next.next
+    }
+    return slow
+}
+
+// 3. Reverse Linked List
+function reverseList(head: ListNode | null): ListNode | null {
+    let prev: ListNode | null = null
+    let curr = head
+    while (curr) {
+        const next = curr.next
+        curr.next = prev
+        prev = curr
+        curr = next
+    }
+    return prev
+}
+
+// Doubly Linked List
+class DoublyNode {
+    val: number
+    prev: DoublyNode | null = null
+    next: DoublyNode | null = null
+    constructor(val = 0) { this.val = val }
 }`}</CodeBlock>
 
                 {/* ===== HEAP ===== */}
@@ -1184,9 +1288,12 @@ function levelOrder(root: TreeNode | null): number[][] {
                     JavaScript has no built-in Heap. Must self-implement — <Highlight>critical for LeetCode</Highlight>.
                 </Paragraph>
 
-                <CodeBlock title="heap.ts">{`class MinHeap {
+                <CodeBlock title="heap.ts">{`// Min Heap — smallest element always on top
+class MinHeap {
     private heap: number[] = []
+
     get size() { return this.heap.length }
+
     peek(): number { return this.heap[0] }
 
     push(val: number) {
@@ -1214,11 +1321,15 @@ function levelOrder(root: TreeNode | null): number[][] {
     }
 
     private _sinkDown(i: number) {
+        const n = this.heap.length
         while (true) {
             let smallest = i
-            const left = 2 * i + 1, right = 2 * i + 2
-            if (left < this.heap.length && this.heap[left] < this.heap[smallest]) smallest = left
-            if (right < this.heap.length && this.heap[right] < this.heap[smallest]) smallest = right
+            const left = 2 * i + 1
+            const right = 2 * i + 2
+
+            if (left < n && this.heap[left] < this.heap[smallest]) smallest = left
+            if (right < n && this.heap[right] < this.heap[smallest]) smallest = right
+
             if (smallest === i) break
             ;[this.heap[smallest], this.heap[i]] = [this.heap[i], this.heap[smallest]]
             i = smallest
@@ -1226,15 +1337,28 @@ function levelOrder(root: TreeNode | null): number[][] {
     }
 }
 
-// Use: Kth largest, merge K sorted, top-K frequent, Dijkstra`}</CodeBlock>
+// 🎯 Applications:
+// - Kth Largest Element: use MinHeap of size k
+// - Merge K Sorted Lists: push head of each list
+// - Top K Frequent: frequency counter + heap
+// - Dijkstra's Algorithm: shortest path
 
-                {/* ===== TRIE & GRAPH ===== */}
-                <Heading2>🌳 Trie & 🕸️ Graph</Heading2>
+// Example: Kth Largest
+function findKthLargest(nums: number[], k: number): number {
+    const heap = new MinHeap()
+    for (const num of nums) {
+        heap.push(num)
+        if (heap.size > k) heap.pop() // keep only k elements
+    }
+    return heap.peek() // smallest in top-k = kth largest
+}`}</CodeBlock>
 
-                <Callout type="tip">📱 <strong>Trie:</strong> Like <strong>phone keyboard autocomplete</strong> — type &quot;hel&quot; → suggests &quot;hello&quot;, &quot;help&quot;. Each character is a branch.
-                    <br />🗺️ <strong>Graph:</strong> Like <strong>Google Maps</strong> — cities are nodes, roads are edges. BFS = ripple outward (shortest path). DFS = explore one road fully before backtracking.</Callout>
+                {/* ===== TRIE ===== */}
+                <Heading2>🌳 Trie — Prefix Tree</Heading2>
 
-                <CodeBlock title="trie-graph.ts">{`// Trie — prefix search O(m)
+                <Callout type="tip">📱 <strong>Visualize:</strong> Trie is like <strong>phone keyboard autocomplete</strong> — type &quot;hel&quot; → suggests &quot;hello&quot;, &quot;help&quot;, &quot;helmet&quot;. Each character is a branch in the tree, following a branch = finding a prefix.</Callout>
+
+                <CodeBlock title="trie.ts">{`// Trie — efficient prefix search O(m), m = length of word
 class TrieNode {
     children = new Map<string, TrieNode>()
     isEnd = false
@@ -1243,76 +1367,134 @@ class TrieNode {
 class Trie {
     private root = new TrieNode()
 
-    insert(word: string) {
+    insert(word: string): void {
         let node = this.root
-        for (const c of word) {
-            if (!node.children.has(c)) node.children.set(c, new TrieNode())
-            node = node.children.get(c)!
+        for (const char of word) {
+            if (!node.children.has(char)) {
+                node.children.set(char, new TrieNode())
+            }
+            node = node.children.get(char)!
         }
         node.isEnd = true
     }
 
     search(word: string): boolean {
+        const node = this._findNode(word)
+        return node !== null && node.isEnd
+    }
+
+    startsWith(prefix: string): boolean {
+        return this._findNode(prefix) !== null
+    }
+
+    private _findNode(s: string): TrieNode | null {
         let node = this.root
-        for (const c of word) {
-            if (!node.children.has(c)) return false
-            node = node.children.get(c)!
+        for (const char of s) {
+            if (!node.children.has(char)) return null
+            node = node.children.get(char)!
         }
-        return node.isEnd
+        return node
     }
 }
 
-// Graph — Adjacency List
+// 🎯 Applications: autocomplete, word search, IP routing`}</CodeBlock>
+
+                {/* ===== GRAPH ===== */}
+                <Heading2>🕸️ Graph — Representation &amp; Traversal</Heading2>
+
+                <Callout type="tip">🗺️ <strong>Visualize:</strong> Graph is like <strong>Google Maps</strong> — cities are nodes, roads are edges. BFS = ripple outward in circles (shortest path). DFS = explore one road fully before backtracking (find all paths).</Callout>
+
+                <CodeBlock title="graph.ts">{`// Adjacency List — most common for algorithms
+// Use Map<number, number[]>
+
+// Undirected Graph
 function buildGraph(edges: number[][]): Map<number, number[]> {
     const graph = new Map<number, number[]>()
     for (const [u, v] of edges) {
         if (!graph.has(u)) graph.set(u, [])
         if (!graph.has(v)) graph.set(v, [])
         graph.get(u)!.push(v)
-        graph.get(v)!.push(u) // undirected
+        graph.get(v)!.push(u)
     }
     return graph
 }
 
-// DFS on graph
-function dfs(graph: Map<number, number[]>, start: number) {
+// DFS — Depth First Search
+function dfs(graph: Map<number, number[]>, start: number): number[] {
     const visited = new Set<number>()
+    const result: number[] = []
+
     function explore(node: number) {
         visited.add(node)
-        for (const n of graph.get(node) || []) {
-            if (!visited.has(n)) explore(n)
+        result.push(node)
+        for (const neighbor of graph.get(node) || []) {
+            if (!visited.has(neighbor)) explore(neighbor)
         }
     }
+
     explore(start)
-}`}</CodeBlock>
+    return result
+}
+
+// BFS — Breadth First Search
+function bfsGraph(graph: Map<number, number[]>, start: number): number[] {
+    const visited = new Set<number>([start])
+    const queue: number[] = [start]
+    const result: number[] = []
+    let head = 0
+
+    while (head < queue.length) {
+        const node = queue[head++]
+        result.push(node)
+        for (const neighbor of graph.get(node) || []) {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor)
+                queue.push(neighbor)
+            }
+        }
+    }
+    return result
+}
+
+// 🎯 Applications:
+// - Number of Islands (2D grid DFS/BFS)
+// - Course Schedule (topological sort)
+// - Shortest Path (BFS unweighted, Dijkstra weighted)
+// - Connected Components
+// - Detect Cycle`}</CodeBlock>
 
                 {/* ===== CHEAT SHEET ===== */}
                 <Heading2>📋 Big-O Cheat Sheet</Heading2>
 
-                <CodeBlock title="complexity.ts">{`// Structure        | Access | Search | Insert | Delete
+                <CodeBlock title="complexity.ts">{`// Data Structure    | Access | Search | Insert | Delete
 // ─────────────────────────────────────────────────────
-// Array             | O(1)   | O(n)   | O(n)   | O(n)
-// Array (push/pop)  |   —    |   —    | O(1)   | O(1)
-// Stack (array)     | O(n)   | O(n)   | O(1)   | O(1)
-// Queue (pointer)   | O(n)   | O(n)   | O(1)   | O(1)*
-// Map               |   —    | O(1)   | O(1)   | O(1)
-// Set               |   —    | O(1)   | O(1)   | O(1)
-// Linked List       | O(n)   | O(n)   | O(1)** | O(1)**
-// Binary Heap       |   —    | O(n)   |O(logn) |O(logn)
-// Trie              |   —    | O(m)   | O(m)   | O(m)
+// Array               | O(1)   | O(n)   | O(n)   | O(n)
+// Array (push/pop)    |   —    |   —    | O(1)   | O(1)
+// Stack (array)       | O(n)   | O(n)   | O(1)   | O(1)
+// Queue (pointer)     | O(n)   | O(n)   | O(1)   | O(1)*
+// Map                 |   —    | O(1)   | O(1)   | O(1)
+// Set                 |   —    | O(1)   | O(1)   | O(1)
+// Object              |   —    | O(1)   | O(1)   | O(1)
+// Linked List         | O(n)   | O(n)   | O(1)** | O(1)**
+// Binary Heap         |   —    | O(n)   |O(logn) |O(logn)
+// Trie                |   —    | O(m)   | O(m)   | O(m)
+//
+// * amortized   ** after finding position   m = length of string
 //
 // When to use what?
-// O(1) lookup        → Map, Set
+// O(1) lookup        → Map, Set, Object
 // LIFO               → Stack (array)
 // FIFO               → Queue (with pointer)
-// Min/max            → Heap
+// Sorted / min-max   → Heap
 // Prefix search      → Trie
-// Relationships      → Graph
-// Frequency count    → Map`}</CodeBlock>
+// Relationships      → Graph (adjacency list)
+// Ordered unique     → Set
+// Frequency counting → Map
+// Cache (LRU)        → Map (maintains insertion order)`}</CodeBlock>
 
                 <Callout type="tip">
                     <strong>LeetCode tip:</strong> 90% of problems use Array + Map + Set. Add Stack for parentheses/monotonic,
-                    Queue for BFS, Heap for top-K. Trie and Graph for specific medium-hard problems.
+                    Queue for BFS, Heap for top-K/scheduling. Trie and Graph for specific medium-hard problems.
                 </Callout>
             </>
         ),

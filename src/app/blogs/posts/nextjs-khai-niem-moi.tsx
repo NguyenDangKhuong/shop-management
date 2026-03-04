@@ -494,66 +494,442 @@ export default function RootLayout({ children }) {
             <>
                 <Paragraph>
                     <Highlight>Next.js</Highlight> is the most popular React framework today, developed by Vercel.
-                    Since version 13, Next.js introduced revolutionary concepts that changed how we build web apps.
+                    Since version 13, Next.js introduced a series of revolutionary concepts
+                    — fundamentally changing how we build web applications.
                 </Paragraph>
 
                 <Callout type="info">
-                    This article covers the latest Next.js concepts — App Router, Server/Client Components,
-                    Server Actions, Streaming, Parallel Routes, Caching, Middleware, and Image/Font optimization.
+                    This article covers the latest Next.js concepts, helping you quickly grasp
+                    and apply them to real-world projects.
                 </Callout>
 
                 <Heading2>1. App Router vs Pages Router</Heading2>
+
                 <Paragraph>
-                    Next.js now has 2 routing systems: <Highlight>Pages Router</Highlight> (old) and <Highlight>App Router</Highlight> (new, recommended).
-                    App Router uses the <InlineCode>app/</InlineCode> directory instead of <InlineCode>pages/</InlineCode>.
+                    Next.js now has 2 routing systems: <Highlight>Pages Router</Highlight> (old) and{' '}
+                    <Highlight>App Router</Highlight> (new, recommended). App Router uses the{' '}
+                    <InlineCode>app/</InlineCode> directory instead of <InlineCode>pages/</InlineCode>.
                 </Paragraph>
+
+                <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="rounded-xl bg-slate-800/40 border border-white/10 p-4">
+                        <div className="text-yellow-400 font-bold text-sm mb-3">📁 Pages Router (old)</div>
+                        <CodeBlock title="pages/">{`pages/
+├── index.tsx        → /
+├── about.tsx        → /about
+├── blog/
+│   ├── index.tsx    → /blog
+│   └── [slug].tsx   → /blog/:slug
+└── api/
+    └── hello.ts     → /api/hello`}</CodeBlock>
+                    </div>
+                    <div className="rounded-xl bg-slate-800/40 border border-white/10 p-4">
+                        <div className="text-green-400 font-bold text-sm mb-3">📁 App Router (new)</div>
+                        <CodeBlock title="app/">{`app/
+├── page.tsx         → /
+├── layout.tsx       → Shared layout
+├── about/
+│   └── page.tsx     → /about
+├── blog/
+│   ├── page.tsx     → /blog
+│   └── [slug]/
+│       └── page.tsx → /blog/:slug
+└── api/
+    └── hello/
+        └── route.ts → /api/hello`}</CodeBlock>
+                    </div>
+                </div>
+
                 <Callout type="tip">
-                    App Router supports <InlineCode>layout.tsx</InlineCode>, <InlineCode>loading.tsx</InlineCode>,
-                    <InlineCode>error.tsx</InlineCode>, <InlineCode>not-found.tsx</InlineCode> — each file is a convention automatically handled by Next.js.
+                    App Router supports <InlineCode>layout.tsx</InlineCode>, <InlineCode>loading.tsx</InlineCode>,{' '}
+                    <InlineCode>error.tsx</InlineCode>, <InlineCode>not-found.tsx</InlineCode> — each file is a
+                    &quot;convention&quot; automatically handled by Next.js.
                 </Callout>
 
                 <Heading2>2. Server Components vs Client Components</Heading2>
+
                 <Paragraph>
-                    The <Highlight>biggest change</Highlight>: all components in App Router are <Highlight>Server Components</Highlight> by default — they run on the server, sending 0 KB JS to the client.
-                    Add <InlineCode>&apos;use client&apos;</InlineCode> only when you need interactivity (useState, onClick, etc.).
+                    This is the <Highlight>biggest change</Highlight> in Next.js. By default, all components in
+                    App Router are <Highlight>Server Components</Highlight> — they run on the server and send 0 KB JS to the client.
                 </Paragraph>
+
+                <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
+                        <div className="text-blue-400 font-bold text-sm mb-2">🖥️ Server Component</div>
+                        <ul className="text-slate-300 text-sm space-y-1.5">
+                            <li>✅ Fetch data directly (async/await)</li>
+                            <li>✅ Access database, file system</li>
+                            <li>✅ Keep secret keys secure</li>
+                            <li>✅ Small bundle size (0 KB JS)</li>
+                            <li>❌ Cannot use useState, useEffect</li>
+                            <li>❌ Cannot use event handlers</li>
+                        </ul>
+                    </div>
+                    <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-4">
+                        <div className="text-purple-400 font-bold text-sm mb-2">🌐 Client Component</div>
+                        <ul className="text-slate-300 text-sm space-y-1.5">
+                            <li>✅ useState, useEffect, hooks</li>
+                            <li>✅ onClick, onChange, events</li>
+                            <li>✅ Browser APIs (localStorage...)</li>
+                            <li>✅ Third-party libraries (Ant Design...)</li>
+                            <li>❌ Cannot access DB directly</li>
+                            <li>❌ Increases bundle size</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <CodeBlock title="server-component.tsx">{`// Server Component (default - NO directive needed)
+// ✅ Can be async, fetch data directly
+export default async function ProductPage() {
+    const products = await db.product.findMany() // Query DB directly!
+
+    return (
+        <div>
+            {products.map(p => <ProductCard key={p.id} product={p} />)}
+        </div>
+    )
+}`}</CodeBlock>
+
+                <CodeBlock title="client-component.tsx">{`'use client' // ⬅️ Required directive for Client Component
+
+import { useState } from 'react'
+
+export default function AddToCartButton({ productId }) {
+    const [count, setCount] = useState(0)
+
+    return (
+        <button onClick={() => setCount(c => c + 1)}>
+            Add to cart ({count})
+        </button>
+    )
+}`}</CodeBlock>
+
+                <Callout type="warning">
+                    Only add <InlineCode>&apos;use client&apos;</InlineCode> when a component truly needs interactivity.
+                    Keep as many Server Components as possible to reduce bundle size and improve performance.
+                </Callout>
 
                 <Heading2>3. Server Actions</Heading2>
+
                 <Paragraph>
-                    <Highlight>Server Actions</Highlight> let you call server-side functions directly from the client — no API routes needed.
-                    They work with Progressive Enhancement (even without JavaScript).
+                    <Highlight>Server Actions</Highlight> let you call server-side functions directly from the client
+                    — no separate API route needed. This is how Next.js handles mutations (create, update, delete data).
                 </Paragraph>
+
+                <CodeBlock title="actions.ts">{`'use server'
+
+export async function createProduct(formData: FormData) {
+    const name = formData.get('name') as string
+    const price = Number(formData.get('price'))
+
+    // Validate
+    if (!name || !price) {
+        return { error: 'Missing information' }
+    }
+
+    // Insert into DB — runs on server, safe!
+    await db.product.create({
+        data: { name, price }
+    })
+
+    // Revalidate cache
+    revalidatePath('/products')
+    return { success: true }
+}`}</CodeBlock>
+
+                <CodeBlock title="form.tsx">{`// Use in form — no API route needed!
+import { createProduct } from './actions'
+
+export default function ProductForm() {
+    return (
+        <form action={createProduct}>
+            <input name="name" placeholder="Product name" />
+            <input name="price" type="number" placeholder="Price" />
+            <button type="submit">Create product</button>
+        </form>
+    )
+}`}</CodeBlock>
+
+                <Callout type="tip">
+                    Server Actions work even when JavaScript is disabled (Progressive Enhancement).
+                    Use <InlineCode>useFormStatus</InlineCode> to show loading state
+                    and <InlineCode>useActionState</InlineCode> to handle results.
+                </Callout>
 
                 <Heading2>4. Streaming & Suspense</Heading2>
+
                 <Paragraph>
-                    <Highlight>Streaming</Highlight> sends HTML in chunks — instead of waiting for the entire page to render.
-                    Combined with React <InlineCode>Suspense</InlineCode>, each section shows a loading skeleton independently.
+                    <Highlight>Streaming</Highlight> lets the server send HTML in chunks to the client
+                    — instead of waiting for the entire page to finish rendering. Combined with React{' '}
+                    <InlineCode>Suspense</InlineCode> to show loading UI for each section independently.
                 </Paragraph>
 
-                <Heading2>5. Parallel & Intercepting Routes</Heading2>
+                <CodeBlock title="page.tsx">{`import { Suspense } from 'react'
+
+export default function DashboardPage() {
+    return (
+        <div>
+            <h1>Dashboard</h1>
+
+            {/* Header renders immediately */}
+            <Suspense fallback={<OrdersSkeleton />}>
+                {/* Orders loads async, streams when ready */}
+                <RecentOrders />
+            </Suspense>
+
+            <Suspense fallback={<StatsSkeleton />}>
+                {/* Stats loads in parallel, doesn't block Orders */}
+                <SalesStats />
+            </Suspense>
+        </div>
+    )
+}
+
+// Server Component — async fetch
+async function RecentOrders() {
+    const orders = await fetchOrders() // May take 2s
+    return <OrderList orders={orders} />
+}
+
+async function SalesStats() {
+    const stats = await fetchStats() // May take 3s
+    return <StatsGrid stats={stats} />
+}`}</CodeBlock>
+
+                <div className="my-6 rounded-xl bg-slate-800/40 border border-white/10 p-4">
+                    <div className="text-[#38bdf8] font-bold text-sm mb-3">⚡ Streaming Flow</div>
+                    <div className="flex flex-col gap-2 text-sm text-slate-300">
+                        <div className="flex items-center gap-2">
+                            <span className="text-green-400">0ms</span>
+                            <span>→ Header + Skeletons sent to client immediately</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-yellow-400">2s</span>
+                            <span>→ Orders data streams in, replaces OrdersSkeleton</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-blue-400">3s</span>
+                            <span>→ Stats data streams in, replaces StatsSkeleton</span>
+                        </div>
+                    </div>
+                </div>
+
+                <Heading3>loading.tsx — Automatic Convention</Heading3>
+
                 <Paragraph>
-                    <Highlight>Parallel Routes</Highlight> (@folder) render multiple pages simultaneously in a layout.
-                    <Highlight>Intercepting Routes</Highlight> let you show content in the current context (e.g., modals).
+                    Instead of wrapping Suspense yourself, create a <InlineCode>loading.tsx</InlineCode> file next to{' '}
+                    <InlineCode>page.tsx</InlineCode> — Next.js automatically wraps Suspense for you:
                 </Paragraph>
+
+                <CodeBlock title="app/dashboard/loading.tsx">{`export default function Loading() {
+    return (
+        <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/3 mb-4" />
+            <div className="h-64 bg-gray-200 rounded" />
+        </div>
+    )
+}`}</CodeBlock>
+
+                <Heading2>5. Parallel Routes & Intercepting Routes</Heading2>
+
+                <Heading3>Parallel Routes (@folder)</Heading3>
+
+                <Paragraph>
+                    Display multiple pages <Highlight>simultaneously</Highlight> in the same layout.
+                    Use for dashboards with multiple panels, or modal + page behind it.
+                </Paragraph>
+
+                <CodeBlock title="folder-structure">{`app/dashboard/
+├── layout.tsx        → Receives @analytics and @team as props
+├── page.tsx          → Main content
+├── @analytics/
+│   └── page.tsx      → Analytics panel (renders in parallel)
+└── @team/
+    └── page.tsx      → Team panel (renders in parallel)`}</CodeBlock>
+
+                <CodeBlock title="layout.tsx">{`// Parallel routes are injected as props
+export default function DashboardLayout({
+    children,     // page.tsx
+    analytics,    // @analytics/page.tsx
+    team,         // @team/page.tsx
+}: {
+    children: React.ReactNode
+    analytics: React.ReactNode
+    team: React.ReactNode
+}) {
+    return (
+        <div className="grid grid-cols-3 gap-4">
+            <div className="col-span-2">{children}</div>
+            <div>{analytics}</div>
+            <div>{team}</div>
+        </div>
+    )
+}`}</CodeBlock>
+
+                <Heading3>Intercepting Routes (.)</Heading3>
+
+                <Paragraph>
+                    &quot;Intercept&quot; navigation to show content in the current context (e.g., modal).
+                    When the page is refreshed, it shows the full page normally.
+                </Paragraph>
+
+                <CodeBlock title="intercepting-routes">{`app/
+├── feed/
+│   └── page.tsx           → Feed page
+│   └── (..)photo/[id]/    → Intercept: show photo as modal
+│       └── page.tsx         on feed page
+└── photo/
+    └── [id]/
+        └── page.tsx       → Full photo page (when accessed directly)`}</CodeBlock>
+
+                <Callout type="info">
+                    This pattern is common in Instagram, Twitter — clicking a photo opens a modal,
+                    but directly accessing the URL shows the full page.
+                </Callout>
 
                 <Heading2>6. Caching & Revalidation</Heading2>
+
                 <Paragraph>
-                    Next.js has a powerful multi-layer caching system: Request Memoization, Data Cache, Full Route Cache, and Router Cache.
-                    Use <InlineCode>revalidatePath</InlineCode> or <InlineCode>revalidateTag</InlineCode> for on-demand revalidation.
+                    Next.js has a powerful <Highlight>multi-layer caching</Highlight> system:
                 </Paragraph>
+
+                <div className="my-6 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead>
+                            <tr className="border-b border-white/10">
+                                <th className="text-left p-3 text-slate-400 font-medium">Cache</th>
+                                <th className="text-left p-3 text-slate-400 font-medium">Description</th>
+                                <th className="text-left p-3 text-slate-400 font-medium">Location</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-slate-300">
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>Request Memoization</InlineCode></td>
+                                <td className="p-3">Deduplicates same URL in a single render</td>
+                                <td className="p-3">Server</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>Data Cache</InlineCode></td>
+                                <td className="p-3">Caches fetch API results</td>
+                                <td className="p-3">Server</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3"><InlineCode>Full Route Cache</InlineCode></td>
+                                <td className="p-3">Caches entire HTML + RSC payload</td>
+                                <td className="p-3">Server</td>
+                            </tr>
+                            <tr>
+                                <td className="p-3"><InlineCode>Router Cache</InlineCode></td>
+                                <td className="p-3">Caches RSC payload in browser</td>
+                                <td className="p-3">Client</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <Heading3>Revalidation Strategies</Heading3>
+
+                <CodeBlock title="revalidation.ts">{`// 1. Time-based: revalidate every 60 seconds
+fetch('/api/data', { next: { revalidate: 60 } })
+
+// 2. On-demand: revalidate when data changes
+import { revalidatePath, revalidateTag } from 'next/cache'
+
+// In Server Action:
+async function updateProduct() {
+    'use server'
+    await db.product.update(...)
+
+    revalidatePath('/products')          // Revalidate by path
+    revalidateTag('products')            // Revalidate by tag
+}
+
+// 3. Tag-based fetch
+fetch('/api/products', { next: { tags: ['products'] } })`}</CodeBlock>
 
                 <Heading2>7. Middleware</Heading2>
+
                 <Paragraph>
-                    <Highlight>Middleware</Highlight> runs before every request — use for auth, redirects, rewrites, headers, A/B testing, i18n.
+                    <Highlight>Middleware</Highlight> runs <Highlight>before every request</Highlight> — use for authentication,
+                    redirects, URL rewrites, adding headers, A/B testing, i18n...
                 </Paragraph>
+
+                <CodeBlock title="middleware.ts">{`import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+
+export function middleware(request: NextRequest) {
+    const token = request.cookies.get('session')?.value
+
+    // Not logged in → redirect to /login
+    if (!token && request.nextUrl.pathname.startsWith('/admin')) {
+        return NextResponse.redirect(new URL('/login', request.url))
+    }
+
+    // Add custom header
+    const response = NextResponse.next()
+    response.headers.set('x-custom-header', 'hello')
+
+    return response
+}
+
+// Only run for paths matching pattern
+export const config = {
+    matcher: ['/admin/:path*', '/api/:path*']
+}`}</CodeBlock>
 
                 <Heading2>8. Image & Font Optimization</Heading2>
+
+                <Heading3>next/image</Heading3>
+
                 <Paragraph>
-                    <InlineCode>next/image</InlineCode> auto-optimizes: lazy loading, responsive sizes, WebP/AVIF.
-                    <InlineCode>next/font</InlineCode> self-hosts fonts locally — no external Google Fonts requests.
+                    The <InlineCode>Image</InlineCode> component automatically optimizes: lazy loading, responsive sizes,
+                    WebP/AVIF format, prevent layout shift (CLS).
                 </Paragraph>
 
+                <CodeBlock title="optimized-image.tsx">{`import Image from 'next/image'
+
+// Automatically optimizes size, format, lazy load
+<Image
+    src="/product.jpg"
+    alt="Product"
+    width={800}
+    height={600}
+    quality={80}
+    placeholder="blur"    // Blur placeholder while loading
+    priority              // Preload for LCP images
+    sizes="(max-width: 768px) 100vw, 50vw"
+/>`}</CodeBlock>
+
+                <Heading3>next/font</Heading3>
+
+                <Paragraph>
+                    Automatically hosts fonts locally — no Google Fonts requests from client, improving privacy and performance:
+                </Paragraph>
+
+                <CodeBlock title="font-setup.tsx">{`import { Inter, Roboto_Mono } from 'next/font/google'
+
+const inter = Inter({
+    subsets: ['latin'],
+    display: 'swap',   // Show text immediately, swap font when loaded
+    variable: '--font-inter',
+})
+
+const robotoMono = Roboto_Mono({
+    subsets: ['latin'],
+    variable: '--font-roboto-mono',
+})
+
+// Use in layout
+export default function RootLayout({ children }) {
+    return (
+        <html className={\`\${inter.variable} \${robotoMono.variable}\`}>
+            <body className={inter.className}>{children}</body>
+        </html>
+    )
+}`}</CodeBlock>
+
                 <Heading2>📌 Summary</Heading2>
+
                 <div className="my-6 space-y-3">
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
                         <span className="text-blue-400 mt-0.5">▲</span>
@@ -571,10 +947,18 @@ export default function RootLayout({ children }) {
                         <span className="text-blue-400 mt-0.5">🌊</span>
                         <span className="text-slate-300"><Highlight>Streaming</Highlight> — progressive HTML delivery for smooth UX</span>
                     </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
+                        <span className="text-blue-400 mt-0.5">🔄</span>
+                        <span className="text-slate-300"><Highlight>Caching</Highlight> — multi-layer, flexible revalidation</span>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/40 border border-white/5">
+                        <span className="text-blue-400 mt-0.5">🛡️</span>
+                        <span className="text-slate-300"><Highlight>Middleware</Highlight> — auth, redirects, headers before every request</span>
+                    </div>
                 </div>
 
                 <Callout type="tip">
-                    For new projects, always use App Router. Keep components as Server Components by default,
+                    For new projects, always use App Router. Keep components as Server by default,
                     only add <InlineCode>&apos;use client&apos;</InlineCode> when interactivity is needed.
                     Use Server Actions for mutations and <InlineCode>Suspense</InlineCode> for streaming UI.
                 </Callout>
