@@ -14,6 +14,75 @@ const viContent = (
             &quot;đếm tần suất&quot;, &quot;kiểm tra trùng lặp&quot;. Nếu brute-force là O(n²), Hash Map thường giúp giảm xuống O(n).
         </Callout>
 
+        <Heading2>Cách dùng Map & Set trong JavaScript</Heading2>
+
+        <CodeBlock title="map-api.js">{`// ═══ MAP — lưu cặp key → value ═══
+const map = new Map()
+map.set('name', 'Khuông')     // Thêm/cập nhật
+map.set('age', 25)
+map.get('name')               // 'Khuông' — O(1)
+map.has('age')                // true — O(1)
+map.delete('age')             // Xóa key
+map.size                      // 1 — O(1)
+
+// Khởi tạo từ mảng cặp [key, value]
+const map2 = new Map([['a', 1], ['b', 2], ['c', 3]])
+
+// Duyệt Map
+for (const [key, value] of map2) {
+    console.log(key, value)   // 'a' 1, 'b' 2, 'c' 3
+}
+map2.forEach((value, key) => console.log(key, value))
+
+// Chuyển Map ↔ Object
+const obj = Object.fromEntries(map2)  // { a: 1, b: 2, c: 3 }
+const map3 = new Map(Object.entries(obj))`}</CodeBlock>
+
+        <CodeBlock title="set-api.js">{`// ═══ SET — tập hợp giá trị duy nhất (không trùng lặp) ═══
+const set = new Set()
+set.add(1)                    // Thêm phần tử
+set.add(2)
+set.add(1)                    // Không thêm — đã có rồi!
+set.has(1)                    // true — O(1)
+set.delete(2)                 // Xóa phần tử
+set.size                      // 1
+
+// Loại bỏ trùng lặp từ mảng — 1 dòng!
+const unique = [...new Set([1, 2, 2, 3, 3, 3])]  // [1, 2, 3]
+
+// Kiểm tra giao/hợp/hiệu tập hợp
+const a = new Set([1, 2, 3])
+const b = new Set([2, 3, 4])
+const intersection = [...a].filter(x => b.has(x))  // [2, 3]
+const union = new Set([...a, ...b])                 // {1, 2, 3, 4}
+const diff = [...a].filter(x => !b.has(x))          // [1]`}</CodeBlock>
+
+        <Heading3>Object vs Map — khi nào dùng cái nào?</Heading3>
+
+        <div className="my-4 overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+                <thead>
+                    <tr className="border-b border-gray-200 dark:border-white/10">
+                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium"></th>
+                        <th className="text-left p-3 text-blue-400 font-medium">Object</th>
+                        <th className="text-left p-3 text-purple-400 font-medium">Map</th>
+                    </tr>
+                </thead>
+                <tbody className="text-gray-600 dark:text-slate-300">
+                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Key type</td><td className="p-3">Chỉ string/symbol</td><td className="p-3">Bất kỳ (object, array, number...)</td></tr>
+                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Lấy size</td><td className="p-3"><InlineCode>Object.keys(o).length</InlineCode></td><td className="p-3"><InlineCode>map.size</InlineCode> — O(1)</td></tr>
+                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Thứ tự</td><td className="p-3">Không đảm bảo</td><td className="p-3">Theo thứ tự chèn (insertion order)</td></tr>
+                    <tr><td className="p-3 font-medium">Performance</td><td className="p-3">Nhanh với ít key</td><td className="p-3">Tốt hơn khi thêm/xóa nhiều</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <Callout type="tip">
+            <strong>Quy tắc nhanh:</strong> Dùng <InlineCode>Object</InlineCode> khi key là string đơn giản (config, JSON).
+            Dùng <InlineCode>Map</InlineCode> khi key không phải string, cần <InlineCode>size</InlineCode>, hoặc thêm/xóa nhiều.
+            Dùng <InlineCode>Set</InlineCode> khi chỉ cần kiểm tra "có tồn tại không" mà không cần value.
+        </Callout>
+
         <Heading2>Khi nào dùng Hash Map?</Heading2>
 
         <div className="my-4 overflow-x-auto">
@@ -540,6 +609,75 @@ const enContent = (
         <Callout type="info">
             Hash Map solves most problems involving: &quot;find element matching condition&quot;,
             &quot;count frequency&quot;, &quot;check duplicates&quot;. If brute-force is O(n²), Hash Map usually brings it down to O(n).
+        </Callout>
+
+        <Heading2>How to Use Map & Set in JavaScript</Heading2>
+
+        <CodeBlock title="map-api.js">{`// ═══ MAP — store key → value pairs ═══
+const map = new Map()
+map.set('name', 'Khuông')     // Add/update
+map.set('age', 25)
+map.get('name')               // 'Khuông' — O(1)
+map.has('age')                // true — O(1)
+map.delete('age')             // Remove key
+map.size                      // 1 — O(1)
+
+// Initialize from array of [key, value] pairs
+const map2 = new Map([['a', 1], ['b', 2], ['c', 3]])
+
+// Iterate Map
+for (const [key, value] of map2) {
+    console.log(key, value)   // 'a' 1, 'b' 2, 'c' 3
+}
+map2.forEach((value, key) => console.log(key, value))
+
+// Convert Map ↔ Object
+const obj = Object.fromEntries(map2)  // { a: 1, b: 2, c: 3 }
+const map3 = new Map(Object.entries(obj))`}</CodeBlock>
+
+        <CodeBlock title="set-api.js">{`// ═══ SET — collection of unique values (no duplicates) ═══
+const set = new Set()
+set.add(1)                    // Add element
+set.add(2)
+set.add(1)                    // Ignored — already exists!
+set.has(1)                    // true — O(1)
+set.delete(2)                 // Remove element
+set.size                      // 1
+
+// Remove duplicates from array — one liner!
+const unique = [...new Set([1, 2, 2, 3, 3, 3])]  // [1, 2, 3]
+
+// Set operations: intersection, union, difference
+const a = new Set([1, 2, 3])
+const b = new Set([2, 3, 4])
+const intersection = [...a].filter(x => b.has(x))  // [2, 3]
+const union = new Set([...a, ...b])                 // {1, 2, 3, 4}
+const diff = [...a].filter(x => !b.has(x))          // [1]`}</CodeBlock>
+
+        <Heading3>Object vs Map — When to Use Which?</Heading3>
+
+        <div className="my-4 overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+                <thead>
+                    <tr className="border-b border-gray-200 dark:border-white/10">
+                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium"></th>
+                        <th className="text-left p-3 text-blue-400 font-medium">Object</th>
+                        <th className="text-left p-3 text-purple-400 font-medium">Map</th>
+                    </tr>
+                </thead>
+                <tbody className="text-gray-600 dark:text-slate-300">
+                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Key type</td><td className="p-3">String/symbol only</td><td className="p-3">Any type (object, array, number...)</td></tr>
+                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Get size</td><td className="p-3"><InlineCode>Object.keys(o).length</InlineCode></td><td className="p-3"><InlineCode>map.size</InlineCode> — O(1)</td></tr>
+                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Order</td><td className="p-3">Not guaranteed</td><td className="p-3">Insertion order preserved</td></tr>
+                    <tr><td className="p-3 font-medium">Performance</td><td className="p-3">Fast with few keys</td><td className="p-3">Better for frequent add/delete</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <Callout type="tip">
+            <strong>Quick rule:</strong> Use <InlineCode>Object</InlineCode> when keys are simple strings (config, JSON).
+            Use <InlineCode>Map</InlineCode> when keys aren&#39;t strings, you need <InlineCode>size</InlineCode>, or frequent add/delete.
+            Use <InlineCode>Set</InlineCode> when you only need to check "does it exist?" without storing values.
         </Callout>
 
         <Heading2>When to Use Hash Map?</Heading2>
