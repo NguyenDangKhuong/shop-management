@@ -891,6 +891,71 @@ function bfsGraph(graph: Map<number, number[]>, start: number): number[] {
 // Frequency counting     → Map
 // Cache (LRU)            → Map (giữ insertion order)`}</CodeBlock>
 
+                {/* ===== REAL-WORLD EXAMPLES ===== */}
+                <Heading2>🏭 Ví dụ thực tế từ dự án này</Heading2>
+
+                <Paragraph>
+                    Dưới đây là các ví dụ <Highlight>thực tế</Highlight> từ chính source code của dự án này,
+                    cho thấy Map, Set, Array được sử dụng như thế nào trong production code.
+                </Paragraph>
+
+                <CodeBlock title="ProductTable.tsx — Map O(1) lookup">{`// 📁 src/components/shop/products/ProductTable.tsx
+
+// 🚀 Tạo categoryMap để lookup O(1) thay vì O(n) find()
+const categoryMap = useMemo(() => {
+    const map = new Map<string, string>()
+    categories?.forEach((category: Category) => {
+        if (category._id) {
+            map.set(String(category._id), category.name)
+        }
+    })
+    return map
+}, [categories])
+
+// 🚀 Sử dụng: O(1) Map.get() thay vì O(n) Array.find()
+// ❌ Cách cũ: categories.find(c => c._id === categoryId)?.name
+// ✅ Cách mới:
+render: (_, { categoryId }) =>
+    categoryId ? categoryMap.get(categoryId) || '-' : '-'
+
+// Với 100 sản phẩm × 50 categories:
+// ❌ find(): 100 × 50 = 5000 comparisons
+// ✅ Map.get(): 100 × 1 = 100 lookups`}</CodeBlock>
+
+                <CodeBlock title="autoflows/route.ts — Set dedup + Map batch">{`// 📁 src/app/(admin)/api/autoflows/route.ts
+
+// 1️⃣ Set — Loại bỏ promptId trùng lặp
+const allPromptIds = autoflows.flatMap((a: any) => a.promptIds || [])
+const uniquePromptIds = [...new Set(allPromptIds)]  // ✨ 1 dòng dedup!
+
+// 2️⃣ Map — Batch fetch → Map để lookup nhanh
+const prompts = await PromptModel.find({ _id: { $in: uniquePromptIds } })
+
+const promptsMap = new Map<string, any>()
+prompts.forEach((p: any) => {
+    promptsMap.set(p._id.toString(), p)
+})
+
+// 3️⃣ Sử dụng Map để gắn prompts vào mỗi autoflow
+const orderedPrompts = (a.promptIds || [])
+    .map((id: string) => promptsMap.get(id))  // O(1) mỗi lần
+    .filter(Boolean)  // loại bỏ undefined`}</CodeBlock>
+
+                <CodeBlock title="tweets/route.ts — Map làm cache">{`// 📁 src/app/api/tweets/route.ts
+
+// Map dùng làm in-memory cache với TTL
+const cache = new Map<string, { html: string; ts: number }>()
+const CACHE_TTL = 10 * 60 * 1000 // 10 phút
+
+// Check cache trước khi fetch
+const cached = cache.get(key)
+if (cached && Date.now() - cached.ts < CACHE_TTL) {
+    return cached.html  // Cache HIT ✅
+}
+
+// Sau khi fetch xong → lưu vào cache
+cache.set(key, { html, ts: Date.now() })`}</CodeBlock>
+
                 <Callout type="tip">
                     <strong>Tip cho LeetCode:</strong> 90% bài dùng Array + Map + Set. Thêm Stack cho parentheses/monotonic,
                     Queue cho BFS, Heap cho top-K/scheduling. Trie và Graph cho bài medium-hard cụ thể.
@@ -1491,6 +1556,71 @@ function bfsGraph(graph: Map<number, number[]>, start: number): number[] {
 // Ordered unique     → Set
 // Frequency counting → Map
 // Cache (LRU)        → Map (maintains insertion order)`}</CodeBlock>
+
+                {/* ===== REAL-WORLD EXAMPLES ===== */}
+                <Heading2>🏭 Real-World Examples from This Project</Heading2>
+
+                <Paragraph>
+                    Below are <Highlight>real examples</Highlight> from this project&#39;s source code,
+                    showing how Map, Set, and Array are used in production.
+                </Paragraph>
+
+                <CodeBlock title="ProductTable.tsx — Map O(1) lookup">{`// 📁 src/components/shop/products/ProductTable.tsx
+
+// 🚀 Build categoryMap for O(1) lookups instead of O(n) find()
+const categoryMap = useMemo(() => {
+    const map = new Map<string, string>()
+    categories?.forEach((category: Category) => {
+        if (category._id) {
+            map.set(String(category._id), category.name)
+        }
+    })
+    return map
+}, [categories])
+
+// 🚀 Usage: O(1) Map.get() instead of O(n) Array.find()
+// ❌ Old way: categories.find(c => c._id === categoryId)?.name
+// ✅ New way:
+render: (_, { categoryId }) =>
+    categoryId ? categoryMap.get(categoryId) || '-' : '-'
+
+// With 100 products × 50 categories:
+// ❌ find(): 100 × 50 = 5,000 comparisons
+// ✅ Map.get(): 100 × 1 = 100 lookups`}</CodeBlock>
+
+                <CodeBlock title="autoflows/route.ts — Set dedup + Map batch">{`// 📁 src/app/(admin)/api/autoflows/route.ts
+
+// 1️⃣ Set — Deduplicate prompt IDs in one line
+const allPromptIds = autoflows.flatMap((a: any) => a.promptIds || [])
+const uniquePromptIds = [...new Set(allPromptIds)]  // ✨ 1-line dedup!
+
+// 2️⃣ Map — Batch fetch → Map for fast lookup
+const prompts = await PromptModel.find({ _id: { $in: uniquePromptIds } })
+
+const promptsMap = new Map<string, any>()
+prompts.forEach((p: any) => {
+    promptsMap.set(p._id.toString(), p)
+})
+
+// 3️⃣ Use Map to attach prompts to each autoflow
+const orderedPrompts = (a.promptIds || [])
+    .map((id: string) => promptsMap.get(id))  // O(1) each
+    .filter(Boolean)  // remove undefined`}</CodeBlock>
+
+                <CodeBlock title="tweets/route.ts — Map as cache">{`// 📁 src/app/api/tweets/route.ts
+
+// Map used as in-memory cache with TTL
+const cache = new Map<string, { html: string; ts: number }>()
+const CACHE_TTL = 10 * 60 * 1000 // 10 minutes
+
+// Check cache before fetching
+const cached = cache.get(key)
+if (cached && Date.now() - cached.ts < CACHE_TTL) {
+    return cached.html  // Cache HIT ✅
+}
+
+// After fetching → store in cache
+cache.set(key, { html, ts: Date.now() })`}</CodeBlock>
 
                 <Callout type="tip">
                     <strong>LeetCode tip:</strong> 90% of problems use Array + Map + Set. Add Stack for parentheses/monotonic,

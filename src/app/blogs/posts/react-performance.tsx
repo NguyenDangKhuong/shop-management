@@ -757,6 +757,54 @@ function AddToCartButton({ productId }) {
                     </div>
                 </div>
 
+                {/* ===== REAL-WORLD EXAMPLES ===== */}
+                <Heading2>🏭 Ví dụ thực tế từ dự án này</Heading2>
+
+                <Paragraph>
+                    Các kỹ thuật tối ưu trên được áp dụng <Highlight>thực tế</Highlight> trong component <InlineCode>ProductTable</InlineCode> của dự án này:
+                </Paragraph>
+
+                <CodeBlock title="ProductTable.tsx — Tổng hợp các kỹ thuật">{`// 📁 src/components/shop/products/ProductTable.tsx
+// Component này áp dụng 4 kỹ thuật optimization cùng lúc:
+
+// 1️⃣ useMemo + Map — O(1) lookup thay vì O(n) find()
+const categoryMap = useMemo(() => {
+    const map = new Map<string, string>()
+    categories?.forEach((cat) => {
+        if (cat._id) map.set(String(cat._id), cat.name)
+    })
+    return map
+}, [categories])
+// Render column: categoryMap.get(categoryId) // O(1)!
+
+// 2️⃣ useCallback — 6 stable callbacks, không re-create mỗi render
+const handleEditProduct = useCallback((product: Product) => {
+    setEditingProduct(product)
+    setIsOpen(true)
+}, [])
+
+const handleDeleteProduct = useCallback(async (record: Product) => {
+    const { message, success } = await remove('api/product', record, 'products')
+    push(message, success)
+}, [push])
+
+// 3️⃣ useMemo — Memoize columns definition
+const columns = useMemo(
+    () => [/* ...column configs... */],
+    [categoryMap, handleEditProduct, handleDeleteProduct, ...]
+)
+
+// 4️⃣ useDebounce — Debounce search input
+const debouncedSearch = useDebounce(searchValue, 100)
+useEffect(() => {
+    const params = new URLSearchParams(searchParams)
+    params.set('name', String(debouncedSearch))
+    replace(pathname + '?' + params.toString())
+}, [debouncedSearch])
+
+// Kết quả: Component với 270 dòng code,
+// nhưng mượt và không re-render thừa!`}</CodeBlock>
+
                 <Callout type="tip">
                     Performance optimization là một quá trình liên tục. Đừng cố optimize mọi thứ cùng lúc —
                     hãy bắt đầu từ những bottleneck lớn nhất, đo lại, rồi tiếp tục cải thiện.
@@ -1503,6 +1551,54 @@ function AddToCartButton({ productId }) {
                         <span className="text-gray-800 dark:text-slate-300">Prefer Server Components for non-interactive content</span>
                     </div>
                 </div>
+
+                {/* ===== REAL-WORLD EXAMPLES ===== */}
+                <Heading2>🏭 Real-World Examples from This Project</Heading2>
+
+                <Paragraph>
+                    The optimization techniques above are applied <Highlight>in practice</Highlight> in the <InlineCode>ProductTable</InlineCode> component of this project:
+                </Paragraph>
+
+                <CodeBlock title="ProductTable.tsx — Combined Techniques">{`// 📁 src/components/shop/products/ProductTable.tsx
+// This component applies 4 optimization techniques simultaneously:
+
+// 1️⃣ useMemo + Map — O(1) lookup instead of O(n) find()
+const categoryMap = useMemo(() => {
+    const map = new Map<string, string>()
+    categories?.forEach((cat) => {
+        if (cat._id) map.set(String(cat._id), cat.name)
+    })
+    return map
+}, [categories])
+// Column render: categoryMap.get(categoryId) // O(1)!
+
+// 2️⃣ useCallback — 6 stable callbacks, not recreated every render
+const handleEditProduct = useCallback((product: Product) => {
+    setEditingProduct(product)
+    setIsOpen(true)
+}, [])
+
+const handleDeleteProduct = useCallback(async (record: Product) => {
+    const { message, success } = await remove('api/product', record, 'products')
+    push(message, success)
+}, [push])
+
+// 3️⃣ useMemo — Memoize columns definition
+const columns = useMemo(
+    () => [/* ...column configs... */],
+    [categoryMap, handleEditProduct, handleDeleteProduct, ...]
+)
+
+// 4️⃣ useDebounce — Debounce search input
+const debouncedSearch = useDebounce(searchValue, 100)
+useEffect(() => {
+    const params = new URLSearchParams(searchParams)
+    params.set('name', String(debouncedSearch))
+    replace(pathname + '?' + params.toString())
+}, [debouncedSearch])
+
+// Result: 270-line component that stays smooth
+// and never re-renders unnecessarily!`}</CodeBlock>
 
                 <Callout type="tip">
                     Performance optimization is an ongoing process. Don&apos;t try to optimize everything at once —

@@ -689,6 +689,62 @@ function MyForm() {
                     </div>
                 </div>
 
+                {/* ===== REAL-WORLD EXAMPLES ===== */}
+                <Heading2>🏭 Ví dụ thực tế từ dự án này</Heading2>
+
+                <Paragraph>
+                    Dưới đây là cách các hooks được sử dụng <Highlight>thực tế</Highlight> trong source code của dự án này.
+                </Paragraph>
+
+                <CodeBlock title="ProductTable.tsx — useMemo + useCallback">{`// 📁 src/components/shop/products/ProductTable.tsx
+
+// useMemo — tạo categoryMap, chỉ tính lại khi categories thay đổi
+const categoryMap = useMemo(() => {
+    const map = new Map<string, string>()
+    categories?.forEach((category: Category) => {
+        if (category._id) {
+            map.set(String(category._id), category.name)
+        }
+    })
+    return map
+}, [categories])  // 🔑 dependency: chỉ re-compute khi categories đổi
+
+// useCallback — 6 stable callbacks, không tạo lại mỗi render
+const handleEditProduct = useCallback((product: Product) => {
+    setEditingProduct(product)
+    setIsOpen(true)
+}, [])  // 🔑 [] = không bao giờ tạo lại
+
+const handleDeleteProduct = useCallback(async (record: Product) => {
+    const { message, success }: any = await remove('api/product', record, 'products')
+    push(message, success)
+}, [push])  // 🔑 [push] = tạo lại khi push thay đổi
+
+// useMemo — memoize columns array
+const columns: ColumnsType<Product> = useMemo(
+    () => [/* ... column definitions ... */],
+    [categoryMap, handleEditProduct, handleOpenBarcode, handleCopySku, handleDeleteProduct]
+)  // 🔑 chỉ tạo lại khi các callback hoặc map thay đổi`}</CodeBlock>
+
+                <CodeBlock title="useDebounce.ts — Custom Hook thực tế">{`// 📁 src/hooks/useDebounce.ts
+// Custom hook dùng trong 3 components: ProductTable, ShopeeLinksTable, CartPage
+
+const useDebounce = (value: string, delay: number): string => {
+    const [debouncedValue, setDebouncedValue] = useState<string>(value)
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value)
+        }, delay)
+        return () => clearTimeout(handler)  // cleanup khi value đổi
+    }, [value, delay])
+    return debouncedValue
+}
+
+// Sử dụng:
+// ProductTable:    useDebounce(searchValue, 100)   // search nhanh
+// ShopeeLinksTable: useDebounce(searchTerm, 300)    // search links
+// CartPage:        useDebounce(scanValue, 2000)     // quét barcode mobile`}</CodeBlock>
+
                 <Callout type="tip">
                     Bắt đầu với <InlineCode>useState</InlineCode> + <InlineCode>useEffect</InlineCode> — đây là 2 hooks
                     cần thiết cho 90% trường hợp. Chỉ thêm các hooks khác khi thực sự cần optimize hoặc logic phức tạp.
@@ -1366,6 +1422,62 @@ function MyForm() {
                         <span className="text-slate-300"><Highlight>useReducer</Highlight> — complex state, Redux-like pattern</span>
                     </div>
                 </div>
+
+                {/* ===== REAL-WORLD EXAMPLES ===== */}
+                <Heading2>🏭 Real-World Examples from This Project</Heading2>
+
+                <Paragraph>
+                    Below is how hooks are used <Highlight>in practice</Highlight> in this project&#39;s source code.
+                </Paragraph>
+
+                <CodeBlock title="ProductTable.tsx — useMemo + useCallback">{`// 📁 src/components/shop/products/ProductTable.tsx
+
+// useMemo — build categoryMap, only recalculate when categories change
+const categoryMap = useMemo(() => {
+    const map = new Map<string, string>()
+    categories?.forEach((category: Category) => {
+        if (category._id) {
+            map.set(String(category._id), category.name)
+        }
+    })
+    return map
+}, [categories])  // 🔑 dependency: only recompute when categories change
+
+// useCallback — 6 stable callbacks, not recreated every render
+const handleEditProduct = useCallback((product: Product) => {
+    setEditingProduct(product)
+    setIsOpen(true)
+}, [])  // 🔑 [] = never recreated
+
+const handleDeleteProduct = useCallback(async (record: Product) => {
+    const { message, success }: any = await remove('api/product', record, 'products')
+    push(message, success)
+}, [push])  // 🔑 [push] = recreated when push changes
+
+// useMemo — memoize columns array
+const columns: ColumnsType<Product> = useMemo(
+    () => [/* ... column definitions ... */],
+    [categoryMap, handleEditProduct, handleOpenBarcode, handleCopySku, handleDeleteProduct]
+)  // 🔑 only recreates when callbacks or map change`}</CodeBlock>
+
+                <CodeBlock title="useDebounce.ts — Real Custom Hook">{`// 📁 src/hooks/useDebounce.ts
+// Custom hook used in 3 components: ProductTable, ShopeeLinksTable, CartPage
+
+const useDebounce = (value: string, delay: number): string => {
+    const [debouncedValue, setDebouncedValue] = useState<string>(value)
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value)
+        }, delay)
+        return () => clearTimeout(handler)  // cleanup on value change
+    }, [value, delay])
+    return debouncedValue
+}
+
+// Usage:
+// ProductTable:     useDebounce(searchValue, 100)   // fast product search
+// ShopeeLinksTable: useDebounce(searchTerm, 300)    // link search
+// CartPage:         useDebounce(scanValue, 2000)    // mobile barcode scan`}</CodeBlock>
 
                 <Callout type="tip">
                     Start with <InlineCode>useState</InlineCode> + <InlineCode>useEffect</InlineCode> — these 2 hooks cover 90% of use cases.
