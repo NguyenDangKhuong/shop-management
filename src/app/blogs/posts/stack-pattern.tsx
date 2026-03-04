@@ -15,6 +15,33 @@ const viContent = (
             (Monotonic Stack).
         </Callout>
 
+        <Heading2>Cách dùng Stack trong JavaScript</Heading2>
+
+        <CodeBlock title="stack-api.js">{`// ═══ Stack API — dùng Array làm Stack ═══
+const stack = []
+stack.push(1)        // Thêm vào đỉnh: [1]
+stack.push(2)        // [1, 2]
+stack.push(3)        // [1, 2, 3]
+stack.pop()          // Lấy ra: 3, stack = [1, 2]
+stack[stack.length-1] // Peek (đỉnh stack): 2 — không xóa
+stack.length          // Size: 2
+stack.length === 0    // isEmpty: false
+
+// ═══ TEMPLATE: Monotonic Stack (tìm phần tử lớn/nhỏ hơn gần nhất) ═══
+// VD: Với mỗi phần tử, tìm phần tử LỚN HƠN tiếp theo bên phải
+const result = new Array(arr.length).fill(-1)
+const monoStack = []  // Lưu INDEX, giảm dần
+
+for (let i = 0; i < arr.length; i++) {
+    // Pop tất cả phần tử nhỏ hơn arr[i]
+    while (monoStack.length && arr[monoStack[monoStack.length-1]] < arr[i]) {
+        const idx = monoStack.pop()
+        result[idx] = arr[i]  // arr[i] là next greater của arr[idx]
+    }
+    monoStack.push(i)
+}
+// VD: arr = [2, 1, 4, 3] → result = [4, 4, -1, -1]`}</CodeBlock>
+
         <Heading2>Khi nào dùng Stack?</Heading2>
 
         <div className="my-4 overflow-x-auto">
@@ -506,6 +533,33 @@ const enContent = (
             needing to <Highlight>backtrack to previous state</Highlight>, or finding nearest elements
             matching a condition (Monotonic Stack).
         </Callout>
+
+        <Heading2>How to Use Stack in JavaScript</Heading2>
+
+        <CodeBlock title="stack-api.js">{`// ═══ Stack API — use Array as Stack ═══
+const stack = []
+stack.push(1)        // Add to top: [1]
+stack.push(2)        // [1, 2]
+stack.push(3)        // [1, 2, 3]
+stack.pop()          // Remove from top: 3, stack = [1, 2]
+stack[stack.length-1] // Peek (top of stack): 2 — doesn't remove
+stack.length          // Size: 2
+stack.length === 0    // isEmpty: false
+
+// ═══ TEMPLATE: Monotonic Stack (find nearest greater/smaller) ═══
+// Ex: For each element, find the NEXT GREATER element to the right
+const result = new Array(arr.length).fill(-1)
+const monoStack = []  // Store INDICES, decreasing order
+
+for (let i = 0; i < arr.length; i++) {
+    // Pop all elements smaller than arr[i]
+    while (monoStack.length && arr[monoStack[monoStack.length-1]] < arr[i]) {
+        const idx = monoStack.pop()
+        result[idx] = arr[i]  // arr[i] is next greater of arr[idx]
+    }
+    monoStack.push(i)
+}
+// Ex: arr = [2, 1, 4, 3] → result = [4, 4, -1, -1]`}</CodeBlock>
 
         <Heading2>When to Use Stack?</Heading2>
 

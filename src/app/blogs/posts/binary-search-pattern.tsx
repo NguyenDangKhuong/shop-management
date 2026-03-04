@@ -14,6 +14,41 @@ const viContent = (
             <Highlight>Binary Search on Answer</Highlight>: tìm giá trị min/max thỏa điều kiện.
         </Callout>
 
+        <Heading2>Cách dùng Binary Search</Heading2>
+
+        <CodeBlock title="binary-search-templates.js">{`// ═══ TEMPLATE 1: Tìm giá trị cụ thể trong mảng sorted ═══
+function binarySearch(arr, target) {
+    let left = 0, right = arr.length - 1
+
+    while (left <= right) {           // ≤ vì left === right vẫn cần kiểm tra
+        const mid = Math.floor((left + right) / 2)
+
+        if (arr[mid] === target) return mid       // Tìm thấy!
+        else if (arr[mid] < target) left = mid + 1  // Target ở nửa phải
+        else right = mid - 1                        // Target ở nửa trái
+    }
+    return -1  // Không tìm thấy
+}
+
+// ═══ TEMPLATE 2: Binary Search on Answer ═══
+// Tìm giá trị NHỎ NHẤT thỏa điều kiện (ví dụ: tốc độ ăn chuối chậm nhất)
+function binarySearchOnAnswer(lo, hi) {
+    while (lo < hi) {
+        const mid = Math.floor((lo + hi) / 2)
+
+        if (canFinish(mid)) {          // mid thỏa điều kiện?
+            hi = mid                    // Thử giá trị nhỏ hơn
+        } else {
+            lo = mid + 1                // Cần giá trị lớn hơn
+        }
+    }
+    return lo  // Giá trị nhỏ nhất thỏa điều kiện
+}
+
+// Lưu ý: left <= right vs left < right
+// - left <= right: tìm giá trị CỤ THỂ (trả về index hoặc -1)
+// - left < right:  tìm BIÊN (trả về left khi hội tụ)`}</CodeBlock>
+
         <Heading2>Khi nào dùng Binary Search?</Heading2>
 
         <div className="my-4 overflow-x-auto">
@@ -397,6 +432,41 @@ const enContent = (
             Binary Search isn&apos;t just for &quot;find element in sorted array&quot;. The most powerful pattern is{' '}
             <Highlight>Binary Search on Answer</Highlight>: finding the min/max value satisfying a condition.
         </Callout>
+
+        <Heading2>How to Use Binary Search</Heading2>
+
+        <CodeBlock title="binary-search-templates.js">{`// ═══ TEMPLATE 1: Find specific value in sorted array ═══
+function binarySearch(arr, target) {
+    let left = 0, right = arr.length - 1
+
+    while (left <= right) {           // ≤ because left === right still needs checking
+        const mid = Math.floor((left + right) / 2)
+
+        if (arr[mid] === target) return mid       // Found!
+        else if (arr[mid] < target) left = mid + 1  // Target in right half
+        else right = mid - 1                        // Target in left half
+    }
+    return -1  // Not found
+}
+
+// ═══ TEMPLATE 2: Binary Search on Answer ═══
+// Find SMALLEST value satisfying condition (e.g., slowest banana eating speed)
+function binarySearchOnAnswer(lo, hi) {
+    while (lo < hi) {
+        const mid = Math.floor((lo + hi) / 2)
+
+        if (canFinish(mid)) {          // Does mid satisfy condition?
+            hi = mid                    // Try smaller value
+        } else {
+            lo = mid + 1                // Need larger value
+        }
+    }
+    return lo  // Smallest value satisfying condition
+}
+
+// Note: left <= right vs left < right
+// - left <= right: find SPECIFIC value (return index or -1)
+// - left < right:  find BOUNDARY (return left when converged)`}</CodeBlock>
 
         <Heading2>When to Use Binary Search?</Heading2>
 
