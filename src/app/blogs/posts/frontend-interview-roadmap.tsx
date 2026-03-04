@@ -674,6 +674,37 @@ const result = await Promise.race([
 
             <TopicModal title="for vs while — Khi nào dùng?" emoji="🔄" color="#10b981" summary="for = biết trước số lần lặp, while = lặp đến khi điều kiện sai — pattern quan trọng trong DSA">
                 <Paragraph><InlineCode>for</InlineCode> dùng khi <Highlight>biết trước</Highlight> số lần lặp. <InlineCode>while</InlineCode> dùng khi <Highlight>không biết trước</Highlight> khi nào dừng.</Paragraph>
+
+                <Heading3>for — Khi biết trước số lần lặp</Heading3>
+                <CodeBlock title="4 biến thể của for">{`// Duyệt mảng — biết rõ arr.length
+for (let i = 0; i < arr.length; i++) { ... }
+
+// Duyệt range cố định
+for (let i = 0; i < n; i++) { ... }
+
+// for...of — duyệt từng phần tử (Array, Map, Set, String)
+for (const item of items) { ... }
+
+// for...in — duyệt keys của object
+for (const key in obj) { ... }`}</CodeBlock>
+
+                <Heading3>while — Khi không biết trước khi nào dừng</Heading3>
+                <CodeBlock title="5 use case phổ biến">{`// Two Pointers — dừng khi 2 con trỏ gặp nhau
+while (left < right) { ... }
+
+// BFS — dừng khi queue rỗng
+while (queue.length > 0) { ... }
+
+// Binary Search — dừng khi left vượt right
+while (left <= right) { ... }
+
+// Linked List — dừng khi hết node
+while (node !== null) { ... }
+
+// Regex match — dừng khi không còn match
+while ((match = regex.exec(str)) !== null) { ... }`}</CodeBlock>
+
+                <Heading3>Cheat Sheet nhanh</Heading3>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                         <thead>
@@ -684,33 +715,32 @@ const result = await Promise.race([
                             </tr>
                         </thead>
                         <tbody className="text-slate-300">
-                            <tr className="border-b border-white/5"><td className="p-3">Duyệt mảng đầu → cuối</td><td className="p-3">for</td><td className="p-3">Biết trước length</td></tr>
-                            <tr className="border-b border-white/5"><td className="p-3">Two Pointers</td><td className="p-3">while</td><td className="p-3">Dừng khi left {'>'}= right</td></tr>
-                            <tr className="border-b border-white/5"><td className="p-3">BFS / DFS iterative</td><td className="p-3">while</td><td className="p-3">Không biết khi nào queue/stack rỗng</td></tr>
-                            <tr className="border-b border-white/5"><td className="p-3">Binary Search</td><td className="p-3">while</td><td className="p-3">Không biết bao nhiêu bước chia đôi</td></tr>
-                            <tr className="border-b border-white/5"><td className="p-3">Linked List</td><td className="p-3">while</td><td className="p-3">Dừng khi node === null</td></tr>
-                            <tr><td className="p-3">Sliding Window: right mở rộng</td><td className="p-3">for + while</td><td className="p-3">for duyệt right, while thu hẹp left</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Duyệt mảng từ đầu đến cuối</td><td className="p-3"><InlineCode>for</InlineCode></td><td className="p-3">Biết trước length</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Two Pointers</td><td className="p-3"><InlineCode>while</InlineCode></td><td className="p-3">Dừng khi left {'>'} = right</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Sliding Window: right chạy</td><td className="p-3"><InlineCode>for</InlineCode></td><td className="p-3">right duyệt từ 0 → n</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Sliding Window: left thu hẹp</td><td className="p-3"><InlineCode>while</InlineCode></td><td className="p-3">Không biết thu bao nhiêu</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">BFS / DFS iterative</td><td className="p-3"><InlineCode>while</InlineCode></td><td className="p-3">Không biết khi nào queue/stack rỗng</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Binary Search</td><td className="p-3"><InlineCode>while</InlineCode></td><td className="p-3">Không biết bao nhiêu bước chia đôi</td></tr>
+                            <tr><td className="p-3">Đọc file / stream</td><td className="p-3"><InlineCode>while</InlineCode></td><td className="p-3">Không biết khi nào hết data</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <CodeBlock title="Ví dụ kết hợp trong LeetCode">{`// Sliding Window = for + while lồng nhau!
-for (let right = 0; right < arr.length; right++) {  // for: mở rộng
-    while (/* invalid */) left++                      // while: thu hẹp
+
+                <Heading3>Trong LeetCode patterns</Heading3>
+                <CodeBlock title="Kết hợp for + while">{`// Sliding Window = for + while lồng nhau!
+for (let right = 0; right < arr.length; right++) {  // for: mở rộng (biết trước n bước)
+    while (/* invalid */) {                           // while: thu hẹp (không biết trước)
+        left++
+    }
 }
 
 // Monotonic Stack = for + while
 for (let i = 0; i < arr.length; i++) {               // for: duyệt mảng
-    while (stack.length && arr[stack.at(-1)] < arr[i]) // while: pop
+    while (stack.length && arr[stack.at(-1)] < arr[i]) { // while: pop cho đến khi hợp lệ
         stack.pop()
-}
-
-// Binary Search = chỉ while
-while (left <= right) {                               // while: chia đôi
-    const mid = (left + right) >> 1
-    if (arr[mid] < target) left = mid + 1
-    else right = mid - 1
+    }
 }`}</CodeBlock>
-                <Callout type="tip">Quy tắc đơn giản: <InlineCode>for</InlineCode> = &quot;duyệt qua N phần tử&quot;, <InlineCode>while</InlineCode> = &quot;lặp cho đến khi điều kiện sai&quot;. Khi kết hợp cả hai (Sliding Window, Monotonic Stack), <InlineCode>for</InlineCode> quản lý vòng ngoài, <InlineCode>while</InlineCode> xử lý logic bên trong.</Callout>
+                <Callout type="tip"><strong>Tóm lại:</strong> <InlineCode>for</InlineCode> = &quot;duyệt qua N phần tử&quot;, <InlineCode>while</InlineCode> = &quot;lặp cho đến khi điều kiện sai&quot;. Khi kết hợp cả hai (Sliding Window, Monotonic Stack), <InlineCode>for</InlineCode> quản lý vòng ngoài, <InlineCode>while</InlineCode> xử lý logic bên trong không biết trước số bước! 🎯</Callout>
             </TopicModal>
 
             <TopicModal title="Kiểu dữ liệu JS" emoji="📦" color="#06b6d4" summary="7 primitive + 1 reference — typeof, truthy/falsy, pass by value vs reference">
@@ -746,7 +776,7 @@ b = 10
 console.log(a) // 5 — không bị ảnh hưởng!
 
 // Reference → copy con trỏ (cùng trỏ đến 1 object)
-let obj1 = { name: 'Khuông' }
+let obj1 = { name: 'Khương' }
 let obj2 = obj1
 obj2.name = 'Changed'
 console.log(obj1.name) // 'Changed' — bị ảnh hưởng!
