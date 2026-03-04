@@ -49,6 +49,56 @@ function Counter() {
     )
 }`}</CodeBlock>
 
+                <Heading3>Object & Array State</Heading3>
+
+                <Paragraph>
+                    React so sánh state bằng <Highlight>reference</Highlight> (===), không so sánh deep.
+                    Phải tạo <Highlight>object/array mới</Highlight> để trigger re-render:
+                </Paragraph>
+
+                <CodeBlock title="object-array-state.tsx">{`// ✅ Object — spread operator
+const [user, setUser] = useState({ name: 'Khuông', age: 25 })
+setUser({ ...user, age: 26 })          // Tạo object mới, giữ các field khác
+setUser(prev => ({ ...prev, age: prev.age + 1 }))  // Callback form
+
+// ❌ SAI — mutate trực tiếp, React không biết state đã thay đổi!
+user.age = 26
+setUser(user)  // Cùng reference → không re-render!
+
+// ✅ Array — tạo mảng mới
+const [items, setItems] = useState<string[]>([])
+setItems([...items, 'new item'])        // Thêm phần tử
+setItems(items.filter(i => i !== 'x'))  // Xóa phần tử
+setItems(items.map(i =>                 // Cập nhật phần tử
+    i.id === targetId ? { ...i, done: true } : i
+))
+
+// 🏭 Ví dụ thực tế từ CartTable.tsx:
+// Tăng số lượng sản phẩm trong giỏ hàng
+setCartList(
+    cartList.map(item =>
+        String(item.product?._id) === String(_id)
+            ? { ...item, quantity: item.quantity + 1 }  // Cập nhật item match
+            : item                                      // Giữ nguyên các item khác
+    )
+)`}</CodeBlock>
+
+                <Heading3>Batching & Stale Closure</Heading3>
+
+                <CodeBlock title="batching.tsx">{`// React 18+ tự động batch nhiều setState thành 1 re-render
+function handleClick() {
+    setCount(count + 1)   // count = 0
+    setCount(count + 1)   // count vẫn = 0 (stale closure!)
+    setCount(count + 1)   // count vẫn = 0 → kết quả: 1 (không phải 3!)
+}
+
+// ✅ Fix: dùng callback form
+function handleClick() {
+    setCount(prev => prev + 1)  // prev = 0 → 1
+    setCount(prev => prev + 1)  // prev = 1 → 2
+    setCount(prev => prev + 1)  // prev = 2 → 3 ✅
+}`}</CodeBlock>
+
                 <Heading3>Lazy Initialization</Heading3>
 
                 <Paragraph>
@@ -62,9 +112,10 @@ const [data, setData] = useState(expensiveComputation())
 const [data, setData] = useState(() => expensiveComputation())`}</CodeBlock>
 
                 <Callout type="tip">
-                    Khi update state dựa trên state cũ, luôn dùng callback form:{' '}
-                    <InlineCode>setCount(prev =&gt; prev + 1)</InlineCode> thay vì{' '}
-                    <InlineCode>setCount(count + 1)</InlineCode> để tránh stale closure.
+                    <strong>3 quy tắc vàng của useState:</strong><br />
+                    1. Update state dựa trên state cũ → luôn dùng callback: <InlineCode>setState(prev =&gt; ...)</InlineCode><br />
+                    2. Object/Array → luôn tạo bản sao mới (spread, map, filter)<br />
+                    3. Initial value tốn kém → truyền function: <InlineCode>useState(() =&gt; compute())</InlineCode>
                 </Callout>
 
                 {/* ===== useEffect ===== */}
@@ -783,6 +834,56 @@ function Counter() {
     )
 }`}</CodeBlock>
 
+                <Heading3>Object & Array State</Heading3>
+
+                <Paragraph>
+                    React compares state by <Highlight>reference</Highlight> (===), not deep equality.
+                    You must create a <Highlight>new object/array</Highlight> to trigger re-render:
+                </Paragraph>
+
+                <CodeBlock title="object-array-state.tsx">{`// ✅ Object — spread operator
+const [user, setUser] = useState({ name: 'Khuông', age: 25 })
+setUser({ ...user, age: 26 })          // Create new object, keep other fields
+setUser(prev => ({ ...prev, age: prev.age + 1 }))  // Callback form
+
+// ❌ WRONG — direct mutation, React doesn't know state changed!
+user.age = 26
+setUser(user)  // Same reference → no re-render!
+
+// ✅ Array — create new array
+const [items, setItems] = useState<string[]>([])
+setItems([...items, 'new item'])        // Add item
+setItems(items.filter(i => i !== 'x'))  // Remove item
+setItems(items.map(i =>                 // Update item
+    i.id === targetId ? { ...i, done: true } : i
+))
+
+// 🏭 Real example from CartTable.tsx:
+// Increase product quantity in shopping cart
+setCartList(
+    cartList.map(item =>
+        String(item.product?._id) === String(_id)
+            ? { ...item, quantity: item.quantity + 1 }  // Update matched item
+            : item                                      // Keep other items
+    )
+)`}</CodeBlock>
+
+                <Heading3>Batching & Stale Closure</Heading3>
+
+                <CodeBlock title="batching.tsx">{`// React 18+ automatically batches multiple setState into 1 re-render
+function handleClick() {
+    setCount(count + 1)   // count = 0
+    setCount(count + 1)   // count still = 0 (stale closure!)
+    setCount(count + 1)   // count still = 0 → result: 1 (not 3!)
+}
+
+// ✅ Fix: use callback form
+function handleClick() {
+    setCount(prev => prev + 1)  // prev = 0 → 1
+    setCount(prev => prev + 1)  // prev = 1 → 2
+    setCount(prev => prev + 1)  // prev = 2 → 3 ✅
+}`}</CodeBlock>
+
                 <Heading3>Lazy Initialization</Heading3>
 
                 <Paragraph>
@@ -796,9 +897,10 @@ const [data, setData] = useState(expensiveComputation())
 const [data, setData] = useState(() => expensiveComputation())`}</CodeBlock>
 
                 <Callout type="tip">
-                    When updating state based on previous state, always use callback form:{' '}
-                    <InlineCode>setCount(prev =&gt; prev + 1)</InlineCode> instead of{' '}
-                    <InlineCode>setCount(count + 1)</InlineCode> to avoid stale closures.
+                    <strong>3 golden rules of useState:</strong><br />
+                    1. Update based on previous state → always use callback: <InlineCode>setState(prev =&gt; ...)</InlineCode><br />
+                    2. Object/Array → always create new copy (spread, map, filter)<br />
+                    3. Expensive initial value → pass function: <InlineCode>useState(() =&gt; compute())</InlineCode>
                 </Callout>
 
                 {/* ===== useEffect ===== */}
