@@ -668,6 +668,92 @@ const result = await Promise.race([
 // Truthy: everything else (including [] and {}!)`}</CodeBlock>
                 <Callout type="tip">Simple rule: <Highlight>always use ===</Highlight> unless you INTENTIONALLY want type coercion (rare). And memorize the 6 falsy values.</Callout>
             </TopicModal>
+
+            <TopicModal title="for vs while — When to Use?" emoji="🔄" color="#10b981" summary="for = known iteration count, while = loop until condition is false — crucial pattern in DSA">
+                <Paragraph><InlineCode>for</InlineCode> when you <Highlight>know in advance</Highlight> how many times to iterate. <InlineCode>while</InlineCode> when you <Highlight>don&#39;t know</Highlight> when to stop.</Paragraph>
+                <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead>
+                            <tr className="border-b border-white/10">
+                                <th className="text-left p-3 text-slate-400 font-medium">Situation</th>
+                                <th className="text-left p-3 text-blue-400 font-medium">Use</th>
+                                <th className="text-left p-3 text-slate-400 font-medium">Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-slate-300">
+                            <tr className="border-b border-white/5"><td className="p-3">Traverse array start → end</td><td className="p-3">for</td><td className="p-3">Length known upfront</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Two Pointers</td><td className="p-3">while</td><td className="p-3">Stop when left {'>'}= right</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">BFS / DFS iterative</td><td className="p-3">while</td><td className="p-3">Don&#39;t know when queue/stack empties</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Binary Search</td><td className="p-3">while</td><td className="p-3">Don&#39;t know how many halving steps</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Linked List</td><td className="p-3">while</td><td className="p-3">Stop when node === null</td></tr>
+                            <tr><td className="p-3">Sliding Window: right expands</td><td className="p-3">for + while</td><td className="p-3">for drives right, while shrinks left</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <CodeBlock title="Combined examples in LeetCode">{`// Sliding Window = for + while nested!
+for (let right = 0; right < arr.length; right++) {  // for: expand
+    while (/* invalid */) left++                      // while: shrink
+}
+
+// Monotonic Stack = for + while
+for (let i = 0; i < arr.length; i++) {               // for: traverse
+    while (stack.length && arr[stack.at(-1)] < arr[i]) // while: pop
+        stack.pop()
+}
+
+// Binary Search = while only
+while (left <= right) {                               // while: halve
+    const mid = (left + right) >> 1
+    if (arr[mid] < target) left = mid + 1
+    else right = mid - 1
+}`}</CodeBlock>
+                <Callout type="tip">Simple rule: <InlineCode>for</InlineCode> = &quot;iterate through N elements&quot;, <InlineCode>while</InlineCode> = &quot;loop until condition is false&quot;. When combining both (Sliding Window, Monotonic Stack), <InlineCode>for</InlineCode> manages the outer loop, <InlineCode>while</InlineCode> handles inner logic.</Callout>
+            </TopicModal>
+
+            <TopicModal title="JS Data Types" emoji="📦" color="#06b6d4" summary="7 primitives + 1 reference — typeof, truthy/falsy, pass by value vs reference">
+                <Paragraph>JavaScript has <Highlight>7 primitive types</Highlight> and <Highlight>1 reference type</Highlight>.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">Primitive (stored by value, compared by value)</div>
+                        <div className="text-slate-300 text-sm mt-1"><InlineCode>string</InlineCode>, <InlineCode>number</InlineCode>, <InlineCode>boolean</InlineCode>, <InlineCode>null</InlineCode>, <InlineCode>undefined</InlineCode>, <InlineCode>symbol</InlineCode>, <InlineCode>bigint</InlineCode></div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">Reference (stored by pointer, compared by reference)</div>
+                        <div className="text-slate-300 text-sm mt-1"><InlineCode>object</InlineCode> — includes: Object, Array, Function, Date, Map, Set, RegExp...</div>
+                    </div>
+                </div>
+                <CodeBlock title="typeof gotchas">{`typeof 'hello'     // 'string'
+typeof 42          // 'number'
+typeof true        // 'boolean'
+typeof undefined   // 'undefined'
+typeof null        // 'object' ← Historical JS BUG!
+typeof []          // 'object' ← Array is also an object
+typeof {}          // 'object'
+typeof function(){} // 'function' ← special case
+
+// Accurate type checking:
+Array.isArray([])           // true
+obj === null                // check null
+obj instanceof Date         // check Date
+Object.prototype.toString.call(obj) // "[object Array]"`}</CodeBlock>
+                <CodeBlock title="Pass by value vs reference">{`// Primitive → copies the value
+let a = 5
+let b = a
+b = 10
+console.log(a) // 5 — not affected!
+
+// Reference → copies the pointer (both point to same object)
+let obj1 = { name: 'Khuong' }
+let obj2 = obj1
+obj2.name = 'Changed'
+console.log(obj1.name) // 'Changed' — affected!
+
+// Fix: shallow copy
+let obj3 = { ...obj1 }  // spread operator
+let obj4 = Object.assign({}, obj1)`}</CodeBlock>
+                <Callout type="tip">Interview tip: Explaining that <Highlight>typeof null === &apos;object&apos;</Highlight> is a historical bug, and the difference between <InlineCode>==</InlineCode> vs <InlineCode>===</InlineCode> when comparing types, will score big points.</Callout>
+                <a href="/blogs/data-types-structures" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 See detailed article →</a>
+            </TopicModal>
         </div>
 
         <Heading3>2.2 Implement from Scratch (click for sample code)</Heading3>
