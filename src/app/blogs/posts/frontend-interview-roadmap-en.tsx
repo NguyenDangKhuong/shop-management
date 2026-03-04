@@ -820,6 +820,28 @@ let obj4 = Object.assign({}, obj1)`}</CodeBlock>
             </TopicModal>
 
             <TopicModal title="Function.bind / call / apply" emoji="💻" color="#fbbf24" summary="Re-implement the 3 methods that change this context">
+                <Heading3>How to Use</Heading3>
+                <CodeBlock title="bind / call / apply — 3 ways to change this">{`const user = { name: 'An' }
+function greet(greeting, punctuation) {
+    return greeting + ', ' + this.name + punctuation
+}
+
+// call — invoke NOW, pass args SEPARATELY
+greet.call(user, 'Hi', '!')         // 'Hi, An!'
+
+// apply — invoke NOW, pass args as ARRAY
+greet.apply(user, ['Hi', '!'])      // 'Hi, An!'
+
+// bind — RETURNS new function, does NOT invoke
+const boundGreet = greet.bind(user, 'Hi')
+boundGreet('!')                     // 'Hi, An!'
+
+// 💡 Mnemonic:
+// call  = C = Comma      → args separated by commas
+// apply = A = Array       → args passed as array
+// bind  = B = Bind (save) → returns new function`}</CodeBlock>
+
+                <Heading3>Build from Scratch</Heading3>
                 <CodeBlock title="myBind">{`Function.prototype.myBind = function(context, ...args) {
     const fn = this;
     return function(...newArgs) {
@@ -848,6 +870,30 @@ Function.prototype.myApply = function(context, args = []) {
             </TopicModal>
 
             <TopicModal title="Promise & Promise.all" emoji="💻" color="#fbbf24" summary="Implement Promise from scratch — the most classic interview question">
+                <Heading3>How to Use</Heading3>
+                <CodeBlock title="Promise basics">{`// Create a Promise
+const promise = new Promise((resolve, reject) => {
+    setTimeout(() => resolve('Done!'), 1000)
+})
+
+// Handle results
+promise
+    .then(result => console.log(result))   // 'Done!'
+    .catch(error => console.error(error))  // If rejected
+    .finally(() => console.log('Cleanup')) // Always runs
+
+// Promise.all — wait for ALL to complete
+const [users, posts] = await Promise.all([
+    fetch('/api/users').then(r => r.json()),
+    fetch('/api/posts').then(r => r.json()),
+])
+// 1 fails → ALL fail!
+
+// Promise.allSettled — wait for all, NEVER fails
+const results = await Promise.allSettled([p1, p2, p3])
+// [{status:'fulfilled', value:...}, {status:'rejected', reason:...}]`}</CodeBlock>
+
+                <Heading3>Build from Scratch</Heading3>
                 <CodeBlock title="MyPromise (simplified)">{`class MyPromise {
     constructor(executor) {
         this.state = 'pending';
@@ -903,6 +949,27 @@ Function.prototype.myApply = function(context, args = []) {
             </TopicModal>
 
             <TopicModal title="Debounce & Throttle" emoji="💻" color="#fbbf24" summary="2 techniques to control function call frequency — very common in interviews">
+                <Heading3>How to Use</Heading3>
+                <CodeBlock title="When to use Debounce vs Throttle">{`// DEBOUNCE — wait for user to STOP, then execute
+// Use for: search input, window resize, auto-save
+const searchInput = document.querySelector('#search')
+searchInput.addEventListener('input', 
+    debounce((e) => fetchResults(e.target.value), 300)
+)
+// User types: h...e...l...l...o → only 1 API call after 300ms pause
+
+// THROTTLE — execute AT MOST once per time interval
+// Use for: scroll, mousemove, game loop
+window.addEventListener('scroll',
+    throttle(() => updateScrollProgress(), 100)
+)
+// User scrolls continuously → runs every 100ms max, not every pixel
+
+// 💡 Mnemonic:
+// Debounce = Elevator 🛗  → waits for everyone to get in before closing
+// Throttle = Heartbeat 💓  → steady rhythm, never faster than set rate`}</CodeBlock>
+
+                <Heading3>Build from Scratch</Heading3>
                 <CodeBlock title="debounce — wait for user to stop, then execute">{`function debounce(fn, delay) {
     let timer;
     return function(...args) {
@@ -931,6 +998,27 @@ window.addEventListener('scroll', throttle(handleScroll, 100));`}</CodeBlock>
             </TopicModal>
 
             <TopicModal title="Deep clone / Deep equal" emoji="💻" color="#fbbf24" summary="Compare and copy nested objects — shallow vs deep distinction">
+                <Heading3>How to Use</Heading3>
+                <CodeBlock title="3 built-in cloning methods in JS">{`const obj = { a: { b: 1 }, c: [2, 3] }
+
+// 1️⃣ Shallow copy — ONLY copies layer 1 (nested still shares reference!)
+const shallow1 = { ...obj }           // spread
+const shallow2 = Object.assign({}, obj) // assign
+shallow1.a.b = 999
+console.log(obj.a.b) // 999 — AFFECTED! ❌
+
+// 2️⃣ JSON trick — deep but LOSES functions, Date, undefined, circular
+const jsonClone = JSON.parse(JSON.stringify(obj))
+// ⚠️ Doesn't support: Function, Date, RegExp, Map, Set, undefined
+
+// 3️⃣ structuredClone — BEST METHOD (ES2022)
+const deep = structuredClone(obj)
+deep.a.b = 999
+console.log(obj.a.b) // 1 — NOT affected! ✅
+// ✅ Supports: Date, RegExp, Map, Set, ArrayBuffer, circular ref
+// ❌ Doesn't support: Function, DOM nodes`}</CodeBlock>
+
+                <Heading3>Build from Scratch</Heading3>
                 <CodeBlock title="deepClone">{`function deepClone(obj, seen = new WeakMap()) {
     if (obj === null || typeof obj !== 'object') return obj;
     if (obj instanceof Date) return new Date(obj);
@@ -1030,6 +1118,21 @@ errorNow('Database down!');`}</CodeBlock>
             </TopicModal>
 
             <TopicModal title="Flatten array / object" emoji="💻" color="#fbbf24" summary="Flatten nested arrays/objects — commonly asked at Google, Meta">
+                <Heading3>How to Use</Heading3>
+                <CodeBlock title="Built-in Flatten in JS">{`// Array.flat() — built-in since ES2019
+[1, [2, [3, [4]]]].flat()       // [1, 2, [3, [4]]]  — default depth=1
+[1, [2, [3, [4]]]].flat(2)      // [1, 2, 3, [4]]    — depth=2
+[1, [2, [3, [4]]]].flat(Infinity) // [1, 2, 3, 4]    — flatten all!
+
+// Trick: use flatMap to map and flatten 1 level
+['Hello World', 'Foo Bar'].flatMap(s => s.split(' '))
+// → ['Hello', 'World', 'Foo', 'Bar']
+
+// Object.entries + reduce — flatten objects manually
+const nested = { a: { b: 1 }, c: 2 }
+// Want → { 'a.b': 1, 'c': 2 } → need custom build (see below)`}</CodeBlock>
+
+                <Heading3>Build from Scratch</Heading3>
                 <CodeBlock title="flattenArray">{`// Flatten nested array
 function flattenArray(arr, depth = Infinity) {
     const result = [];

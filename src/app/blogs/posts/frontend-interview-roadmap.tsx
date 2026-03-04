@@ -823,6 +823,28 @@ let obj4 = Object.assign({}, obj1)`}</CodeBlock>
             </TopicModal>
 
             <TopicModal title="Function.bind / call / apply" emoji="💻" color="#fbbf24" summary="Implement lại 3 methods thay đổi this context">
+                <Heading3>Cách dùng</Heading3>
+                <CodeBlock title="bind / call / apply — 3 cách thay đổi this">{`const user = { name: 'An' }
+function greet(greeting, punctuation) {
+    return greeting + ', ' + this.name + punctuation
+}
+
+// call — gọi NGAY, truyền args riêng lẻ
+greet.call(user, 'Hi', '!')         // 'Hi, An!'
+
+// apply — gọi NGAY, truyền args dạng ARRAY
+greet.apply(user, ['Hi', '!'])      // 'Hi, An!'
+
+// bind — TRẢ VỀ function mới, KHÔNG gọi ngay
+const boundGreet = greet.bind(user, 'Hi')
+boundGreet('!')                     // 'Hi, An!'
+
+// 💡 Mẹo nhớ:
+// call  = C = Comma (phẩy)   → args phân cách bằng dấu phẩy
+// apply = A = Array           → args truyền dạng mảng
+// bind  = B = Bind (trói lại) → trả về function mới`}</CodeBlock>
+
+                <Heading3>Cách build từ scratch</Heading3>
                 <CodeBlock title="myBind">{`Function.prototype.myBind = function(context, ...args) {
     const fn = this;
     return function(...newArgs) {
@@ -851,6 +873,30 @@ Function.prototype.myApply = function(context, args = []) {
             </TopicModal>
 
             <TopicModal title="Promise & Promise.all" emoji="💻" color="#fbbf24" summary="Implement Promise từ scratch — câu hỏi kinh điển nhất">
+                <Heading3>Cách dùng</Heading3>
+                <CodeBlock title="Promise cơ bản">{`// Tạo Promise
+const promise = new Promise((resolve, reject) => {
+    setTimeout(() => resolve('Done!'), 1000)
+})
+
+// Xử lý kết quả
+promise
+    .then(result => console.log(result))   // 'Done!'
+    .catch(error => console.error(error))  // Nếu reject
+    .finally(() => console.log('Cleanup')) // Luôn chạy
+
+// Promise.all — chờ TẤT CẢ xong
+const [users, posts] = await Promise.all([
+    fetch('/api/users').then(r => r.json()),
+    fetch('/api/posts').then(r => r.json()),
+])
+// 1 fail → TẤT CẢ fail!
+
+// Promise.allSettled — chờ tất cả, KHÔNG fail
+const results = await Promise.allSettled([p1, p2, p3])
+// [{status:'fulfilled', value:...}, {status:'rejected', reason:...}]`}</CodeBlock>
+
+                <Heading3>Cách build từ scratch</Heading3>
                 <CodeBlock title="MyPromise (simplified)">{`class MyPromise {
     constructor(executor) {
         this.state = 'pending';
@@ -906,6 +952,27 @@ Function.prototype.myApply = function(context, args = []) {
             </TopicModal>
 
             <TopicModal title="Debounce & Throttle" emoji="💻" color="#fbbf24" summary="2 kỹ thuật kiểm soát tần suất gọi function — interview hỏi rất nhiều">
+                <Heading3>Cách dùng</Heading3>
+                <CodeBlock title="Khi nào dùng Debounce vs Throttle">{`// DEBOUNCE — chờ user NGỪNG hành động, mới chạy
+// Ví dụ: search input, resize window, auto-save
+const searchInput = document.querySelector('#search')
+searchInput.addEventListener('input', 
+    debounce((e) => fetchResults(e.target.value), 300)
+)
+// User gõ: h...e...l...l...o → chỉ gọi API 1 lần sau 300ms ngừng gõ
+
+// THROTTLE — chạy TỐI ĐA 1 lần / khoảng thời gian
+// Ví dụ: scroll, mousemove, game loop
+window.addEventListener('scroll',
+    throttle(() => updateScrollProgress(), 100)
+)
+// User scroll liên tục → chỉ chạy mỗi 100ms, không phải mỗi pixel
+
+// 💡 Mẹo nhớ:
+// Debounce = Thang máy 🛗  → chờ hết người vào mới đóng cửa
+// Throttle = Nhịp tim  💓  → đều đặn, không nhanh hơn tần suất đã set`}</CodeBlock>
+
+                <Heading3>Cách build từ scratch</Heading3>
                 <CodeBlock title="debounce — chờ user ngừng, mới chạy">{`function debounce(fn, delay) {
     let timer;
     return function(...args) {
@@ -934,6 +1001,27 @@ window.addEventListener('scroll', throttle(handleScroll, 100));`}</CodeBlock>
             </TopicModal>
 
             <TopicModal title="Deep clone / Deep equal" emoji="💻" color="#fbbf24" summary="So sánh và copy object lồng nhau — phân biệt shallow vs deep">
+                <Heading3>Cách dùng</Heading3>
+                <CodeBlock title="3 cách clone có sẵn trong JS">{`const obj = { a: { b: 1 }, c: [2, 3] }
+
+// 1️⃣ Shallow copy — CHỈ copy layer 1 (nested vẫn share reference!)
+const shallow1 = { ...obj }           // spread
+const shallow2 = Object.assign({}, obj) // assign
+shallow1.a.b = 999
+console.log(obj.a.b) // 999 — BỊ ẢNH HƯỞNG! ❌
+
+// 2️⃣ JSON trick — deep nhưng MẤT function, Date, undefined, circular
+const jsonClone = JSON.parse(JSON.stringify(obj))
+// ⚠️ Không hỗ trợ: Function, Date, RegExp, Map, Set, undefined
+
+// 3️⃣ structuredClone — CÁCH TỐT NHẤT (ES2022)
+const deep = structuredClone(obj)
+deep.a.b = 999
+console.log(obj.a.b) // 1 — KHÔNG bị ảnh hưởng! ✅
+// ✅ Hỗ trợ: Date, RegExp, Map, Set, ArrayBuffer, circular ref
+// ❌ Không hỗ trợ: Function, DOM nodes`}</CodeBlock>
+
+                <Heading3>Cách build từ scratch</Heading3>
                 <CodeBlock title="deepClone">{`function deepClone(obj, seen = new WeakMap()) {
     if (obj === null || typeof obj !== 'object') return obj;
     if (obj instanceof Date) return new Date(obj);
@@ -1033,6 +1121,21 @@ errorNow('Database down!');`}</CodeBlock>
             </TopicModal>
 
             <TopicModal title="Flatten array / object" emoji="💻" color="#fbbf24" summary="Làm phẳng array/object lồng nhau — câu hỏi hay gặp ở Google, Meta">
+                <Heading3>Cách dùng</Heading3>
+                <CodeBlock title="Flatten có sẵn trong JS">{`// Array.flat() — built-in từ ES2019
+[1, [2, [3, [4]]]].flat()       // [1, 2, [3, [4]]]  — mặc định depth=1
+[1, [2, [3, [4]]]].flat(2)      // [1, 2, 3, [4]]    — depth=2
+[1, [2, [3, [4]]]].flat(Infinity) // [1, 2, 3, 4]    — flatten hết!
+
+// Trick: dùng flatMap để vừa map vừa flatten 1 level
+['Hello World', 'Foo Bar'].flatMap(s => s.split(' '))
+// → ['Hello', 'World', 'Foo', 'Bar']
+
+// Object.entries + reduce — flatten object thủ công
+const nested = { a: { b: 1 }, c: 2 }
+// Muốn → { 'a.b': 1, 'c': 2 } → cần tự build (xem bên dưới)`}</CodeBlock>
+
+                <Heading3>Cách build từ scratch</Heading3>
                 <CodeBlock title="flattenArray">{`// Flatten nested array
 function flattenArray(arr, depth = Infinity) {
     const result = [];
