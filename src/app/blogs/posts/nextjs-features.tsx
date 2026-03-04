@@ -438,7 +438,7 @@ export default async function Page() {
                 </Paragraph>
 
                 {/* ===== Next.js 12 ===== */}
-                <Heading2>⚡ Next.js 12 (2021) — Middleware & SWC Compiler</Heading2>
+                <Heading2>⚡ Next.js 12 (2021) — Middleware &amp; SWC Compiler</Heading2>
 
                 <CodeBlock title="middleware.ts">{`// Middleware — runs before every request (Edge Runtime)
 import { NextResponse } from 'next/server'
@@ -451,6 +451,12 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
+    // Geolocation-based redirect
+    const country = request.geo?.country || 'US'
+    if (country === 'VN') {
+        return NextResponse.rewrite(new URL('/vi' + request.nextUrl.pathname, request.url))
+    }
+
     // Add headers
     const response = NextResponse.next()
     response.headers.set('X-Frame-Options', 'DENY')
@@ -459,10 +465,25 @@ export function middleware(request: NextRequest) {
 
 export const config = {
     matcher: ['/admin/:path*', '/api/:path*']
-}
+}`}</CodeBlock>
 
-// SWC Compiler — replaces Babel, ~17x faster
-// AVIF Image support in next/image`}</CodeBlock>
+                <CodeBlock title="nextjs12-features.ts">{`// SWC Compiler — replaces Babel, ~17x faster
+// Automatically enabled, no config needed
+
+// React Server Components (experimental)
+// .server.js and .client.js file markers
+
+// ES Modules support
+// next.config.mjs replaces next.config.js
+
+// URL Imports (experimental)
+// import confetti from 'https://cdn.skypack.dev/canvas-confetti'
+
+// Bot-aware ISR
+// Bots (Googlebot) always receive static HTML, users get cached version
+
+// AVIF Image support
+// next/image supports AVIF format (~20% smaller than WebP)`}</CodeBlock>
 
                 {/* ===== Next.js 13 ===== */}
                 <Heading2>🏗️ Next.js 13 (2022) — App Router Revolution</Heading2>
@@ -479,7 +500,15 @@ export const config = {
 // ├── loading.tsx       ← Loading UI (auto Suspense)
 // ├── error.tsx         ← Error UI (auto Error Boundary)
 // ├── not-found.tsx     ← 404 page
-// └── products/[id]/page.tsx  ← /products/:id
+// ├── products/
+// │   ├── page.tsx      ← /products
+// │   ├── [id]/
+// │   │   └── page.tsx  ← /products/:id
+// │   └── layout.tsx    ← Nested layout for /products/*
+// └── (admin)/          ← Route Group (doesn't affect URL)
+//     ├── layout.tsx    ← Admin layout
+//     └── dashboard/
+//         └── page.tsx  ← /dashboard
 
 // Layout — persists across navigations
 export default function RootLayout({ children }) {
@@ -494,7 +523,28 @@ export default function RootLayout({ children }) {
     )
 }
 
-// Server Components — default in App Router
+// Loading UI — automatically wrapped in Suspense
+// app/products/loading.tsx
+export default function Loading() {
+    return <ProductSkeleton />
+}
+
+// Error UI — automatically wrapped in Error Boundary
+// app/products/error.tsx
+'use client'
+export default function Error({ error, reset }) {
+    return (
+        <div>
+            <h2>Something went wrong!</h2>
+            <button onClick={reset}>Try again</button>
+        </div>
+    )
+}`}</CodeBlock>
+
+                <CodeBlock title="server-components-next13.tsx">{`// Server Components — default in App Router
+// No 'use client' needed → Server Component
+
+// ✅ Server Component — fetch data directly, no useState/useEffect
 async function ProductList() {
     const products = await fetch('https://api.example.com/products', {
         next: { revalidate: 60 } // ISR: revalidate every 60s
@@ -503,15 +553,62 @@ async function ProductList() {
     return <ul>{products.map(p => <li key={p.id}>{p.name}</li>)}</ul>
 }
 
-// Parallel Routes & Intercepting Routes
-// app/@modal/(.)photo/[id]/page.tsx
+// Data Fetching with caching
+// 1. Static (default) — cache forever
+const data = await fetch('https://api.example.com/data')
+
+// 2. ISR — revalidate after n seconds
+const data = await fetch('https://api.example.com/data', {
+    next: { revalidate: 3600 } // 1 hour
+})
+
+// 3. Dynamic — no cache
+const data = await fetch('https://api.example.com/data', {
+    cache: 'no-store'
+})
+
+// Route Segment Config
+export const dynamic = 'force-dynamic' // or 'auto', 'force-static'
+export const revalidate = 60
+
+// Parallel Routes — render multiple pages simultaneously
+// app/@modal/login/page.tsx
+// app/@sidebar/page.tsx
+// app/layout.tsx receives { modal, sidebar, children }
+
+// Intercepting Routes — modal patterns
+// app/feed/@modal/(.)photo/[id]/page.tsx
+// (.) = same level, (..) = one level up`}</CodeBlock>
+
+                <CodeBlock title="next-image-font.tsx">{`// next/image improvements
+import Image from 'next/image'
+
+// Automatic sizing — no width/height needed for static imports
+import heroImage from './hero.png'
+<Image src={heroImage} alt="Hero" /> // auto width/height
+
+// Remote images — need config
+// next.config.js
+module.exports = {
+    images: {
+        remotePatterns: [
+            { protocol: 'https', hostname: '**.example.com' }
+        ]
+    }
+}
+
+// next/font — zero layout shift, self-hosted fonts
+import { Inter, Roboto_Mono } from 'next/font/google'
+
+const inter = Inter({ subsets: ['latin'] })
+const roboto = Roboto_Mono({ subsets: ['latin'], weight: ['400', '700'] })
+
+export default function Layout({ children }) {
+    return <body className={inter.className}>{children}</body>
+}
 
 // Turbopack (alpha) — replaces Webpack, ~700x faster HMR
-// next dev --turbo
-
-// next/font — zero layout shift, self-hosted
-import { Inter } from 'next/font/google'
-const inter = Inter({ subsets: ['latin'] })`}</CodeBlock>
+// next dev --turbo`}</CodeBlock>
 
                 {/* ===== Next.js 14 ===== */}
                 <Heading2>🚀 Next.js 14 (2023) — Server Actions Stable</Heading2>
@@ -520,7 +617,8 @@ const inter = Inter({ subsets: ['latin'] })`}</CodeBlock>
                     Next.js 14 stabilizes <Highlight>Server Actions</Highlight>, making Next.js a true full-stack framework.
                 </Paragraph>
 
-                <CodeBlock title="server-actions.tsx">{`// Server Actions — call server functions from client
+                <CodeBlock title="server-actions.tsx">{`// Server Actions — call server functions from client components
+// app/actions.ts
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -530,12 +628,29 @@ export async function createProduct(formData: FormData) {
     const name = formData.get('name') as string
     const price = Number(formData.get('price'))
 
+    // Validation
+    if (!name || !price) {
+        return { error: 'Name and price required' }
+    }
+
+    // Database operation
     await db.insert(products).values({ name, price })
+
+    // Revalidate cache
     revalidatePath('/products')
+
+    // Redirect
     redirect('/products')
 }
 
+export async function deleteProduct(id: string) {
+    await db.delete(products).where(eq(products.id, id))
+    revalidatePath('/products')
+}
+
 // Use in form (Server Component)
+import { createProduct } from './actions'
+
 export default function NewProductPage() {
     return (
         <form action={createProduct}>
@@ -546,38 +661,113 @@ export default function NewProductPage() {
     )
 }
 
-// Metadata API — better SEO
+// Use in Client Component
+'use client'
+import { deleteProduct } from './actions'
+
+export function DeleteButton({ id }) {
+    return (
+        <button onClick={() => deleteProduct(id)}>
+            Delete
+        </button>
+    )
+}
+
+// With useFormState for error handling
+'use client'
+import { useFormState } from 'react-dom'
+import { createProduct } from './actions'
+
+export function ProductForm() {
+    const [state, formAction] = useFormState(createProduct, { error: null })
+
+    return (
+        <form action={formAction}>
+            <input name="name" />
+            {state?.error && <p className="error">{state.error}</p>}
+            <SubmitButton />
+        </form>
+    )
+}`}</CodeBlock>
+
+                <CodeBlock title="nextjs14-features.tsx">{`// Metadata API — better SEO
+import { Metadata } from 'next'
+
+// Static metadata
 export const metadata: Metadata = {
     title: 'My Shop',
-    openGraph: { images: ['/og-image.png'] },
+    description: 'Best products online',
+    openGraph: {
+        title: 'My Shop',
+        images: ['/og-image.png'],
+    },
 }
 
+// Dynamic metadata
 export async function generateMetadata({ params }) {
     const product = await getProduct(params.id)
-    return { title: product.name }
+    return {
+        title: product.name,
+        description: product.description,
+    }
 }
 
-// Partial Prerendering (experimental)
-// Static shell + dynamic holes that stream in`}</CodeBlock>
+// Partial Prerendering (experimental) — PPR
+// Static shell + dynamic holes
+// Page loads fast (static), then dynamic parts stream in
+export const experimental_ppr = true
+
+export default async function Page() {
+    return (
+        <div>
+            <h1>Products</h1>           {/* Static */}
+            <Suspense fallback={<Skeleton />}>
+                <ProductList />          {/* Dynamic — streams in */}
+            </Suspense>
+        </div>
+    )
+}
+
+// Turbopack improvements — faster, more stable
+// next dev --turbo (recommended for dev)`}</CodeBlock>
 
                 {/* ===== Next.js 15 ===== */}
-                <Heading2>✨ Next.js 15 (2024) — React 19 & Turbopack Stable</Heading2>
+                <Heading2>✨ Next.js 15 (2024) — React 19 &amp; Turbopack Stable</Heading2>
 
                 <Paragraph>
                     Next.js 15 integrates <Highlight>React 19</Highlight>, makes Turbopack stable, and introduces important breaking changes.
                 </Paragraph>
 
                 <CodeBlock title="nextjs15.tsx">{`// React 19 Support — all React 19 features available
-// Turbopack Dev — STABLE (~76% faster HMR than Webpack)
+// useActionState, useOptimistic, use(), Server Components improvements
 
-// Caching changes — BREAKING ⚠️
-// Next 14: fetch() defaults to 'force-cache' (cached)
-// Next 15: fetch() defaults to 'no-store' (dynamic)
+// Turbopack Dev — STABLE
+// next dev --turbo (will become default in future)
+// HMR ~76% faster than Webpack
 
-// Dynamic APIs are now async — BREAKING ⚠️
+// Caching changes — BREAKING CHANGE ⚠️
+// Next.js 14: fetch() defaults to 'force-cache' (cached)
+// Next.js 15: fetch() defaults to 'no-store' (dynamic)
+
+// Before (Next 14):
+const data = await fetch('/api/data') // cached by default
+
+// After (Next 15):
+const data = await fetch('/api/data') // NOT cached by default
+const data = await fetch('/api/data', { cache: 'force-cache' }) // opt-in cache
+
+// Dynamic APIs are now async — BREAKING CHANGE ⚠️
+// cookies(), headers(), params, searchParams are now async
+
+// Next.js 14:
 import { cookies } from 'next/headers'
-const cookieStore = await cookies()  // was sync, now async
+const cookieStore = cookies()
 
+// Next.js 15:
+import { cookies } from 'next/headers'
+const cookieStore = await cookies()
+
+// params & searchParams also async
 export default async function Page({
     params,
     searchParams
@@ -585,29 +775,55 @@ export default async function Page({
     params: Promise<{ id: string }>
     searchParams: Promise<{ q?: string }>
 }) {
-    const { id } = await params        // now a Promise
-    const { q } = await searchParams   // now a Promise
+    const { id } = await params
+    const { q } = await searchParams
+    // ...
 }
 
 // next/form — enhanced form with client-side navigation
 import Form from 'next/form'
-<Form action="/search">
-    <input name="q" />
-    <button type="submit">Search</button>
-</Form>
 
-// unstable_after — run code after response sent
+export default function SearchForm() {
+    return (
+        <Form action="/search">
+            <input name="q" placeholder="Search..." />
+            <button type="submit">Search</button>
+        </Form>
+    )
+    // Submit → navigate to /search?q=... with client-side navigation
+    // Prefetch + no full page reload
+}
+
+// Instrumentation — hook into server lifecycle
+// instrumentation.ts (root)
+export async function register() {
+    // Called once when server starts
+    if (process.env.NEXT_RUNTIME === 'nodejs') {
+        // Setup monitoring, DB connections, etc.
+    }
+}
+
+// unstable_after — run code after response has been sent
 import { unstable_after as after } from 'next/server'
 
 export default async function Page() {
     const data = await fetchData()
-    after(() => logPageView('/products'))
+
+    after(() => {
+        // Runs after response has been sent to user
+        // Analytics, logging, cleanup
+        logPageView('/products')
+    })
+
     return <div>{data}</div>
-}`}</CodeBlock>
+}
+
+// Enhanced Security — Server Actions have encryption
+// Unused Server Actions are auto-pruned from JS bundle`}</CodeBlock>
 
                 <Heading2>📋 Quick Reference</Heading2>
 
-                <CodeBlock title="cheat-sheet.js">{`// Next.js 12: Middleware, SWC compiler, Edge Runtime
+                <CodeBlock title="cheat-sheet.js">{`// Next.js 12: Middleware, SWC compiler, Edge Runtime, URL imports
 // Next.js 13: App Router, layouts, loading/error UI,
 //             Server Components (default), Turbopack alpha, next/font
 // Next.js 14: Server Actions (stable), Metadata API,
