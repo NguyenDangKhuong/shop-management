@@ -40,6 +40,38 @@ const viContent = (
             mảng <Highlight>đã sắp xếp</Highlight> hoặc bài toán có tính chất cho phép di chuyển pointer một chiều.
         </Callout>
 
+        <Heading2>Cách dùng Two Pointers</Heading2>
+
+        <CodeBlock title="two-pointers-templates.js">{`// ═══ TEMPLATE 1: Ngược hướng (Opposite Direction) ═══
+// Dùng khi: mảng đã sort, tìm cặp số, palindrome
+let left = 0, right = arr.length - 1
+while (left < right) {
+    const sum = arr[left] + arr[right]
+    if (sum === target) return [left, right]
+    else if (sum < target) left++      // Cần tăng tổng → dịch left
+    else right--                        // Cần giảm tổng → dịch right
+}
+
+// ═══ TEMPLATE 2: Cùng hướng (Fast & Slow) ═══
+// Dùng khi: loại bỏ trùng lặp, phân vùng
+let slow = 0
+for (let fast = 0; fast < arr.length; fast++) {
+    if (arr[fast] !== arr[slow]) {     // Phần tử mới (không trùng)
+        slow++
+        arr[slow] = arr[fast]          // Ghi vào vị trí tiếp theo
+    }
+}
+// Kết quả: arr[0..slow] là mảng đã loại trùng
+
+// ═══ TEMPLATE 3: Merge hai mảng sorted ═══
+let i = 0, j = 0, result = []
+while (i < a.length && j < b.length) {
+    if (a[i] <= b[j]) result.push(a[i++])
+    else result.push(b[j++])
+}
+// Thêm phần còn lại
+result.push(...a.slice(i), ...b.slice(j))`}</CodeBlock>
+
         <Heading2>Khi nào dùng Two Pointers?</Heading2>
 
         <div className="my-4 overflow-x-auto">
@@ -646,6 +678,38 @@ const enContent = (
             Two Pointers typically reduces O(n²) to <InlineCode>O(n)</InlineCode>. Common prerequisite:
             array is <Highlight>sorted</Highlight> or the problem allows one-directional pointer movement.
         </Callout>
+
+        <Heading2>How to Use Two Pointers</Heading2>
+
+        <CodeBlock title="two-pointers-templates.js">{`// ═══ TEMPLATE 1: Opposite Direction ═══
+// Use when: sorted array, find pairs, palindrome
+let left = 0, right = arr.length - 1
+while (left < right) {
+    const sum = arr[left] + arr[right]
+    if (sum === target) return [left, right]
+    else if (sum < target) left++      // Need larger sum → move left
+    else right--                        // Need smaller sum → move right
+}
+
+// ═══ TEMPLATE 2: Same Direction (Fast & Slow) ═══
+// Use when: remove duplicates, partition
+let slow = 0
+for (let fast = 0; fast < arr.length; fast++) {
+    if (arr[fast] !== arr[slow]) {     // New element (not duplicate)
+        slow++
+        arr[slow] = arr[fast]          // Write to next position
+    }
+}
+// Result: arr[0..slow] is array with duplicates removed
+
+// ═══ TEMPLATE 3: Merge Two Sorted Arrays ═══
+let i = 0, j = 0, result = []
+while (i < a.length && j < b.length) {
+    if (a[i] <= b[j]) result.push(a[i++])
+    else result.push(b[j++])
+}
+// Add remaining elements
+result.push(...a.slice(i), ...b.slice(j))`}</CodeBlock>
 
         <Heading2>When to Use Two Pointers?</Heading2>
 

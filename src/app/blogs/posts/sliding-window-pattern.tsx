@@ -14,6 +14,37 @@ const viContent = (
             nếu không hợp lệ, thu hẹp <InlineCode>left</InlineCode> → cập nhật kết quả tốt nhất.
         </Callout>
 
+        <Heading2>Cách dùng Sliding Window</Heading2>
+
+        <CodeBlock title="sliding-window-templates.js">{`// ═══ TEMPLATE 1: Fixed Size Window (size k) ═══
+// Dùng khi: tìm tổng/max/min của k phần tử liên tiếp
+let windowSum = 0, maxSum = -Infinity
+for (let i = 0; i < arr.length; i++) {
+    windowSum += arr[i]               // Thêm phần tử mới vào cửa sổ
+    if (i >= k) windowSum -= arr[i-k] // Bỏ phần tử cũ ra khỏi cửa sổ
+    if (i >= k-1) maxSum = Math.max(maxSum, windowSum)
+}
+
+// ═══ TEMPLATE 2: Variable Size Window ═══
+// Dùng khi: tìm substring dài nhất/ngắn nhất thỏa điều kiện
+let left = 0, best = 0
+const map = new Map()  // Theo dõi trạng thái cửa sổ
+
+for (let right = 0; right < arr.length; right++) {
+    // 1. Mở rộng: thêm arr[right] vào cửa sổ
+    map.set(arr[right], (map.get(arr[right]) || 0) + 1)
+
+    // 2. Thu hẹp: khi cửa sổ không hợp lệ → dịch left
+    while (/* điều kiện không hợp lệ */) {
+        map.set(arr[left], map.get(arr[left]) - 1)
+        if (map.get(arr[left]) === 0) map.delete(arr[left])
+        left++
+    }
+
+    // 3. Cập nhật kết quả tốt nhất
+    best = Math.max(best, right - left + 1)
+}`}</CodeBlock>
+
         <Heading2>Khi nào dùng Sliding Window?</Heading2>
 
         <div className="my-4 overflow-x-auto">
@@ -545,6 +576,37 @@ const enContent = (
             General template: <InlineCode>right</InlineCode> expands the window → check condition →
             if invalid, shrink <InlineCode>left</InlineCode> → update best result.
         </Callout>
+
+        <Heading2>How to Use Sliding Window</Heading2>
+
+        <CodeBlock title="sliding-window-templates.js">{`// ═══ TEMPLATE 1: Fixed Size Window (size k) ═══
+// Use when: find sum/max/min of k consecutive elements
+let windowSum = 0, maxSum = -Infinity
+for (let i = 0; i < arr.length; i++) {
+    windowSum += arr[i]               // Add new element to window
+    if (i >= k) windowSum -= arr[i-k] // Remove old element from window
+    if (i >= k-1) maxSum = Math.max(maxSum, windowSum)
+}
+
+// ═══ TEMPLATE 2: Variable Size Window ═══
+// Use when: find longest/shortest substring satisfying condition
+let left = 0, best = 0
+const map = new Map()  // Track window state
+
+for (let right = 0; right < arr.length; right++) {
+    // 1. Expand: add arr[right] to window
+    map.set(arr[right], (map.get(arr[right]) || 0) + 1)
+
+    // 2. Shrink: when window is invalid → move left
+    while (/* invalid condition */) {
+        map.set(arr[left], map.get(arr[left]) - 1)
+        if (map.get(arr[left]) === 0) map.delete(arr[left])
+        left++
+    }
+
+    // 3. Update best result
+    best = Math.max(best, right - left + 1)
+}`}</CodeBlock>
 
         <Heading2>When to Use Sliding Window?</Heading2>
 

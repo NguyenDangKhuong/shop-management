@@ -14,6 +14,43 @@ const viContent = (
             đó chính là lúc dùng DP.
         </Callout>
 
+        <Heading2>Cách dùng Dynamic Programming</Heading2>
+
+        <CodeBlock title="dp-templates.js">{`// ═══ TOP-DOWN (Memoization) — Đệ quy + Cache ═══
+// Dùng khi: dễ nghĩ đệ quy, muốn chuyển từ brute-force sang DP nhanh
+function solve(n, memo = {}) {
+    if (n in memo) return memo[n]     // Đã tính rồi → trả luôn
+    if (n <= 1) return n              // Base case
+
+    memo[n] = solve(n-1, memo) + solve(n-2, memo)  // Cache kết quả
+    return memo[n]
+}
+// VD: Fibonacci — từ O(2ⁿ) xuống O(n)!
+
+// ═══ BOTTOM-UP (Tabulation) — Vòng lặp + Mảng ═══
+// Dùng khi: muốn tối ưu bộ nhớ, hiểu rõ thứ tự tính toán
+function solveBottomUp(n) {
+    const dp = new Array(n + 1).fill(0)
+    dp[0] = 0; dp[1] = 1             // Base case
+
+    for (let i = 2; i <= n; i++) {
+        dp[i] = dp[i-1] + dp[i-2]    // Transition: dp[i] tính từ dp[i-1], dp[i-2]
+    }
+    return dp[n]                      // Answer
+}
+
+// ═══ SPACE OPTIMIZED — Chỉ giữ 2 giá trị trước ═══
+// Khi dp[i] chỉ phụ thuộc dp[i-1] và dp[i-2] → không cần mảng!
+function solveOptimized(n) {
+    let prev2 = 0, prev1 = 1
+    for (let i = 2; i <= n; i++) {
+        const curr = prev1 + prev2
+        prev2 = prev1
+        prev1 = curr
+    }
+    return prev1  // O(n) time, O(1) space!
+}`}</CodeBlock>
+
         <Heading2>Khi nào dùng Dynamic Programming?</Heading2>
 
         <div className="my-4 overflow-x-auto">
@@ -440,6 +477,43 @@ const enContent = (
             DP = Recursion + Memoization. If you can solve it recursively and notice repeated subproblems,
             that&apos;s when to use DP.
         </Callout>
+
+        <Heading2>How to Use Dynamic Programming</Heading2>
+
+        <CodeBlock title="dp-templates.js">{`// ═══ TOP-DOWN (Memoization) — Recursion + Cache ═══
+// Use when: easy to think recursively, quick conversion from brute-force to DP
+function solve(n, memo = {}) {
+    if (n in memo) return memo[n]     // Already computed → return cached
+    if (n <= 1) return n              // Base case
+
+    memo[n] = solve(n-1, memo) + solve(n-2, memo)  // Cache result
+    return memo[n]
+}
+// Ex: Fibonacci — from O(2ⁿ) down to O(n)!
+
+// ═══ BOTTOM-UP (Tabulation) — Loop + Array ═══
+// Use when: want memory optimization, clear computation order
+function solveBottomUp(n) {
+    const dp = new Array(n + 1).fill(0)
+    dp[0] = 0; dp[1] = 1             // Base case
+
+    for (let i = 2; i <= n; i++) {
+        dp[i] = dp[i-1] + dp[i-2]    // Transition: dp[i] from dp[i-1], dp[i-2]
+    }
+    return dp[n]                      // Answer
+}
+
+// ═══ SPACE OPTIMIZED — Only keep 2 previous values ═══
+// When dp[i] only depends on dp[i-1] and dp[i-2] → no array needed!
+function solveOptimized(n) {
+    let prev2 = 0, prev1 = 1
+    for (let i = 2; i <= n; i++) {
+        const curr = prev1 + prev2
+        prev2 = prev1
+        prev1 = curr
+    }
+    return prev1  // O(n) time, O(1) space!
+}`}</CodeBlock>
 
         <Heading2>When to Use Dynamic Programming?</Heading2>
 

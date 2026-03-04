@@ -35,6 +35,51 @@ const viContent = (
             Cần duyệt <Highlight>tất cả</Highlight> hoặc kiểm tra tồn tại → DFS thường đơn giản hơn.
         </Callout>
 
+        <Heading2>Cách dùng BFS & DFS</Heading2>
+
+        <CodeBlock title="bfs-dfs-templates.js">{`// ═══ BFS TEMPLATE — dùng Queue (FIFO) ═══
+function bfs(graph, start) {
+    const queue = [start]             // Khởi tạo queue với điểm xuất phát
+    const visited = new Set([start])  // Đánh dấu đã thăm
+
+    while (queue.length > 0) {
+        const node = queue.shift()    // Lấy phần tử đầu tiên (FIFO)
+
+        for (const neighbor of graph[node]) {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor)
+                queue.push(neighbor)  // Thêm hàng xóm vào cuối queue
+            }
+        }
+    }
+}
+
+// ═══ DFS TEMPLATE — dùng Đệ quy ═══
+function dfs(graph, node, visited = new Set()) {
+    if (visited.has(node)) return     // Đã thăm → bỏ qua
+    visited.add(node)                 // Đánh dấu
+
+    for (const neighbor of graph[node]) {
+        dfs(graph, neighbor, visited) // Đi sâu vào hàng xóm
+    }
+}
+
+// ═══ DFS TEMPLATE — dùng Stack (không đệ quy) ═══
+function dfsIterative(graph, start) {
+    const stack = [start]
+    const visited = new Set()
+
+    while (stack.length > 0) {
+        const node = stack.pop()      // Lấy phần tử cuối (LIFO)
+        if (visited.has(node)) continue
+        visited.add(node)
+
+        for (const neighbor of graph[node]) {
+            if (!visited.has(neighbor)) stack.push(neighbor)
+        }
+    }
+}`}</CodeBlock>
+
         <Heading2>Khi nào dùng BFS / DFS?</Heading2>
 
         <div className="my-4 overflow-x-auto">
@@ -491,6 +536,51 @@ const enContent = (
             Rule: need <Highlight>shortest path</Highlight> → BFS.
             Need to <Highlight>explore all</Highlight> or check existence → DFS is usually simpler.
         </Callout>
+
+        <Heading2>How to Use BFS & DFS</Heading2>
+
+        <CodeBlock title="bfs-dfs-templates.js">{`// ═══ BFS TEMPLATE — uses Queue (FIFO) ═══
+function bfs(graph, start) {
+    const queue = [start]             // Initialize queue with start node
+    const visited = new Set([start])  // Mark as visited
+
+    while (queue.length > 0) {
+        const node = queue.shift()    // Take first element (FIFO)
+
+        for (const neighbor of graph[node]) {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor)
+                queue.push(neighbor)  // Add neighbor to end of queue
+            }
+        }
+    }
+}
+
+// ═══ DFS TEMPLATE — uses Recursion ═══
+function dfs(graph, node, visited = new Set()) {
+    if (visited.has(node)) return     // Already visited → skip
+    visited.add(node)                 // Mark visited
+
+    for (const neighbor of graph[node]) {
+        dfs(graph, neighbor, visited) // Go deeper into neighbor
+    }
+}
+
+// ═══ DFS TEMPLATE — uses Stack (iterative) ═══
+function dfsIterative(graph, start) {
+    const stack = [start]
+    const visited = new Set()
+
+    while (stack.length > 0) {
+        const node = stack.pop()      // Take last element (LIFO)
+        if (visited.has(node)) continue
+        visited.add(node)
+
+        for (const neighbor of graph[node]) {
+            if (!visited.has(neighbor)) stack.push(neighbor)
+        }
+    }
+}`}</CodeBlock>
 
         <Heading2>When to Use BFS / DFS?</Heading2>
 
