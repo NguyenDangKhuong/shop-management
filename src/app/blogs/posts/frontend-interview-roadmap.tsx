@@ -671,6 +671,92 @@ const result = await Promise.race([
 // Truthy: everything else (including [] and {}!)`}</CodeBlock>
                 <Callout type="tip">Rule đơn giản: <Highlight>luôn dùng === </Highlight> trừ khi bạn CỐ Ý muốn type coercion (hiếm). Và hãy biết thuộc 6 falsy values.</Callout>
             </TopicModal>
+
+            <TopicModal title="for vs while — Khi nào dùng?" emoji="🔄" color="#10b981" summary="for = biết trước số lần lặp, while = lặp đến khi điều kiện sai — pattern quan trọng trong DSA">
+                <Paragraph><InlineCode>for</InlineCode> dùng khi <Highlight>biết trước</Highlight> số lần lặp. <InlineCode>while</InlineCode> dùng khi <Highlight>không biết trước</Highlight> khi nào dừng.</Paragraph>
+                <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead>
+                            <tr className="border-b border-white/10">
+                                <th className="text-left p-3 text-slate-400 font-medium">Tình huống</th>
+                                <th className="text-left p-3 text-blue-400 font-medium">Dùng</th>
+                                <th className="text-left p-3 text-slate-400 font-medium">Lý do</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-slate-300">
+                            <tr className="border-b border-white/5"><td className="p-3">Duyệt mảng đầu → cuối</td><td className="p-3">for</td><td className="p-3">Biết trước length</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Two Pointers</td><td className="p-3">while</td><td className="p-3">Dừng khi left {'>'}= right</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">BFS / DFS iterative</td><td className="p-3">while</td><td className="p-3">Không biết khi nào queue/stack rỗng</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Binary Search</td><td className="p-3">while</td><td className="p-3">Không biết bao nhiêu bước chia đôi</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Linked List</td><td className="p-3">while</td><td className="p-3">Dừng khi node === null</td></tr>
+                            <tr><td className="p-3">Sliding Window: right mở rộng</td><td className="p-3">for + while</td><td className="p-3">for duyệt right, while thu hẹp left</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <CodeBlock title="Ví dụ kết hợp trong LeetCode">{`// Sliding Window = for + while lồng nhau!
+for (let right = 0; right < arr.length; right++) {  // for: mở rộng
+    while (/* invalid */) left++                      // while: thu hẹp
+}
+
+// Monotonic Stack = for + while
+for (let i = 0; i < arr.length; i++) {               // for: duyệt mảng
+    while (stack.length && arr[stack.at(-1)] < arr[i]) // while: pop
+        stack.pop()
+}
+
+// Binary Search = chỉ while
+while (left <= right) {                               // while: chia đôi
+    const mid = (left + right) >> 1
+    if (arr[mid] < target) left = mid + 1
+    else right = mid - 1
+}`}</CodeBlock>
+                <Callout type="tip">Quy tắc đơn giản: <InlineCode>for</InlineCode> = &quot;duyệt qua N phần tử&quot;, <InlineCode>while</InlineCode> = &quot;lặp cho đến khi điều kiện sai&quot;. Khi kết hợp cả hai (Sliding Window, Monotonic Stack), <InlineCode>for</InlineCode> quản lý vòng ngoài, <InlineCode>while</InlineCode> xử lý logic bên trong.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Kiểu dữ liệu JS" emoji="📦" color="#06b6d4" summary="7 primitive + 1 reference — typeof, truthy/falsy, pass by value vs reference">
+                <Paragraph>JavaScript có <Highlight>7 kiểu nguyên thủy</Highlight> (primitive) và <Highlight>1 kiểu tham chiếu</Highlight> (reference).</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">Primitive (lưu giá trị, so sánh bằng giá trị)</div>
+                        <div className="text-slate-300 text-sm mt-1"><InlineCode>string</InlineCode>, <InlineCode>number</InlineCode>, <InlineCode>boolean</InlineCode>, <InlineCode>null</InlineCode>, <InlineCode>undefined</InlineCode>, <InlineCode>symbol</InlineCode>, <InlineCode>bigint</InlineCode></div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">Reference (lưu con trỏ, so sánh bằng reference)</div>
+                        <div className="text-slate-300 text-sm mt-1"><InlineCode>object</InlineCode> — bao gồm: Object, Array, Function, Date, Map, Set, RegExp...</div>
+                    </div>
+                </div>
+                <CodeBlock title="typeof gotchas">{`typeof 'hello'     // 'string'
+typeof 42          // 'number'
+typeof true        // 'boolean'
+typeof undefined   // 'undefined'
+typeof null        // 'object' ← BUG lịch sử của JS!
+typeof []          // 'object' ← Array cũng là object
+typeof {}          // 'object'
+typeof function(){} // 'function' ← trường hợp đặc biệt
+
+// Cách kiểm tra chính xác:
+Array.isArray([])           // true
+obj === null                // kiểm tra null
+obj instanceof Date         // kiểm tra Date
+Object.prototype.toString.call(obj) // "[object Array]"`}</CodeBlock>
+                <CodeBlock title="Pass by value vs reference">{`// Primitive → copy giá trị
+let a = 5
+let b = a
+b = 10
+console.log(a) // 5 — không bị ảnh hưởng!
+
+// Reference → copy con trỏ (cùng trỏ đến 1 object)
+let obj1 = { name: 'Khuông' }
+let obj2 = obj1
+obj2.name = 'Changed'
+console.log(obj1.name) // 'Changed' — bị ảnh hưởng!
+
+// Fix: shallow copy
+let obj3 = { ...obj1 }  // spread operator
+let obj4 = Object.assign({}, obj1)`}</CodeBlock>
+                <Callout type="tip">Interview tip: Giải thích được <Highlight>typeof null === &apos;object&apos;</Highlight> là bug lịch sử, và sự khác biệt giữa <InlineCode>==</InlineCode> vs <InlineCode>===</InlineCode> khi so sánh types sẽ ghi điểm lớn.</Callout>
+                <a href="/blogs/data-types-structures" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+            </TopicModal>
         </div>
 
         <Heading3>2.2 Implement từ scratch (click xem code mẫu)</Heading3>
