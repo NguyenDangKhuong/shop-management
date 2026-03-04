@@ -18,9 +18,9 @@ const viContent = (
 
         <CodeBlock title="map-api.js">{`// ═══ MAP — lưu cặp key → value ═══
 const map = new Map()
-map.set('name', 'Khuông')     // Thêm/cập nhật
+map.set('name', 'Khương')     // Thêm/cập nhật
 map.set('age', 25)
-map.get('name')               // 'Khuông' — O(1)
+map.get('name')               // 'Khương' — O(1)
 map.has('age')                // true — O(1)
 map.delete('age')             // Xóa key
 map.size                      // 1 — O(1)
@@ -615,9 +615,9 @@ const enContent = (
 
         <CodeBlock title="map-api.js">{`// ═══ MAP — store key → value pairs ═══
 const map = new Map()
-map.set('name', 'Khuông')     // Add/update
+map.set('name', 'Khương')     // Add/update
 map.set('age', 25)
-map.get('name')               // 'Khuông' — O(1)
+map.get('name')               // 'Khương' — O(1)
 map.has('age')                // true — O(1)
 map.delete('age')             // Remove key
 map.size                      // 1 — O(1)

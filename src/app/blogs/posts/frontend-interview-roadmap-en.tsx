@@ -671,6 +671,37 @@ const result = await Promise.race([
 
             <TopicModal title="for vs while — When to Use?" emoji="🔄" color="#10b981" summary="for = known iteration count, while = loop until condition is false — crucial pattern in DSA">
                 <Paragraph><InlineCode>for</InlineCode> when you <Highlight>know in advance</Highlight> how many times to iterate. <InlineCode>while</InlineCode> when you <Highlight>don&#39;t know</Highlight> when to stop.</Paragraph>
+
+                <Heading3>for — When You Know the Iteration Count</Heading3>
+                <CodeBlock title="4 Variations of for">{`// Traverse array — length is known
+for (let i = 0; i < arr.length; i++) { ... }
+
+// Fixed range
+for (let i = 0; i < n; i++) { ... }
+
+// for...of — iterate each element (Array, Map, Set, String)
+for (const item of items) { ... }
+
+// for...in — iterate object keys
+for (const key in obj) { ... }`}</CodeBlock>
+
+                <Heading3>while — When You Don&#39;t Know When to Stop</Heading3>
+                <CodeBlock title="5 Common Use Cases">{`// Two Pointers — stop when pointers meet
+while (left < right) { ... }
+
+// BFS — stop when queue is empty
+while (queue.length > 0) { ... }
+
+// Binary Search — stop when left exceeds right
+while (left <= right) { ... }
+
+// Linked List — stop when no more nodes
+while (node !== null) { ... }
+
+// Regex match — stop when no more matches
+while ((match = regex.exec(str)) !== null) { ... }`}</CodeBlock>
+
+                <Heading3>Quick Cheat Sheet</Heading3>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                         <thead>
@@ -681,33 +712,32 @@ const result = await Promise.race([
                             </tr>
                         </thead>
                         <tbody className="text-slate-300">
-                            <tr className="border-b border-white/5"><td className="p-3">Traverse array start → end</td><td className="p-3">for</td><td className="p-3">Length known upfront</td></tr>
-                            <tr className="border-b border-white/5"><td className="p-3">Two Pointers</td><td className="p-3">while</td><td className="p-3">Stop when left {'>'}= right</td></tr>
-                            <tr className="border-b border-white/5"><td className="p-3">BFS / DFS iterative</td><td className="p-3">while</td><td className="p-3">Don&#39;t know when queue/stack empties</td></tr>
-                            <tr className="border-b border-white/5"><td className="p-3">Binary Search</td><td className="p-3">while</td><td className="p-3">Don&#39;t know how many halving steps</td></tr>
-                            <tr className="border-b border-white/5"><td className="p-3">Linked List</td><td className="p-3">while</td><td className="p-3">Stop when node === null</td></tr>
-                            <tr><td className="p-3">Sliding Window: right expands</td><td className="p-3">for + while</td><td className="p-3">for drives right, while shrinks left</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Traverse array start → end</td><td className="p-3"><InlineCode>for</InlineCode></td><td className="p-3">Length known upfront</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Two Pointers</td><td className="p-3"><InlineCode>while</InlineCode></td><td className="p-3">Stop when left {'>'} = right</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Sliding Window: right expands</td><td className="p-3"><InlineCode>for</InlineCode></td><td className="p-3">right goes from 0 → n</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Sliding Window: left shrinks</td><td className="p-3"><InlineCode>while</InlineCode></td><td className="p-3">Don&#39;t know how much to shrink</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">BFS / DFS iterative</td><td className="p-3"><InlineCode>while</InlineCode></td><td className="p-3">Don&#39;t know when queue/stack empties</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Binary Search</td><td className="p-3"><InlineCode>while</InlineCode></td><td className="p-3">Don&#39;t know how many halving steps</td></tr>
+                            <tr><td className="p-3">Read file / stream</td><td className="p-3"><InlineCode>while</InlineCode></td><td className="p-3">Don&#39;t know when data ends</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <CodeBlock title="Combined examples in LeetCode">{`// Sliding Window = for + while nested!
-for (let right = 0; right < arr.length; right++) {  // for: expand
-    while (/* invalid */) left++                      // while: shrink
+
+                <Heading3>In LeetCode Patterns</Heading3>
+                <CodeBlock title="Combining for + while">{`// Sliding Window = for + while nested!
+for (let right = 0; right < arr.length; right++) {  // for: expand (known n steps)
+    while (/* invalid */) {                           // while: shrink (unknown steps)
+        left++
+    }
 }
 
 // Monotonic Stack = for + while
-for (let i = 0; i < arr.length; i++) {               // for: traverse
-    while (stack.length && arr[stack.at(-1)] < arr[i]) // while: pop
+for (let i = 0; i < arr.length; i++) {               // for: traverse array
+    while (stack.length && arr[stack.at(-1)] < arr[i]) { // while: pop until valid
         stack.pop()
-}
-
-// Binary Search = while only
-while (left <= right) {                               // while: halve
-    const mid = (left + right) >> 1
-    if (arr[mid] < target) left = mid + 1
-    else right = mid - 1
+    }
 }`}</CodeBlock>
-                <Callout type="tip">Simple rule: <InlineCode>for</InlineCode> = &quot;iterate through N elements&quot;, <InlineCode>while</InlineCode> = &quot;loop until condition is false&quot;. When combining both (Sliding Window, Monotonic Stack), <InlineCode>for</InlineCode> manages the outer loop, <InlineCode>while</InlineCode> handles inner logic.</Callout>
+                <Callout type="tip"><strong>Summary:</strong> <InlineCode>for</InlineCode> = &quot;iterate through N elements&quot;, <InlineCode>while</InlineCode> = &quot;loop until condition is false&quot;. When combining both (Sliding Window, Monotonic Stack), <InlineCode>for</InlineCode> manages the outer loop, <InlineCode>while</InlineCode> handles inner logic with unknown step count! 🎯</Callout>
             </TopicModal>
 
             <TopicModal title="JS Data Types" emoji="📦" color="#06b6d4" summary="7 primitives + 1 reference — typeof, truthy/falsy, pass by value vs reference">

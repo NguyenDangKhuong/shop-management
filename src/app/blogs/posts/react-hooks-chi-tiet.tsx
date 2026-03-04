@@ -57,7 +57,7 @@ function Counter() {
                 </Paragraph>
 
                 <CodeBlock title="object-array-state.tsx">{`// ✅ Object — spread operator
-const [user, setUser] = useState({ name: 'Khuông', age: 25 })
+const [user, setUser] = useState({ name: 'Khương', age: 25 })
 setUser({ ...user, age: 26 })          // Tạo object mới, giữ các field khác
 setUser(prev => ({ ...prev, age: prev.age + 1 }))  // Callback form
 
@@ -933,7 +933,7 @@ function Counter() {
                 </Paragraph>
 
                 <CodeBlock title="object-array-state.tsx">{`// ✅ Object — spread operator
-const [user, setUser] = useState({ name: 'Khuông', age: 25 })
+const [user, setUser] = useState({ name: 'Khương', age: 25 })
 setUser({ ...user, age: 26 })          // Create new object, keep other fields
 setUser(prev => ({ ...prev, age: prev.age + 1 }))  // Callback form
 
