@@ -180,9 +180,100 @@ function UserProfile({ userId }) {
                     </table>
                 </div>
 
-                <Callout type="warning">
-                    Cleanup function (return) tương đương <InlineCode>componentWillUnmount</InlineCode>.
-                    Luôn cleanup timers, subscriptions, event listeners để tránh memory leak!
+                <Heading3>❌ Không truyền async trực tiếp</Heading3>
+
+                <CodeBlock title="async-effect.tsx">{`// ❌ SAI — useEffect callback phải trả về void hoặc cleanup function
+// async function luôn trả về Promise → React không xử lý được!
+useEffect(async () => {
+    const data = await fetchData()
+    setData(data)
+}, [])  // TypeScript error: Promise<void> ≠ void | Destructor
+
+// ✅ ĐÚNG — tạo async function bên trong
+useEffect(() => {
+    const loadData = async () => {
+        const data = await fetchData()
+        setData(data)
+    }
+    loadData()
+
+    return () => { /* cleanup vẫn hoạt động */ }
+}, [])`}</CodeBlock>
+
+                <Heading3>🧹 Cleanup Patterns</Heading3>
+
+                <Paragraph>
+                    Cleanup chạy khi <Highlight>unmount</Highlight> hoặc <Highlight>trước effect tiếp theo</Highlight>.
+                    Nếu không cleanup → memory leak, race condition!
+                </Paragraph>
+
+                <CodeBlock title="cleanup-patterns.tsx">{`// 1️⃣ Timer — clearInterval khi unmount
+useEffect(() => {
+    const id = setInterval(() => setTime(t => t + 1), 1000)
+    return () => clearInterval(id)  // 🧹 Dừng timer
+}, [])
+
+// 2️⃣ Event Listener — remove khi unmount
+useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+}, [])
+
+// 3️⃣ Fetch — cancel request cũ tránh race condition
+// User gõ "a" → "ab" → "abc" nhanh
+// Response "a" có thể về SAU "abc" → hiển thị sai!
+useEffect(() => {
+    let cancelled = false
+    fetch(\`/api/search?q=\${query}\`)
+        .then(res => res.json())
+        .then(data => {
+            if (!cancelled) setResults(data)  // Chỉ set nếu chưa bị cancel
+        })
+    return () => { cancelled = true }  // 🧹 Ignore response cũ
+}, [query])
+
+// 🏭 Ví dụ thực tế — useDebounce.ts trong project:
+useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay)
+    return () => clearTimeout(handler)  // 🧹 Cancel timeout cũ khi value đổi
+}, [value, delay])`}</CodeBlock>
+
+                <Heading3>⚠️ Dependency Array Pitfalls</Heading3>
+
+                <CodeBlock title="deps-pitfalls.tsx">{`// ❌ Object/Array trong deps — tạo mới mỗi render → effect chạy vô hạn!
+useEffect(() => {
+    fetchData(filters)
+}, [{ status: 'active', page: 1 }])  // Object mới mỗi render!
+
+// ✅ Fix: dùng primitive values hoặc useMemo
+useEffect(() => {
+    fetchData(filters)
+}, [filters.status, filters.page])  // Primitive → so sánh stable
+
+// ❌ Quên dependency → stale closure
+const [count, setCount] = useState(0)
+useEffect(() => {
+    const id = setInterval(() => {
+        console.log(count)  // Luôn = 0 (stale!)
+    }, 1000)
+    return () => clearInterval(id)
+}, [])  // Thiếu count trong deps!
+
+// ✅ Fix: dùng callback form hoặc thêm dependency
+useEffect(() => {
+    const id = setInterval(() => {
+        setCount(prev => prev + 1)  // Callback form — không cần count trong deps
+    }, 1000)
+    return () => clearInterval(id)
+}, [])`}</CodeBlock>
+
+                <Callout type="tip">
+                    <strong>4 quy tắc vàng của useEffect:</strong><br />
+                    1. Không truyền <InlineCode>async</InlineCode> trực tiếp làm callback<br />
+                    2. Luôn cleanup: timer, listener, subscription, fetch<br />
+                    3. Object/function trong deps → dùng <InlineCode>useMemo</InlineCode>/<InlineCode>useCallback</InlineCode> hoặc tách primitive<br />
+                    4. ESLint rule <InlineCode>exhaustive-deps</InlineCode> → bật và tuân thủ!
                 </Callout>
 
                 {/* ===== useRef ===== */}
@@ -965,9 +1056,100 @@ function UserProfile({ userId }) {
                     </table>
                 </div>
 
-                <Callout type="warning">
-                    Cleanup function (return) is equivalent to <InlineCode>componentWillUnmount</InlineCode>.
-                    Always cleanup timers, subscriptions, and event listeners to avoid memory leaks!
+                <Heading3>❌ Don't Pass async Directly</Heading3>
+
+                <CodeBlock title="async-effect.tsx">{`// ❌ WRONG — useEffect callback must return void or cleanup function
+// async function always returns Promise → React can't handle it!
+useEffect(async () => {
+    const data = await fetchData()
+    setData(data)
+}, [])  // TypeScript error: Promise<void> ≠ void | Destructor
+
+// ✅ RIGHT — create async function inside
+useEffect(() => {
+    const loadData = async () => {
+        const data = await fetchData()
+        setData(data)
+    }
+    loadData()
+
+    return () => { /* cleanup still works */ }
+}, [])`}</CodeBlock>
+
+                <Heading3>🧹 Cleanup Patterns</Heading3>
+
+                <Paragraph>
+                    Cleanup runs on <Highlight>unmount</Highlight> or <Highlight>before the next effect</Highlight>.
+                    Without cleanup → memory leaks, race conditions!
+                </Paragraph>
+
+                <CodeBlock title="cleanup-patterns.tsx">{`// 1️⃣ Timer — clearInterval on unmount
+useEffect(() => {
+    const id = setInterval(() => setTime(t => t + 1), 1000)
+    return () => clearInterval(id)  // 🧹 Stop timer
+}, [])
+
+// 2️⃣ Event Listener — remove on unmount
+useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+}, [])
+
+// 3️⃣ Fetch — cancel old request to prevent race condition
+// User types "a" → "ab" → "abc" quickly
+// Response for "a" might arrive AFTER "abc" → wrong data displayed!
+useEffect(() => {
+    let cancelled = false
+    fetch(\`/api/search?q=\${query}\`)
+        .then(res => res.json())
+        .then(data => {
+            if (!cancelled) setResults(data)  // Only set if not cancelled
+        })
+    return () => { cancelled = true }  // 🧹 Ignore old response
+}, [query])
+
+// 🏭 Real example — useDebounce.ts in this project:
+useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay)
+    return () => clearTimeout(handler)  // 🧹 Cancel old timeout when value changes
+}, [value, delay])`}</CodeBlock>
+
+                <Heading3>⚠️ Dependency Array Pitfalls</Heading3>
+
+                <CodeBlock title="deps-pitfalls.tsx">{`// ❌ Object/Array in deps — new reference each render → infinite loop!
+useEffect(() => {
+    fetchData(filters)
+}, [{ status: 'active', page: 1 }])  // New object every render!
+
+// ✅ Fix: use primitive values or useMemo
+useEffect(() => {
+    fetchData(filters)
+}, [filters.status, filters.page])  // Primitives → stable comparison
+
+// ❌ Missing dependency → stale closure
+const [count, setCount] = useState(0)
+useEffect(() => {
+    const id = setInterval(() => {
+        console.log(count)  // Always = 0 (stale!)
+    }, 1000)
+    return () => clearInterval(id)
+}, [])  // Missing count in deps!
+
+// ✅ Fix: use callback form or add dependency
+useEffect(() => {
+    const id = setInterval(() => {
+        setCount(prev => prev + 1)  // Callback form — no count needed in deps
+    }, 1000)
+    return () => clearInterval(id)
+}, [])`}</CodeBlock>
+
+                <Callout type="tip">
+                    <strong>4 golden rules of useEffect:</strong><br />
+                    1. Never pass <InlineCode>async</InlineCode> directly as callback<br />
+                    2. Always cleanup: timers, listeners, subscriptions, fetch<br />
+                    3. Object/function in deps → use <InlineCode>useMemo</InlineCode>/<InlineCode>useCallback</InlineCode> or extract primitives<br />
+                    4. ESLint rule <InlineCode>exhaustive-deps</InlineCode> → enable and follow it!
                 </Callout>
 
                 {/* ===== useRef ===== */}
