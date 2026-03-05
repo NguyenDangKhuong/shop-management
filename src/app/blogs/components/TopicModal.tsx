@@ -33,18 +33,18 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
             {/* Clickable Card */}
             <button
                 onClick={() => setOpen(true)}
-                className="w-full text-left group flex items-start gap-3 p-3.5 rounded-xl bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 hover:bg-gray-200 dark:hover:bg-slate-800/60 transition-all duration-200 cursor-pointer"
+                className="w-full text-left group flex items-start gap-3 p-3.5 rounded-xl bg-[var(--bg-tag)] border border-[var(--border-primary)]   transition-all duration-200 cursor-pointer"
                 style={{ boxShadow: open ? `0 0 20px ${color}20` : undefined }}
             >
                 <span className="text-lg mt-0.5 shrink-0">{emoji}</span>
                 <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-[color] transition flex items-center gap-2" style={{ color: open ? color : undefined }}>
+                    <div className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[color] transition flex items-center gap-2" style={{ color: open ? color : undefined }}>
                         {title}
-                        <span className="text-xs text-gray-400 dark:text-slate-500 group-hover:text-gray-500 dark:group-hover:text-slate-400 transition">← click</span>
+                        <span className="text-xs text-[var(--text-muted)]  transition">← click</span>
                     </div>
-                    <div className="text-xs text-gray-400 dark:text-slate-500 mt-0.5 line-clamp-1">{summary}</div>
+                    <div className="text-xs text-[var(--text-muted)] mt-0.5 line-clamp-1">{summary}</div>
                 </div>
-                <span className="text-gray-400 dark:text-slate-600 group-hover:text-gray-500 dark:group-hover:text-slate-400 transition text-sm mt-1 shrink-0">→</span>
+                <span className="text-[var(--text-dimmed)]  transition text-sm mt-1 shrink-0">→</span>
             </button>
 
             {/* Modal Overlay */}

@@ -2,7 +2,61 @@
 
 @custom-variant dark (&:is(.dark, .dark *));
 
+/* ═══════════════════════════════════════════════
+   Theme Design Tokens — CSS Custom Properties
+   Toggle by adding/removing .dark on <html>
+   ═══════════════════════════════════════════════ */
 :root {
+  /* Backgrounds */
+  --bg-page: #f9fafb;
+  /* gray-50 */
+  --bg-page-gradient-from: #f3f4f6;
+  /* gray-100 */
+  --bg-page-gradient-via: #f9fafb;
+  --bg-page-gradient-to: #f9fafb;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f9fafb;
+  /* gray-50 */
+  --bg-surface: rgba(255, 255, 255, 0.8);
+  --bg-surface-dim: #f3f4f6;
+  /* gray-100 */
+  --bg-input: #f3f4f6;
+  /* gray-100 */
+  --bg-tag: #f3f4f6;
+  --bg-tag-active: rgba(56, 189, 248, 0.1);
+  --bg-header: rgba(255, 255, 255, 0.5);
+  --bg-header-scrolled: rgba(255, 255, 255, 0.8);
+  --bg-glow-blue: rgba(37, 99, 235, 0.06);
+  --bg-glow-purple: rgba(124, 58, 237, 0.06);
+
+  /* Text */
+  --text-primary: #111827;
+  /* gray-900 */
+  --text-secondary: #4b5563;
+  /* gray-600 */
+  --text-muted: #9ca3af;
+  /* gray-400 */
+  --text-dimmed: #6b7280;
+  /* gray-500 */
+  --text-link: #38bdf8;
+  --text-link-hover: #0ea5e9;
+
+  /* Borders */
+  --border-primary: #e5e7eb;
+  /* gray-200 */
+  --border-dim: #f3f4f6;
+  /* gray-100 */
+  --border-input: #d1d5db;
+  /* gray-300 */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+  /* Misc */
+  --ring-bg: #ffffff;
+
+  /* Legacy tokens (keep for glass-card) */
   --card-bg: #ffffff;
   --card-border: #e5e7eb;
   --glass-bg: rgba(255, 255, 255, 0.8);
@@ -10,6 +64,53 @@
 }
 
 .dark {
+  /* Backgrounds */
+  --bg-page: #0a0a0a;
+  --bg-page-gradient-from: #0f172a;
+  /* slate-900 */
+  --bg-page-gradient-via: #0a0a0a;
+  --bg-page-gradient-to: #0a0a0a;
+  --bg-card: rgba(15, 23, 42, 0.4);
+  /* slate-900/40 */
+  --bg-card-hover: rgba(51, 65, 85, 0.4);
+  /* slate-700/40 */
+  --bg-surface: rgba(30, 41, 59, 0.4);
+  --bg-surface-dim: rgba(30, 41, 59, 0.5);
+  --bg-input: rgba(30, 41, 59, 0.8);
+  --bg-tag: rgba(30, 41, 59, 0.5);
+  /* slate-800/50 */
+  --bg-tag-active: rgba(56, 189, 248, 0.15);
+  --bg-header: rgba(10, 10, 10, 0.5);
+  --bg-header-scrolled: rgba(10, 10, 10, 0.8);
+  --bg-glow-blue: rgba(37, 99, 235, 0.1);
+  --bg-glow-purple: rgba(124, 58, 237, 0.1);
+
+  /* Text */
+  --text-primary: #e2e8f0;
+  /* slate-200 */
+  --text-secondary: #94a3b8;
+  /* slate-400 */
+  --text-muted: #64748b;
+  /* slate-500 */
+  --text-dimmed: #475569;
+  /* slate-600 */
+  --text-link: #38bdf8;
+  --text-link-hover: #7dd3fc;
+
+  /* Borders */
+  --border-primary: rgba(255, 255, 255, 0.1);
+  --border-dim: rgba(255, 255, 255, 0.05);
+  --border-input: rgba(100, 116, 139, 0.6);
+  /* slate-600 */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+
+  /* Misc */
+  --ring-bg: #0a0a0a;
+
+  /* Legacy */
   --card-bg: #1f1f1f;
   --card-border: #374151;
   --glass-bg: rgba(30, 41, 59, 0.4);
@@ -29,5 +130,25 @@
     .glass-card {
       padding: 2rem;
     }
+  }
+
+  /* Themed button — for LanguageSwitcher, ThemeToggle, etc. */
+  .theme-btn {
+    background-color: var(--bg-tag);
+    border: 1px solid var(--border-primary);
+    color: var(--text-secondary);
+    transition: all 0.2s;
+  }
+
+  .theme-btn:hover {
+    border-color: rgba(56, 189, 248, 0.5);
+    color: var(--text-primary);
+  }
+
+  /* Round variant for icon buttons */
+  .theme-btn-round {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-primary);
+    transition: all 0.3s;
   }
 }

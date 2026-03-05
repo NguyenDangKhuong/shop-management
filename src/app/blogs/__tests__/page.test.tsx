@@ -19,7 +19,7 @@ jest.mock('@/app/blogs/components/LangContext', () => ({
 }))
 
 // Mock LangSwitcher
-jest.mock('@/app/blogs/components/LangSwitcher', () => {
+jest.mock('@/components/ui/LanguageSwitcher', () => {
     return function MockLangSwitcher() {
         return <button>🇻🇳 / 🇬🇧</button>
     }

@@ -1,3 +1,10 @@
+/**
+ * ThemeToggle — Sun/Moon button to switch light/dark mode.
+ *
+ * Uses useThemeMode() hook to toggle .dark class on <html>.
+ * Button styling uses .theme-btn-round class from globals.css.
+ * Only component that needs isDarkMode for icon animation (sun ↔ moon).
+ */
 'use client'
 
 import { useThemeMode } from '@/contexts/ThemeContext'
@@ -8,7 +15,7 @@ export default function ThemeToggle() {
     return (
         <button
             onClick={toggleTheme}
-            className="relative w-9 h-9 rounded-full border border-gray-300 dark:border-white/10 bg-white dark:bg-slate-800/60 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-slate-700/60 transition-all duration-300 shadow-sm"
+            className="theme-btn-round relative w-9 h-9 rounded-full flex items-center justify-center shadow-sm cursor-pointer"
             aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
             title={isDarkMode ? 'Light mode' : 'Dark mode'}
         >
