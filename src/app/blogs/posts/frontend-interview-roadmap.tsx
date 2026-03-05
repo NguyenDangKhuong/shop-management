@@ -179,6 +179,78 @@ query { user(id: 1) { name, email } }
                 </div>
                 <Callout type="warning">JWT trong <InlineCode>localStorage</InlineCode> dễ bị XSS. Best practice: lưu JWT trong <Highlight>httpOnly cookie</Highlight> hoặc memory.</Callout>
             </TopicModal>
+
+            <TopicModal title="Browser Storage" emoji="💾" color="#ef4444" summary="localStorage, sessionStorage, cookies, IndexedDB — lưu data phía client">
+                <Paragraph>Browser cung cấp nhiều cách lưu data phía client. Mỗi loại có <Highlight>use case riêng</Highlight> — chọn sai là bug hoặc security risk.</Paragraph>
+
+                <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-gray-200 dark:border-white/10"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">localStorage</th><th className="text-left p-2 text-green-400">sessionStorage</th><th className="text-left p-2 text-yellow-400">Cookies</th><th className="text-left p-2 text-purple-400">IndexedDB</th></tr></thead>
+                        <tbody className="text-gray-600 dark:text-slate-300">
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Dung lượng</td><td className="p-2">~5-10 MB</td><td className="p-2">~5 MB</td><td className="p-2">~4 KB</td><td className="p-2">Hàng trăm MB+</td></tr>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Hết hạn</td><td className="p-2">Không (persist)</td><td className="p-2">Đóng tab = mất</td><td className="p-2">Set expires/max-age</td><td className="p-2">Không (persist)</td></tr>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Gửi lên server</td><td className="p-2">❌ Không</td><td className="p-2">❌ Không</td><td className="p-2">✅ Tự động mỗi request</td><td className="p-2">❌ Không</td></tr>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">API</td><td className="p-2">Sync (đơn giản)</td><td className="p-2">Sync (đơn giản)</td><td className="p-2">document.cookie</td><td className="p-2">Async (phức tạp)</td></tr>
+                            <tr><td className="p-2">Use case</td><td className="p-2">User prefs, theme</td><td className="p-2">Form wizard, temp data</td><td className="p-2">Auth tokens, tracking</td><td className="p-2">Offline data, large datasets</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <CodeBlock title="localStorage & sessionStorage">{`// localStorage — persist across sessions
+localStorage.setItem('theme', 'dark')
+localStorage.getItem('theme')    // 'dark'
+localStorage.removeItem('theme')
+localStorage.clear()             // xóa tất cả
+
+// sessionStorage — chỉ tồn tại trong tab hiện tại
+sessionStorage.setItem('step', '2')
+sessionStorage.getItem('step')   // '2'
+// Đóng tab → mất hết!
+
+// Lưu object → phải JSON.stringify
+localStorage.setItem('user', JSON.stringify({ name: 'An', age: 25 }))
+const user = JSON.parse(localStorage.getItem('user'))`}</CodeBlock>
+
+                <CodeBlock title="Cookies (document.cookie)">{`// Set cookie
+document.cookie = 'token=abc123; path=/; max-age=3600; Secure; SameSite=Strict'
+
+// Read cookies (trả về string, phải parse)
+document.cookie  // 'token=abc123; theme=dark'
+
+// Cookie flags quan trọng:
+// Secure     — chỉ gửi qua HTTPS
+// HttpOnly   — JS không đọc được (chống XSS!)
+// SameSite   — chống CSRF (Strict/Lax/None)
+// max-age    — thời gian sống (giây)
+// path=/     — áp dụng cho toàn site`}</CodeBlock>
+
+                <CodeBlock title="IndexedDB (cho data lớn)">{`// IndexedDB — NoSQL database trong browser
+const request = indexedDB.open('myDB', 1)
+
+request.onupgradeneeded = (e) => {
+  const db = e.target.result
+  db.createObjectStore('users', { keyPath: 'id' })
+}
+
+request.onsuccess = (e) => {
+  const db = e.target.result
+  const tx = db.transaction('users', 'readwrite')
+  tx.objectStore('users').add({ id: 1, name: 'An' })
+}
+
+// Thực tế: dùng wrapper như idb hoặc Dexie.js
+// import { openDB } from 'idb'
+// const db = await openDB('myDB', 1)
+// await db.put('users', { id: 1, name: 'An' })`}</CodeBlock>
+
+                <Callout type="tip">🎯 <strong>Quy tắc chọn storage:</strong><br />
+                    • Auth tokens → <InlineCode>httpOnly cookie</InlineCode> (bảo mật nhất)<br />
+                    • Theme/language → <InlineCode>localStorage</InlineCode> (persist, nhỏ)<br />
+                    • Form multi-step → <InlineCode>sessionStorage</InlineCode> (mất khi đóng tab)<br />
+                    • Offline/cache lớn → <InlineCode>IndexedDB</InlineCode> (structured data)</Callout>
+
+                <Callout type="warning"><InlineCode>localStorage</InlineCode> là <strong>synchronous</strong> — nếu lưu data lớn sẽ block main thread. Dùng <InlineCode>IndexedDB</InlineCode> (async) cho data &gt; 1MB.</Callout>
+            </TopicModal>
         </div>
 
         <Heading3>1.3 Git & Terminal (click để xem chi tiết)</Heading3>
