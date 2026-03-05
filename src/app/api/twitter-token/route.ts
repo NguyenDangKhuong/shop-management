@@ -31,7 +31,8 @@ export async function GET() {
 export async function POST(request: NextRequest) {
     try {
         await connectDB()
-        const { cookieText } = await request.json()
+        const body = await request.json()
+        const { cookieText, bearerToken, userTweetsQueryId, userByScreenNameQueryId, homeTimelineQueryId, homeLatestTimelineQueryId } = body
 
         if (!cookieText || typeof cookieText !== 'string') {
             return NextResponse.json({ success: false, error: 'Cookie text is required' }, { status: 400 })
@@ -61,9 +62,10 @@ export async function POST(request: NextRequest) {
             }, { status: 400 })
         }
 
-        // Build cookie string
-        let cookie = `auth_token=${authToken}; ct0=${ct0}`
-        if (att) cookie += `; att=${att}`
+        // Use full cookie string if it looks like a full cookie, otherwise build minimal
+        const cookie = text.includes(';') && text.includes('=')
+            ? text  // Full cookie string — keep as-is
+            : `auth_token=${authToken}; ct0=${ct0}${att ? `; att=${att}` : ''}`
 
         // Delete old tokens, keep only latest
         await TwitterTokenModel.deleteMany({})
@@ -73,6 +75,11 @@ export async function POST(request: NextRequest) {
             ct0,
             att: att || undefined,
             cookie,
+            bearerToken: bearerToken || undefined,
+            userTweetsQueryId: userTweetsQueryId || undefined,
+            userByScreenNameQueryId: userByScreenNameQueryId || undefined,
+            homeTimelineQueryId: homeTimelineQueryId || undefined,
+            homeLatestTimelineQueryId: homeLatestTimelineQueryId || undefined,
         })
 
         return NextResponse.json({
@@ -82,6 +89,13 @@ export async function POST(request: NextRequest) {
                 authToken: authToken.slice(0, 6) + '...',
                 ct0: ct0.slice(0, 6) + '...',
                 att: att ? att.slice(0, 6) + '...' : null,
+                bearerToken: bearerToken ? 'saved' : null,
+                queryIds: {
+                    userTweets: userTweetsQueryId || null,
+                    userByScreenName: userByScreenNameQueryId || null,
+                    homeTimeline: homeTimelineQueryId || null,
+                    homeLatestTimeline: homeLatestTimelineQueryId || null,
+                },
             }
         })
     } catch (error: unknown) {
