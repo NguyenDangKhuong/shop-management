@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { BlogPost } from '../types'
 import { useLang } from './LangContext'
@@ -9,6 +9,22 @@ import ThemeToggle from '@/components/ui/ThemeToggle'
 
 export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; relatedPosts: BlogPost[] }) {
     const { t, lang } = useLang()
+    const [scrolled, setScrolled] = useState(false)
+    const [showBackToTop, setShowBackToTop] = useState(false)
+
+    // Track scroll for sticky header + back to top
+    useEffect(() => {
+        const onScroll = () => {
+            setScrolled(window.scrollY > 60)
+            setShowBackToTop(window.scrollY > 400)
+        }
+        window.addEventListener('scroll', onScroll, { passive: true })
+        return () => window.removeEventListener('scroll', onScroll)
+    }, [])
+
+    const scrollToTop = useCallback(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }, [])
 
     // Scroll to hash anchor on page load (for search deep-linking)
     useEffect(() => {
@@ -24,57 +40,62 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
     }, [])
 
     return (
-        <div className="bg-gray-50 dark:bg-[#0a0a0a] text-gray-800 dark:text-slate-200 font-sans min-h-screen flex flex-col items-center p-4 md:p-8 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-gray-100 dark:from-slate-900 via-gray-50 dark:via-[#0a0a0a] to-gray-50 dark:to-[#0a0a0a] relative transition-colors duration-300">
-            {/* Header */}
-            <header className="w-full max-w-3xl mx-auto flex items-center mb-12 z-20">
-                {/* Mobile: back+lang left, logo center */}
-                <div className="flex md:hidden items-center w-full">
-                    <Link
-                        href="/blogs"
-                        className="text-sm text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white transition"
-                    >
-                        ←
-                    </Link>
-                    <div className="flex-1 flex justify-center">
+        <div className="bg-gray-50 dark:bg-[#0a0a0a] text-gray-800 dark:text-slate-200 font-sans min-h-screen flex flex-col items-center bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-gray-100 dark:from-slate-900 via-gray-50 dark:via-[#0a0a0a] to-gray-50 dark:to-[#0a0a0a] relative transition-colors duration-300">
+            {/* Sticky Header */}
+            <header className={`w-full sticky top-0 z-50 transition-all duration-300 ${scrolled
+                ? 'bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-xl shadow-sm dark:shadow-none border-b border-gray-200/50 dark:border-white/5 py-2'
+                : 'bg-transparent py-4 md:py-6'
+                }`}>
+                <div className={`max-w-3xl mx-auto px-4 md:px-8 transition-all duration-300`}>
+                    {/* Mobile */}
+                    <div className="flex md:hidden items-center w-full">
+                        <Link
+                            href="/blogs"
+                            className="text-sm text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white transition"
+                        >
+                            ←
+                        </Link>
+                        <div className="flex-1 flex justify-center">
+                            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
+                                <div className={`rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg transition-all duration-300 ${scrolled ? 'w-6 h-6 text-xs' : 'w-8 h-8 text-sm'}`}>
+                                    Y
+                                </div>
+                                <span className={`font-bold tracking-tight text-gray-900 dark:text-white transition-all duration-300 ${scrolled ? 'text-base' : 'text-xl'}`}>
+                                    The<span className="text-[#38bdf8]">TapHoa</span>
+                                </span>
+                            </Link>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <ThemeToggle />
+                            <LangSwitcher />
+                        </div>
+                    </div>
+                    {/* Desktop */}
+                    <div className="hidden md:flex justify-between items-center w-full">
                         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg">
+                            <div className={`rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg transition-all duration-300 ${scrolled ? 'w-6 h-6 text-xs' : 'w-8 h-8 text-sm'}`}>
                                 Y
                             </div>
-                            <span className="font-bold text-xl tracking-tight text-gray-900 dark:text-white">
+                            <span className={`font-bold tracking-tight text-gray-900 dark:text-white transition-all duration-300 ${scrolled ? 'text-base' : 'text-xl'}`}>
                                 The<span className="text-[#38bdf8]">TapHoa</span>
                             </span>
                         </Link>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <ThemeToggle />
-                        <LangSwitcher />
-                    </div>
-                </div>
-                {/* Desktop: logo left, buttons right */}
-                <div className="hidden md:flex justify-between items-center w-full">
-                    <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg">
-                            Y
+                        <div className="flex items-center gap-3">
+                            <ThemeToggle />
+                            <LangSwitcher />
+                            <Link
+                                href="/blogs"
+                                className="text-sm text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white transition flex items-center gap-1"
+                            >
+                                {lang === 'vi' ? '← Tất cả bài viết' : '← All posts'}
+                            </Link>
                         </div>
-                        <span className="font-bold text-xl tracking-tight text-gray-900 dark:text-white">
-                            The<span className="text-[#38bdf8]">TapHoa</span>
-                        </span>
-                    </Link>
-                    <div className="flex items-center gap-3">
-                        <ThemeToggle />
-                        <LangSwitcher />
-                        <Link
-                            href="/blogs"
-                            className="text-sm text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white transition flex items-center gap-1"
-                        >
-                            {lang === 'vi' ? '← Tất cả bài viết' : '← All posts'}
-                        </Link>
                     </div>
                 </div>
             </header>
 
             {/* Article */}
-            <article className="w-full max-w-3xl mx-auto z-10">
+            <article className="w-full max-w-3xl mx-auto z-10 px-4 md:px-8 mt-8">
                 {/* Article Header */}
                 <div className="mb-8">
                     <div className="flex items-center gap-3 mb-4">
@@ -121,7 +142,7 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
 
             {/* Related Posts */}
             {relatedPosts.length > 0 && (
-                <div className="w-full max-w-3xl mx-auto mt-16 z-10">
+                <div className="w-full max-w-3xl mx-auto mt-16 z-10 px-4 md:px-8">
                     <div
                         className="h-px w-full mb-8 opacity-30"
                         style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent)' }}
@@ -150,11 +171,22 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
             )}
 
             {/* Footer */}
-            <footer className="w-full max-w-3xl mx-auto mt-16 pt-8 pb-6 border-t border-gray-300 dark:border-slate-700/50 z-20 text-center">
+            <footer className="w-full max-w-3xl mx-auto mt-16 pt-8 pb-6 border-t border-gray-300 dark:border-slate-700/50 z-20 text-center px-4 md:px-8">
                 <p className="text-sm text-gray-400 dark:text-slate-500">
                     Built with Next.js, TypeScript & MongoDB
                 </p>
             </footer>
+
+            {/* Back to Top */}
+            <button
+                onClick={scrollToTop}
+                className={`fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-gray-200 dark:bg-slate-800 border border-gray-300 dark:border-white/10 text-gray-600 dark:text-slate-400 hover:bg-gray-300 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white transition-all duration-300 flex items-center justify-center shadow-lg ${showBackToTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
+                aria-label="Back to top"
+            >
+                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                    <path d="M12 4l-8 8h5v8h6v-8h5z" />
+                </svg>
+            </button>
 
             {/* Background Gradients */}
             <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
@@ -164,3 +196,4 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
         </div>
     )
 }
+
