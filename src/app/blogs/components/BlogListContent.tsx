@@ -7,6 +7,7 @@ import { BlogPost } from '../types'
 import { useLang } from './LangContext'
 import LangSwitcher from './LangSwitcher'
 import SiteHeader from '@/components/ui/SiteHeader'
+import { useThemeMode } from '@/contexts/ThemeContext'
 import { blogSections } from '../posts/sections'
 
 interface SearchResult {
@@ -17,6 +18,7 @@ interface SearchResult {
 export function BlogListContent({ posts }: { posts: BlogPost[] }) {
     const { t, lang } = useLang()
     const router = useRouter()
+    const { isDarkMode } = useThemeMode()
     const [search, setSearch] = useState('')
     const [isOpen, setIsOpen] = useState(false)
     const [activeIndex, setActiveIndex] = useState(-1)
@@ -149,7 +151,7 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                         onFocus={() => search.trim() && setIsOpen(true)}
                         onKeyDown={handleKeyDown}
                         placeholder={lang === 'vi' ? 'Tìm kiếm bài viết...' : 'Search posts...'}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#38bdf8]/50 focus:border-[#38bdf8] dark:focus:border-[#38bdf8] transition-all duration-200 text-sm shadow-sm dark:shadow-none"
+                        className={`w-full pl-10 pr-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#38bdf8]/50 focus:border-[#38bdf8] transition-all duration-200 text-sm ${isDarkMode ? 'bg-slate-800/80 border-slate-600 text-white placeholder-slate-400' : 'bg-gray-100 border-gray-300 text-gray-900 placeholder-gray-400'}`}
                     />
                     {search && (
                         <button
@@ -163,7 +165,7 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
 
                 {/* Dropdown Results */}
                 {isOpen && search.trim() && (
-                    <div className="absolute top-full left-0 right-0 mt-2 rounded-xl bg-white dark:bg-slate-800/95 border border-gray-200 dark:border-white/10 shadow-xl dark:shadow-2xl backdrop-blur-xl overflow-hidden max-h-80 overflow-y-auto">
+                    <div className={`absolute top-full left-0 right-0 mt-2 rounded-xl border shadow-2xl backdrop-blur-xl overflow-hidden max-h-80 overflow-y-auto z-50 ${isDarkMode ? 'bg-slate-800/95 border-white/10' : 'bg-white border-gray-200'}`}>
                         {results.length > 0 ? (
                             (() => {
                                 let navIndex = 0
@@ -177,22 +179,22 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                                                 onClick={() => handleNavigate(result.post.slug)}
                                                 onMouseEnter={() => setActiveIndex(postNavIdx)}
                                                 className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors duration-100 ${postNavIdx === activeIndex
-                                                    ? 'bg-[#38bdf8]/10 dark:bg-[#38bdf8]/15'
-                                                    : 'hover:bg-gray-50 dark:hover:bg-slate-700/40'
-                                                    } ${rIdx > 0 ? 'border-t border-gray-100 dark:border-white/5' : ''}`}
+                                                    ? (isDarkMode ? 'bg-[#38bdf8]/15' : 'bg-[#38bdf8]/10')
+                                                    : (isDarkMode ? 'hover:bg-slate-700/40' : 'hover:bg-gray-50')
+                                                    } ${rIdx > 0 ? (isDarkMode ? 'border-t border-white/5' : 'border-t border-gray-100') : ''}`}
                                             >
                                                 <span className="text-xl shrink-0">{result.post.emoji}</span>
                                                 <div className="min-w-0 flex-1">
-                                                    <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                                    <div className={`text-sm font-medium truncate ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                                                         {t(result.post.title)}
                                                     </div>
-                                                    <div className="text-xs text-gray-400 dark:text-slate-500 flex items-center gap-2 mt-0.5">
+                                                    <div className={`text-xs flex items-center gap-2 mt-0.5 ${isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
                                                         <span>{result.post.date}</span>
                                                         <span>·</span>
                                                         <span>{result.post.tags.slice(0, 2).join(', ')}</span>
                                                     </div>
                                                 </div>
-                                                <span className="text-gray-300 dark:text-slate-600 text-xs shrink-0">↵</span>
+                                                <span className={`text-xs shrink-0 ${isDarkMode ? 'text-slate-600' : 'text-gray-300'}`}>↵</span>
                                             </button>
                                             {/* Section entries */}
                                             {sectionItems.map((section) => {
@@ -203,13 +205,13 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                                                         onClick={() => handleNavigate(result.post.slug, section.id)}
                                                         onMouseEnter={() => setActiveIndex(secNavIdx)}
                                                         className={`w-full text-left pl-12 pr-4 py-2 flex items-center gap-2.5 transition-colors duration-100 ${secNavIdx === activeIndex
-                                                            ? 'bg-[#38bdf8]/10 dark:bg-[#38bdf8]/15'
-                                                            : 'hover:bg-gray-50 dark:hover:bg-slate-700/40'
+                                                            ? (isDarkMode ? 'bg-[#38bdf8]/15' : 'bg-[#38bdf8]/10')
+                                                            : (isDarkMode ? 'hover:bg-slate-700/40' : 'hover:bg-gray-50')
                                                             }`}
                                                     >
                                                         <span className="text-xs text-[#38bdf8] dark:text-[#38bdf8] shrink-0">§</span>
-                                                        <span className="text-xs text-gray-600 dark:text-slate-400 truncate">{section.title}</span>
-                                                        <span className="text-gray-300 dark:text-slate-600 text-xs shrink-0 ml-auto">↵</span>
+                                                        <span className={`text-xs truncate ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>{section.title}</span>
+                                                        <span className={`text-xs shrink-0 ml-auto ${isDarkMode ? 'text-slate-600' : 'text-gray-300'}`}>↵</span>
                                                     </button>
                                                 )
                                             })}
@@ -218,7 +220,7 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                                 })
                             })()
                         ) : (
-                            <div className="px-4 py-6 text-center text-sm text-gray-400 dark:text-slate-500">
+                            <div className={`px-4 py-6 text-center text-sm ${isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
                                 {lang === 'vi' ? 'Không tìm thấy bài viết nào' : 'No posts found'}
                             </div>
                         )}

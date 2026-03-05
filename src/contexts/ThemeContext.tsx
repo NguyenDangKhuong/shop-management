@@ -15,12 +15,16 @@ const ThemeContext = createContext<ThemeContextType>({
 const STORAGE_KEY = 'dashboard-theme-mode'
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const [isDarkMode, setIsDarkMode] = useState(false)
+    const [isDarkMode, setIsDarkMode] = useState(true)
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
         const saved = localStorage.getItem(STORAGE_KEY)
-        if (saved === 'dark') {
+        if (saved === 'light') {
+            setIsDarkMode(false)
+            document.documentElement.classList.remove('dark')
+        } else {
+            // Default to dark mode
             setIsDarkMode(true)
             document.documentElement.classList.add('dark')
         }

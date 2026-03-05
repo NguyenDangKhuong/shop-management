@@ -9,6 +9,8 @@ import NextAuthProvider from '@/components/providers/NextAuthProvider'
 import AntdProvider from '@/components/providers/AntdProvider'
 import { LanguageProvider } from '@/i18n'
 
+import { ThemeProvider } from '@/contexts/ThemeContext'
+
 import './globals.css'
 
 const inter = Inter({
@@ -40,13 +42,15 @@ export const metadata: Metadata = {
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang='en'>
+    <html lang='en' suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning={true}>
         <NextAuthProvider>
           <LanguageProvider>
-            <AntdProvider>
-              {children}
-            </AntdProvider>
+            <ThemeProvider>
+              <AntdProvider>
+                {children}
+              </AntdProvider>
+            </ThemeProvider>
           </LanguageProvider>
           <SpeedInsights />
           <Analytics />
