@@ -59,11 +59,11 @@ export default function SiteHeader({
             )}
 
             {/* Sticky Header */}
-            <header className={`w-full sticky top-0 z-50 border-b transition-[padding,background-color,border-color,box-shadow] duration-300 ${scrolled
+            <header className={`w-full sticky top-0 z-50 border-b transition-[padding,background-color,border-color,box-shadow] duration-300 px-4 md:px-8 ${scrolled
                 ? 'bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-xl border-gray-200/50 dark:border-white/5 py-2 shadow-[0_1px_3px_rgba(0,0,0,0.05)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)]'
-                : 'bg-transparent border-transparent py-4 md:py-6'
+                : 'bg-white/50 dark:bg-[#0a0a0a]/50 backdrop-blur-md border-transparent py-4 md:py-6'
                 }`}>
-                <div className={`${maxWidth} mx-auto px-4 md:px-8 transition-all duration-300`}>
+                <div className={`${maxWidth} mx-auto transition-all duration-300`}>
                     {/* Mobile */}
                     <div className="flex md:hidden items-center w-full">
                         <div className="flex-1 flex justify-start">
