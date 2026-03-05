@@ -7,7 +7,23 @@ type Tab = 'for_you' | 'following'
 
 /**
  * HomeFeed — For You / Following timeline (X home page equivalent)
- * Uses /api/tweets/home?tab=for_you|following with cursor-based pagination
+ *
+ * Features:
+ *   - Tab switcher: "For You" (algorithmic) and "Following" (chronological)
+ *   - Cursor-based pagination via /api/tweets/home
+ *   - Infinite scroll using IntersectionObserver (auto-loads at 400px before bottom)
+ *   - Collapse/expand toggle to save bandwidth
+ *   - Image preview lightbox
+ *
+ * State:
+ *   - tab: active feed (for_you | following)
+ *   - tweets: accumulated tweet list (appended on load more)
+ *   - cursorBottom: pagination cursor from last API response
+ *   - hasMore: false when API returns no more tweets or no cursor
+ *   - expanded: controls collapse/expand (collapsed = no API calls)
+ *
+ * Props:
+ *   - onUserClick: callback when user clicks a username (navigates to profile)
  */
 export function HomeFeed({ onUserClick }: { onUserClick?: (username: string) => void }) {
     const [tab, setTab] = useState<Tab>('for_you')

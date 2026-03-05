@@ -7,6 +7,20 @@ import { ParsedTweet, parseTweetResult } from '../graphql/tweetParser'
  * Home Timeline API — For You + Following feeds
  *
  * GET /api/tweets/home?tab=for_you|following&cursor=xxx&count=20
+ *
+ * How it works:
+ *   1. Read credentials from MongoDB (cookie, bearer, queryIds)
+ *   2. Build X's GraphQL query URL with variables (count, cursor) and features
+ *   3. Parse response: extract tweets from instructions[].entries[]
+ *   4. Return parsed tweets + cursor for pagination
+ *
+ * Tab mapping:
+ *   - for_you   → HomeTimeline endpoint (algorithmic feed)
+ *   - following  → HomeLatestTimeline endpoint (chronological feed)
+ *
+ * Caching:
+ *   - DB credentials cached in-memory for 5 min (avoids hitting MongoDB per request)
+ *   - Response includes Cache-Control header for CDN caching
  */
 
 // Fallback defaults (used if not stored in DB)
@@ -46,16 +60,28 @@ const FEATURES = {
     responsive_web_enhance_cards_enabled: false,
 }
 
-// In-memory cache for credentials (cookie + bearerToken + queryIds)
+// In-memory cache for credentials (avoids hitting MongoDB on every request)
+// TTL: 5 minutes — credential changes (new cookie, token rotation) are infrequent
 let cachedCreds: {
     cookie: string; csrfToken: string
     bearerToken: string
     queryIds: { for_you: string; following: string }
     ts: number
 } | null = null
-const CACHE_TTL = 5 * 60 * 1000
+const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
+/**
+ * Load credentials from DB with in-memory caching.
+ * 
+ * Priority for cookie:
+ *   1. Full cookie string (token.cookie) — preferred, contains all fields
+ *   2. Individual fields (authToken + ct0 + att) — fallback, builds minimal cookie
+ * 
+ * CSRF token is extracted from ct0 cookie value.
+ * Bearer token and query IDs fall back to hardcoded defaults if not in DB.
+ */
 async function getCredentials() {
+    // Return cached credentials if still fresh
     if (cachedCreds && Date.now() - cachedCreds.ts < CACHE_TTL) {
         return cachedCreds
     }
@@ -67,9 +93,11 @@ async function getCredentials() {
             let csrfToken = ''
             if (token.cookie) {
                 cookie = token.cookie
+                // Extract ct0 (CSRF token) from the cookie string
                 const ct0Match = cookie.match(/ct0=([^;]+)/)
                 csrfToken = ct0Match?.[1] || token.ct0 || ''
             } else if (token.authToken && token.ct0) {
+                // Build minimal cookie from individual fields
                 cookie = `auth_token=${token.authToken}; ct0=${token.ct0}`
                 if (token.att) cookie += `; att=${token.att}`
                 csrfToken = token.ct0
@@ -140,7 +168,13 @@ export async function GET(req: NextRequest) {
 
         const data = await res.json()
 
-        // Parse response — HomeTimeline uses data.home.home_timeline_urt
+        // Parse response — X returns data in instructions > entries format
+        // HomeTimeline response structure:
+        //   data.home.home_timeline_urt.instructions[]
+        //     each instruction has entries[] with:
+        //       - tweet- entries: single tweets
+        //       - homeConversation- entries: conversations (thread of tweets)
+        //       - cursor-bottom/cursor-top entries: pagination cursors
         const instructions = data?.data?.home?.home_timeline_urt?.instructions || []
         const tweets: ParsedTweet[] = []
         let cursorTop = ''
@@ -152,13 +186,13 @@ export async function GET(req: NextRequest) {
                 const entryId = entry.entryId || ''
 
                 if (entryId.startsWith('tweet-') || entryId.startsWith('homeConversation-')) {
-                    // Single tweet
+                    // Single tweet — extract from itemContent.tweet_results
                     const tweetResult = entry.content?.itemContent?.tweet_results?.result
                     if (tweetResult) {
                         const parsed = parseTweetResult(tweetResult)
                         if (parsed) tweets.push(parsed)
                     }
-                    // Conversation module — multiple tweets in items
+                    // Conversation module — multiple tweets nested in items[]
                     const items = entry.content?.items
                     if (items) {
                         for (const item of items) {
@@ -170,8 +204,10 @@ export async function GET(req: NextRequest) {
                         }
                     }
                 } else if (entryId.startsWith('cursor-bottom') || entryId.includes('cursor-bottom')) {
+                    // Bottom cursor — used for "load more" / infinite scroll
                     cursorBottom = entry.content?.value || ''
                 } else if (entryId.startsWith('cursor-top') || entryId.includes('cursor-top')) {
+                    // Top cursor — used for "check for new tweets"
                     cursorTop = entry.content?.value || ''
                 }
             }
