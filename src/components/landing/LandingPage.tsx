@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
-import ThemeToggle from '@/components/ui/ThemeToggle'
+import SiteHeader from '@/components/ui/SiteHeader'
 import { useTranslation } from '@/i18n'
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -140,45 +140,37 @@ export default function LandingPage() {
             <link rel="dns-prefetch" href="https://images.unsplash.com" />
 
             <div className="bg-gray-50 dark:bg-[#0a0a0a] text-gray-800 dark:text-slate-200 font-sans min-h-screen flex flex-col items-center p-4 md:p-8 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-gray-100 dark:from-slate-900 via-gray-50 dark:via-[#0a0a0a] to-gray-50 dark:to-[#0a0a0a] relative transition-colors duration-300">
-                {/* Header with Login Button */}
-                <header className="w-full max-w-6xl mx-auto flex justify-between items-center mb-8 z-20">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg">
-                            Y
-                        </div>
-                        <span className="font-bold text-xl tracking-tight text-gray-900 dark:text-white">
-                            The<span className="text-[#38bdf8]">TapHoa</span>
-                        </span>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        <ThemeToggle />
-                        <LanguageSwitcher />
-                        <Link
-                            href="/login"
-                            className="group relative px-6 py-2 rounded-full bg-gray-100 dark:bg-slate-800/40 border border-gray-300 dark:border-white/10 overflow-hidden transition-all hover:border-[#38bdf8]/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]"
-                        >
-                            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                            <span className="relative font-medium text-sm text-gray-600 dark:text-slate-300 group-hover:text-gray-900 dark:group-hover:text-white flex items-center gap-2">
-                                {t('landing.login')}
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth="2"
-                                    stroke="currentColor"
-                                    className="w-4 h-4"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
-                                    />
-                                </svg>
-                            </span>
-                        </Link>
-                    </div>
-                </header>
+                <SiteHeader
+                    maxWidth="max-w-6xl"
+                    rightSlot={
+                        <>
+                            <LanguageSwitcher />
+                            <Link
+                                href="/login"
+                                className="group relative px-6 py-2 rounded-full bg-gray-100 dark:bg-slate-800/40 border border-gray-300 dark:border-white/10 overflow-hidden transition-all hover:border-[#38bdf8]/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]"
+                            >
+                                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                <span className="relative font-medium text-sm text-gray-600 dark:text-slate-300 group-hover:text-gray-900 dark:group-hover:text-white flex items-center gap-2">
+                                    {t('landing.login')}
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth="2"
+                                        stroke="currentColor"
+                                        className="w-4 h-4"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+                                        />
+                                    </svg>
+                                </span>
+                            </Link>
+                        </>
+                    }
+                />
 
                 <main className="max-w-6xl w-full mx-auto relative z-10">
                     {/* ═══ TOP BENTO GRID ═══ */}

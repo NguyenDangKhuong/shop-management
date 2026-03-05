@@ -865,6 +865,24 @@ let obj4 = Object.assign({}, obj1)`}</CodeBlock>
         <a href="/blogs/js-common-functions" target="_blank" rel="noopener noreferrer" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem tổng hợp JS Common Functions →</a>
         <div className="my-4 space-y-2">
             <TopicModal title="Array.map / filter / reduce" emoji="💻" color="#fbbf24" summary="Implement lại 3 higher-order functions phổ biến nhất của Array">
+                <Heading3>📖 Cách dùng</Heading3>
+                <CodeBlock title="map / filter / reduce — cách dùng thực tế">{`// map: biến đổi từng phần tử → mảng mới cùng độ dài
+const prices = [100, 200, 300]
+const withTax = prices.map(p => p * 1.1)  // [110, 220, 330]
+
+// filter: lọc phần tử theo điều kiện → mảng ngắn hơn
+const expensive = prices.filter(p => p > 150)  // [200, 300]
+
+// reduce: gom tất cả → 1 giá trị duy nhất
+const total = prices.reduce((sum, p) => sum + p, 0)  // 600
+
+// 🔗 Combo đỉnh: filter → map → reduce
+const result = products
+    .filter(p => p.inStock)       // lọc hàng còn
+    .map(p => p.price * p.qty)    // tính tiền từng món
+    .reduce((sum, x) => sum + x, 0) // tổng tiền`}</CodeBlock>
+
+                <Heading3>🔧 Cách build (Implement lại)</Heading3>
                 <CodeBlock title="myMap">{`Array.prototype.myMap = function(callback) {
     const result = [];
     for (let i = 0; i < this.length; i++) {
@@ -892,6 +910,45 @@ let obj4 = Object.assign({}, obj1)`}</CodeBlock>
 };
 // [1,2,3].myReduce((sum, x) => sum + x, 0) → 6`}</CodeBlock>
                 <Callout type="tip">Nhớ xử lý edge case: <InlineCode>reduce</InlineCode> không có initialValue thì dùng <InlineCode>this[0]</InlineCode> và bắt đầu từ index 1.</Callout>
+
+                <Heading3>🏭 Mẹo nhớ reduce: Máy ép trái cây</Heading3>
+                <Paragraph>Tưởng tượng <Highlight>reduce = máy ép trái cây</Highlight>: 🍊🍊🍊 → 🧃</Paragraph>
+                <Paragraph><InlineCode>[🍊, 🍊, 🍊, 🍊] → reduce → 🧃 (1 ly nước ép)</InlineCode></Paragraph>
+
+                <div className="my-4 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-gray-200 dark:border-white/10 text-left">
+                            <th className="p-2 text-[#fbbf24] font-bold">ACIV</th><th className="p-2">Là gì</th><th className="p-2">Hình ảnh</th>
+                        </tr></thead>
+                        <tbody>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2 font-bold">A — Accumulator</td><td className="p-2">Bình chứa (kết quả tích lũy)</td><td className="p-2">🧃 Ly nước đang đổ dần</td></tr>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2 font-bold">C — Current Item</td><td className="p-2">Trái cây đang ép</td><td className="p-2">🍊 Quả cam hiện tại</td></tr>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2 font-bold">I — Initial Value</td><td className="p-2">Ly ban đầu (rỗng hoặc có sẵn)</td><td className="p-2">🥤 Ly rỗng</td></tr>
+                            <tr><td className="p-2 font-bold">V — (return) Value</td><td className="p-2">Kết quả trả về = accumulator mới</td><td className="p-2">🧃 Ly sau khi thêm nước</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <CodeBlock title="Ví dụ từ dễ → khó">{`// 1️⃣ Tổng — ly nước tăng dần
+[1, 2, 3, 4].reduce((ly, cam) => ly + cam, 0)
+//  ly=0, cam=1 → 1 → ly=1, cam=2 → 3 → ly=3, cam=3 → 6 → ly=6, cam=4 → 10 ✅
+
+// 2️⃣ Đếm tần suất — cho trái cây vào các ngăn
+['🍎','🍊','🍎','🍊','🍎'].reduce((ngăn, trái) => {
+    ngăn[trái] = (ngăn[trái] || 0) + 1
+    return ngăn
+}, {})  // → { '🍎': 3, '🍊': 2 }
+
+// 3️⃣ Flatten — mở hộp lồng nhau
+[[1,2], [3,4], [5]].reduce((kq, hộp) => [...kq, ...hộp], [])
+// → [1, 2, 3, 4, 5]
+
+// 4️⃣ Pipeline — nước chảy qua nhiều bộ lọc
+const pipeline = [addTax, applyDiscount, roundPrice]
+pipeline.reduce((price, fn) => fn(price), 100)
+// 100 → addTax → 110 → applyDiscount → 99 → roundPrice → 99.00`}</CodeBlock>
+
+                <Callout type="info">reduce = &quot;nhiều → một&quot;: Mảng số → 1 tổng, mảng string → 1 object đếm, mảng mảng → 1 mảng phẳng, mảng functions → 1 kết quả. Nếu cần biến mảng thành 1 thứ gì đó → dùng reduce!</Callout>
             </TopicModal>
 
             <TopicModal title="Function.bind / call / apply" emoji="💻" color="#fbbf24" summary="Implement lại 3 methods thay đổi this context">

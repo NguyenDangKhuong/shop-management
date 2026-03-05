@@ -24,9 +24,9 @@ describe('LandingPage Component', () => {
     it('displays login button with correct link', () => {
         render(<LandingPage />)
 
-        const loginLink = screen.getByRole('link', { name: /login/i })
-        expect(loginLink).toBeInTheDocument()
-        expect(loginLink).toHaveAttribute('href', '/login')
+        const loginLinks = screen.getAllByRole('link', { name: /login/i })
+        expect(loginLinks.length).toBeGreaterThan(0)
+        expect(loginLinks[0]).toHaveAttribute('href', '/login')
     })
 
     it('shows TheTapHoa branding', () => {
@@ -92,7 +92,8 @@ describe('LandingPage Component', () => {
     it('renders theme toggle button', () => {
         render(<LandingPage />)
 
-        expect(screen.getByRole('button', { name: /toggle.*mode|switch.*theme|dark.*mode|light.*mode/i })).toBeInTheDocument()
+        const toggleButtons = screen.getAllByRole('button', { name: /toggle.*mode|switch.*theme|dark.*mode|light.*mode/i })
+        expect(toggleButtons.length).toBeGreaterThan(0)
     })
 
     it('displays developer portrait image', () => {

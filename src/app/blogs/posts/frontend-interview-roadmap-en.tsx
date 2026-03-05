@@ -862,6 +862,24 @@ let obj4 = Object.assign({}, obj1)`}</CodeBlock>
         <a href="/blogs/js-common-functions" target="_blank" rel="noopener noreferrer" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 See JS Common Functions collection →</a>
         <div className="my-4 space-y-2">
             <TopicModal title="Array.map / filter / reduce" emoji="💻" color="#fbbf24" summary="Re-implement the 3 most popular Array higher-order functions">
+                <Heading3>📖 How to Use</Heading3>
+                <CodeBlock title="map / filter / reduce — real-world usage">{`// map: transform each element → new array of same length
+const prices = [100, 200, 300]
+const withTax = prices.map(p => p * 1.1)  // [110, 220, 330]
+
+// filter: keep elements matching condition → shorter array
+const expensive = prices.filter(p => p > 150)  // [200, 300]
+
+// reduce: aggregate all → single value
+const total = prices.reduce((sum, p) => sum + p, 0)  // 600
+
+// 🔗 Power combo: filter → map → reduce
+const result = products
+    .filter(p => p.inStock)       // keep in-stock items
+    .map(p => p.price * p.qty)    // calc subtotal per item
+    .reduce((sum, x) => sum + x, 0) // grand total`}</CodeBlock>
+
+                <Heading3>🔧 How to Build (Re-implement)</Heading3>
                 <CodeBlock title="myMap">{`Array.prototype.myMap = function(callback) {
     const result = [];
     for (let i = 0; i < this.length; i++) {
@@ -889,6 +907,45 @@ let obj4 = Object.assign({}, obj1)`}</CodeBlock>
 };
 // [1,2,3].myReduce((sum, x) => sum + x, 0) → 6`}</CodeBlock>
                 <Callout type="tip">Remember to handle the edge case: <InlineCode>reduce</InlineCode> without initialValue uses <InlineCode>this[0]</InlineCode> and starts from index 1.</Callout>
+
+                <Heading3>🏭 Reduce Mnemonic: The Juicer Machine</Heading3>
+                <Paragraph>Think of <Highlight>reduce = a fruit juicer</Highlight>: 🍊🍊🍊 → 🧃</Paragraph>
+                <Paragraph><InlineCode>[🍊, 🍊, 🍊, 🍊] → reduce → 🧃 (1 glass of juice)</InlineCode></Paragraph>
+
+                <div className="my-4 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-gray-200 dark:border-white/10 text-left">
+                            <th className="p-2 text-[#fbbf24] font-bold">ACIV</th><th className="p-2">What</th><th className="p-2">Visual</th>
+                        </tr></thead>
+                        <tbody>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2 font-bold">A — Accumulator</td><td className="p-2">Container (accumulated result)</td><td className="p-2">🧃 Glass filling up</td></tr>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2 font-bold">C — Current Item</td><td className="p-2">Fruit being juiced</td><td className="p-2">🍊 Current orange</td></tr>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2 font-bold">I — Initial Value</td><td className="p-2">Starting glass (empty or pre-filled)</td><td className="p-2">🥤 Empty glass</td></tr>
+                            <tr><td className="p-2 font-bold">V — (return) Value</td><td className="p-2">Result = new accumulator</td><td className="p-2">🧃 Glass after adding juice</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <CodeBlock title="Examples: Easy → Hard">{`// 1️⃣ Sum — glass filling up
+[1, 2, 3, 4].reduce((glass, orange) => glass + orange, 0)
+//  glass=0, orange=1 → 1 → glass=1, orange=2 → 3 → ... → 10 ✅
+
+// 2️⃣ Frequency count — sort fruits into bins
+['🍎','🍊','🍎','🍊','🍎'].reduce((bins, fruit) => {
+    bins[fruit] = (bins[fruit] || 0) + 1
+    return bins
+}, {})  // → { '🍎': 3, '🍊': 2 }
+
+// 3️⃣ Flatten — open nested boxes
+[[1,2], [3,4], [5]].reduce((res, box) => [...res, ...box], [])
+// → [1, 2, 3, 4, 5]
+
+// 4️⃣ Pipeline — water flowing through filters
+const pipeline = [addTax, applyDiscount, roundPrice]
+pipeline.reduce((price, fn) => fn(price), 100)
+// 100 → addTax → 110 → applyDiscount → 99 → roundPrice → 99.00`}</CodeBlock>
+
+                <Callout type="info">reduce = &quot;many → one&quot;: Array of numbers → 1 sum, array of strings → 1 counting object, array of arrays → 1 flat array, array of functions → 1 result. If you need to transform an array into one thing → use reduce!</Callout>
             </TopicModal>
 
             <TopicModal title="Function.bind / call / apply" emoji="💻" color="#fbbf24" summary="Re-implement the 3 methods that change this context">
