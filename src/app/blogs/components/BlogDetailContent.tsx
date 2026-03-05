@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { BlogPost } from '../types'
 import { useLang } from './LangContext'
@@ -11,16 +11,19 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
     const { t, lang } = useLang()
     const [scrolled, setScrolled] = useState(false)
     const [showBackToTop, setShowBackToTop] = useState(false)
-    const [progress, setProgress] = useState(0)
+    const progressRef = useRef<HTMLDivElement>(null)
 
     // Track scroll for sticky header, back to top, and reading progress
     useEffect(() => {
         const onScroll = () => {
             setScrolled(window.scrollY > 60)
             setShowBackToTop(window.scrollY > 400)
-            // Reading progress: 0% at top, 100% at bottom
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight
-            setProgress(docHeight > 0 ? Math.min((window.scrollY / docHeight) * 100, 100) : 0)
+            // Update progress bar directly via DOM (no re-render, GPU-accelerated)
+            if (progressRef.current) {
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight
+                const pct = docHeight > 0 ? Math.min(window.scrollY / docHeight, 1) : 0
+                progressRef.current.style.transform = `scaleX(${pct})`
+            }
         }
         window.addEventListener('scroll', onScroll, { passive: true })
         return () => window.removeEventListener('scroll', onScroll)
@@ -45,18 +48,19 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
 
     return (
         <div className="bg-gray-50 dark:bg-[#0a0a0a] text-gray-800 dark:text-slate-200 font-sans min-h-screen flex flex-col items-center bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-gray-100 dark:from-slate-900 via-gray-50 dark:via-[#0a0a0a] to-gray-50 dark:to-[#0a0a0a] relative transition-colors duration-300">
-            {/* Reading Progress Bar */}
+            {/* Reading Progress Bar — GPU-accelerated via scaleX transform */}
             <div className="fixed top-0 left-0 w-full h-[3px] z-[60] bg-transparent">
                 <div
-                    className="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 transition-[width] duration-150 ease-out"
-                    style={{ width: `${progress}%` }}
+                    ref={progressRef}
+                    className="h-full w-full origin-left bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 will-change-transform"
+                    style={{ transform: 'scaleX(0)' }}
                 />
             </div>
 
             {/* Sticky Header */}
-            <header className={`w-full sticky top-0 z-50 transition-all duration-300 ${scrolled
-                ? 'bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/5 py-2 shadow-[0_1px_3px_rgba(0,0,0,0.05)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)]'
-                : 'bg-transparent py-4 md:py-6'
+            <header className={`w-full sticky top-0 z-50 border-b transition-[padding,background-color,border-color,box-shadow] duration-300 ${scrolled
+                ? 'bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-xl border-gray-200/50 dark:border-white/5 py-2 shadow-[0_1px_3px_rgba(0,0,0,0.05)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)]'
+                : 'bg-transparent border-transparent py-4 md:py-6'
                 }`}>
                 <div className={`max-w-3xl mx-auto px-4 md:px-8 transition-all duration-300`}>
                     {/* Mobile */}
