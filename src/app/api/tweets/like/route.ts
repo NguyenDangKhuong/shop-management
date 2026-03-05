@@ -5,15 +5,32 @@ import TwitterTokenModel from '@/models/TwitterToken'
 /**
  * Like / Unlike API
  *
- * POST /api/tweets/like    { tweetId: string }
- * DELETE /api/tweets/like   { tweetId: string }
+ * Endpoints:
+ *   POST   /api/tweets/like  → FavoriteTweet (like a tweet)
+ *   DELETE /api/tweets/like  → UnfavoriteTweet (unlike a tweet)
+ *
+ * Request body: { tweetId: string }
+ *
+ * How it works:
+ *   1. Read auth credentials (cookie, CSRF token, bearer) from MongoDB
+ *   2. Call X's internal GraphQL mutation (FavoriteTweet or UnfavoriteTweet)
+ *   3. X may return empty body on success → we safely parse with res.text()
+ *
+ * Query IDs:
+ *   GraphQL operation hashes from x.com's web client.
+ *   To find updated IDs: DevTools → Network → filter "FavoriteTweet" → copy queryId
  */
 
 const DEFAULT_BEARER = 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA'
 
+// GraphQL mutation IDs — sniffed from x.com DevTools
 const FAVORITE_QID = 'lI07N6Otwv1PhnEgXILM7A'
 const UNFAVORITE_QID = 'ZYKSe-w7KEslx3JhSIk5LA'
 
+/**
+ * Fetch auth credentials from MongoDB.
+ * Returns cookie string, CSRF token, and bearer token.
+ */
 async function getCredentials() {
     try {
         await connectDB()
@@ -21,11 +38,13 @@ async function getCredentials() {
         if (token) {
             let cookie = ''
             let csrfToken = ''
+            // Prefer full cookie string if available
             if (token.cookie) {
                 cookie = token.cookie
                 const ct0Match = cookie.match(/ct0=([^;]+)/)
                 csrfToken = ct0Match?.[1] || token.ct0 || ''
             } else if (token.authToken && token.ct0) {
+                // Build minimal cookie from individual fields
                 cookie = `auth_token=${token.authToken}; ct0=${token.ct0}`
                 if (token.att) cookie += `; att=${token.att}`
                 csrfToken = token.ct0
@@ -40,6 +59,9 @@ async function getCredentials() {
     return null
 }
 
+/**
+ * Build request headers mimicking x.com's web client.
+ */
 function makeHeaders(creds: { cookie: string; csrfToken: string; bearerToken: string }) {
     return {
         'authorization': creds.bearerToken,
@@ -52,7 +74,15 @@ function makeHeaders(creds: { cookie: string; csrfToken: string; bearerToken: st
     }
 }
 
-// POST — Like
+/**
+ * POST — FavoriteTweet (like)
+ *
+ * Variables: { tweet_id: string }
+ * Possible X responses:
+ *   200 → success (returns { data: { favorite_tweet: "Done" } })
+ *   403 → already liked (we treat as success)
+ *   429 → rate limited
+ */
 export async function POST(request: NextRequest) {
     try {
         const { tweetId } = await request.json()
@@ -70,8 +100,20 @@ export async function POST(request: NextRequest) {
             }),
         })
 
-        const data = await res.json()
-        if (!res.ok) return NextResponse.json({ error: data?.errors?.[0]?.message || `Twitter returned ${res.status}` }, { status: res.status })
+        // X may return empty body on success → safely parse
+        const text = await res.text()
+        const data = text ? JSON.parse(text) : null
+        console.log(`Like ${tweetId}: ${res.status}`, data ? JSON.stringify(data).slice(0, 200) : '(empty)')
+
+        if (!res.ok) {
+            const msg = data?.errors?.[0]?.message || ''
+            // 403 = already liked → treat as success (idempotent)
+            if (res.status === 403 || msg.includes('already favorited')) {
+                return NextResponse.json({ success: true, data: { alreadyLiked: true } })
+            }
+            return NextResponse.json({ error: msg || `Twitter returned ${res.status}` }, { status: res.status })
+        }
+
         return NextResponse.json({ success: true, data })
     } catch (err) {
         console.error('Like error:', err)
@@ -79,7 +121,12 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// DELETE — Unlike
+/**
+ * DELETE — UnfavoriteTweet (unlike)
+ *
+ * Variables: { tweet_id: string }
+ * Note: unlike repost, unfavorite uses tweet_id (not source_tweet_id)
+ */
 export async function DELETE(request: NextRequest) {
     try {
         const { tweetId } = await request.json()
@@ -89,7 +136,7 @@ export async function DELETE(request: NextRequest) {
         if (!creds) return NextResponse.json({ error: 'No Twitter credentials' }, { status: 500 })
 
         const res = await fetch(`https://x.com/i/api/graphql/${UNFAVORITE_QID}/UnfavoriteTweet`, {
-            method: 'POST',
+            method: 'POST', // GraphQL mutations always use POST
             headers: makeHeaders(creds),
             body: JSON.stringify({
                 variables: { tweet_id: tweetId },
@@ -97,7 +144,10 @@ export async function DELETE(request: NextRequest) {
             }),
         })
 
-        const data = await res.json()
+        // Safe parse — X may return empty body
+        const text = await res.text()
+        const data = text ? JSON.parse(text) : null
+
         if (!res.ok) return NextResponse.json({ error: data?.errors?.[0]?.message || `Twitter returned ${res.status}` }, { status: res.status })
         return NextResponse.json({ success: true, data })
     } catch (err) {
