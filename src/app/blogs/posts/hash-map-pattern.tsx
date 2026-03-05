@@ -1139,7 +1139,7 @@ const hashMapPattern: BlogPost = {
         vi: 'Giải thích chi tiết Hash Map/Set với các bài LeetCode: Two Sum, Group Anagrams, Contains Duplicate. Mỗi bài có giải pháp từng bước và code comment.',
         en: 'Deep dive into Hash Map/Set with LeetCode problems: Two Sum, Group Anagrams, Contains Duplicate. Step-by-step solutions with commented code.',
     },
-    date: '2026-02-26',
+    date: '2025-07-15',
     tags: ['Algorithm', 'Hash Map', 'LeetCode'],
     emoji: '🗺️',
     color: '#3b82f6',

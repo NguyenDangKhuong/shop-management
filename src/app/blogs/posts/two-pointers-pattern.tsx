@@ -1139,7 +1139,7 @@ const twoPointersPattern: BlogPost = {
         vi: 'Giải thích chi tiết Two Pointers với các bài LeetCode: Two Sum II, Valid Palindrome, Container With Most Water, Merge Sorted Array.',
         en: 'Deep dive into Two Pointers with LeetCode: Two Sum II, Valid Palindrome, Container With Most Water, Merge Sorted Array.',
     },
-    date: '2026-02-26',
+    date: '2025-08-02',
     tags: ['Algorithm', 'Two Pointers', 'LeetCode'],
     emoji: '👆',
     color: '#8b5cf6',

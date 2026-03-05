@@ -987,7 +987,7 @@ const slidingWindowPattern: BlogPost = {
         vi: 'Giải thích chi tiết Sliding Window với LeetCode: Longest Substring, Minimum Window Substring, Max Sum Subarray. Fixed vs Variable window.',
         en: 'Deep dive into Sliding Window with LeetCode: Longest Substring, Minimum Window Substring, Max Sum Subarray. Fixed vs Variable window.',
     },
-    date: '2026-02-26',
+    date: '2025-09-11',
     tags: ['Algorithm', 'Sliding Window', 'LeetCode'],
     emoji: '🪟',
     color: '#06b6d4',

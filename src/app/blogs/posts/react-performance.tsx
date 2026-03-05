@@ -11,7 +11,7 @@ const reactPerformance: BlogPost = {
         vi: 'Tổng hợp 15+ kỹ thuật tối ưu hiệu suất React: React.memo, useMemo, useCallback, code splitting, lazy loading, virtualization, debounce, Web Workers và nhiều hơn nữa.',
         en: 'A comprehensive guide to 15+ React performance techniques: React.memo, useMemo, useCallback, code splitting, lazy loading, virtualization, debounce, Web Workers and more.',
     },
-    date: '2026-02-26',
+    date: '2025-04-08',
     tags: ['React', 'Performance', 'Advanced'],
     emoji: '⚡',
     color: '#f59e0b',

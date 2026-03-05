@@ -755,7 +755,7 @@ const binarySearchPattern: BlogPost = {
         vi: 'Giải thích chi tiết Binary Search với LeetCode: Classic BS, Koko Eating Bananas, Search in Rotated Array. Binary Search on Answer.',
         en: 'Deep dive into Binary Search with LeetCode: Classic BS, Koko Eating Bananas, Search in Rotated Array. Binary Search on Answer.',
     },
-    date: '2026-02-26',
+    date: '2025-12-28',
     tags: ['Algorithm', 'Binary Search', 'LeetCode'],
     emoji: '🔍',
     color: '#f59e0b',

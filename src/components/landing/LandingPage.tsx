@@ -192,7 +192,7 @@ export default function LandingPage() {
                                             href="/projects"
                                             className="inline-block px-6 py-3 rounded-full bg-[var(--bg-tag)] border border-[#38bdf8]/50 text-[var(--text-primary)] font-semibold transition hover:bg-[#38bdf8]/20 shadow-[0_0_15px_rgba(56,189,248,0.3)]"
                                         >
-                                            {t('landing.viewProjects')}
+                                            🚀 {t('landing.viewProjects')}
                                         </Link>
                                         <Link
                                             href="/blogs"

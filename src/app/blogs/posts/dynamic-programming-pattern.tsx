@@ -827,7 +827,7 @@ const dynamicProgrammingPattern: BlogPost = {
         vi: 'Giải thích chi tiết DP với LeetCode: Climbing Stairs, Coin Change, Longest Common Subsequence. Top-Down vs Bottom-Up, 4 bước tiếp cận DP.',
         en: 'Deep dive into DP with LeetCode: Climbing Stairs, Coin Change, LCS. Top-Down vs Bottom-Up, 4-step DP approach.',
     },
-    date: '2026-02-26',
+    date: '2026-01-22',
     tags: ['Algorithm', 'Dynamic Programming', 'LeetCode'],
     emoji: '🧠',
     color: '#ec4899',
