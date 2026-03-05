@@ -713,47 +713,47 @@ function AddToCartButton({ productId }) {
                 <div className="my-6 space-y-3">
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Đo performance trước bằng <InlineCode>React DevTools Profiler</InlineCode></span>
+                        <span className="text-[var(--text-primary)]">Đo performance trước bằng <InlineCode>React DevTools Profiler</InlineCode></span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Đặt state ở vị trí thấp nhất có thể (colocate state)</span>
+                        <span className="text-[var(--text-primary)]">Đặt state ở vị trí thấp nhất có thể (colocate state)</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300"><InlineCode>React.memo</InlineCode> + <InlineCode>useCallback</InlineCode> cho expensive children</span>
+                        <span className="text-[var(--text-primary)]"><InlineCode>React.memo</InlineCode> + <InlineCode>useCallback</InlineCode> cho expensive children</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300"><InlineCode>useMemo</InlineCode> cho expensive calculations</span>
+                        <span className="text-[var(--text-primary)]"><InlineCode>useMemo</InlineCode> cho expensive calculations</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Code splitting với <InlineCode>React.lazy</InlineCode> / <InlineCode>dynamic import</InlineCode></span>
+                        <span className="text-[var(--text-primary)]">Code splitting với <InlineCode>React.lazy</InlineCode> / <InlineCode>dynamic import</InlineCode></span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Virtualize danh sách lớn ({'>'}100 items)</span>
+                        <span className="text-[var(--text-primary)]">Virtualize danh sách lớn ({'>'}100 items)</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Debounce search inputs, throttle scroll handlers</span>
+                        <span className="text-[var(--text-primary)]">Debounce search inputs, throttle scroll handlers</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Optimize images: lazy load, WebP/AVIF, responsive sizes</span>
+                        <span className="text-[var(--text-primary)]">Optimize images: lazy load, WebP/AVIF, responsive sizes</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Dùng unique keys (không dùng index) cho dynamic lists</span>
+                        <span className="text-[var(--text-primary)]">Dùng unique keys (không dùng index) cho dynamic lists</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Analyze bundle size, loại bỏ thư viện nặng không cần thiết</span>
+                        <span className="text-[var(--text-primary)]">Analyze bundle size, loại bỏ thư viện nặng không cần thiết</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Ưu tiên Server Components cho content không interactive</span>
+                        <span className="text-[var(--text-primary)]">Ưu tiên Server Components cho content không interactive</span>
                     </div>
                 </div>
 
@@ -1508,47 +1508,47 @@ function AddToCartButton({ productId }) {
                 <div className="my-6 space-y-3">
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Measure performance first with <InlineCode>React DevTools Profiler</InlineCode></span>
+                        <span className="text-[var(--text-primary)]">Measure performance first with <InlineCode>React DevTools Profiler</InlineCode></span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Place state at the lowest possible level (colocate state)</span>
+                        <span className="text-[var(--text-primary)]">Place state at the lowest possible level (colocate state)</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300"><InlineCode>React.memo</InlineCode> + <InlineCode>useCallback</InlineCode> for expensive children</span>
+                        <span className="text-[var(--text-primary)]"><InlineCode>React.memo</InlineCode> + <InlineCode>useCallback</InlineCode> for expensive children</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300"><InlineCode>useMemo</InlineCode> for expensive calculations</span>
+                        <span className="text-[var(--text-primary)]"><InlineCode>useMemo</InlineCode> for expensive calculations</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Code splitting with <InlineCode>React.lazy</InlineCode> / <InlineCode>dynamic import</InlineCode></span>
+                        <span className="text-[var(--text-primary)]">Code splitting with <InlineCode>React.lazy</InlineCode> / <InlineCode>dynamic import</InlineCode></span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Virtualize large lists ({'>'}100 items)</span>
+                        <span className="text-[var(--text-primary)]">Virtualize large lists ({'>'}100 items)</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Debounce search inputs, throttle scroll handlers</span>
+                        <span className="text-[var(--text-primary)]">Debounce search inputs, throttle scroll handlers</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Optimize images: lazy load, WebP/AVIF, responsive sizes</span>
+                        <span className="text-[var(--text-primary)]">Optimize images: lazy load, WebP/AVIF, responsive sizes</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Use unique keys (not index) for dynamic lists</span>
+                        <span className="text-[var(--text-primary)]">Use unique keys (not index) for dynamic lists</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Analyze bundle size, remove unnecessary heavy libraries</span>
+                        <span className="text-[var(--text-primary)]">Analyze bundle size, remove unnecessary heavy libraries</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
-                        <span className="text-gray-800 dark:text-slate-300">Prefer Server Components for non-interactive content</span>
+                        <span className="text-[var(--text-primary)]">Prefer Server Components for non-interactive content</span>
                     </div>
                 </div>
 

@@ -6,11 +6,13 @@ import { Avatar, Dropdown, Flex, Layout, MenuProps, Switch } from 'antd'
 import { logout } from '@/actions/auth'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
 import { useThemeMode } from '@/contexts/ThemeContext'
+import { useTranslation } from '@/i18n'
 
 const { Header } = Layout
 
 const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
   const { isDarkMode, toggleTheme } = useThemeMode()
+  const { language, setLanguage } = useTranslation()
 
   const items: MenuProps['items'] = [
     {
@@ -107,7 +109,7 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
             checkedChildren={<MoonOutlined />}
             unCheckedChildren={<SunOutlined />}
           />
-          <LanguageSwitcher />
+          <LanguageSwitcher lang={language} onToggle={() => setLanguage(language === 'en' ? 'vi' : 'en')} />
           <Dropdown menu={{ items }}>
             <Avatar
               size={40}

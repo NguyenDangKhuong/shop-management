@@ -20,7 +20,7 @@ const viContent = (
         {/* ===== OVERVIEW ===== */}
         <Heading2>🗺️ Tổng quan lộ trình</Heading2>
 
-        <div className="my-6 p-4 rounded-xl bg-gray-100 dark:bg-slate-800/50 border border-gray-200 dark:border-white/10">
+        <div className="my-6 p-4 rounded-xl bg-[var(--bg-tag)] border border-[var(--border-primary)]">
             <div className="flex flex-col items-center gap-2 text-sm">
                 <div className="px-4 py-2 rounded-lg bg-red-500/20 text-red-300 border border-red-500/30 w-fit font-semibold">Phase 1 — Nền tảng CS (4-6 tuần)</div>
                 <div className="text-slate-600">↓</div>
@@ -92,11 +92,11 @@ new TextEncoder().encode('Việt').length // 6 bytes`}</CodeBlock>
                 <Paragraph>Khi bạn mở Chrome + VS Code + Terminal, OS quản lý chúng bằng <Highlight>Process</Highlight> và <Highlight>Thread</Highlight>.</Paragraph>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-gray-200 dark:border-white/10"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">Process</th><th className="text-left p-2 text-green-400">Thread</th></tr></thead>
-                        <tbody className="text-gray-600 dark:text-slate-300">
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Memory</td><td className="p-2">Riêng biệt</td><td className="p-2">Chia sẻ với process</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Tạo mới</td><td className="p-2">Nặng (~MB)</td><td className="p-2">Nhẹ (~KB)</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Crash</td><td className="p-2">Không ảnh hưởng process khác</td><td className="p-2">Có thể crash cả process</td></tr>
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">Process</th><th className="text-left p-2 text-green-400">Thread</th></tr></thead>
+                        <tbody className="text-[var(--text-secondary)]">
+                            <tr className="border-b border-gray-100"><td className="p-2">Memory</td><td className="p-2">Riêng biệt</td><td className="p-2">Chia sẻ với process</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Tạo mới</td><td className="p-2">Nặng (~MB)</td><td className="p-2">Nhẹ (~KB)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Crash</td><td className="p-2">Không ảnh hưởng process khác</td><td className="p-2">Có thể crash cả process</td></tr>
                             <tr><td className="p-2">Ví dụ</td><td className="p-2">Mỗi tab Chrome = 1 process</td><td className="p-2">JS main thread + Web Workers</td></tr>
                         </tbody>
                     </table>
@@ -144,12 +144,12 @@ new TextEncoder().encode('Việt').length // 6 bytes`}</CodeBlock>
             <TopicModal title="REST vs GraphQL" emoji="🔌" color="#ef4444" summary="Hai mô hình API phổ biến — khi nào dùng cái nào">
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-gray-200 dark:border-white/10"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">REST</th><th className="text-left p-2 text-purple-400">GraphQL</th></tr></thead>
-                        <tbody className="text-gray-600 dark:text-slate-300">
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Kiểu</td><td className="p-2">Nhiều endpoints</td><td className="p-2">1 endpoint duy nhất</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Data fetching</td><td className="p-2">Server quyết định trả gì</td><td className="p-2">Client chọn fields cần</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Over-fetching</td><td className="p-2">Thường xảy ra</td><td className="p-2">Không bao giờ</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Caching</td><td className="p-2">HTTP caching đơn giản</td><td className="p-2">Phức tạp hơn</td></tr>
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">REST</th><th className="text-left p-2 text-purple-400">GraphQL</th></tr></thead>
+                        <tbody className="text-[var(--text-secondary)]">
+                            <tr className="border-b border-gray-100"><td className="p-2">Kiểu</td><td className="p-2">Nhiều endpoints</td><td className="p-2">1 endpoint duy nhất</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Data fetching</td><td className="p-2">Server quyết định trả gì</td><td className="p-2">Client chọn fields cần</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Over-fetching</td><td className="p-2">Thường xảy ra</td><td className="p-2">Không bao giờ</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Caching</td><td className="p-2">HTTP caching đơn giản</td><td className="p-2">Phức tạp hơn</td></tr>
                             <tr><td className="p-2">Dùng bởi</td><td className="p-2">Hầu hết APIs</td><td className="p-2">Facebook, GitHub, Shopify</td></tr>
                         </tbody>
                     </table>
@@ -168,11 +168,11 @@ query { user(id: 1) { name, email } }
                 <Heading3>Cookies vs JWT</Heading3>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-gray-200 dark:border-white/10"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">Cookie</th><th className="text-left p-2 text-green-400">JWT</th></tr></thead>
-                        <tbody className="text-gray-600 dark:text-slate-300">
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Lưu ở</td><td className="p-2">Browser (tự gửi)</td><td className="p-2">Client (localStorage/memory)</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Stateful</td><td className="p-2">Server lưu session</td><td className="p-2">Stateless — token chứa data</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">XSS risk</td><td className="p-2">httpOnly flag bảo vệ</td><td className="p-2">Nếu ở localStorage — risk!</td></tr>
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">Cookie</th><th className="text-left p-2 text-green-400">JWT</th></tr></thead>
+                        <tbody className="text-[var(--text-secondary)]">
+                            <tr className="border-b border-gray-100"><td className="p-2">Lưu ở</td><td className="p-2">Browser (tự gửi)</td><td className="p-2">Client (localStorage/memory)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Stateful</td><td className="p-2">Server lưu session</td><td className="p-2">Stateless — token chứa data</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">XSS risk</td><td className="p-2">httpOnly flag bảo vệ</td><td className="p-2">Nếu ở localStorage — risk!</td></tr>
                             <tr><td className="p-2">Scale</td><td className="p-2">Cần sticky sessions</td><td className="p-2">Dễ scale (stateless)</td></tr>
                         </tbody>
                     </table>
@@ -185,12 +185,12 @@ query { user(id: 1) { name, email } }
 
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-gray-200 dark:border-white/10"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">localStorage</th><th className="text-left p-2 text-green-400">sessionStorage</th><th className="text-left p-2 text-yellow-400">Cookies</th><th className="text-left p-2 text-purple-400">IndexedDB</th></tr></thead>
-                        <tbody className="text-gray-600 dark:text-slate-300">
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Dung lượng</td><td className="p-2">~5-10 MB</td><td className="p-2">~5 MB</td><td className="p-2">~4 KB</td><td className="p-2">Hàng trăm MB+</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Hết hạn</td><td className="p-2">Không (persist)</td><td className="p-2">Đóng tab = mất</td><td className="p-2">Set expires/max-age</td><td className="p-2">Không (persist)</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Gửi lên server</td><td className="p-2">❌ Không</td><td className="p-2">❌ Không</td><td className="p-2">✅ Tự động mỗi request</td><td className="p-2">❌ Không</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">API</td><td className="p-2">Sync (đơn giản)</td><td className="p-2">Sync (đơn giản)</td><td className="p-2">document.cookie</td><td className="p-2">Async (phức tạp)</td></tr>
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">localStorage</th><th className="text-left p-2 text-green-400">sessionStorage</th><th className="text-left p-2 text-yellow-400">Cookies</th><th className="text-left p-2 text-purple-400">IndexedDB</th></tr></thead>
+                        <tbody className="text-[var(--text-secondary)]">
+                            <tr className="border-b border-gray-100"><td className="p-2">Dung lượng</td><td className="p-2">~5-10 MB</td><td className="p-2">~5 MB</td><td className="p-2">~4 KB</td><td className="p-2">Hàng trăm MB+</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Hết hạn</td><td className="p-2">Không (persist)</td><td className="p-2">Đóng tab = mất</td><td className="p-2">Set expires/max-age</td><td className="p-2">Không (persist)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Gửi lên server</td><td className="p-2">❌ Không</td><td className="p-2">❌ Không</td><td className="p-2">✅ Tự động mỗi request</td><td className="p-2">❌ Không</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">API</td><td className="p-2">Sync (đơn giản)</td><td className="p-2">Sync (đơn giản)</td><td className="p-2">document.cookie</td><td className="p-2">Async (phức tạp)</td></tr>
                             <tr><td className="p-2">Use case</td><td className="p-2">User prefs, theme</td><td className="p-2">Form wizard, temp data</td><td className="p-2">Auth tokens, tracking</td><td className="p-2">Offline data, large datasets</td></tr>
                         </tbody>
                     </table>
@@ -391,11 +391,11 @@ for (var i = 0; i < 5; i++) {
                 <Paragraph><InlineCode>this</InlineCode> trong JS <Highlight>không cố định</Highlight> — nó phụ thuộc vào <strong>cách function được gọi</strong>, không phải nơi nó được viết.</Paragraph>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-gray-200 dark:border-white/10"><th className="text-left p-2 text-slate-400">Rule</th><th className="text-left p-2 text-slate-400">this =</th><th className="text-left p-2 text-slate-400">Ví dụ</th></tr></thead>
-                        <tbody className="text-gray-600 dark:text-slate-300">
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2 text-yellow-400">Default</td><td className="p-2">window / undefined</td><td className="p-2"><InlineCode>foo()</InlineCode></td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2 text-blue-400">Implicit</td><td className="p-2">object trước dấu .</td><td className="p-2"><InlineCode>obj.foo()</InlineCode></td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2 text-green-400">Explicit</td><td className="p-2">argument đầu</td><td className="p-2"><InlineCode>foo.call(obj)</InlineCode></td></tr>
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Rule</th><th className="text-left p-2 text-slate-400">this =</th><th className="text-left p-2 text-slate-400">Ví dụ</th></tr></thead>
+                        <tbody className="text-[var(--text-secondary)]">
+                            <tr className="border-b border-gray-100"><td className="p-2 text-yellow-400">Default</td><td className="p-2">window / undefined</td><td className="p-2"><InlineCode>foo()</InlineCode></td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2 text-blue-400">Implicit</td><td className="p-2">object trước dấu .</td><td className="p-2"><InlineCode>obj.foo()</InlineCode></td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2 text-green-400">Explicit</td><td className="p-2">argument đầu</td><td className="p-2"><InlineCode>foo.call(obj)</InlineCode></td></tr>
                             <tr><td className="p-2 text-purple-400">new</td><td className="p-2">object mới tạo</td><td className="p-2"><InlineCode>new Foo()</InlineCode></td></tr>
                         </tbody>
                     </table>
@@ -652,11 +652,11 @@ async function loadPosts() {
                 <Heading3>Các phương thức quan trọng</Heading3>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-gray-200 dark:border-white/10"><th className="text-left p-2 text-slate-400">Method</th><th className="text-left p-2 text-slate-400">Hành vi</th><th className="text-left p-2 text-slate-400">Khi nào dùng</th></tr></thead>
-                        <tbody className="text-gray-600 dark:text-slate-300">
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2"><InlineCode>Promise.all</InlineCode></td><td className="p-2">Chạy song song, <strong>reject nếu 1 fail</strong></td><td className="p-2">Fetch nhiều API cùng lúc, tất cả đều bắt buộc</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2"><InlineCode>Promise.allSettled</InlineCode></td><td className="p-2">Chạy song song, <strong>chờ tất cả xong</strong> (kể cả fail)</td><td className="p-2">Batch operations mà vẫn muốn biết kết quả từng cái</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2"><InlineCode>Promise.race</InlineCode></td><td className="p-2">Trả về <strong>kết quả đầu tiên</strong> (fulfill hoặc reject)</td><td className="p-2">Timeout pattern, lấy response nhanh nhất</td></tr>
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Method</th><th className="text-left p-2 text-slate-400">Hành vi</th><th className="text-left p-2 text-slate-400">Khi nào dùng</th></tr></thead>
+                        <tbody className="text-[var(--text-secondary)]">
+                            <tr className="border-b border-gray-100"><td className="p-2"><InlineCode>Promise.all</InlineCode></td><td className="p-2">Chạy song song, <strong>reject nếu 1 fail</strong></td><td className="p-2">Fetch nhiều API cùng lúc, tất cả đều bắt buộc</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2"><InlineCode>Promise.allSettled</InlineCode></td><td className="p-2">Chạy song song, <strong>chờ tất cả xong</strong> (kể cả fail)</td><td className="p-2">Batch operations mà vẫn muốn biết kết quả từng cái</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2"><InlineCode>Promise.race</InlineCode></td><td className="p-2">Trả về <strong>kết quả đầu tiên</strong> (fulfill hoặc reject)</td><td className="p-2">Timeout pattern, lấy response nhanh nhất</td></tr>
                             <tr><td className="p-2"><InlineCode>Promise.any</InlineCode></td><td className="p-2">Trả về <strong>fulfilled đầu tiên</strong>, ignore rejected</td><td className="p-2">Fallback servers, lấy kết quả thành công đầu tiên</td></tr>
                         </tbody>
                     </table>
@@ -717,9 +717,9 @@ const result = await Promise.race([
                         ['Nullish Coalescing', 'value ?? defaultValue // chỉ null/undefined mới fallback'],
                         ['ES Modules', 'import/export — static analysis, tree shaking'],
                     ].map(([title, desc]) => (
-                        <div key={title} className="p-2 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+                        <div key={title} className="p-2 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                             <div className="text-blue-400 text-sm font-medium">{title}</div>
-                            <div className="text-gray-500 dark:text-slate-400 text-xs font-mono mt-0.5">{desc}</div>
+                            <div className="text-[var(--text-secondary)] text-xs font-mono mt-0.5">{desc}</div>
                         </div>
                     ))}
                 </div>
@@ -917,13 +917,13 @@ const result = products
 
                 <div className="my-4 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-gray-200 dark:border-white/10 text-left">
+                        <thead><tr className="border-b border-[var(--border-primary)] text-left">
                             <th className="p-2 text-[#fbbf24] font-bold">ACIV</th><th className="p-2">Là gì</th><th className="p-2">Hình ảnh</th>
                         </tr></thead>
                         <tbody>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2 font-bold">A — Accumulator</td><td className="p-2">Bình chứa (kết quả tích lũy)</td><td className="p-2">🧃 Ly nước đang đổ dần</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2 font-bold">C — Current Item</td><td className="p-2">Trái cây đang ép</td><td className="p-2">🍊 Quả cam hiện tại</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2 font-bold">I — Initial Value</td><td className="p-2">Ly ban đầu (rỗng hoặc có sẵn)</td><td className="p-2">🥤 Ly rỗng</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2 font-bold">A — Accumulator</td><td className="p-2">Bình chứa (kết quả tích lũy)</td><td className="p-2">🧃 Ly nước đang đổ dần</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2 font-bold">C — Current Item</td><td className="p-2">Trái cây đang ép</td><td className="p-2">🍊 Quả cam hiện tại</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2 font-bold">I — Initial Value</td><td className="p-2">Ly ban đầu (rỗng hoặc có sẵn)</td><td className="p-2">🥤 Ly rỗng</td></tr>
                             <tr><td className="p-2 font-bold">V — (return) Value</td><td className="p-2">Kết quả trả về = accumulator mới</td><td className="p-2">🧃 Ly sau khi thêm nước</td></tr>
                         </tbody>
                     </table>
@@ -1300,19 +1300,19 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
 
         <Heading3>2.3 Tài liệu</Heading3>
         <div className="my-4 space-y-2">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-yellow-400">📕</span>
                 <div className="text-slate-300 text-sm">
                     <strong>You Don&apos;t Know JS</strong> (Kyle Simpson) — đọc hết series này sẽ hiểu JS cực sâu
                 </div>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-yellow-400">📗</span>
                 <div className="text-slate-300 text-sm">
                     <strong>javascript.info</strong> — tài liệu online tốt nhất, có ví dụ + bài tập
                 </div>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-yellow-400">📘</span>
                 <div className="text-slate-300 text-sm">
                     <strong>GreatFrontEnd.com</strong> — platform luyện frontend interview, có mock interview
@@ -1355,7 +1355,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                         ['useCallback', 'Cache function reference. Quan trọng khi pass callback vào React.memo components hoặc dependency arrays.'],
                         ['useContext', 'Đọc context value. Re-render khi context value thay đổi. Cẩn thận performance — split context nếu cần.'],
                     ].map(([name, desc]) => (
-                        <div key={name} className="p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+                        <div key={name} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                             <div className="text-blue-400 font-mono text-sm font-bold">{name}</div>
                             <div className="text-slate-300 text-sm mt-1">{desc}</div>
                         </div>
@@ -1481,10 +1481,10 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
             <TopicModal title="Core Web Vitals" emoji="📊" color="#38bdf8" summary="LCP, FID, CLS — Google đo performance thế nào, cách tối ưu">
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-gray-200 dark:border-white/10"><th className="text-left p-2 text-slate-400">Metric</th><th className="text-left p-2 text-slate-400">Đo gì</th><th className="text-left p-2 text-green-400">Good</th><th className="text-left p-2 text-slate-400">Cách tối ưu</th></tr></thead>
-                        <tbody className="text-gray-600 dark:text-slate-300">
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2 text-blue-400 font-bold">LCP</td><td className="p-2">Largest Contentful Paint</td><td className="p-2">&lt; 2.5s</td><td className="p-2">Optimize images, preload fonts, SSR</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2 text-green-400 font-bold">INP</td><td className="p-2">Interaction to Next Paint</td><td className="p-2">&lt; 200ms</td><td className="p-2">Reduce JS, web workers, debounce</td></tr>
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Metric</th><th className="text-left p-2 text-slate-400">Đo gì</th><th className="text-left p-2 text-green-400">Good</th><th className="text-left p-2 text-slate-400">Cách tối ưu</th></tr></thead>
+                        <tbody className="text-[var(--text-secondary)]">
+                            <tr className="border-b border-gray-100"><td className="p-2 text-blue-400 font-bold">LCP</td><td className="p-2">Largest Contentful Paint</td><td className="p-2">&lt; 2.5s</td><td className="p-2">Optimize images, preload fonts, SSR</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2 text-green-400 font-bold">INP</td><td className="p-2">Interaction to Next Paint</td><td className="p-2">&lt; 200ms</td><td className="p-2">Reduce JS, web workers, debounce</td></tr>
                             <tr><td className="p-2 text-yellow-400 font-bold">CLS</td><td className="p-2">Cumulative Layout Shift</td><td className="p-2">&lt; 0.1</td><td className="p-2">Set image dimensions, font-display</td></tr>
                         </tbody>
                     </table>
@@ -1515,11 +1515,11 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                 <Paragraph><Highlight>Array</Highlight> lưu phần tử liền kề trong bộ nhớ → truy cập O(1) bằng index. <Highlight>String</Highlight> trong JS là immutable — mỗi lần thay đổi tạo string mới.</Paragraph>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-gray-200 dark:border-white/10"><th className="text-left p-2 text-slate-400">Thao tác</th><th className="text-left p-2 text-slate-400">Time</th><th className="text-left p-2 text-slate-400">Ghi chú</th></tr></thead>
-                        <tbody className="text-gray-600 dark:text-slate-300">
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Access [i]</td><td className="p-2 text-green-400">O(1)</td><td className="p-2">Random access</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Push / Pop (cuối)</td><td className="p-2 text-green-400">O(1)</td><td className="p-2">Thêm/xóa cuối mảng</td></tr>
-                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Shift / Unshift (đầu)</td><td className="p-2 text-red-400">O(n)</td><td className="p-2">Phải dịch toàn bộ</td></tr>
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Thao tác</th><th className="text-left p-2 text-slate-400">Time</th><th className="text-left p-2 text-slate-400">Ghi chú</th></tr></thead>
+                        <tbody className="text-[var(--text-secondary)]">
+                            <tr className="border-b border-gray-100"><td className="p-2">Access [i]</td><td className="p-2 text-green-400">O(1)</td><td className="p-2">Random access</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Push / Pop (cuối)</td><td className="p-2 text-green-400">O(1)</td><td className="p-2">Thêm/xóa cuối mảng</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Shift / Unshift (đầu)</td><td className="p-2 text-red-400">O(n)</td><td className="p-2">Phải dịch toàn bộ</td></tr>
                             <tr><td className="p-2">Search / includes</td><td className="p-2 text-yellow-400">O(n)</td><td className="p-2">Linear scan</td></tr>
                         </tbody>
                     </table>
@@ -1569,7 +1569,7 @@ for (let i = 0; i < nums.length; i++) {
                 <div className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                         <div className="text-blue-400 font-bold text-sm mb-2">📚 Stack (LIFO)</div>
-                        <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                        <ul className="text-[var(--text-secondary)] text-xs space-y-1">
                             <li>• push / pop: O(1)</li>
                             <li>• Valid Parentheses</li>
                             <li>• Undo / Redo</li>
@@ -1578,7 +1578,7 @@ for (let i = 0; i < nums.length; i++) {
                     </div>
                     <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                         <div className="text-green-400 font-bold text-sm mb-2">🚶 Queue (FIFO)</div>
-                        <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                        <ul className="text-[var(--text-secondary)] text-xs space-y-1">
                             <li>• enqueue / dequeue: O(1)*</li>
                             <li>• BFS traversal</li>
                             <li>• Task scheduling</li>
@@ -1711,7 +1711,7 @@ function bfs(graph, start) {
                 <div className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/20 p-4">
                         <div className="text-yellow-400 font-bold text-sm mb-2">⛰️ Heap</div>
-                        <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                        <ul className="text-[var(--text-secondary)] text-xs space-y-1">
                             <li>• Top K elements</li>
                             <li>• Merge K sorted lists</li>
                             <li>• Median of stream</li>
@@ -1720,7 +1720,7 @@ function bfs(graph, start) {
                     </div>
                     <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-4">
                         <div className="text-purple-400 font-bold text-sm mb-2">🔤 Trie</div>
-                        <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                        <ul className="text-[var(--text-secondary)] text-xs space-y-1">
                             <li>• Autocomplete</li>
                             <li>• Spell checker</li>
                             <li>• Word search</li>
@@ -1786,7 +1786,7 @@ for (const s of strs) {
                         ['Easy', ['1. Two Sum', '217. Contains Duplicate', '242. Valid Anagram', '383. Ransom Note', '349. Intersection of Two Arrays']],
                         ['Medium', ['49. Group Anagrams', '347. Top K Frequent Elements', '128. Longest Consecutive Sequence', '560. Subarray Sum Equals K', '36. Valid Sudoku', '438. Find All Anagrams in a String']],
                     ].map(([level, problems]) => (
-                        <div key={level as string} className="p-2.5 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+                        <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                             <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : 'text-yellow-400'}`}>{level as string}</div>
                             <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
@@ -1824,7 +1824,7 @@ while (l < r) {
                         ['Easy', ['167. Two Sum II - Input Array Is Sorted', '26. Remove Duplicates from Sorted Array', '283. Move Zeroes', '344. Reverse String', '977. Squares of a Sorted Array']],
                         ['Medium', ['15. 3Sum', '11. Container With Most Water', '75. Sort Colors', '142. Linked List Cycle II', '238. Product of Array Except Self']],
                     ].map(([level, problems]) => (
-                        <div key={level as string} className="p-2.5 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+                        <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                             <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : 'text-yellow-400'}`}>{level as string}</div>
                             <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
@@ -1871,7 +1871,7 @@ for (let l = 0, r = 0; r < nums.length; r++) {
                         ['Medium', ['3. Longest Substring Without Repeating Characters', '424. Longest Repeating Character Replacement', '567. Permutation in String', '209. Minimum Size Subarray Sum', '438. Find All Anagrams in a String']],
                         ['Hard', ['76. Minimum Window Substring', '239. Sliding Window Maximum']],
                     ].map(([level, problems]) => (
-                        <div key={level as string} className="p-2.5 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+                        <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                             <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : level === 'Medium' ? 'text-yellow-400' : 'text-red-400'}`}>{level as string}</div>
                             <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
@@ -1920,7 +1920,7 @@ function sink(grid, i, j) {
                         ['Medium', ['102. Binary Tree Level Order Traversal', '200. Number of Islands', '133. Clone Graph', '207. Course Schedule', '547. Number of Provinces', '994. Rotting Oranges']],
                         ['Hard', ['124. Binary Tree Maximum Path Sum', '297. Serialize and Deserialize Binary Tree']],
                     ].map(([level, problems]) => (
-                        <div key={level as string} className="p-2.5 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+                        <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                             <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : level === 'Medium' ? 'text-yellow-400' : 'text-red-400'}`}>{level as string}</div>
                             <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
@@ -1966,7 +1966,7 @@ function minEatingSpeed(piles, h) {
                         ['Easy', ['704. Binary Search', '35. Search Insert Position', '278. First Bad Version']],
                         ['Medium', ['33. Search in Rotated Sorted Array', '153. Find Minimum in Rotated Sorted Array', '74. Search a 2D Matrix', '875. Koko Eating Bananas', '34. Find First and Last Position of Element in Sorted Array']],
                     ].map(([level, problems]) => (
-                        <div key={level as string} className="p-2.5 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+                        <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                             <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : 'text-yellow-400'}`}>{level as string}</div>
                             <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
@@ -2016,7 +2016,7 @@ function lengthOfLIS(nums) {
                         ['Easy', ['70. Climbing Stairs', '746. Min Cost Climbing Stairs', '338. Counting Bits', '121. Best Time to Buy and Sell Stock']],
                         ['Medium', ['198. House Robber', '322. Coin Change', '300. Longest Increasing Subsequence', '152. Maximum Product Subarray', '62. Unique Paths', '139. Word Break', '5. Longest Palindromic Substring']],
                     ].map(([level, problems]) => (
-                        <div key={level as string} className="p-2.5 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+                        <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                             <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : 'text-yellow-400'}`}>{level as string}</div>
                             <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
@@ -2076,7 +2076,7 @@ function generateParenthesis(n) {
                         ['Medium', ['78. Subsets', '46. Permutations', '39. Combination Sum', '77. Combinations', '22. Generate Parentheses', '79. Word Search', '17. Letter Combinations of a Phone Number']],
                         ['Hard', ['51. N-Queens', '37. Sudoku Solver']],
                     ].map(([level, problems]) => (
-                        <div key={level as string} className="p-2.5 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+                        <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                             <div className={`text-xs font-bold mb-1 ${level === 'Medium' ? 'text-yellow-400' : 'text-red-400'}`}>{level as string}</div>
                             <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
@@ -2132,7 +2132,7 @@ function decodeString(s) {
                         ['Medium', ['150. Evaluate Reverse Polish Notation', '739. Daily Temperatures', '394. Decode String', '735. Asteroid Collision', '853. Car Fleet']],
                         ['Hard', ['84. Largest Rectangle in Histogram']],
                     ].map(([level, problems]) => (
-                        <div key={level as string} className="p-2.5 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+                        <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                             <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : level === 'Medium' ? 'text-yellow-400' : 'text-red-400'}`}>{level as string}</div>
                             <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                         </div>
@@ -2241,7 +2241,7 @@ function decodeString(s) {
 
         <Heading3>5.2 Framework trả lời</Heading3>
 
-        <div className="my-6 p-4 rounded-xl bg-gray-100 dark:bg-slate-800/50 border border-gray-200 dark:border-white/10">
+        <div className="my-6 p-4 rounded-xl bg-[var(--bg-tag)] border border-[var(--border-primary)]">
             <div className="text-center text-sm text-slate-400 mb-3 font-medium">📋 Frontend System Design Framework</div>
             <div className="flex flex-col items-center gap-2 text-sm">
                 <div className="px-4 py-2 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/30 w-fit"><strong>1. Clarify</strong> — Hỏi requirements, scope, constraints</div>
@@ -2258,15 +2258,15 @@ function decodeString(s) {
 
         <Heading3>5.3 Tài liệu</Heading3>
         <div className="my-4 space-y-2">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-purple-400">📕</span>
                 <span className="text-slate-300 text-sm"><strong>GreatFrontEnd</strong> — phần System Design rất chất lượng</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-purple-400">📗</span>
                 <span className="text-slate-300 text-sm"><strong>frontendmastery.com</strong> — bài viết deep-dive về FE architecture</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-purple-400">📘</span>
                 <span className="text-slate-300 text-sm"><strong>YouTube: &quot;Frontend System Design&quot;</strong> — kênh Chirag Goel, Evgeniy</span>
             </div>
@@ -2277,15 +2277,15 @@ function decodeString(s) {
 
         <Heading3>6.1 Mock Interview</Heading3>
         <div className="my-4 space-y-2">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-pink-400">🎤</span>
                 <span className="text-slate-300 text-sm"><strong>Pramp.com</strong> — mock interview miễn phí với người thật</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-pink-400">🎤</span>
                 <span className="text-slate-300 text-sm"><strong>interviewing.io</strong> — anonymous mock interview với engineers từ big tech</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-pink-400">🎤</span>
                 <span className="text-slate-300 text-sm">Rủ bạn bè mock lẫn nhau — <strong>practice nói to lên</strong> khi giải bài!</span>
             </div>
@@ -2300,19 +2300,19 @@ function decodeString(s) {
         <div className="my-4 grid grid-cols-2 md:grid-cols-4 gap-2">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-3 text-center">
                 <div className="text-blue-400 font-bold text-lg">S</div>
-                <div className="text-gray-500 dark:text-slate-400 text-xs">Situation</div>
+                <div className="text-[var(--text-secondary)] text-xs">Situation</div>
             </div>
             <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-3 text-center">
                 <div className="text-purple-400 font-bold text-lg">T</div>
-                <div className="text-gray-500 dark:text-slate-400 text-xs">Task</div>
+                <div className="text-[var(--text-secondary)] text-xs">Task</div>
             </div>
             <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-3 text-center">
                 <div className="text-green-400 font-bold text-lg">A</div>
-                <div className="text-gray-500 dark:text-slate-400 text-xs">Action</div>
+                <div className="text-[var(--text-secondary)] text-xs">Action</div>
             </div>
             <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/20 p-3 text-center">
                 <div className="text-yellow-400 font-bold text-lg">R</div>
-                <div className="text-gray-500 dark:text-slate-400 text-xs">Result</div>
+                <div className="text-[var(--text-secondary)] text-xs">Result</div>
             </div>
         </div>
 
@@ -2342,33 +2342,33 @@ function decodeString(s) {
         <div className="my-6 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Tháng</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Phase</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Focus</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Output</th>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Tháng</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Phase</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Focus</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Output</th>
                     </tr>
                 </thead>
-                <tbody className="text-gray-600 dark:text-slate-300">
-                    <tr className="border-b border-gray-100 dark:border-white/5">
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100">
                         <td className="p-3 text-red-400 font-bold">1-2</td>
                         <td className="p-3">CS + JS Core</td>
                         <td className="p-3">Networking, JS engine, closures</td>
                         <td className="p-3">Implement 10 JS utilities</td>
                     </tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5">
+                    <tr className="border-b border-gray-100">
                         <td className="p-3 text-blue-400 font-bold">3-4</td>
                         <td className="p-3">React + FE</td>
                         <td className="p-3">Hooks, patterns, CSS, perf</td>
                         <td className="p-3">Build 3 UI components thuần</td>
                     </tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5">
+                    <tr className="border-b border-gray-100">
                         <td className="p-3 text-green-400 font-bold">4-6</td>
                         <td className="p-3">DSA</td>
                         <td className="p-3">LeetCode Easy → Medium</td>
                         <td className="p-3">150 bài, 30 phút/bài</td>
                     </tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5">
+                    <tr className="border-b border-gray-100">
                         <td className="p-3 text-purple-400 font-bold">6-7</td>
                         <td className="p-3">System Design</td>
                         <td className="p-3">FE architecture, performance</td>
@@ -2387,29 +2387,29 @@ function decodeString(s) {
         <Heading2>📌 Tóm tắt</Heading2>
 
         <div className="my-6 space-y-3">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-red-400 mt-0.5">1.</span>
-                <span className="text-gray-600 dark:text-slate-300"><Highlight>Nền tảng CS</Highlight> — đừng skip, đây là thứ phân biệt junior và senior</span>
+                <span className="text-[var(--text-secondary)]"><Highlight>Nền tảng CS</Highlight> — đừng skip, đây là thứ phân biệt junior và senior</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-yellow-400 mt-0.5">2.</span>
-                <span className="text-gray-600 dark:text-slate-300"><Highlight>JS sâu</Highlight> — hiểu cơ chế, không chỉ syntax. Implement từ scratch</span>
+                <span className="text-[var(--text-secondary)]"><Highlight>JS sâu</Highlight> — hiểu cơ chế, không chỉ syntax. Implement từ scratch</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 mt-0.5">3.</span>
-                <span className="text-gray-600 dark:text-slate-300"><Highlight>React + FE</Highlight> — build UI thuần, hiểu rendering, performance</span>
+                <span className="text-[var(--text-secondary)]"><Highlight>React + FE</Highlight> — build UI thuần, hiểu rendering, performance</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-green-400 mt-0.5">4.</span>
-                <span className="text-gray-600 dark:text-slate-300"><Highlight>DSA</Highlight> — 150 bài LeetCode, focus patterns không phải số lượng</span>
+                <span className="text-[var(--text-secondary)]"><Highlight>DSA</Highlight> — 150 bài LeetCode, focus patterns không phải số lượng</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-purple-400 mt-0.5">5.</span>
-                <span className="text-gray-600 dark:text-slate-300"><Highlight>System Design</Highlight> — thiết kế FE architecture, không chỉ vẽ diagram</span>
+                <span className="text-[var(--text-secondary)]"><Highlight>System Design</Highlight> — thiết kế FE architecture, không chỉ vẽ diagram</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-pink-400 mt-0.5">6.</span>
-                <span className="text-gray-600 dark:text-slate-300"><Highlight>Mock + Behavioral</Highlight> — practice nói to, chuẩn bị câu chuyện STAR</span>
+                <span className="text-[var(--text-secondary)]"><Highlight>Mock + Behavioral</Highlight> — practice nói to, chuẩn bị câu chuyện STAR</span>
             </div>
         </div>
 

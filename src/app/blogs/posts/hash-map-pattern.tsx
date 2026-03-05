@@ -62,16 +62,16 @@ const diff = [...a].filter(x => !b.has(x))          // [1]`}</CodeBlock>
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium"></th>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium"></th>
                         <th className="text-left p-3 text-blue-400 font-medium">Object</th>
                         <th className="text-left p-3 text-purple-400 font-medium">Map</th>
                     </tr>
                 </thead>
-                <tbody className="text-gray-600 dark:text-slate-300">
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Key type</td><td className="p-3">Chỉ string/symbol</td><td className="p-3">Bất kỳ (object, array, number...)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Lấy size</td><td className="p-3"><InlineCode>Object.keys(o).length</InlineCode></td><td className="p-3"><InlineCode>map.size</InlineCode> — O(1)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Thứ tự</td><td className="p-3">Không đảm bảo</td><td className="p-3">Theo thứ tự chèn (insertion order)</td></tr>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3 font-medium">Key type</td><td className="p-3">Chỉ string/symbol</td><td className="p-3">Bất kỳ (object, array, number...)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3 font-medium">Lấy size</td><td className="p-3"><InlineCode>Object.keys(o).length</InlineCode></td><td className="p-3"><InlineCode>map.size</InlineCode> — O(1)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3 font-medium">Thứ tự</td><td className="p-3">Không đảm bảo</td><td className="p-3">Theo thứ tự chèn (insertion order)</td></tr>
                     <tr><td className="p-3 font-medium">Performance</td><td className="p-3">Nhanh với ít key</td><td className="p-3">Tốt hơn khi thêm/xóa nhiều</td></tr>
                 </tbody>
             </table>
@@ -88,16 +88,16 @@ const diff = [...a].filter(x => !b.has(x))          // [1]`}</CodeBlock>
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Dấu hiệu bài toán</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Ví dụ LeetCode</th>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Dấu hiệu bài toán</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Ví dụ LeetCode</th>
                     </tr>
                 </thead>
-                <tbody className="text-gray-600 dark:text-slate-300">
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">Tìm 2 số có tổng = target</td><td className="p-3">Two Sum (#1)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">Đếm số lần xuất hiện</td><td className="p-3">Majority Element (#169)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">Kiểm tra phần tử trùng lặp</td><td className="p-3">Contains Duplicate (#217)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">Nhóm các phần tử giống nhau</td><td className="p-3">Group Anagrams (#49)</td></tr>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3">Tìm 2 số có tổng = target</td><td className="p-3">Two Sum (#1)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Đếm số lần xuất hiện</td><td className="p-3">Majority Element (#169)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Kiểm tra phần tử trùng lặp</td><td className="p-3">Contains Duplicate (#217)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Nhóm các phần tử giống nhau</td><td className="p-3">Group Anagrams (#49)</td></tr>
                     <tr><td className="p-3">Tìm phần tử đầu tiên không lặp</td><td className="p-3">First Unique Character (#387)</td></tr>
                 </tbody>
             </table>
@@ -130,20 +130,20 @@ const diff = [...a].filter(x => !b.has(x))          // [1]`}</CodeBlock>
         </Paragraph>
 
         <Heading3>Giải pháp với Hash Map</Heading3>
-        <div className="my-4 space-y-2 text-sm text-gray-600 dark:text-slate-300">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Duyệt qua từng phần tử <InlineCode>nums[i]</InlineCode> trong mảng.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Tính <InlineCode>complement = target - nums[i]</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Kiểm tra xem <InlineCode>complement</InlineCode> đã tồn tại trong Map chưa → nếu có, ta tìm thấy cặp!</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Nếu chưa có, lưu <InlineCode>nums[i] → i</InlineCode> vào Map để các phần tử sau có thể tìm thấy.</span>
             </div>
@@ -183,20 +183,20 @@ function twoSum(nums, target) {
         </Paragraph>
 
         <Heading3>Giải pháp với Hash Map</Heading3>
-        <div className="my-4 space-y-2 text-sm text-gray-600 dark:text-slate-300">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Hai chuỗi là anagram khi chúng có cùng ký tự (cùng tần suất). Vậy ta cần tạo một &quot;key&quot; đại diện.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Key = sắp xếp các ký tự: <InlineCode>&quot;eat&quot; → &quot;aet&quot;</InlineCode>, <InlineCode>&quot;tea&quot; → &quot;aet&quot;</InlineCode> → cùng key!</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Dùng Map với key là chuỗi đã sort, value là mảng các chuỗi gốc.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Cuối cùng trả về tất cả values trong Map.</span>
             </div>
@@ -240,16 +240,16 @@ function groupAnagrams(strs) {
         </Paragraph>
 
         <Heading3>Giải pháp với Hash Set</Heading3>
-        <div className="my-4 space-y-2 text-sm text-gray-600 dark:text-slate-300">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Dùng <InlineCode>Set</InlineCode> để lưu các phần tử đã gặp.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Duyệt qua từng phần tử: nếu đã có trong Set → trùng lặp!</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Nếu chưa có → thêm vào Set và tiếp tục.</span>
             </div>
@@ -539,21 +539,21 @@ function isValidSudoku(board) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Tiêu chí</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Object</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Map</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Set</th>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Tiêu chí</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Object</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Map</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Set</th>
                     </tr>
                 </thead>
-                <tbody className="text-gray-600 dark:text-slate-300">
-                    <tr className="border-b border-gray-100 dark:border-white/5">
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100">
                         <td className="p-3 font-medium">Key type</td>
                         <td className="p-3">string/symbol</td>
                         <td className="p-3">bất kỳ</td>
                         <td className="p-3">—</td>
                     </tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5">
+                    <tr className="border-b border-gray-100">
                         <td className="p-3 font-medium">Dùng khi</td>
                         <td className="p-3">Key là string đơn giản</td>
                         <td className="p-3">Key phức tạp (object, array)</td>
@@ -578,15 +578,15 @@ function isValidSudoku(board) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Thao tác</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Trung bình</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Xấu nhất</th>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Thao tác</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Trung bình</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Xấu nhất</th>
                     </tr>
                 </thead>
-                <tbody className="text-gray-600 dark:text-slate-300">
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">Thêm (set)</td><td className="p-3">O(1)</td><td className="p-3">O(n)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">Tìm (get/has)</td><td className="p-3">O(1)</td><td className="p-3">O(n)</td></tr>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3">Thêm (set)</td><td className="p-3">O(1)</td><td className="p-3">O(n)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Tìm (get/has)</td><td className="p-3">O(1)</td><td className="p-3">O(n)</td></tr>
                     <tr><td className="p-3">Xóa (delete)</td><td className="p-3">O(1)</td><td className="p-3">O(n)</td></tr>
                 </tbody>
             </table>
@@ -659,16 +659,16 @@ const diff = [...a].filter(x => !b.has(x))          // [1]`}</CodeBlock>
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium"></th>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium"></th>
                         <th className="text-left p-3 text-blue-400 font-medium">Object</th>
                         <th className="text-left p-3 text-purple-400 font-medium">Map</th>
                     </tr>
                 </thead>
-                <tbody className="text-gray-600 dark:text-slate-300">
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Key type</td><td className="p-3">String/symbol only</td><td className="p-3">Any type (object, array, number...)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Get size</td><td className="p-3"><InlineCode>Object.keys(o).length</InlineCode></td><td className="p-3"><InlineCode>map.size</InlineCode> — O(1)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3 font-medium">Order</td><td className="p-3">Not guaranteed</td><td className="p-3">Insertion order preserved</td></tr>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3 font-medium">Key type</td><td className="p-3">String/symbol only</td><td className="p-3">Any type (object, array, number...)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3 font-medium">Get size</td><td className="p-3"><InlineCode>Object.keys(o).length</InlineCode></td><td className="p-3"><InlineCode>map.size</InlineCode> — O(1)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3 font-medium">Order</td><td className="p-3">Not guaranteed</td><td className="p-3">Insertion order preserved</td></tr>
                     <tr><td className="p-3 font-medium">Performance</td><td className="p-3">Fast with few keys</td><td className="p-3">Better for frequent add/delete</td></tr>
                 </tbody>
             </table>
@@ -685,16 +685,16 @@ const diff = [...a].filter(x => !b.has(x))          // [1]`}</CodeBlock>
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Problem Signal</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">LeetCode Example</th>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Problem Signal</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">LeetCode Example</th>
                     </tr>
                 </thead>
-                <tbody className="text-gray-600 dark:text-slate-300">
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">Find two numbers summing to target</td><td className="p-3">Two Sum (#1)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">Count occurrences</td><td className="p-3">Majority Element (#169)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">Check for duplicates</td><td className="p-3">Contains Duplicate (#217)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">Group similar elements</td><td className="p-3">Group Anagrams (#49)</td></tr>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3">Find two numbers summing to target</td><td className="p-3">Two Sum (#1)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Count occurrences</td><td className="p-3">Majority Element (#169)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Check for duplicates</td><td className="p-3">Contains Duplicate (#217)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Group similar elements</td><td className="p-3">Group Anagrams (#49)</td></tr>
                     <tr><td className="p-3">Find first non-repeating element</td><td className="p-3">First Unique Character (#387)</td></tr>
                 </tbody>
             </table>
@@ -726,20 +726,20 @@ const diff = [...a].filter(x => !b.has(x))          // [1]`}</CodeBlock>
         </Paragraph>
 
         <Heading3>Hash Map Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-gray-600 dark:text-slate-300">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Iterate through each element <InlineCode>nums[i]</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Compute <InlineCode>complement = target - nums[i]</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Check if complement exists in Map → if yes, we found our pair!</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>If not, store <InlineCode>nums[i] → i</InlineCode> in Map for future lookups.</span>
             </div>
@@ -778,16 +778,16 @@ function twoSum(nums, target) {
         </Paragraph>
 
         <Heading3>Hash Map Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-gray-600 dark:text-slate-300">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Two strings are anagrams when they share the same characters. We need a &quot;key&quot; to represent this.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Key = sorted characters: <InlineCode>&quot;eat&quot; → &quot;aet&quot;</InlineCode>, <InlineCode>&quot;tea&quot; → &quot;aet&quot;</InlineCode> → same key!</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Use Map with sorted string as key, array of original strings as value.</span>
             </div>
@@ -825,16 +825,16 @@ function groupAnagrams(strs) {
         </Paragraph>
 
         <Heading3>Hash Set Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-gray-600 dark:text-slate-300">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Use a <InlineCode>Set</InlineCode> to track seen elements.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>For each element: if already in Set → duplicate found!</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Otherwise add to Set and continue.</span>
             </div>
@@ -1109,15 +1109,15 @@ function isValidSudoku(board) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Operation</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Average</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Worst</th>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Operation</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Average</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Worst</th>
                     </tr>
                 </thead>
-                <tbody className="text-gray-600 dark:text-slate-300">
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">Insert (set)</td><td className="p-3">O(1)</td><td className="p-3">O(n)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">Lookup (get/has)</td><td className="p-3">O(1)</td><td className="p-3">O(n)</td></tr>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3">Insert (set)</td><td className="p-3">O(1)</td><td className="p-3">O(n)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Lookup (get/has)</td><td className="p-3">O(1)</td><td className="p-3">O(n)</td></tr>
                     <tr><td className="p-3">Delete</td><td className="p-3">O(1)</td><td className="p-3">O(n)</td></tr>
                 </tbody>
             </table>

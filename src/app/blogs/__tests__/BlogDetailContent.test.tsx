@@ -21,7 +21,7 @@ jest.mock('@/components/ui/ThemeToggle', () => {
     MockThemeToggle.displayName = 'ThemeToggle'
     return MockThemeToggle
 })
-jest.mock('@/app/blogs/components/LangSwitcher', () => {
+jest.mock('@/components/ui/LanguageSwitcher', () => {
     const MockLangSwitcher = () => <button>LangSwitcher</button>
     MockLangSwitcher.displayName = 'LangSwitcher'
     return MockLangSwitcher

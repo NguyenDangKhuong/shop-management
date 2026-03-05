@@ -10,13 +10,13 @@ interface LangContextType {
 }
 
 const LangContext = createContext<LangContextType>({
-    lang: 'vi',
+    lang: 'en',
     setLang: () => { },
-    t: (obj) => obj.vi,
+    t: (obj) => obj.en,
 })
 
 export function LangProvider({ children }: { children: React.ReactNode }) {
-    const [lang, setLangState] = useState<Lang>('vi')
+    const [lang, setLangState] = useState<Lang>('en')
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
@@ -33,13 +33,13 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
     }, [])
 
     const t = useCallback((obj: Record<Lang, string>) => {
-        return obj[lang] || obj.vi
+        return obj[lang] || obj.en
     }, [lang])
 
-    // Prevent hydration mismatch — render Vietnamese by default on server
+    // Prevent hydration mismatch — render English by default on server
     if (!mounted) {
         return (
-            <LangContext.Provider value={{ lang: 'vi', setLang, t: (obj) => obj.vi }}>
+            <LangContext.Provider value={{ lang: 'en', setLang, t: (obj) => obj.en }}>
                 {children}
             </LangContext.Provider>
         )

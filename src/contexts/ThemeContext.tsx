@@ -1,5 +1,18 @@
 'use client'
 
+/**
+ * Theme Context — Core theme management.
+ *
+ * HOW IT WORKS:
+ * - Adds/removes `.dark` class on <html> element
+ * - CSS variables in globals.css react to `.dark` class automatically
+ * - Preference saved to localStorage key 'dashboard-theme-mode'
+ * - Default: dark mode (if no preference saved)
+ *
+ * TO CHANGE DEFAULT THEME: edit useState(true) below → false for light default
+ * TO ADD NEW THEME TOKENS: edit globals.css :root and .dark sections
+ */
+
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 
 interface ThemeContextType {

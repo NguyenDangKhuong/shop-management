@@ -1,3 +1,9 @@
+/**
+ * SiteHeader — Shared sticky header (LandingPage, BlogList, BlogDetail).
+ *
+ * THEMING: Uses CSS custom properties from globals.css (--bg-header, --text-primary, etc.)
+ * No dark: classes needed — colors auto-switch when .dark class toggles on <html>.
+ */
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
@@ -15,13 +21,7 @@ interface SiteHeaderProps {
 
 /**
  * Shared sticky header with shrink-on-scroll behavior.
- * Used across LandingPage, BlogListContent, and BlogDetailContent.
- *
- * Features:
- * - Gradient logo "K" + "TheTapHoa" brand
- * - Sticky header that shrinks on scroll (logo + padding reduce)
- * - Optional reading progress bar (gradient cyan→blue→purple)
- * - ThemeToggle always included; rightSlot for page-specific buttons
+ * Uses CSS custom properties (--bg-header, --text-primary etc.) for theming.
  */
 export default function SiteHeader({
     maxWidth = 'max-w-4xl',
@@ -34,7 +34,6 @@ export default function SiteHeader({
     useEffect(() => {
         const onScroll = () => {
             setScrolled(window.scrollY > 60)
-            // Update progress bar directly via DOM (no re-render, GPU-accelerated)
             if (progressRef.current) {
                 const docHeight = document.documentElement.scrollHeight - window.innerHeight
                 const pct = docHeight > 0 ? Math.min(window.scrollY / docHeight, 1) : 0
@@ -47,7 +46,7 @@ export default function SiteHeader({
 
     return (
         <>
-            {/* Reading Progress Bar — GPU-accelerated via scaleX transform */}
+            {/* Reading Progress Bar */}
             {showProgress && (
                 <div className="fixed top-0 left-0 w-full h-[3px] z-[60] bg-transparent">
                     <div
@@ -59,10 +58,14 @@ export default function SiteHeader({
             )}
 
             {/* Sticky Header */}
-            <header className={`w-full sticky top-0 z-50 border-b transition-[padding,background-color,border-color,box-shadow] duration-300 px-4 md:px-8 ${scrolled
-                ? 'bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-xl border-gray-200/50 dark:border-white/5 py-2 shadow-[0_1px_3px_rgba(0,0,0,0.05)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)]'
-                : 'bg-white/50 dark:bg-[#0a0a0a]/50 backdrop-blur-md border-transparent py-4 md:py-6'
-                }`}>
+            <header
+                className={`w-full sticky top-0 z-50 border-b transition-[padding,background-color,border-color,box-shadow] duration-300 px-4 md:px-8 backdrop-blur-xl ${scrolled ? 'py-2' : 'py-4 md:py-6'}`}
+                style={{
+                    backgroundColor: scrolled ? 'var(--bg-header-scrolled)' : 'var(--bg-header)',
+                    borderColor: scrolled ? 'var(--border-primary)' : 'transparent',
+                    boxShadow: scrolled ? 'var(--shadow-sm)' : 'none',
+                }}
+            >
                 <div className={`${maxWidth} mx-auto transition-all duration-300`}>
                     {/* Mobile */}
                     <div className="flex md:hidden items-center w-full">
@@ -71,7 +74,10 @@ export default function SiteHeader({
                                 <div className={`rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg transition-all duration-300 ${scrolled ? 'w-6 h-6 text-xs' : 'w-8 h-8 text-sm'}`}>
                                     K
                                 </div>
-                                <span className={`font-bold tracking-tight text-gray-900 dark:text-white transition-all duration-300 ${scrolled ? 'text-base' : 'text-xl'}`}>
+                                <span
+                                    className={`font-bold tracking-tight transition-all duration-300 ${scrolled ? 'text-base' : 'text-xl'}`}
+                                    style={{ color: 'var(--text-primary)' }}
+                                >
                                     The<span className="text-[#38bdf8]">TapHoa</span>
                                 </span>
                             </Link>
@@ -87,7 +93,10 @@ export default function SiteHeader({
                             <div className={`rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg transition-all duration-300 ${scrolled ? 'w-6 h-6 text-xs' : 'w-8 h-8 text-sm'}`}>
                                 K
                             </div>
-                            <span className={`font-bold tracking-tight text-gray-900 dark:text-white transition-all duration-300 ${scrolled ? 'text-base' : 'text-xl'}`}>
+                            <span
+                                className={`font-bold tracking-tight transition-all duration-300 ${scrolled ? 'text-base' : 'text-xl'}`}
+                                style={{ color: 'var(--text-primary)' }}
+                            >
                                 The<span className="text-[#38bdf8]">TapHoa</span>
                             </span>
                         </Link>

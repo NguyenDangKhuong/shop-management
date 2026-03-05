@@ -56,16 +56,16 @@ function solveOptimized(n) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Từ khóa trong đề</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Ví dụ LeetCode</th>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Từ khóa trong đề</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Ví dụ LeetCode</th>
                     </tr>
                 </thead>
-                <tbody className="text-gray-600 dark:text-slate-300">
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">&quot;Có bao nhiêu cách...&quot;</td><td className="p-3">Climbing Stairs (#70)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">&quot;Giá trị lớn nhất/nhỏ nhất&quot;</td><td className="p-3">Coin Change (#322)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">&quot;Chuỗi con chung dài nhất&quot;</td><td className="p-3">Longest Common Subsequence (#1143)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">&quot;Có thể đạt được hay không&quot;</td><td className="p-3">House Robber (#198)</td></tr>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3">&quot;Có bao nhiêu cách...&quot;</td><td className="p-3">Climbing Stairs (#70)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">&quot;Giá trị lớn nhất/nhỏ nhất&quot;</td><td className="p-3">Coin Change (#322)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">&quot;Chuỗi con chung dài nhất&quot;</td><td className="p-3">Longest Common Subsequence (#1143)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">&quot;Có thể đạt được hay không&quot;</td><td className="p-3">House Robber (#198)</td></tr>
                     <tr><td className="p-3">&quot;Chia mảng thành...&quot;</td><td className="p-3">Partition Equal Subset Sum (#416)</td></tr>
                 </tbody>
             </table>
@@ -73,15 +73,15 @@ function solveOptimized(n) {
 
         <Heading2>Cách tiếp cận DP — 4 bước</Heading2>
 
-        <div className="my-6 p-4 rounded-xl bg-gray-100 dark:bg-slate-800/50 border border-gray-200 dark:border-white/10">
+        <div className="my-6 p-4 rounded-xl bg-[var(--bg-tag)] border border-[var(--border-primary)]">
             <div className="flex flex-col items-center gap-2 text-sm">
-                <div className="px-4 py-2 rounded-lg bg-blue-500/20 text-blue-600 dark:text-blue-300 border border-blue-500/30 w-fit">1. Xác định STATE — dp[i] đại diện cho gì?</div>
-                <div className="text-gray-400 dark:text-slate-600">↓</div>
-                <div className="px-4 py-2 rounded-lg bg-purple-500/20 text-purple-600 dark:text-purple-300 border border-purple-500/30 w-fit">2. Tìm TRANSITION — dp[i] tính từ dp[j] nào?</div>
-                <div className="text-gray-400 dark:text-slate-600">↓</div>
-                <div className="px-4 py-2 rounded-lg bg-green-500/20 text-green-600 dark:text-green-300 border border-green-500/30 w-fit">3. Xác định BASE CASE — dp[0], dp[1] = ?</div>
-                <div className="text-gray-400 dark:text-slate-600">↓</div>
-                <div className="px-4 py-2 rounded-lg bg-yellow-500/20 text-yellow-600 dark:text-yellow-300 border border-yellow-500/30 w-fit">4. Xác định ANSWER — return dp[n] hay dp cuối?</div>
+                <div className="px-4 py-2 rounded-lg bg-blue-500/20 text-blue-600 border border-blue-500/30 w-fit">1. Xác định STATE — dp[i] đại diện cho gì?</div>
+                <div className="text-gray-400">↓</div>
+                <div className="px-4 py-2 rounded-lg bg-purple-500/20 text-purple-600 border border-purple-500/30 w-fit">2. Tìm TRANSITION — dp[i] tính từ dp[j] nào?</div>
+                <div className="text-gray-400">↓</div>
+                <div className="px-4 py-2 rounded-lg bg-green-500/20 text-green-600 border border-green-500/30 w-fit">3. Xác định BASE CASE — dp[0], dp[1] = ?</div>
+                <div className="text-gray-400">↓</div>
+                <div className="px-4 py-2 rounded-lg bg-yellow-500/20 text-yellow-600 border border-yellow-500/30 w-fit">4. Xác định ANSWER — return dp[n] hay dp cuối?</div>
             </div>
         </div>
 
@@ -95,20 +95,20 @@ function solveOptimized(n) {
         </Paragraph>
 
         <Heading3>Giải pháp với DP</Heading3>
-        <div className="my-4 space-y-2 text-sm text-gray-600 dark:text-slate-300">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">STATE</span>
                 <span><InlineCode>dp[i]</InlineCode> = số cách để leo tới bậc i.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-purple-400 font-bold">TRANSITION</span>
                 <span><InlineCode>dp[i] = dp[i-1] + dp[i-2]</InlineCode> (bước 1 bậc từ i-1, hoặc 2 bậc từ i-2).</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-green-400 font-bold">BASE</span>
                 <span><InlineCode>dp[1] = 1</InlineCode> (1 cách), <InlineCode>dp[2] = 2</InlineCode> (2 cách: 1+1 hoặc 2).</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-yellow-400 font-bold">ANSWER</span>
                 <span>return <InlineCode>dp[n]</InlineCode>.</span>
             </div>
@@ -151,20 +151,20 @@ function climbStairs(n) {
         </Paragraph>
 
         <Heading3>Giải pháp với DP</Heading3>
-        <div className="my-4 space-y-2 text-sm text-gray-600 dark:text-slate-300">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">STATE</span>
                 <span><InlineCode>dp[i]</InlineCode> = số xu ít nhất để tạo ra i đồng.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-purple-400 font-bold">TRANSITION</span>
                 <span>Với mỗi coin: <InlineCode>dp[i] = min(dp[i], dp[i - coin] + 1)</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-green-400 font-bold">BASE</span>
                 <span><InlineCode>dp[0] = 0</InlineCode> (0 xu để tạo 0 đồng). Còn lại = Infinity.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-yellow-400 font-bold">ANSWER</span>
                 <span><InlineCode>dp[amount]</InlineCode> (nếu === Infinity thì trả -1).</span>
             </div>
@@ -222,21 +222,21 @@ function coinChange(coins, amount) {
         </Paragraph>
 
         <Heading3>Giải pháp với DP 2D</Heading3>
-        <div className="my-4 space-y-2 text-sm text-gray-600 dark:text-slate-300">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">STATE</span>
                 <span><InlineCode>dp[i][j]</InlineCode> = LCS của text1[0..i-1] và text2[0..j-1].</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-purple-400 font-bold">TRANSITION</span>
                 <span>Nếu <InlineCode>text1[i-1] === text2[j-1]</InlineCode> → <InlineCode>dp[i][j] = dp[i-1][j-1] + 1</InlineCode><br />
                     Ngược lại → <InlineCode>dp[i][j] = max(dp[i-1][j], dp[i][j-1])</InlineCode></span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-green-400 font-bold">BASE</span>
                 <span><InlineCode>dp[0][j] = 0</InlineCode> và <InlineCode>dp[i][0] = 0</InlineCode> (chuỗi rỗng).</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-yellow-400 font-bold">ANSWER</span>
                 <span><InlineCode>dp[m][n]</InlineCode> (góc dưới phải của bảng).</span>
             </div>
@@ -284,7 +284,7 @@ function longestCommonSubsequence(text1, text2) {
         <div className="my-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                 <div className="text-blue-400 font-bold text-sm mb-2">⬇️ Top-Down (Memoization)</div>
-                <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
                     <li>• Đệ quy + cache kết quả</li>
                     <li>• Dễ viết hơn (giống đệ quy)</li>
                     <li>• Chỉ tính state cần thiết</li>
@@ -293,7 +293,7 @@ function longestCommonSubsequence(text1, text2) {
             </div>
             <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                 <div className="text-green-400 font-bold text-sm mb-2">⬆️ Bottom-Up (Tabulation)</div>
-                <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
                     <li>• Dùng vòng lặp + mảng dp</li>
                     <li>• Hiệu quả hơn (không đệ quy)</li>
                     <li>• Tính tất cả state</li>
@@ -520,16 +520,16 @@ function solveOptimized(n) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">Problem Keywords</th>
-                        <th className="text-left p-3 text-gray-500 dark:text-slate-400 font-medium">LeetCode Example</th>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Problem Keywords</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">LeetCode Example</th>
                     </tr>
                 </thead>
-                <tbody className="text-gray-600 dark:text-slate-300">
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">&quot;How many ways...&quot;</td><td className="p-3">Climbing Stairs (#70)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">&quot;Find maximum/minimum value&quot;</td><td className="p-3">Coin Change (#322)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">&quot;Longest common subsequence&quot;</td><td className="p-3">LCS (#1143)</td></tr>
-                    <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-3">&quot;Can you achieve...&quot;</td><td className="p-3">House Robber (#198)</td></tr>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3">&quot;How many ways...&quot;</td><td className="p-3">Climbing Stairs (#70)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">&quot;Find maximum/minimum value&quot;</td><td className="p-3">Coin Change (#322)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">&quot;Longest common subsequence&quot;</td><td className="p-3">LCS (#1143)</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">&quot;Can you achieve...&quot;</td><td className="p-3">House Robber (#198)</td></tr>
                     <tr><td className="p-3">&quot;Partition into...&quot;</td><td className="p-3">Partition Equal Subset Sum (#416)</td></tr>
                 </tbody>
             </table>
@@ -537,15 +537,15 @@ function solveOptimized(n) {
 
         <Heading2>DP Approach — 4 Steps</Heading2>
 
-        <div className="my-6 p-4 rounded-xl bg-gray-100 dark:bg-slate-800/50 border border-gray-200 dark:border-white/10">
+        <div className="my-6 p-4 rounded-xl bg-[var(--bg-tag)] border border-[var(--border-primary)]">
             <div className="flex flex-col items-center gap-2 text-sm">
-                <div className="px-4 py-2 rounded-lg bg-blue-500/20 text-blue-600 dark:text-blue-300 border border-blue-500/30 w-fit">1. Define STATE — what does dp[i] represent?</div>
-                <div className="text-gray-400 dark:text-slate-600">↓</div>
-                <div className="px-4 py-2 rounded-lg bg-purple-500/20 text-purple-600 dark:text-purple-300 border border-purple-500/30 w-fit">2. Find TRANSITION — how to compute dp[i] from dp[j]?</div>
-                <div className="text-gray-400 dark:text-slate-600">↓</div>
-                <div className="px-4 py-2 rounded-lg bg-green-500/20 text-green-600 dark:text-green-300 border border-green-500/30 w-fit">3. Set BASE CASE — dp[0], dp[1] = ?</div>
-                <div className="text-gray-400 dark:text-slate-600">↓</div>
-                <div className="px-4 py-2 rounded-lg bg-yellow-500/20 text-yellow-600 dark:text-yellow-300 border border-yellow-500/30 w-fit">4. Identify ANSWER — return dp[n]?</div>
+                <div className="px-4 py-2 rounded-lg bg-blue-500/20 text-blue-600 border border-blue-500/30 w-fit">1. Define STATE — what does dp[i] represent?</div>
+                <div className="text-gray-400">↓</div>
+                <div className="px-4 py-2 rounded-lg bg-purple-500/20 text-purple-600 border border-purple-500/30 w-fit">2. Find TRANSITION — how to compute dp[i] from dp[j]?</div>
+                <div className="text-gray-400">↓</div>
+                <div className="px-4 py-2 rounded-lg bg-green-500/20 text-green-600 border border-green-500/30 w-fit">3. Set BASE CASE — dp[0], dp[1] = ?</div>
+                <div className="text-gray-400">↓</div>
+                <div className="px-4 py-2 rounded-lg bg-yellow-500/20 text-yellow-600 border border-yellow-500/30 w-fit">4. Identify ANSWER — return dp[n]?</div>
             </div>
         </div>
 
@@ -558,16 +558,16 @@ function solveOptimized(n) {
         </Paragraph>
 
         <Heading3>DP Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-gray-600 dark:text-slate-300">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">STATE</span>
                 <span><InlineCode>dp[i]</InlineCode> = number of ways to reach step i.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-purple-400 font-bold">TRANSITION</span>
                 <span><InlineCode>dp[i] = dp[i-1] + dp[i-2]</InlineCode> (from step i-1 or i-2).</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-green-400 font-bold">BASE</span>
                 <span><InlineCode>dp[1] = 1</InlineCode>, <InlineCode>dp[2] = 2</InlineCode>.</span>
             </div>
@@ -600,16 +600,16 @@ function climbStairs(n) {
         </Paragraph>
 
         <Heading3>DP Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-gray-600 dark:text-slate-300">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">STATE</span>
                 <span><InlineCode>dp[i]</InlineCode> = minimum coins to make amount i.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-purple-400 font-bold">TRANSITION</span>
                 <span>For each coin: <InlineCode>dp[i] = min(dp[i], dp[i - coin] + 1)</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-green-400 font-bold">BASE</span>
                 <span><InlineCode>dp[0] = 0</InlineCode>, rest = Infinity.</span>
             </div>
@@ -643,12 +643,12 @@ function coinChange(coins, amount) {
         </Paragraph>
 
         <Heading3>2D DP Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-gray-600 dark:text-slate-300">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-blue-400 font-bold">STATE</span>
                 <span><InlineCode>dp[i][j]</InlineCode> = LCS of text1[0..i-1] and text2[0..j-1].</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-800/40 border border-gray-200 dark:border-white/5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
                 <span className="text-purple-400 font-bold">TRANSITION</span>
                 <span>Match → <InlineCode>dp[i-1][j-1] + 1</InlineCode>. No match → <InlineCode>max(dp[i-1][j], dp[i][j-1])</InlineCode></span>
             </div>
@@ -684,7 +684,7 @@ function longestCommonSubsequence(text1, text2) {
         <div className="my-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                 <div className="text-blue-400 font-bold text-sm mb-2">⬇️ Top-Down (Memoization)</div>
-                <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
                     <li>• Recursion + cache results</li>
                     <li>• Easier to write</li>
                     <li>• Only computes needed states</li>
@@ -693,7 +693,7 @@ function longestCommonSubsequence(text1, text2) {
             </div>
             <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                 <div className="text-green-400 font-bold text-sm mb-2">⬆️ Bottom-Up (Tabulation)</div>
-                <ul className="text-gray-500 dark:text-slate-400 text-xs space-y-1">
+                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
                     <li>• Loops + dp array</li>
                     <li>• More efficient (no recursion)</li>
                     <li>• Computes all states</li>

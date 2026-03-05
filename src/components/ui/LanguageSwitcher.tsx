@@ -1,24 +1,31 @@
+/**
+ * LanguageSwitcher — Shared language toggle button.
+ *
+ * Used on both home page and blog pages.
+ * Uses .theme-btn class from globals.css for consistent theming.
+ * Accepts lang/onToggle props so it works with any context (useTranslation or useLang).
+ */
 'use client'
 
-import { useTranslation } from '@/i18n'
+interface LanguageSwitcherProps {
+    lang: string
+    onToggle: () => void
+}
 
-const LanguageSwitcher = () => {
-    const { language, setLanguage } = useTranslation()
-
-    const toggle = () => {
-        setLanguage(language === 'en' ? 'vi' : 'en')
-    }
-
+export default function LanguageSwitcher({ lang, onToggle }: LanguageSwitcherProps) {
     return (
         <button
-            onClick={toggle}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-sm text-gray-600 dark:text-slate-300 hover:border-[#38bdf8]/50 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer"
+            onClick={onToggle}
+            className="theme-btn flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm cursor-pointer"
             aria-label="Switch language"
         >
-            <span>{language === 'en' ? '🇬🇧' : '🇻🇳'}</span>
-            <span className="font-medium">{language === 'en' ? 'EN' : 'VN'}</span>
+            <span className={`transition-opacity duration-200 ${lang === 'vi' ? 'opacity-100' : 'opacity-50'}`}>
+                🇻🇳
+            </span>
+            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>/</span>
+            <span className={`transition-opacity duration-200 ${lang === 'en' ? 'opacity-100' : 'opacity-50'}`}>
+                🇬🇧
+            </span>
         </button>
     )
 }
-
-export default LanguageSwitcher
