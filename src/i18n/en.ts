@@ -3,7 +3,7 @@ const en = {
     'landing.heroGreeting': "Hello, I'm",
     'landing.heroName': 'Khuong',
     'landing.heroSub': 'Front-End Developer · 8+ Years · React Specialist',
-    'landing.viewProjects': 'View Projects',
+    'landing.viewProjects': 'Side Projects',
     'landing.heroSection': 'Hero Section',
     'landing.about': 'About Me',
     'landing.aboutText':
@@ -11,7 +11,7 @@ const en = {
     'landing.present': 'Present',
     'landing.skiller': 'Tech Lead',
     'landing.techStack': 'Tech Stack',
-    'landing.featuredProject': 'Featured Project: E-commerce App',
+    'landing.featuredProject': 'Featured Side Project: E-commerce App',
     'landing.liveDemo': 'Live Demo',
     'landing.adminPanel': 'Admin Panel',
     'landing.contact': 'Contact',

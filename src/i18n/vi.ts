@@ -5,7 +5,7 @@ const vi: Record<TranslationKeys, string> = {
     'landing.heroGreeting': 'Xin chào, tôi là',
     'landing.heroName': 'Khương',
     'landing.heroSub': 'Front-End Developer · 8+ Năm · React Specialist',
-    'landing.viewProjects': 'Xem dự án',
+    'landing.viewProjects': 'Xem dự án phụ',
     'landing.heroSection': 'Giới thiệu',
     'landing.about': 'Về tôi',
     'landing.aboutText':
@@ -13,7 +13,7 @@ const vi: Record<TranslationKeys, string> = {
     'landing.present': 'Hiện tại',
     'landing.skiller': 'Tech Lead',
     'landing.techStack': 'Công nghệ',
-    'landing.featuredProject': 'Dự án nổi bật: Ứng dụng E-commerce',
+    'landing.featuredProject': 'Dự án phụ nổi bật: Ứng dụng E-commerce',
     'landing.liveDemo': 'Xem demo',
     'landing.adminPanel': 'Trang quản trị',
     'landing.contact': 'Liên hệ',
