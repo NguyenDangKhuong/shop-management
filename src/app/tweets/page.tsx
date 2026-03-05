@@ -1,8 +1,5 @@
 import { Metadata } from 'next'
-import { TweetSearch } from './TweetSearch'
-import { GraphQLTimeline } from './GraphQLTimeline'
-import { HomeFeed } from './HomeFeed'
-import { BackToTop } from './BackToTop'
+import { TweetsClient } from './TweetsClient'
 
 export const metadata: Metadata = {
     title: 'X Tweets',
@@ -14,27 +11,7 @@ export const metadata: Metadata = {
 export default function TweetsPage() {
     return (
         <div className="bg-[#0a0a0a] text-slate-200 font-sans min-h-screen flex flex-col items-center px-0 py-4 md:p-8 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-900 via-[#0a0a0a] to-[#0a0a0a] relative">
-            {/* Title */}
-            <div className="w-full max-w-3xl mx-auto mb-8 z-10 px-4 md:px-0">
-                <div className="flex items-center gap-3 mb-2">
-                    <span className="text-3xl">𝕏</span>
-                    <h1 className="text-3xl md:text-4xl font-bold text-white">Tweets</h1>
-                </div>
-                <p className="text-slate-400">
-                    Paste link tweet từ X để xem trực tiếp trên trang.
-                </p>
-            </div>
-
-            {/* Home Feed — For You / Following tabs */}
-            <HomeFeed />
-
-            {/* GraphQL Tweets — Custom rendered with pagination */}
-            <GraphQLTimeline />
-
-            {/* Tweet Search + Dynamic Tweets (Embed) */}
-            <TweetSearch />
-
-            <BackToTop />
+            <TweetsClient />
 
             {/* Background */}
             <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
