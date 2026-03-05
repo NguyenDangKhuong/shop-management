@@ -176,6 +176,78 @@ query { user(id: 1) { name, email } }
                 </div>
                 <Callout type="warning">JWT in <InlineCode>localStorage</InlineCode> is vulnerable to XSS. Best practice: store JWT in <Highlight>httpOnly cookie</Highlight> or memory.</Callout>
             </TopicModal>
+
+            <TopicModal title="Browser Storage" emoji="💾" color="#ef4444" summary="localStorage, sessionStorage, cookies, IndexedDB — client-side data storage">
+                <Paragraph>Browsers provide multiple ways to store data on the client side. Each has <Highlight>specific use cases</Highlight> — choosing wrong can lead to bugs or security risks.</Paragraph>
+
+                <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-gray-200 dark:border-white/10"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-blue-400">localStorage</th><th className="text-left p-2 text-green-400">sessionStorage</th><th className="text-left p-2 text-yellow-400">Cookies</th><th className="text-left p-2 text-purple-400">IndexedDB</th></tr></thead>
+                        <tbody className="text-gray-600 dark:text-slate-300">
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Capacity</td><td className="p-2">~5-10 MB</td><td className="p-2">~5 MB</td><td className="p-2">~4 KB</td><td className="p-2">Hundreds of MB+</td></tr>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Expiration</td><td className="p-2">Never (persists)</td><td className="p-2">Tab close = gone</td><td className="p-2">Set expires/max-age</td><td className="p-2">Never (persists)</td></tr>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">Sent to server</td><td className="p-2">❌ No</td><td className="p-2">❌ No</td><td className="p-2">✅ Auto on every request</td><td className="p-2">❌ No</td></tr>
+                            <tr className="border-b border-gray-100 dark:border-white/5"><td className="p-2">API</td><td className="p-2">Sync (simple)</td><td className="p-2">Sync (simple)</td><td className="p-2">document.cookie</td><td className="p-2">Async (complex)</td></tr>
+                            <tr><td className="p-2">Use case</td><td className="p-2">User prefs, theme</td><td className="p-2">Form wizard, temp data</td><td className="p-2">Auth tokens, tracking</td><td className="p-2">Offline data, large datasets</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <CodeBlock title="localStorage & sessionStorage">{`// localStorage — persists across sessions
+localStorage.setItem('theme', 'dark')
+localStorage.getItem('theme')    // 'dark'
+localStorage.removeItem('theme')
+localStorage.clear()             // remove all
+
+// sessionStorage — only lives in current tab
+sessionStorage.setItem('step', '2')
+sessionStorage.getItem('step')   // '2'
+// Close tab → all gone!
+
+// Storing objects → must JSON.stringify
+localStorage.setItem('user', JSON.stringify({ name: 'An', age: 25 }))
+const user = JSON.parse(localStorage.getItem('user'))`}</CodeBlock>
+
+                <CodeBlock title="Cookies (document.cookie)">{`// Set cookie
+document.cookie = 'token=abc123; path=/; max-age=3600; Secure; SameSite=Strict'
+
+// Read cookies (returns string, must parse)
+document.cookie  // 'token=abc123; theme=dark'
+
+// Important cookie flags:
+// Secure     — only sent over HTTPS
+// HttpOnly   — JS can't read it (XSS protection!)
+// SameSite   — CSRF protection (Strict/Lax/None)
+// max-age    — time to live (seconds)
+// path=/     — applies to entire site`}</CodeBlock>
+
+                <CodeBlock title="IndexedDB (for large data)">{`// IndexedDB — NoSQL database in the browser
+const request = indexedDB.open('myDB', 1)
+
+request.onupgradeneeded = (e) => {
+  const db = e.target.result
+  db.createObjectStore('users', { keyPath: 'id' })
+}
+
+request.onsuccess = (e) => {
+  const db = e.target.result
+  const tx = db.transaction('users', 'readwrite')
+  tx.objectStore('users').add({ id: 1, name: 'An' })
+}
+
+// In practice: use wrappers like idb or Dexie.js
+// import { openDB } from 'idb'
+// const db = await openDB('myDB', 1)
+// await db.put('users', { id: 1, name: 'An' })`}</CodeBlock>
+
+                <Callout type="tip">🎯 <strong>Storage selection rules:</strong><br />
+                    • Auth tokens → <InlineCode>httpOnly cookie</InlineCode> (most secure)<br />
+                    • Theme/language → <InlineCode>localStorage</InlineCode> (persistent, small)<br />
+                    • Multi-step form → <InlineCode>sessionStorage</InlineCode> (lost on tab close)<br />
+                    • Offline/large cache → <InlineCode>IndexedDB</InlineCode> (structured data)</Callout>
+
+                <Callout type="warning"><InlineCode>localStorage</InlineCode> is <strong>synchronous</strong> — storing large data blocks the main thread. Use <InlineCode>IndexedDB</InlineCode> (async) for data &gt; 1MB.</Callout>
+            </TopicModal>
         </div>
 
         <Heading3>1.3 Git & Terminal (click for details)</Heading3>
