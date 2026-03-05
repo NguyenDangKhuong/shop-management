@@ -52,88 +52,91 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
                 }
             />
 
-            {/* Article */}
-            <article className="w-full max-w-3xl mx-auto z-10 mt-8">
-                {/* Article Header */}
-                <div className="mb-8">
-                    <div className="flex items-center gap-3 mb-4">
-                        <span className="text-4xl">{post.emoji}</span>
-                        <div className="flex flex-wrap gap-2">
-                            {post.tags.map((tag) => (
-                                <span
-                                    key={tag}
-                                    className="px-2.5 py-1 text-xs rounded-full border border-[var(--border-primary)] text-[var(--text-secondary)]"
-                                    style={{ backgroundColor: `${post.color}15` }}
+            {/* Content wrapper — px matches SiteHeader's outer padding */}
+            <div className="w-full px-4 md:px-8">
+                {/* Article */}
+                <article className="w-full max-w-3xl mx-auto z-10 mt-8">
+                    {/* Article Header */}
+                    <div className="mb-8">
+                        <div className="flex items-center gap-3 mb-4">
+                            <span className="text-4xl">{post.emoji}</span>
+                            <div className="flex flex-wrap gap-2">
+                                {post.tags.map((tag) => (
+                                    <span
+                                        key={tag}
+                                        className="px-2.5 py-1 text-xs rounded-full border border-[var(--border-primary)] text-[var(--text-secondary)]"
+                                        style={{ backgroundColor: `${post.color}15` }}
+                                    >
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] leading-tight mb-3">
+                            {t(post.title)}
+                        </h1>
+
+                        <p className="text-[var(--text-secondary)] text-lg leading-relaxed mb-4">
+                            {t(post.description)}
+                        </p>
+
+                        <div className="flex items-center gap-4 text-sm text-[var(--text-muted)]">
+                            <span>📅 {post.date}</span>
+                            <span>·</span>
+                            <span>{lang === 'vi' ? '☕ ~10 phút đọc' : '☕ ~10 min read'}</span>
+                        </div>
+
+                        {/* Gradient Divider */}
+                        <div
+                            className="h-0.5 w-full mt-6 rounded-full opacity-50"
+                            style={{ background: `linear-gradient(to right, ${post.color}, transparent)` }}
+                        />
+                    </div>
+
+                    {/* Article Content */}
+                    <div className="prose-custom">
+                        {post.content[lang]}
+                    </div>
+                </article>
+
+                {/* Related Posts */}
+                {relatedPosts.length > 0 && (
+                    <div className="w-full max-w-3xl mx-auto mt-16 z-10">
+                        <div
+                            className="h-px w-full mb-8 opacity-30"
+                            style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent)' }}
+                        />
+                        <h3 className="text-xl font-bold text-[var(--text-primary)] mb-6">
+                            {lang === 'vi' ? 'Bài viết khác' : 'Related posts'}
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {relatedPosts.map((related) => (
+                                <Link
+                                    key={related.slug}
+                                    href={`/blogs/${related.slug}`}
+                                    className="group rounded-xl bg-[var(--bg-card)] border border-[var(--border-primary)] p-5   transition-all duration-300 no-underline"
                                 >
-                                    {tag}
-                                </span>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span>{related.emoji}</span>
+                                        <span className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[#38bdf8] transition">
+                                            {t(related.title)}
+                                        </span>
+                                    </div>
+                                    <p className="text-xs text-[var(--text-secondary)] line-clamp-2">{t(related.description)}</p>
+                                </Link>
                             ))}
                         </div>
                     </div>
+                )}
 
-                    <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] leading-tight mb-3">
-                        {t(post.title)}
-                    </h1>
-
-                    <p className="text-[var(--text-secondary)] text-lg leading-relaxed mb-4">
-                        {t(post.description)}
+                {/* Footer */}
+                <footer className="w-full max-w-3xl mx-auto mt-16 pt-8 pb-6 border-t border-[var(--border-primary)] z-20 text-center">
+                    <p className="text-sm text-[var(--text-muted)]">
+                        Built with Next.js, TypeScript & MongoDB
                     </p>
-
-                    <div className="flex items-center gap-4 text-sm text-[var(--text-muted)]">
-                        <span>📅 {post.date}</span>
-                        <span>·</span>
-                        <span>{lang === 'vi' ? '☕ ~10 phút đọc' : '☕ ~10 min read'}</span>
-                    </div>
-
-                    {/* Gradient Divider */}
-                    <div
-                        className="h-0.5 w-full mt-6 rounded-full opacity-50"
-                        style={{ background: `linear-gradient(to right, ${post.color}, transparent)` }}
-                    />
-                </div>
-
-                {/* Article Content */}
-                <div className="prose-custom">
-                    {post.content[lang]}
-                </div>
-            </article>
-
-            {/* Related Posts */}
-            {relatedPosts.length > 0 && (
-                <div className="w-full max-w-3xl mx-auto mt-16 z-10">
-                    <div
-                        className="h-px w-full mb-8 opacity-30"
-                        style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent)' }}
-                    />
-                    <h3 className="text-xl font-bold text-[var(--text-primary)] mb-6">
-                        {lang === 'vi' ? 'Bài viết khác' : 'Related posts'}
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {relatedPosts.map((related) => (
-                            <Link
-                                key={related.slug}
-                                href={`/blogs/${related.slug}`}
-                                className="group rounded-xl bg-[var(--bg-card)] border border-[var(--border-primary)] p-5   transition-all duration-300 no-underline"
-                            >
-                                <div className="flex items-center gap-2 mb-2">
-                                    <span>{related.emoji}</span>
-                                    <span className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[#38bdf8] transition">
-                                        {t(related.title)}
-                                    </span>
-                                </div>
-                                <p className="text-xs text-[var(--text-secondary)] line-clamp-2">{t(related.description)}</p>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* Footer */}
-            <footer className="w-full max-w-3xl mx-auto mt-16 pt-8 pb-6 border-t border-[var(--border-primary)] z-20 text-center">
-                <p className="text-sm text-[var(--text-muted)]">
-                    Built with Next.js, TypeScript & MongoDB
-                </p>
-            </footer>
+                </footer>
+            </div> {/* end content wrapper */}
 
             {/* Back to Top */}
             <button

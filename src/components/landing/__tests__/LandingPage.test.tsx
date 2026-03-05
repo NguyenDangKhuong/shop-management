@@ -36,10 +36,9 @@ describe('LandingPage Component', () => {
         expect(screen.getAllByText(/taphoa/i).length).toBeGreaterThan(0)
     })
 
-    it('renders "View Projects" button', () => {
+    it('renders "Side Projects" button', () => {
         render(<LandingPage />)
-
-        const viewProjectsLink = screen.getByRole('link', { name: /view projects/i })
+        const viewProjectsLink = screen.getByRole('link', { name: /side projects/i })
         expect(viewProjectsLink).toBeInTheDocument()
         expect(viewProjectsLink).toHaveAttribute('href', '/projects')
     })
@@ -60,7 +59,7 @@ describe('LandingPage Component', () => {
     it('renders featured project section', () => {
         render(<LandingPage />)
 
-        expect(screen.getByText(/featured project: e-commerce app/i)).toBeInTheDocument()
+        expect(screen.getByText(/featured side project: e-commerce app/i)).toBeInTheDocument()
         expect(screen.getByRole('link', { name: /live demo/i })).toHaveAttribute('href', '/products')
         expect(screen.getByRole('link', { name: /admin panel/i })).toHaveAttribute('href', '/login')
     })
