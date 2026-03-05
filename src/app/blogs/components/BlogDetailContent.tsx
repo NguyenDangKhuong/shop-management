@@ -1,30 +1,19 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { BlogPost } from '../types'
 import { useLang } from './LangContext'
 import LangSwitcher from './LangSwitcher'
-import ThemeToggle from '@/components/ui/ThemeToggle'
+import SiteHeader from '@/components/ui/SiteHeader'
 
 export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; relatedPosts: BlogPost[] }) {
     const { t, lang } = useLang()
-    const [scrolled, setScrolled] = useState(false)
     const [showBackToTop, setShowBackToTop] = useState(false)
-    const progressRef = useRef<HTMLDivElement>(null)
 
-    // Track scroll for sticky header, back to top, and reading progress
+    // Track scroll for back to top button
     useEffect(() => {
-        const onScroll = () => {
-            setScrolled(window.scrollY > 60)
-            setShowBackToTop(window.scrollY > 400)
-            // Update progress bar directly via DOM (no re-render, GPU-accelerated)
-            if (progressRef.current) {
-                const docHeight = document.documentElement.scrollHeight - window.innerHeight
-                const pct = docHeight > 0 ? Math.min(window.scrollY / docHeight, 1) : 0
-                progressRef.current.style.transform = `scaleX(${pct})`
-            }
-        }
+        const onScroll = () => setShowBackToTop(window.scrollY > 400)
         window.addEventListener('scroll', onScroll, { passive: true })
         return () => window.removeEventListener('scroll', onScroll)
     }, [])
@@ -37,7 +26,6 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
     useEffect(() => {
         const hash = window.location.hash.slice(1)
         if (hash) {
-            // Small delay to allow content to render
             const timer = setTimeout(() => {
                 const el = document.getElementById(hash)
                 if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -48,67 +36,21 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
 
     return (
         <div className="bg-gray-50 dark:bg-[#0a0a0a] text-gray-800 dark:text-slate-200 font-sans min-h-screen flex flex-col items-center bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-gray-100 dark:from-slate-900 via-gray-50 dark:via-[#0a0a0a] to-gray-50 dark:to-[#0a0a0a] relative transition-colors duration-300">
-            {/* Reading Progress Bar — GPU-accelerated via scaleX transform */}
-            <div className="fixed top-0 left-0 w-full h-[3px] z-[60] bg-transparent">
-                <div
-                    ref={progressRef}
-                    className="h-full w-full origin-left bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 will-change-transform"
-                    style={{ transform: 'scaleX(0)' }}
-                />
-            </div>
-
-            {/* Sticky Header */}
-            <header className={`w-full sticky top-0 z-50 border-b transition-[padding,background-color,border-color,box-shadow] duration-300 ${scrolled
-                ? 'bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-xl border-gray-200/50 dark:border-white/5 py-2 shadow-[0_1px_3px_rgba(0,0,0,0.05)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)]'
-                : 'bg-transparent border-transparent py-4 md:py-6'
-                }`}>
-                <div className={`max-w-3xl mx-auto px-4 md:px-8 transition-all duration-300`}>
-                    {/* Mobile */}
-                    <div className="flex md:hidden items-center w-full">
+            <SiteHeader
+                maxWidth="max-w-3xl"
+                showProgress
+                rightSlot={
+                    <>
+                        <LangSwitcher />
                         <Link
                             href="/blogs"
-                            className="text-sm text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white transition"
+                            className="text-sm text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white transition flex items-center gap-1"
                         >
-                            ←
+                            {lang === 'vi' ? '← Tất cả bài viết' : '← All posts'}
                         </Link>
-                        <div className="flex-1 flex justify-center">
-                            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
-                                <div className={`rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg transition-all duration-300 ${scrolled ? 'w-6 h-6 text-xs' : 'w-8 h-8 text-sm'}`}>
-                                    Y
-                                </div>
-                                <span className={`font-bold tracking-tight text-gray-900 dark:text-white transition-all duration-300 ${scrolled ? 'text-base' : 'text-xl'}`}>
-                                    The<span className="text-[#38bdf8]">TapHoa</span>
-                                </span>
-                            </Link>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <ThemeToggle />
-                            <LangSwitcher />
-                        </div>
-                    </div>
-                    {/* Desktop */}
-                    <div className="hidden md:flex justify-between items-center w-full">
-                        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
-                            <div className={`rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg transition-all duration-300 ${scrolled ? 'w-6 h-6 text-xs' : 'w-8 h-8 text-sm'}`}>
-                                Y
-                            </div>
-                            <span className={`font-bold tracking-tight text-gray-900 dark:text-white transition-all duration-300 ${scrolled ? 'text-base' : 'text-xl'}`}>
-                                The<span className="text-[#38bdf8]">TapHoa</span>
-                            </span>
-                        </Link>
-                        <div className="flex items-center gap-3">
-                            <ThemeToggle />
-                            <LangSwitcher />
-                            <Link
-                                href="/blogs"
-                                className="text-sm text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white transition flex items-center gap-1"
-                            >
-                                {lang === 'vi' ? '← Tất cả bài viết' : '← All posts'}
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </header>
+                    </>
+                }
+            />
 
             {/* Article */}
             <article className="w-full max-w-3xl mx-auto z-10 px-4 md:px-8 mt-8">

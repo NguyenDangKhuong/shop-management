@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { BlogPost } from '../types'
 import { useLang } from './LangContext'
 import LangSwitcher from './LangSwitcher'
-import ThemeToggle from '@/components/ui/ThemeToggle'
+import SiteHeader from '@/components/ui/SiteHeader'
 import { blogSections } from '../posts/sections'
 
 interface SearchResult {
@@ -26,22 +26,22 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
     // Build flat list of search results: posts + matching sections
     const results: SearchResult[] = search.trim()
         ? posts.reduce<SearchResult[]>((acc, post) => {
-              const q = search.toLowerCase()
-              const titleMatch = t(post.title).toLowerCase().includes(q)
-              const descMatch = t(post.description).toLowerCase().includes(q)
-              const tagMatch = post.tags.some((tag) => tag.toLowerCase().includes(q))
+            const q = search.toLowerCase()
+            const titleMatch = t(post.title).toLowerCase().includes(q)
+            const descMatch = t(post.description).toLowerCase().includes(q)
+            const tagMatch = post.tags.some((tag) => tag.toLowerCase().includes(q))
 
-              // Check section matches
-              const sections = blogSections[post.slug] || []
-              const matchedSections = sections
-                  .filter((s) => s.title[lang].toLowerCase().includes(q))
-                  .map((s) => ({ id: s.id, title: s.title[lang] }))
+            // Check section matches
+            const sections = blogSections[post.slug] || []
+            const matchedSections = sections
+                .filter((s) => s.title[lang].toLowerCase().includes(q))
+                .map((s) => ({ id: s.id, title: s.title[lang] }))
 
-              if (titleMatch || descMatch || tagMatch || matchedSections.length > 0) {
-                  acc.push({ post, matchedSections })
-              }
-              return acc
-          }, [])
+            if (titleMatch || descMatch || tagMatch || matchedSections.length > 0) {
+                acc.push({ post, matchedSections })
+            }
+            return acc
+        }, [])
         : []
 
     // Build flat navigation list for keyboard: each entry is either a post or a section
@@ -93,44 +93,11 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
     }
 
     return (
-        <div className="bg-gray-50 dark:bg-[#0a0a0a] text-gray-800 dark:text-slate-200 font-sans min-h-screen flex flex-col items-center p-4 md:p-8 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-gray-100 dark:from-slate-900 via-gray-50 dark:via-[#0a0a0a] to-gray-50 dark:to-[#0a0a0a] relative transition-colors duration-300">
-            {/* Header */}
-            <header className="w-full max-w-4xl mx-auto flex items-center mb-12 z-20">
-                {/* Mobile: back+lang left, logo center */}
-                <div className="flex md:hidden items-center w-full">
-                    <Link
-                        href="/"
-                        className="text-sm text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white transition"
-                    >
-                        ←
-                    </Link>
-                    <div className="flex-1 flex justify-center">
-                        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg">
-                                Y
-                            </div>
-                            <span className="font-bold text-xl tracking-tight text-gray-900 dark:text-white">
-                                The<span className="text-[#38bdf8]">TapHoa</span>
-                            </span>
-                        </Link>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <ThemeToggle />
-                        <LangSwitcher />
-                    </div>
-                </div>
-                {/* Desktop: logo left, buttons right */}
-                <div className="hidden md:flex justify-between items-center w-full">
-                    <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg">
-                            Y
-                        </div>
-                        <span className="font-bold text-xl tracking-tight text-gray-900 dark:text-white">
-                            The<span className="text-[#38bdf8]">TapHoa</span>
-                        </span>
-                    </Link>
-                    <div className="flex items-center gap-3">
-                        <ThemeToggle />
+        <div className="bg-gray-50 dark:bg-[#0a0a0a] text-gray-800 dark:text-slate-200 font-sans min-h-screen flex flex-col items-center bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-gray-100 dark:from-slate-900 via-gray-50 dark:via-[#0a0a0a] to-gray-50 dark:to-[#0a0a0a] relative transition-colors duration-300">
+            <SiteHeader
+                maxWidth="max-w-4xl"
+                rightSlot={
+                    <>
                         <LangSwitcher />
                         <Link
                             href="/"
@@ -138,9 +105,9 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                         >
                             ← Back
                         </Link>
-                    </div>
-                </div>
-            </header>
+                    </>
+                }
+            />
 
             {/* Title */}
             <div className="w-full max-w-4xl mx-auto mb-6 z-10">
@@ -209,11 +176,10 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                                             <button
                                                 onClick={() => handleNavigate(result.post.slug)}
                                                 onMouseEnter={() => setActiveIndex(postNavIdx)}
-                                                className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors duration-100 ${
-                                                    postNavIdx === activeIndex
-                                                        ? 'bg-[#38bdf8]/10 dark:bg-[#38bdf8]/15'
-                                                        : 'hover:bg-gray-50 dark:hover:bg-slate-700/40'
-                                                } ${rIdx > 0 ? 'border-t border-gray-100 dark:border-white/5' : ''}`}
+                                                className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors duration-100 ${postNavIdx === activeIndex
+                                                    ? 'bg-[#38bdf8]/10 dark:bg-[#38bdf8]/15'
+                                                    : 'hover:bg-gray-50 dark:hover:bg-slate-700/40'
+                                                    } ${rIdx > 0 ? 'border-t border-gray-100 dark:border-white/5' : ''}`}
                                             >
                                                 <span className="text-xl shrink-0">{result.post.emoji}</span>
                                                 <div className="min-w-0 flex-1">
@@ -236,11 +202,10 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                                                         key={section.id}
                                                         onClick={() => handleNavigate(result.post.slug, section.id)}
                                                         onMouseEnter={() => setActiveIndex(secNavIdx)}
-                                                        className={`w-full text-left pl-12 pr-4 py-2 flex items-center gap-2.5 transition-colors duration-100 ${
-                                                            secNavIdx === activeIndex
-                                                                ? 'bg-[#38bdf8]/10 dark:bg-[#38bdf8]/15'
-                                                                : 'hover:bg-gray-50 dark:hover:bg-slate-700/40'
-                                                        }`}
+                                                        className={`w-full text-left pl-12 pr-4 py-2 flex items-center gap-2.5 transition-colors duration-100 ${secNavIdx === activeIndex
+                                                            ? 'bg-[#38bdf8]/10 dark:bg-[#38bdf8]/15'
+                                                            : 'hover:bg-gray-50 dark:hover:bg-slate-700/40'
+                                                            }`}
                                                     >
                                                         <span className="text-xs text-[#38bdf8] dark:text-[#38bdf8] shrink-0">§</span>
                                                         <span className="text-xs text-gray-600 dark:text-slate-400 truncate">{section.title}</span>
