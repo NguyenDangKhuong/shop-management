@@ -479,7 +479,7 @@ console.log('4'); // Call Stack
 
 // Output: 1 → 4 → 3 → 2`}</CodeBlock>
                 <Callout type="tip">Đây là câu hỏi phỏng vấn #1 về JS. Luôn nhớ: <Highlight>Sync → Microtask → Macrotask</Highlight>.</Callout>
-                <a href="/blogs/event-loop" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/event-loop" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Async/Await & Promises" emoji="⚡" color="#fbbf24" summary="Promise là gì, 3 trạng thái, Promise.all/race/allSettled, async/await, error handling">
@@ -703,7 +703,7 @@ const result = await Promise.race([
 
                 <Callout type="warning">Luôn dùng <InlineCode>try/catch</InlineCode> với async/await. Unhandled Promise rejection sẽ crash Node.js process!</Callout>
                 <Callout type="tip">Interview tip: Giải thích được sự khác nhau giữa <InlineCode>Promise.all</InlineCode> vs <InlineCode>Promise.allSettled</InlineCode> và khi nào dùng cái nào — câu hỏi rất phổ biến.</Callout>
-                <a href="/blogs/callback-promise-async-await" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/callback-promise-async-await" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="ES6+ Features" emoji="✨" color="#38bdf8" summary="destructuring, spread, modules, optional chaining, nullish coalescing">
@@ -723,7 +723,7 @@ const result = await Promise.race([
                         </div>
                     ))}
                 </div>
-                <a href="/blogs/ecmascript-features" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/ecmascript-features" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== vs ===, truthy/falsy, implicit conversion traps">
@@ -857,12 +857,12 @@ console.log(obj1.name) // 'Changed' — bị ảnh hưởng!
 let obj3 = { ...obj1 }  // spread operator
 let obj4 = Object.assign({}, obj1)`}</CodeBlock>
                 <Callout type="tip">Interview tip: Giải thích được <Highlight>typeof null === &apos;object&apos;</Highlight> là bug lịch sử, và sự khác biệt giữa <InlineCode>==</InlineCode> vs <InlineCode>===</InlineCode> khi so sánh types sẽ ghi điểm lớn.</Callout>
-                <a href="/blogs/data-types-structures" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/data-types-structures" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
         </div>
 
         <Heading3>2.2 Implement từ scratch (click xem code mẫu)</Heading3>
-        <a href="/blogs/js-common-functions" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem tổng hợp JS Common Functions →</a>
+        <a href="/blogs/js-common-functions" target="_blank" rel="noopener noreferrer" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem tổng hợp JS Common Functions →</a>
         <div className="my-4 space-y-2">
             <TopicModal title="Array.map / filter / reduce" emoji="💻" color="#fbbf24" summary="Implement lại 3 higher-order functions phổ biến nhất của Array">
                 <CodeBlock title="myMap">{`Array.prototype.myMap = function(callback) {
@@ -1305,7 +1305,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                     ))}
                 </div>
                 <Callout type="warning"><strong>Rules of Hooks:</strong> 1) Chỉ gọi ở top level (không trong if/for/nested function) 2) Chỉ gọi trong React components hoặc custom hooks.</Callout>
-                <a href="/blogs/react-hooks-chi-tiet" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/react-hooks-chi-tiet" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Component Patterns" emoji="🧩" color="#61DAFB" summary="HOC, Render Props, Compound, Controlled/Uncontrolled — khi nào dùng pattern nào">
@@ -1354,7 +1354,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
 // 5. Virtualization — chỉ render visible items
 // react-window, react-virtuoso cho danh sách 10k+ items`}</CodeBlock>
                 <Callout type="warning">Đừng premature optimize! Chỉ optimize khi React DevTools Profiler chỉ ra bottleneck thật sự.</Callout>
-                <a href="/blogs/react-performance" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/react-performance" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
         </div>
 
@@ -1433,7 +1433,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     </table>
                 </div>
                 <Callout type="tip">Tools đo: <strong>Lighthouse</strong> (Chrome DevTools), <strong>web.dev/measure</strong>, <strong>PageSpeed Insights</strong>.</Callout>
-                <a href="/blogs/core-web-vitals" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/core-web-vitals" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
         </div>
 
@@ -1452,7 +1452,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
         </Paragraph>
 
         <Heading3>4.1 Data Structures (click để xem chi tiết)</Heading3>
-        <a href="/blogs/data-types-structures" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết Data Types &amp; Structures →</a>
+        <a href="/blogs/data-types-structures" target="_blank" rel="noopener noreferrer" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết Data Types &amp; Structures →</a>
         <div className="my-4 space-y-2">
             <TopicModal title="Array / String" emoji="📦" color="#4ade80" summary="⭐ Bắt buộc — nền tảng của mọi bài DSA, two pointers, sliding window">
                 <Paragraph><Highlight>Array</Highlight> lưu phần tử liền kề trong bộ nhớ → truy cập O(1) bằng index. <Highlight>String</Highlight> trong JS là immutable — mỗi lần thay đổi tạo string mới.</Paragraph>
@@ -1504,7 +1504,7 @@ for (let i = 0; i < nums.length; i++) {
     map.set(nums[i], i)
 }`}</CodeBlock>
                 <Callout type="tip">Nếu brute force là O(n²), hãy nghĩ đến HashMap — thường giảm xuống <Highlight>O(n)</Highlight>.</Callout>
-                <a href="/blogs/hash-map-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/hash-map-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Stack / Queue" emoji="📚" color="#4ade80" summary="⭐ Bắt buộc — valid parentheses, BFS, monotonic stack">
@@ -1541,7 +1541,7 @@ queue.shift()    // 1, queue = [2]
 
 // ⚠️ Queue O(1): dùng Linked List hoặc obj+pointer`}</CodeBlock>
                 <Callout type="warning">JS Array <InlineCode>shift()</InlineCode> là <Highlight>O(n)</Highlight>! Interview nếu cần optimal queue, dùng Linked List-based queue.</Callout>
-                <a href="/blogs/stack-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/stack-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Linked List" emoji="🔗" color="#60a5fa" summary="⭐⭐ Quan trọng — reverse, cycle detect, merge sorted lists">
@@ -1612,7 +1612,7 @@ function levelOrder(root) {
     return result
 }`}</CodeBlock>
                 <Callout type="tip">Phần lớn bài tree dùng <Highlight>đệ quy</Highlight>. Base case: <InlineCode>if (!root) return</InlineCode>. Think: &quot;biết left+right → tính root thế nào?&quot;</Callout>
-                <a href="/blogs/bfs-dfs-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài BFS/DFS chi tiết →</a>
+                <a href="/blogs/bfs-dfs-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài BFS/DFS chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Graph" emoji="🕸️" color="#60a5fa" summary="⭐⭐ Quan trọng — BFS/DFS, cycle detection, topological sort">
@@ -1736,7 +1736,7 @@ for (const s of strs) {
                     ))}
                 </div>
                 <Callout type="tip">Khi thấy bài yêu cầu &quot;tìm trong O(n)&quot; hoặc &quot;count frequency&quot; → nghĩ ngay HashMap. Đây là pattern <Highlight>nền tảng nhất</Highlight> — hầu hết patterns khác đều kết hợp với HashMap.</Callout>
-                <a href="/blogs/hash-map-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/hash-map-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Two Pointers" emoji="👉👈" color="#4ade80" summary="~15 bài — dùng 2 con trỏ di chuyển trên sorted array hoặc linked list">
@@ -1774,7 +1774,7 @@ while (l < r) {
                     ))}
                 </div>
                 <Callout type="tip">2 dạng chính: <Highlight>Opposite ends</Highlight> (sorted, tìm pair) và <Highlight>Same direction</Highlight> (fast/slow, remove duplicates). Luôn nghĩ: &quot;Phần tử nào tôi có thể loại bỏ?&quot;</Callout>
-                <a href="/blogs/two-pointers-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/two-pointers-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Sliding Window" emoji="🪟" color="#4ade80" summary="~10 bài — tìm substring/subarray tối ưu với fixed hoặc variable window">
@@ -1821,7 +1821,7 @@ for (let l = 0, r = 0; r < nums.length; r++) {
                     ))}
                 </div>
                 <Callout type="tip">2 dạng: <Highlight>Fixed window</Highlight> (size k cố định) và <Highlight>Variable window</Highlight> (expand right, shrink left khi invalid). Thường kết hợp HashMap track frequency.</Callout>
-                <a href="/blogs/sliding-window-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/sliding-window-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="BFS / DFS" emoji="🌲" color="#4ade80" summary="~20 bài — duyệt đồ thị và cây, quan trọng nhất cho Frontend (DOM tree!)">
@@ -1870,7 +1870,7 @@ function sink(grid, i, j) {
                     ))}
                 </div>
                 <Callout type="tip"><strong>BFS</strong> = Queue (level order, shortest path). <strong>DFS</strong> = Recursion (tree, backtrack). Grid problems: DFS + mark visited. FE interview thích DFS vì liên quan DOM.</Callout>
-                <a href="/blogs/bfs-dfs-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/bfs-dfs-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Binary Search" emoji="🔍" color="#4ade80" summary="~10 bài — O(log n) search, không chỉ trên sorted array">
@@ -1916,7 +1916,7 @@ function minEatingSpeed(piles, h) {
                     ))}
                 </div>
                 <Callout type="tip">3 dạng: <Highlight>Classic</Highlight> (tìm exact), <Highlight>Bisect left/right</Highlight> (tìm boundary), <Highlight>Search on answer</Highlight> (binary search trên kết quả). Khi thấy O(log n) → nghĩ Binary Search.</Callout>
-                <a href="/blogs/binary-search-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/binary-search-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Dynamic Programming" emoji="📊" color="#4ade80" summary="~15 bài Easy-Medium — phần khó nhất nhưng có pattern rõ ràng">
@@ -1966,7 +1966,7 @@ function lengthOfLIS(nums) {
                     ))}
                 </div>
                 <Callout type="tip">4 dạng DP phổ biến: <Highlight>1D linear</Highlight> (Climbing Stairs), <Highlight>Chọn/không chọn</Highlight> (House Robber), <Highlight>Knapsack</Highlight> (Coin Change), <Highlight>Subsequence</Highlight> (LIS). Bắt đầu từ 1D DP trước.</Callout>
-                <a href="/blogs/dynamic-programming-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/dynamic-programming-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Backtracking" emoji="🔙" color="#4ade80" summary="~10 bài — generate all combinations, permutations, subsets">
@@ -2082,7 +2082,7 @@ function decodeString(s) {
                     ))}
                 </div>
                 <Callout type="tip">3 dạng: <Highlight>Matching</Highlight> (brackets, tags), <Highlight>Monotonic stack</Highlight> (next greater/smaller element), <Highlight>Expression eval</Highlight> (decode, RPN). Trick: khi push mới mà &gt; top → pop và xử lý.</Callout>
-                <a href="/blogs/stack-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                <a href="/blogs/stack-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
         </div>
 

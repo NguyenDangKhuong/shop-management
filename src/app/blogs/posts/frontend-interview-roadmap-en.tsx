@@ -476,7 +476,7 @@ console.log('4'); // Call Stack
 
 // Output: 1 → 4 → 3 → 2`}</CodeBlock>
                 <Callout type="tip">This is the #1 JS interview question. Always remember: <Highlight>Sync → Microtask → Macrotask</Highlight>.</Callout>
-                <a href="/blogs/event-loop" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/event-loop" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Async/Await & Promises" emoji="⚡" color="#fbbf24" summary="What is a Promise, 3 states, Promise.all/race/allSettled, async/await, error handling">
@@ -700,7 +700,7 @@ const result = await Promise.race([
 
                 <Callout type="warning">Always use <InlineCode>try/catch</InlineCode> with async/await. Unhandled Promise rejections will crash the Node.js process!</Callout>
                 <Callout type="tip">Interview tip: Being able to explain the difference between <InlineCode>Promise.all</InlineCode> vs <InlineCode>Promise.allSettled</InlineCode> and when to use each — very common question.</Callout>
-                <a href="/blogs/callback-promise-async-await" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/callback-promise-async-await" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="ES6+ Features" emoji="✨" color="#38bdf8" summary="destructuring, spread, modules, optional chaining, nullish coalescing">
@@ -720,7 +720,7 @@ const result = await Promise.race([
                         </div>
                     ))}
                 </div>
-                <a href="/blogs/ecmascript-features" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/ecmascript-features" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== vs ===, truthy/falsy, implicit conversion traps">
@@ -854,12 +854,12 @@ console.log(obj1.name) // 'Changed' — affected!
 let obj3 = { ...obj1 }  // spread operator
 let obj4 = Object.assign({}, obj1)`}</CodeBlock>
                 <Callout type="tip">Interview tip: Explaining that <Highlight>typeof null === &apos;object&apos;</Highlight> is a historical bug, and the difference between <InlineCode>==</InlineCode> vs <InlineCode>===</InlineCode> when comparing types, will score big points.</Callout>
-                <a href="/blogs/data-types-structures" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 See detailed article →</a>
+                <a href="/blogs/data-types-structures" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 See detailed article →</a>
             </TopicModal>
         </div>
 
         <Heading3>2.2 Implement from Scratch (click for sample code)</Heading3>
-        <a href="/blogs/js-common-functions" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 See JS Common Functions collection →</a>
+        <a href="/blogs/js-common-functions" target="_blank" rel="noopener noreferrer" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 See JS Common Functions collection →</a>
         <div className="my-4 space-y-2">
             <TopicModal title="Array.map / filter / reduce" emoji="💻" color="#fbbf24" summary="Re-implement the 3 most popular Array higher-order functions">
                 <CodeBlock title="myMap">{`Array.prototype.myMap = function(callback) {
@@ -1302,7 +1302,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                     ))}
                 </div>
                 <Callout type="warning"><strong>Rules of Hooks:</strong> 1) Only call at top level (not inside if/for/nested functions) 2) Only call in React components or custom hooks.</Callout>
-                <a href="/blogs/react-hooks-chi-tiet" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/react-hooks-chi-tiet" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Component Patterns" emoji="🧩" color="#61DAFB" summary="HOC, Render Props, Compound, Controlled/Uncontrolled — when to use which">
@@ -1351,7 +1351,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
 // 5. Virtualization — only render visible items
 // react-window, react-virtuoso for lists with 10k+ items`}</CodeBlock>
                 <Callout type="warning">Don&apos;t premature optimize! Only optimize when React DevTools Profiler shows a real bottleneck.</Callout>
-                <a href="/blogs/react-performance" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/react-performance" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
         </div>
 
@@ -1430,7 +1430,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
                     </table>
                 </div>
                 <Callout type="tip">Tools: <strong>Lighthouse</strong> (Chrome DevTools), <strong>web.dev/measure</strong>, <strong>PageSpeed Insights</strong>.</Callout>
-                <a href="/blogs/core-web-vitals" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/core-web-vitals" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
         </div>
 
@@ -1449,7 +1449,7 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
         </Paragraph>
 
         <Heading3>4.1 Data Structures (click for details)</Heading3>
-        <a href="/blogs/data-types-structures" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read Data Types &amp; Structures article →</a>
+        <a href="/blogs/data-types-structures" target="_blank" rel="noopener noreferrer" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read Data Types &amp; Structures article →</a>
         <div className="my-4 space-y-2">
             <TopicModal title="Array / String" emoji="📦" color="#4ade80" summary="⭐ Must know — foundation of all DSA problems, two pointers, sliding window">
                 <Paragraph><Highlight>Array</Highlight> stores elements contiguously in memory → O(1) access by index. <Highlight>String</Highlight> in JS is immutable — each change creates a new string.</Paragraph>
@@ -1501,7 +1501,7 @@ for (let i = 0; i < nums.length; i++) {
     map.set(nums[i], i)
 }`}</CodeBlock>
                 <Callout type="tip">If brute force is O(n²), think HashMap — usually reduces to <Highlight>O(n)</Highlight>.</Callout>
-                <a href="/blogs/hash-map-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/hash-map-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Stack / Queue" emoji="📚" color="#4ade80" summary="⭐ Must know — valid parentheses, BFS, monotonic stack">
@@ -1538,7 +1538,7 @@ queue.shift()    // 1, queue = [2]
 
 // ⚠️ O(1) queue: use Linked List or obj+pointer`}</CodeBlock>
                 <Callout type="warning">JS Array <InlineCode>shift()</InlineCode> is <Highlight>O(n)</Highlight>! In interviews, mention Linked List-based queue for optimal performance.</Callout>
-                <a href="/blogs/stack-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/stack-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Linked List" emoji="🔗" color="#60a5fa" summary="⭐⭐ Important — reverse, cycle detect, merge sorted lists">
@@ -1609,7 +1609,7 @@ function levelOrder(root) {
     return result
 }`}</CodeBlock>
                 <Callout type="tip">Most tree problems use <Highlight>recursion</Highlight>. Base case: <InlineCode>if (!root) return</InlineCode>. Think: &quot;if I know left+right results, how do I compute root?&quot;</Callout>
-                <a href="/blogs/bfs-dfs-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read BFS/DFS article →</a>
+                <a href="/blogs/bfs-dfs-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read BFS/DFS article →</a>
             </TopicModal>
 
             <TopicModal title="Graph" emoji="🕸️" color="#60a5fa" summary="⭐⭐ Important — BFS/DFS, cycle detection, topological sort">
@@ -1733,7 +1733,7 @@ for (const s of strs) {
                     ))}
                 </div>
                 <Callout type="tip">When a problem requires &quot;find in O(n)&quot; or &quot;count frequency&quot; → think HashMap. This is the <Highlight>most fundamental pattern</Highlight> — most other patterns combine with HashMap.</Callout>
-                <a href="/blogs/hash-map-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/hash-map-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Two Pointers" emoji="👉👈" color="#4ade80" summary="~15 problems — use 2 pointers moving on sorted array or linked list">
@@ -1771,7 +1771,7 @@ while (l < r) {
                     ))}
                 </div>
                 <Callout type="tip">2 main types: <Highlight>Opposite ends</Highlight> (sorted, find pair) and <Highlight>Same direction</Highlight> (fast/slow, remove duplicates). Think: &quot;Which element can I eliminate?&quot;</Callout>
-                <a href="/blogs/two-pointers-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/two-pointers-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Sliding Window" emoji="🪟" color="#4ade80" summary="~10 problems — find optimal substring/subarray with fixed or variable window">
@@ -1818,7 +1818,7 @@ for (let l = 0, r = 0; r < nums.length; r++) {
                     ))}
                 </div>
                 <Callout type="tip">2 types: <Highlight>Fixed window</Highlight> (size k) and <Highlight>Variable window</Highlight> (expand right, shrink left when invalid). Often combined with HashMap for frequency tracking.</Callout>
-                <a href="/blogs/sliding-window-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/sliding-window-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="BFS / DFS" emoji="🌲" color="#4ade80" summary="~20 problems — graph and tree traversal, most important for Frontend (DOM tree!)">
@@ -1867,7 +1867,7 @@ function sink(grid, i, j) {
                     ))}
                 </div>
                 <Callout type="tip"><strong>BFS</strong> = Queue (level order, shortest path). <strong>DFS</strong> = Recursion (tree, backtrack). Grid: DFS + mark visited. FE interviews prefer DFS — relates to DOM.</Callout>
-                <a href="/blogs/bfs-dfs-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/bfs-dfs-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Binary Search" emoji="🔍" color="#4ade80" summary="~10 problems — O(log n) search, not just on sorted arrays">
@@ -1913,7 +1913,7 @@ function minEatingSpeed(piles, h) {
                     ))}
                 </div>
                 <Callout type="tip">3 types: <Highlight>Classic</Highlight> (find exact), <Highlight>Bisect left/right</Highlight> (find boundary), <Highlight>Search on answer</Highlight> (binary search on result). When you see O(log n) → think Binary Search.</Callout>
-                <a href="/blogs/binary-search-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/binary-search-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Dynamic Programming" emoji="📊" color="#4ade80" summary="~15 Easy-Medium problems — hardest part but has clear patterns">
@@ -1963,7 +1963,7 @@ function lengthOfLIS(nums) {
                     ))}
                 </div>
                 <Callout type="tip">4 common DP types: <Highlight>1D linear</Highlight> (Climbing Stairs), <Highlight>Take/Skip</Highlight> (House Robber), <Highlight>Knapsack</Highlight> (Coin Change), <Highlight>Subsequence</Highlight> (LIS). Start with 1D DP first.</Callout>
-                <a href="/blogs/dynamic-programming-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/dynamic-programming-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Backtracking" emoji="🔙" color="#4ade80" summary="~10 problems — generate all combinations, permutations, subsets">
@@ -2079,7 +2079,7 @@ function decodeString(s) {
                     ))}
                 </div>
                 <Callout type="tip">3 types: <Highlight>Matching</Highlight> (brackets, tags), <Highlight>Monotonic stack</Highlight> (next greater/smaller), <Highlight>Expression eval</Highlight> (decode, RPN). Trick: when pushing new &gt; top → pop and process.</Callout>
-                <a href="/blogs/stack-pattern" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                <a href="/blogs/stack-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
         </div>
 
