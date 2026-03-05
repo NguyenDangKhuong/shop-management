@@ -120,13 +120,19 @@ export async function POST(request: NextRequest) {
         const data = text ? JSON.parse(text) : null
         console.log(`Repost ${tweetId}: ${res.status}`, data ? JSON.stringify(data).slice(0, 200) : '(empty)')
 
+        // Check for "already retweeted" error — X may return this with HTTP 200 OR 403
+        const errMsg = data?.errors?.[0]?.message || ''
+        const errCode = data?.errors?.[0]?.code
+        if (errCode === 327 || errMsg.includes('already retweeted')) {
+            return NextResponse.json({ success: true, data: { alreadyReposted: true } })
+        }
+
         if (!res.ok) {
-            const msg = data?.errors?.[0]?.message || ''
-            // 403 = already retweeted → treat as success (idempotent)
-            if (res.status === 403 || msg.includes('already retweeted')) {
-                return NextResponse.json({ success: true, data: { alreadyReposted: true } })
+            // 404 often means queryId has changed — include helpful debug info
+            if (res.status === 404) {
+                console.error(`Repost 404 — queryId "${CREATE_RETWEET_QID}" may be outdated. Check DevTools → Network → CreateRetweet`)
             }
-            return NextResponse.json({ error: msg || `Twitter returned ${res.status}` }, { status: res.status })
+            return NextResponse.json({ error: errMsg || `Twitter returned ${res.status}` }, { status: res.status })
         }
 
         return NextResponse.json({ success: true, data })
