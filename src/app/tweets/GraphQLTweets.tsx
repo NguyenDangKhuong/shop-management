@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, useRef } from 'react'
 
-interface TweetMedia {
+export interface TweetMedia {
     type: 'photo' | 'video' | 'animated_gif'
     url: string
     width: number
@@ -10,7 +10,7 @@ interface TweetMedia {
     videoUrl?: string
 }
 
-interface TweetData {
+export interface TweetData {
     id: string
     text: string
     createdAt: string
@@ -32,13 +32,13 @@ interface TweetData {
     quotedTweet?: TweetData
 }
 
-function formatCount(n: number): string {
+export function formatCount(n: number): string {
     if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M'
     if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K'
     return n.toString()
 }
 
-function timeAgo(dateStr: string): string {
+export function timeAgo(dateStr: string): string {
     const date = new Date(dateStr)
     const now = new Date()
     const diff = Math.floor((now.getTime() - date.getTime()) / 1000)
@@ -50,7 +50,7 @@ function timeAgo(dateStr: string): string {
 }
 
 /** Replace t.co URLs with display URLs and linkify @mentions and #hashtags */
-function formatTweetText(text: string): string {
+export function formatTweetText(text: string): string {
     // Remove t.co media URLs at the end
     let cleaned = text.replace(/https:\/\/t\.co\/\w+$/g, '').trim()
     // Linkify remaining URLs
@@ -71,7 +71,7 @@ function formatTweetText(text: string): string {
     return cleaned
 }
 
-function ImagePreview({ src, onClose }: { src: string; onClose: () => void }) {
+export function ImagePreview({ src, onClose }: { src: string; onClose: () => void }) {
     const overlayRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -105,7 +105,7 @@ function ImagePreview({ src, onClose }: { src: string; onClose: () => void }) {
     )
 }
 
-function MediaGrid({ media, videoProxyUrl, onImageClick }: { media: TweetMedia[]; videoProxyUrl: string; onImageClick?: (url: string) => void }) {
+export function MediaGrid({ media, videoProxyUrl, onImageClick }: { media: TweetMedia[]; videoProxyUrl: string; onImageClick?: (url: string) => void }) {
     if (media.length === 0) return null
 
     const gridClass = media.length === 1
@@ -165,7 +165,52 @@ function MediaGrid({ media, videoProxyUrl, onImageClick }: { media: TweetMedia[]
     )
 }
 
-function TweetCard({ tweet, videoProxyUrl, onUserClick, onImageClick }: { tweet: TweetData; videoProxyUrl: string; onUserClick?: (username: string) => void; onImageClick?: (url: string) => void }) {
+export function TweetCard({ tweet, videoProxyUrl, onUserClick, onImageClick }: { tweet: TweetData; videoProxyUrl: string; onUserClick?: (username: string) => void; onImageClick?: (url: string) => void }) {
+    const [reposted, setReposted] = useState(false)
+    const [repostCount, setRepostCount] = useState(tweet.metrics.retweets)
+    const [reposting, setReposting] = useState(false)
+    const [liked, setLiked] = useState(false)
+    const [likeCount, setLikeCount] = useState(tweet.metrics.likes)
+    const [liking, setLiking] = useState(false)
+
+    const handleRepost = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        if (reposting) return
+        setReposting(true)
+        try {
+            const res = await fetch('/api/tweets/repost', {
+                method: reposted ? 'DELETE' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tweetId: tweet.id }),
+            })
+            const data = await res.json()
+            if (data.success) {
+                setReposted(!reposted)
+                setRepostCount(prev => reposted ? prev - 1 : prev + 1)
+            }
+        } catch { }
+        setReposting(false)
+    }
+
+    const handleLike = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        if (liking) return
+        setLiking(true)
+        try {
+            const res = await fetch('/api/tweets/like', {
+                method: liked ? 'DELETE' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tweetId: tweet.id }),
+            })
+            const data = await res.json()
+            if (data.success) {
+                setLiked(!liked)
+                setLikeCount(prev => liked ? prev - 1 : prev + 1)
+            }
+        } catch { }
+        setLiking(false)
+    }
+
     return (
         <article className="px-4 py-3 border-b border-white/5 hover:bg-white/[0.02] transition">
             {/* Retweet indicator */}
@@ -222,18 +267,35 @@ function TweetCard({ tweet, videoProxyUrl, onUserClick, onImageClick }: { tweet:
 
                     {/* Actions */}
                     <div className="flex items-center justify-between mt-3 max-w-[425px] -ml-2">
+                        {/* Reply */}
                         <button className="flex items-center gap-1.5 text-slate-500 hover:text-[#1d9bf0] transition group px-2 py-1.5 rounded-full hover:bg-[#1d9bf0]/10">
                             <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z" /></svg>
                             <span className="text-xs">{formatCount(tweet.metrics.replies)}</span>
                         </button>
-                        <button className="flex items-center gap-1.5 text-slate-500 hover:text-[#00ba7c] transition group px-2 py-1.5 rounded-full hover:bg-[#00ba7c]/10">
+                        {/* Repost */}
+                        <button
+                            onClick={handleRepost}
+                            disabled={reposting}
+                            className={`flex items-center gap-1.5 transition px-2 py-1.5 rounded-full cursor-pointer ${reposted ? 'text-[#00ba7c]' : 'text-slate-500 hover:text-[#00ba7c]'} hover:bg-[#00ba7c]/10 ${reposting ? 'opacity-50' : ''}`}
+                        >
                             <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M4.75 3.79l4.603 4.3-1.706 1.82L6 8.38v7.37c0 .97.784 1.75 1.75 1.75H13V19.5H7.75c-2.347 0-4.25-1.9-4.25-4.25V8.38L1.853 9.91.147 8.09l4.603-4.3zm11.5 2.71H11V4.5h5.25c2.347 0 4.25 1.9 4.25 4.25v7.37l1.647-1.53 1.706 1.82-4.603 4.3-4.603-4.3 1.706-1.82L18 16.12V8.75c0-.97-.784-1.75-1.75-1.75z" /></svg>
-                            <span className="text-xs">{formatCount(tweet.metrics.retweets)}</span>
+                            <span className="text-xs">{formatCount(repostCount)}</span>
                         </button>
-                        <button className="flex items-center gap-1.5 text-slate-500 hover:text-[#f91880] transition group px-2 py-1.5 rounded-full hover:bg-[#f91880]/10">
-                            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.7-.514-6.67.89-1.93 2.754-3.17 4.665-3.27 1.93-.1 3.63.56 4.93 2.01 1.3-1.45 3-2.11 4.93-2.01 1.91.1 3.78 1.34 4.66 3.27.9 1.97.85 4.17-.51 6.67z" /></svg>
-                            <span className="text-xs">{formatCount(tweet.metrics.likes)}</span>
+                        {/* Like */}
+                        <button
+                            onClick={handleLike}
+                            disabled={liking}
+                            className={`flex items-center gap-1.5 transition px-2 py-1.5 rounded-full cursor-pointer ${liked ? 'text-[#f91880]' : 'text-slate-500 hover:text-[#f91880]'} hover:bg-[#f91880]/10 ${liking ? 'opacity-50' : ''}`}
+                        >
+                            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                                {liked
+                                    ? <path d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.7-.514-6.67.89-1.93 2.754-3.17 4.665-3.27 1.93-.1 3.63.56 4.93 2.01 1.3-1.45 3-2.11 4.93-2.01 1.91.1 3.78 1.34 4.66 3.27.9 1.97.85 4.17-.51 6.67z" />
+                                    : <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.7-.514-6.67.89-1.93 2.754-3.17 4.665-3.27 1.93-.1 3.63.56 4.93 2.01 1.3-1.45 3-2.11 4.93-2.01 1.91.1 3.78 1.34 4.66 3.27.9 1.97.85 4.17-.51 6.67z" />
+                                }
+                            </svg>
+                            <span className="text-xs">{formatCount(likeCount)}</span>
                         </button>
+                        {/* Views */}
                         <button className="flex items-center gap-1.5 text-slate-500 hover:text-[#1d9bf0] transition px-2 py-1.5 rounded-full hover:bg-[#1d9bf0]/10">
                             <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21v-5.5h2V21H4z" /></svg>
                             <span className="text-xs">{formatCount(tweet.metrics.views)}</span>

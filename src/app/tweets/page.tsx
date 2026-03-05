@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { TweetSearch } from './TweetSearch'
 import { GraphQLTimeline } from './GraphQLTimeline'
+import { HomeFeed } from './HomeFeed'
 import { BackToTop } from './BackToTop'
 
 export const metadata: Metadata = {
@@ -23,6 +24,9 @@ export default function TweetsPage() {
                     Paste link tweet từ X để xem trực tiếp trên trang.
                 </p>
             </div>
+
+            {/* Home Feed — For You / Following tabs */}
+            <HomeFeed />
 
             {/* GraphQL Tweets — Custom rendered with pagination */}
             <GraphQLTimeline />

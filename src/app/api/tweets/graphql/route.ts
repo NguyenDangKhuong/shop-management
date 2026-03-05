@@ -15,12 +15,20 @@ import { ParsedTweet, parseTweetResult } from './tweetParser'
  * Không cần Twitter API key (dùng cookie của account)
  */
 
-const GRAPHQL_QUERY_ID = 'Y9WM4Id6UcGFE8Z-hbnixw'
-const BEARER_TOKEN = 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA'
+// Fallback defaults (used if not stored in DB)
+const DEFAULT_BEARER = 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA'
+const DEFAULT_USER_TWEETS_QID = 'Y9WM4Id6UcGFE8Z-hbnixw'
+const DEFAULT_USER_BY_SCREEN_NAME_QID = 'qW5u-DAuXpMEG0zA1F7UGQ'
 
-// In-memory cache for cookie
-let cachedCookie: { cookie: string; csrfToken: string; ts: number } | null = null
-const COOKIE_CACHE_TTL = 5 * 60 * 1000
+// In-memory cache for credentials
+let cachedCreds: {
+    cookie: string; csrfToken: string
+    bearerToken: string
+    userTweetsQueryId: string
+    userByScreenNameQueryId: string
+    ts: number
+} | null = null
+const CACHE_TTL = 5 * 60 * 1000
 
 // In-memory cache for user IDs (username -> userId)
 const userIdCache = new Map<string, string>()
@@ -53,9 +61,9 @@ const FEATURES = {
     responsive_web_enhance_cards_enabled: false,
 }
 
-async function getCredentials(): Promise<{ cookie: string; csrfToken: string } | null> {
-    if (cachedCookie && Date.now() - cachedCookie.ts < COOKIE_CACHE_TTL) {
-        return { cookie: cachedCookie.cookie, csrfToken: cachedCookie.csrfToken }
+async function getCredentials() {
+    if (cachedCreds && Date.now() - cachedCreds.ts < CACHE_TTL) {
+        return cachedCreds
     }
     try {
         await connectDB()
@@ -65,33 +73,33 @@ async function getCredentials(): Promise<{ cookie: string; csrfToken: string } |
             let csrfToken = ''
 
             if (token.cookie) {
-                // Full cookie string available
                 cookie = token.cookie
                 const ct0Match = cookie.match(/ct0=([^;]+)/)
                 csrfToken = ct0Match?.[1] || token.ct0 || ''
             } else if (token.authToken && token.ct0) {
-                // Build cookie from individual fields
                 cookie = `auth_token=${token.authToken}; ct0=${token.ct0}`
                 if (token.att) cookie += `; att=${token.att}`
                 csrfToken = token.ct0
             }
 
             if (cookie) {
-                cachedCookie = { cookie, csrfToken, ts: Date.now() }
-                return { cookie, csrfToken }
+                cachedCreds = {
+                    cookie, csrfToken,
+                    bearerToken: token.bearerToken || DEFAULT_BEARER,
+                    userTweetsQueryId: token.userTweetsQueryId || DEFAULT_USER_TWEETS_QID,
+                    userByScreenNameQueryId: token.userByScreenNameQueryId || DEFAULT_USER_BY_SCREEN_NAME_QID,
+                    ts: Date.now(),
+                }
+                return cachedCreds
             }
         }
     } catch {
         console.error('Failed to get credentials from DB')
     }
-
-    // Fallback to env
-    const cookie = process.env.TWITTER_COOKIE || ''
-    const ct0Match = cookie.match(/ct0=([^;]+)/)
-    return cookie ? { cookie, csrfToken: ct0Match?.[1] || '' } : null
+    return null
 }
 
-async function getUserId(username: string, headers: Record<string, string>): Promise<string | null> {
+async function getUserId(username: string, headers: Record<string, string>, userByScreenNameQId: string): Promise<string | null> {
     const cached = userIdCache.get(username.toLowerCase())
     if (cached) return cached
 
@@ -108,7 +116,7 @@ async function getUserId(username: string, headers: Record<string, string>): Pro
             responsive_web_graphql_skip_user_profile_image_extensions_enabled: false,
             responsive_web_graphql_timeline_navigation_enabled: true,
         })
-        const url = `https://x.com/i/api/graphql/qW5u-DAuXpMEG0zA1F7UGQ/UserByScreenName?variables=${encodeURIComponent(variables)}&features=${encodeURIComponent(features)}`
+        const url = `https://x.com/i/api/graphql/${userByScreenNameQId}/UserByScreenName?variables=${encodeURIComponent(variables)}&features=${encodeURIComponent(features)}`
         const res = await fetch(url, { headers })
         if (!res.ok) return null
 
@@ -137,7 +145,7 @@ export async function GET(req: NextRequest) {
     }
 
     const headers: Record<string, string> = {
-        'authorization': BEARER_TOKEN,
+        'authorization': creds.bearerToken,
         'x-csrf-token': creds.csrfToken,
         'cookie': creds.cookie,
         'x-twitter-active-user': 'yes',
@@ -148,7 +156,7 @@ export async function GET(req: NextRequest) {
 
     try {
         // Step 1: Get user ID
-        const userId = await getUserId(username, headers)
+        const userId = await getUserId(username, headers, creds.userByScreenNameQueryId)
         if (!userId) {
             return NextResponse.json({ error: `User @${username} not found` }, { status: 404 })
         }
@@ -166,7 +174,7 @@ export async function GET(req: NextRequest) {
         }
 
         const fieldToggles = { withArticlePlainText: false }
-        const url = `https://x.com/i/api/graphql/${GRAPHQL_QUERY_ID}/UserTweets?variables=${encodeURIComponent(JSON.stringify(variables))}&features=${encodeURIComponent(JSON.stringify(FEATURES))}&fieldToggles=${encodeURIComponent(JSON.stringify(fieldToggles))}`
+        const url = `https://x.com/i/api/graphql/${creds.userTweetsQueryId}/UserTweets?variables=${encodeURIComponent(JSON.stringify(variables))}&features=${encodeURIComponent(JSON.stringify(FEATURES))}&fieldToggles=${encodeURIComponent(JSON.stringify(fieldToggles))}`
         const res = await fetch(url, { headers })
 
         if (!res.ok) {
