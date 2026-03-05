@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
-import { HomeFeed } from '@/app/tweets/HomeFeed'
+import { TweetsFeed } from '@/app/tweets/TweetsFeed'
 
 // Mock fetch globally
 const mockFetch = jest.fn()
@@ -30,7 +30,7 @@ const sampleTweet = {
     isRetweet: false,
 }
 
-const successResponse = {
+const homeResponse = {
     success: true,
     data: {
         tweets: [sampleTweet],
@@ -39,28 +39,42 @@ const successResponse = {
     },
 }
 
-describe('HomeFeed', () => {
+const usersResponse = {
+    success: true,
+    data: [{ _id: 'u1', username: 'saveduser1' }],
+}
+
+/**
+ * Helper: mock both /api/twitter-users and /api/tweets/home calls
+ */
+function mockDefaultFetches() {
+    mockFetch.mockImplementation((url: string) => {
+        if (url.includes('/api/twitter-users')) {
+            return Promise.resolve({ json: () => Promise.resolve(usersResponse) })
+        }
+        if (url.includes('/api/tweets/home')) {
+            return Promise.resolve({ json: () => Promise.resolve(homeResponse) })
+        }
+        return Promise.resolve({ json: () => Promise.resolve({ success: false }) })
+    })
+}
+
+describe('TweetsFeed', () => {
     beforeEach(() => {
         jest.clearAllMocks()
     })
 
     it('renders tab buttons for For You and Following', async () => {
-        mockFetch.mockResolvedValueOnce({
-            json: () => Promise.resolve(successResponse),
-        })
-
-        render(<HomeFeed />)
+        mockDefaultFetches()
+        render(<TweetsFeed />)
 
         expect(screen.getByText('For You')).toBeInTheDocument()
         expect(screen.getByText('Following')).toBeInTheDocument()
     })
 
-    it('fetches for_you tweets on mount when expanded', async () => {
-        mockFetch.mockResolvedValueOnce({
-            json: () => Promise.resolve(successResponse),
-        })
-
-        render(<HomeFeed />)
+    it('fetches for_you tweets on mount', async () => {
+        mockDefaultFetches()
+        render(<TweetsFeed />)
 
         await waitFor(() => {
             expect(mockFetch).toHaveBeenCalledWith(
@@ -70,11 +84,8 @@ describe('HomeFeed', () => {
     })
 
     it('displays tweets after successful fetch', async () => {
-        mockFetch.mockResolvedValueOnce({
-            json: () => Promise.resolve(successResponse),
-        })
-
-        render(<HomeFeed />)
+        mockDefaultFetches()
+        render(<TweetsFeed />)
 
         await waitFor(() => {
             expect(screen.getByText('Hello World')).toBeInTheDocument()
@@ -82,11 +93,16 @@ describe('HomeFeed', () => {
     })
 
     it('shows error message when fetch fails', async () => {
-        mockFetch.mockResolvedValueOnce({
-            json: () => Promise.resolve({ success: false, error: 'Rate limited' }),
+        mockFetch.mockImplementation((url: string) => {
+            if (url.includes('/api/twitter-users')) {
+                return Promise.resolve({ json: () => Promise.resolve(usersResponse) })
+            }
+            return Promise.resolve({
+                json: () => Promise.resolve({ success: false, error: 'Rate limited' }),
+            })
         })
 
-        render(<HomeFeed />)
+        render(<TweetsFeed />)
 
         await waitFor(() => {
             expect(screen.getByText('Rate limited')).toBeInTheDocument()
@@ -94,9 +110,14 @@ describe('HomeFeed', () => {
     })
 
     it('shows network error on fetch rejection', async () => {
-        mockFetch.mockRejectedValueOnce(new Error('Network error'))
+        mockFetch.mockImplementation((url: string) => {
+            if (url.includes('/api/twitter-users')) {
+                return Promise.resolve({ json: () => Promise.resolve(usersResponse) })
+            }
+            return Promise.reject(new Error('Network error'))
+        })
 
-        render(<HomeFeed />)
+        render(<TweetsFeed />)
 
         await waitFor(() => {
             expect(screen.getByText('Network error')).toBeInTheDocument()
@@ -104,25 +125,14 @@ describe('HomeFeed', () => {
     })
 
     it('switches tabs and re-fetches tweets', async () => {
-        // Initial for_you fetch
-        mockFetch.mockResolvedValueOnce({
-            json: () => Promise.resolve(successResponse),
-        })
-
-        render(<HomeFeed />)
+        mockDefaultFetches()
+        render(<TweetsFeed />)
 
         await waitFor(() => {
-            expect(mockFetch).toHaveBeenCalledTimes(1)
+            expect(screen.getByText('Hello World')).toBeInTheDocument()
         })
 
         // Switch to Following tab
-        mockFetch.mockResolvedValueOnce({
-            json: () => Promise.resolve({
-                ...successResponse,
-                data: { ...successResponse.data, tab: 'following' },
-            }),
-        })
-
         fireEvent.click(screen.getByText('Following'))
 
         await waitFor(() => {
@@ -132,64 +142,53 @@ describe('HomeFeed', () => {
         })
     })
 
-    it('collapses feed and shows message', async () => {
-        mockFetch.mockResolvedValueOnce({
-            json: () => Promise.resolve(successResponse),
-        })
+    it('renders browse user toggle button', async () => {
+        mockDefaultFetches()
+        render(<TweetsFeed />)
 
-        render(<HomeFeed />)
+        expect(screen.getByText('Browse user')).toBeInTheDocument()
+    })
+
+    it('shows search input after clicking browse user', async () => {
+        mockDefaultFetches()
+        render(<TweetsFeed />)
+
+        fireEvent.click(screen.getByText('Browse user'))
+        expect(screen.getByPlaceholderText('Enter @username to browse...')).toBeInTheDocument()
+        expect(screen.getByText('Browse', { selector: 'button' })).toBeInTheDocument()
+    })
+
+    it('shows saved user tags after expanding search', async () => {
+        mockDefaultFetches()
+        render(<TweetsFeed />)
+
+        fireEvent.click(screen.getByText('Browse user'))
+
+        await waitFor(() => {
+            expect(screen.getByText('@saveduser1')).toBeInTheDocument()
+        })
+    })
+
+    it('navigates to user timeline when @username clicked in tweet', async () => {
+        mockDefaultFetches()
+        render(<TweetsFeed />)
 
         await waitFor(() => {
             expect(screen.getByText('Hello World')).toBeInTheDocument()
         })
 
-        // Click header to collapse
-        fireEvent.click(screen.getByText('Home Feed'))
-
-        expect(screen.getByText('Feed collapsed to save bandwidth')).toBeInTheDocument()
-    })
-
-    it('does not refetch same tab on click', async () => {
-        mockFetch.mockResolvedValueOnce({
-            json: () => Promise.resolve(successResponse),
-        })
-
-        render(<HomeFeed />)
-
-        await waitFor(() => {
-            expect(mockFetch).toHaveBeenCalledTimes(1)
-        })
-
-        // Click same tab — should NOT trigger new fetch
-        fireEvent.click(screen.getByText('For You'))
-
-        expect(mockFetch).toHaveBeenCalledTimes(1)
-    })
-
-    it('calls onUserClick when username is clicked', async () => {
-        mockFetch.mockResolvedValueOnce({
-            json: () => Promise.resolve(successResponse),
-        })
-
-        const onUserClick = jest.fn()
-        render(<HomeFeed onUserClick={onUserClick} />)
-
-        await waitFor(() => {
-            expect(screen.getByText('Hello World')).toBeInTheDocument()
-        })
-
-        // Click the @username link
+        // Click the @username link in the tweet
         fireEvent.click(screen.getByText('@testuser'))
 
-        expect(onUserClick).toHaveBeenCalledWith('testuser')
+        // Should show back button
+        await waitFor(() => {
+            expect(screen.getByText(/Back to feed/)).toBeInTheDocument()
+        })
     })
 
     it('shows tweet count in header', async () => {
-        mockFetch.mockResolvedValueOnce({
-            json: () => Promise.resolve(successResponse),
-        })
-
-        render(<HomeFeed />)
+        mockDefaultFetches()
+        render(<TweetsFeed />)
 
         await waitFor(() => {
             expect(screen.getByText('1 tweets')).toBeInTheDocument()
@@ -197,11 +196,8 @@ describe('HomeFeed', () => {
     })
 
     it('handles repost button click', async () => {
-        mockFetch.mockResolvedValueOnce({
-            json: () => Promise.resolve(successResponse),
-        })
-
-        render(<HomeFeed />)
+        mockDefaultFetches()
+        render(<TweetsFeed />)
 
         await waitFor(() => {
             expect(screen.getByText('Hello World')).toBeInTheDocument()
@@ -227,11 +223,8 @@ describe('HomeFeed', () => {
     })
 
     it('handles like button click', async () => {
-        mockFetch.mockResolvedValueOnce({
-            json: () => Promise.resolve(successResponse),
-        })
-
-        render(<HomeFeed />)
+        mockDefaultFetches()
+        render(<TweetsFeed />)
 
         await waitFor(() => {
             expect(screen.getByText('Hello World')).toBeInTheDocument()
