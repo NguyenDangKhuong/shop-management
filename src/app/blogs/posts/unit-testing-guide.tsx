@@ -11,7 +11,7 @@ const unitTestingGuide: BlogPost = {
         vi: 'Từ cơ bản đến nâng cao: setup Jest, viết test cho functions, React components, hooks, API calls, mocking, coverage và best practices.',
         en: 'From basics to advanced: Jest setup, testing functions, React components, hooks, API calls, mocking, coverage and best practices.',
     },
-    date: '2026-02-26',
+    date: '2025-05-21',
     tags: ['Testing', 'Jest', 'React', 'Best Practices'],
     emoji: '🧪',
     color: '#99425b',

@@ -11,7 +11,7 @@ const reactFeatures: BlogPost = {
         vi: 'Tổng hợp các tính năng quan trọng của React qua từng phiên bản: Hooks, Concurrent Mode, Server Components, Suspense, React Compiler và nhiều hơn.',
         en: 'A comprehensive guide to React features across versions: Hooks, Concurrent Mode, Server Components, Suspense, React Compiler and more.',
     },
-    date: '2026-02-26',
+    date: '2024-08-12',
     tags: ['React', 'Hooks', 'Server Components', 'Advanced'],
     emoji: '⚛️',
     color: '#61dafb',

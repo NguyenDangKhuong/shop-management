@@ -11,7 +11,7 @@ const ecmascriptFeatures: BlogPost = {
         vi: 'Tổng hợp các tính năng quan trọng của JavaScript qua từng phiên bản ECMAScript: ES6 (2015), ES7, ES8, ES9, ES10, ES11, ES12, ES13, ES14, ES2024. Mỗi feature đều có code example thực tế.',
         en: 'A comprehensive guide to important JavaScript features across ECMAScript versions: ES6 (2015), ES7, ES8, ES9, ES10, ES11, ES12, ES13, ES14, ES2024. Each feature includes practical code examples.',
     },
-    date: '2026-02-26',
+    date: '2024-11-05',
     tags: ['JavaScript', 'ECMAScript', 'ES6', 'Fundamentals'],
     emoji: '📜',
     color: '#f7df1e',

@@ -928,7 +928,7 @@ const bfsDfsPattern: BlogPost = {
         vi: 'Giải thích chi tiết BFS và DFS với LeetCode: Number of Islands, Level Order Traversal, Word Search. So sánh BFS vs DFS và khi nào dùng.',
         en: 'Deep dive into BFS and DFS with LeetCode: Number of Islands, Level Order Traversal, Word Search. BFS vs DFS comparison.',
     },
-    date: '2026-02-26',
+    date: '2025-11-19',
     tags: ['Algorithm', 'BFS', 'DFS', 'LeetCode'],
     emoji: '🌲',
     color: '#22c55e',

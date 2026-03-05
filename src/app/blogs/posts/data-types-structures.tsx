@@ -11,7 +11,7 @@ const dataTypesStructures: BlogPost = {
         vi: 'Từ kiểu cơ bản (string, number, boolean) đến nâng cao (Map, Set, WeakMap) và các cấu trúc dữ liệu tự implement cho giải thuật: Stack, Queue, LinkedList, Heap, Trie, Graph.',
         en: 'From primitive types (string, number, boolean) to advanced (Map, Set, WeakMap) and self-implemented data structures for algorithms: Stack, Queue, LinkedList, Heap, Trie, Graph.',
     },
-    date: '2026-02-26',
+    date: '2025-01-27',
     tags: ['JavaScript', 'TypeScript', 'Data Structures', 'Algorithms'],
     emoji: '🧮',
     color: '#3178c6',

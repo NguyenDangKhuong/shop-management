@@ -53,7 +53,7 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
             />
 
             {/* Article */}
-            <article className="w-full max-w-3xl mx-auto z-10 px-4 md:px-8 mt-8">
+            <article className="w-full max-w-3xl mx-auto z-10 mt-8">
                 {/* Article Header */}
                 <div className="mb-8">
                     <div className="flex items-center gap-3 mb-4">
@@ -100,7 +100,7 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
 
             {/* Related Posts */}
             {relatedPosts.length > 0 && (
-                <div className="w-full max-w-3xl mx-auto mt-16 z-10 px-4 md:px-8">
+                <div className="w-full max-w-3xl mx-auto mt-16 z-10">
                     <div
                         className="h-px w-full mb-8 opacity-30"
                         style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent)' }}
@@ -129,7 +129,7 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
             )}
 
             {/* Footer */}
-            <footer className="w-full max-w-3xl mx-auto mt-16 pt-8 pb-6 border-t border-[var(--border-primary)] z-20 text-center px-4 md:px-8">
+            <footer className="w-full max-w-3xl mx-auto mt-16 pt-8 pb-6 border-t border-[var(--border-primary)] z-20 text-center">
                 <p className="text-sm text-[var(--text-muted)]">
                     Built with Next.js, TypeScript & MongoDB
                 </p>

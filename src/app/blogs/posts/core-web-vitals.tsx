@@ -11,7 +11,7 @@ const coreWebVitals: BlogPost = {
         vi: 'Tìm hiểu chi tiết Core Web Vitals: LCP, INP, CLS, FCP, TTFB — cách đo bằng Lighthouse, PageSpeed Insights, Web Vitals library và các kỹ thuật cải thiện từng chỉ số.',
         en: 'Deep dive into Core Web Vitals: LCP, INP, CLS, FCP, TTFB — how to measure with Lighthouse, PageSpeed Insights, Web Vitals library and techniques to improve each metric.',
     },
-    date: '2026-02-26',
+    date: '2025-03-14',
     tags: ['Performance', 'Web Vitals', 'SEO'],
     emoji: '📊',
     color: '#10b981',

@@ -918,7 +918,7 @@ const stackPattern: BlogPost = {
         vi: 'Giải thích chi tiết Stack với LeetCode: Valid Parentheses, Daily Temperatures, Min Stack. Monotonic Stack cho bài toán tìm phần tử gần nhất.',
         en: 'Deep dive into Stack with LeetCode: Valid Parentheses, Daily Temperatures, Min Stack. Monotonic Stack for nearest element problems.',
     },
-    date: '2026-02-26',
+    date: '2025-10-04',
     tags: ['Algorithm', 'Stack', 'LeetCode'],
     emoji: '📚',
     color: '#ef4444',

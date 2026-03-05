@@ -11,7 +11,7 @@ const nextjsFeatures: BlogPost = {
         vi: 'Tổng hợp tính năng quan trọng của Next.js: Middleware, App Router, Server Components, Server Actions, Turbopack, PPR và nhiều hơn.',
         en: 'Key Next.js features: Middleware, App Router, Server Components, Server Actions, Turbopack, PPR and more.',
     },
-    date: '2026-02-26',
+    date: '2024-09-23',
     tags: ['Next.js', 'React', 'Server Components', 'Full-stack'],
     emoji: '▲',
     color: '#000000',

@@ -858,7 +858,7 @@ const algorithmPatterns: BlogPost = {
         vi: '7 pattern cốt lõi (Hash Map, Two Pointers, Sliding Window, Stack, BFS/DFS, Binary Search, DP) với code ví dụ và flowchart quyết định nhanh.',
         en: '7 core patterns (Hash Map, Two Pointers, Sliding Window, Stack, BFS/DFS, Binary Search, DP) with code examples and quick decision flowchart.',
     },
-    date: '2026-02-26',
+    date: '2025-06-30',
     tags: ['Algorithm', 'Data Structure', 'LeetCode', 'Interview'],
     emoji: '🧩',
     color: '#f59e0b',

@@ -741,7 +741,7 @@ const jsCommonFunctions: BlogPost = {
         vi: 'Tổng hợp các hàm JS thường dùng: map, filter, reduce, find, sort, includes, spread, destructuring, Object methods, Optional Chaining.',
         en: 'Comprehensive guide to common JS functions: map, filter, reduce, find, sort, includes, spread, destructuring, Object methods, Optional Chaining.',
     },
-    date: '2026-02-26',
+    date: '2024-12-18',
     tags: ['JavaScript', 'Array Methods', 'Cheatsheet'],
     emoji: '⚡',
     color: '#f59e0b',
