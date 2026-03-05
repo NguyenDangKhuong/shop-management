@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { BlogPost } from '../types'
 import { useLang } from './LangContext'
@@ -11,6 +11,7 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
     const { t, lang } = useLang()
     const [scrolled, setScrolled] = useState(false)
     const [showBackToTop, setShowBackToTop] = useState(false)
+    const articleRef = useRef<HTMLElement>(null)
 
     // Track scroll for sticky header + back to top
     useEffect(() => {
@@ -38,6 +39,16 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
             return () => clearTimeout(timer)
         }
     }, [])
+
+    // Open all links inside article content in new tab
+    useEffect(() => {
+        if (!articleRef.current) return
+        const links = articleRef.current.querySelectorAll('a[href]')
+        links.forEach(link => {
+            link.setAttribute('target', '_blank')
+            link.setAttribute('rel', 'noopener noreferrer')
+        })
+    }, [lang]) // Re-run when language changes (content re-renders)
 
     return (
         <div className="bg-gray-50 dark:bg-[#0a0a0a] text-gray-800 dark:text-slate-200 font-sans min-h-screen flex flex-col items-center bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-gray-100 dark:from-slate-900 via-gray-50 dark:via-[#0a0a0a] to-gray-50 dark:to-[#0a0a0a] relative transition-colors duration-300">
@@ -95,7 +106,7 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
             </header>
 
             {/* Article */}
-            <article className="w-full max-w-3xl mx-auto z-10 px-4 md:px-8 mt-8">
+            <article ref={articleRef} className="w-full max-w-3xl mx-auto z-10 px-4 md:px-8 mt-8">
                 {/* Article Header */}
                 <div className="mb-8">
                     <div className="flex items-center gap-3 mb-4">
