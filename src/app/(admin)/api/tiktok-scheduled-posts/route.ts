@@ -94,7 +94,7 @@ export async function PUT(request: NextRequest) {
 
 // DELETE scheduled post + cleanup R2 video
 // ?id=xxx → xoá 1 bài cụ thể
-// ?cleanup=expired&accountId=xxx → xoá tất cả bài đã quá hạn của account
+// ?cleanup=expired&accountId=xxx → xoá bài quá hạn hoặc bài cuối cùng (nếu chỉ còn 1)
 export async function DELETE(request: NextRequest) {
     try {
         await connectDb()
@@ -107,6 +107,27 @@ export async function DELETE(request: NextRequest) {
         if (cleanup === 'expired' && accountId) {
             const now = new Date()
             const allPosts = await TikTokScheduledPostModel.find({ accountId }).lean() as any[]
+
+            // Nếu chỉ còn 1 bài duy nhất → xoá luôn không cần check quá hạn
+            if (allPosts.length === 1) {
+                const post = allPosts[0]
+                if (post.video?.publicId) {
+                    try {
+                        const bucketName = R2_BUCKET_NAME || 'tiktok-videos'
+                        await r2Client.removeObject(bucketName, post.video.publicId)
+                        console.log('🗑️ Cleanup R2 (last post):', post.video.publicId)
+                    } catch (err) {
+                        console.error('Failed to delete R2 video:', err)
+                    }
+                }
+                await TikTokScheduledPostModel.findByIdAndDelete(post._id)
+                return NextResponse.json({
+                    success: true,
+                    message: `Đã xoá bài cuối cùng của account`,
+                    deleted: 1,
+                    total: 0
+                })
+            }
 
             // Filter posts that are in the past (scheduledDate DD/MM/YYYY + scheduledTime HH:mm < now)
             const expiredPosts = allPosts.filter((post: any) => {
