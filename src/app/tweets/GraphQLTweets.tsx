@@ -172,6 +172,8 @@ export function TweetCard({ tweet, videoProxyUrl, onUserClick, onImageClick }: {
     const [liked, setLiked] = useState(false)
     const [likeCount, setLikeCount] = useState(tweet.metrics.likes)
     const [liking, setLiking] = useState(false)
+    const [followed, setFollowed] = useState(false)
+    const [following, setFollowing] = useState(false)
 
     const handleRepost = async (e: React.MouseEvent) => {
         e.stopPropagation()
@@ -211,6 +213,24 @@ export function TweetCard({ tweet, videoProxyUrl, onUserClick, onImageClick }: {
         setLiking(false)
     }
 
+    const handleFollow = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        if (following) return
+        setFollowing(true)
+        try {
+            const res = await fetch('/api/tweets/follow', {
+                method: followed ? 'DELETE' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ screenName: tweet.user.screenName }),
+            })
+            const data = await res.json()
+            if (data.success) {
+                setFollowed(!followed)
+            }
+        } catch { }
+        setFollowing(false)
+    }
+
     return (
         <article className="px-4 py-3 border-b border-white/5 hover:bg-white/[0.02] transition">
             {/* Retweet indicator */}
@@ -239,6 +259,17 @@ export function TweetCard({ tweet, videoProxyUrl, onUserClick, onImageClick }: {
                         <button onClick={() => onUserClick?.(tweet.user.screenName)} className="text-slate-500 truncate hover:text-[#1d9bf0] hover:underline transition cursor-pointer">@{tweet.user.screenName}</button>
                         <span className="text-slate-600">·</span>
                         <span className="text-slate-500 shrink-0">{timeAgo(tweet.createdAt)}</span>
+                        {/* Follow button */}
+                        <button
+                            onClick={handleFollow}
+                            disabled={following}
+                            className={`ml-auto text-xs font-bold px-3 py-0.5 rounded-full border transition cursor-pointer shrink-0 ${followed
+                                ? 'border-white/20 text-white bg-transparent hover:border-red-500/50 hover:text-red-500'
+                                : 'border-[#1d9bf0] text-[#1d9bf0] hover:bg-[#1d9bf0]/10'
+                                } ${following ? 'opacity-50' : ''}`}
+                        >
+                            {followed ? 'Following' : 'Follow'}
+                        </button>
                     </div>
 
                     {/* Text */}
