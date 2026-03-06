@@ -294,7 +294,7 @@ const TikTokScheduledPostModal = ({
                         scheduledUnixTime: finalTime.unix(),
                         productId: values.productId || null,
                         productTitle: selectedProduct?.title || null,
-                        description: values.description || selectedProduct?.title || '',
+                        description: values.description || selectedProduct?.title || '', // fallback: description → productTitle → empty
                         status: values.status || 'scheduled',
                         hasMusic: values.hasMusic ?? false,
                         video: vid,
