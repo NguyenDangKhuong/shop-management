@@ -420,8 +420,20 @@ export default function TikTokAccountPage() {
                             <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded">
                                 <span className="text-xs text-red-400">DEL</span>
                                 <span className="text-xs text-red-700 dark:text-red-400 font-mono truncate flex-1">
-                                    ?cleanup=expired&accountId=...
+                                    {cleanupUrl}
                                 </span>
+                                <Button
+                                    type="text"
+                                    size="small"
+                                    icon={<CopyOutlined />}
+                                    onClick={() => {
+                                        const curl = `curl -X DELETE "${cleanupUrl}"`
+                                        navigator.clipboard.writeText(curl)
+                                        message.success('Đã copy curl!')
+                                    }}
+                                    className="!p-0 !h-5 !w-5 !min-w-0 text-red-700 dark:text-red-400"
+                                    title="Copy curl command"
+                                />
                                 <Button
                                     type="text"
                                     size="small"
@@ -442,7 +454,7 @@ export default function TikTokAccountPage() {
                                     }}
                                     className="!p-0 !px-1 !h-5 !min-w-0 text-xs"
                                 >
-                                    🗑 Dọn bài cũ
+                                    🗑 Dọn
                                 </Button>
                             </div>
                         </div>
@@ -484,12 +496,16 @@ export default function TikTokAccountPage() {
                                                 const date = dayjs(post.scheduledDate, 'DD/MM/YYYY')
                                                 const today = dayjs()
                                                 const tomorrow = dayjs().add(1, 'day')
+                                                const dayAfter = dayjs().add(2, 'day')
 
                                                 if (date.isSame(today, 'day')) {
                                                     return `(Hôm nay) - ${post.scheduledDate}`
                                                 }
                                                 if (date.isSame(tomorrow, 'day')) {
                                                     return `(Ngày mai) - ${post.scheduledDate}`
+                                                }
+                                                if (date.isSame(dayAfter, 'day')) {
+                                                    return `(Ngày mốt) - ${post.scheduledDate}`
                                                 }
                                                 return post.scheduledDate
                                             })()}

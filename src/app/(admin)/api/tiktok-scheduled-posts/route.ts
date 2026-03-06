@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import TikTokScheduledPostModel from '@/models/TikTokScheduledPost'
 import connectDb from '@/utils/connectDb'
 import { Client } from 'minio'
-import { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME } from '@/utils/constants'
+import { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, TIKTOK_DEFAULT_HOUR_GAP } from '@/utils/constants'
 
 const r2Client = new Client({
     endPoint: `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
@@ -56,9 +56,9 @@ export async function POST(request: NextRequest) {
                 baseDate = new Date()
             }
 
-            // Add 2 hours + random 0-59 minutes
+            // Add 1 hour + random 0-59 minutes
             const randomMinutes = Math.floor(Math.random() * 60)
-            baseDate.setHours(baseDate.getHours() + 2)
+            baseDate.setHours(baseDate.getHours() + TIKTOK_DEFAULT_HOUR_GAP)
             baseDate.setMinutes(baseDate.getMinutes() + randomMinutes)
 
             // Format back to DD/MM/YYYY and HH:mm
@@ -92,9 +92,17 @@ export async function PUT(request: NextRequest) {
     }
 }
 
-// DELETE scheduled post + cleanup R2 video
-// ?id=xxx → xoá 1 bài cụ thể
-// ?cleanup=expired&accountId=xxx → xoá bài quá hạn hoặc bài cuối cùng (nếu chỉ còn 1)
+// ═══════════════════════════════════════════════════════════════
+// DELETE /api/tiktok-scheduled-posts
+// ═══════════════════════════════════════════════════════════════
+// 1. Xoá 1 bài:       ?id=xxx
+//    → Xoá video trên R2 + xoá record trong DB
+//
+// 2. Cleanup expired:  ?cleanup=expired&accountId=xxx
+//    → Nếu chỉ còn 1 bài duy nhất → xoá luôn (không cần check quá hạn)
+//    → Nếu nhiều bài → chỉ xoá bài có scheduledDate + scheduledTime < NOW
+//    → Mỗi bài: xoá video R2 + xoá DB record
+// ═══════════════════════════════════════════════════════════════
 export async function DELETE(request: NextRequest) {
     try {
         await connectDb()
