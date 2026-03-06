@@ -859,6 +859,45 @@ let obj4 = Object.assign({}, obj1)`}</CodeBlock>
                 <Callout type="tip">Interview tip: Giải thích được <Highlight>typeof null === &apos;object&apos;</Highlight> là bug lịch sử, và sự khác biệt giữa <InlineCode>==</InlineCode> vs <InlineCode>===</InlineCode> khi so sánh types sẽ ghi điểm lớn.</Callout>
                 <a href="/blogs/data-types-structures" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
+
+            <TopicModal title="Strict Mode" emoji="🔒" color="#ef4444" summary={`"use strict" — chế độ nghiêm ngặt giúp bắt lỗi sớm, code an toàn hơn`}>
+                <Paragraph><InlineCode>{`"use strict"`}</InlineCode> kích hoạt chế độ thực thi nghiêm ngặt hơn, được giới thiệu từ <Highlight>ES5</Highlight>. Giúp bắt lỗi sớm và ngăn chặn các hành vi nguy hiểm.</Paragraph>
+                <CodeBlock title="Cách kích hoạt">{`"use strict"; // Đầu file → áp dụng toàn bộ file
+
+function myFunc() {
+  "use strict"; // Hoặc chỉ trong 1 function
+}
+
+// ⚡ ES Modules (import/export) và class
+// tự động chạy strict mode — không cần khai báo!`}</CodeBlock>
+                <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Hành vi</th><th className="text-left p-2 text-red-400">Không strict</th><th className="text-left p-2 text-green-400">Strict mode</th></tr></thead>
+                        <tbody className="text-[var(--text-secondary)]">
+                            <tr className="border-b border-gray-100"><td className="p-2">Biến chưa khai báo</td><td className="p-2">Tự tạo global 😱</td><td className="p-2">❌ ReferenceError</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Gán vào read-only property</td><td className="p-2">Im lặng, bỏ qua</td><td className="p-2">❌ TypeError</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Duplicate params</td><td className="p-2">Cho phép</td><td className="p-2">❌ SyntaxError</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2"><InlineCode>this</InlineCode> trong function</td><td className="p-2">window</td><td className="p-2">undefined</td></tr>
+                            <tr><td className="p-2">Dùng <InlineCode>with</InlineCode></td><td className="p-2">Cho phép</td><td className="p-2">❌ SyntaxError</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <CodeBlock title="Ví dụ">{`"use strict";
+
+x = 10; // ❌ ReferenceError — phải dùng let/const/var
+
+function sum(a, a, b) {} // ❌ SyntaxError — duplicate params
+
+function showThis() {
+  console.log(this); // undefined (không strict → window)
+}
+showThis();
+
+const obj = {};
+Object.defineProperty(obj, "name", { value: "K", writable: false });
+obj.name = "X"; // ❌ TypeError — read-only`}</CodeBlock>
+                <Callout type="tip">Trong dự án React/Next.js hiện đại, code đã chạy <Highlight>strict mode sẵn</Highlight> vì dùng ES Modules. Nhưng hiểu strict mode vẫn rất quan trọng cho phỏng vấn!</Callout>
+            </TopicModal>
         </div>
 
         <Heading3>2.2 Implement từ scratch (click xem code mẫu)</Heading3>
