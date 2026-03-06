@@ -856,6 +856,45 @@ let obj4 = Object.assign({}, obj1)`}</CodeBlock>
                 <Callout type="tip">Interview tip: Explaining that <Highlight>typeof null === &apos;object&apos;</Highlight> is a historical bug, and the difference between <InlineCode>==</InlineCode> vs <InlineCode>===</InlineCode> when comparing types, will score big points.</Callout>
                 <a href="/blogs/data-types-structures" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 See detailed article →</a>
             </TopicModal>
+
+            <TopicModal title="Strict Mode" emoji="🔒" color="#ef4444" summary={`"use strict" — stricter execution mode that catches errors early and makes code safer`}>
+                <Paragraph><InlineCode>{`"use strict"`}</InlineCode> enables a stricter execution mode, introduced in <Highlight>ES5</Highlight>. It catches errors early and prevents dangerous behaviors that normal JS silently allows.</Paragraph>
+                <CodeBlock title="How to enable">{`"use strict"; // Top of file → applies to entire file
+
+function myFunc() {
+  "use strict"; // Or only inside a function
+}
+
+// ⚡ ES Modules (import/export) and class
+// automatically run in strict mode — no declaration needed!`}</CodeBlock>
+                <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Behavior</th><th className="text-left p-2 text-red-400">Non-strict</th><th className="text-left p-2 text-green-400">Strict mode</th></tr></thead>
+                        <tbody className="text-[var(--text-secondary)]">
+                            <tr className="border-b border-gray-100"><td className="p-2">Undeclared variable</td><td className="p-2">Creates global 😱</td><td className="p-2">❌ ReferenceError</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Assign to read-only property</td><td className="p-2">Silent, ignored</td><td className="p-2">❌ TypeError</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Duplicate params</td><td className="p-2">Allowed</td><td className="p-2">❌ SyntaxError</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2"><InlineCode>this</InlineCode> in function</td><td className="p-2">window</td><td className="p-2">undefined</td></tr>
+                            <tr><td className="p-2">Using <InlineCode>with</InlineCode></td><td className="p-2">Allowed</td><td className="p-2">❌ SyntaxError</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <CodeBlock title="Examples">{`"use strict";
+
+x = 10; // ❌ ReferenceError — must use let/const/var
+
+function sum(a, a, b) {} // ❌ SyntaxError — duplicate params
+
+function showThis() {
+  console.log(this); // undefined (non-strict → window)
+}
+showThis();
+
+const obj = {};
+Object.defineProperty(obj, "name", { value: "K", writable: false });
+obj.name = "X"; // ❌ TypeError — read-only`}</CodeBlock>
+                <Callout type="tip">In modern React/Next.js projects, code already runs in <Highlight>strict mode by default</Highlight> because of ES Modules. But understanding strict mode is still crucial for interviews!</Callout>
+            </TopicModal>
         </div>
 
         <Heading3>2.2 Implement from Scratch (click for sample code)</Heading3>
