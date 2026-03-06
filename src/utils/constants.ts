@@ -33,3 +33,6 @@ export const R2_PUBLIC_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
 export const NOTION_API_KEY = process.env.NEXT_PUBLIC_NOTION_API_KEY
 
 export const LIMIT_PAGE_NUMBER = 20
+
+// TikTok scheduling
+export const TIKTOK_DEFAULT_HOUR_GAP = 1 // Khoảng cách mặc định giữa các bài đăng (giờ)

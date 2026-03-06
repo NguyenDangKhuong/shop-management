@@ -5,6 +5,7 @@ import { Form, Input, Modal, Button, App, DatePicker, Select, Upload, TimePicker
 import { UploadOutlined, DeleteOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { apiPost, apiPut } from '@/utils/internalApi'
 import { uploadVideoToR2, deleteVideoFromR2 } from '@/utils/r2Upload'
+import { TIKTOK_DEFAULT_HOUR_GAP } from '@/utils/constants'
 
 const R2_TIKTOK_BUCKET = 'tiktok-videos'
 import dayjs from 'dayjs'
@@ -241,11 +242,11 @@ const TikTokScheduledPostModal = ({
 
                 // ===== LOGIC TÍNH GIỜ SCHEDULE =====
                 // Ưu tiên 1: User chọn ngày + giờ cụ thể → dùng luôn
-                // Ưu tiên 2: Không chọn → lấy bài gần nhất của account + 2h
+                // Ưu tiên 2: Không chọn → lấy bài gần nhất của account + 1h
                 // Ưu tiên 3: Không có bài nào → dùng giờ hiện tại (NOW)
                 // Mỗi video tiếp theo trong batch: +Nh + random 0-59 phút
                 // =====================================
-                const hourGap = values.hourGap || 2
+                const hourGap = values.hourGap || TIKTOK_DEFAULT_HOUR_GAP
                 const now = dayjs()
                 let baseTime: ReturnType<typeof dayjs>
 
@@ -267,7 +268,7 @@ const TikTokScheduledPostModal = ({
                                 const maxTime = dayjs(`${max.scheduledDate} ${max.scheduledTime}`, 'DD/MM/YYYY HH:mm')
                                 return postTime.isAfter(maxTime) ? post : max
                             })
-                            // Base = bài trễ nhất + 2 tiếng
+                            // Base = bài trễ nhất + hourGap tiếng
                             baseTime = dayjs(`${latest.scheduledDate} ${latest.scheduledTime}`, 'DD/MM/YYYY HH:mm').add(hourGap, 'hour')
                             console.log(`📅 Base from latest post: ${latest.scheduledDate} ${latest.scheduledTime} → +${hourGap}h = ${baseTime.format('HH:mm')}`)
                         } else {
@@ -413,7 +414,7 @@ const TikTokScheduledPostModal = ({
                                         <Form.Item
                                             label="Khoảng cách giờ giữa các bài"
                                             name="hourGap"
-                                            initialValue={2}
+                                            initialValue={TIKTOK_DEFAULT_HOUR_GAP}
                                             className="mb-2"
                                         >
                                             <Select>
