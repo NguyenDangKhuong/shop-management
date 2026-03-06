@@ -243,8 +243,9 @@ const TikTokScheduledPostModal = ({
                 // Ưu tiên 1: User chọn ngày + giờ cụ thể → dùng luôn
                 // Ưu tiên 2: Không chọn → lấy bài gần nhất của account + 2h
                 // Ưu tiên 3: Không có bài nào → dùng giờ hiện tại (NOW)
-                // Mỗi video tiếp theo trong batch: +2h + random 0-59 phút
+                // Mỗi video tiếp theo trong batch: +Nh + random 0-59 phút
                 // =====================================
+                const hourGap = values.hourGap || 2
                 const now = dayjs()
                 let baseTime: ReturnType<typeof dayjs>
 
@@ -267,8 +268,8 @@ const TikTokScheduledPostModal = ({
                                 return postTime.isAfter(maxTime) ? post : max
                             })
                             // Base = bài trễ nhất + 2 tiếng
-                            baseTime = dayjs(`${latest.scheduledDate} ${latest.scheduledTime}`, 'DD/MM/YYYY HH:mm').add(2, 'hour')
-                            console.log(`📅 Base from latest post: ${latest.scheduledDate} ${latest.scheduledTime} → +2h = ${baseTime.format('HH:mm')}`)
+                            baseTime = dayjs(`${latest.scheduledDate} ${latest.scheduledTime}`, 'DD/MM/YYYY HH:mm').add(hourGap, 'hour')
+                            console.log(`📅 Base from latest post: ${latest.scheduledDate} ${latest.scheduledTime} → +${hourGap}h = ${baseTime.format('HH:mm')}`)
                         } else {
                             // Không có bài nào → dùng NOW
                             baseTime = now
@@ -278,11 +279,11 @@ const TikTokScheduledPostModal = ({
                     }
                 }
 
-                // Tạo bài cho từng video, cách nhau 2h + random 0-59 phút
-                // VD: baseTime = 10:00 → video 1: 10:XX, video 2: 12:XX, video 3: 14:XX
+                // Tạo bài cho từng video, cách nhau Nh + random 0-59 phút
+                // VD: hourGap=2, baseTime = 10:00 → video 1: 10:XX, video 2: 12:XX, video 3: 14:XX
                 let created = 0
                 for (const vid of videos) {
-                    const postTime = baseTime.add(created * 2, 'hour')       // +0h, +2h, +4h, ...
+                    const postTime = baseTime.add(created * hourGap, 'hour') // +0h, +Nh, +2Nh, ...
                     const randomMinutes = Math.floor(Math.random() * 60)     // random 0-59 phút
                     const finalTime = postTime.add(randomMinutes, 'minute')   // giờ cuối cùng
 
@@ -290,9 +291,10 @@ const TikTokScheduledPostModal = ({
                         accountId,
                         scheduledDate: finalTime.format('DD/MM/YYYY'),
                         scheduledTime: finalTime.format('HH:mm'),
+                        scheduledUnixTime: finalTime.unix(),
                         productId: values.productId || null,
                         productTitle: selectedProduct?.title || null,
-                        description: values.description,
+                        description: values.description || selectedProduct?.title || '',
                         status: values.status || 'scheduled',
                         hasMusic: values.hasMusic ?? false,
                         video: vid,
@@ -354,6 +356,7 @@ const TikTokScheduledPostModal = ({
                     items={[{
                         key: 'schedule',
                         label: '⏰ Ngày giờ đăng & Trạng thái',
+                        forceRender: true,
                         children: (
                             <>
                                 <div className="flex gap-2">
@@ -403,9 +406,23 @@ const TikTokScheduledPostModal = ({
                                     </Form.Item>
                                 </div>
                                 {!isEditMode && (
-                                    <p className="text-xs text-gray-400 -mt-4 mb-1">
-                                        💡 Bỏ trống = tự tính từ bài gần nhất + 2h + random phút
-                                    </p>
+                                    <>
+                                        <p className="text-xs text-gray-400 -mt-4 mb-1">
+                                            💡 Bỏ trống = tự tính từ bài gần nhất + khoảng cách giờ + random phút
+                                        </p>
+                                        <Form.Item
+                                            label="Khoảng cách giờ giữa các bài"
+                                            name="hourGap"
+                                            initialValue={2}
+                                            className="mb-2"
+                                        >
+                                            <Select>
+                                                {[1, 2, 3, 4, 5, 6].map(h => (
+                                                    <Select.Option key={h} value={h}>{h} giờ</Select.Option>
+                                                ))}
+                                            </Select>
+                                        </Form.Item>
+                                    </>
                                 )}
                                 <Form.Item
                                     label="Trạng thái"
