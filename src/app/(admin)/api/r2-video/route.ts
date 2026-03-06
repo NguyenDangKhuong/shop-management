@@ -19,7 +19,7 @@ const r2Client = new Client({
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json()
-        const { fileName, bucketName: customBucket } = body
+        const { fileName, bucketName: customBucket, accountId } = body
         const bucketName = customBucket || R2_BUCKET_NAME || 'tiktok-videos'
 
         if (!fileName) {
@@ -29,9 +29,9 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        const timestamp = Date.now()
         const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_')
-        const objectName = `reel-${timestamp}-${sanitizedFileName}`
+        const prefix = accountId ? `tiktok-${accountId}` : `reel-${Date.now()}`
+        const objectName = `${prefix}-${sanitizedFileName}`
 
         const presignedUrl = await r2Client.presignedPutObject(
             bucketName,
