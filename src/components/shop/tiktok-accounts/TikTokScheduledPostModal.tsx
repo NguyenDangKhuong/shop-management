@@ -122,7 +122,7 @@ const TikTokScheduledPostModal = ({
                             : item
                     ))
                 }
-            })
+            }, accountId)
 
             uploadAbortRef.current = null
             if (cancelled) {

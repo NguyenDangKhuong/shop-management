@@ -2,7 +2,8 @@
 export const uploadVideoToR2 = async (
     file: File,
     bucketName?: string,
-    onProgress?: (percent: number) => void
+    onProgress?: (percent: number) => void,
+    accountId?: string
 ): Promise<{ url: string; fileName?: string; success: boolean; message?: string }> => {
     try {
         onProgress?.(5)
@@ -11,7 +12,7 @@ export const uploadVideoToR2 = async (
         const response = await fetch('/api/r2-video', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fileName: file.name, contentType: file.type, bucketName }),
+            body: JSON.stringify({ fileName: file.name, contentType: file.type, bucketName, accountId }),
         })
 
         const result = await response.json()
