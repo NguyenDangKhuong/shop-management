@@ -65,23 +65,27 @@ const TikTokScheduledPostModal = ({
             uploadedThisSessionRef.current = []
 
             if (editingPost) {
+                const editDate = editingPost.scheduledDate ? dayjs(editingPost.scheduledDate, 'DD/MM/YYYY') : null
                 form.setFieldsValue({
-                    scheduledDate: editingPost.scheduledDate ? dayjs(editingPost.scheduledDate, 'DD/MM/YYYY') : null,
+                    scheduledDate: editDate,
                     scheduledTime: editingPost.scheduledTime ? dayjs(editingPost.scheduledTime, 'HH:mm') : null,
                     productId: editingPost.productId || '',
                     description: editingPost.description || '',
                     status: editingPost.status || 'scheduled',
                     hasMusic: editingPost.hasMusic ?? false
                 })
+                setSelectedDate(editDate)
                 setVideo(editingPost.video || null)
                 setVideos([])
             } else {
                 form.resetFields()
                 form.setFieldsValue({ status: 'scheduled', hasMusic: false })
+                setSelectedDate(null)
                 setVideo(null)
                 setVideos([])
             }
         } else {
+            setSelectedDate(null)
             setVideo(null)
             setVideos([])
         }
