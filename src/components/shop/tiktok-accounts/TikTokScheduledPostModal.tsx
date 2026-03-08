@@ -482,6 +482,7 @@ const TikTokScheduledPostModal = ({
                         filterOption={(input, option) =>
                             String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                         }
+                        onSelect={() => (document.activeElement as HTMLElement)?.blur()}
                     >
                         {products.map((product: any) => (
                             <Select.Option
@@ -515,6 +516,7 @@ const TikTokScheduledPostModal = ({
                             String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                         }
                         onChange={handleShopeeSelect}
+                        onSelect={() => (document.activeElement as HTMLElement)?.blur()}
                     >
                         {shopeeLinks.map((link: any) => (
                             <Select.Option
