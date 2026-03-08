@@ -40,36 +40,42 @@ export async function POST(request: NextRequest) {
 
         // Auto-calculate scheduledDate & scheduledTime if not provided
         if (!body.scheduledDate || !body.scheduledTime) {
-            // Find the latest scheduled post for this account
+            // Find the latest scheduled post for this account (by unix time for accuracy)
             const latestPost = await TikTokScheduledPostModel.findOne(
                 { accountId: body.accountId }
-            ).sort({ scheduledDate: -1, scheduledTime: -1 }).lean() as any
+            ).sort({ scheduledUnixTime: -1 }).lean() as any
 
-            let baseDate: Date
+            let baseUnix: number
 
-            if (latestPost?.scheduledDate && latestPost?.scheduledTime) {
-                // Parse latest post date (DD/MM/YYYY HH:mm)
+            if (latestPost?.scheduledUnixTime) {
+                // Use scheduledUnixTime (timezone-safe)
+                baseUnix = latestPost.scheduledUnixTime
+            } else if (latestPost?.scheduledDate && latestPost?.scheduledTime) {
+                // Fallback: parse date string as VN timezone (UTC+7)
                 const [day, month, year] = latestPost.scheduledDate.split('/')
                 const [hour, minute] = latestPost.scheduledTime.split(':')
-                baseDate = new Date(+year, +month - 1, +day, +hour, +minute)
+                // Create UTC date then subtract 7h to convert VN → UTC
+                const utcMs = Date.UTC(+year, +month - 1, +day, +hour - 7, +minute)
+                baseUnix = Math.floor(utcMs / 1000)
             } else {
-                baseDate = new Date()
+                baseUnix = Math.floor(Date.now() / 1000)
             }
 
-            // Add 1 hour + random 0-59 minutes
+            // Add TIKTOK_DEFAULT_HOUR_GAP hours + random 0-59 minutes
             const randomMinutes = Math.floor(Math.random() * 60)
-            baseDate.setHours(baseDate.getHours() + TIKTOK_DEFAULT_HOUR_GAP)
-            baseDate.setMinutes(baseDate.getMinutes() + randomMinutes)
+            const newUnix = baseUnix + (TIKTOK_DEFAULT_HOUR_GAP * 3600) + (randomMinutes * 60)
 
-            // Format back to DD/MM/YYYY and HH:mm
-            const dd = String(baseDate.getDate()).padStart(2, '0')
-            const mm = String(baseDate.getMonth() + 1).padStart(2, '0')
-            const yyyy = baseDate.getFullYear()
-            const hh = String(baseDate.getHours()).padStart(2, '0')
-            const min = String(baseDate.getMinutes()).padStart(2, '0')
+            // Convert unix timestamp to VN timezone (UTC+7) for DD/MM/YYYY and HH:mm
+            const vnDate = new Date((newUnix + 7 * 3600) * 1000)
+            const dd = String(vnDate.getUTCDate()).padStart(2, '0')
+            const mm = String(vnDate.getUTCMonth() + 1).padStart(2, '0')
+            const yyyy = vnDate.getUTCFullYear()
+            const hh = String(vnDate.getUTCHours()).padStart(2, '0')
+            const min = String(vnDate.getUTCMinutes()).padStart(2, '0')
 
             body.scheduledDate = body.scheduledDate || `${dd}/${mm}/${yyyy}`
             body.scheduledTime = body.scheduledTime || `${hh}:${min}`
+            body.scheduledUnixTime = body.scheduledUnixTime || newUnix
         }
 
         const post = await TikTokScheduledPostModel.create(body)

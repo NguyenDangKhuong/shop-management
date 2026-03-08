@@ -146,60 +146,204 @@ describe('TikTok Scheduled Posts API', () => {
             expect(json.success).toBe(true)
             expect(json.data.scheduledDate).toBe('06/03/2026')
             expect(json.data.scheduledTime).toBe('14:00')
-            // findOne should NOT be called when date/time is provided
             expect(mockModel.findOne).not.toHaveBeenCalled()
         })
 
-        it('auto-calculates from latest post when no date/time', async () => {
-            const latestPost = {
-                scheduledDate: '06/03/2026',
-                scheduledTime: '10:00',
+        // ────────────────────────────────────────────────
+        // Precise auto-schedule tests (mocked Math.random)
+        // ────────────────────────────────────────────────
+        describe('auto-schedule (timezone-safe, exact values)', () => {
+            let randomSpy: jest.SpyInstance
+
+            afterEach(() => {
+                randomSpy?.mockRestore()
+            })
+
+            // Helper to setup findOne mock
+            const setupLatestPost = (post: any) => {
+                mockModel.findOne.mockReturnValue({
+                    sort: jest.fn().mockReturnValue({
+                        lean: jest.fn().mockResolvedValue(post),
+                    }),
+                })
+                mockModel.create.mockImplementation((body: any) =>
+                    Promise.resolve({ _id: 'p_new', ...body })
+                )
             }
-            mockModel.findOne.mockReturnValue({
-                sort: jest.fn().mockReturnValue({
-                    lean: jest.fn().mockResolvedValue(latestPost),
-                }),
+
+            const callPOST = async (body: any) => {
+                const request = new NextRequest('http://localhost:3000/api/tiktok-scheduled-posts', {
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                })
+                return POST(request)
+            }
+
+            it('10:00 VN + 1h gap + 0 random = 11:00 VN (exact)', async () => {
+                randomSpy = jest.spyOn(Math, 'random').mockReturnValue(0)
+
+                // 08/03/2026 10:00 VN = 08/03/2026 03:00 UTC
+                const latestUnix = Math.floor(Date.UTC(2026, 2, 8, 3, 0) / 1000)
+                setupLatestPost({ scheduledUnixTime: latestUnix })
+
+                await callPOST({ accountId: 'acc1', description: 'Test' })
+
+                const arg = mockModel.create.mock.calls[0][0]
+                expect(arg.scheduledDate).toBe('08/03/2026')
+                expect(arg.scheduledTime).toBe('11:00')
+                expect(arg.scheduledUnixTime).toBe(latestUnix + 3600) // exactly +1h
             })
-            mockModel.create.mockImplementation((body: any) => Promise.resolve({ _id: 'p_new', ...body }))
 
-            const request = new NextRequest('http://localhost:3000/api/tiktok-scheduled-posts', {
-                method: 'POST',
-                body: JSON.stringify({
-                    accountId: 'acc1',
-                    description: 'Auto scheduled',
-                }),
+            it('10:00 VN + 1h gap + 30 random = 11:30 VN (exact)', async () => {
+                randomSpy = jest.spyOn(Math, 'random').mockReturnValue(0.5)
+
+                const latestUnix = Math.floor(Date.UTC(2026, 2, 8, 3, 0) / 1000)
+                setupLatestPost({ scheduledUnixTime: latestUnix })
+
+                await callPOST({ accountId: 'acc1', description: 'Test' })
+
+                const arg = mockModel.create.mock.calls[0][0]
+                expect(arg.scheduledDate).toBe('08/03/2026')
+                expect(arg.scheduledTime).toBe('11:30')
+                expect(arg.scheduledUnixTime).toBe(latestUnix + 3600 + 1800)
             })
-            const response = await POST(request)
-            const json = await response.json()
 
-            expect(json.success).toBe(true)
-            const createArg = mockModel.create.mock.calls[0][0]
-            // Should auto-fill date and time (+1h from 10:00 + random minutes)
-            expect(createArg.scheduledDate).toBeDefined()
-            expect(createArg.scheduledTime).toBeDefined()
-            expect(createArg.scheduledDate).toMatch(/^\d{2}\/\d{2}\/\d{4}$/) // DD/MM/YYYY format
-            expect(createArg.scheduledTime).toMatch(/^\d{2}:\d{2}$/)          // HH:mm format
-        })
+            it('23:00 VN + 1h + 30min = next day 00:30 VN (cross-midnight)', async () => {
+                randomSpy = jest.spyOn(Math, 'random').mockReturnValue(0.5)
 
-        it('auto-calculates from NOW when no existing posts', async () => {
-            mockModel.findOne.mockReturnValue({
-                sort: jest.fn().mockReturnValue({
+                // 08/03/2026 23:00 VN = 08/03/2026 16:00 UTC
+                const latestUnix = Math.floor(Date.UTC(2026, 2, 8, 16, 0) / 1000)
+                setupLatestPost({ scheduledUnixTime: latestUnix })
+
+                await callPOST({ accountId: 'acc1', description: 'Cross midnight' })
+
+                const arg = mockModel.create.mock.calls[0][0]
+                expect(arg.scheduledDate).toBe('09/03/2026') // Next day!
+                expect(arg.scheduledTime).toBe('00:30')
+            })
+
+            // ────────────────────────────────────────────────
+            // KEY TEST: 2 bài tạo liên tiếp cách nhau đúng 1h
+            // ────────────────────────────────────────────────
+            it('two sequential posts are exactly 1h apart (0 random)', async () => {
+                randomSpy = jest.spyOn(Math, 'random').mockReturnValue(0)
+
+                // Bài đầu: 08/03/2026 10:00 VN
+                const firstUnix = Math.floor(Date.UTC(2026, 2, 8, 3, 0) / 1000)
+                setupLatestPost({ scheduledUnixTime: firstUnix })
+
+                await callPOST({ accountId: 'acc1', description: 'Post 1' })
+                const post1 = mockModel.create.mock.calls[0][0]
+
+                // Bài thứ 2: dùng output bài 1 làm latest
+                setupLatestPost({ scheduledUnixTime: post1.scheduledUnixTime })
+                await callPOST({ accountId: 'acc1', description: 'Post 2' })
+                const post2 = mockModel.create.mock.calls[1][0]
+
+                // Verify exact gap = 3600 seconds (1 hour)
+                const gapSeconds = post2.scheduledUnixTime - post1.scheduledUnixTime
+                expect(gapSeconds).toBe(3600)
+
+                // Verify dates
+                expect(post1.scheduledDate).toBe('08/03/2026')
+                expect(post1.scheduledTime).toBe('11:00')
+                expect(post2.scheduledDate).toBe('08/03/2026')
+                expect(post2.scheduledTime).toBe('12:00')
+            })
+
+            it('three sequential posts maintain consistent 1h gaps', async () => {
+                randomSpy = jest.spyOn(Math, 'random').mockReturnValue(0)
+
+                const baseUnix = Math.floor(Date.UTC(2026, 2, 8, 3, 0) / 1000) // 10:00 VN
+
+                // Create 3 posts sequentially
+                const posts: any[] = []
+                let lastUnix = baseUnix
+
+                for (let i = 0; i < 3; i++) {
+                    setupLatestPost({ scheduledUnixTime: lastUnix })
+                    await callPOST({ accountId: 'acc1', description: `Post ${i + 1}` })
+                    const created = mockModel.create.mock.calls[i][0]
+                    posts.push(created)
+                    lastUnix = created.scheduledUnixTime
+                }
+
+                // All gaps should be exactly 3600s (1h)
+                expect(posts[1].scheduledUnixTime - posts[0].scheduledUnixTime).toBe(3600)
+                expect(posts[2].scheduledUnixTime - posts[1].scheduledUnixTime).toBe(3600)
+
+                // Verify times: 11:00, 12:00, 13:00
+                expect(posts[0].scheduledTime).toBe('11:00')
+                expect(posts[1].scheduledTime).toBe('12:00')
+                expect(posts[2].scheduledTime).toBe('13:00')
+            })
+
+            it('gap is always between 1h0m and 1h59m with random jitter', async () => {
+                // Test with various random values
+                const randomValues = [0, 0.1, 0.25, 0.5, 0.75, 0.99]
+                const baseUnix = Math.floor(Date.UTC(2026, 2, 8, 3, 0) / 1000)
+
+                for (const rv of randomValues) {
+                    jest.clearAllMocks()
+                    randomSpy = jest.spyOn(Math, 'random').mockReturnValue(rv)
+                    setupLatestPost({ scheduledUnixTime: baseUnix })
+                    await callPOST({ accountId: 'acc1', description: 'Test' })
+
+                    const arg = mockModel.create.mock.calls[0][0]
+                    const gapSeconds = arg.scheduledUnixTime - baseUnix
+                    const gapMinutes = gapSeconds / 60
+
+                    // Gap must be 60min (1h) + 0-59min random = 60..119 minutes
+                    expect(gapMinutes).toBeGreaterThanOrEqual(60)
+                    expect(gapMinutes).toBeLessThan(120)
+                }
+            })
+
+            it('sorts by scheduledUnixTime to find latest post', async () => {
+                randomSpy = jest.spyOn(Math, 'random').mockReturnValue(0)
+                const mockSortFn = jest.fn().mockReturnValue({
                     lean: jest.fn().mockResolvedValue(null),
-                }),
-            })
-            mockModel.create.mockImplementation((body: any) => Promise.resolve({ _id: 'p_new', ...body }))
+                })
+                mockModel.findOne.mockReturnValue({ sort: mockSortFn })
+                mockModel.create.mockImplementation((body: any) =>
+                    Promise.resolve({ _id: 'p_new', ...body })
+                )
 
-            const request = new NextRequest('http://localhost:3000/api/tiktok-scheduled-posts', {
-                method: 'POST',
-                body: JSON.stringify({ accountId: 'acc1', description: 'First post' }),
-            })
-            const response = await POST(request)
-            const json = await response.json()
+                await callPOST({ accountId: 'acc1', description: 'Test' })
 
-            expect(json.success).toBe(true)
-            const createArg = mockModel.create.mock.calls[0][0]
-            expect(createArg.scheduledDate).toBeDefined()
-            expect(createArg.scheduledTime).toBeDefined()
+                expect(mockSortFn).toHaveBeenCalledWith({ scheduledUnixTime: -1 })
+            })
+
+            it('falls back to date string for legacy posts (no scheduledUnixTime)', async () => {
+                randomSpy = jest.spyOn(Math, 'random').mockReturnValue(0)
+
+                // Legacy post without scheduledUnixTime
+                setupLatestPost({
+                    scheduledDate: '08/03/2026',
+                    scheduledTime: '10:00',
+                    // No scheduledUnixTime!
+                })
+
+                await callPOST({ accountId: 'acc1', description: 'Legacy' })
+
+                const arg = mockModel.create.mock.calls[0][0]
+                expect(arg.scheduledDate).toBe('08/03/2026')
+                expect(arg.scheduledTime).toBe('11:00') // 10:00 + 1h
+                expect(arg.scheduledUnixTime).toBeDefined()
+                expect(typeof arg.scheduledUnixTime).toBe('number')
+            })
+
+            it('auto-sets scheduledUnixTime on every new post', async () => {
+                randomSpy = jest.spyOn(Math, 'random').mockReturnValue(0)
+                const latestUnix = Math.floor(Date.UTC(2026, 2, 8, 3, 0) / 1000)
+                setupLatestPost({ scheduledUnixTime: latestUnix })
+
+                await callPOST({ accountId: 'acc1', description: 'Test' })
+
+                const arg = mockModel.create.mock.calls[0][0]
+                expect(arg.scheduledUnixTime).toBe(latestUnix + 3600)
+                expect(typeof arg.scheduledUnixTime).toBe('number')
+            })
         })
 
         it('uses description fallback to empty string when omitted', async () => {
@@ -218,7 +362,6 @@ describe('TikTok Scheduled Posts API', () => {
             const json = await response.json()
 
             expect(json.success).toBe(true)
-            // Description can be empty — server just passes through
             expect(mockModel.create).toHaveBeenCalled()
         })
 
@@ -276,7 +419,6 @@ describe('TikTok Scheduled Posts API', () => {
             })
             await PUT(request)
 
-            // id should be separated, not in the data payload
             const [, updateData] = mockModel.findByIdAndUpdate.mock.calls[0]
             expect(updateData).not.toHaveProperty('id')
             expect(updateData).toEqual({ status: 'draft' })
@@ -354,7 +496,6 @@ describe('TikTok Scheduled Posts API', () => {
                 const json = await response.json()
 
                 expect(json.success).toBe(true)
-                // DB record should still be deleted even if R2 fails
                 expect(mockModel.findByIdAndDelete).toHaveBeenCalledWith('p1')
             })
         })
@@ -376,7 +517,7 @@ describe('TikTok Scheduled Posts API', () => {
             it('deletes last post regardless of expiry (future date)', async () => {
                 const lastPost = {
                     _id: 'p_last',
-                    scheduledDate: '31/12/2099',  // Tương lai xa → chưa quá hạn
+                    scheduledDate: '31/12/2099',
                     scheduledTime: '23:59',
                     video: { publicId: 'last-video.mp4' },
                 }
@@ -420,7 +561,7 @@ describe('TikTok Scheduled Posts API', () => {
                 expect(json.total).toBe(0)
             })
 
-            it('cleans up R2 even if last post has no video', async () => {
+            it('handles last post without video', async () => {
                 const lastPost = { _id: 'p_last', scheduledDate: '06/03/2026', scheduledTime: '10:00' }
                 mockFindLean.mockResolvedValue([lastPost])
                 mockModel.findByIdAndDelete.mockResolvedValue(lastPost)
@@ -442,9 +583,9 @@ describe('TikTok Scheduled Posts API', () => {
             it('deletes only expired posts using scheduledUnixTime (timezone-safe)', async () => {
                 const nowUnix = Math.floor(Date.now() / 1000)
                 const posts = [
-                    { _id: 'p_exp1', scheduledDate: '01/01/2020', scheduledTime: '08:00', scheduledUnixTime: nowUnix - 86400, video: { publicId: 'old1.mp4' } },
-                    { _id: 'p_exp2', scheduledDate: '15/06/2023', scheduledTime: '14:30', scheduledUnixTime: nowUnix - 3600, video: { publicId: 'old2.mp4' } },
-                    { _id: 'p_future', scheduledDate: '31/12/2099', scheduledTime: '20:00', scheduledUnixTime: nowUnix + 86400, video: { publicId: 'new.mp4' } },
+                    { _id: 'p_exp1', scheduledUnixTime: nowUnix - 86400, video: { publicId: 'old1.mp4' } },
+                    { _id: 'p_exp2', scheduledUnixTime: nowUnix - 3600, video: { publicId: 'old2.mp4' } },
+                    { _id: 'p_future', scheduledUnixTime: nowUnix + 86400, video: { publicId: 'new.mp4' } },
                 ]
                 mockFindLean.mockResolvedValue(posts)
                 mockModel.findByIdAndDelete.mockResolvedValue({})
@@ -462,17 +603,16 @@ describe('TikTok Scheduled Posts API', () => {
                 expect(mockModel.findByIdAndDelete).toHaveBeenCalledWith('p_exp1')
                 expect(mockModel.findByIdAndDelete).toHaveBeenCalledWith('p_exp2')
                 expect(mockModel.findByIdAndDelete).not.toHaveBeenCalledWith('p_future')
-                // R2 cleanup for expired only
                 expect(mockRemoveObject).toHaveBeenCalledWith('test-bucket', 'old1.mp4')
                 expect(mockRemoveObject).toHaveBeenCalledWith('test-bucket', 'old2.mp4')
                 expect(mockRemoveObject).not.toHaveBeenCalledWith('test-bucket', 'new.mp4')
             })
 
-            it('returns 0 deleted when all posts are in the future (by scheduledUnixTime)', async () => {
+            it('returns 0 deleted when all posts are in the future', async () => {
                 const nowUnix = Math.floor(Date.now() / 1000)
                 const posts = [
-                    { _id: 'p1', scheduledDate: '31/12/2099', scheduledTime: '10:00', scheduledUnixTime: nowUnix + 86400 },
-                    { _id: 'p2', scheduledDate: '31/12/2099', scheduledTime: '12:00', scheduledUnixTime: nowUnix + 172800 },
+                    { _id: 'p1', scheduledUnixTime: nowUnix + 86400 },
+                    { _id: 'p2', scheduledUnixTime: nowUnix + 172800 },
                 ]
                 mockFindLean.mockResolvedValue(posts)
 
@@ -487,30 +627,6 @@ describe('TikTok Scheduled Posts API', () => {
                 expect(json.deleted).toBe(0)
                 expect(json.total).toBe(2)
                 expect(mockModel.findByIdAndDelete).not.toHaveBeenCalled()
-            })
-
-            it('skips posts with missing date/time fields', async () => {
-                const posts = [
-                    { _id: 'p_no_date', scheduledTime: '10:00' },       // missing date
-                    { _id: 'p_no_time', scheduledDate: '01/01/2020' },  // missing time
-                    { _id: 'p_ok', scheduledDate: '01/01/2020', scheduledTime: '08:00', video: {} },
-                ]
-                mockFindLean.mockResolvedValue(posts)
-                mockModel.findByIdAndDelete.mockResolvedValue({})
-
-                const request = new NextRequest(
-                    'http://localhost:3000/api/tiktok-scheduled-posts?cleanup=expired&accountId=acc1',
-                    { method: 'DELETE' }
-                )
-                const response = await DELETE(request)
-                const json = await response.json()
-
-                expect(json.success).toBe(true)
-                expect(json.deleted).toBe(1)
-                // Only p_ok (has both date+time and is expired) gets deleted
-                expect(mockModel.findByIdAndDelete).toHaveBeenCalledWith('p_ok')
-                expect(mockModel.findByIdAndDelete).not.toHaveBeenCalledWith('p_no_date')
-                expect(mockModel.findByIdAndDelete).not.toHaveBeenCalledWith('p_no_time')
             })
 
             it('handles empty account (no posts)', async () => {

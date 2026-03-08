@@ -388,6 +388,7 @@ const TikTokScheduledPostModal = ({
                                         className="flex-1"
                                     >
                                         <TimePicker
+                                            key={selectedDate?.format('YYYY-MM-DD') || 'no-date'}
                                             className="w-full"
                                             format="HH"
                                             showMinute={false}
