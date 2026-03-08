@@ -137,13 +137,19 @@ export async function DELETE(request: NextRequest) {
                 })
             }
 
-            // Filter posts that are in the past (scheduledDate DD/MM/YYYY + scheduledTime HH:mm < now)
+            // Filter posts that are expired using scheduledUnixTime (timezone-safe)
+            // scheduledUnixTime is stored as Unix seconds in VN timezone
+            const nowUnix = Math.floor(Date.now() / 1000)
             const expiredPosts = allPosts.filter((post: any) => {
+                if (post.scheduledUnixTime) {
+                    return post.scheduledUnixTime < nowUnix
+                }
+                // Fallback: parse date string (legacy posts without scheduledUnixTime)
                 if (!post.scheduledDate || !post.scheduledTime) return false
                 const [day, month, year] = post.scheduledDate.split('/')
                 const [hour, minute] = post.scheduledTime.split(':')
                 const postDate = new Date(+year, +month - 1, +day, +hour, +minute)
-                return postDate < now
+                return postDate < new Date()
             })
 
             // Delete R2 videos + DB records

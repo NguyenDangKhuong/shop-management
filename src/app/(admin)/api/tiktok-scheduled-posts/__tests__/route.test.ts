@@ -439,11 +439,12 @@ describe('TikTok Scheduled Posts API', () => {
 
         // ── Cleanup: multiple posts → only delete expired ──
         describe('cleanup - expired posts', () => {
-            it('deletes only expired posts, keeps future ones', async () => {
+            it('deletes only expired posts using scheduledUnixTime (timezone-safe)', async () => {
+                const nowUnix = Math.floor(Date.now() / 1000)
                 const posts = [
-                    { _id: 'p_exp1', scheduledDate: '01/01/2020', scheduledTime: '08:00', video: { publicId: 'old1.mp4' } },
-                    { _id: 'p_exp2', scheduledDate: '15/06/2023', scheduledTime: '14:30', video: { publicId: 'old2.mp4' } },
-                    { _id: 'p_future', scheduledDate: '31/12/2099', scheduledTime: '20:00', video: { publicId: 'new.mp4' } },
+                    { _id: 'p_exp1', scheduledDate: '01/01/2020', scheduledTime: '08:00', scheduledUnixTime: nowUnix - 86400, video: { publicId: 'old1.mp4' } },
+                    { _id: 'p_exp2', scheduledDate: '15/06/2023', scheduledTime: '14:30', scheduledUnixTime: nowUnix - 3600, video: { publicId: 'old2.mp4' } },
+                    { _id: 'p_future', scheduledDate: '31/12/2099', scheduledTime: '20:00', scheduledUnixTime: nowUnix + 86400, video: { publicId: 'new.mp4' } },
                 ]
                 mockFindLean.mockResolvedValue(posts)
                 mockModel.findByIdAndDelete.mockResolvedValue({})
@@ -467,10 +468,11 @@ describe('TikTok Scheduled Posts API', () => {
                 expect(mockRemoveObject).not.toHaveBeenCalledWith('test-bucket', 'new.mp4')
             })
 
-            it('returns 0 deleted when all posts are in the future', async () => {
+            it('returns 0 deleted when all posts are in the future (by scheduledUnixTime)', async () => {
+                const nowUnix = Math.floor(Date.now() / 1000)
                 const posts = [
-                    { _id: 'p1', scheduledDate: '31/12/2099', scheduledTime: '10:00' },
-                    { _id: 'p2', scheduledDate: '31/12/2099', scheduledTime: '12:00' },
+                    { _id: 'p1', scheduledDate: '31/12/2099', scheduledTime: '10:00', scheduledUnixTime: nowUnix + 86400 },
+                    { _id: 'p2', scheduledDate: '31/12/2099', scheduledTime: '12:00', scheduledUnixTime: nowUnix + 172800 },
                 ]
                 mockFindLean.mockResolvedValue(posts)
 
