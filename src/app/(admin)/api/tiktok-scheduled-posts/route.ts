@@ -113,7 +113,6 @@ export async function DELETE(request: NextRequest) {
 
         // Cleanup expired posts for an account
         if (cleanup === 'expired' && accountId) {
-            const now = new Date()
             const allPosts = await TikTokScheduledPostModel.find({ accountId }).lean() as any[]
 
             // Nếu chỉ còn 1 bài duy nhất → xoá luôn không cần check quá hạn
