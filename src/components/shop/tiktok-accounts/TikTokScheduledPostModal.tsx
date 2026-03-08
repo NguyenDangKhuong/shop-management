@@ -35,7 +35,6 @@ const TikTokScheduledPostModal = ({
     const [uploading, setUploading] = useState(false)
     const [uploadQueue, setUploadQueue] = useState<{ name: string; progress: number; status: 'uploading' | 'done' | 'error' }[]>([])
     const [shopeeLinks, setShopeeLinks] = useState<any[]>([])
-    const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null)
 
     const uploadAbortRef = useRef<(() => void) | null>(null)
 
@@ -74,18 +73,15 @@ const TikTokScheduledPostModal = ({
                     status: editingPost.status || 'scheduled',
                     hasMusic: editingPost.hasMusic ?? false
                 })
-                setSelectedDate(editDate)
                 setVideo(editingPost.video || null)
                 setVideos([])
             } else {
                 form.resetFields()
                 form.setFieldsValue({ status: 'scheduled', hasMusic: false })
-                setSelectedDate(null)
                 setVideo(null)
                 setVideos([])
             }
         } else {
-            setSelectedDate(null)
             setVideo(null)
             setVideos([])
         }
@@ -373,42 +369,47 @@ const TikTokScheduledPostModal = ({
                                         <DatePicker
                                             className="w-full"
                                             format="DD/MM/YYYY"
+                                            // Chỉ cho chọn hôm nay trở đi
                                             disabledDate={(current) => current && current < dayjs().startOf('day')}
-                                            onChange={(date) => {
-                                                setSelectedDate(date)
-                                                if (date && date.isSame(dayjs(), 'day')) {
-                                                    const currentTime = form.getFieldValue('scheduledTime')
-                                                    if (currentTime && currentTime.hour() <= dayjs().hour()) {
-                                                        form.setFieldValue('scheduledTime', null)
-                                                    }
-                                                }
-                                            }}
                                         />
                                     </Form.Item>
 
+                                    {/* shouldUpdate: force re-render TimePicker khi scheduledDate thay đổi
+                                         → đảm bảo disabledTime luôn tính đúng theo ngày đã chọn
+                                         - Hôm nay: disable giờ 0..currentHour-1 (giờ hiện tại vẫn chọn được)
+                                         - Ngày mai/mốt: cho chọn full 0-23h */}
                                     <Form.Item
-                                        label="Giờ đăng"
-                                        name="scheduledTime"
-                                        className="flex-1"
+                                        shouldUpdate={(prev, cur) => prev.scheduledDate !== cur.scheduledDate}
+                                        noStyle
                                     >
-                                        <TimePicker
-                                            key={selectedDate?.format('YYYY-MM-DD') || 'no-date'}
-                                            className="w-full"
-                                            format="HH"
-                                            showMinute={false}
-                                            showSecond={false}
-                                            defaultOpenValue={dayjs()}
-                                            disabledTime={() => {
-                                                const isToday = selectedDate && selectedDate.isSame(dayjs(), 'day')
-                                                if (isToday) {
-                                                    const currentHour = dayjs().hour()
-                                                    return {
-                                                        disabledHours: () => Array.from({ length: currentHour + 1 }, (_, i) => i)
-                                                    }
-                                                }
-                                                return {}
-                                            }}
-                                        />
+                                        {() => {
+                                            const formDate = form.getFieldValue('scheduledDate')
+                                            const isToday = formDate && dayjs(formDate).isSame(dayjs(), 'day')
+                                            return (
+                                                <Form.Item
+                                                    label="Giờ đăng"
+                                                    name="scheduledTime"
+                                                    className="flex-1"
+                                                >
+                                                    <TimePicker
+                                                        className="w-full"
+                                                        format="HH"
+                                                        showMinute={false}
+                                                        showSecond={false}
+                                                        defaultOpenValue={dayjs()}
+                                                        disabledTime={() => {
+                                                            if (isToday) {
+                                                                const currentHour = dayjs().hour()
+                                                                return {
+                                                                    disabledHours: () => Array.from({ length: currentHour }, (_, i) => i)
+                                                                }
+                                                            }
+                                                            return {}
+                                                        }}
+                                                    />
+                                                </Form.Item>
+                                            )
+                                        }}
                                     </Form.Item>
                                 </div>
                                 {!isEditMode && (

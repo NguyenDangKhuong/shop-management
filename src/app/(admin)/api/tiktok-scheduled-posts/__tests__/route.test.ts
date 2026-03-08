@@ -208,6 +208,38 @@ describe('TikTok Scheduled Posts API', () => {
                 expect(arg.scheduledUnixTime).toBe(latestUnix + 3600 + 1800)
             })
 
+            it('10:32 VN → floors to 10:00, then +1h = 11:00 (not 11:32)', async () => {
+                randomSpy = jest.spyOn(Math, 'random').mockReturnValue(0)
+
+                // 08/03/2026 10:32 VN = 08/03/2026 03:32 UTC
+                const latestUnix = Math.floor(Date.UTC(2026, 2, 8, 3, 32) / 1000)
+                setupLatestPost({ scheduledUnixTime: latestUnix })
+
+                await callPOST({ accountId: 'acc1', description: 'Test floor' })
+
+                const arg = mockModel.create.mock.calls[0][0]
+                expect(arg.scheduledDate).toBe('08/03/2026')
+                expect(arg.scheduledTime).toBe('11:00') // NOT 11:32!
+
+                // Verify: floor(03:32 UTC) = 03:00 UTC, +1h = 04:00 UTC = 11:00 VN
+                const expectedUnix = Math.floor(Date.UTC(2026, 2, 8, 4, 0) / 1000)
+                expect(arg.scheduledUnixTime).toBe(expectedUnix)
+            })
+
+            it('05:48 VN + random 25min → 06:25 (floor to 05:00, +1h +25m)', async () => {
+                // Math.floor(0.42 * 60) = 25
+                randomSpy = jest.spyOn(Math, 'random').mockReturnValue(0.42)
+
+                // 08/03/2026 05:48 VN = 07/03/2026 22:48 UTC
+                const latestUnix = Math.floor(Date.UTC(2026, 2, 7, 22, 48) / 1000)
+                setupLatestPost({ scheduledUnixTime: latestUnix })
+
+                await callPOST({ accountId: 'acc1', description: 'Test floor+random' })
+
+                const arg = mockModel.create.mock.calls[0][0]
+                expect(arg.scheduledDate).toBe('08/03/2026')
+                expect(arg.scheduledTime).toBe('06:25') // floor(05:48)=05:00, +1h+25m=06:25
+            })
             it('23:00 VN + 1h + 30min = next day 00:30 VN (cross-midnight)', async () => {
                 randomSpy = jest.spyOn(Math, 'random').mockReturnValue(0.5)
 

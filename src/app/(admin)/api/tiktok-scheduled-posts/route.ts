@@ -61,9 +61,13 @@ export async function POST(request: NextRequest) {
                 baseUnix = Math.floor(Date.now() / 1000)
             }
 
-            // Add TIKTOK_DEFAULT_HOUR_GAP hours + random 0-59 minutes
+            // Tính giờ tiếp theo: tăng đúng TIKTOK_DEFAULT_HOUR_GAP giờ từ giờ bài trước
+            // Chỉ random phút (0-59), đảm bảo mỗi bài nằm ở slot giờ khác nhau
+            // VD: bài cũ 05:32 → bài mới 06:xx (không phải 06:32 + random)
             const randomMinutes = Math.floor(Math.random() * 60)
-            const newUnix = baseUnix + (TIKTOK_DEFAULT_HOUR_GAP * 3600) + (randomMinutes * 60)
+            // Làm tròn baseUnix về đầu giờ (bỏ phút/giây) rồi cộng gap giờ + random phút
+            const baseHourUnix = baseUnix - (baseUnix % 3600)
+            const newUnix = baseHourUnix + (TIKTOK_DEFAULT_HOUR_GAP * 3600) + (randomMinutes * 60)
 
             // Convert unix timestamp to VN timezone (UTC+7) for DD/MM/YYYY and HH:mm
             const vnDate = new Date((newUnix + 7 * 3600) * 1000)
