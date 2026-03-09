@@ -76,7 +76,7 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
       }}
     >
       <Link href='/'>
-        <img className='bg-white mb-5 w-full h-[65px] m-auto' src='/image/logo.png' alt='logo' />
+        <img className='mb-5 w-[200px] h-[65px] object-contain m-auto' src='/image/logo.png' alt='logo' />
       </Link>
       <Menu
         theme='dark'

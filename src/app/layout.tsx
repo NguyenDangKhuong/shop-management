@@ -25,7 +25,6 @@ export const metadata: Metadata = {
   description: 'TheTapHoa, TPHCM, Viet Nam',
   manifest: '/favicon_io/site.webmanifest',
   // PWA meta tags
-  themeColor: '#0a0a0a',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -51,6 +50,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport = {
+  themeColor: '#0a0a0a',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
