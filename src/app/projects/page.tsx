@@ -168,6 +168,63 @@ export default function ProjectsPage() {
                 </div>
             </div>
 
+            {/* Skills */}
+            <div className="w-full max-w-5xl mx-auto mb-8 z-10">
+                <h2 className="text-xl font-semibold text-white mb-4">🛠️ Tech Stack & Skills</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {[
+                        {
+                            category: 'Core',
+                            color: '#38bdf8',
+                            skills: ['TypeScript (strict mode)', 'JavaScript ES2024+', 'HTML5 / CSS3', 'Vanilla Extract (CSS-in-JS)']
+                        },
+                        {
+                            category: 'Frameworks & Libraries',
+                            color: '#c084fc',
+                            skills: ['React 19 (Compiler, Suspense)', 'Next.js 15 (App Router, SSR)', 'React Hook Form + Zod', 'Ant Design / Tailwind CSS']
+                        },
+                        {
+                            category: 'Testing & Quality',
+                            color: '#10b981',
+                            skills: ['Jest + Testing Library', 'Playwright (E2E)', 'Storybook / MSW', 'Lighthouse CI (98% A11Y)']
+                        },
+                        {
+                            category: 'DevOps & Infrastructure',
+                            color: '#f97316',
+                            skills: ['MongoDB / Mongoose', 'Cloudinary / Cloudflare R2', 'n8n Automation', 'NextAuth.js']
+                        },
+                        {
+                            category: 'Architecture',
+                            color: '#fbbf24',
+                            skills: ['Micro Frontend', 'Module Federation', 'Design Systems (70+ components)', 'REST API / GraphQL']
+                        },
+                        {
+                            category: 'Tools & Workflow',
+                            color: '#ec4899',
+                            skills: ['ESLint / Prettier (Oxc)', 'LaunchDarkly (Feature Flags)', 'Segment Analytics', 'Claude AI / Cursor / Copilot']
+                        },
+                    ].map((group) => (
+                        <div
+                            key={group.category}
+                            className="rounded-xl bg-slate-800/40 border border-white/10 p-4 hover:border-white/20 transition"
+                        >
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: group.color }} />
+                                <span className="text-sm font-medium text-white">{group.category}</span>
+                            </div>
+                            <div className="space-y-1.5">
+                                {group.skills.map((skill) => (
+                                    <div key={skill} className="text-xs text-slate-400 flex items-center gap-2">
+                                        <span style={{ color: group.color }}>▸</span>
+                                        {skill}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             {/* Project Grid */}
             <div className="w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 z-10">
                 {projects.map((project) => (
