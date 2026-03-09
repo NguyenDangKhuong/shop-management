@@ -492,7 +492,7 @@ export default function LandingPage() {
                                         {cat.skills.map((skill) => (
                                             <span
                                                 key={skill}
-                                                className="px-2.5 py-1 text-xs rounded-full border text-gray-700"
+                                                className="px-2.5 py-1 text-xs rounded-full border text-[var(--text-secondary)]"
                                                 style={{ borderColor: `${cat.color}30`, backgroundColor: `${cat.color}10` }}
                                             >
                                                 {skill}
