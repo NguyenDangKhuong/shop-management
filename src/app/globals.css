@@ -20,6 +20,8 @@
   --bg-surface: rgba(255, 255, 255, 0.8);
   --bg-surface-dim: #f3f4f6;
   /* gray-100 */
+  --bg-secondary: #f3f4f6;
+  /* gray-100 */
   --bg-input: #f3f4f6;
   /* gray-100 */
   --bg-tag: #f3f4f6;
@@ -76,6 +78,8 @@
   /* slate-700/40 */
   --bg-surface: rgba(30, 41, 59, 0.4);
   --bg-surface-dim: rgba(30, 41, 59, 0.5);
+  --bg-secondary: rgba(30, 41, 59, 0.6);
+  /* slate-800/60 */
   --bg-input: rgba(30, 41, 59, 0.8);
   --bg-tag: rgba(30, 41, 59, 0.5);
   /* slate-800/50 */
