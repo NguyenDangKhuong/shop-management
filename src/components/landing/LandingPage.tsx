@@ -513,6 +513,13 @@ export default function LandingPage() {
                         </p>
                         <div className="flex items-center gap-6">
                             <Link
+                                href="/flashcards"
+                                className="text-[var(--text-secondary)] hover:text-[#fbbf24] transition-colors"
+                                title="Algorithm Flashcards"
+                            >
+                                🃏 Flashcards
+                            </Link>
+                            <Link
                                 href="/privacy"
                                 className="text-[var(--text-secondary)] hover:text-[#38bdf8] transition-colors underline"
                             >
