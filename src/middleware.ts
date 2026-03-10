@@ -86,30 +86,18 @@ export async function middleware(request: NextRequest) {
 }
 
 /**
- * Matcher: CHỈ match routes CẦN middleware.
+ * Matcher: catch-all cho mọi page routes (trừ static assets).
  *
- * Tại sao không match ALL routes?
- * → Mỗi middleware invocation tốn Vercel Fast Origin Transfer
- * → Public pages (blogs, landing) không cần middleware → bỏ qua để tiết kiệm
+ * Tại sao catch-all thay vì list từng route?
+ * → Cần chặn xvn.vercel.app truy cập BẤT KỲ page nào ngoài /tweets
+ * → Nếu chỉ list cụ thể, route mới (blogs, projects) sẽ bị miss
  *
- * ⚠️ Thêm route admin mới → thêm vào đây!
+ * Pattern loại trừ: _next (static files), favicon, files có extension (.css, .js, .ico...)
  */
 export const config = {
   matcher: [
-    // Admin routes (cần auth)
-    '/carts/:path*',
-    '/categories/:path*',
-    '/facebook-posts/:path*',
-    '/orders/:path*',
-    '/products/:path*',
-    '/prompts/:path*',
-    '/tiktok-accounts/:path*',
-    '/tiktok-music/:path*',
-    '/veo3-tokens/:path*',
-    '/shopee-links/:path*',
-    // Tweets (domain blocking/routing)
-    '/tweets/:path*',
-    // Root (xvn.vercel.app redirect)
-    '/',
+    // Catch-all: chặn mọi route trên xvn.vercel.app (trừ static assets)
+    // Cũng dùng cho admin auth + domain-based routing
+    '/((?!_next|favicon|.*\\..*).*)',
   ]
 }
