@@ -57,6 +57,52 @@ const intersection = [...a].filter(x => b.has(x))  // [2, 3]
 const union = new Set([...a, ...b])                 // {1, 2, 3, 4}
 const diff = [...a].filter(x => !b.has(x))          // [1]`}</CodeBlock>
 
+        <Heading3>Map ↔ Array: cheat sheet chuyển đổi</Heading3>
+        <Callout type="tip">
+            <strong>Hình dung:</strong> <Highlight>Map = tủ hồ sơ</Highlight> (mỗi ngăn có nhãn key + tài liệu value).
+            <Highlight>Array = bàn làm việc</Highlight> (xếp hàng, có thứ tự).
+            Chuyển đổi = lấy đồ từ tủ ra bàn, hoặc cất từ bàn vào tủ.
+        </Callout>
+        <CodeBlock title="map-to-array.js">{`// ═══ MAP → ARRAY: "Lấy đồ từ tủ ra bàn" ═══
+const map = new Map([["a", 1], ["b", 2], ["c", 3]])
+
+// 🏷️ Chỉ lấy nhãn (keys)
+[...map.keys()]           // ["a", "b", "c"]
+
+// 📄 Chỉ lấy tài liệu (values)
+[...map.values()]         // [1, 2, 3]
+// hoặc: Array.from(map.values())  ← Group Anagrams dùng cách này!
+
+// 📦 Lấy cả cặp [nhãn, tài liệu]
+[...map.entries()]        // [["a",1], ["b",2], ["c",3]]
+
+// ═══ ARRAY → MAP: "Cất đồ từ bàn vào tủ" ═══
+const pairs = [["x", 10], ["y", 20]]
+const newMap = new Map(pairs)   // Map { "x"→10, "y"→20 }
+
+// Từ array thường → Map (tự tạo key bằng index)
+const arr = ["apple", "banana"]
+const indexMap = new Map(arr.map((val, i) => [i, val]))
+// Map { 0→"apple", 1→"banana" }`}</CodeBlock>
+
+        <div className="my-4 overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+                <thead>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Chiều chuyển</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Code</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Kết quả</th>
+                    </tr>
+                </thead>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3">Map → keys</td><td className="p-3"><InlineCode>[...map.keys()]</InlineCode></td><td className="p-3">[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Map → values</td><td className="p-3"><InlineCode>Array.from(map.values())</InlineCode></td><td className="p-3">[1, 2, 3]</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Map → pairs</td><td className="p-3"><InlineCode>[...map.entries()]</InlineCode></td><td className="p-3">[[&quot;a&quot;,1], [&quot;b&quot;,2]]</td></tr>
+                    <tr><td className="p-3">Array → Map</td><td className="p-3"><InlineCode>new Map(pairs)</InlineCode></td><td className="p-3">Map &#123; &quot;x&quot;→10 &#125;</td></tr>
+                </tbody>
+            </table>
+        </div>
+
         <Heading3>Object vs Map — khi nào dùng cái nào?</Heading3>
 
         <div className="my-4 overflow-x-auto">
@@ -747,6 +793,52 @@ const b = new Set([2, 3, 4])
 const intersection = [...a].filter(x => b.has(x))  // [2, 3]
 const union = new Set([...a, ...b])                 // {1, 2, 3, 4}
 const diff = [...a].filter(x => !b.has(x))          // [1]`}</CodeBlock>
+
+        <Heading3>Map ↔ Array: Conversion Cheat Sheet</Heading3>
+        <Callout type="tip">
+            <strong>Visual metaphor:</strong> <Highlight>Map = filing cabinet</Highlight> (each drawer has a label key + document value).
+            <Highlight>Array = desk</Highlight> (items lined up in order).
+            Converting = taking items from cabinet to desk, or filing from desk into cabinet.
+        </Callout>
+        <CodeBlock title="map-to-array.js">{`// ═══ MAP → ARRAY: "Take items from cabinet to desk" ═══
+const map = new Map([["a", 1], ["b", 2], ["c", 3]])
+
+// 🏷️ Take only labels (keys)
+[...map.keys()]           // ["a", "b", "c"]
+
+// 📄 Take only documents (values)
+[...map.values()]         // [1, 2, 3]
+// or: Array.from(map.values())  ← Group Anagrams uses this!
+
+// 📦 Take everything [label, document]
+[...map.entries()]        // [["a",1], ["b",2], ["c",3]]
+
+// ═══ ARRAY → MAP: "File items from desk into cabinet" ═══
+const pairs = [["x", 10], ["y", 20]]
+const newMap = new Map(pairs)   // Map { "x"→10, "y"→20 }
+
+// From regular array → Map (use index as key)
+const arr = ["apple", "banana"]
+const indexMap = new Map(arr.map((val, i) => [i, val]))
+// Map { 0→"apple", 1→"banana" }`}</CodeBlock>
+
+        <div className="my-4 overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+                <thead>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Direction</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Code</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Result</th>
+                    </tr>
+                </thead>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3">Map → keys</td><td className="p-3"><InlineCode>[...map.keys()]</InlineCode></td><td className="p-3">[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Map → values</td><td className="p-3"><InlineCode>Array.from(map.values())</InlineCode></td><td className="p-3">[1, 2, 3]</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Map → pairs</td><td className="p-3"><InlineCode>[...map.entries()]</InlineCode></td><td className="p-3">[[&quot;a&quot;,1], [&quot;b&quot;,2]]</td></tr>
+                    <tr><td className="p-3">Array → Map</td><td className="p-3"><InlineCode>new Map(pairs)</InlineCode></td><td className="p-3">Map &#123; &quot;x&quot;→10 &#125;</td></tr>
+                </tbody>
+            </table>
+        </div>
 
         <Heading3>Object vs Map — When to Use Which?</Heading3>
 
