@@ -19,9 +19,6 @@ export default function TweetsPage() {
                     <span className="text-3xl">𝕏</span>
                     <h1 className="text-3xl md:text-4xl font-bold text-white">Tweets</h1>
                 </div>
-                <p className="text-slate-400">
-                    Paste link tweet từ X để xem trực tiếp trên trang.
-                </p>
             </div>
 
             {/* Unified Feed — For You / Following / User timeline */}
