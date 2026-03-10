@@ -71,18 +71,22 @@ export function formatTweetText(text: string): string {
     return cleaned
 }
 
-export function ImagePreview({ src, onClose }: { src: string; onClose: () => void }) {
+export function ImagePreview({ images, index, onClose, onNavigate }: { images: string[]; index: number; onClose: () => void; onNavigate: (index: number) => void }) {
     const overlayRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose()
+            if (e.key === 'ArrowLeft' && index > 0) onNavigate(index - 1)
+            if (e.key === 'ArrowRight' && index < images.length - 1) onNavigate(index + 1)
+        }
         document.addEventListener('keydown', handleKey)
         document.body.style.overflow = 'hidden'
         return () => {
             document.removeEventListener('keydown', handleKey)
             document.body.style.overflow = ''
         }
-    }, [onClose])
+    }, [onClose, onNavigate, index, images.length])
 
     return (
         <div
@@ -96,11 +100,39 @@ export function ImagePreview({ src, onClose }: { src: string; onClose: () => voi
             >
                 ✕
             </button>
+
+            {/* Left arrow */}
+            {index > 0 && (
+                <button
+                    onClick={(e) => { e.stopPropagation(); onNavigate(index - 1) }}
+                    className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-black/80 border border-white/20 text-white text-lg transition cursor-pointer z-10"
+                >
+                    ‹
+                </button>
+            )}
+
+            {/* Right arrow */}
+            {index < images.length - 1 && (
+                <button
+                    onClick={(e) => { e.stopPropagation(); onNavigate(index + 1) }}
+                    className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-black/80 border border-white/20 text-white text-lg transition cursor-pointer z-10"
+                >
+                    ›
+                </button>
+            )}
+
             <img
-                src={src}
+                src={images[index]}
                 alt=""
                 className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl animate-[scaleIn_0.2s_ease-out]"
             />
+
+            {/* Counter */}
+            {images.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/60 border border-white/10 text-white text-xs">
+                    {index + 1} / {images.length}
+                </div>
+            )}
         </div>
     )
 }
@@ -350,7 +382,7 @@ export function GraphQLTweets({ username, onUserClick }: GraphQLTweetsProps) {
     const [error, setError] = useState('')
     const [cursorBottom, setCursorBottom] = useState('')
     const [hasMore, setHasMore] = useState(true)
-    const [previewImage, setPreviewImage] = useState<string | null>(null)
+    const [previewState, setPreviewState] = useState<{ images: string[]; index: number } | null>(null)
 
     const videoProxyUrl = process.env.NEXT_PUBLIC_VIDEO_PROXY_URL || ''
 
@@ -388,6 +420,31 @@ export function GraphQLTweets({ username, onUserClick }: GraphQLTweetsProps) {
             setLoadingMore(false)
         }
     }, [username])
+
+    // ─── Infinite scroll ──────────────────────────────────────────────────
+    const sentinelRef = useRef<HTMLDivElement>(null)
+    const loadingMoreRef = useRef(false)
+    loadingMoreRef.current = loadingMore
+    const hasMoreRef = useRef(true)
+    hasMoreRef.current = hasMore
+    const cursorRef = useRef('')
+    cursorRef.current = cursorBottom
+
+    useEffect(() => {
+        const el = sentinelRef.current
+        if (!el) return
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting && hasMoreRef.current && !loadingMoreRef.current && cursorRef.current) {
+                    fetchTweets(cursorRef.current)
+                }
+            },
+            { rootMargin: '400px' }
+        )
+        observer.observe(el)
+        return () => observer.disconnect()
+    }, [fetchTweets])
 
     useEffect(() => {
         fetchTweets()
@@ -434,30 +491,35 @@ export function GraphQLTweets({ username, onUserClick }: GraphQLTweetsProps) {
 
                 {/* Tweets */}
                 {tweets.map(tweet => (
-                    <TweetCard key={tweet.id} tweet={tweet} videoProxyUrl={videoProxyUrl} onUserClick={onUserClick} onImageClick={setPreviewImage} />
+                    <TweetCard key={tweet.id} tweet={tweet} videoProxyUrl={videoProxyUrl} onUserClick={onUserClick} onImageClick={(url) => {
+                        const allPhotos = tweet.media.filter(m => m.type === 'photo').map(m => m.url)
+                        const idx = allPhotos.indexOf(url)
+                        setPreviewState({ images: allPhotos, index: idx >= 0 ? idx : 0 })
+                    }} />
                 ))}
 
-                {/* Load More */}
+                {/* Infinite scroll sentinel */}
                 {hasMore && (
-                    <div className="px-4 py-4 text-center">
-                        <button
-                            onClick={() => fetchTweets(cursorBottom)}
-                            disabled={loadingMore}
-                            className="px-6 py-2.5 rounded-full bg-[#1d9bf0] text-white text-sm font-semibold hover:bg-[#1a8cd8] transition disabled:opacity-50"
-                        >
-                            {loadingMore ? (
-                                <span className="flex items-center gap-2">
-                                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                    Loading...
-                                </span>
-                            ) : 'Load more tweets'}
-                        </button>
+                    <div ref={sentinelRef} className="px-4 py-4 text-center">
+                        {loadingMore ? (
+                            <div className="flex items-center justify-center gap-2 text-slate-400 text-sm">
+                                <span className="w-4 h-4 border-2 border-[#1d9bf0] border-t-transparent rounded-full animate-spin" />
+                                Loading more...
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => fetchTweets(cursorBottom)}
+                                className="text-[#1d9bf0] text-xs hover:underline opacity-50 cursor-pointer"
+                            >
+                                Load more tweets
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
 
             {/* Image Preview Lightbox */}
-            {previewImage && <ImagePreview src={previewImage} onClose={() => setPreviewImage(null)} />}
+            {previewState && <ImagePreview images={previewState.images} index={previewState.index} onClose={() => setPreviewState(null)} onNavigate={(i) => setPreviewState(prev => prev ? { ...prev, index: i } : null)} />}
 
             {/* Keyframe animations for lightbox */}
             <style jsx global>{`
