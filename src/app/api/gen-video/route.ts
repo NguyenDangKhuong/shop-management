@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { SITE_URL } from '@/utils/constants'
 
 const VEO3_API_URL = 'https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText'
 const WS_BRIDGE_URL = process.env.WS_BRIDGE_URL || 'http://localhost:3002'
@@ -84,7 +85,7 @@ export async function POST(request: NextRequest) {
         // API fallback — fetch projectId/sessionId/siteKey/token from /api/veo3-tokens
         if (!bearerToken || !projectId || !sessionId || !siteKey) {
             try {
-                const apiBase = process.env.NEXT_PUBLIC_BASE_URL || 'https://shop.thetaphoa.store'
+                const apiBase = process.env.NEXT_PUBLIC_BASE_URL || SITE_URL
                 const tokensResp = await fetch(`${apiBase}/api/veo3-tokens`, {
                     signal: AbortSignal.timeout(5000)
                 })

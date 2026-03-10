@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
+import { SITE_URL } from '@/utils/constants'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://shop.thetaphoa.store'
 
 export default function robots(): MetadataRoute.Robots {
     return {

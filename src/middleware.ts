@@ -1,6 +1,7 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 import { auth } from '../auth.edge'
+import { SITE_DOMAIN } from '@/utils/constants'
 
 /**
  * ========================================================================
@@ -30,9 +31,9 @@ import { auth } from '../auth.edge'
 
 /**
  * Domain bị chặn không cho truy cập /tweets.
- * User vào shop.thetaphoa.store/tweets → rewrite /not-found
+ * User vào SITE_DOMAIN/tweets → rewrite /not-found
  */
-const BLOCKED_DOMAINS_FOR_TWEETS = ['shop.thetaphoa.store']
+const BLOCKED_DOMAINS_FOR_TWEETS = [SITE_DOMAIN]
 
 /**
  * Domain CHỈ cho phép truy cập /tweets.
@@ -65,7 +66,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // 2. Chặn /tweets trên domain chính (shop.thetaphoa.store)
+  // 2. Chặn /tweets trên domain chính (SITE_DOMAIN)
   //    Tweets chỉ truy cập được qua xvn.vercel.app
   if (
     pathname.startsWith('/tweets') &&

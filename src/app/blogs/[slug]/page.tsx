@@ -3,8 +3,7 @@ import { notFound } from 'next/navigation'
 import { blogPosts, getBlogBySlug, getAllSlugs } from '../blogData'
 import { LangProvider } from '../components/LangContext'
 import { BlogDetailContent } from '../components/BlogDetailContent'
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://shop.thetaphoa.store'
+import { SITE_URL } from '@/utils/constants'
 
 interface BlogDetailPageProps {
     params: Promise<{ slug: string }>

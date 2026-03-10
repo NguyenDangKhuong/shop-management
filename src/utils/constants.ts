@@ -36,3 +36,8 @@ export const LIMIT_PAGE_NUMBER = 20
 
 // TikTok scheduling
 export const TIKTOK_DEFAULT_HOUR_GAP = 1 // Khoảng cách mặc định giữa các bài đăng (giờ)
+
+// Site domain (đổi domain ở đây khi migrate)
+export const SITE_DOMAIN = 'shop.thetaphoa.store'
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || `https://${SITE_DOMAIN}`
+export const SITE_NAME = 'TheTapHoa'

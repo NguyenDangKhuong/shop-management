@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 import { blogPosts } from './blogs/blogData'
+import { SITE_URL } from '@/utils/constants'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://shop.thetaphoa.store'
 
 export default function sitemap(): MetadataRoute.Sitemap {
     // Static pages

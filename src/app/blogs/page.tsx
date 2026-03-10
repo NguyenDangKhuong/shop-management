@@ -2,8 +2,7 @@ import { Metadata } from 'next'
 import { blogPosts } from './blogData'
 import { LangProvider } from './components/LangContext'
 import { BlogListContent } from './components/BlogListContent'
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://shop.thetaphoa.store'
+import { SITE_URL } from '@/utils/constants'
 
 export const metadata: Metadata = {
     title: 'Blog - Frontend Knowledge | Nguyen Dang Khuong',
