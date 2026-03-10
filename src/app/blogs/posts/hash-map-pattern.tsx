@@ -172,6 +172,68 @@ function twoSum(nums, target) {
 // i=0: complement = 9-2 = 7, map = {} → chưa có 7 → map = {2:0}
 // i=1: complement = 9-7 = 2, map = {2:0} → CÓ 2! → return [0, 1] ✓`}</CodeBlock>
 
+        <Heading3>Walkthrough chi tiết</Heading3>
+        <CodeBlock title="walkthrough.txt">{`nums = [3, 7, 11, 15], target = 18
+
+i=0: nums[0]=3,  complement=15, map={} → chưa có → map={3:0}
+i=1: nums[1]=7,  complement=11, map={3:0} → chưa có → map={3:0, 7:1}
+i=2: nums[2]=11, complement=7,  map={3:0, 7:1} → CÓ 7 tại index 1 ✅
+     → return [1, 2]
+
+Kết quả: [1, 2] vì nums[1] + nums[2] = 7 + 11 = 18`}</CodeBlock>
+
+        <Callout type="tip">
+            <strong>Trick:</strong> Mỗi phần tử khi đi qua sẽ <Highlight>tự đăng ký vào Map</Highlight>.
+            Phần tử sau chỉ cần check Map xem &quot;partner&quot; của mình đã đăng ký chưa — <Highlight>1 lần duyệt là đủ</Highlight>, không cần 2 vòng for lồng nhau.
+        </Callout>
+
+        <Heading3>Edge case: phần tử lớn hơn target</Heading3>
+        <Paragraph>
+            Thuật toán vẫn hoạt động bình thường vì complement có thể là <Highlight>số âm</Highlight>:
+        </Paragraph>
+        <CodeBlock title="edge-case.txt">{`nums = [20, -5, 3, -11], target = 9
+
+i=0: nums[0]=20, complement = 9-20 = -11 → map={20:0}
+i=1: nums[1]=-5, complement = 9-(-5) = 14 → map={20:0, -5:1}
+i=2: nums[2]=3,  complement = 9-3 = 6 → map={20:0, -5:1, 3:2}
+i=3: nums[3]=-11, complement = 9-(-11) = 20 → CÓ 20 tại index 0 ✅
+     → return [0, 3]  (vì 20 + (-11) = 9)`}</CodeBlock>
+
+        <Heading3>So sánh Brute Force vs HashMap</Heading3>
+        <div className="my-4 overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+                <thead>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Approach</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Time</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Space</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Cách hoạt động</th>
+                    </tr>
+                </thead>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3">Brute Force</td><td className="p-3">O(n²)</td><td className="p-3">O(1)</td><td className="p-3">2 vòng for, thử từng cặp (i,j)</td></tr>
+                    <tr><td className="p-3 font-medium text-green-400">HashMap ✅</td><td className="p-3 text-green-400">O(n)</td><td className="p-3">O(n)</td><td className="p-3">1 vòng for, mỗi phần tử check Map</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <Heading3>TypeScript: dấu ! là gì?</Heading3>
+        <CodeBlock title="non-null-assertion.ts">{`// Nếu viết bằng TypeScript:
+function twoSum(nums: number[], target: number): number[] {
+    const map = new Map<number, number>()
+    for (let i = 0; i < nums.length; i++) {
+        const complement = target - nums[i]
+        if (map.has(complement)) {
+            return [map.get(complement)!, i]
+            //                          ^ Non-null assertion operator
+            // map.get() trả về number | undefined
+            // Dấu ! nói với TS: "đã check .has() rồi, chắc chắn không phải undefined"
+        }
+        map.set(nums[i], i)
+    }
+    return []
+}`}</CodeBlock>
+
         {/* ───────── BÀI 2: GROUP ANAGRAMS ───────── */}
         <Heading2>Bài 2: Group Anagrams (LeetCode #49)</Heading2>
 
@@ -767,6 +829,68 @@ function twoSum(nums, target) {
 // Walkthrough: nums = [2, 7, 11, 15], target = 9
 // i=0: complement = 9-2 = 7, map = {} → no 7 → map = {2:0}
 // i=1: complement = 9-7 = 2, map = {2:0} → HAS 2! → return [0, 1] ✓`}</CodeBlock>
+
+        <Heading3>Detailed Walkthrough</Heading3>
+        <CodeBlock title="walkthrough.txt">{`nums = [3, 7, 11, 15], target = 18
+
+i=0: nums[0]=3,  complement=15, map={} → not found → map={3:0}
+i=1: nums[1]=7,  complement=11, map={3:0} → not found → map={3:0, 7:1}
+i=2: nums[2]=11, complement=7,  map={3:0, 7:1} → FOUND 7 at index 1 ✅
+     → return [1, 2]
+
+Result: [1, 2] because nums[1] + nums[2] = 7 + 11 = 18`}</CodeBlock>
+
+        <Callout type="tip">
+            <strong>Key insight:</strong> Each element <Highlight>registers itself in the Map</Highlight> as it passes through.
+            Later elements only need to check if their &quot;partner&quot; already registered — <Highlight>one pass is enough</Highlight>, no nested loops needed.
+        </Callout>
+
+        <Heading3>Edge Case: Element Larger Than Target</Heading3>
+        <Paragraph>
+            The algorithm still works because complement can be <Highlight>negative</Highlight>:
+        </Paragraph>
+        <CodeBlock title="edge-case.txt">{`nums = [20, -5, 3, -11], target = 9
+
+i=0: nums[0]=20, complement = 9-20 = -11 → map={20:0}
+i=1: nums[1]=-5, complement = 9-(-5) = 14 → map={20:0, -5:1}
+i=2: nums[2]=3,  complement = 9-3 = 6 → map={20:0, -5:1, 3:2}
+i=3: nums[3]=-11, complement = 9-(-11) = 20 → FOUND 20 at index 0 ✅
+     → return [0, 3]  (because 20 + (-11) = 9)`}</CodeBlock>
+
+        <Heading3>Brute Force vs HashMap</Heading3>
+        <div className="my-4 overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+                <thead>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Approach</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Time</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Space</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">How it works</th>
+                    </tr>
+                </thead>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3">Brute Force</td><td className="p-3">O(n²)</td><td className="p-3">O(1)</td><td className="p-3">Two nested loops, try every pair (i,j)</td></tr>
+                    <tr><td className="p-3 font-medium text-green-400">HashMap ✅</td><td className="p-3 text-green-400">O(n)</td><td className="p-3">O(n)</td><td className="p-3">One loop, each element checks Map</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <Heading3>TypeScript: What Does ! Do?</Heading3>
+        <CodeBlock title="non-null-assertion.ts">{`// TypeScript version:
+function twoSum(nums: number[], target: number): number[] {
+    const map = new Map<number, number>()
+    for (let i = 0; i < nums.length; i++) {
+        const complement = target - nums[i]
+        if (map.has(complement)) {
+            return [map.get(complement)!, i]
+            //                          ^ Non-null assertion operator
+            // map.get() returns number | undefined
+            // The ! tells TS: "I already checked .has(), this is definitely not undefined"
+        }
+        map.set(nums[i], i)
+    }
+    return []
+}`}</CodeBlock>
 
         <Heading2>Problem 2: Group Anagrams (LeetCode #49)</Heading2>
 
