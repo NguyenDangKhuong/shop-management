@@ -166,6 +166,60 @@ const indexMap = new Map(arr.map((val, i) => [i, val]))
             </div>
         </div>
 
+        <Heading3>Brute Force vs HashMap — tại sao nhanh hơn?</Heading3>
+        <Paragraph>
+            Brute Force dùng <Highlight>2 vòng for lồng nhau</Highlight> → thử từng cặp (i, j) → O(n²).<br />
+            HashMap thay <Highlight>vòng for trong bằng 1 lần tra Map</Highlight> → O(1) mỗi lần → O(n) tổng.
+        </Paragraph>
+        <CodeBlock title="brute-force-vs-hashmap.js">{`// ═══ BRUTE FORCE — O(n²) ═══
+function twoSumBrute(nums, target) {
+    for (let i = 0; i < nums.length; i++) {         // vòng 1: chọn phần tử A
+        for (let j = i + 1; j < nums.length; j++) { // vòng 2: duyệt TẤT CẢ tìm partner
+            if (nums[i] + nums[j] === target) return [i, j]
+        }
+    }
+}
+// Worst case [1,2,3,4,5] target=9:
+// i=0: so 4 lần ✗ | i=1: so 3 lần ✗ | i=2: so 2 lần ✗ | i=3: 4+5=9 ✓
+// Tổng: 10 lần so sánh cho 5 phần tử!
+
+// ═══ HASHMAP — O(n) ═══
+function twoSumHash(nums, target) {
+    const map = new Map()
+    for (let i = 0; i < nums.length; i++) {
+        const comp = target - nums[i]
+        if (map.has(comp)) return [map.get(comp), i]  // O(1) tra cứu!
+        map.set(nums[i], i)
+    }
+}
+// Cùng input [1,2,3,4,5] target=9:
+// i=0: comp=8 → nope | i=1: comp=7 → nope | i=2: comp=6 → nope
+// i=3: comp=5 → nope | i=4: comp=4 → CÓ! ✓
+// Tổng: 5 lần check — nhanh gấp đôi!`}</CodeBlock>
+
+        <div className="my-4 overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+                <thead>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">n phần tử</th>
+                        <th className="text-left p-3 text-red-400 font-medium">Brute Force O(n²)</th>
+                        <th className="text-left p-3 text-green-400 font-medium">HashMap O(n)</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Nhanh hơn</th>
+                    </tr>
+                </thead>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3">10</td><td className="p-3">45</td><td className="p-3">10</td><td className="p-3">×4.5</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">1,000</td><td className="p-3">500,000</td><td className="p-3">1,000</td><td className="p-3">×500</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">1,000,000</td><td className="p-3">500 tỷ</td><td className="p-3">1 triệu</td><td className="p-3">×500,000</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <Callout type="tip">
+            <strong>Quy tắc nhớ:</strong> Nếu brute force dùng <Highlight>2 vòng for lồng nhau</Highlight> O(n²) để tìm kiếm, hãy thử
+            thay vòng for trong bằng <Highlight>HashMap</Highlight> → giảm xuống O(n). Đánh đổi: tốn thêm O(n) bộ nhớ — nhưng rất đáng!
+        </Callout>
+
         {/* ───────── BÀI 1: TWO SUM ───────── */}
         <Heading2>Bài 1: Two Sum (LeetCode #1)</Heading2>
 
@@ -902,6 +956,60 @@ const indexMap = new Map(arr.map((val, i) => [i, val]))
                 <div className="px-4 py-2 rounded-lg bg-green-500/20 text-green-300 border border-green-500/30 w-fit">3. Store/read value at index → O(1) average</div>
             </div>
         </div>
+
+        <Heading3>Brute Force vs HashMap — Why is it Faster?</Heading3>
+        <Paragraph>
+            Brute Force uses <Highlight>2 nested for loops</Highlight> → tries every pair (i, j) → O(n²).<br />
+            HashMap replaces the <Highlight>inner loop with one Map lookup</Highlight> → O(1) each → O(n) total.
+        </Paragraph>
+        <CodeBlock title="brute-force-vs-hashmap.js">{`// ═══ BRUTE FORCE — O(n²) ═══
+function twoSumBrute(nums, target) {
+    for (let i = 0; i < nums.length; i++) {         // loop 1: pick element A
+        for (let j = i + 1; j < nums.length; j++) { // loop 2: scan ALL for partner
+            if (nums[i] + nums[j] === target) return [i, j]
+        }
+    }
+}
+// Worst case [1,2,3,4,5] target=9:
+// i=0: compare 4 times ✗ | i=1: 3 times ✗ | i=2: 2 times ✗ | i=3: 4+5=9 ✓
+// Total: 10 comparisons for 5 elements!
+
+// ═══ HASHMAP — O(n) ═══
+function twoSumHash(nums, target) {
+    const map = new Map()
+    for (let i = 0; i < nums.length; i++) {
+        const comp = target - nums[i]
+        if (map.has(comp)) return [map.get(comp), i]  // O(1) lookup!
+        map.set(nums[i], i)
+    }
+}
+// Same input [1,2,3,4,5] target=9:
+// i=0: comp=8 → nope | i=1: comp=7 → nope | i=2: comp=6 → nope
+// i=3: comp=5 → nope | i=4: comp=4 → YES! ✓
+// Total: 5 checks — twice as fast!`}</CodeBlock>
+
+        <div className="my-4 overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+                <thead>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">n elements</th>
+                        <th className="text-left p-3 text-red-400 font-medium">Brute Force O(n²)</th>
+                        <th className="text-left p-3 text-green-400 font-medium">HashMap O(n)</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Speedup</th>
+                    </tr>
+                </thead>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3">10</td><td className="p-3">45</td><td className="p-3">10</td><td className="p-3">×4.5</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">1,000</td><td className="p-3">500,000</td><td className="p-3">1,000</td><td className="p-3">×500</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">1,000,000</td><td className="p-3">500 billion</td><td className="p-3">1 million</td><td className="p-3">×500,000</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <Callout type="tip">
+            <strong>Rule of thumb:</strong> If brute force uses <Highlight>2 nested for loops</Highlight> O(n²) to search, try
+            replacing the inner loop with a <Highlight>HashMap</Highlight> → reduces to O(n). Trade-off: O(n) extra memory — but totally worth it!
+        </Callout>
 
         <Heading2>Problem 1: Two Sum (LeetCode #1)</Heading2>
 
