@@ -293,6 +293,38 @@ function groupAnagrams(strs) {
 // "bat" → key="abt" → map = { ..., "abt": ["bat"] }
 // → [["eat","tea","ate"], ["tan","nat"], ["bat"]] ✓`}</CodeBlock>
 
+        <Callout type="tip">
+            <strong>Tại sao dùng <InlineCode>for...of</InlineCode> thay vì <InlineCode>for</InlineCode> thường?</strong><br />
+            Bài này <Highlight>không cần index</Highlight> — chỉ cần giá trị từng string.
+            <InlineCode>for...of</InlineCode> gọn hơn, đọc dễ hơn.
+            So sánh: <strong>Two Sum</strong> cần <InlineCode>i</InlineCode> để return index → dùng <InlineCode>for</InlineCode> thường.
+        </Callout>
+
+        <Heading3>Map + Array: tại sao map.get(key).push() hoạt động?</Heading3>
+        <Paragraph>
+            <InlineCode>.push()</InlineCode> <Highlight>không phải method của Map</Highlight> — nó là method của <strong>Array</strong>.
+            Trick ở đây: Map lưu <Highlight>reference</Highlight> (tham chiếu) tới Array, nên khi push vào Array, Map tự &quot;thấy&quot; thay đổi:
+        </Paragraph>
+        <CodeBlock title="map-array-reference.js">{`// Bước 1: Lưu array rỗng vào Map
+map.set("aet", [])
+// map = { "aet": [] }
+
+// Bước 2: map.get() trả về chính cái array đó (reference)
+const arr = map.get("aet")   // arr = []
+
+// Bước 3: push vào array (KHÔNG phải push vào Map!)
+arr.push("eat")
+// arr = ["eat"]
+// map = { "aet": ["eat"] }  ← tự cập nhật vì cùng reference!
+
+// Viết gọn: map.get("aet").push("eat")
+// Không cần map.set() lại!`}</CodeBlock>
+        <Callout type="info">
+            <strong>Tại sao không cần <InlineCode>map.set()</InlineCode> lại?</strong><br />
+            Vì Map chỉ lưu <Highlight>con trỏ</Highlight> tới array trong bộ nhớ.
+            Khi <InlineCode>.push()</InlineCode>, array thay đổi tại chỗ → Map vẫn trỏ tới đúng array đó → tự thấy giá trị mới.
+        </Callout>
+
         {/* ───────── BÀI 3: CONTAINS DUPLICATE ───────── */}
         <Heading2>Bài 3: Contains Duplicate (LeetCode #217)</Heading2>
 
@@ -940,6 +972,38 @@ function groupAnagrams(strs) {
 // "tan" → key="ant" → map = { "aet": ["eat","tea"], "ant": ["tan"] }
 // "ate" → key="aet" → map = { "aet": ["eat","tea","ate"], ... }
 // Result: [["eat","tea","ate"], ["tan","nat"], ["bat"]] ✓`}</CodeBlock>
+
+        <Callout type="tip">
+            <strong>Why <InlineCode>for...of</InlineCode> instead of a regular <InlineCode>for</InlineCode> loop?</strong><br />
+            This problem <Highlight>doesn&apos;t need the index</Highlight> — only the value of each string.
+            <InlineCode>for...of</InlineCode> is cleaner and more readable.
+            Compare: <strong>Two Sum</strong> needs <InlineCode>i</InlineCode> to return the index → uses a regular <InlineCode>for</InlineCode>.
+        </Callout>
+
+        <Heading3>Map + Array: why does map.get(key).push() work?</Heading3>
+        <Paragraph>
+            <InlineCode>.push()</InlineCode> is <Highlight>not a Map method</Highlight> — it&apos;s an <strong>Array</strong> method.
+            The trick: Map stores a <Highlight>reference</Highlight> to the Array, so pushing to the Array automatically updates what Map &quot;sees&quot;:
+        </Paragraph>
+        <CodeBlock title="map-array-reference.js">{`// Step 1: Store an empty array in Map
+map.set("aet", [])
+// map = { "aet": [] }
+
+// Step 2: map.get() returns that exact array (reference)
+const arr = map.get("aet")   // arr = []
+
+// Step 3: push to the array (NOT pushing to Map!)
+arr.push("eat")
+// arr = ["eat"]
+// map = { "aet": ["eat"] }  ← auto-updated, same reference!
+
+// Shorthand: map.get("aet").push("eat")
+// No need to map.set() again!`}</CodeBlock>
+        <Callout type="info">
+            <strong>Why no need to <InlineCode>map.set()</InlineCode> again?</strong><br />
+            Map only stores a <Highlight>pointer</Highlight> to the array in memory.
+            When you <InlineCode>.push()</InlineCode>, the array mutates in place → Map still points to the same array → sees the new value automatically.
+        </Callout>
 
         <Heading2>Problem 3: Contains Duplicate (LeetCode #217)</Heading2>
 
