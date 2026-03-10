@@ -488,23 +488,25 @@ function containsDuplicate(nums) {
 function isAnagram(s, t) {
     if (s.length !== t.length) return false  // Khác độ dài → không thể là anagram
 
-    const count = {}                         // Đếm tần suất ký tự
+    const count = new Map()                  // Đếm tần suất ký tự
 
+    // Vòng 1: đếm từng ký tự trong s (+1)
     for (const c of s) {
-        count[c] = (count[c] || 0) + 1       // Tăng count cho s
+        count.set(c, (count.get(c) || 0) + 1)
     }
 
+    // Vòng 2: trừ từng ký tự trong t (-1)
     for (const c of t) {
-        if (!count[c]) return false           // Ký tự không có hoặc hết → false
-        count[c]--                            // Giảm count cho t
+        if (!count.has(c) || count.get(c) === 0) return false  // Ký tự không có hoặc hết
+        count.set(c, count.get(c) - 1)                         // Giảm count
     }
 
     return true                              // Mọi ký tự khớp
 }
 
 // Ví dụ: s = "anagram", t = "nagaram"
-// Sau vòng 1: count = { a:3, n:1, g:1, r:1, m:1 }
-// Sau vòng 2: mỗi ký tự trong t trừ đi → tất cả = 0 → true ✓`}</CodeBlock>
+// Vòng 1: count = Map { a→3, n→1, g→1, r→1, m→1 }
+// Vòng 2: n→0, a→2, g→0, a→1, r→0, a→0, m→0 → true ✓`}</CodeBlock>
 
         {/* ───────── BÀI 5: RANSOM NOTE ───────── */}
         <Heading2>Bài 5: Ransom Note (LeetCode #383)</Heading2>
@@ -1260,23 +1262,25 @@ function containsDuplicate(nums) {
 function isAnagram(s, t) {
     if (s.length !== t.length) return false  // Different length → not anagram
 
-    const count = {}                         // Character frequency counter
+    const count = new Map()                  // Character frequency counter
 
+    // Loop 1: count each char in s (+1)
     for (const c of s) {
-        count[c] = (count[c] || 0) + 1       // Increment for s
+        count.set(c, (count.get(c) || 0) + 1)
     }
 
+    // Loop 2: subtract each char in t (-1)
     for (const c of t) {
-        if (!count[c]) return false           // Char missing or exhausted → false
-        count[c]--                            // Decrement for t
+        if (!count.has(c) || count.get(c) === 0) return false  // Char missing or exhausted
+        count.set(c, count.get(c) - 1)                         // Decrement
     }
 
     return true                              // All chars matched
 }
 
 // Example: s = "anagram", t = "nagaram"
-// After loop 1: count = { a:3, n:1, g:1, r:1, m:1 }
-// After loop 2: each char in t decrements → all = 0 → true ✓`}</CodeBlock>
+// Loop 1: count = Map { a→3, n→1, g→1, r→1, m→1 }
+// Loop 2: n→0, a→2, g→0, a→1, r→0, a→0, m→0 → true ✓`}</CodeBlock>
 
         <Heading2>Problem 5: Ransom Note (LeetCode #383)</Heading2>
 
