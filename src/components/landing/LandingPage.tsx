@@ -206,12 +206,7 @@ export default function LandingPage() {
                                         >
                                             📄 {t('landing.downloadCV')}
                                         </Link>
-                                        <Link
-                                            href="/leetcode"
-                                            className="inline-block px-6 py-3 rounded-full bg-[var(--bg-tag)] border border-[#ffa116]/50 text-[var(--text-primary)] font-semibold transition hover:bg-[#ffa116]/20 shadow-[0_0_15px_rgba(255,161,22,0.3)]"
-                                        >
-                                            🧩 LeetCode
-                                        </Link>
+
                                     </div>
                                 </div>
 
@@ -518,6 +513,13 @@ export default function LandingPage() {
                                 title="Algorithm Flashcards"
                             >
                                 🃏 Flashcards
+                            </Link>
+                            <Link
+                                href="/leetcode"
+                                className="text-[var(--text-secondary)] hover:text-[#ffa116] transition-colors"
+                                title="LeetCode Practice"
+                            >
+                                🧩 LeetCode
                             </Link>
                             <Link
                                 href="/privacy"
