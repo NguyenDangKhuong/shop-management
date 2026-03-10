@@ -59,7 +59,11 @@ export async function middleware(request: NextRequest) {
 
   // 1. Domain chỉ cho phép /tweets (xvn.vercel.app)
   //    Vào root hoặc bất kỳ path khác → redirect về /tweets
+  //    Nhưng cho phép /api/ (cần cho tweets API) và /sw.js (service worker)
   if (TWEETS_ONLY_DOMAINS.includes(hostname)) {
+    if (pathname.startsWith('/api/') || pathname === '/sw.js') {
+      return NextResponse.next()
+    }
     if (!pathname.startsWith('/tweets')) {
       return NextResponse.redirect(new URL('/tweets', request.url))
     }
