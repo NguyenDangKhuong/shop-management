@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { SITE_URL } from '@/utils/constants'
 
-const VEO3_API_URL = 'https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText'
+const VEO3_API_URL = process.env.VEO3_API_URL || ''
 const WS_BRIDGE_URL = process.env.WS_BRIDGE_URL || 'http://localhost:3002'
 const MAX_RECAPTCHA_RETRIES = 3
 const RETRY_DELAY_MS = 3000

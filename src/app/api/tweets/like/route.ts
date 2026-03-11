@@ -21,7 +21,7 @@ import TwitterTokenModel from '@/models/TwitterToken'
  *   To find updated IDs: DevTools → Network → filter "FavoriteTweet" → copy queryId
  */
 
-const DEFAULT_BEARER = 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA'
+const DEFAULT_BEARER = process.env.TWITTER_DEFAULT_BEARER || ''
 
 // GraphQL mutation IDs — sniffed from x.com DevTools
 const FAVORITE_QID = 'lI07N6Otwv1PhnEgXILM7A'

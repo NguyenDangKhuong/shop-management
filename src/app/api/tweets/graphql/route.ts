@@ -16,9 +16,9 @@ import { ParsedTweet, parseTweetResult } from './tweetParser'
  */
 
 // Fallback defaults (used if not stored in DB)
-const DEFAULT_BEARER = 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA'
-const DEFAULT_USER_TWEETS_QID = 'Y9WM4Id6UcGFE8Z-hbnixw'
-const DEFAULT_USER_BY_SCREEN_NAME_QID = 'qW5u-DAuXpMEG0zA1F7UGQ'
+const DEFAULT_BEARER = process.env.TWITTER_DEFAULT_BEARER || ''
+const DEFAULT_USER_TWEETS_QID = process.env.TWITTER_USER_TWEETS_QID || ''
+const DEFAULT_USER_BY_SCREEN_NAME_QID = process.env.TWITTER_USER_BY_SCREEN_NAME_QID || ''
 
 // In-memory cache for credentials
 let cachedCreds: {

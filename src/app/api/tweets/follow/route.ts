@@ -15,7 +15,7 @@ import TwitterTokenModel from '@/models/TwitterToken'
  * Content-Type: application/x-www-form-urlencoded
  */
 
-const DEFAULT_BEARER = 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA'
+const DEFAULT_BEARER = process.env.TWITTER_DEFAULT_BEARER || ''
 
 async function getCredentials() {
     try {

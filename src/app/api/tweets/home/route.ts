@@ -24,10 +24,10 @@ import { ParsedTweet, parseTweetResult } from '../graphql/tweetParser'
  */
 
 // Fallback defaults (used if not stored in DB)
-const DEFAULT_BEARER = 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA'
+const DEFAULT_BEARER = process.env.TWITTER_DEFAULT_BEARER || ''
 const DEFAULT_QUERY_IDS = {
-    for_you: 'HJFjzBgCs16TqxewQOeLNg',
-    following: 'zhX91JE87mWvfprhYE97xA',
+    for_you: process.env.TWITTER_HOME_FOR_YOU_QID || '',
+    following: process.env.TWITTER_HOME_FOLLOWING_QID || '',
 }
 
 const ENDPOINTS = {
