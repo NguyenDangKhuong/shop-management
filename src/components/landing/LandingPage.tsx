@@ -522,6 +522,13 @@ export default function LandingPage() {
                                 🧩 LeetCode
                             </Link>
                             <Link
+                                href="/translate"
+                                className="text-[var(--text-secondary)] hover:text-[#60a5fa] transition-colors"
+                                title="Vietnamese ↔ English Translator"
+                            >
+                                🌐 Translate
+                            </Link>
+                            <Link
                                 href="/privacy"
                                 className="text-[var(--text-secondary)] hover:text-[#38bdf8] transition-colors underline"
                             >
