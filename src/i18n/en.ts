@@ -3,6 +3,7 @@ const en = {
     'landing.heroGreeting': "Hello, I'm",
     'landing.heroName': 'Khuong',
     'landing.heroSub': 'Front-End Developer · 8+ Years · React Specialist',
+    'landing.purpose': 'This project is my personal playground — built to learn new things, sharpen my skills, and push myself to grow a little every day. 🚀',
     'landing.viewProjects': 'Side Projects',
     'landing.heroSection': 'Hero Section',
     'landing.about': 'About Me',

@@ -187,6 +187,9 @@ export default function LandingPage() {
                                         {t('landing.heroGreeting')} <span className="text-[#c084fc]">{t('landing.heroName')}</span>.<br />
                                         {t('landing.heroSub')}
                                     </h1>
+                                    <p className="text-sm text-[var(--text-secondary)] italic leading-relaxed">
+                                        {t('landing.purpose')}
+                                    </p>
                                     <div className="pt-4 flex flex-wrap gap-3">
                                         <Link
                                             href="/projects"

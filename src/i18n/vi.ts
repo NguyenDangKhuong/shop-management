@@ -5,6 +5,7 @@ const vi: Record<TranslationKeys, string> = {
     'landing.heroGreeting': 'Xin chào, tôi là',
     'landing.heroName': 'Khương',
     'landing.heroSub': 'Front-End Developer · 8+ Năm · React Specialist',
+    'landing.purpose': 'Dự án này là sân chơi cá nhân — được xây dựng để học hỏi, nạp thêm kiến thức và cập nhật bản thân mỗi ngày. 🚀',
     'landing.viewProjects': 'Xem dự án phụ',
     'landing.heroSection': 'Giới thiệu',
     'landing.about': 'Về tôi',
