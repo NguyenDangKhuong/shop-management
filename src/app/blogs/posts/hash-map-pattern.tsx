@@ -521,23 +521,23 @@ function isAnagram(s, t) {
         <Heading3>Giải pháp với Hash Map</Heading3>
         <CodeBlock title="ransom-note.js">{`// LeetCode #383: Ransom Note — O(n + m) time, O(1) space
 function canConstruct(ransomNote, magazine) {
-    const charCount = {}                     // Đếm ký tự có sẵn trong magazine
+    const charCount = new Map()              // Đếm ký tự có sẵn trong magazine
 
     for (const c of magazine) {
-        charCount[c] = (charCount[c] || 0) + 1  // Xây kho ký tự
+        charCount.set(c, (charCount.get(c) || 0) + 1)  // Xây kho ký tự
     }
 
     for (const c of ransomNote) {
-        if (!charCount[c]) return false      // Không đủ ký tự → false
-        charCount[c]--                       // Dùng 1 ký tự
+        if (!charCount.has(c) || charCount.get(c) === 0) return false  // Không đủ ký tự → false
+        charCount.set(c, charCount.get(c) - 1)                        // Dùng 1 ký tự
     }
 
     return true                              // Đủ tất cả ký tự
 }
 
 // Ví dụ: ransomNote = "aa", magazine = "aab"
-// charCount sau magazine: { a:2, b:1 }
-// Duyệt ransomNote: 'a' → {a:1,b:1}, 'a' → {a:0,b:1} → true ✓`}</CodeBlock>
+// charCount sau magazine: Map { a→2, b→1 }
+// Duyệt ransomNote: 'a' → Map {a→1,b→1}, 'a' → Map {a→0,b→1} → true ✓`}</CodeBlock>
 
         {/* ───────── BÀI 6: INTERSECTION OF TWO ARRAYS ───────── */}
         <Heading2>Bài 6: Intersection of Two Arrays (LeetCode #349)</Heading2>
@@ -1294,23 +1294,23 @@ function isAnagram(s, t) {
         <Heading3>Hash Map Solution</Heading3>
         <CodeBlock title="ransom-note.js">{`// LeetCode #383: Ransom Note — O(n + m) time, O(1) space
 function canConstruct(ransomNote, magazine) {
-    const charCount = {}                     // Available chars from magazine
+    const charCount = new Map()              // Available chars from magazine
 
     for (const c of magazine) {
-        charCount[c] = (charCount[c] || 0) + 1  // Build char inventory
+        charCount.set(c, (charCount.get(c) || 0) + 1)  // Build char inventory
     }
 
     for (const c of ransomNote) {
-        if (!charCount[c]) return false      // Not enough chars → false
-        charCount[c]--                       // Use one char
+        if (!charCount.has(c) || charCount.get(c) === 0) return false  // Not enough chars → false
+        charCount.set(c, charCount.get(c) - 1)                        // Use one char
     }
 
     return true                              // All chars available
 }
 
 // Example: ransomNote = "aa", magazine = "aab"
-// charCount after magazine: { a:2, b:1 }
-// Loop ransomNote: 'a' → {a:1,b:1}, 'a' → {a:0,b:1} → true ✓`}</CodeBlock>
+// charCount after magazine: Map { a→2, b→1 }
+// Loop ransomNote: 'a' → Map {a→1,b→1}, 'a' → Map {a→0,b→1} → true ✓`}</CodeBlock>
 
         <Heading2>Problem 6: Intersection of Two Arrays (LeetCode #349)</Heading2>
 
