@@ -294,9 +294,16 @@ export default function TranslateClient() {
                 </div>
             </div>
 
-            {/* Hint */}
-            <div className="w-full max-w-5xl mt-4 text-center text-xs text-slate-600">
-                Auto-translate after 2s • Press Swap (⇄) to reverse
+            {/* Translate button + Hint */}
+            <div className="w-full max-w-5xl mt-4 flex items-center justify-center gap-4">
+                <button
+                    onClick={() => translate(input, from, to)}
+                    disabled={!input.trim() || loading}
+                    className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 text-white text-sm font-medium transition-all active:scale-95 shadow-md shadow-blue-600/20"
+                >
+                    {loading ? 'Translating...' : '🌐 Translate'}
+                </button>
+                <span className="text-xs text-slate-600">or auto after 2s</span>
             </div>
 
             {/* ───────── Saved Vocabulary List ───────── */}
