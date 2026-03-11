@@ -1,10 +1,45 @@
 'use client'
 
+/**
+ * ========================================================================
+ * TRANSLATE CLIENT — Trang dịch VI ↔ EN
+ * ========================================================================
+ *
+ * Tính năng:
+ * 1. Auto-translate: Gõ xong 800ms → tự dịch (debounce)
+ * 2. Swap: Đổi chiều ngôn ngữ (VI→EN thành EN→VI)
+ * 3. Bookmark: Bấm 🔖 → lưu từ vựng vào MongoDB
+ * 4. Saved list: Hiển thị danh sách từ đã lưu bên dưới
+ * 5. Delete: Xóa từ vựng đã lưu
+ *
+ * Flow:
+ *   Gõ text → debounce 800ms → POST /api/translate → hiện kết quả
+ *   Bấm 🔖 → POST /api/vocabulary → thêm vào savedItems
+ *   Load page → GET /api/vocabulary → hiện danh sách
+ *
+ * State:
+ *   - input/output: text đang dịch
+ *   - from/to: ngôn ngữ nguồn/đích
+ *   - savedItems: danh sách từ đã lưu (từ MongoDB)
+ *   - saving: đang lưu (tránh double-click)
+ *   - loading: đang dịch
+ */
+
 import { useState, useRef, useEffect, useCallback } from 'react'
 
 type Lang = 'vi' | 'en'
 
+interface VocabItem {
+    _id: string
+    original: string
+    translated: string
+    from: Lang
+    to: Lang
+    createdAt: string
+}
+
 export default function TranslateClient() {
+    // ─── Translation state ────────────────────────────────────────────
     const [from, setFrom] = useState<Lang>('vi')
     const [to, setTo] = useState<Lang>('en')
     const [input, setInput] = useState('')
@@ -15,8 +50,16 @@ export default function TranslateClient() {
     const debounceRef = useRef<NodeJS.Timeout | null>(null)
     const inputRef = useRef<HTMLTextAreaElement>(null)
 
-    const langLabel: Record<Lang, string> = { vi: '🇻🇳 Tiếng Việt', en: '🇬🇧 English' }
+    // ─── Vocabulary state ─────────────────────────────────────────────
+    const [savedItems, setSavedItems] = useState<VocabItem[]>([])
+    const [saving, setSaving] = useState(false)         // Tránh spam nút bookmark
+    const [savedFeedback, setSavedFeedback] = useState(false)  // Hiệu ứng "Saved!"
+    const [deletingId, setDeletingId] = useState<string | null>(null) // ID đang xóa
 
+    const langLabel: Record<Lang, string> = { vi: '🇻🇳 Tiếng Việt', en: '🇬🇧 English' }
+    const langFlag: Record<Lang, string> = { vi: '🇻🇳', en: '🇬🇧' }
+
+    // ─── Auto-translate (debounce 800ms) ──────────────────────────────
     const translate = useCallback(async (text: string, fromLang: Lang, toLang: Lang) => {
         if (!text.trim()) {
             setOutput('')
@@ -42,7 +85,7 @@ export default function TranslateClient() {
         }
     }, [])
 
-    // Auto-translate with debounce (800ms)
+    // Debounce: chờ user ngưng gõ 800ms rồi mới dịch
     useEffect(() => {
         setCharCount(input.length)
         if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -52,12 +95,72 @@ export default function TranslateClient() {
         }
         debounceRef.current = setTimeout(() => {
             translate(input, from, to)
-        }, 800)
+        }, 2000)
         return () => {
             if (debounceRef.current) clearTimeout(debounceRef.current)
         }
     }, [input, from, to, translate])
 
+    // ─── Fetch saved vocabulary on mount ──────────────────────────────
+    const fetchVocabulary = useCallback(async () => {
+        try {
+            const res = await fetch('/api/vocabulary')
+            const data = await res.json()
+            if (data.items) setSavedItems(data.items)
+        } catch {
+            console.error('Failed to fetch vocabulary')
+        }
+    }, [])
+
+    useEffect(() => {
+        fetchVocabulary()
+    }, [fetchVocabulary])
+
+    // ─── Save vocabulary (bookmark) ───────────────────────────────────
+    // Gọi khi user bấm nút 🔖
+    // Lưu cặp original + translated vào MongoDB
+    const saveVocabulary = async () => {
+        if (!input.trim() || !output.trim() || saving) return
+        setSaving(true)
+        try {
+            const res = await fetch('/api/vocabulary', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ original: input, translated: output, from, to }),
+            })
+            const data = await res.json()
+            if (data.success) {
+                // Thêm item mới vào đầu danh sách (không cần fetch lại)
+                setSavedItems(prev => [data.item, ...prev])
+                // Hiệu ứng "Saved!" 1.5 giây
+                setSavedFeedback(true)
+                setTimeout(() => setSavedFeedback(false), 1500)
+            }
+        } catch {
+            console.error('Failed to save vocabulary')
+        } finally {
+            setSaving(false)
+        }
+    }
+
+    // ─── Delete vocabulary ────────────────────────────────────────────
+    const deleteVocabulary = async (id: string) => {
+        setDeletingId(id)
+        try {
+            const res = await fetch(`/api/vocabulary?id=${id}`, { method: 'DELETE' })
+            const data = await res.json()
+            if (data.success) {
+                // Xóa khỏi state (không cần fetch lại)
+                setSavedItems(prev => prev.filter(item => item._id !== id))
+            }
+        } catch {
+            console.error('Failed to delete vocabulary')
+        } finally {
+            setDeletingId(null)
+        }
+    }
+
+    // ─── Swap languages ───────────────────────────────────────────────
     const swapLanguages = () => {
         setFrom(to)
         setTo(from)
@@ -65,6 +168,7 @@ export default function TranslateClient() {
         setOutput(input)
     }
 
+    // ─── Copy output ──────────────────────────────────────────────────
     const copyOutput = async () => {
         if (!output) return
         await navigator.clipboard.writeText(output)
@@ -72,6 +176,7 @@ export default function TranslateClient() {
         setTimeout(() => setCopied(false), 1500)
     }
 
+    // ─── Clear input ──────────────────────────────────────────────────
     const clearInput = () => {
         setInput('')
         setOutput('')
@@ -80,7 +185,7 @@ export default function TranslateClient() {
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-slate-200 flex flex-col items-center px-4 py-8 md:py-12">
-            {/* Header */}
+            {/* ───────── Header ───────── */}
             <div className="w-full max-w-5xl mb-8">
                 <div className="flex items-center gap-3 mb-2">
                     <span className="text-3xl">🌐</span>
@@ -89,7 +194,7 @@ export default function TranslateClient() {
                 <p className="text-slate-400 text-sm">Dịch tiếng Việt ↔ English • Powered by AI</p>
             </div>
 
-            {/* Language Selector */}
+            {/* ───────── Language Selector ───────── */}
             <div className="w-full max-w-5xl flex items-center gap-3 mb-4">
                 <button
                     className="flex-1 py-3 px-4 rounded-xl text-center font-medium transition-all bg-slate-800/80 border border-white/10 hover:border-blue-500/50 text-white"
@@ -110,9 +215,9 @@ export default function TranslateClient() {
                 </button>
             </div>
 
-            {/* Translation Area */}
+            {/* ───────── Translation Area ───────── */}
             <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Input */}
+                {/* Input panel */}
                 <div className="relative">
                     <textarea
                         ref={inputRef}
@@ -135,12 +240,12 @@ export default function TranslateClient() {
                     </div>
                 </div>
 
-                {/* Output */}
+                {/* Output panel */}
                 <div className="relative">
                     <div
                         className={`w-full h-64 md:h-80 p-4 pb-10 rounded-xl border text-base leading-relaxed whitespace-pre-wrap overflow-auto ${loading
-                                ? 'bg-slate-900/50 border-blue-500/30'
-                                : 'bg-slate-900/80 border-white/10'
+                            ? 'bg-slate-900/50 border-blue-500/30'
+                            : 'bg-slate-900/80 border-white/10'
                             }`}
                     >
                         {loading ? (
@@ -156,25 +261,93 @@ export default function TranslateClient() {
                             </span>
                         )}
                     </div>
-                    <div className="absolute bottom-3 right-4 flex items-center gap-2">
-                        {output && !loading && (
-                            <button
-                                onClick={copyOutput}
-                                className="text-xs text-slate-500 hover:text-white transition-colors px-2 py-1 rounded hover:bg-slate-800 flex items-center gap-1"
-                            >
-                                {copied ? '✓ Copied' : '📋 Copy'}
-                            </button>
-                        )}
+
+                    {/* ── Bottom bar: Copy + Bookmark ── */}
+                    <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
+                        <div />
+                        <div className="flex items-center gap-2">
+                            {/* Bookmark button — lưu từ vựng */}
+                            {output && !loading && (
+                                <button
+                                    onClick={saveVocabulary}
+                                    disabled={saving}
+                                    className={`text-xs transition-colors px-2 py-1 rounded flex items-center gap-1 ${savedFeedback
+                                        ? 'text-green-400'
+                                        : 'text-slate-500 hover:text-amber-400 hover:bg-slate-800'
+                                        }`}
+                                    title="Save to vocabulary"
+                                >
+                                    {savedFeedback ? '✓ Saved' : saving ? '...' : '🔖 Save'}
+                                </button>
+                            )}
+                            {/* Copy button */}
+                            {output && !loading && (
+                                <button
+                                    onClick={copyOutput}
+                                    className="text-xs text-slate-500 hover:text-white transition-colors px-2 py-1 rounded hover:bg-slate-800 flex items-center gap-1"
+                                >
+                                    {copied ? '✓ Copied' : '📋 Copy'}
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Keyboard shortcuts hint */}
+            {/* Hint */}
             <div className="w-full max-w-5xl mt-4 text-center text-xs text-slate-600">
-                Auto-translate after 0.8s • Press Swap (⇄) to reverse
+                Auto-translate after 2s • Press Swap (⇄) to reverse
             </div>
 
-            {/* Background effects */}
+            {/* ───────── Saved Vocabulary List ───────── */}
+            {savedItems.length > 0 && (
+                <div className="w-full max-w-5xl mt-10">
+                    <div className="flex items-center gap-2 mb-4">
+                        <span className="text-xl">🔖</span>
+                        <h2 className="text-lg font-semibold text-white">
+                            Saved Vocabulary
+                            <span className="ml-2 text-sm font-normal text-slate-500">({savedItems.length})</span>
+                        </h2>
+                    </div>
+
+                    <div className="space-y-2">
+                        {savedItems.map((item) => (
+                            <div
+                                key={item._id}
+                                className={`group grid grid-cols-[1fr_auto_1fr_auto] items-center gap-3 px-4 py-3 rounded-xl bg-slate-900/60 border border-white/5 hover:border-white/10 transition-colors ${deletingId === item._id ? 'opacity-50' : ''
+                                    }`}
+                            >
+                                {/* Original text + flag */}
+                                <div className="min-w-0">
+                                    <span className="text-xs text-slate-500 mr-1">{langFlag[item.from]}</span>
+                                    <span className="text-sm text-slate-300 break-words">{item.original}</span>
+                                </div>
+
+                                {/* Arrow */}
+                                <span className="text-slate-600 text-xs shrink-0">→</span>
+
+                                {/* Translated text + flag */}
+                                <div className="min-w-0">
+                                    <span className="text-xs text-slate-500 mr-1">{langFlag[item.to]}</span>
+                                    <span className="text-sm text-white break-words">{item.translated}</span>
+                                </div>
+
+                                {/* Delete button — ẩn mặc định, hiện khi hover */}
+                                <button
+                                    onClick={() => deleteVocabulary(item._id)}
+                                    disabled={deletingId === item._id}
+                                    className="opacity-0 group-hover:opacity-100 text-xs text-slate-600 hover:text-red-400 transition-all px-1 py-0.5 rounded shrink-0"
+                                    title="Delete"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* ───────── Background effects ───────── */}
             <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/5 rounded-full blur-[100px]" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/5 rounded-full blur-[100px]" />
