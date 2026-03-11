@@ -518,7 +518,41 @@ function isAnagram(s, t) {
             (mỗi ký tự trong magazine chỉ dùng một lần).
         </Paragraph>
 
+        <Callout type="tip">
+            <strong>🔪 Hình dung:</strong> Giống như cắt chữ từ tạp chí để ghép thành thư đe dọa trong phim! Bạn có tạp chí (magazine) chứa nhiều chữ cái.
+            Bạn cần ghép thành một câu (ransomNote). Mỗi chữ cái trong tạp chí <Highlight>chỉ cắt được 1 lần</Highlight>.
+            Không quan tâm thứ tự hay vị trí — chỉ cần <Highlight>đủ số lượng</Highlight>.
+        </Callout>
+
+        <Heading3>Tần suất (frequency) — không cần liên tục!</Heading3>
+        <Paragraph>
+            Bài này chỉ đếm <Highlight>số lần xuất hiện</Highlight> của mỗi ký tự, không cần các ký tự nằm liên tục hay theo thứ tự.
+            Magazine <InlineCode>{`"xaybz"`}</InlineCode> vẫn chứa đủ ký tự cho ransomNote <InlineCode>{`"aby"`}</InlineCode> — dù chúng nằm rải rác.
+        </Paragraph>
+        <CodeBlock title="frequency-not-position.txt">{`// Câu hỏi: "aby" có tạo được từ "xaybz" không?
+// → Chỉ cần đếm: a cần 1 (có 1 ✅), b cần 1 (có 1 ✅), y cần 1 (có 1 ✅) → true!
+// Vị trí a ở index 1, b ở index 3, y ở index 2 — KHÔNG QUAN TRỌNG
+
+// So sánh với Substring (bài khác):
+// Substring CẦN liên tục: "aby" KHÔNG phải substring của "xaybz"
+// Ransom Note KHÔNG CẦN liên tục: chỉ cần frequency đủ`}</CodeBlock>
+
         <Heading3>Giải pháp với Hash Map</Heading3>
+        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <span className="text-blue-400 font-bold">1.</span>
+                <span>Đếm tất cả ký tự trong magazine → lưu vào Map (kho chữ cái)</span>
+            </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <span className="text-blue-400 font-bold">2.</span>
+                <span>Duyệt ransomNote: mỗi ký tự cần dùng → trừ 1 từ kho. Nếu kho hết → false</span>
+            </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <span className="text-blue-400 font-bold">3.</span>
+                <span>Duyệt hết mà không thiếu → true</span>
+            </div>
+        </div>
+
         <CodeBlock title="ransom-note.js">{`// LeetCode #383: Ransom Note — O(n + m) time, O(1) space
 function canConstruct(ransomNote, magazine) {
     const charCount = new Map()              // Đếm ký tự có sẵn trong magazine
@@ -533,11 +567,44 @@ function canConstruct(ransomNote, magazine) {
     }
 
     return true                              // Đủ tất cả ký tự
-}
+}`}</CodeBlock>
 
-// Ví dụ: ransomNote = "aa", magazine = "aab"
-// charCount sau magazine: Map { a→2, b→1 }
-// Duyệt ransomNote: 'a' → Map {a→1,b→1}, 'a' → Map {a→0,b→1} → true ✓`}</CodeBlock>
+        <Heading3>Walkthrough chi tiết</Heading3>
+        <CodeBlock title="walkthrough.txt">{`✅ Ví dụ 1: ransomNote = "aa", magazine = "aab" → true
+──────────────────────────────────────────────────────
+Bước 1 — Đếm magazine "aab":
+  'a' → Map { a→1 }
+  'a' → Map { a→2 }
+  'b' → Map { a→2, b→1 }
+
+Bước 2 — Duyệt ransomNote "aa":
+  'a' → has? ✅, count=2>0 ✅ → trừ 1 → Map { a→1, b→1 }
+  'a' → has? ✅, count=1>0 ✅ → trừ 1 → Map { a→0, b→1 }
+  → Hết ransomNote → return true ✓
+
+❌ Ví dụ 2: ransomNote = "aab", magazine = "ab" → false
+──────────────────────────────────────────────────────
+Bước 1 — Đếm magazine "ab":
+  'a' → Map { a→1 }
+  'b' → Map { a→1, b→1 }
+
+Bước 2 — Duyệt ransomNote "aab":
+  'a' → has? ✅, count=1>0 ✅ → trừ 1 → Map { a→0, b→1 }
+  'a' → has? ✅, count=0 ❌ → return false ✗
+  (cần 2 chữ 'a' nhưng magazine chỉ có 1!)
+
+✅ Ví dụ 3: ransomNote = "abc", magazine = "zcbaxyz" → true
+──────────────────────────────────────────────────────
+Magazine có a=1, b=1, c=1, x=1, y=1, z=2
+RansomNote cần a=1, b=1, c=1 → tất cả đều đủ!
+Các ký tự x, y, z dư → không sao (magazine được phép dư)`}</CodeBlock>
+
+        <Callout type="tip">
+            <strong>So sánh Ransom Note vs Valid Anagram:</strong><br />
+            Cả hai đều dùng Map đếm frequency, nhưng khác ở điểm:<br />
+            • <strong>Anagram</strong>: 2 chuỗi phải <Highlight>cùng length</Highlight> và cùng frequency → hoán vị của nhau<br />
+            • <strong>Ransom Note</strong>: magazine được phép <Highlight>dư ký tự</Highlight> → chỉ cần &quot;đủ&quot;, không cần &quot;bằng&quot;
+        </Callout>
 
         {/* ───────── BÀI 6: INTERSECTION OF TWO ARRAYS ───────── */}
         <Heading2>Bài 6: Intersection of Two Arrays (LeetCode #349)</Heading2>
@@ -1291,7 +1358,41 @@ function isAnagram(s, t) {
             (each character in magazine used at most once).
         </Paragraph>
 
+        <Callout type="tip">
+            <strong>🔪 Visualize:</strong> Like cutting letters from a magazine to compose a ransom note in a movie! You have a magazine with many letters.
+            You need to create a message (ransomNote). Each letter in the magazine can only be <Highlight>cut once</Highlight>.
+            Order and position don&apos;t matter — you only need <Highlight>enough quantity</Highlight>.
+        </Callout>
+
+        <Heading3>Frequency — no need for consecutive!</Heading3>
+        <Paragraph>
+            This problem only counts the <Highlight>frequency</Highlight> of each character, not whether they appear consecutively or in order.
+            Magazine <InlineCode>{`"xaybz"`}</InlineCode> still has enough characters for ransomNote <InlineCode>{`"aby"`}</InlineCode> — even though they&apos;re scattered.
+        </Paragraph>
+        <CodeBlock title="frequency-not-position.txt">{`// Question: Can "aby" be constructed from "xaybz"?
+// → Just count: a needs 1 (has 1 ✅), b needs 1 (has 1 ✅), y needs 1 (has 1 ✅) → true!
+// Position of a at index 1, b at index 3, y at index 2 — DOESN'T MATTER
+
+// Compare with Substring (different problem):
+// Substring REQUIRES consecutive: "aby" is NOT a substring of "xaybz"
+// Ransom Note DOESN'T require consecutive: only frequency matters`}</CodeBlock>
+
         <Heading3>Hash Map Solution</Heading3>
+        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <span className="text-blue-400 font-bold">1.</span>
+                <span>Count all characters in magazine → store in Map (letter inventory)</span>
+            </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <span className="text-blue-400 font-bold">2.</span>
+                <span>Loop ransomNote: each character needed → subtract 1 from inventory. If empty → false</span>
+            </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <span className="text-blue-400 font-bold">3.</span>
+                <span>If all characters consumed successfully → true</span>
+            </div>
+        </div>
+
         <CodeBlock title="ransom-note.js">{`// LeetCode #383: Ransom Note — O(n + m) time, O(1) space
 function canConstruct(ransomNote, magazine) {
     const charCount = new Map()              // Available chars from magazine
@@ -1306,11 +1407,44 @@ function canConstruct(ransomNote, magazine) {
     }
 
     return true                              // All chars available
-}
+}`}</CodeBlock>
 
-// Example: ransomNote = "aa", magazine = "aab"
-// charCount after magazine: Map { a→2, b→1 }
-// Loop ransomNote: 'a' → Map {a→1,b→1}, 'a' → Map {a→0,b→1} → true ✓`}</CodeBlock>
+        <Heading3>Detailed Walkthrough</Heading3>
+        <CodeBlock title="walkthrough.txt">{`✅ Example 1: ransomNote = "aa", magazine = "aab" → true
+──────────────────────────────────────────────────────
+Step 1 — Count magazine "aab":
+  'a' → Map { a→1 }
+  'a' → Map { a→2 }
+  'b' → Map { a→2, b→1 }
+
+Step 2 — Loop ransomNote "aa":
+  'a' → has? ✅, count=2>0 ✅ → subtract 1 → Map { a→1, b→1 }
+  'a' → has? ✅, count=1>0 ✅ → subtract 1 → Map { a→0, b→1 }
+  → Done with ransomNote → return true ✓
+
+❌ Example 2: ransomNote = "aab", magazine = "ab" → false
+──────────────────────────────────────────────────────
+Step 1 — Count magazine "ab":
+  'a' → Map { a→1 }
+  'b' → Map { a→1, b→1 }
+
+Step 2 — Loop ransomNote "aab":
+  'a' → has? ✅, count=1>0 ✅ → subtract 1 → Map { a→0, b→1 }
+  'a' → has? ✅, count=0 ❌ → return false ✗
+  (needs 2 'a's but magazine only has 1!)
+
+✅ Example 3: ransomNote = "abc", magazine = "zcbaxyz" → true
+──────────────────────────────────────────────────────
+Magazine has a=1, b=1, c=1, x=1, y=1, z=2
+RansomNote needs a=1, b=1, c=1 → all satisfied!
+Extra chars x, y, z → no problem (magazine can have surplus)`}</CodeBlock>
+
+        <Callout type="tip">
+            <strong>Ransom Note vs Valid Anagram:</strong><br />
+            Both use Map to count frequency, but differ in:<br />
+            • <strong>Anagram</strong>: two strings must have <Highlight>same length</Highlight> and same frequency → permutations of each other<br />
+            • <strong>Ransom Note</strong>: magazine can have <Highlight>surplus characters</Highlight> → just need &quot;enough&quot;, not &quot;equal&quot;
+        </Callout>
 
         <Heading2>Problem 6: Intersection of Two Arrays (LeetCode #349)</Heading2>
 
