@@ -2003,6 +2003,90 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
             &quot;Viết debounce không dùng lodash&quot;. Nếu bạn chỉ dùng API mà không hiểu bên trong, sẽ fail vòng này.
         </Callout>
 
+        <Heading3>2.4 Câu hỏi phỏng vấn nhanh (VN Style)</Heading3>
+        <Paragraph>
+            Phỏng vấn ở Việt Nam thường hỏi <Highlight>câu hỏi lý thuyết ngắn</Highlight> để đánh giá nhanh kiến thức.
+            Dưới đây là những câu <Highlight>hay gặp nhất</Highlight> — phải trả lời được ngay lập tức.
+        </Paragraph>
+
+        <div className="my-4 space-y-2">
+            <TopicModal title="JS Cơ bản — 15 câu hỏi kinh điển" emoji="⚡" color="#fbbf24" summary="var/let/const, hoisting, truthy/falsy, == vs === — câu nào cũng gặp ở VN interview">
+                <div className="my-3 space-y-3">
+                    {[
+                        ['Q: var, let, const khác nhau thế nào?', 'var: function-scoped, hoisted (undefined), re-declare OK.\nlet: block-scoped, hoisted (TDZ), re-assign OK.\nconst: block-scoped, hoisted (TDZ), không re-assign (nhưng object/array bên trong vẫn mutable!).'],
+                        ['Q: Hoisting là gì? Cho ví dụ.', 'Hoisting: JS đưa khai báo lên đầu scope trước khi chạy.\nvar → hoisted, giá trị = undefined.\nlet/const → hoisted nhưng trong TDZ (Temporal Dead Zone) → ReferenceError nếu access trước khai báo.\nfunction declaration → hoisted toàn bộ (cả body).'],
+                        ['Q: == vs === khác gì?', '== (loose): so sánh có type coercion (1 == "1" → true).\n=== (strict): so sánh không coercion, cả value + type (1 === "1" → false).\n→ Luôn dùng === trừ khi cần check null/undefined (x == null).'],
+                        ['Q: null vs undefined?', 'undefined: biến khai báo nhưng chưa gán giá trị, hoặc function không return.\nnull: gán rõ ràng = "không có giá trị".\ntypeof null === "object" (bug lịch sử của JS).\nnull == undefined → true, null === undefined → false.'],
+                        ['Q: Closure là gì? Cho ví dụ thực tế.', 'Closure: function "nhớ" biến của scope bên ngoài ngay cả khi scope đó đã kết thúc.\nVí dụ thực tế: debounce, throttle, module pattern, React hooks (useState bên trong là closure).'],
+                        ['Q: Arrow function khác regular function thế nào?', '1. Không có this riêng — inherit từ parent scope.\n2. Không có arguments object.\n3. Không thể dùng làm constructor (new).\n4. Không thể dùng làm generator (function*).\n→ Trong React: luôn dùng arrow function cho event handlers.'],
+                        ['Q: Truthy / falsy values?', 'Falsy (6 giá trị): false, 0, "" (empty string), null, undefined, NaN.\nTất cả giá trị khác đều truthy (kể cả [], {}, "0", "false").'],
+                        ['Q: Giải thích call stack và event loop.', 'Call stack: LIFO, chạy synchronous code.\nWeb APIs: setTimeout, fetch... chạy bên ngoài call stack.\nCallback/Task Queue: macro tasks (setTimeout).\nMicrotask Queue: Promises, queueMicrotask.\nEvent Loop: khi stack rỗng → lấy microtask trước → rồi macrotask.'],
+                        ['Q: Spread operator và rest parameter?', 'Spread (...): "mở rộng" array/object ra → {...obj}, [...arr].\nRest (...): "gom lại" params → function(...args).\nCùng syntax ... nhưng ngược nghĩa: spread = unpack, rest = pack.'],
+                        ['Q: map, filter, reduce khác forEach thế nào?', 'forEach: chỉ lặp, return undefined, không tạo array mới.\nmap: return array mới, cùng length.\nfilter: return array mới, items thỏa condition.\nreduce: return 1 giá trị từ array.\n→ forEach dùng cho side effects (log, API call), map/filter/reduce cho data transformation.'],
+                        ['Q: Shallow copy vs deep copy?', 'Shallow: copy level 1, nested objects vẫn share reference.\n→ {...obj}, [...arr], Object.assign.\nDeep: copy tất cả levels, hoàn toàn independent.\n→ structuredClone() (modern), JSON.parse(JSON.stringify()) (cũ, mất function/Date).'],
+                        ['Q: Pass by value vs pass by reference?', 'Primitives: pass by value (copy giá trị).\nObjects/Arrays: pass by reference (share cùng reference).\n→ Thay đổi property của object trong function SẼ thay đổi object gốc.'],
+                        ['Q: setTimeout(fn, 0) chạy ngay không?', 'KHÔNG chạy ngay! setTimeout(fn, 0) đưa fn vào macrotask queue.\nChỉ chạy khi call stack RỖNG và tất cả microtasks đã xong.\n→ console.log(1); setTimeout(() => console.log(2), 0); console.log(3);\n→ Output: 1, 3, 2.'],
+                        ['Q: Promise.all vs Promise.allSettled?', 'Promise.all: fail NGAY khi 1 promise reject (fast-fail).\nPromise.allSettled: đợi TẤT CẢ hoàn thành, trả về [{status, value/reason}].\n→ Dùng all khi cần tất cả thành công. Dùng allSettled khi cần biết kết quả từng cái.'],
+                        ['Q: Destructuring là gì?', 'Destructuring: "rút" giá trị từ object/array vào biến.\nObject: const { name, age } = user;\nArray: const [first, ...rest] = arr;\nCó thể: rename, default value, nested destructuring.'],
+                    ].map(([q, a]) => (
+                        <div key={q} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div className="text-yellow-400 text-sm font-bold mb-2">{q}</div>
+                            <div className="text-slate-300 text-sm whitespace-pre-line">{a}</div>
+                        </div>
+                    ))}
+                </div>
+                <Callout type="tip">Mẹo: Gặp câu hỏi lý thuyết → trả lời <Highlight>ngắn gọn + ví dụ</Highlight>. {'"var là function-scoped, ví dụ console.log(x) // undefined vì hoisting"'} — tốt hơn chỉ nói {'"var là function scoped"'}.</Callout>
+            </TopicModal>
+
+            <TopicModal title="HTML/CSS — 10 câu hỏi hay gặp" emoji="🎨" color="#38bdf8" summary="box model, position, flexbox, responsive — CSS là phần nhiều dev VN yếu">
+                <div className="my-3 space-y-3">
+                    {[
+                        ['Q: Box model là gì?', 'Mỗi element có 4 layers: Content → Padding → Border → Margin.\nbox-sizing: content-box (default): width = content only.\nbox-sizing: border-box: width = content + padding + border.\n→ Luôn dùng border-box (*, *::before, *::after { box-sizing: border-box; }).'],
+                        ['Q: position: relative, absolute, fixed, sticky?', 'static: default, flow bình thường.\nrelative: dịch so với VỊ TRÍ GỐC, vẫn chiếm chỗ.\nabsolute: dịch so với PARENT có position khác static, không chiếm chỗ.\nfixed: dịch so với VIEWPORT, không chiếm chỗ.\nsticky: relative cho đến khi scroll đến threshold → thành fixed.'],
+                        ['Q: display: none vs visibility: hidden vs opacity: 0?', 'display: none — mất khỏi DOM flow, không chiếm chỗ.\nvisibility: hidden — vẫn chiếm chỗ, không thấy, không click được.\nopacity: 0 — vẫn chiếm chỗ, không thấy, VẪN click được.\n→ Accessibility: dùng sr-only class (position: absolute, clip) cho screen reader.'],
+                        ['Q: em, rem, px khác nhau?', 'px: fixed size, không responsive.\nem: relative to PARENT font-size → compound nếu nested.\nrem: relative to ROOT (html) font-size → predictable.\n→ Best practice: font-size dùng rem, spacing dùng rem hoặc em, border dùng px.'],
+                        ['Q: Flexbox vs Grid khi nào dùng?', 'Flexbox: 1 chiều (hàng HOẶC cột). Dùng cho: navbar, button group, card row.\nGrid: 2 chiều (hàng VÀ cột). Dùng cho: page layout, dashboard, gallery.\n→ "Flex cho components, Grid cho layouts."'],
+                        ['Q: Pseudo-class vs pseudo-element?', 'Pseudo-class (:hover, :focus, :nth-child) — style STATE của element.\nPseudo-element (::before, ::after, ::placeholder) — tạo ELEMENT ảo.\nPseudo-class: 1 dấu hai chấm. Pseudo-element: 2 dấu hai chấm.'],
+                        ['Q: Responsive design approach?', 'Mobile-first: min-width (mặc định mobile, thêm style cho desktop).\nDesktop-first: max-width (mặc định desktop, override cho mobile).\n→ Mobile-first tốt hơn: ít CSS hơn, performance tốt hơn trên mobile.\nBreakpoints phổ biến: 640px (sm), 768px (md), 1024px (lg), 1280px (xl).'],
+                        ['Q: z-index hoạt động thế nào?', 'z-index chỉ có tác dụng trên elements có position khác static.\nStacking context: tạo bởi position + z-index, opacity < 1, transform, filter.\nz-index chỉ so sánh TRONG cùng stacking context.\n→ Tip: tránh z-index war, dùng semantic layers (modal: 100, dropdown: 50, tooltip: 200).'],
+                        ['Q: CSS selector priority?', '!important > inline style > #id > .class/:pseudo-class/[attr] > tag > *.\nKhi cùng specificity → rule sau win.\n→ Luôn giữ specificity thấp. Avoid !important. Dùng class thay vì id.'],
+                        ['Q: Centering một element?', 'Flex: display: flex; justify-content: center; align-items: center;\nGrid: display: grid; place-items: center;\nAbsolute: position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\nMargin: margin: 0 auto (chỉ horizontal, cần width).'],
+                    ].map(([q, a]) => (
+                        <div key={q} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div className="text-blue-400 text-sm font-bold mb-2">{q}</div>
+                            <div className="text-slate-300 text-sm whitespace-pre-line">{a}</div>
+                        </div>
+                    ))}
+                </div>
+                <Callout type="tip">VN interview đặc biệt hay hỏi CSS: <Highlight>centering, box model, position, flexbox/grid</Highlight>. Nhiều công ty cho bài test code CSS trực tiếp — phải viết thuộc lòng.</Callout>
+            </TopicModal>
+
+            <TopicModal title="React — 12 câu hỏi phỏng vấn" emoji="⚛️" color="#61DAFB" summary="lifecycle, hooks, key, controlled/uncontrolled — phải trả lời được trong 30 giây">
+                <div className="my-3 space-y-3">
+                    {[
+                        ['Q: React lifecycle methods?', 'Mounting: constructor → render → componentDidMount (≈ useEffect(fn, [])).\nUpdating: render → componentDidUpdate (≈ useEffect(fn, [deps])).\nUnmounting: componentWillUnmount (≈ useEffect cleanup return).\n→ Hooks đã thay thế lifecycle methods. Nhưng phải biết mapping.'],
+                        ['Q: useState vs useRef?', 'useState: lưu state, thay đổi → re-render.\nuseRef: lưu giá trị, thay đổi → KHÔNG re-render.\n→ useRef cho: DOM reference, timer ID, previous value, mutable value không cần UI update.'],
+                        ['Q: useEffect dependency array?', 'useEffect(fn) — chạy MỌI render.\nuseEffect(fn, []) — chạy 1 lần sau mount.\nuseEffect(fn, [a, b]) — chạy khi a hoặc b thay đổi.\nCleanup: return () => {} — chạy khi unmount hoặc trước effect mới.'],
+                        ['Q: Tại sao cần key trong list?', 'key giúp React xác định element nào thay đổi, thêm, xóa (reconciliation).\n❌ Dùng index làm key → bug khi reorder/delete (state bị lẫn giữa các items).\n✅ Dùng unique ID (id từ API, UUID).\n→ Không có key → React dùng index mặc định → warning.'],
+                        ['Q: Controlled vs Uncontrolled component?', 'Controlled: React quản lý value qua state (value={state}, onChange={setState}).\nUncontrolled: DOM quản lý value, React đọc qua ref (useRef).\n→ Form đơn giản: uncontrolled (register ref). Form complex: controlled (validation real-time).'],
+                        ['Q: useMemo vs useCallback?', 'useMemo: memoize GIÁ TRỊ computed → useMemo(() => expensiveCalc(a), [a]).\nuseCallback: memoize FUNCTION → useCallback(fn, [deps]).\nuseCallback(fn, deps) = useMemo(() => fn, deps).\n→ Chỉ dùng khi: 1) heavy computation 2) reference equality matters 3) React.memo child.'],
+                        ['Q: Props drilling là gì? Giải pháp?', 'Props drilling: truyền props qua nhiều layers components trung gian.\nGiải pháp:\n1. Context API — share state global (theme, auth, locale).\n2. Composition — render children trực tiếp.\n3. State management — Redux, Zustand.\n→ Context tốt cho low-frequency updates. Redux/Zustand cho complex state.'],
+                        ['Q: React render lại khi nào?', '1. State thay đổi (setState).\n2. Props thay đổi.\n3. Parent re-render (mặc dù props không đổi!).\n4. Context value thay đổi.\n→ Tránh unnecessary re-render: React.memo, useMemo, useCallback, state colocation.'],
+                        ['Q: Giải thích Virtual DOM.', 'Virtual DOM = JS object đại diện cho DOM thật.\nKhi state thay đổi:\n1. React tạo Virtual DOM mới.\n2. So sánh (diff) với Virtual DOM cũ.\n3. Tính ra minimal changes (reconciliation).\n4. Batch update DOM thật.\n→ Nhanh hơn manipulate DOM trực tiếp vì batch updates + minimal DOM operations.'],
+                        ['Q: useContext dùng khi nào?', 'useContext: chia sẻ data global mà không cần props drilling.\nUse cases: theme, language/locale, auth user, toast notifications.\n⚠️ Hạn chế: TẤT CẢ consumers re-render khi context value thay đổi.\n→ Split context theo domain. Không dùng cho frequently changing data (mouse position).'],
+                        ['Q: Higher-Order Component (HOC) là gì?', 'HOC = function nhận component, trả về component mới với thêm logic.\nVí dụ: withAuth(Component) → check auth trước khi render.\nNhược điểm: wrapper hell, khó debug, naming collision.\n→ Hooks đã thay thế phần lớn HOC use cases. Nhưng HOC vẫn dùng cho cross-cutting concerns.'],
+                        ['Q: Custom hooks là gì? Cho ví dụ.', 'Custom hook = function bắt đầu bằng "use", dùng hooks bên trong.\nVí dụ: useDebounce, useLocalStorage, useWindowSize, useFetch.\nĐặc điểm: share logic, KHÔNG share state (mỗi component dùng hook có state riêng).\n→ Rule: logic dùng lại ≥ 2 lần → extract thành custom hook.'],
+                    ].map(([q, a]) => (
+                        <div key={q} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div className="text-cyan-400 text-sm font-bold mb-2">{q}</div>
+                            <div className="text-slate-300 text-sm whitespace-pre-line">{a}</div>
+                        </div>
+                    ))}
+                </div>
+                <Callout type="tip">Công ty VN hỏi React nhiều nhất: <Highlight>hooks, lifecycle, key, controlled form, re-render optimization</Highlight>. Chuẩn bị kỹ 12 câu trên là cover 80% câu hỏi React ở VN.</Callout>
+            </TopicModal>
+        </div>
+
         {/* ===== PHASE 3 ===== */}
         <Heading2>Phase 3 — React & Frontend Chuyên sâu (4-6 tuần)</Heading2>
 
@@ -2370,6 +2454,139 @@ function SearchBar() {
 
                 <Callout type="warning">Đừng premature optimize! Chỉ optimize khi <Highlight>React DevTools Profiler</Highlight> chỉ ra bottleneck thật sự. useMemo/useCallback có overhead — dùng sai còn chậm hơn.</Callout>
                 <a href="/blogs/react-performance" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+            </TopicModal>
+
+            <TopicModal title="State Management — Redux, Zustand, Context" emoji="🗃️" color="#764ABC" summary="So sánh 3 cách quản lý state phổ biến — câu hỏi cực kỳ phổ biến ở VN interview">
+                <Paragraph>Công ty VN <Highlight>rất hay hỏi Redux</Highlight> vì đa số dự án enterprise đều dùng. Nhưng cần biết cả alternatives.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔴 Redux (Redux Toolkit)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Store</strong> → <strong>Action</strong> → <strong>Reducer</strong> → <strong>New State</strong> (unidirectional flow)<br />
+                            • Redux Toolkit: <InlineCode>createSlice</InlineCode>, <InlineCode>configureStore</InlineCode>, <InlineCode>createAsyncThunk</InlineCode><br />
+                            • Middleware: redux-thunk (default), redux-saga (complex side effects)<br />
+                            • DevTools: time-travel debugging, action log<br />
+                            • Dùng khi: complex state, nhiều components cần share, cần predictable
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                        <div className="text-orange-400 font-bold text-sm">🐻 Zustand</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Lightweight (~1KB), API đơn giản, không boilerplate<br />
+                            • No Provider needed, dùng hooks trực tiếp<br />
+                            • Auto selector: chỉ re-render khi slice state thay đổi<br />
+                            • Middleware: persist, devtools, immer<br />
+                            • Dùng khi: muốn đơn giản, không cần Redux Toolkit overhead
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">⚛️ Context API</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Built-in React, no extra dependency<br />
+                            • ⚠️ <strong>ALL consumers re-render</strong> khi context value thay đổi<br />
+                            • Tốt cho: theme, locale, auth (infrequent updates)<br />
+                            • Không tốt cho: frequently changing data (input, scroll, mouse)<br />
+                            • Split context theo domain để giảm re-renders
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="state-management.ts">{`// Redux Toolkit — createSlice
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+const counterSlice = createSlice({
+  name: 'counter',
+  initialState: { value: 0 },
+  reducers: {
+    increment: (state) => { state.value += 1 }, // Immer: mutate OK
+    addBy: (state, action: PayloadAction<number>) => {
+      state.value += action.payload
+    },
+  },
+})
+
+// Zustand — minimal boilerplate
+import { create } from 'zustand'
+const useStore = create((set) => ({
+  count: 0,
+  increment: () => set((s) => ({ count: s.count + 1 })),
+}))
+// Usage: const count = useStore(s => s.count) // auto-optimized!
+
+// Context — built-in
+const ThemeContext = createContext('light')
+function App() {
+  return (
+    <ThemeContext.Provider value="dark">
+      <Child /> {/* All children re-render when value changes */}
+    </ThemeContext.Provider>
+  )
+}`}</CodeBlock>
+                <Callout type="tip">VN Interview: 90% sẽ hỏi Redux flow (action → reducer → store). Biết giải thích <Highlight>tại sao dùng Zustand thay Redux</Highlight> (less boilerplate, auto-optimized re-renders) → senior answer.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Next.js — SSR, SSG, ISR, App Router" emoji="▲" color="#000000" summary="Rendering strategies — công ty VN dùng Next.js rất nhiều, phải biết rõ">
+                <Paragraph>Next.js là framework React <Highlight>phổ biến nhất ở VN</Highlight>. Phỏng vấn hay hỏi về rendering strategies.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20">
+                        <div className="text-gray-300 font-bold text-sm">📊 So sánh Rendering Strategies</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>CSR</strong> (Client-Side Rendering): HTML trống + JS bundle → render trên browser<br />
+                            • <strong>SSR</strong> (Server-Side Rendering): render trên server mỗi request → HTML đầy đủ<br />
+                            • <strong>SSG</strong> (Static Site Generation): render lúc build → HTML tĩnh, CDN cache<br />
+                            • <strong>ISR</strong> (Incremental Static Regeneration): SSG + revalidate sau N giây
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🆕 App Router (Next.js 13+)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Server Components</strong> (default): render trên server, 0 JS bundle<br />
+                            • <strong>&apos;use client&apos;</strong>: opt-in to client component (hooks, events, browser API)<br />
+                            • <strong>layout.tsx</strong>: shared layout (persistent across navigation)<br />
+                            • <strong>loading.tsx</strong>: React Suspense boundary<br />
+                            • <strong>error.tsx</strong>: Error Boundary<br />
+                            • <strong>Server Actions</strong>: gọi server-side function trực tiếp từ client
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🎯 Khi nào dùng gì?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>SSG</strong>: blogs, landing pages, docs (content ít thay đổi)<br />
+                            • <strong>ISR</strong>: e-commerce products, news (thay đổi vài phút/giờ)<br />
+                            • <strong>SSR</strong>: user dashboard, search results (data real-time, SEO cần)<br />
+                            • <strong>CSR</strong>: admin panel, private pages (không cần SEO)
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="nextjs-rendering.tsx">{`// SSG — build time (getStaticProps — Pages Router)
+export async function getStaticProps() {
+  const posts = await fetchPosts()
+  return { props: { posts } }
+}
+
+// ISR — revalidate mỗi 60 giây
+export async function getStaticProps() {
+  const products = await fetchProducts()
+  return { props: { products }, revalidate: 60 }
+}
+
+// SSR — mỗi request
+export async function getServerSideProps(ctx) {
+  const user = await getUser(ctx.req.cookies.token)
+  return { props: { user } }
+}
+
+// App Router — Server Component (default)
+async function ProductPage({ params }) {
+  const product = await db.product.findById(params.id) // direct DB!
+  return <div>{product.name}</div>
+}
+
+// App Router — Client Component
+'use client'
+function LikeButton() {
+  const [liked, setLiked] = useState(false) // hooks OK here
+  return <button onClick={() => setLiked(!liked)}>❤️</button>
+}`}</CodeBlock>
+                <Callout type="tip">VN Interview: {'"Giải thích SSR vs SSG vs ISR"'} = câu hỏi <Highlight>gần như chắc chắn</Highlight> gặp nếu JD có Next.js. Biết thêm App Router + Server Components → shows bạn up-to-date.</Callout>
             </TopicModal>
         </div>
 
@@ -3058,7 +3275,502 @@ export const card = style({
             Luyện xây UI components thuần sẽ rất có lợi.
         </Callout>
 
-        {/* ===== PHASE 4 ===== */}
+        <Heading3>3.3 Build Component từ Scratch (VN Style)</Heading3>
+        <Paragraph>
+            Công ty VN thường cho <Highlight>bài test code thực tế</Highlight>: build component trong 30-60 phút.
+            Không cần perfect — nhưng phải chạy được, code sạch, và giải thích được decisions.
+        </Paragraph>
+        <div className="my-4 space-y-2">
+            <TopicModal title="Searchable Dropdown / Autocomplete" emoji="🔍" color="#f59e0b" summary="Bài test kinh điển — input + dropdown + filter + keyboard navigation">
+                <Paragraph>Đây là bài test <Highlight>phổ biến nhất</Highlight> ở VN interview. Phải biết xây từ scratch.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">📋 Requirements cơ bản</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Input text → filter options list<br />
+                            • Click option → select + close dropdown<br />
+                            • Click outside → close dropdown<br />
+                            • Keyboard: Arrow Up/Down navigate, Enter select, Escape close
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">⭐ Điểm cộng (senior level)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Debounce input (API call)<br />
+                            • Loading state<br />
+                            • Highlight match text<br />
+                            • Virtualized list (nếu 1000+ options)<br />
+                            • Accessibility: aria-expanded, aria-activedescendant
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="SearchableDropdown.tsx">{`function SearchableDropdown({ options, onSelect }) {
+  const [query, setQuery] = useState('')
+  const [isOpen, setIsOpen] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(-1)
+  const ref = useRef(null)
+
+  const filtered = options.filter(o =>
+    o.label.toLowerCase().includes(query.toLowerCase())
+  )
+
+  // Close on click outside
+  useEffect(() => {
+    const handler = (e) => {
+      if (!ref.current?.contains(e.target)) setIsOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setActiveIndex(i => Math.min(i + 1, filtered.length - 1))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActiveIndex(i => Math.max(i - 1, 0))
+    } else if (e.key === 'Enter' && activeIndex >= 0) {
+      onSelect(filtered[activeIndex])
+      setIsOpen(false)
+    } else if (e.key === 'Escape') {
+      setIsOpen(false)
+    }
+  }
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <input
+        value={query}
+        onChange={e => { setQuery(e.target.value); setIsOpen(true) }}
+        onFocus={() => setIsOpen(true)}
+        onKeyDown={handleKeyDown}
+        placeholder="Search..."
+      />
+      {isOpen && filtered.length > 0 && (
+        <ul style={{
+          position: 'absolute', top: '100%', left: 0, right: 0,
+          maxHeight: 200, overflowY: 'auto', border: '1px solid #ccc',
+        }}>
+          {filtered.map((item, i) => (
+            <li
+              key={item.value}
+              onClick={() => { onSelect(item); setIsOpen(false) }}
+              style={{ padding: 8, cursor: 'pointer',
+                background: i === activeIndex ? '#e0f0ff' : 'transparent'
+              }}
+            >{item.label}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}`}</CodeBlock>
+                <Callout type="tip">Tip: Luôn nhớ <Highlight>click outside to close</Highlight> và <Highlight>keyboard navigation</Highlight> — 2 thứ mà nhiều ứng viên quên.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Modal / Dialog" emoji="📦" color="#8b5cf6" summary="Overlay, focus trap, escape close, portal — component cơ bản nhưng nhiều edge cases">
+                <Paragraph>Modal tưởng đơn giản nhưng có <Highlight>nhiều edge cases</Highlight> mà interviewer hay test.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">📋 Requirements quan trọng</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Overlay (backdrop) click → close<br />
+                            • Escape key → close<br />
+                            • <strong>Focus trap</strong>: Tab chỉ cycle trong modal (a11y!)<br />
+                            • <strong>Body scroll lock</strong>: không scroll page khi modal mở<br />
+                            • <strong>Portal</strong>: render ở root DOM (tránh z-index issues)<br />
+                            • Return focus khi close (focus lại button đã mở modal)
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="Modal.tsx">{`function Modal({ isOpen, onClose, children }) {
+  const prevFocusRef = useRef(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      prevFocusRef.current = document.activeElement
+      document.body.style.overflow = 'hidden' // lock scroll
+
+      const handleEsc = (e) => e.key === 'Escape' && onClose()
+      document.addEventListener('keydown', handleEsc)
+      return () => {
+        document.removeEventListener('keydown', handleEsc)
+        document.body.style.overflow = '' // unlock scroll
+        prevFocusRef.current?.focus() // return focus
+      }
+    }
+  }, [isOpen, onClose])
+
+  if (!isOpen) return null
+
+  return createPortal(
+    <div className="modal-overlay" onClick={onClose}>
+      <div
+        className="modal-content"
+        onClick={e => e.stopPropagation()} // prevent close
+        role="dialog"
+        aria-modal="true"
+      >
+        <button onClick={onClose} aria-label="Close">✕</button>
+        {children}
+      </div>
+    </div>,
+    document.body
+  )
+}`}</CodeBlock>
+                <Callout type="tip">Edge cases: <Highlight>multiple modals stacked</Highlight> (z-index), <Highlight>animation on enter/exit</Highlight>, <Highlight>responsive sizing</Highlight>. Nhắc các edge cases này → bonus points.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Pagination Component" emoji="📄" color="#06b6d4" summary="Client-side vs server-side, page numbers, ellipsis — bài test phổ biến cho junior/mid">
+                <Paragraph>Pagination tưởng đơn giản nhưng phải handle <Highlight>ellipsis logic</Highlight> + edge cases.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                        <div className="text-cyan-400 font-bold text-sm">📋 Key features</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Previous / Next buttons (disabled ở trang đầu/cuối)<br />
+                            • Page numbers với ellipsis (1 ... 4 5 6 ... 20)<br />
+                            • Current page highlight<br />
+                            • Controlled: page + onChange từ parent<br />
+                            • Optional: items per page, total count display
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="pagination-logic.ts">{`// Core logic: generate page numbers with ellipsis
+function getPageNumbers(current, total, siblings = 1) {
+  const range = []
+  const left = Math.max(2, current - siblings)
+  const right = Math.min(total - 1, current + siblings)
+
+  // Always show first page
+  range.push(1)
+
+  // Left ellipsis
+  if (left > 2) range.push('...')
+
+  // Middle pages
+  for (let i = left; i <= right; i++) range.push(i)
+
+  // Right ellipsis
+  if (right < total - 1) range.push('...')
+
+  // Always show last page
+  if (total > 1) range.push(total)
+
+  return range
+}
+
+// Examples:
+// getPageNumbers(1, 10)  → [1, 2, 3, ..., 10]
+// getPageNumbers(5, 10)  → [1, ..., 4, 5, 6, ..., 10]
+// getPageNumbers(10, 10) → [1, ..., 8, 9, 10]`}</CodeBlock>
+                <Callout type="tip">Server-side pagination: <Highlight>API trả về total + page + limit</Highlight>. Client-side: slice array. VN interview thường cho build client-side pagination.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Form Validation" emoji="📝" color="#10b981" summary="Real-time validation, error messages, submit handling — bài test thực tế nhất">
+                <Paragraph>Form validation là bài test <Highlight>thực tế nhất</Highlight> — mọi dự án đều cần.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📋 Requirements thường gặp</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Required fields (hiện error khi blur hoặc submit)<br />
+                            • Email format validation (regex)<br />
+                            • Password strength (min length, uppercase, number, special char)<br />
+                            • Confirm password match<br />
+                            • Real-time validation (on change) vs on submit<br />
+                            • Disable submit button khi form invalid
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">⭐ Approach tốt nhất</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Thực tế</strong>: React Hook Form + Zod (production)<br />
+                            • <strong>Interview</strong>: custom hook useForm (show hiểu biết)<br />
+                            • <strong>UX</strong>: validate on blur (first touch) → on change (after error)<br />
+                            • <strong>Pattern</strong>: errors object, touched object, isValid boolean
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="useForm-hook.ts">{`// Custom useForm hook (interview approach)
+function useForm(initialValues, validate) {
+  const [values, setValues] = useState(initialValues)
+  const [errors, setErrors] = useState({})
+  const [touched, setTouched] = useState({})
+
+  const handleChange = (field) => (e) => {
+    const newValues = { ...values, [field]: e.target.value }
+    setValues(newValues)
+    // Validate on change only if already touched
+    if (touched[field]) {
+      setErrors(validate(newValues))
+    }
+  }
+
+  const handleBlur = (field) => () => {
+    setTouched(t => ({ ...t, [field]: true }))
+    setErrors(validate(values))
+  }
+
+  const handleSubmit = (onSubmit) => (e) => {
+    e.preventDefault()
+    const errs = validate(values)
+    setErrors(errs)
+    setTouched(Object.keys(values).reduce((acc, k) =>
+      ({ ...acc, [k]: true }), {}))
+    if (Object.keys(errs).length === 0) onSubmit(values)
+  }
+
+  return { values, errors, touched, handleChange, handleBlur, handleSubmit,
+    isValid: Object.keys(validate(values)).length === 0 }
+}
+
+// Usage
+const { values, errors, handleChange, handleBlur, handleSubmit } = useForm(
+  { email: '', password: '' },
+  (v) => {
+    const e = {}
+    if (!v.email) e.email = 'Email bắt buộc'
+    else if (!/\\S+@\\S+\\.\\S+/.test(v.email)) e.email = 'Email không hợp lệ'
+    if (!v.password) e.password = 'Password bắt buộc'
+    else if (v.password.length < 8) e.password = 'Tối thiểu 8 ký tự'
+    return e
+  }
+)`}</CodeBlock>
+                <Callout type="tip">Interview: build custom <Highlight>useForm</Highlight> hook → shows bạn hiểu form state management. Nhắc rằng production dùng React Hook Form + Zod → shows practical awareness.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Infinite Scroll / Lazy Load" emoji="♾️" color="#f43f5e" summary="IntersectionObserver + pagination API — bài test cho mid/senior">
+                <Paragraph>Infinite scroll = <Highlight>IntersectionObserver + API pagination</Highlight>. Phải handle loading, error, no more data.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20">
+                        <div className="text-rose-400 font-bold text-sm">📋 Implementation steps</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            1. Fetch initial data (page 1)<br />
+                            2. Render sentinel element ở cuối list<br />
+                            3. IntersectionObserver observe sentinel<br />
+                            4. Khi sentinel visible → fetch page N+1<br />
+                            5. Append data (không replace!)<br />
+                            6. Stop khi: API trả về empty array hoặc hasMore = false
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="useInfiniteScroll.ts">{`function useInfiniteScroll(fetchFn) {
+  const [data, setData] = useState([])
+  const [page, setPage] = useState(1)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const sentinelRef = useRef(null)
+
+  const loadMore = useCallback(async () => {
+    if (loading || !hasMore) return
+    setLoading(true)
+    try {
+      const newItems = await fetchFn(page)
+      if (newItems.length === 0) {
+        setHasMore(false)
+      } else {
+        setData(prev => [...prev, ...newItems]) // append!
+        setPage(p => p + 1)
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }, [page, loading, hasMore, fetchFn])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) loadMore()
+    }, { threshold: 0.1 })
+    if (sentinelRef.current) observer.observe(sentinelRef.current)
+    return () => observer.disconnect()
+  }, [loadMore])
+
+  return { data, loading, hasMore, sentinelRef }
+}
+
+// Usage
+function ProductList() {
+  const { data, loading, hasMore, sentinelRef } = useInfiniteScroll(
+    (page) => fetch(\`/api/products?page=\${page}\`).then(r => r.json())
+  )
+  return (
+    <div>
+      {data.map(p => <ProductCard key={p.id} product={p} />)}
+      {loading && <Spinner />}
+      {hasMore && <div ref={sentinelRef} style={{ height: 1 }} />}
+    </div>
+  )
+}`}</CodeBlock>
+                <Callout type="tip">Edge cases: <Highlight>race conditions</Highlight> (abort previous request), <Highlight>duplicate items</Highlight> (dedupe by id), <Highlight>scroll restoration</Highlight> khi navigate back.</Callout>
+            </TopicModal>
+        </div>
+
+        <Heading3>3.4 Thư viện phổ biến trong thị trường VN</Heading3>
+        <Paragraph>
+            Talent market Việt Nam dùng rất nhiều <Highlight>component libraries</Highlight> và UI frameworks.
+            Biết sử dụng + giải thích tại sao chọn library này → điểm cộng rất lớn.
+        </Paragraph>
+        <div className="my-4 space-y-2">
+            <TopicModal title="Ant Design (antd)" emoji="🐜" color="#1890ff" summary="Component library phổ biến nhất ở VN enterprise — tables, forms, layouts">
+                <Paragraph><Highlight>Ant Design</Highlight> = lựa chọn #1 cho admin dashboards và enterprise apps ở VN.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">📋 Khi nào dùng Ant Design?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            ✅ Admin panel, CRM, ERP, back-office systems<br />
+                            ✅ Cần rich components: Table (sort/filter/pagination), Form, DatePicker, Tree<br />
+                            ✅ Team muốn consistent design system sẵn có<br />
+                            ❌ Consumer-facing products (thiếu personality, heavy bundle)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">⚠️ Câu hỏi phỏng vấn hay gặp</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Customize theme antd thế nào? → ConfigProvider + token<br />
+                            • antd Table performance với large data? → virtual scroll, columnWidth<br />
+                            • Tree-shaking antd? → import từ antd/es (v5 auto tree-shake)<br />
+                            • Form validation antd? → Form.Item rules + async validator
+                        </div>
+                    </div>
+                </div>
+                <Callout type="tip">VN Interview: nếu JD có antd → <Highlight>phải biết Table component</Highlight> (custom render, sorter, filter, editable cells) vì 90% dự án antd là data-heavy admin.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Tailwind CSS" emoji="🌊" color="#38bdf8" summary="Utility-first CSS framework — phổ biến ở startups và products VN">
+                <Paragraph><Highlight>Tailwind</Highlight> = lựa chọn #1 cho startups và consumer products ở VN.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                        <div className="text-cyan-400 font-bold text-sm">📋 Tại sao Tailwind phổ biến?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Utility-first</strong>: viết CSS trong HTML, không cần đặt tên class<br />
+                            • <strong>Design system</strong>: spacing, colors, breakpoints consistency<br />
+                            • <strong>Purge CSS</strong>: chỉ ship CSS đã dùng → tiny bundle<br />
+                            • <strong>DX</strong>: IntelliSense plugin, instant prototyping<br />
+                            • <strong>Responsive</strong>: <InlineCode>md:flex lg:grid</InlineCode> — prefix-based
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">⚠️ Câu hỏi phỏng vấn</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Tailwind vs CSS Modules? → Trade-off: speed vs separation<br />
+                            • Customize theme? → tailwind.config.js extend<br />
+                            • Dynamic classes? → clsx/cn, không dùng string interpolation<br />
+                            • Tailwind v4 có gì mới? → CSS-first config, no JS config file
+                        </div>
+                    </div>
+                </div>
+                <Callout type="tip">Nếu dùng Tailwind + React → phải biết <Highlight>clsx hoặc cn (class-variance-authority)</Highlight> để conditional classes. Đây là pattern thiết yếu.</Callout>
+            </TopicModal>
+
+            <TopicModal title="React Hook Form + Zod" emoji="📋" color="#ec4899" summary="Form management + schema validation — combo phổ biến nhất hiện nay">
+                <Paragraph><Highlight>React Hook Form + Zod</Highlight> = combo form tốt nhất hiện tại — performance + type-safety.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-pink-500/10 border border-pink-500/20">
+                        <div className="text-pink-400 font-bold text-sm">🔥 Tại sao hay hơn Formik?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Performance</strong>: uncontrolled components → ít re-renders<br />
+                            • <strong>Bundle size</strong>: ~9KB vs Formik ~44KB<br />
+                            • <strong>Zod</strong>: schema validation, TypeScript-first, reusable<br />
+                            • <strong>DevTools</strong>: React Hook Form DevTools<br />
+                            • <strong>Server</strong>: works with Next.js Server Actions
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="react-hook-form-zod.tsx">{`import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+
+const schema = z.object({
+  email: z.string().email('Email không hợp lệ'),
+  password: z.string().min(8, 'Tối thiểu 8 ký tự'),
+  confirmPassword: z.string(),
+}).refine(d => d.password === d.confirmPassword, {
+  message: 'Mật khẩu không khớp',
+  path: ['confirmPassword'],
+})
+
+function RegisterForm() {
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(schema),
+  })
+  return (
+    <form onSubmit={handleSubmit(data => console.log(data))}>
+      <input {...register('email')} />
+      {errors.email && <span>{errors.email.message}</span>}
+
+      <input type="password" {...register('password')} />
+      {errors.password && <span>{errors.password.message}</span>}
+
+      <input type="password" {...register('confirmPassword')} />
+      {errors.confirmPassword && <span>{errors.confirmPassword.message}</span>}
+
+      <button type="submit">Đăng ký</button>
+    </form>
+  )
+}`}</CodeBlock>
+                <Callout type="tip">VN Interview: nếu hỏi form → nói <Highlight>React Hook Form + Zod</Highlight> (modern) thay vì Formik (legacy). Giải thích tại sao RHF nhanh hơn (uncontrolled) → bonus.</Callout>
+            </TopicModal>
+
+            <TopicModal title="TanStack Query (React Query)" emoji="🔄" color="#ef4444" summary="Server state management — fetching, caching, sync — thay thế useEffect fetch">
+                <Paragraph><Highlight>TanStack Query</Highlight> giải quyết bài toán data fetching mà useEffect + useState làm rất tệ.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">❌ Vấn đề với useEffect fetch</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Không cache → fetch lại mỗi mount<br />
+                            • Race conditions (user navigate nhanh)<br />
+                            • No loading/error states built-in<br />
+                            • No retry, no pagination, no optimistic updates<br />
+                            • No background refetch (data stale)<br />
+                            • No type-safety (nếu không dùng thư viện như Zod)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">✅ TanStack Query giải quyết tất cả</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Auto caching</strong>: staleTime, gcTime<br />
+                            • <strong>Auto refetch</strong>: on window focus, on reconnect<br />
+                            • <strong>Loading/error/success</strong> states built-in<br />
+                            • <strong>Mutations</strong>: optimistic updates, invalidation<br />
+                            • <strong>Infinite queries</strong>: useInfiniteQuery cho pagination
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="react-query.tsx">{`import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+
+// Fetch data
+function UserProfile({ userId }) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['user', userId],
+    queryFn: () => fetch(\`/api/users/\${userId}\`).then(r => r.json()),
+    staleTime: 5 * 60 * 1000, // cache 5 minutes
+  })
+
+  if (isLoading) return <Spinner />
+  if (error) return <Error message={error.message} />
+  return <div>{data.name}</div>
+}
+
+// Mutation + invalidation
+function UpdateUser() {
+  const queryClient = useQueryClient()
+  const mutation = useMutation({
+    mutationFn: (data) => fetch('/api/users', {
+      method: 'PUT', body: JSON.stringify(data)
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] }) // refetch!
+    },
+  })
+  // mutation.mutate({ name: 'New Name' })
+}`}</CodeBlock>
+                <Callout type="tip">VN Interview: nếu hỏi {'"Làm sao fetch data trong React?"'} → đừng chỉ nói useEffect. Nói <Highlight>TanStack Query</Highlight> + giải thích tại sao (caching, race conditions, stale data) → senior answer.</Callout>
+            </TopicModal>
+        </div>
+
+
         <Heading2>Phase 4 — Data Structures & Algorithms (6-8 tuần)</Heading2>
 
         <Paragraph>
