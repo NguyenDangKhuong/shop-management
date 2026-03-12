@@ -4029,6 +4029,44 @@ class Trie {
         <div className="my-4 space-y-2">
             <TopicModal title="Hash Map / Hash Set" emoji="🗂️" color="#4ade80" summary="~15 bài — pattern dùng nhiều nhất, gần như mọi interview đều có">
                 <Paragraph>Dùng khi: cần <Highlight>lookup O(1)</Highlight>, đếm frequency, tìm pair/complement, loại bỏ duplicates, hoặc group theo key.</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🔧 HashMap hoạt động thế nào?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Cốt lõi:</strong> Key → <InlineCode>hash(key)</InlineCode> → index → Array[index] = Value<br /><br />
+                            1. <strong>Hash</strong>: lấy key → chạy qua hash function → ra 1 con số (hash code)<br />
+                            2. <strong>Index</strong>: <InlineCode>hashCode % arraySize</InlineCode> → ra index trong array<br />
+                            3. <strong>Store</strong>: lưu <InlineCode>{'{key, value}'}</InlineCode> vào <InlineCode>array[index]</InlineCode>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">💥 Hash Collision (2 keys cùng index)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Chaining</strong> (phổ biến): mỗi slot là 1 linked list. Collision → append vào list<br />
+                            • <strong>Open Addressing</strong>: collision → tìm slot trống tiếp theo (linear/quadratic probing)<br />
+                            • Ví dụ: <InlineCode>hash(&quot;name&quot;) % 8 = 3</InlineCode>, <InlineCode>hash(&quot;email&quot;) % 8 = 3</InlineCode> → collision! → cả 2 nằm trong linked list ở slot 3
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">⏱️ Time Complexity</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Get / Set / Delete / Has</strong>: Average <InlineCode>O(1)</InlineCode> | Worst <InlineCode>O(n)</InlineCode> (nhiều collision)<br />
+                            • <strong>Load Factor</strong> = số phần tử / array size. Khi &gt; 0.75 → <strong>resize x2</strong> + rehash tất cả<br />
+                            • Resize expensive nhưng <strong>amortized O(1)</strong> — xảy ra rất hiếm
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">📦 Trong JS: Map vs Object</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Object</strong>: keys chỉ là string/symbol. Không có <InlineCode>.size</InlineCode>. Prototype pollution risk<br />
+                            • <strong>Map</strong>: keys là <strong>BẤT KỲ type</strong> nào (object, number, function). Có <InlineCode>.size</InlineCode>. Ordered insertion<br />
+                            • <strong>Set</strong>: chỉ lưu keys (không value). Dùng cho: check duplicate, unique values<br />
+                            • <strong>WeakMap</strong>: keys must be objects. Weak reference → allows GC
+                        </div>
+                    </div>
+                </div>
+
                 <CodeBlock title="hash-map-patterns.js">{`// 1. Đếm frequency
 const freq = new Map()
 for (const c of str) freq.set(c, (freq.get(c) || 0) + 1)
@@ -4036,19 +4074,19 @@ for (const c of str) freq.set(c, (freq.get(c) || 0) + 1)
 // 2. Check duplicate
 const hasDup = arr => new Set(arr).size !== arr.length
 
-// 3. Two Sum — tìm complement
-const map = new Map()
-for (let i = 0; i < nums.length; i++) {
+                // 3. Two Sum — tìm complement
+                const map = new Map()
+                for (let i = 0; i < nums.length; i++) {
     const comp = target - nums[i]
-    if (map.has(comp)) return [map.get(comp), i]
-    map.set(nums[i], i)
+                if (map.has(comp)) return [map.get(comp), i]
+                map.set(nums[i], i)
 }
 
-// 4. Group Anagrams — sort làm key
-const groups = new Map()
-for (const s of strs) {
+                // 4. Group Anagrams — sort làm key
+                const groups = new Map()
+                for (const s of strs) {
     const key = s.split('').sort().join('')
-    groups.set(key, [...(groups.get(key) || []), s])
+                groups.set(key, [...(groups.get(key) || []), s])
 }`}</CodeBlock>
                 <div className="my-3 space-y-1.5">
                     <div className="text-green-400 font-bold text-sm mb-2">📋 Bài LeetCode:</div>

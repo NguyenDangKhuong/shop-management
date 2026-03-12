@@ -3258,6 +3258,44 @@ class Trie {
         <div className="my-4 space-y-2">
             <TopicModal title="Hash Map / Hash Set" emoji="🗂️" color="#4ade80" summary="~15 problems — the most used pattern, almost every interview includes it">
                 <Paragraph>Use when: you need <Highlight>O(1) lookup</Highlight>, frequency counting, finding pair/complement, removing duplicates, or grouping by key.</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🔧 How does HashMap work?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Core:</strong> Key → <InlineCode>hash(key)</InlineCode> → index → Array[index] = Value<br /><br />
+                            1. <strong>Hash</strong>: take key → run through hash function → get a number (hash code)<br />
+                            2. <strong>Index</strong>: <InlineCode>hashCode % arraySize</InlineCode> → get index in array<br />
+                            3. <strong>Store</strong>: save <InlineCode>{'{key, value}'}</InlineCode> at <InlineCode>array[index]</InlineCode>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">💥 Hash Collision (2 keys same index)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Chaining</strong> (common): each slot is a linked list. Collision → append to list<br />
+                            • <strong>Open Addressing</strong>: collision → find next empty slot (linear/quadratic probing)<br />
+                            • Example: <InlineCode>hash(&quot;name&quot;) % 8 = 3</InlineCode>, <InlineCode>hash(&quot;email&quot;) % 8 = 3</InlineCode> → collision! → both in linked list at slot 3
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">⏱️ Time Complexity</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Get / Set / Delete / Has</strong>: Average <InlineCode>O(1)</InlineCode> | Worst <InlineCode>O(n)</InlineCode> (many collisions)<br />
+                            • <strong>Load Factor</strong> = number of elements / array size. When &gt; 0.75 → <strong>resize x2</strong> + rehash all<br />
+                            • Resize is expensive but <strong>amortized O(1)</strong> — happens very rarely
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">📦 In JS: Map vs Object</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Object</strong>: keys are string/symbol only. No <InlineCode>.size</InlineCode>. Prototype pollution risk<br />
+                            • <strong>Map</strong>: keys can be <strong>ANY type</strong> (object, number, function). Has <InlineCode>.size</InlineCode>. Ordered insertion<br />
+                            • <strong>Set</strong>: stores keys only (no values). Used for: check duplicates, unique values<br />
+                            • <strong>WeakMap</strong>: keys must be objects. Weak reference → allows GC
+                        </div>
+                    </div>
+                </div>
+
                 <CodeBlock title="hash-map-patterns.js">{`// 1. Count frequency
 const freq = new Map()
 for (const c of str) freq.set(c, (freq.get(c) || 0) + 1)
