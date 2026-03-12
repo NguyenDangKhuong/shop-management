@@ -1624,83 +1624,360 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                 <Paragraph>React doesn&apos;t update the DOM directly. Instead, it uses a <Highlight>Virtual DOM</Highlight> — a lightweight copy of the real DOM.</Paragraph>
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                        <div className="text-blue-400 font-bold text-sm">Process</div>
-                        <div className="text-slate-300 text-sm mt-1">1. State changes → React creates a new Virtual DOM<br />2. <strong>Diffing</strong>: Compares old vs new VDOM (O(n) via heuristics)<br />3. <strong>Reconciliation</strong>: Only updates the differences on the real DOM<br />4. Browser repaint</div>
+                        <div className="text-blue-400 font-bold text-sm">🔄 Rendering Process</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            1. State/props change → React calls <strong>render()</strong> to create new Virtual DOM<br />
+                            2. <strong>Diffing</strong>: Compare old vs new VDOM (O(n) via heuristics instead of O(n³))<br />
+                            3. <strong>Reconciliation</strong>: Create list of minimal DOM operations needed<br />
+                            4. <strong>Commit</strong>: Apply changes to real DOM (batched)<br />
+                            5. Browser repaint (layout → paint → composite)
+                        </div>
                     </div>
+
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">📏 Diffing Heuristics (2 assumptions)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Different type</strong> → destroy old tree, build new tree (e.g., {'<div>'} → {'<span>'})<br />
+                            • <strong>Same type</strong> → keep DOM node, only update changed attributes<br />
+                            • <strong>List items</strong>: use <InlineCode>key</InlineCode> prop to match — NEVER use index as key!<br />
+                            • Key helps React know which items changed, were added, or removed without re-rendering the entire list
+                        </div>
+                    </div>
+
                     <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                        <div className="text-green-400 font-bold text-sm">React Fiber (React 18+)</div>
-                        <div className="text-slate-300 text-sm mt-1">Fiber = new architecture for reconciliation<br />Allows <strong>interrupt rendering</strong> — prioritizes important UI updates first<br />Enables concurrent features: Suspense, Transitions, Streaming</div>
+                        <div className="text-green-400 font-bold text-sm">⚡ React Fiber (React 18+)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Fiber = new architecture for reconciliation — <strong>incremental rendering</strong>:<br />
+                            • <strong>Time slicing</strong>: split rendering into small chunks, don&apos;t block main thread<br />
+                            • <strong>Priority lanes</strong>: user input (urgent) {'>'} animation {'>'} data fetch (low priority)<br />
+                            • <strong>Concurrent features</strong>: Suspense, startTransition, useDeferredValue<br />
+                            • <strong>Interruptible</strong>: React can pause rendering to handle user input first
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🆚 VDOM vs Direct DOM vs Signals</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>VDOM (React)</strong>: diffing overhead but predictable, good DX<br />
+                            • <strong>Direct DOM (Svelte)</strong>: compile-time, no runtime overhead, smaller bundle<br />
+                            • <strong>Signals (Solid, Angular)</strong>: fine-grained reactivity, no unnecessary re-renders<br />
+                            • Interview: knowing trade-offs between approaches → big plus
+                        </div>
                     </div>
                 </div>
-                <Callout type="tip">Interview: Explain why the <InlineCode>key</InlineCode> prop is important in lists — it helps React&apos;s diff algorithm identify which elements changed, were added, or removed.</Callout>
+
+                <CodeBlock title="reconciliation-demo.tsx">{`// ❌ Bad: using index as key → bugs when reordering
+{items.map((item, index) => (
+  <Input key={index} defaultValue={item.name} />
+  // When sorting: DOM nodes stay the same, only props change
+  // → OLD input values still show at NEW positions!
+))}
+
+// ✅ Good: use unique ID as key
+{items.map(item => (
+  <Input key={item.id} defaultValue={item.name} />
+  // React knows exactly which item moved → correct DOM reorder
+))}
+
+// React 18: Concurrent rendering
+function App() {
+  const [query, setQuery] = useState('')
+  const deferredQuery = useDeferredValue(query)
+  // Input updates immediately (urgent)
+  // SearchResults re-renders with deferredQuery (low priority)
+  return <>
+    <input value={query} onChange={e => setQuery(e.target.value)} />
+    <SearchResults query={deferredQuery} />
+  </>
+}`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: Explain <Highlight>why key matters</Highlight> with a concrete example (reorder list with inputs).
+                    Mention Fiber + concurrent rendering → shows understanding of modern React, not just legacy.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="Hooks deep dive" emoji="🪝" color="#61DAFB" summary="useState, useEffect, useRef, useMemo, useCallback — rules and pitfalls">
+                <Paragraph>Hooks are the <Highlight>foundation</Highlight> of modern React. Deep understanding of each hook + pitfalls = confident interview answers.</Paragraph>
                 <div className="my-3 space-y-2">
-                    {[
-                        ['useState', 'Basic state. Batch updates (React 18+). Use function form for state depending on previous: setState(prev => prev + 1)'],
-                        ['useEffect', 'Side effects. Dependency array determines when it runs. Cleanup function runs before each re-run and on unmount.'],
-                        ['useRef', 'Persistent reference across renders. Changing .current does NOT cause re-render. Use for DOM ref, timers, previous value.'],
-                        ['useMemo', 'Cache expensive computations. Only recalculates when dependencies change. Don\'t overuse — has overhead!'],
-                        ['useCallback', 'Cache function reference. Important when passing callbacks to React.memo components or dependency arrays.'],
-                        ['useContext', 'Read context value. Re-renders when context value changes. Watch for performance — split context if needed.'],
-                    ].map(([name, desc]) => (
-                        <div key={name} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
-                            <div className="text-blue-400 font-mono text-sm font-bold">{name}</div>
-                            <div className="text-slate-300 text-sm mt-1">{desc}</div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">📦 useState — State Management</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Basic state. <strong>Batch updates</strong> (React 18+ auto-batches in event handlers, setTimeout, promises)<br />
+                            • Use <strong>function form</strong> for state depending on previous: <InlineCode>setState(prev =&gt; prev + 1)</InlineCode><br />
+                            • <strong>Lazy initialization</strong>: <InlineCode>useState(() =&gt; expensiveCalc())</InlineCode> — only runs on first render<br />
+                            • ⚠️ setState is <strong>async</strong> — can&apos;t read new state immediately after setting
                         </div>
-                    ))}
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🔄 useEffect — Side Effects</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Dependency array</strong> determines when it runs: [] = mount only, [dep] = when dep changes<br />
+                            • <strong>Cleanup function</strong> runs before each re-run AND on unmount<br />
+                            • ⚠️ <strong>Stale closure</strong>: closure captures old value → use ref or function updater<br />
+                            • ⚠️ <strong>Object/array deps</strong>: compared by reference → useMemo wrap or use primitive deps
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">📌 useRef — Persistent References</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Persistent reference across renders. Changing <InlineCode>.current</InlineCode> <strong>does NOT cause re-render</strong><br />
+                            • Use for: <strong>DOM ref</strong>, timers, previous value, mutable variables<br />
+                            • Pattern: <InlineCode>usePrevious(value)</InlineCode> — store value from previous render<br />
+                            • ⚠️ Don&apos;t read/write ref in render body — only in effects or handlers
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🧠 useMemo & useCallback — Memoization</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>useMemo</strong>: cache expensive computations. Only recalculates when deps change<br />
+                            • <strong>useCallback</strong>: cache function reference. Important when passing to React.memo children<br />
+                            • ⚠️ Don&apos;t overuse — has <strong>overhead</strong> (comparing deps every render)<br />
+                            • Rule: only use when <strong>React DevTools Profiler</strong> confirms a bottleneck
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">🌐 useContext — Global State</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Read context value. <strong>Re-renders when context value changes</strong> — all consumers!<br />
+                            • ⚠️ Performance trap: 1 context change → <strong>every consumer re-renders</strong><br />
+                            • Fix: <strong>split context</strong> (ThemeContext + UserContext instead of 1 AppContext)<br />
+                            • Fix: <strong>useMemo</strong> context value or use a state management library
+                        </div>
+                    </div>
                 </div>
-                <Callout type="warning"><strong>Rules of Hooks:</strong> 1) Only call at top level (not inside if/for/nested functions) 2) Only call in React components or custom hooks.</Callout>
+
+                <CodeBlock title="hooks-pitfalls.tsx">{`// ⚠️ Pitfall 1: Stale closure
+function Counter() {
+  const [count, setCount] = useState(0)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      // ❌ count is always 0 (closure captured initial value)
+      setCount(count + 1)
+      // ✅ Fix: function updater
+      setCount(prev => prev + 1)
+    }, 1000)
+    return () => clearInterval(timer)
+  }, []) // empty deps = closure only captures once
+}
+
+// ⚠️ Pitfall 2: Object deps → infinite loop
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null)
+  // ❌ options is recreated every render → effect runs continuously
+  const options = { includeAvatar: true }
+  useEffect(() => { fetchUser(userId, options) }, [options])
+  // ✅ Fix: useMemo or use primitive deps
+  const options2 = useMemo(() => ({ includeAvatar: true }), [])
+
+  // ⚠️ Pitfall 3: Missing cleanup → memory leak
+  useEffect(() => {
+    const ws = new WebSocket(url)
+    ws.onmessage = (e) => setMessages(prev => [...prev, e.data])
+    return () => ws.close() // ✅ MUST cleanup!
+  }, [url])
+}`}</CodeBlock>
+
+                <Callout type="warning"><strong>Rules of Hooks:</strong> 1) Only call at top level (not inside if/for/nested functions) 2) Only call in React components or custom hooks. Violating → unpredictable behavior.</Callout>
                 <a href="/blogs/react-hooks-chi-tiet" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
 
             <TopicModal title="Component Patterns" emoji="🧩" color="#61DAFB" summary="HOC, Render Props, Compound, Controlled/Uncontrolled — when to use which">
+                <Paragraph>Knowing component patterns helps you <Highlight>design flexible APIs</Highlight> and answer frontend system design questions.</Paragraph>
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                        <div className="text-blue-400 font-bold text-sm">Higher-Order Component (HOC)</div>
-                        <div className="text-slate-300 text-sm mt-1">Function that takes a component → returns a new component with extra logic.<br />Example: <InlineCode>withAuth(Dashboard)</InlineCode> — adds auth check.</div>
+                        <div className="text-blue-400 font-bold text-sm">🔲 Higher-Order Component (HOC)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Function that takes a component → returns a new component with extra logic.<br />
+                            • Example: <InlineCode>withAuth(Dashboard)</InlineCode>, <InlineCode>withTheme(Button)</InlineCode><br />
+                            • <strong>Pros</strong>: reuse logic, cross-cutting concerns (auth, logging, analytics)<br />
+                            • <strong>Cons</strong>: wrapper hell, props collision, hard to debug (anonymous components)<br />
+                            • ⚠️ Currently <strong>Custom Hooks replace most HOC use cases</strong>
+                        </div>
                     </div>
+
                     <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                        <div className="text-purple-400 font-bold text-sm">Render Props</div>
-                        <div className="text-slate-300 text-sm mt-1">Component receives a function via prop, calls it to render.<br />More flexible than HOC but can cause &quot;callback hell&quot;.</div>
+                        <div className="text-purple-400 font-bold text-sm">🎯 Render Props</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Component receives a function via prop → calls it to render UI.<br />
+                            • Example: <InlineCode>{'{\'<Mouse render={({x, y}) => <Cursor x={x} y={y} />} />\'}'}</InlineCode><br />
+                            • <strong>Pros</strong>: more flexible than HOC, caller controls rendering<br />
+                            • <strong>Cons</strong>: callback hell, hard to read when deeply nested<br />
+                            • Still useful for: <strong>headless UI</strong> (Downshift, React Table)
+                        </div>
                     </div>
+
                     <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                        <div className="text-green-400 font-bold text-sm">Compound Components</div>
-                        <div className="text-slate-300 text-sm mt-1">Group of components sharing state via Context.<br />Example: <InlineCode>{'<Select> <Select.Option /> </Select>'}</InlineCode></div>
+                        <div className="text-green-400 font-bold text-sm">🧱 Compound Components</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Group of components sharing implicit state via Context.<br />
+                            • Example: <InlineCode>{'{\'<Select> <Select.Option /> </Select>\'}'}</InlineCode>, <InlineCode>{'{\'<Tabs> <Tabs.Panel /> </Tabs>\'}'}</InlineCode><br />
+                            • <strong>Pros</strong>: clean API, flexible layout, inversion of control<br />
+                            • <strong>Cons</strong>: complex implementation, context overhead<br />
+                            • Used in: <strong>Design System components</strong> (Radix UI, Headless UI)
+                        </div>
                     </div>
+
                     <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                        <div className="text-yellow-400 font-bold text-sm">Controlled vs Uncontrolled</div>
-                        <div className="text-slate-300 text-sm mt-1"><strong>Controlled</strong>: React manages state (value + onChange).<br /><strong>Uncontrolled</strong>: DOM manages state (useRef). Use when integrating with non-React code.</div>
+                        <div className="text-yellow-400 font-bold text-sm">🎚️ Controlled vs Uncontrolled</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Controlled</strong>: React manages state (<InlineCode>value + onChange</InlineCode>). Single source of truth.<br />
+                            <strong>Uncontrolled</strong>: DOM manages state (<InlineCode>useRef</InlineCode>). Use when integrating with non-React code.<br />
+                            • Forms: controlled for real-time validation, uncontrolled for simple forms<br />
+                            • Best practice: <strong>support both</strong> (controlled when value prop exists, uncontrolled when not)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">🪝 Custom Hooks — Modern Pattern</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Extract logic into reusable hooks — <strong>replaces most HOC + Render Props</strong>.<br />
+                            • <InlineCode>useLocalStorage</InlineCode>, <InlineCode>useDebounce</InlineCode>, <InlineCode>useMediaQuery</InlineCode>, <InlineCode>useIntersectionObserver</InlineCode><br />
+                            • <strong>Pros</strong>: composable, no wrapper hell, easy to test<br />
+                            • Convention: name starts with <InlineCode>use</InlineCode>, return object or tuple
+                        </div>
                     </div>
                 </div>
-                <Callout type="tip">Current trend: <Highlight>Custom Hooks</Highlight> replace most HOC and Render Props. Easier to read, test, and compose.</Callout>
+
+                <CodeBlock title="component-patterns.tsx">{`// 1. HOC Pattern
+function withAuth<P>(Component: React.ComponentType<P>) {
+  return function AuthenticatedComponent(props: P) {
+    const { user } = useAuth()
+    if (!user) return <Navigate to="/login" />
+    return <Component {...props} user={user} />
+  }
+}
+const ProtectedDashboard = withAuth(Dashboard)
+
+// 2. Compound Component Pattern
+const SelectContext = createContext<SelectContextType>(null!)
+
+function Select({ children, value, onChange }) {
+  return (
+    <SelectContext.Provider value={{ value, onChange }}>
+      <div role="listbox">{children}</div>
+    </SelectContext.Provider>
+  )
+}
+Select.Option = function Option({ value, children }) {
+  const ctx = useContext(SelectContext)
+  return (
+    <div role="option" aria-selected={ctx.value === value}
+         onClick={() => ctx.onChange(value)}>
+      {children}
+    </div>
+  )
+}
+
+// 3. Custom Hook (replaces HOC/Render Props)
+function useDebounce<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = useState(value)
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay)
+    return () => clearTimeout(timer)
+  }, [value, delay])
+  return debounced
+}`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview trend: <Highlight>Custom Hooks</Highlight> replace most HOC and Render Props. But still need to know all patterns — legacy code + system design needs Compound Components.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="Performance Optimization" emoji="⚡" color="#61DAFB" summary="React.memo, useMemo, useCallback, code splitting, virtualization">
-                <Paragraph>React re-renders the entire subtree when state changes. Here are techniques to <Highlight>prevent unnecessary re-renders</Highlight>:</Paragraph>
-                <CodeBlock title="Optimization techniques">{`// 1. React.memo — skip re-render if props haven't changed
-const ExpensiveList = React.memo(({ items }) => {
-    return items.map(item => <Item key={item.id} {...item} />)
+                <Paragraph>React re-renders the entire subtree when state changes. Here are techniques to <Highlight>prevent unnecessary re-renders</Highlight> and optimize performance:</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🛡️ Prevent Unnecessary Re-renders</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>React.memo</strong>: wrap component → skip re-render if props are shallow equal<br />
+                            • <strong>useMemo</strong>: cache expensive calculations (sort, filter, map large arrays)<br />
+                            • <strong>useCallback</strong>: stable function reference for React.memo children<br />
+                            • <strong>State colocation</strong>: push state down to the component that needs it (avoid parent re-render)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📦 Code Splitting & Lazy Loading</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>React.lazy + Suspense</strong>: dynamic import components<br />
+                            • <strong>Route-based splitting</strong>: each page is a separate chunk<br />
+                            • <strong>Component-based splitting</strong>: heavy components (rich editor, chart library)<br />
+                            • <strong>Prefetch</strong>: load chunk before user clicks (onMouseEnter)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">📋 Virtualization</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Only render items visible in viewport (10k+ items → ~20 DOM nodes)<br />
+                            • <strong>react-window</strong>: lightweight, fixed-size items<br />
+                            • <strong>react-virtuoso</strong>: variable-size, auto-measure, grouping<br />
+                            • When to use: list {'>'} 100 items, or any list causing lag
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🔍 Profiling & Debugging</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>React DevTools Profiler</strong>: see which components re-render, how long<br />
+                            • <strong>why-did-you-render</strong>: library that logs unnecessary re-renders<br />
+                            • <strong>Chrome Performance tab</strong>: flame chart, main thread blocking<br />
+                            • <strong>Lighthouse</strong>: CI/CD integration for performance budgets
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">🏗️ Architecture-level Optimization</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>State management</strong>: Zustand/Jotai (atomic) vs Redux (centralized)<br />
+                            • <strong>Server Components</strong> (React 19): zero JS shipped for static content<br />
+                            • <strong>Streaming SSR</strong>: renderToPipeableStream for faster TTFB<br />
+                            • <strong>ISR</strong> (Next.js): revalidate static pages without redeploy
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="optimization-techniques.tsx">{`// 1. React.memo — skip re-render if props haven't changed
+const ExpensiveList = React.memo(({ items, onItemClick }) => {
+  return items.map(item => <Item key={item.id} {...item} onClick={onItemClick} />)
 })
 
 // 2. useMemo — cache expensive calculations
-const sorted = useMemo(() => 
-    items.sort((a, b) => a.price - b.price), 
-    [items]
+const sorted = useMemo(() =>
+  items
+    .filter(i => i.active)
+    .sort((a, b) => a.price - b.price),
+  [items] // only recalculate when items change
 )
 
 // 3. useCallback — stable function reference
-const handleClick = useCallback((id) => {
-    setItems(prev => prev.filter(i => i.id !== id))
-}, []) // Won't re-create on every render
+const handleClick = useCallback((id: string) => {
+  setItems(prev => prev.filter(i => i.id !== id))
+}, []) // Won't re-create every render → ExpensiveList won't re-render
 
 // 4. Dynamic import — code splitting
 const AdminPanel = lazy(() => import('./AdminPanel'))
+// Usage: <Suspense fallback={<Spinner />}><AdminPanel /></Suspense>
 
-// 5. Virtualization — only render visible items
-// react-window, react-virtuoso for lists with 10k+ items`}</CodeBlock>
-                <Callout type="warning">Don&apos;t premature optimize! Only optimize when React DevTools Profiler shows a real bottleneck.</Callout>
+// 5. State colocation — avoid unnecessary re-renders
+// ❌ Bad: search state in App → every child re-renders on keystroke
+function App() {
+  const [search, setSearch] = useState('') // ← state here
+  return <><Header /><SearchBar search={search} onChange={setSearch} /><Content /></>
+}
+// ✅ Good: search state in SearchBar → only SearchBar re-renders
+function SearchBar() {
+  const [search, setSearch] = useState('') // ← state here
+  return <input value={search} onChange={e => setSearch(e.target.value)} />
+}`}</CodeBlock>
+
+                <Callout type="warning">Don&apos;t premature optimize! Only optimize when <Highlight>React DevTools Profiler</Highlight> shows a real bottleneck. useMemo/useCallback have overhead — using them wrong can be slower.</Callout>
                 <a href="/blogs/react-performance" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
         </div>
@@ -1709,77 +1986,398 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
         <div className="my-4 space-y-2">
             <TopicModal title="Semantic HTML & Accessibility" emoji="♿" color="#38bdf8" summary="Screen readers, ARIA, landmark roles — why accessibility matters in interviews">
                 <Paragraph><Highlight>Semantic HTML</Highlight> = using the right tag for the right purpose. Google and Apple especially value accessibility.</Paragraph>
-                <CodeBlock title="Semantic vs Non-semantic">{`<!-- ❌ Non-semantic -->
-<div class="header"><div class="nav">...</div></div>
-<div class="main"><div class="article">...</div></div>
-<div class="footer">...</div>
 
-<!-- ✅ Semantic -->
-<header><nav>...</nav></header>
-<main><article>...</article></main>
-<footer>...</footer>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🏷️ Semantic vs Non-semantic Elements</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Landmark roles</strong>: {'<header>'}, {'<nav>'}, {'<main>'}, {'<aside>'}, {'<footer>'}, {'<article>'}, {'<section>'}<br />
+                            • Screen readers use landmarks to <strong>navigate quickly</strong> (skip to main content)<br />
+                            • {'<div>'} and {'<span>'} are <strong>generic containers</strong> — no semantic meaning<br />
+                            • {'<button>'} vs {'<div onClick>'}: button has keyboard support + focus + role built-in
+                        </div>
+                    </div>
 
-<!-- ARIA when needed -->
-<button aria-label="Close dialog" aria-expanded="false">✕</button>
-<div role="alert" aria-live="polite">Error message</div>`}</CodeBlock>
-                <Callout type="tip">Big tech loves asking: &quot;Build component X that&apos;s accessible&quot; — must support keyboard navigation, screen reader, focus management.</Callout>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔊 ARIA (Accessible Rich Internet Applications)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>aria-label</strong>: label for elements without visible text (icon buttons)<br />
+                            • <strong>aria-expanded</strong>: dropdown/accordion open or closed state<br />
+                            • <strong>aria-live</strong>: announce dynamic content changes (toasts, counters)<br />
+                            • <strong>role</strong>: override semantic role (role={'"dialog"'}, role={'"alert"'}, role={'"tab"'})<br />
+                            • ⚠️ Rule #1: <strong>No ARIA needed if using correct HTML tag</strong> (native semantics)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">⌨️ Keyboard Navigation</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Tab order</strong>: focusable elements follow DOM order (tabIndex={'"0"'} to add)<br />
+                            • <strong>Focus trap</strong>: Modal/Dialog must keep focus inside (Tab wraps around)<br />
+                            • <strong>Skip links</strong>: {'"Skip to main content"'} hidden link, visible on focus<br />
+                            • <strong>Keyboard shortcuts</strong>: Escape close, Enter submit, Arrow keys navigate
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🎨 Color & Visual Accessibility</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Color contrast</strong>: WCAG AA ≥ 4.5:1 (text), ≥ 3:1 (large text, UI components)<br />
+                            • Don&apos;t use color alone to convey meaning (add icon, text, pattern)<br />
+                            • <strong>prefers-reduced-motion</strong>: disable animations for sensitive users<br />
+                            • <strong>prefers-color-scheme</strong>: dark/light mode support
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">🧪 Testing Accessibility</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>axe DevTools</strong>: Chrome extension to scan a11y violations<br />
+                            • <strong>Lighthouse</strong>: accessibility audit score<br />
+                            • <strong>Screen reader</strong>: test with VoiceOver (Mac) or NVDA (Windows)<br />
+                            • <strong>jest-axe</strong>: automated a11y testing in unit tests
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="accessibility.html">{`<!-- ✅ Semantic + Accessible -->
+<header>
+  <nav aria-label="Main navigation">
+    <ul role="menubar">
+      <li role="none"><a role="menuitem" href="/">Home</a></li>
+      <li role="none"><a role="menuitem" href="/about">About</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h1>Page Title</h1> <!-- Only 1 h1 per page! -->
+  <article>
+    <h2>Article Title</h2>
+    <p>Content...</p>
+  </article>
+</main>
+
+<!-- ✅ Accessible Modal -->
+<div role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <h2 id="modal-title">Confirm Delete</h2>
+  <p>Are you sure?</p>
+  <button autofocus>Cancel</button> <!-- autofocus on safe action -->
+  <button>Delete</button>
+</div>
+
+<!-- ✅ Accessible Form -->
+<label for="email">Email</label>
+<input id="email" type="email" aria-required="true"
+       aria-describedby="email-hint" aria-invalid="true" />
+<span id="email-hint">example@domain.com</span>`}</CodeBlock>
+
+                <Callout type="tip">
+                    Big tech loves asking: {'"Build component X that\'s accessible"'} — must support keyboard navigation, screen reader, focus management.
+                    Mention <Highlight>WCAG 2.1 Level AA</Highlight> + testing with screen reader → big bonus points.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="CSS Layout — Flexbox & Grid" emoji="📐" color="#38bdf8" summary="Layout from scratch without frameworks — an important interview skill">
-                <CodeBlock title="Flexbox cheat sheet">{`/* Flexbox — 1 dimension (row OR column) */
-.container {
-    display: flex;
-    justify-content: space-between; /* main axis */
-    align-items: center;            /* cross axis */
-    flex-wrap: wrap;                /* wrap to next line */
-    gap: 16px;                      /* spacing */
-}
-.item { flex: 1 1 200px; }         /* grow shrink basis */
+                <Paragraph>Frontend coding interviews often require building layouts <Highlight>from scratch without TailwindCSS</Highlight>. Must master both Flexbox and Grid.</Paragraph>
 
-/* Grid — 2 dimensions (row AND column) */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 16px;
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">📏 Flexbox — 1 Dimension</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Main axis</strong>: justify-content (start, center, space-between, space-around, space-evenly)<br />
+                            • <strong>Cross axis</strong>: align-items (flex-start, center, stretch, baseline)<br />
+                            • <strong>flex</strong>: shorthand for grow shrink basis → <InlineCode>flex: 1 0 auto</InlineCode><br />
+                            • <strong>flex-wrap</strong>: allow items to wrap to next line (responsive)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📊 Grid — 2 Dimensions</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>grid-template-columns/rows</strong>: define tracks (px, fr, auto, minmax)<br />
+                            • <strong>grid-area</strong>: named areas for complex layouts<br />
+                            • <strong>auto-fill vs auto-fit</strong>: auto-fill keeps empty tracks, auto-fit collapses<br />
+                            • <strong>minmax()</strong>: responsive columns without media queries
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🆚 When to Use Which</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Flexbox</strong>: navbar, card row, centering, sidebar + content<br />
+                            • <strong>Grid</strong>: page layout, dashboard, image gallery, form layout<br />
+                            • <strong>Combine</strong>: Grid for page layout, Flexbox for inner components<br />
+                            • Interview tip: always ask {'"Does it need to be responsive?"'} → determines approach
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">📱 Responsive Design</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Mobile-first</strong>: default CSS for mobile, media queries for larger screens<br />
+                            • <strong>Container queries</strong> (new!): responsive based on parent size instead of viewport<br />
+                            • <strong>clamp()</strong>: fluid typography: <InlineCode>font-size: clamp(1rem, 2vw, 1.5rem)</InlineCode><br />
+                            • <strong>Logical properties</strong>: margin-inline, padding-block (RTL support)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">🎯 Box Model & Positioning</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>box-sizing: border-box</strong>: width includes padding + border (ALWAYS set!)<br />
+                            • <strong>Position</strong>: static (default), relative, absolute, fixed, sticky<br />
+                            • <strong>Stacking context</strong>: z-index only works within same stacking context<br />
+                            • <strong>BFC</strong> (Block Formatting Context): overflow: hidden creates new BFC → clears floats
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="css-layout.css">{`/* Flexbox — Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  height: 64px;
+}
+.navbar__links { display: flex; gap: 16px; }
+
+/* Grid — Dashboard Layout */
+.dashboard {
+  display: grid;
+  grid-template-columns: 250px 1fr;      /* sidebar + content */
+  grid-template-rows: 64px 1fr;          /* header + main */
+  grid-template-areas:
+    "header  header"
+    "sidebar content";
+  height: 100vh;
+}
+.header  { grid-area: header; }
+.sidebar { grid-area: sidebar; }
+.content { grid-area: content; }
+
+/* Responsive Cards — NO media queries */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
 }
 
-/* Responsive without media queries! */
-.responsive {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}`}</CodeBlock>
-                <Callout type="tip">Interview: <strong>Flexbox</strong> for navigation, card layouts. <strong>Grid</strong> for page layout, dashboards. Know both and when to use each.</Callout>
+/* Holy Grail Layout — Flexbox */
+.holy-grail { display: flex; flex-direction: column; min-height: 100vh; }
+.holy-grail main { flex: 1; display: flex; }
+.holy-grail .content { flex: 1; }
+.holy-grail .sidebar { flex: 0 0 250px; }
+
+/* Centering — multiple ways */
+.center-flex { display: flex; justify-content: center; align-items: center; }
+.center-grid { display: grid; place-items: center; }
+.center-abs  { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: often requires building a <Highlight>responsive layout from scratch</Highlight>. Practice: Holy Grail Layout, Dashboard Grid, Responsive Card Grid, Modal centering.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="Web Security — XSS, CSRF, CSP" emoji="🛡️" color="#38bdf8" summary="Common web security vulnerabilities — must know how to prevent them">
+                <Paragraph>Frontend developers <Highlight>must understand security</Highlight> — especially at big tech, security questions are very common.</Paragraph>
+
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                        <div className="text-red-400 font-bold text-sm">XSS (Cross-Site Scripting)</div>
-                        <div className="text-slate-300 text-sm mt-1">Attacker injects malicious JS into the page.<br /><strong>Prevention:</strong> React auto-escapes JSX. NEVER use <InlineCode>dangerouslySetInnerHTML</InlineCode>. Sanitize user input.</div>
+                        <div className="text-red-400 font-bold text-sm">💉 XSS (Cross-Site Scripting)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Attacker injects malicious JS into the page → steal cookies, redirect, keylog.<br />
+                            <strong>3 types:</strong><br />
+                            • <strong>Stored XSS</strong>: script stored in DB → every user sees it (most dangerous)<br />
+                            • <strong>Reflected XSS</strong>: script in URL → server returns HTML containing the script<br />
+                            • <strong>DOM-based XSS</strong>: script modifies DOM client-side (innerHTML, eval)<br />
+                            <strong>Prevention:</strong> React auto-escapes JSX. NEVER use <InlineCode>dangerouslySetInnerHTML</InlineCode>. Sanitize input (DOMPurify).
+                        </div>
                     </div>
+
                     <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                        <div className="text-yellow-400 font-bold text-sm">CSRF (Cross-Site Request Forgery)</div>
-                        <div className="text-slate-300 text-sm mt-1">Attacker tricks user into sending requests from another site.<br /><strong>Prevention:</strong> CSRF tokens, SameSite cookie, verify Origin header.</div>
+                        <div className="text-yellow-400 font-bold text-sm">🔗 CSRF (Cross-Site Request Forgery)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Attacker tricks user into sending requests from another site (e.g., transfer money).<br />
+                            • User is logged into site A → visits site B → site B sends request to A<br />
+                            • Browser auto-attaches cookies → server thinks it&apos;s a legitimate request<br />
+                            <strong>Prevention:</strong><br />
+                            • <strong>CSRF token</strong>: random token per session, verify each request<br />
+                            • <strong>SameSite cookie</strong>: SameSite=Strict or Lax<br />
+                            • <strong>Double submit</strong>: token in cookie + header, server compares
+                        </div>
                     </div>
+
                     <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                        <div className="text-blue-400 font-bold text-sm">CSP (Content Security Policy)</div>
-                        <div className="text-slate-300 text-sm mt-1">HTTP header specifying allowed sources for scripts/styles.<br /><InlineCode>{`Content-Security-Policy: script-src 'self' https://cdn.example.com`}</InlineCode></div>
+                        <div className="text-blue-400 font-bold text-sm">🔒 CSP (Content Security Policy)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            HTTP header specifying allowed sources for loading resources.<br />
+                            • <strong>script-src</strong>: only allow JS from specific sources<br />
+                            • <strong>style-src</strong>: only allow CSS from specific sources<br />
+                            • <strong>img-src</strong>: only allow images from specific sources<br />
+                            • <InlineCode>{'{`Content-Security-Policy: script-src \'self\' https://cdn.example.com`}'}</InlineCode>
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🍪 Cookie Security</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>HttpOnly</strong>: JS cannot read cookie → prevents XSS session theft<br />
+                            • <strong>Secure</strong>: only sent over HTTPS<br />
+                            • <strong>SameSite</strong>: Strict (same-site only), Lax (safe methods OK), None (all)<br />
+                            • <strong>Domain + Path</strong>: scope cookie to specific subdomain/path
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🛡️ Other Security Headers</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>CORS</strong>: Access-Control-Allow-Origin — control cross-origin requests<br />
+                            • <strong>X-Frame-Options</strong>: DENY — prevent clickjacking (iframe embed)<br />
+                            • <strong>HSTS</strong>: force HTTPS, prevent SSL stripping<br />
+                            • <strong>Subresource Integrity</strong>: verify CDN resources haven&apos;t been tampered
+                        </div>
                     </div>
                 </div>
+
+                <CodeBlock title="security-examples.ts">{`// ❌ XSS Vulnerability
+element.innerHTML = userInput // NEVER DO THIS
+eval(userInput)               // NEVER DO THIS
+
+// ✅ Safe: React auto-escapes
+<div>{userInput}</div>  // React escapes special chars
+
+// ✅ If you MUST use HTML, sanitize first
+import DOMPurify from 'dompurify'
+const clean = DOMPurify.sanitize(dirtyHTML)
+<div dangerouslySetInnerHTML={{ __html: clean }} />
+
+// ✅ Cookie security settings
+Set-Cookie: session=abc123;
+  HttpOnly;        // JS cannot read
+  Secure;          // HTTPS only
+  SameSite=Strict; // No cross-site
+  Path=/;
+  Max-Age=86400;
+
+// ✅ Security headers (Next.js example)
+// next.config.js
+headers: [{
+  source: '/(.*)',
+  headers: [
+    { key: 'Content-Security-Policy', value: "script-src 'self'" },
+    { key: 'X-Frame-Options', value: 'DENY' },
+    { key: 'X-Content-Type-Options', value: 'nosniff' },
+    { key: 'Strict-Transport-Security', value: 'max-age=31536000' },
+  ]
+}]`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: Always mention <Highlight>defense in depth</Highlight> — don&apos;t rely on a single layer.
+                    XSS: escape + CSP + HttpOnly. CSRF: SameSite + token. Know how to explain <strong>why</strong> each measure is needed.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="Core Web Vitals" emoji="📊" color="#38bdf8" summary="LCP, INP, CLS — how Google measures performance, how to optimize">
-                <div className="my-3 overflow-x-auto">
-                    <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Metric</th><th className="text-left p-2 text-slate-400">Measures</th><th className="text-left p-2 text-green-400">Good</th><th className="text-left p-2 text-slate-400">Optimization</th></tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
-                            <tr className="border-b border-gray-100"><td className="p-2 text-blue-400 font-bold">LCP</td><td className="p-2">Largest Contentful Paint</td><td className="p-2">&lt; 2.5s</td><td className="p-2">Optimize images, preload fonts, SSR</td></tr>
-                            <tr className="border-b border-gray-100"><td className="p-2 text-green-400 font-bold">INP</td><td className="p-2">Interaction to Next Paint</td><td className="p-2">&lt; 200ms</td><td className="p-2">Reduce JS, web workers, debounce</td></tr>
-                            <tr><td className="p-2 text-yellow-400 font-bold">CLS</td><td className="p-2">Cumulative Layout Shift</td><td className="p-2">&lt; 0.1</td><td className="p-2">Set image dimensions, font-display</td></tr>
-                        </tbody>
-                    </table>
+                <Paragraph>Core Web Vitals are metrics <Highlight>Google uses for SEO ranking</Highlight>. Frontend engineers must know how to optimize them.</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🖼️ LCP (Largest Contentful Paint) — {'< 2.5s'}</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Time to render the largest visible element in the viewport.<br />
+                            <strong>Optimize:</strong><br />
+                            • <strong>Optimize images</strong>: WebP/AVIF, responsive srcset, lazy loading<br />
+                            • <strong>Preload</strong>: critical assets (hero image, fonts)<br />
+                            • <strong>SSR/SSG</strong>: HTML has content immediately (no waiting for JS)<br />
+                            • <strong>CDN</strong>: serve static assets close to users
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">👆 INP (Interaction to Next Paint) — {'< 200ms'}</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Time from user interaction → visual response (replaces FID).<br />
+                            <strong>Optimize:</strong><br />
+                            • <strong>Reduce JS execution</strong>: code splitting, tree shaking<br />
+                            • <strong>Web Workers</strong>: heavy computation off main thread<br />
+                            • <strong>Debounce/throttle</strong>: limit event handler frequency<br />
+                            • <strong>requestIdleCallback</strong>: defer non-critical work
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">📐 CLS (Cumulative Layout Shift) — {'< 0.1'}</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Measures unexpected layout shifts (content jumping around).<br />
+                            <strong>Optimize:</strong><br />
+                            • <strong>Set dimensions</strong>: width + height for images/videos/ads<br />
+                            • <strong>font-display: optional</strong>: avoid FOUT (flash of unstyled text)<br />
+                            • <strong>Skeleton loading</strong>: placeholder to keep layout stable<br />
+                            • <strong>transform</strong> animations: don&apos;t trigger layout (composite only)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔧 Rendering Pipeline</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>JS → Style → Layout → Paint → Composite</strong><br />
+                            • <strong>Layout thrashing</strong>: read layout → write → read → write → forced reflow!<br />
+                            • <strong>Composite-only</strong>: transform + opacity — cheapest animations (GPU)<br />
+                            • <strong>will-change</strong>: hint browser to prepare a new composite layer<br />
+                            • <strong>contain</strong>: CSS containment — isolate rendering subtree
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">📏 Measurement & Tools</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Lighthouse</strong> (Chrome DevTools): comprehensive audit<br />
+                            • <strong>web.dev/measure</strong>: online tool by Google<br />
+                            • <strong>PageSpeed Insights</strong>: real user data (CrUX) + lab data<br />
+                            • <strong>web-vitals</strong> library: measure CWV in production<br />
+                            • <strong>Performance API</strong>: PerformanceObserver for custom metrics
+                        </div>
+                    </div>
                 </div>
-                <Callout type="tip">Tools: <strong>Lighthouse</strong> (Chrome DevTools), <strong>web.dev/measure</strong>, <strong>PageSpeed Insights</strong>.</Callout>
+
+                <CodeBlock title="performance-optimization.tsx">{`// Measure Core Web Vitals in production
+import { onLCP, onINP, onCLS } from 'web-vitals'
+
+onLCP(metric => analytics.send('LCP', metric.value))
+onINP(metric => analytics.send('INP', metric.value))
+onCLS(metric => analytics.send('CLS', metric.value))
+
+// ✅ Optimize images — responsive + lazy
+<img
+  src="/hero-800.webp"
+  srcSet="/hero-400.webp 400w, /hero-800.webp 800w, /hero-1200.webp 1200w"
+  sizes="(max-width: 600px) 400px, (max-width: 1200px) 800px, 1200px"
+  loading="lazy"           // lazy: below fold, eager: above fold
+  decoding="async"         // decode off main thread
+  width={800} height={400} // prevent CLS!
+  alt="Hero banner"
+/>
+
+// ✅ Preload critical resources
+<link rel="preload" href="/fonts/Inter.woff2" as="font" crossOrigin="" />
+<link rel="preload" href="/hero.webp" as="image" />
+<link rel="preconnect" href="https://api.example.com" />
+
+// ✅ Avoid layout thrashing
+// ❌ Bad: read → write → read → write (forced reflow)
+elements.forEach(el => {
+  const height = el.offsetHeight  // read (force layout)
+  el.style.height = height + 10   // write (invalidate layout)
+})
+// ✅ Good: batch reads, then batch writes
+const heights = elements.map(el => el.offsetHeight)  // all reads
+elements.forEach((el, i) => el.style.height = heights[i] + 10)  // all writes`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: When asked {'"The site is slow, what would you do?"'} → <Highlight>measure first (Lighthouse)</Highlight> → identify bottleneck (LCP? INP? CLS?) → apply specific solutions. Don&apos;t optimize blindly!
+                </Callout>
                 <a href="/blogs/core-web-vitals" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
             </TopicModal>
         </div>

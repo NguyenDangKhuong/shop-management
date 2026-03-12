@@ -1627,83 +1627,363 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                 <Paragraph>React không update DOM trực tiếp. Thay vào đó, nó dùng <Highlight>Virtual DOM</Highlight> — một bản copy nhẹ của DOM thật.</Paragraph>
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                        <div className="text-blue-400 font-bold text-sm">Quy trình</div>
-                        <div className="text-slate-300 text-sm mt-1">1. State thay đổi → React tạo Virtual DOM mới<br />2. <strong>Diffing</strong>: So sánh VDOM cũ vs mới (O(n) nhờ heuristics)<br />3. <strong>Reconciliation</strong>: Chỉ update phần khác nhau lên DOM thật<br />4. Browser repaint</div>
+                        <div className="text-blue-400 font-bold text-sm">🔄 Quy trình Rendering</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            1. State/props thay đổi → React gọi <strong>render()</strong> tạo Virtual DOM mới<br />
+                            2. <strong>Diffing</strong>: So sánh VDOM cũ vs mới (O(n) nhờ heuristics thay vì O(n³))<br />
+                            3. <strong>Reconciliation</strong>: Tạo list minimal DOM operations cần thiết<br />
+                            4. <strong>Commit</strong>: Apply changes lên DOM thật (batched)<br />
+                            5. Browser repaint (layout → paint → composite)
+                        </div>
                     </div>
+
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">📏 Diffing Heuristics (2 assumptions)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Khác type</strong> → destroy cây cũ, build cây mới (ví dụ: {'<div>'} → {'<span>'})<br />
+                            • <strong>Cùng type</strong> → giữ DOM node, chỉ update attributes thay đổi<br />
+                            • <strong>List items</strong>: dùng <InlineCode>key</InlineCode> prop để match — KHÔNG dùng index làm key!<br />
+                            • Key giúp React biết item nào thay đổi, thêm, xóa mà không cần re-render toàn bộ list
+                        </div>
+                    </div>
+
                     <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                        <div className="text-green-400 font-bold text-sm">React Fiber (React 18+)</div>
-                        <div className="text-slate-300 text-sm mt-1">Fiber = kiến trúc mới cho reconciliation<br />Cho phép <strong>interrupt rendering</strong> — ưu tiên UI updates quan trọng trước<br />Hỗ trợ concurrent features: Suspense, Transitions, Streaming</div>
+                        <div className="text-green-400 font-bold text-sm">⚡ React Fiber (React 18+)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Fiber = kiến trúc mới cho reconciliation — <strong>incremental rendering</strong>:<br />
+                            • <strong>Time slicing</strong>: chia rendering thành chunks nhỏ, không block main thread<br />
+                            • <strong>Priority lanes</strong>: user input (urgent) {'>'} animation {'>'} data fetch (low priority)<br />
+                            • <strong>Concurrent features</strong>: Suspense, startTransition, useDeferredValue<br />
+                            • <strong>Interruptible</strong>: React có thể pause rendering để xử lý user input trước
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🆚 VDOM vs Direct DOM vs Signals</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>VDOM (React)</strong>: diffing overhead nhưng predictable, good DX<br />
+                            • <strong>Direct DOM (Svelte)</strong>: compile-time, no runtime overhead, smaller bundle<br />
+                            • <strong>Signals (Solid, Angular)</strong>: fine-grained reactivity, no unnecessary re-renders<br />
+                            • Interview: biết trade-offs giữa các approaches → điểm cộng lớn
+                        </div>
                     </div>
                 </div>
-                <Callout type="tip">Interview: Giải thích tại sao <InlineCode>key</InlineCode> prop quan trọng trong lists — nó giúp React diff algorithm xác định element nào thay đổi, thêm, hoặc xóa.</Callout>
+
+                <CodeBlock title="reconciliation-demo.tsx">{`// ❌ Bad: dùng index làm key → bug khi reorder
+{items.map((item, index) => (
+  <Input key={index} defaultValue={item.name} />
+  // Khi sort: DOM nodes giữ nguyên, chỉ props thay đổi
+  // → input value CŨ vẫn hiển thị ở vị trí MỚI!
+))}
+
+// ✅ Good: dùng unique ID làm key
+{items.map(item => (
+  <Input key={item.id} defaultValue={item.name} />
+  // React biết chính xác item nào move → DOM reorder đúng
+))}
+
+// React 18: Concurrent rendering
+function App() {
+  const [query, setQuery] = useState('')
+  const deferredQuery = useDeferredValue(query)
+  // Input updates ngay (urgent)
+  // SearchResults re-render với deferredQuery (low priority)
+  return <>
+    <input value={query} onChange={e => setQuery(e.target.value)} />
+    <SearchResults query={deferredQuery} />
+  </>
+}`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: Giải thích <Highlight>tại sao key quan trọng</Highlight> với ví dụ cụ thể (reorder list với input).
+                    Nhắc đến Fiber + concurrent rendering → cho thấy hiểu React hiện đại, không chỉ React cũ.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="Hooks deep dive" emoji="🪝" color="#61DAFB" summary="useState, useEffect, useRef, useMemo, useCallback — rules và pitfalls">
+                <Paragraph>Hooks là <Highlight>nền tảng</Highlight> của React hiện đại. Hiểu sâu từng hook + pitfalls = trả lời phỏng vấn tự tin.</Paragraph>
                 <div className="my-3 space-y-2">
-                    {[
-                        ['useState', 'State cơ bản. Batch updates (React 18+). Dùng function form cho state phụ thuộc previous: setState(prev => prev + 1)'],
-                        ['useEffect', 'Side effects. Dependency array quyết định khi nào chạy. Cleanup function chạy trước mỗi re-run và unmount.'],
-                        ['useRef', 'Persistent reference qua renders. Thay đổi .current KHÔNG gây re-render. Dùng cho DOM ref, timers, previous value.'],
-                        ['useMemo', 'Cache expensive computations. Chỉ recalculate khi dependencies thay đổi. Đừng lạm dụng — có overhead!'],
-                        ['useCallback', 'Cache function reference. Quan trọng khi pass callback vào React.memo components hoặc dependency arrays.'],
-                        ['useContext', 'Đọc context value. Re-render khi context value thay đổi. Cẩn thận performance — split context nếu cần.'],
-                    ].map(([name, desc]) => (
-                        <div key={name} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
-                            <div className="text-blue-400 font-mono text-sm font-bold">{name}</div>
-                            <div className="text-slate-300 text-sm mt-1">{desc}</div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">📦 useState — State Management</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • State cơ bản. <strong>Batch updates</strong> (React 18+ tự batch trong event handlers, setTimeout, promises)<br />
+                            • Dùng <strong>function form</strong> cho state phụ thuộc previous: <InlineCode>setState(prev =&gt; prev + 1)</InlineCode><br />
+                            • <strong>Lazy initialization</strong>: <InlineCode>useState(() =&gt; expensiveCalc())</InlineCode> — chỉ chạy lần đầu<br />
+                            • ⚠️ setState là <strong>async</strong> — không đọc state mới ngay sau set
                         </div>
-                    ))}
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🔄 useEffect — Side Effects</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Dependency array</strong> quyết định khi nào chạy: [] = mount only, [dep] = khi dep thay đổi<br />
+                            • <strong>Cleanup function</strong> chạy trước mỗi re-run VÀ khi unmount<br />
+                            • ⚠️ <strong>Stale closure</strong>: closure capture giá trị cũ → dùng ref hoặc function updater<br />
+                            • ⚠️ <strong>Object/array deps</strong>: so sánh by reference → useMemo wrap hoặc primitive deps
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">📌 useRef — Persistent References</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Persistent reference qua renders. Thay đổi <InlineCode>.current</InlineCode> <strong>KHÔNG gây re-render</strong><br />
+                            • Dùng cho: <strong>DOM ref</strong>, timers, previous value, mutable variables<br />
+                            • Pattern: <InlineCode>usePrevious(value)</InlineCode> — lưu giá trị render trước<br />
+                            • ⚠️ Không đọc/ghi ref trong render body — chỉ trong effects hoặc handlers
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🧠 useMemo & useCallback — Memoization</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>useMemo</strong>: cache expensive computations. Chỉ recalculate khi deps thay đổi<br />
+                            • <strong>useCallback</strong>: cache function reference. Quan trọng khi pass vào React.memo children<br />
+                            • ⚠️ Đừng lạm dụng — có <strong>overhead</strong> (so sánh deps mỗi render)<br />
+                            • Rule: chỉ dùng khi <strong>React DevTools Profiler</strong> xác nhận bottleneck
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">🌐 useContext — Global State</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Đọc context value. <strong>Re-render khi context value thay đổi</strong> — tất cả consumers!<br />
+                            • ⚠️ Performance trap: 1 context thay đổi → <strong>mọi consumer re-render</strong><br />
+                            • Fix: <strong>split context</strong> (ThemeContext + UserContext thay vì 1 AppContext)<br />
+                            • Fix: <strong>useMemo</strong> context value hoặc dùng state management library
+                        </div>
+                    </div>
                 </div>
-                <Callout type="warning"><strong>Rules of Hooks:</strong> 1) Chỉ gọi ở top level (không trong if/for/nested function) 2) Chỉ gọi trong React components hoặc custom hooks.</Callout>
+
+                <CodeBlock title="hooks-pitfalls.tsx">{`// ⚠️ Pitfall 1: Stale closure
+function Counter() {
+  const [count, setCount] = useState(0)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      // ❌ count luôn = 0 (closure capture initial value)
+      setCount(count + 1)
+      // ✅ Fix: function updater
+      setCount(prev => prev + 1)
+    }, 1000)
+    return () => clearInterval(timer)
+  }, []) // empty deps = closure chỉ capture lần đầu
+}
+
+// ⚠️ Pitfall 2: Object deps → infinite loop
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null)
+  // ❌ options tạo mới mỗi render → effect chạy liên tục
+  const options = { includeAvatar: true }
+  useEffect(() => { fetchUser(userId, options) }, [options])
+  // ✅ Fix: useMemo hoặc primitive deps
+  const options2 = useMemo(() => ({ includeAvatar: true }), [])
+
+  // ⚠️ Pitfall 3: Missing cleanup → memory leak
+  useEffect(() => {
+    const ws = new WebSocket(url)
+    ws.onmessage = (e) => setMessages(prev => [...prev, e.data])
+    return () => ws.close() // ✅ PHẢI cleanup!
+  }, [url])
+}`}</CodeBlock>
+
+                <Callout type="warning"><strong>Rules of Hooks:</strong> 1) Chỉ gọi ở top level (không trong if/for/nested function) 2) Chỉ gọi trong React components hoặc custom hooks. Vi phạm → behavior không predictable.</Callout>
                 <a href="/blogs/react-hooks-chi-tiet" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
 
             <TopicModal title="Component Patterns" emoji="🧩" color="#61DAFB" summary="HOC, Render Props, Compound, Controlled/Uncontrolled — khi nào dùng pattern nào">
+                <Paragraph>Biết các component patterns giúp bạn <Highlight>thiết kế API linh hoạt</Highlight> và trả lời câu hỏi system design frontend.</Paragraph>
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                        <div className="text-blue-400 font-bold text-sm">Higher-Order Component (HOC)</div>
-                        <div className="text-slate-300 text-sm mt-1">Function nhận component → trả về component mới với thêm logic.<br />Ví dụ: <InlineCode>withAuth(Dashboard)</InlineCode> — thêm auth check.</div>
+                        <div className="text-blue-400 font-bold text-sm">🔲 Higher-Order Component (HOC)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Function nhận component → trả về component mới với thêm logic.<br />
+                            • Ví dụ: <InlineCode>withAuth(Dashboard)</InlineCode>, <InlineCode>withTheme(Button)</InlineCode><br />
+                            • <strong>Pros</strong>: reuse logic, cross-cutting concerns (auth, logging, analytics)<br />
+                            • <strong>Cons</strong>: wrapper hell, props collision, khó debug (anonymous components)<br />
+                            • ⚠️ Hiện tại <strong>Custom Hooks thay thế phần lớn HOC use cases</strong>
+                        </div>
                     </div>
+
                     <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                        <div className="text-purple-400 font-bold text-sm">Render Props</div>
-                        <div className="text-slate-300 text-sm mt-1">Component nhận function qua prop, gọi function đó để render.<br />Linh hoạt hơn HOC nhưng có thể gây &quot;callback hell&quot;.</div>
+                        <div className="text-purple-400 font-bold text-sm">🎯 Render Props</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Component nhận function qua prop → gọi function đó để render UI.<br />
+                            • Ví dụ: <InlineCode>{'{\'<Mouse render={({x, y}) => <Cursor x={x} y={y} />} />\'}'}</InlineCode><br />
+                            • <strong>Pros</strong>: linh hoạt hơn HOC, caller control rendering<br />
+                            • <strong>Cons</strong>: callback hell, khó đọc khi nested nhiều<br />
+                            • Vẫn hữu ích cho: <strong>headless UI</strong> (Downshift, React Table)
+                        </div>
                     </div>
+
                     <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                        <div className="text-green-400 font-bold text-sm">Compound Components</div>
-                        <div className="text-slate-300 text-sm mt-1">Nhóm components chia sẻ state qua Context.<br />Ví dụ: <InlineCode>{'<Select> <Select.Option /> </Select>'}</InlineCode></div>
+                        <div className="text-green-400 font-bold text-sm">🧱 Compound Components</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Nhóm components chia sẻ implicit state qua Context.<br />
+                            • Ví dụ: <InlineCode>{'{\'<Select> <Select.Option /> </Select>\'}'}</InlineCode>, <InlineCode>{'{\'<Tabs> <Tabs.Panel /> </Tabs>\'}'}</InlineCode><br />
+                            • <strong>Pros</strong>: API đẹp, flexible layout, inversion of control<br />
+                            • <strong>Cons</strong>: complex implementation, context overhead<br />
+                            • Dùng trong: <strong>Design System components</strong> (Radix UI, Headless UI)
+                        </div>
                     </div>
+
                     <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                        <div className="text-yellow-400 font-bold text-sm">Controlled vs Uncontrolled</div>
-                        <div className="text-slate-300 text-sm mt-1"><strong>Controlled</strong>: React quản lý state (value + onChange).<br /><strong>Uncontrolled</strong>: DOM quản lý state (useRef). Dùng khi integration với non-React code.</div>
+                        <div className="text-yellow-400 font-bold text-sm">🎚️ Controlled vs Uncontrolled</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Controlled</strong>: React quản lý state (<InlineCode>value + onChange</InlineCode>). Single source of truth.<br />
+                            <strong>Uncontrolled</strong>: DOM quản lý state (<InlineCode>useRef</InlineCode>). Dùng khi integration với non-React code.<br />
+                            • Form: controlled cho validation real-time, uncontrolled cho simple forms<br />
+                            • Best practice: <strong>support both</strong> (controlled khi có value prop, uncontrolled khi không)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">🪝 Custom Hooks — Modern Pattern</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Extract logic thành reusable hooks — <strong>thay thế hầu hết HOC + Render Props</strong>.<br />
+                            • <InlineCode>useLocalStorage</InlineCode>, <InlineCode>useDebounce</InlineCode>, <InlineCode>useMediaQuery</InlineCode>, <InlineCode>useIntersectionObserver</InlineCode><br />
+                            • <strong>Pros</strong>: composable, no wrapper hell, dễ test<br />
+                            • Convention: tên bắt đầu bằng <InlineCode>use</InlineCode>, return object hoặc tuple
+                        </div>
                     </div>
                 </div>
-                <Callout type="tip">Trend hiện tại: <Highlight>Custom Hooks</Highlight> thay thế hầu hết HOC và Render Props. Dễ đọc, dễ test, dễ compose hơn.</Callout>
+
+                <CodeBlock title="component-patterns.tsx">{`// 1. HOC Pattern
+function withAuth<P>(Component: React.ComponentType<P>) {
+  return function AuthenticatedComponent(props: P) {
+    const { user } = useAuth()
+    if (!user) return <Navigate to="/login" />
+    return <Component {...props} user={user} />
+  }
+}
+const ProtectedDashboard = withAuth(Dashboard)
+
+// 2. Compound Component Pattern
+const SelectContext = createContext<SelectContextType>(null!)
+
+function Select({ children, value, onChange }) {
+  return (
+    <SelectContext.Provider value={{ value, onChange }}>
+      <div role="listbox">{children}</div>
+    </SelectContext.Provider>
+  )
+}
+Select.Option = function Option({ value, children }) {
+  const ctx = useContext(SelectContext)
+  return (
+    <div role="option" aria-selected={ctx.value === value}
+         onClick={() => ctx.onChange(value)}>
+      {children}
+    </div>
+  )
+}
+// Usage: <Select value={v} onChange={setV}>
+//          <Select.Option value="a">Option A</Select.Option>
+//        </Select>
+
+// 3. Custom Hook (replaces HOC/Render Props)
+function useDebounce<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = useState(value)
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay)
+    return () => clearTimeout(timer)
+  }, [value, delay])
+  return debounced
+}`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview trend: <Highlight>Custom Hooks</Highlight> thay thế hầu hết HOC và Render Props. Nhưng vẫn cần biết tất cả patterns vì legacy code + system design cần Compound Components.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="Performance Optimization" emoji="⚡" color="#61DAFB" summary="React.memo, useMemo, useCallback, code splitting, virtualization">
-                <Paragraph>React re-render toàn bộ subtree khi state thay đổi. Đây là các kỹ thuật <Highlight>ngăn re-render không cần thiết</Highlight>:</Paragraph>
-                <CodeBlock title="Optimization techniques">{`// 1. React.memo — skip re-render nếu props không đổi
-const ExpensiveList = React.memo(({ items }) => {
-    return items.map(item => <Item key={item.id} {...item} />)
+                <Paragraph>React re-render toàn bộ subtree khi state thay đổi. Đây là các kỹ thuật <Highlight>ngăn re-render không cần thiết</Highlight> và tối ưu performance:</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🛡️ Prevent Unnecessary Re-renders</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>React.memo</strong>: wrap component → skip re-render nếu props shallow equal<br />
+                            • <strong>useMemo</strong>: cache expensive calculations (sort, filter, map large arrays)<br />
+                            • <strong>useCallback</strong>: stable function reference cho React.memo children<br />
+                            • <strong>State colocation</strong>: đẩy state xuống component cần nó (tránh re-render parent)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📦 Code Splitting & Lazy Loading</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>React.lazy + Suspense</strong>: dynamic import components<br />
+                            • <strong>Route-based splitting</strong>: mỗi page là 1 chunk riêng<br />
+                            • <strong>Component-based splitting</strong>: heavy components (rich editor, chart library)<br />
+                            • <strong>Prefetch</strong>: load chunk trước khi user click (onMouseEnter)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">📋 Virtualization</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Chỉ render items visible trong viewport (10k+ items → ~20 DOM nodes)<br />
+                            • <strong>react-window</strong>: lightweight, fixed-size items<br />
+                            • <strong>react-virtuoso</strong>: variable-size, auto-measure, grouping<br />
+                            • Khi nào dùng: list {'>'} 100 items, hoặc bất kỳ list gây lag
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🔍 Profiling & Debugging</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>React DevTools Profiler</strong>: xem component nào re-render, bao lâu<br />
+                            • <strong>why-did-you-render</strong>: library log unnecessary re-renders<br />
+                            • <strong>Chrome Performance tab</strong>: flame chart, main thread blocking<br />
+                            • <strong>Lighthouse</strong>: CI/CD integration cho performance budget
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">🏗️ Architecture-level Optimization</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>State management</strong>: Zustand/Jotai (atomic) vs Redux (centralized)<br />
+                            • <strong>Server Components</strong> (React 19): zero JS shipped cho static content<br />
+                            • <strong>Streaming SSR</strong>: renderToPipeableStream cho faster TTFB<br />
+                            • <strong>ISR</strong> (Next.js): revalidate static pages without redeploy
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="optimization-techniques.tsx">{`// 1. React.memo — skip re-render nếu props không đổi
+const ExpensiveList = React.memo(({ items, onItemClick }) => {
+  return items.map(item => <Item key={item.id} {...item} onClick={onItemClick} />)
 })
 
 // 2. useMemo — cache expensive calculations
-const sorted = useMemo(() => 
-    items.sort((a, b) => a.price - b.price), 
-    [items]
+const sorted = useMemo(() =>
+  items
+    .filter(i => i.active)
+    .sort((a, b) => a.price - b.price),
+  [items] // chỉ recalculate khi items thay đổi
 )
 
 // 3. useCallback — stable function reference
-const handleClick = useCallback((id) => {
-    setItems(prev => prev.filter(i => i.id !== id))
-}, []) // Không re-create mỗi render
+const handleClick = useCallback((id: string) => {
+  setItems(prev => prev.filter(i => i.id !== id))
+}, []) // Không re-create mỗi render → ExpensiveList không re-render
 
 // 4. Dynamic import — code splitting
 const AdminPanel = lazy(() => import('./AdminPanel'))
+// Usage: <Suspense fallback={<Spinner />}><AdminPanel /></Suspense>
 
-// 5. Virtualization — chỉ render visible items
-// react-window, react-virtuoso cho danh sách 10k+ items`}</CodeBlock>
-                <Callout type="warning">Đừng premature optimize! Chỉ optimize khi React DevTools Profiler chỉ ra bottleneck thật sự.</Callout>
+// 5. State colocation — tránh re-render không cần thiết
+// ❌ Bad: search state ở App → mọi child re-render khi gõ
+function App() {
+  const [search, setSearch] = useState('') // ← state ở đây
+  return <><Header /><SearchBar search={search} onChange={setSearch} /><Content /></>
+}
+// ✅ Good: search state ở SearchBar → chỉ SearchBar re-render
+function SearchBar() {
+  const [search, setSearch] = useState('') // ← state ở đây
+  return <input value={search} onChange={e => setSearch(e.target.value)} />
+}`}</CodeBlock>
+
+                <Callout type="warning">Đừng premature optimize! Chỉ optimize khi <Highlight>React DevTools Profiler</Highlight> chỉ ra bottleneck thật sự. useMemo/useCallback có overhead — dùng sai còn chậm hơn.</Callout>
                 <a href="/blogs/react-performance" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
         </div>
@@ -1712,77 +1992,398 @@ const AdminPanel = lazy(() => import('./AdminPanel'))
         <div className="my-4 space-y-2">
             <TopicModal title="Semantic HTML & Accessibility" emoji="♿" color="#38bdf8" summary="Screen readers, ARIA, landmark roles — tại sao accessibility quan trọng trong interview">
                 <Paragraph><Highlight>Semantic HTML</Highlight> = dùng đúng tag cho đúng mục đích. Google, Apple đặc biệt coi trọng accessibility.</Paragraph>
-                <CodeBlock title="Semantic vs Non-semantic">{`<!-- ❌ Non-semantic -->
-<div class="header"><div class="nav">...</div></div>
-<div class="main"><div class="article">...</div></div>
-<div class="footer">...</div>
 
-<!-- ✅ Semantic -->
-<header><nav>...</nav></header>
-<main><article>...</article></main>
-<footer>...</footer>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🏷️ Semantic vs Non-semantic Elements</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Landmark roles</strong>: {'<header>'}, {'<nav>'}, {'<main>'}, {'<aside>'}, {'<footer>'}, {'<article>'}, {'<section>'}<br />
+                            • Screen readers dùng landmarks để <strong>navigate nhanh</strong> (skip to main content)<br />
+                            • {'<div>'} và {'<span>'} là <strong>generic containers</strong> — không có semantic meaning<br />
+                            • {'<button>'} vs {'<div onClick>'}: button có keyboard support + focus + role built-in
+                        </div>
+                    </div>
 
-<!-- ARIA khi cần -->
-<button aria-label="Close dialog" aria-expanded="false">✕</button>
-<div role="alert" aria-live="polite">Error message</div>`}</CodeBlock>
-                <Callout type="tip">Big tech hay hỏi: &quot;Build component X accessible&quot; — phải hỗ trợ keyboard navigation, screen reader, focus management.</Callout>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔊 ARIA (Accessible Rich Internet Applications)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>aria-label</strong>: label cho elements không có visible text (icon buttons)<br />
+                            • <strong>aria-expanded</strong>: dropdown/accordion đang mở hay đóng<br />
+                            • <strong>aria-live</strong>: announce dynamic content changes (toasts, counters)<br />
+                            • <strong>role</strong>: override semantic role (role={'"dialog"'}, role={'"alert"'}, role={'"tab"'})<br />
+                            • ⚠️ Rule #1: <strong>Không cần ARIA nếu dùng đúng HTML tag</strong> (native semantics)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">⌨️ Keyboard Navigation</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Tab order</strong>: focusable elements theo DOM order (tabIndex={'"0"'} để thêm)<br />
+                            • <strong>Focus trap</strong>: Modal/Dialog phải giữ focus bên trong (Tab wrap around)<br />
+                            • <strong>Skip links</strong>: {'"Skip to main content"'} link ẩn, hiện khi focus<br />
+                            • <strong>Keyboard shortcuts</strong>: Escape close, Enter submit, Arrow keys navigate
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🎨 Color & Visual Accessibility</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Color contrast</strong>: WCAG AA ≥ 4.5:1 (text), ≥ 3:1 (large text, UI components)<br />
+                            • Không dùng color alone để convey meaning (thêm icon, text, pattern)<br />
+                            • <strong>prefers-reduced-motion</strong>: disable animations cho users sensitive<br />
+                            • <strong>prefers-color-scheme</strong>: dark/light mode support
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">🧪 Testing Accessibility</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>axe DevTools</strong>: Chrome extension scan a11y violations<br />
+                            • <strong>Lighthouse</strong>: accessibility audit score<br />
+                            • <strong>Screen reader</strong>: test với VoiceOver (Mac) hoặc NVDA (Windows)<br />
+                            • <strong>jest-axe</strong>: automated a11y testing trong unit tests
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="accessibility.html">{`<!-- ✅ Semantic + Accessible -->
+<header>
+  <nav aria-label="Main navigation">
+    <ul role="menubar">
+      <li role="none"><a role="menuitem" href="/">Home</a></li>
+      <li role="none"><a role="menuitem" href="/about">About</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h1>Page Title</h1> <!-- Chỉ 1 h1 per page! -->
+  <article>
+    <h2>Article Title</h2>
+    <p>Content...</p>
+  </article>
+</main>
+
+<!-- ✅ Accessible Modal -->
+<div role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <h2 id="modal-title">Confirm Delete</h2>
+  <p>Are you sure?</p>
+  <button autofocus>Cancel</button> <!-- autofocus on safe action -->
+  <button>Delete</button>
+</div>
+
+<!-- ✅ Accessible Form -->
+<label for="email">Email</label>
+<input id="email" type="email" aria-required="true"
+       aria-describedby="email-hint" aria-invalid="true" />
+<span id="email-hint">example@domain.com</span>`}</CodeBlock>
+
+                <Callout type="tip">
+                    Big tech hay hỏi: {'"Build component X accessible"'} — phải hỗ trợ keyboard navigation, screen reader, focus management.
+                    Nhắc đến <Highlight>WCAG 2.1 Level AA</Highlight> + test bằng screen reader → điểm cộng lớn.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="CSS Layout — Flexbox & Grid" emoji="📐" color="#38bdf8" summary="Layout từ scratch không framework — kỹ năng interview quan trọng">
-                <CodeBlock title="Flexbox cheat sheet">{`/* Flexbox — 1 chiều (row OR column) */
-.container {
-    display: flex;
-    justify-content: space-between; /* main axis */
-    align-items: center;            /* cross axis */
-    flex-wrap: wrap;                /* xuống dòng */
-    gap: 16px;                      /* khoảng cách */
-}
-.item { flex: 1 1 200px; }         /* grow shrink basis */
+                <Paragraph>Coding interview frontend thường yêu cầu xây layout <Highlight>từ scratch không TailwindCSS</Highlight>. Phải thành thạo cả Flexbox lẫn Grid.</Paragraph>
 
-/* Grid — 2 chiều (row AND column) */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 16px;
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">📏 Flexbox — 1 chiều</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Main axis</strong>: justify-content (start, center, space-between, space-around, space-evenly)<br />
+                            • <strong>Cross axis</strong>: align-items (flex-start, center, stretch, baseline)<br />
+                            • <strong>flex</strong>: shorthand cho grow shrink basis → <InlineCode>flex: 1 0 auto</InlineCode><br />
+                            • <strong>flex-wrap</strong>: cho phép items xuống dòng (responsive)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📊 Grid — 2 chiều</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>grid-template-columns/rows</strong>: define tracks (px, fr, auto, minmax)<br />
+                            • <strong>grid-area</strong>: named areas cho complex layouts<br />
+                            • <strong>auto-fill vs auto-fit</strong>: auto-fill giữ empty tracks, auto-fit collapse<br />
+                            • <strong>minmax()</strong>: responsive columns không cần media queries
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🆚 Khi nào dùng cái nào</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Flexbox</strong>: navbar, card row, centering, sidebar + content<br />
+                            • <strong>Grid</strong>: page layout, dashboard, image gallery, form layout<br />
+                            • <strong>Kết hợp</strong>: Grid cho page layout, Flexbox cho component bên trong<br />
+                            • Interview tip: luôn hỏi {'"responsive không?"'} → quyết cách approach
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">📱 Responsive Design</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Mobile-first</strong>: CSS default cho mobile, media queries cho larger screens<br />
+                            • <strong>Container queries</strong> (new!): responsive dựa trên parent size thay vì viewport<br />
+                            • <strong>clamp()</strong>: fluid typography: <InlineCode>font-size: clamp(1rem, 2vw, 1.5rem)</InlineCode><br />
+                            • <strong>Logical properties</strong>: margin-inline, padding-block (RTL support)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">🎯 Box Model & Positioning</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>box-sizing: border-box</strong>: width includes padding + border (LUÔN set!)<br />
+                            • <strong>Position</strong>: static (default), relative, absolute, fixed, sticky<br />
+                            • <strong>Stacking context</strong>: z-index chỉ hoạt động trong cùng stacking context<br />
+                            • <strong>BFC</strong> (Block Formatting Context): overflow: hidden tạo BFC mới → clear floats
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="css-layout.css">{`/* Flexbox — Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  height: 64px;
+}
+.navbar__links { display: flex; gap: 16px; }
+
+/* Grid — Dashboard Layout */
+.dashboard {
+  display: grid;
+  grid-template-columns: 250px 1fr;      /* sidebar + content */
+  grid-template-rows: 64px 1fr;          /* header + main */
+  grid-template-areas:
+    "header  header"
+    "sidebar content";
+  height: 100vh;
+}
+.header  { grid-area: header; }
+.sidebar { grid-area: sidebar; }
+.content { grid-area: content; }
+
+/* Responsive Cards — NO media queries */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
 }
 
-/* Responsive without media queries! */
-.responsive {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}`}</CodeBlock>
-                <Callout type="tip">Interview: <strong>Flexbox</strong> cho navigation, card layouts. <strong>Grid</strong> cho page layout, dashboard. Biết cả 2 và khi nào dùng cái nào.</Callout>
+/* Holy Grail Layout — Flexbox */
+.holy-grail { display: flex; flex-direction: column; min-height: 100vh; }
+.holy-grail main { flex: 1; display: flex; }
+.holy-grail .content { flex: 1; }
+.holy-grail .sidebar { flex: 0 0 250px; }
+
+/* Centering — nhiều cách */
+.center-flex { display: flex; justify-content: center; align-items: center; }
+.center-grid { display: grid; place-items: center; }
+.center-abs  { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: thường yêu cầu xây <Highlight>responsive layout từ scratch</Highlight>. Luyện: Holy Grail Layout, Dashboard Grid, Card Grid responsive, Modal centering.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="Web Security — XSS, CSRF, CSP" emoji="🛡️" color="#38bdf8" summary="Các lỗ hổng bảo mật web phổ biến — phải biết cách phòng chống">
+                <Paragraph>Frontend developer <Highlight>phải hiểu security</Highlight> — đặc biệt ở big tech, câu hỏi security rất phổ biến.</Paragraph>
+
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                        <div className="text-red-400 font-bold text-sm">XSS (Cross-Site Scripting)</div>
-                        <div className="text-slate-300 text-sm mt-1">Attacker inject malicious JS vào trang.<br /><strong>Phòng:</strong> React tự escape JSX. KHÔNG dùng <InlineCode>dangerouslySetInnerHTML</InlineCode>. Sanitize user input.</div>
+                        <div className="text-red-400 font-bold text-sm">💉 XSS (Cross-Site Scripting)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Attacker inject malicious JS vào trang → steal cookies, redirect, keylog.<br />
+                            <strong>3 loại:</strong><br />
+                            • <strong>Stored XSS</strong>: script lưu trong DB → mọi user thấy (nguy hiểm nhất)<br />
+                            • <strong>Reflected XSS</strong>: script trong URL → server trả về HTML chứa script<br />
+                            • <strong>DOM-based XSS</strong>: script thay đổi DOM client-side (innerHTML, eval)<br />
+                            <strong>Phòng:</strong> React auto-escape JSX. KHÔNG dùng <InlineCode>dangerouslySetInnerHTML</InlineCode>. Sanitize input (DOMPurify).
+                        </div>
                     </div>
+
                     <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                        <div className="text-yellow-400 font-bold text-sm">CSRF (Cross-Site Request Forgery)</div>
-                        <div className="text-slate-300 text-sm mt-1">Attacker trick user gửi request từ site khác.<br /><strong>Phòng:</strong> CSRF token, SameSite cookie, verify Origin header.</div>
+                        <div className="text-yellow-400 font-bold text-sm">🔗 CSRF (Cross-Site Request Forgery)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Attacker trick user gửi request từ site khác (ví dụ: transfer tiền).<br />
+                            • User đang logged in site A → visit site B → site B gửi request tới A<br />
+                            • Browser tự attach cookies → server nghĩ là legitimate request<br />
+                            <strong>Phòng:</strong><br />
+                            • <strong>CSRF token</strong>: random token per session, verify mỗi request<br />
+                            • <strong>SameSite cookie</strong>: SameSite=Strict hoặc Lax<br />
+                            • <strong>Double submit</strong>: token trong cookie + header, server so sánh
+                        </div>
                     </div>
+
                     <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                        <div className="text-blue-400 font-bold text-sm">CSP (Content Security Policy)</div>
-                        <div className="text-slate-300 text-sm mt-1">HTTP header chỉ định sources được phép load scripts/styles.<br /><InlineCode>{`Content-Security-Policy: script-src 'self' https://cdn.example.com`}</InlineCode></div>
+                        <div className="text-blue-400 font-bold text-sm">🔒 CSP (Content Security Policy)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            HTTP header chỉ định sources được phép load resources.<br />
+                            • <strong>script-src</strong>: chỉ cho phép JS từ sources nhất định<br />
+                            • <strong>style-src</strong>: chỉ cho phép CSS từ sources nhất định<br />
+                            • <strong>img-src</strong>: chỉ cho phép images từ sources nhất định<br />
+                            • <InlineCode>{'{`Content-Security-Policy: script-src \'self\' https://cdn.example.com`}'}</InlineCode>
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🍪 Cookie Security</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>HttpOnly</strong>: JS không đọc được cookie → chống XSS steal session<br />
+                            • <strong>Secure</strong>: chỉ gửi qua HTTPS<br />
+                            • <strong>SameSite</strong>: Strict (chỉ same-site), Lax (safe methods OK), None (all)<br />
+                            • <strong>Domain + Path</strong>: scope cookie cho specific subdomain/path
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🛡️ Other Security Headers</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>CORS</strong>: Access-Control-Allow-Origin — control cross-origin requests<br />
+                            • <strong>X-Frame-Options</strong>: DENY — chống clickjacking (iframe embed)<br />
+                            • <strong>HSTS</strong>: force HTTPS, prevent SSL stripping<br />
+                            • <strong>Subresource Integrity</strong>: verify CDN resources chưa bị tamper
+                        </div>
                     </div>
                 </div>
+
+                <CodeBlock title="security-examples.ts">{`// ❌ XSS Vulnerability
+element.innerHTML = userInput // NEVER DO THIS
+eval(userInput)               // NEVER DO THIS
+
+// ✅ Safe: React auto-escapes
+<div>{userInput}</div>  // React escapes special chars
+
+// ✅ If you MUST use HTML, sanitize first
+import DOMPurify from 'dompurify'
+const clean = DOMPurify.sanitize(dirtyHTML)
+<div dangerouslySetInnerHTML={{ __html: clean }} />
+
+// ✅ Cookie security settings
+Set-Cookie: session=abc123;
+  HttpOnly;        // JS cannot read
+  Secure;          // HTTPS only
+  SameSite=Strict; // No cross-site
+  Path=/;
+  Max-Age=86400;
+
+// ✅ Security headers (Next.js example)
+// next.config.js
+headers: [{
+  source: '/(.*)',
+  headers: [
+    { key: 'Content-Security-Policy', value: "script-src 'self'" },
+    { key: 'X-Frame-Options', value: 'DENY' },
+    { key: 'X-Content-Type-Options', value: 'nosniff' },
+    { key: 'Strict-Transport-Security', value: 'max-age=31536000' },
+  ]
+}]`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: Luôn nhắc tới <Highlight>defense in depth</Highlight> — không rely vào 1 layer.
+                    XSS: escape + CSP + HttpOnly. CSRF: SameSite + token. Biết giải thích <strong>tại sao</strong> mỗi biện pháp cần thiết.
+                </Callout>
             </TopicModal>
 
-            <TopicModal title="Core Web Vitals" emoji="📊" color="#38bdf8" summary="LCP, FID, CLS — Google đo performance thế nào, cách tối ưu">
-                <div className="my-3 overflow-x-auto">
-                    <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Metric</th><th className="text-left p-2 text-slate-400">Đo gì</th><th className="text-left p-2 text-green-400">Good</th><th className="text-left p-2 text-slate-400">Cách tối ưu</th></tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
-                            <tr className="border-b border-gray-100"><td className="p-2 text-blue-400 font-bold">LCP</td><td className="p-2">Largest Contentful Paint</td><td className="p-2">&lt; 2.5s</td><td className="p-2">Optimize images, preload fonts, SSR</td></tr>
-                            <tr className="border-b border-gray-100"><td className="p-2 text-green-400 font-bold">INP</td><td className="p-2">Interaction to Next Paint</td><td className="p-2">&lt; 200ms</td><td className="p-2">Reduce JS, web workers, debounce</td></tr>
-                            <tr><td className="p-2 text-yellow-400 font-bold">CLS</td><td className="p-2">Cumulative Layout Shift</td><td className="p-2">&lt; 0.1</td><td className="p-2">Set image dimensions, font-display</td></tr>
-                        </tbody>
-                    </table>
+            <TopicModal title="Core Web Vitals" emoji="📊" color="#38bdf8" summary="LCP, INP, CLS — Google đo performance thế nào, cách tối ưu">
+                <Paragraph>Core Web Vitals là metrics <Highlight>Google dùng để rank SEO</Highlight>. Frontend engineer phải biết optimize.</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🖼️ LCP (Largest Contentful Paint) — {'< 2.5s'}</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Thời gian render element lớn nhất visible trong viewport.<br />
+                            <strong>Tối ưu:</strong><br />
+                            • <strong>Optimize images</strong>: WebP/AVIF, responsive srcset, lazy loading<br />
+                            • <strong>Preload</strong>: critical assets (hero image, fonts)<br />
+                            • <strong>SSR/SSG</strong>: HTML có content ngay (không đợi JS)<br />
+                            • <strong>CDN</strong>: serve static assets gần user
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">👆 INP (Interaction to Next Paint) — {'< 200ms'}</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Thời gian từ user interaction → visual response (thay thế FID).<br />
+                            <strong>Tối ưu:</strong><br />
+                            • <strong>Reduce JS execution</strong>: code splitting, tree shaking<br />
+                            • <strong>Web Workers</strong>: heavy computation off main thread<br />
+                            • <strong>Debounce/throttle</strong>: limit event handler frequency<br />
+                            • <strong>requestIdleCallback</strong>: defer non-critical work
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">📐 CLS (Cumulative Layout Shift) — {'< 0.1'}</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Đo layout shifts không mong muốn (content nhảy lung tung).<br />
+                            <strong>Tối ưu:</strong><br />
+                            • <strong>Set dimensions</strong>: width + height cho images/videos/ads<br />
+                            • <strong>font-display: optional</strong>: tránh FOUT (flash of unstyled text)<br />
+                            • <strong>Skeleton loading</strong>: placeholder giữ layout ổn định<br />
+                            • <strong>transform</strong> animations: không trigger layout (chỉ composite)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔧 Rendering Pipeline</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>JS → Style → Layout → Paint → Composite</strong><br />
+                            • <strong>Layout thrashing</strong>: đọc layout → ghi → đọc → ghi → forced reflow!<br />
+                            • <strong>Composite-only</strong>: transform + opacity — cheapest animations (GPU)<br />
+                            • <strong>will-change</strong>: hint browser chuẩn bị compose layer mới<br />
+                            • <strong>contain</strong>: CSS containment — isolate rendering subtree
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">📏 Đo lường & Tools</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Lighthouse</strong> (Chrome DevTools): comprehensive audit<br />
+                            • <strong>web.dev/measure</strong>: online tool by Google<br />
+                            • <strong>PageSpeed Insights</strong>: real user data (CrUX) + lab data<br />
+                            • <strong>web-vitals</strong> library: measure CWV trong production<br />
+                            • <strong>Performance API</strong>: PerformanceObserver cho custom metrics
+                        </div>
+                    </div>
                 </div>
-                <Callout type="tip">Tools đo: <strong>Lighthouse</strong> (Chrome DevTools), <strong>web.dev/measure</strong>, <strong>PageSpeed Insights</strong>.</Callout>
+
+                <CodeBlock title="performance-optimization.tsx">{`// Measure Core Web Vitals in production
+import { onLCP, onINP, onCLS } from 'web-vitals'
+
+onLCP(metric => analytics.send('LCP', metric.value))
+onINP(metric => analytics.send('INP', metric.value))
+onCLS(metric => analytics.send('CLS', metric.value))
+
+// ✅ Optimize images — responsive + lazy
+<img
+  src="/hero-800.webp"
+  srcSet="/hero-400.webp 400w, /hero-800.webp 800w, /hero-1200.webp 1200w"
+  sizes="(max-width: 600px) 400px, (max-width: 1200px) 800px, 1200px"
+  loading="lazy"           // lazy: below fold, eager: above fold
+  decoding="async"         // decode off main thread
+  width={800} height={400} // prevent CLS!
+  alt="Hero banner"
+/>
+
+// ✅ Preload critical resources
+<link rel="preload" href="/fonts/Inter.woff2" as="font" crossOrigin="" />
+<link rel="preload" href="/hero.webp" as="image" />
+<link rel="preconnect" href="https://api.example.com" />
+
+// ✅ Avoid layout thrashing
+// ❌ Bad: read → write → read → write (forced reflow)
+elements.forEach(el => {
+  const height = el.offsetHeight  // read (force layout)
+  el.style.height = height + 10   // write (invalidate layout)
+})
+// ✅ Good: batch reads, then batch writes
+const heights = elements.map(el => el.offsetHeight)  // all reads
+elements.forEach((el, i) => el.style.height = heights[i] + 10)  // all writes`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: Khi được hỏi {'"Trang web chậm, bạn sẽ làm gì?"'} → <Highlight>đo trước (Lighthouse)</Highlight> → xác định bottleneck (LCP? INP? CLS?) → apply giải pháp cụ thể. Không optimize mù!
+                </Callout>
                 <a href="/blogs/core-web-vitals" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
             </TopicModal>
         </div>
