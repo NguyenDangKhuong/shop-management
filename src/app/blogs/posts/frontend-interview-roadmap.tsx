@@ -2085,6 +2085,107 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                 </div>
                 <Callout type="tip">Công ty VN hỏi React nhiều nhất: <Highlight>hooks, lifecycle, key, controlled form, re-render optimization</Highlight>. Chuẩn bị kỹ 12 câu trên là cover 80% câu hỏi React ở VN.</Callout>
             </TopicModal>
+
+            <TopicModal title="CORS, Cookies & JWT" emoji="🔐" color="#f97316" summary="Authentication & Security — 3 khái niệm liên quan mà hay hỏi cùng lúc">
+                <Paragraph><Highlight>CORS</Highlight> = ai được gọi API. <Highlight>JWT</Highlight> = bạn là ai. <Highlight>Cookie</Highlight> = cách truyền JWT an toàn.</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🌐 CORS (Cross-Origin Resource Sharing)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Browser có <strong>Same-Origin Policy</strong>: chỉ cho phép request tới cùng origin (protocol + domain + port).<br />
+                            <strong>CORS = cơ chế cho server nói &quot;tôi chấp nhận request từ origin khác&quot;</strong><br /><br />
+                            • <InlineCode>Access-Control-Allow-Origin</InlineCode>: origin nào được phép<br />
+                            • <InlineCode>Access-Control-Allow-Methods</InlineCode>: GET, POST, PUT...<br />
+                            • <InlineCode>Access-Control-Allow-Credentials: true</InlineCode>: cho phép gửi cookies<br />
+                            • <strong>Preflight (OPTIONS)</strong>: browser gửi OPTIONS trước khi gửi POST JSON / custom headers
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🍪 Cookies</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Cookie = dữ liệu server gửi về, <strong>browser tự động gửi lại mỗi request</strong>.<br /><br />
+                            • <InlineCode>HttpOnly</InlineCode>: JS không đọc được (chống XSS steal cookie)<br />
+                            • <InlineCode>Secure</InlineCode>: chỉ gửi qua HTTPS<br />
+                            • <InlineCode>SameSite=Strict</InlineCode>: chỉ gửi nếu cùng site (chống CSRF)<br />
+                            • <InlineCode>SameSite=Lax</InlineCode>: cho phép top-level navigation (click link)<br />
+                            • <InlineCode>SameSite=None</InlineCode>: cross-site OK (cần Secure, dùng cho OAuth)<br />
+                            • <InlineCode>Max-Age</InlineCode>: thời gian sống (giây). Không set = mất khi đóng browser
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🎫 JWT (JSON Web Token)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            JWT = token <strong>tự chứa thông tin user</strong>, server không cần lưu session.<br />
+                            <strong>3 phần</strong>: header.payload.signature<br /><br />
+                            • <strong>Header</strong>: algorithm + type (<InlineCode>{`{"alg":"HS256","typ":"JWT"}`}</InlineCode>)<br />
+                            • <strong>Payload</strong>: data/claims (<InlineCode>{`{"userId":"1001","role":"admin","exp":...}`}</InlineCode>)<br />
+                            • <strong>Signature</strong>: HMAC(header + payload, SECRET) → verify chưa bị sửa
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                        <div className="text-orange-400 font-bold text-sm">🔗 3 cái liên quan thế nào?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            1. User login → server tạo <strong>JWT</strong> (sign với SECRET_KEY)<br />
+                            2. Server gửi JWT về trong <strong>HttpOnly Cookie</strong> (an toàn nhất)<br />
+                            3. Browser tự động gửi cookie mỗi request → server verify JWT<br />
+                            4. Nếu cross-origin → cần <strong>CORS</strong> cho phép + <InlineCode>credentials: true</InlineCode>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">📦 Lưu JWT ở đâu?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>HttpOnly Cookie</strong> ✅ — JS không đọc được (chống XSS). Best practice!<br />
+                            • <strong>localStorage</strong> ❌ — XSS có thể đọc token! Nên tránh cho auth tokens<br />
+                            • <strong>Memory (RAM)</strong> — An toàn nhất nhưng mất khi refresh page
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="cors-cookies-jwt.ts">{`// ===== Express Setup =====
+app.use(cors({
+  origin: 'https://myapp.com',      // CORS: cho phép frontend
+  credentials: true,                  // CORS: cho phép cookies
+}))
+
+// Login → set JWT vào HttpOnly Cookie
+app.post('/login', async (req, res) => {
+  const user = await authenticate(req.body)
+  const token = jwt.sign(
+    { userId: user.id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  )
+  res.cookie('token', token, {
+    httpOnly: true,     // ← Chống XSS
+    secure: true,       // ← HTTPS only
+    sameSite: 'strict', // ← Chống CSRF
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+  })
+  res.json({ message: 'Logged in', user })
+})
+
+// Middleware: verify JWT từ cookie
+function authMiddleware(req, res, next) {
+  const token = req.cookies.token
+  if (!token) return res.status(401).json({ error: 'No token' })
+  try {
+    req.user = jwt.verify(token, process.env.JWT_SECRET)
+    next()
+  } catch {
+    res.status(401).json({ error: 'Invalid/expired token' })
+  }
+}
+
+// ===== Frontend (fetch) =====
+// PHẢI có credentials: 'include' để browser gửi cookies cross-origin
+const res = await fetch('https://api.myapp.com/profile', {
+  credentials: 'include',  // ← Gửi cookies!
+  headers: { 'Content-Type': 'application/json' },
+})`}</CodeBlock>
+
+                <Callout type="tip">VN Interview: {'"Giải thích CORS"'} + {'"JWT lưu ở đâu an toàn?"'} + {'"HttpOnly cookie là gì?"'} = <Highlight>3 câu hay gặp cùng lúc</Highlight>. Trả lời được flow đầy đủ (login → JWT → cookie → CORS) → senior answer.</Callout>
+            </TopicModal>
         </div>
 
         {/* ===== PHASE 3 ===== */}

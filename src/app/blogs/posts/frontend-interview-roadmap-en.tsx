@@ -1967,6 +1967,194 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
             &quot;Write debounce without lodash&quot;. If you only use the API without understanding the internals, you&apos;ll fail this round.
         </Callout>
 
+        <Heading3>2.4 Rapid-Fire Interview Questions</Heading3>
+        <Paragraph>
+            Interviews often include <Highlight>short theoretical questions</Highlight> to quickly assess knowledge.
+            Below are the <Highlight>most common ones</Highlight> — you must be able to answer immediately.
+        </Paragraph>
+
+        <div className="my-4 space-y-2">
+            <TopicModal title="JS Fundamentals — 15 Classic Questions" emoji="⚡" color="#fbbf24" summary="var/let/const, hoisting, truthy/falsy, == vs === — every interview asks these">
+                <div className="my-3 space-y-3">
+                    {[
+                        ['Q: How are var, let, const different?', 'var: function-scoped, hoisted (undefined), can re-declare.\nlet: block-scoped, hoisted (TDZ), can re-assign.\nconst: block-scoped, hoisted (TDZ), cannot re-assign (but object/array contents are still mutable!).'],
+                        ['Q: What is hoisting? Give an example.', 'Hoisting: JS moves declarations to the top of scope before executing.\nvar → hoisted, value = undefined.\nlet/const → hoisted but in TDZ (Temporal Dead Zone) → ReferenceError if accessed before declaration.\nfunction declaration → fully hoisted (including body).'],
+                        ['Q: == vs === difference?', '== (loose): compares with type coercion (1 == "1" → true).\n=== (strict): no coercion, compares both value + type (1 === "1" → false).\n→ Always use === unless checking null/undefined (x == null).'],
+                        ['Q: null vs undefined?', 'undefined: variable declared but not assigned, or function without return.\nnull: explicitly assigned = "no value".\ntypeof null === "object" (historical JS bug).\nnull == undefined → true, null === undefined → false.'],
+                        ['Q: What is a closure? Real-world example?', 'Closure: a function "remembers" variables from its outer scope even after that scope has ended.\nReal examples: debounce, throttle, module pattern, React hooks (useState internally uses closures).'],
+                        ['Q: Arrow function vs regular function?', '1. No own this — inherits from parent scope.\n2. No arguments object.\n3. Cannot be used as constructor (new).\n4. Cannot be a generator (function*).\n→ In React: always use arrow functions for event handlers.'],
+                        ['Q: Truthy / falsy values?', 'Falsy (6 values): false, 0, "" (empty string), null, undefined, NaN.\nAll other values are truthy (including [], {}, "0", "false").'],
+                        ['Q: Explain call stack and event loop.', 'Call stack: LIFO, runs synchronous code.\nWeb APIs: setTimeout, fetch... run outside call stack.\nCallback/Task Queue: macro tasks (setTimeout).\nMicrotask Queue: Promises, queueMicrotask.\nEvent Loop: when stack is empty → takes microtasks first → then macrotasks.'],
+                        ['Q: Spread operator vs rest parameter?', 'Spread (...): "expands" array/object → {...obj}, [...arr].\nRest (...): "collects" params → function(...args).\nSame syntax ... but opposite meaning: spread = unpack, rest = pack.'],
+                        ['Q: map, filter, reduce vs forEach?', 'forEach: just loops, returns undefined, no new array.\nmap: returns new array, same length.\nfilter: returns new array, items matching condition.\nreduce: returns 1 value from array.\n→ forEach for side effects (log, API call), map/filter/reduce for data transformation.'],
+                        ['Q: Shallow copy vs deep copy?', 'Shallow: copies level 1, nested objects still share reference.\n→ {...obj}, [...arr], Object.assign.\nDeep: copies all levels, completely independent.\n→ structuredClone() (modern), JSON.parse(JSON.stringify()) (old, loses functions/Date).'],
+                        ['Q: Pass by value vs pass by reference?', 'Primitives: pass by value (copies the value).\nObjects/Arrays: pass by reference (share the same reference).\n→ Changing a property of an object inside a function WILL change the original object.'],
+                        ['Q: Does setTimeout(fn, 0) run immediately?', 'NO! setTimeout(fn, 0) puts fn into the macrotask queue.\nOnly runs when call stack is EMPTY and all microtasks are done.\n→ console.log(1); setTimeout(() => console.log(2), 0); console.log(3);\n→ Output: 1, 3, 2.'],
+                        ['Q: Promise.all vs Promise.allSettled?', 'Promise.all: fails IMMEDIATELY when 1 promise rejects (fast-fail).\nPromise.allSettled: waits for ALL to complete, returns [{status, value/reason}].\n→ Use all when all must succeed. Use allSettled when you need each result.'],
+                        ['Q: What is destructuring?', 'Destructuring: "extract" values from objects/arrays into variables.\nObject: const { name, age } = user;\nArray: const [first, ...rest] = arr;\nSupports: rename, default values, nested destructuring.'],
+                    ].map(([q, a]) => (
+                        <div key={q} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div className="text-yellow-400 text-sm font-bold mb-2">{q}</div>
+                            <div className="text-slate-300 text-sm whitespace-pre-line">{a}</div>
+                        </div>
+                    ))}
+                </div>
+                <Callout type="tip">Tip: For theory questions → answer <Highlight>concisely + with an example</Highlight>. {'"var is function-scoped, e.g. console.log(x) // undefined due to hoisting"'} is better than just {'"var is function scoped"'}.</Callout>
+            </TopicModal>
+
+            <TopicModal title="HTML/CSS — 10 Common Questions" emoji="🎨" color="#38bdf8" summary="box model, position, flexbox, responsive — CSS is where many developers are weakest">
+                <div className="my-3 space-y-3">
+                    {[
+                        ['Q: What is the box model?', 'Every element has 4 layers: Content → Padding → Border → Margin.\nbox-sizing: content-box (default): width = content only.\nbox-sizing: border-box: width = content + padding + border.\n→ Always use border-box (*, *::before, *::after { box-sizing: border-box; }).'],
+                        ['Q: position: relative, absolute, fixed, sticky?', 'static: default, normal flow.\nrelative: offset from ORIGINAL POSITION, still occupies space.\nabsolute: offset from nearest positioned PARENT, removed from flow.\nfixed: offset from VIEWPORT, removed from flow.\nsticky: relative until scroll reaches threshold → becomes fixed.'],
+                        ['Q: display: none vs visibility: hidden vs opacity: 0?', 'display: none — removed from DOM flow, takes no space.\nvisibility: hidden — still takes space, invisible, not clickable.\nopacity: 0 — still takes space, invisible, STILL clickable.\n→ Accessibility: use sr-only class (position: absolute, clip) for screen readers.'],
+                        ['Q: em, rem, px differences?', 'px: fixed size, not responsive.\nem: relative to PARENT font-size → compounds when nested.\nrem: relative to ROOT (html) font-size → predictable.\n→ Best practice: font-size use rem, spacing use rem or em, borders use px.'],
+                        ['Q: Flexbox vs Grid — when to use?', 'Flexbox: 1-dimensional (row OR column). Use for: navbar, button group, card row.\nGrid: 2-dimensional (rows AND columns). Use for: page layout, dashboard, gallery.\n→ "Flex for components, Grid for layouts."'],
+                        ['Q: Pseudo-class vs pseudo-element?', 'Pseudo-class (:hover, :focus, :nth-child) — styles the STATE of an element.\nPseudo-element (::before, ::after, ::placeholder) — creates a VIRTUAL element.\nPseudo-class: single colon. Pseudo-element: double colon.'],
+                        ['Q: Responsive design approach?', 'Mobile-first: min-width (default mobile, add styles for desktop).\nDesktop-first: max-width (default desktop, override for mobile).\n→ Mobile-first is better: less CSS, better performance on mobile.\nCommon breakpoints: 640px (sm), 768px (md), 1024px (lg), 1280px (xl).'],
+                        ['Q: How does z-index work?', 'z-index only works on elements with position other than static.\nStacking context: created by position + z-index, opacity < 1, transform, filter.\nz-index only compares WITHIN the same stacking context.\n→ Tip: avoid z-index wars, use semantic layers (modal: 100, dropdown: 50, tooltip: 200).'],
+                        ['Q: CSS selector priority?', '!important > inline style > #id > .class/:pseudo-class/[attr] > tag > *.\nWhen same specificity → later rule wins.\n→ Keep specificity low. Avoid !important. Use classes instead of IDs.'],
+                        ['Q: How to center an element?', 'Flex: display: flex; justify-content: center; align-items: center;\nGrid: display: grid; place-items: center;\nAbsolute: position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\nMargin: margin: 0 auto (horizontal only, needs width).'],
+                    ].map(([q, a]) => (
+                        <div key={q} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div className="text-blue-400 text-sm font-bold mb-2">{q}</div>
+                            <div className="text-slate-300 text-sm whitespace-pre-line">{a}</div>
+                        </div>
+                    ))}
+                </div>
+                <Callout type="tip">CSS is commonly tested in interviews: <Highlight>centering, box model, position, flexbox/grid</Highlight>. Many companies give live CSS coding tests — you must know these by heart.</Callout>
+            </TopicModal>
+
+            <TopicModal title="React — 12 Interview Questions" emoji="⚛️" color="#61DAFB" summary="lifecycle, hooks, key, controlled/uncontrolled — must answer within 30 seconds">
+                <div className="my-3 space-y-3">
+                    {[
+                        ['Q: React lifecycle methods?', 'Mounting: constructor → render → componentDidMount (≈ useEffect(fn, [])).\nUpdating: render → componentDidUpdate (≈ useEffect(fn, [deps])).\nUnmounting: componentWillUnmount (≈ useEffect cleanup return).\n→ Hooks have replaced lifecycle methods. But you must know the mapping.'],
+                        ['Q: useState vs useRef?', 'useState: stores state, changes → re-render.\nuseRef: stores a value, changes → NO re-render.\n→ useRef for: DOM reference, timer ID, previous value, mutable value that doesn\'t need UI update.'],
+                        ['Q: useEffect dependency array?', 'useEffect(fn) — runs EVERY render.\nuseEffect(fn, []) — runs once after mount.\nuseEffect(fn, [a, b]) — runs when a or b changes.\nCleanup: return () => {} — runs on unmount or before new effect.'],
+                        ['Q: Why do we need key in lists?', 'key helps React identify which elements changed, were added, or removed (reconciliation).\n❌ Using index as key → bugs when reordering/deleting (state mixes between items).\n✅ Use unique ID (from API, UUID).\n→ No key → React uses index by default → warning.'],
+                        ['Q: Controlled vs Uncontrolled component?', 'Controlled: React manages value via state (value={state}, onChange={setState}).\nUncontrolled: DOM manages value, React reads via ref (useRef).\n→ Simple forms: uncontrolled (register ref). Complex forms: controlled (real-time validation).'],
+                        ['Q: useMemo vs useCallback?', 'useMemo: memoizes COMPUTED VALUE → useMemo(() => expensiveCalc(a), [a]).\nuseCallback: memoizes FUNCTION → useCallback(fn, [deps]).\nuseCallback(fn, deps) = useMemo(() => fn, deps).\n→ Only use when: 1) heavy computation 2) reference equality matters 3) React.memo child.'],
+                        ['Q: What is props drilling? Solutions?', 'Props drilling: passing props through many intermediate component layers.\nSolutions:\n1. Context API — share global state (theme, auth, locale).\n2. Composition — render children directly.\n3. State management — Redux, Zustand.\n→ Context is good for low-frequency updates. Redux/Zustand for complex state.'],
+                        ['Q: When does React re-render?', '1. State changes (setState).\n2. Props change.\n3. Parent re-renders (even if props haven\'t changed!).\n4. Context value changes.\n→ Avoid unnecessary re-renders: React.memo, useMemo, useCallback, state colocation.'],
+                        ['Q: Explain Virtual DOM.', 'Virtual DOM = JS object representing the real DOM.\nWhen state changes:\n1. React creates a new Virtual DOM.\n2. Compares (diffs) with the old Virtual DOM.\n3. Calculates minimal changes (reconciliation).\n4. Batch updates the real DOM.\n→ Faster than direct DOM manipulation because of batch updates + minimal DOM operations.'],
+                        ['Q: When to use useContext?', 'useContext: share global data without props drilling.\nUse cases: theme, language/locale, auth user, toast notifications.\n⚠️ Limitation: ALL consumers re-render when context value changes.\n→ Split context by domain. Don\'t use for frequently changing data (mouse position).'],
+                        ['Q: What is a Higher-Order Component (HOC)?', 'HOC = function that takes a component and returns a new component with added logic.\nExample: withAuth(Component) → checks auth before rendering.\nDrawbacks: wrapper hell, hard to debug, naming collisions.\n→ Hooks have replaced most HOC use cases. But HOCs are still used for cross-cutting concerns.'],
+                        ['Q: What are custom hooks? Give an example.', 'Custom hook = function starting with "use", using hooks inside.\nExamples: useDebounce, useLocalStorage, useWindowSize, useFetch.\nKey feature: shares logic, NOT state (each component using the hook has its own state).\n→ Rule: logic reused ≥ 2 times → extract into a custom hook.'],
+                    ].map(([q, a]) => (
+                        <div key={q} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div className="text-cyan-400 text-sm font-bold mb-2">{q}</div>
+                            <div className="text-slate-300 text-sm whitespace-pre-line">{a}</div>
+                        </div>
+                    ))}
+                </div>
+                <Callout type="tip">Companies ask React the most: <Highlight>hooks, lifecycle, key, controlled forms, re-render optimization</Highlight>. Master these 12 questions and you&apos;ll cover 80% of React interview questions.</Callout>
+            </TopicModal>
+        </div>
+
+        <Heading3>2.5 CORS, Cookies &amp; JWT</Heading3>
+        <div className="my-4 space-y-2">
+            <TopicModal title="CORS, Cookies & JWT" emoji="🔐" color="#f97316" summary="Authentication & Security — 3 related concepts often asked together in interviews">
+                <Paragraph><Highlight>CORS</Highlight> = who can call the API. <Highlight>JWT</Highlight> = who you are. <Highlight>Cookie</Highlight> = how to transport JWT securely.</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🌐 CORS (Cross-Origin Resource Sharing)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Browsers enforce <strong>Same-Origin Policy</strong>: only allows requests to the same origin (protocol + domain + port).<br />
+                            <strong>CORS = mechanism for the server to say &quot;I accept requests from other origins&quot;</strong><br /><br />
+                            • <InlineCode>Access-Control-Allow-Origin</InlineCode>: which origins are allowed<br />
+                            • <InlineCode>Access-Control-Allow-Methods</InlineCode>: GET, POST, PUT...<br />
+                            • <InlineCode>Access-Control-Allow-Credentials: true</InlineCode>: allow sending cookies<br />
+                            • <strong>Preflight (OPTIONS)</strong>: browser sends OPTIONS before POST JSON / custom headers
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🍪 Cookies</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Cookie = data the server sends back, <strong>browser automatically sends it with every request</strong>.<br /><br />
+                            • <InlineCode>HttpOnly</InlineCode>: JS cannot read it (prevents XSS stealing cookies)<br />
+                            • <InlineCode>Secure</InlineCode>: only sent over HTTPS<br />
+                            • <InlineCode>SameSite=Strict</InlineCode>: only sent for same-site requests (prevents CSRF)<br />
+                            • <InlineCode>SameSite=Lax</InlineCode>: allows top-level navigation (clicking links)<br />
+                            • <InlineCode>SameSite=None</InlineCode>: cross-site OK (requires Secure, used for OAuth)<br />
+                            • <InlineCode>Max-Age</InlineCode>: lifetime in seconds. Not set = session cookie (lost on browser close)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🎫 JWT (JSON Web Token)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            JWT = a token that <strong>contains user info itself</strong>, server doesn&apos;t need to store sessions.<br />
+                            <strong>3 parts</strong>: header.payload.signature<br /><br />
+                            • <strong>Header</strong>: algorithm + type (<InlineCode>{`{"alg":"HS256","typ":"JWT"}`}</InlineCode>)<br />
+                            • <strong>Payload</strong>: data/claims (<InlineCode>{`{"userId":"1001","role":"admin","exp":...}`}</InlineCode>)<br />
+                            • <strong>Signature</strong>: HMAC(header + payload, SECRET) → verifies token hasn&apos;t been tampered
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                        <div className="text-orange-400 font-bold text-sm">🔗 How do they relate?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            1. User login → server creates <strong>JWT</strong> (signed with SECRET_KEY)<br />
+                            2. Server sends JWT in an <strong>HttpOnly Cookie</strong> (most secure)<br />
+                            3. Browser automatically sends cookie with every request → server verifies JWT<br />
+                            4. If cross-origin → need <strong>CORS</strong> to allow + <InlineCode>credentials: true</InlineCode>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">📦 Where to store JWT?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>HttpOnly Cookie</strong> ✅ — JS cannot read it (prevents XSS). Best practice!<br />
+                            • <strong>localStorage</strong> ❌ — XSS can read token! Avoid for auth tokens<br />
+                            • <strong>Memory (RAM)</strong> — Most secure but lost on page refresh
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="cors-cookies-jwt.ts">{`// ===== Express Setup =====
+app.use(cors({
+  origin: 'https://myapp.com',      // CORS: allow frontend
+  credentials: true,                  // CORS: allow cookies
+}))
+
+// Login → set JWT in HttpOnly Cookie
+app.post('/login', async (req, res) => {
+  const user = await authenticate(req.body)
+  const token = jwt.sign(
+    { userId: user.id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  )
+  res.cookie('token', token, {
+    httpOnly: true,     // ← Prevent XSS
+    secure: true,       // ← HTTPS only
+    sameSite: 'strict', // ← Prevent CSRF
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  })
+  res.json({ message: 'Logged in', user })
+})
+
+// Middleware: verify JWT from cookie
+function authMiddleware(req, res, next) {
+  const token = req.cookies.token
+  if (!token) return res.status(401).json({ error: 'No token' })
+  try {
+    req.user = jwt.verify(token, process.env.JWT_SECRET)
+    next()
+  } catch {
+    res.status(401).json({ error: 'Invalid/expired token' })
+  }
+}
+
+// ===== Frontend (fetch) =====
+// MUST use credentials: 'include' for browser to send cookies cross-origin
+const res = await fetch('https://api.myapp.com/profile', {
+  credentials: 'include',  // ← Send cookies!
+  headers: { 'Content-Type': 'application/json' },
+})`}</CodeBlock>
+
+                <Callout type="tip">Interview: {'"Explain CORS"'} + {'"Where to store JWT securely?"'} + {'"What is HttpOnly cookie?"'} = <Highlight>3 questions often asked together</Highlight>. Being able to explain the full flow (login → JWT → cookie → CORS) → senior answer.</Callout>
+            </TopicModal>
+        </div>
+
         {/* ===== PHASE 3 ===== */}
         <Heading2>Phase 3 — React & Deep Frontend (4-6 weeks)</Heading2>
 
@@ -2331,6 +2519,139 @@ function SearchBar() {
 
                 <Callout type="warning">Don&apos;t premature optimize! Only optimize when <Highlight>React DevTools Profiler</Highlight> shows a real bottleneck. useMemo/useCallback have overhead — using them wrong can be slower.</Callout>
                 <a href="/blogs/react-performance" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+            </TopicModal>
+
+            <TopicModal title="State Management — Redux, Zustand, Context" emoji="🗃️" color="#764ABC" summary="Comparing 3 popular state management approaches — very common interview question">
+                <Paragraph>Enterprise projects commonly use <Highlight>Redux</Highlight>, but you should also know alternatives.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔴 Redux (Redux Toolkit)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Store</strong> → <strong>Action</strong> → <strong>Reducer</strong> → <strong>New State</strong> (unidirectional flow)<br />
+                            • Redux Toolkit: <InlineCode>createSlice</InlineCode>, <InlineCode>configureStore</InlineCode>, <InlineCode>createAsyncThunk</InlineCode><br />
+                            • Middleware: redux-thunk (default), redux-saga (complex side effects)<br />
+                            • DevTools: time-travel debugging, action log<br />
+                            • Use when: complex state, many components need to share, need predictability
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                        <div className="text-orange-400 font-bold text-sm">🐻 Zustand</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Lightweight (~1KB), simple API, no boilerplate<br />
+                            • No Provider needed, use hooks directly<br />
+                            • Auto selector: only re-renders when slice of state changes<br />
+                            • Middleware: persist, devtools, immer<br />
+                            • Use when: want simplicity, don&apos;t need Redux Toolkit overhead
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">⚛️ Context API</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Built-in React, no extra dependency<br />
+                            • ⚠️ <strong>ALL consumers re-render</strong> when context value changes<br />
+                            • Good for: theme, locale, auth (infrequent updates)<br />
+                            • Not good for: frequently changing data (input, scroll, mouse)<br />
+                            • Split context by domain to reduce re-renders
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="state-management.ts">{`// Redux Toolkit — createSlice
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+const counterSlice = createSlice({
+  name: 'counter',
+  initialState: { value: 0 },
+  reducers: {
+    increment: (state) => { state.value += 1 }, // Immer: mutate OK
+    addBy: (state, action: PayloadAction<number>) => {
+      state.value += action.payload
+    },
+  },
+})
+
+// Zustand — minimal boilerplate
+import { create } from 'zustand'
+const useStore = create((set) => ({
+  count: 0,
+  increment: () => set((s) => ({ count: s.count + 1 })),
+}))
+// Usage: const count = useStore(s => s.count) // auto-optimized!
+
+// Context — built-in
+const ThemeContext = createContext('light')
+function App() {
+  return (
+    <ThemeContext.Provider value="dark">
+      <Child /> {/* All children re-render when value changes */}
+    </ThemeContext.Provider>
+  )
+}`}</CodeBlock>
+                <Callout type="tip">Interview: 90% will ask Redux flow (action → reducer → store). Knowing <Highlight>why use Zustand over Redux</Highlight> (less boilerplate, auto-optimized re-renders) → senior answer.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Next.js — SSR, SSG, ISR, App Router" emoji="▲" color="#000000" summary="Rendering strategies — Next.js is extremely popular, must know well">
+                <Paragraph>Next.js is the <Highlight>most popular React framework</Highlight>. Interviews frequently ask about rendering strategies.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20">
+                        <div className="text-gray-300 font-bold text-sm">📊 Rendering Strategies Comparison</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>CSR</strong> (Client-Side Rendering): empty HTML + JS bundle → renders in browser<br />
+                            • <strong>SSR</strong> (Server-Side Rendering): renders on server each request → full HTML<br />
+                            • <strong>SSG</strong> (Static Site Generation): renders at build time → static HTML, CDN cached<br />
+                            • <strong>ISR</strong> (Incremental Static Regeneration): SSG + revalidate after N seconds
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🆕 App Router (Next.js 13+)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Server Components</strong> (default): render on server, 0 JS bundle<br />
+                            • <strong>&apos;use client&apos;</strong>: opt-in to client component (hooks, events, browser API)<br />
+                            • <strong>layout.tsx</strong>: shared layout (persistent across navigation)<br />
+                            • <strong>loading.tsx</strong>: React Suspense boundary<br />
+                            • <strong>error.tsx</strong>: Error Boundary<br />
+                            • <strong>Server Actions</strong>: call server-side functions directly from client
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🎯 When to use what?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>SSG</strong>: blogs, landing pages, docs (content rarely changes)<br />
+                            • <strong>ISR</strong>: e-commerce products, news (changes every few minutes/hours)<br />
+                            • <strong>SSR</strong>: user dashboard, search results (real-time data, needs SEO)<br />
+                            • <strong>CSR</strong>: admin panel, private pages (no SEO needed)
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="nextjs-rendering.tsx">{`// SSG — build time (getStaticProps — Pages Router)
+export async function getStaticProps() {
+  const posts = await fetchPosts()
+  return { props: { posts } }
+}
+
+// ISR — revalidate every 60 seconds
+export async function getStaticProps() {
+  const products = await fetchProducts()
+  return { props: { products }, revalidate: 60 }
+}
+
+// SSR — every request
+export async function getServerSideProps(ctx) {
+  const user = await getUser(ctx.req.cookies.token)
+  return { props: { user } }
+}
+
+// App Router — Server Component (default)
+async function ProductPage({ params }) {
+  const product = await db.product.findById(params.id) // direct DB!
+  return <div>{product.name}</div>
+}
+
+// App Router — Client Component
+'use client'
+function LikeButton() {
+  const [liked, setLiked] = useState(false) // hooks OK here
+  return <button onClick={() => setLiked(!liked)}>❤️</button>
+}`}</CodeBlock>
+                <Callout type="tip">Interview: {'"Explain SSR vs SSG vs ISR"'} is <Highlight>almost guaranteed</Highlight> if the JD mentions Next.js. Knowing App Router + Server Components → shows you&apos;re up-to-date.</Callout>
             </TopicModal>
         </div>
 
@@ -2998,6 +3319,501 @@ export const card = style({
             e.g., autocomplete, infinite scroll, modal, drag &amp; drop, virtual list.
             Practicing building pure UI components is hugely beneficial.
         </Callout>
+
+        <Heading3>3.3 Build Component from Scratch</Heading3>
+        <Paragraph>
+            Companies often give <Highlight>practical coding tests</Highlight>: build a component in 30-60 minutes.
+            Doesn&apos;t need to be perfect — but must work, have clean code, and you should be able to explain your decisions.
+        </Paragraph>
+        <div className="my-4 space-y-2">
+            <TopicModal title="Searchable Dropdown / Autocomplete" emoji="🔍" color="#f59e0b" summary="Classic test — input + dropdown + filter + keyboard navigation">
+                <Paragraph>This is the <Highlight>most common</Highlight> interview coding test. Must know how to build from scratch.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">📋 Basic Requirements</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Input text → filter options list<br />
+                            • Click option → select + close dropdown<br />
+                            • Click outside → close dropdown<br />
+                            • Keyboard: Arrow Up/Down navigate, Enter select, Escape close
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">⭐ Bonus points (senior level)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Debounce input (API call)<br />
+                            • Loading state<br />
+                            • Highlight match text<br />
+                            • Virtualized list (for 1000+ options)<br />
+                            • Accessibility: aria-expanded, aria-activedescendant
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="SearchableDropdown.tsx">{`function SearchableDropdown({ options, onSelect }) {
+  const [query, setQuery] = useState('')
+  const [isOpen, setIsOpen] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(-1)
+  const ref = useRef(null)
+
+  const filtered = options.filter(o =>
+    o.label.toLowerCase().includes(query.toLowerCase())
+  )
+
+  // Close on click outside
+  useEffect(() => {
+    const handler = (e) => {
+      if (!ref.current?.contains(e.target)) setIsOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setActiveIndex(i => Math.min(i + 1, filtered.length - 1))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActiveIndex(i => Math.max(i - 1, 0))
+    } else if (e.key === 'Enter' && activeIndex >= 0) {
+      onSelect(filtered[activeIndex])
+      setIsOpen(false)
+    } else if (e.key === 'Escape') {
+      setIsOpen(false)
+    }
+  }
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <input
+        value={query}
+        onChange={e => { setQuery(e.target.value); setIsOpen(true) }}
+        onFocus={() => setIsOpen(true)}
+        onKeyDown={handleKeyDown}
+        placeholder="Search..."
+      />
+      {isOpen && filtered.length > 0 && (
+        <ul style={{
+          position: 'absolute', top: '100%', left: 0, right: 0,
+          maxHeight: 200, overflowY: 'auto', border: '1px solid #ccc',
+        }}>
+          {filtered.map((item, i) => (
+            <li
+              key={item.value}
+              onClick={() => { onSelect(item); setIsOpen(false) }}
+              style={{ padding: 8, cursor: 'pointer',
+                background: i === activeIndex ? '#e0f0ff' : 'transparent'
+              }}
+            >{item.label}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}`}</CodeBlock>
+                <Callout type="tip">Tip: Always remember <Highlight>click outside to close</Highlight> and <Highlight>keyboard navigation</Highlight> — 2 things many candidates forget.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Modal / Dialog" emoji="📦" color="#8b5cf6" summary="Overlay, focus trap, escape close, portal — simple component but many edge cases">
+                <Paragraph>Modal seems simple but has <Highlight>many edge cases</Highlight> that interviewers love to test.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">📋 Important Requirements</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Overlay (backdrop) click → close<br />
+                            • Escape key → close<br />
+                            • <strong>Focus trap</strong>: Tab only cycles within modal (a11y!)<br />
+                            • <strong>Body scroll lock</strong>: prevent page scroll when modal is open<br />
+                            • <strong>Portal</strong>: render at root DOM (avoid z-index issues)<br />
+                            • Return focus on close (focus back to the button that opened modal)
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="Modal.tsx">{`function Modal({ isOpen, onClose, children }) {
+  const prevFocusRef = useRef(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      prevFocusRef.current = document.activeElement
+      document.body.style.overflow = 'hidden' // lock scroll
+
+      const handleEsc = (e) => e.key === 'Escape' && onClose()
+      document.addEventListener('keydown', handleEsc)
+      return () => {
+        document.removeEventListener('keydown', handleEsc)
+        document.body.style.overflow = '' // unlock scroll
+        prevFocusRef.current?.focus() // return focus
+      }
+    }
+  }, [isOpen, onClose])
+
+  if (!isOpen) return null
+
+  return createPortal(
+    <div className="modal-overlay" onClick={onClose}>
+      <div
+        className="modal-content"
+        onClick={e => e.stopPropagation()} // prevent close
+        role="dialog"
+        aria-modal="true"
+      >
+        <button onClick={onClose} aria-label="Close">✕</button>
+        {children}
+      </div>
+    </div>,
+    document.body
+  )
+}`}</CodeBlock>
+                <Callout type="tip">Edge cases: <Highlight>multiple modals stacked</Highlight> (z-index), <Highlight>animation on enter/exit</Highlight>, <Highlight>responsive sizing</Highlight>. Mentioning these → bonus points.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Pagination Component" emoji="📄" color="#06b6d4" summary="Client-side vs server-side, page numbers, ellipsis — common test for junior/mid">
+                <Paragraph>Pagination seems simple but you need to handle <Highlight>ellipsis logic</Highlight> + edge cases.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                        <div className="text-cyan-400 font-bold text-sm">📋 Key features</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Previous / Next buttons (disabled on first/last page)<br />
+                            • Page numbers with ellipsis (1 ... 4 5 6 ... 20)<br />
+                            • Current page highlight<br />
+                            • Controlled: page + onChange from parent<br />
+                            • Optional: items per page, total count display
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="pagination-logic.ts">{`// Core logic: generate page numbers with ellipsis
+function getPageNumbers(current, total, siblings = 1) {
+  const range = []
+  const left = Math.max(2, current - siblings)
+  const right = Math.min(total - 1, current + siblings)
+
+  // Always show first page
+  range.push(1)
+
+  // Left ellipsis
+  if (left > 2) range.push('...')
+
+  // Middle pages
+  for (let i = left; i <= right; i++) range.push(i)
+
+  // Right ellipsis
+  if (right < total - 1) range.push('...')
+
+  // Always show last page
+  if (total > 1) range.push(total)
+
+  return range
+}
+
+// Examples:
+// getPageNumbers(1, 10)  → [1, 2, 3, ..., 10]
+// getPageNumbers(5, 10)  → [1, ..., 4, 5, 6, ..., 10]
+// getPageNumbers(10, 10) → [1, ..., 8, 9, 10]`}</CodeBlock>
+                <Callout type="tip">Server-side pagination: <Highlight>API returns total + page + limit</Highlight>. Client-side: slice array. Interviews usually ask you to build client-side pagination.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Form Validation" emoji="📝" color="#10b981" summary="Real-time validation, error messages, submit handling — the most practical test">
+                <Paragraph>Form validation is the <Highlight>most practical</Highlight> coding test — every project needs it.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📋 Common Requirements</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Required fields (show error on blur or submit)<br />
+                            • Email format validation (regex)<br />
+                            • Password strength (min length, uppercase, number, special char)<br />
+                            • Confirm password match<br />
+                            • Real-time validation (on change) vs on submit<br />
+                            • Disable submit button when form is invalid
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">⭐ Best Approaches</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Production</strong>: React Hook Form + Zod<br />
+                            • <strong>Interview</strong>: custom useForm hook (shows understanding)<br />
+                            • <strong>UX</strong>: validate on blur (first touch) → on change (after error)<br />
+                            • <strong>Pattern</strong>: errors object, touched object, isValid boolean
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="useForm-hook.ts">{`// Custom useForm hook (interview approach)
+function useForm(initialValues, validate) {
+  const [values, setValues] = useState(initialValues)
+  const [errors, setErrors] = useState({})
+  const [touched, setTouched] = useState({})
+
+  const handleChange = (field) => (e) => {
+    const newValues = { ...values, [field]: e.target.value }
+    setValues(newValues)
+    // Validate on change only if already touched
+    if (touched[field]) {
+      setErrors(validate(newValues))
+    }
+  }
+
+  const handleBlur = (field) => () => {
+    setTouched(t => ({ ...t, [field]: true }))
+    setErrors(validate(values))
+  }
+
+  const handleSubmit = (onSubmit) => (e) => {
+    e.preventDefault()
+    const errs = validate(values)
+    setErrors(errs)
+    setTouched(Object.keys(values).reduce((acc, k) =>
+      ({ ...acc, [k]: true }), {}))
+    if (Object.keys(errs).length === 0) onSubmit(values)
+  }
+
+  return { values, errors, touched, handleChange, handleBlur, handleSubmit,
+    isValid: Object.keys(validate(values)).length === 0 }
+}
+
+// Usage
+const { values, errors, handleChange, handleBlur, handleSubmit } = useForm(
+  { email: '', password: '' },
+  (v) => {
+    const e = {}
+    if (!v.email) e.email = 'Email is required'
+    else if (!/\\S+@\\S+\\.\\S+/.test(v.email)) e.email = 'Invalid email'
+    if (!v.password) e.password = 'Password is required'
+    else if (v.password.length < 8) e.password = 'Minimum 8 characters'
+    return e
+  }
+)`}</CodeBlock>
+                <Callout type="tip">Interview: build a custom <Highlight>useForm</Highlight> hook → shows you understand form state management. Mention that production uses React Hook Form + Zod → shows practical awareness.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Infinite Scroll / Lazy Load" emoji="♾️" color="#f43f5e" summary="IntersectionObserver + pagination API — mid/senior level test">
+                <Paragraph>Infinite scroll = <Highlight>IntersectionObserver + API pagination</Highlight>. Must handle loading, error, no more data.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20">
+                        <div className="text-rose-400 font-bold text-sm">📋 Implementation steps</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            1. Fetch initial data (page 1)<br />
+                            2. Render sentinel element at end of list<br />
+                            3. IntersectionObserver observes sentinel<br />
+                            4. When sentinel is visible → fetch page N+1<br />
+                            5. Append data (don&apos;t replace!)<br />
+                            6. Stop when: API returns empty array or hasMore = false
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="useInfiniteScroll.ts">{`function useInfiniteScroll(fetchFn) {
+  const [data, setData] = useState([])
+  const [page, setPage] = useState(1)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const sentinelRef = useRef(null)
+
+  const loadMore = useCallback(async () => {
+    if (loading || !hasMore) return
+    setLoading(true)
+    try {
+      const newItems = await fetchFn(page)
+      if (newItems.length === 0) {
+        setHasMore(false)
+      } else {
+        setData(prev => [...prev, ...newItems]) // append!
+        setPage(p => p + 1)
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }, [page, loading, hasMore, fetchFn])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) loadMore()
+    }, { threshold: 0.1 })
+    if (sentinelRef.current) observer.observe(sentinelRef.current)
+    return () => observer.disconnect()
+  }, [loadMore])
+
+  return { data, loading, hasMore, sentinelRef }
+}
+
+// Usage
+function ProductList() {
+  const { data, loading, hasMore, sentinelRef } = useInfiniteScroll(
+    (page) => fetch(\`/api/products?page=\${page}\`).then(r => r.json())
+  )
+  return (
+    <div>
+      {data.map(p => <ProductCard key={p.id} product={p} />)}
+      {loading && <Spinner />}
+      {hasMore && <div ref={sentinelRef} style={{ height: 1 }} />}
+    </div>
+  )
+}`}</CodeBlock>
+                <Callout type="tip">Edge cases: <Highlight>race conditions</Highlight> (abort previous request), <Highlight>duplicate items</Highlight> (dedupe by id), <Highlight>scroll restoration</Highlight> when navigating back.</Callout>
+            </TopicModal>
+        </div>
+
+        <Heading3>3.4 Popular Libraries</Heading3>
+        <Paragraph>
+            The job market uses many <Highlight>component libraries</Highlight> and UI frameworks.
+            Knowing how to use them + explaining why you chose a library → big bonus points.
+        </Paragraph>
+        <div className="my-4 space-y-2">
+            <TopicModal title="Ant Design (antd)" emoji="🐜" color="#1890ff" summary="Most popular component library for enterprise — tables, forms, layouts">
+                <Paragraph><Highlight>Ant Design</Highlight> = #1 choice for admin dashboards and enterprise apps.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">📋 When to use Ant Design?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            ✅ Admin panel, CRM, ERP, back-office systems<br />
+                            ✅ Need rich components: Table (sort/filter/pagination), Form, DatePicker, Tree<br />
+                            ✅ Team wants a consistent ready-made design system<br />
+                            ❌ Consumer-facing products (lacks personality, heavy bundle)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">⚠️ Common Interview Questions</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • How to customize antd theme? → ConfigProvider + token<br />
+                            • antd Table performance with large data? → virtual scroll, columnWidth<br />
+                            • Tree-shaking antd? → import from antd/es (v5 auto tree-shakes)<br />
+                            • Form validation with antd? → Form.Item rules + async validator
+                        </div>
+                    </div>
+                </div>
+                <Callout type="tip">Interview: if JD mentions antd → <Highlight>must know the Table component</Highlight> (custom render, sorter, filter, editable cells) since 90% of antd projects are data-heavy admin panels.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Tailwind CSS" emoji="🌊" color="#38bdf8" summary="Utility-first CSS framework — popular at startups and product companies">
+                <Paragraph><Highlight>Tailwind</Highlight> = #1 choice for startups and consumer products.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                        <div className="text-cyan-400 font-bold text-sm">📋 Why is Tailwind popular?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Utility-first</strong>: write CSS in HTML, no need to name classes<br />
+                            • <strong>Design system</strong>: spacing, colors, breakpoints consistency<br />
+                            • <strong>Purge CSS</strong>: only ships used CSS → tiny bundle<br />
+                            • <strong>DX</strong>: IntelliSense plugin, instant prototyping<br />
+                            • <strong>Responsive</strong>: <InlineCode>md:flex lg:grid</InlineCode> — prefix-based
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">⚠️ Interview Questions</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Tailwind vs CSS Modules? → Trade-off: speed vs separation<br />
+                            • Customize theme? → tailwind.config.js extend<br />
+                            • Dynamic classes? → clsx/cn, don&apos;t use string interpolation<br />
+                            • Tailwind v4 — what&apos;s new? → CSS-first config, no JS config file
+                        </div>
+                    </div>
+                </div>
+                <Callout type="tip">If using Tailwind + React → must know <Highlight>clsx or cn (class-variance-authority)</Highlight> for conditional classes. This is an essential pattern.</Callout>
+            </TopicModal>
+
+            <TopicModal title="React Hook Form + Zod" emoji="📋" color="#ec4899" summary="Form management + schema validation — most popular combo today">
+                <Paragraph><Highlight>React Hook Form + Zod</Highlight> = best form combo today — performance + type-safety.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-pink-500/10 border border-pink-500/20">
+                        <div className="text-pink-400 font-bold text-sm">🔥 Why better than Formik?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Performance</strong>: uncontrolled components → fewer re-renders<br />
+                            • <strong>Bundle size</strong>: ~9KB vs Formik ~44KB<br />
+                            • <strong>Zod</strong>: schema validation, TypeScript-first, reusable<br />
+                            • <strong>DevTools</strong>: React Hook Form DevTools<br />
+                            • <strong>Server</strong>: works with Next.js Server Actions
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="react-hook-form-zod.tsx">{`import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+
+const schema = z.object({
+  email: z.string().email('Invalid email'),
+  password: z.string().min(8, 'Minimum 8 characters'),
+  confirmPassword: z.string(),
+}).refine(d => d.password === d.confirmPassword, {
+  message: 'Passwords do not match',
+  path: ['confirmPassword'],
+})
+
+function RegisterForm() {
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(schema),
+  })
+  return (
+    <form onSubmit={handleSubmit(data => console.log(data))}>
+      <input {...register('email')} />
+      {errors.email && <span>{errors.email.message}</span>}
+
+      <input type="password" {...register('password')} />
+      {errors.password && <span>{errors.password.message}</span>}
+
+      <input type="password" {...register('confirmPassword')} />
+      {errors.confirmPassword && <span>{errors.confirmPassword.message}</span>}
+
+      <button type="submit">Register</button>
+    </form>
+  )
+}`}</CodeBlock>
+                <Callout type="tip">Interview: if asked about forms → mention <Highlight>React Hook Form + Zod</Highlight> (modern) instead of Formik (legacy). Explaining why RHF is faster (uncontrolled) → bonus.</Callout>
+            </TopicModal>
+
+            <TopicModal title="TanStack Query (React Query)" emoji="🔄" color="#ef4444" summary="Server state management — fetching, caching, sync — replaces useEffect fetch">
+                <Paragraph><Highlight>TanStack Query</Highlight> solves the data fetching problem that useEffect + useState handles very poorly.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">❌ Problems with useEffect fetch</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • No cache → refetches every mount<br />
+                            • Race conditions (user navigates quickly)<br />
+                            • No loading/error states built-in<br />
+                            • No retry, no pagination, no optimistic updates<br />
+                            • No background refetch (stale data)<br />
+                            • No type-safety (unless using libraries like Zod)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">✅ TanStack Query solves all of this</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Auto caching</strong>: staleTime, gcTime<br />
+                            • <strong>Auto refetch</strong>: on window focus, on reconnect<br />
+                            • <strong>Loading/error/success</strong> states built-in<br />
+                            • <strong>Mutations</strong>: optimistic updates, invalidation<br />
+                            • <strong>Infinite queries</strong>: useInfiniteQuery for pagination
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="react-query.tsx">{`import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+
+// Fetch data
+function UserProfile({ userId }) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['user', userId],
+    queryFn: () => fetch(\`/api/users/\${userId}\`).then(r => r.json()),
+    staleTime: 5 * 60 * 1000, // cache 5 minutes
+  })
+
+  if (isLoading) return <Spinner />
+  if (error) return <Error message={error.message} />
+  return <div>{data.name}</div>
+}
+
+// Mutation + invalidation
+function UpdateUser() {
+  const queryClient = useQueryClient()
+  const mutation = useMutation({
+    mutationFn: (data) => fetch('/api/users', {
+      method: 'PUT', body: JSON.stringify(data)
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] }) // refetch!
+    },
+  })
+  // mutation.mutate({ name: 'New Name' })
+}`}</CodeBlock>
+                <Callout type="tip">Interview: if asked {'"How to fetch data in React?"'} → don&apos;t just say useEffect. Say <Highlight>TanStack Query</Highlight> + explain why (caching, race conditions, stale data) → senior answer.</Callout>
+            </TopicModal>
+        </div>
 
         {/* ===== PHASE 4 ===== */}
         <Heading2>Phase 4 — Data Structures & Algorithms (6-8 weeks)</Heading2>
