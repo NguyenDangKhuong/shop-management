@@ -2475,60 +2475,418 @@ function decodeString(s) {
         <div className="my-4 space-y-2">
             <TopicModal title="Design a News Feed" emoji="📰" color="#a855f7" summary="Infinite scroll, virtualization, caching, optimistic update — bài tập phổ biến nhất">
                 <Paragraph>Thiết kế News Feed như Facebook/Twitter — đây là bài <Highlight>classic nhất</Highlight> trong FE System Design.</Paragraph>
+
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                        <div className="text-purple-400 font-bold text-sm">Component Architecture</div>
-                        <div className="text-slate-300 text-sm mt-1"><InlineCode>{'<Feed> → <FeedItem> → <PostContent>, <ActionBar>, <CommentSection>'}</InlineCode><br />Mỗi FeedItem là unit render riêng biệt → dễ virtualize.</div>
+                        <div className="text-purple-400 font-bold text-sm">🏗️ Component Architecture</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <InlineCode>{'{\'<App> → <Feed> → <FeedItem> → <PostHeader>, <PostContent>, <MediaGallery>, <ActionBar>, <CommentSection>\'}'}</InlineCode><br />
+                            • Mỗi <strong>FeedItem</strong> là unit render riêng biệt → dễ virtualize<br />
+                            • <strong>ActionBar</strong>: Like, Comment, Share — mỗi action là independent component<br />
+                            • <strong>CommentSection</strong>: lazy load, chỉ fetch khi user expand
+                        </div>
                     </div>
+
                     <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                        <div className="text-blue-400 font-bold text-sm">Key Techniques</div>
-                        <div className="text-slate-300 text-sm mt-1">• <strong>Infinite Scroll</strong>: IntersectionObserver + cursor-based pagination<br />• <strong>Virtualization</strong>: Chỉ render ~20 items visible, unmount items ngoài viewport<br />• <strong>Optimistic Update</strong>: UI update ngay → gửi API → rollback nếu fail<br />• <strong>Cache</strong>: Normalize data store (by ID), stale-while-revalidate</div>
+                        <div className="text-blue-400 font-bold text-sm">📜 Infinite Scroll & Virtualization</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>IntersectionObserver</strong>: detect khi sentinel element vào viewport → trigger fetch<br />
+                            • <strong>Cursor-based pagination</strong>: dùng lastPostId thay vì page number (tránh duplicate khi feed update)<br />
+                            • <strong>Virtualization</strong>: Chỉ render ~20 items visible trong DOM, unmount items ngoài viewport<br />
+                            • Library: <strong>react-window</strong> hoặc <strong>react-virtuoso</strong> — tự implement nếu được hỏi
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">💾 Data Model & Caching</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Normalize</strong>: posts by ID, users by ID — tránh duplicate data<br />
+                            • <strong>Stale-while-revalidate</strong>: show cache ngay → background refetch<br />
+                            • <strong>Optimistic update</strong>: Like ngay trên UI → gửi API → rollback nếu fail<br />
+                            • <strong>Cache invalidation</strong>: WebSocket event hoặc polling mỗi 30s
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">⚡ Performance</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Image lazy loading</strong>: loading={'"lazy"'} + placeholder blur<br />
+                            • <strong>Code splitting</strong>: heavy components (video player, rich editor) → dynamic import<br />
+                            • <strong>Skeleton loading</strong>: UI placeholder trong lúc fetch<br />
+                            • <strong>Debounce scroll</strong>: tránh trigger quá nhiều fetch
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">♿ Accessibility & Edge Cases</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Keyboard navigation qua posts (Tab, Enter, Space)<br />
+                            • Screen reader: aria-label cho action buttons, aria-live cho new posts<br />
+                            • Focus management khi load thêm posts<br />
+                            • Offline: show cached posts + banner {'"Bạn đang offline"'}
+                        </div>
                     </div>
                 </div>
-                <Callout type="tip">Luôn nhắc tới <Highlight>accessibility</Highlight>: keyboard navigation qua posts, screen reader cho action buttons, focus management khi load thêm.</Callout>
+
+                <CodeBlock title="news-feed-architecture.tsx">{`// Normalized data store
+interface FeedState {
+  posts: Record<string, Post>       // by ID
+  users: Record<string, User>       // by ID
+  feedIds: string[]                  // ordered list
+  cursor: string | null              // for pagination
+  hasMore: boolean
+}
+
+// Infinite scroll hook
+function useInfiniteScroll(fetchMore: () => void) {
+  const sentinelRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) fetchMore() },
+      { rootMargin: '200px' }  // prefetch trước 200px
+    )
+    if (sentinelRef.current) observer.observe(sentinelRef.current)
+    return () => observer.disconnect()
+  }, [fetchMore])
+  return sentinelRef
+}
+
+// Optimistic like
+function handleLike(postId: string) {
+  // 1. Update UI ngay
+  dispatch({ type: 'TOGGLE_LIKE', postId })
+  // 2. Gửi API
+  api.likePost(postId).catch(() => {
+    // 3. Rollback nếu fail
+    dispatch({ type: 'TOGGLE_LIKE', postId })
+    toast.error('Không thể like. Thử lại!')
+  })
+}`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: Bắt đầu từ <Highlight>component tree</Highlight> → discuss data flow →
+                    zoom vào infinite scroll + virtualization → nhắc optimization + a11y. Luôn hỏi: {'"Feed có real-time update không?"'} → quyết định polling vs WebSocket.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="Design Autocomplete / Typeahead" emoji="🔍" color="#a855f7" summary="Debounce, caching, keyboard navigation — tối ưu UX cho search">
-                <Paragraph>Google Search, GitHub Code Search — chức năng tưởng đơn giản nhưng cực kỳ complex.</Paragraph>
+                <Paragraph>Google Search, GitHub Code Search — chức năng tưởng đơn giản nhưng <Highlight>cực kỳ complex</Highlight>.</Paragraph>
+
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                        <div className="text-purple-400 font-bold text-sm">Data Flow</div>
-                        <div className="text-slate-300 text-sm mt-1">1. User type → <strong>debounce 300ms</strong> → API call<br />2. Check <strong>cache</strong> trước (LRU cache by query prefix)<br />3. Hiển thị results dropdown, <strong>highlight matching text</strong><br />4. Keyboard: ↑↓ navigate, Enter select, Esc close</div>
+                        <div className="text-purple-400 font-bold text-sm">🏗️ Component Architecture</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <InlineCode>{'{\'<Autocomplete> → <SearchInput>, <SuggestionList> → <SuggestionItem>\'}'}</InlineCode><br />
+                            • <strong>Combobox pattern</strong> (WAI-ARIA): input + listbox + options<br />
+                            • <strong>Controlled component</strong>: parent quản lý query state<br />
+                            • <strong>Portal</strong>: dropdown render ngoài container (tránh overflow hidden)
+                        </div>
                     </div>
+
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🔄 Data Flow</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            1. User type → <strong>debounce 300ms</strong> → check cache → API call<br />
+                            2. Check <strong>LRU cache</strong> trước (by query prefix, max ~50 entries)<br />
+                            3. Hiển thị results dropdown, <strong>highlight matching text</strong><br />
+                            4. <strong>AbortController</strong>: cancel previous request khi user tiếp tục gõ
+                        </div>
+                    </div>
+
                     <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                        <div className="text-green-400 font-bold text-sm">Edge Cases phải handle</div>
-                        <div className="text-slate-300 text-sm mt-1">• Race condition: user type nhanh → cancel previous requests (AbortController)<br />• Empty state, loading state, error state<br />• Click outside to close, focus trap<br />• Mobile: virtual keyboard pushes content</div>
+                        <div className="text-green-400 font-bold text-sm">⌨️ Keyboard Navigation</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>↑↓</strong>: navigate qua suggestions (wrap around)<br />
+                            • <strong>Enter</strong>: select highlighted item<br />
+                            • <strong>Escape</strong>: close dropdown, clear selection<br />
+                            • <strong>Tab</strong>: auto-complete inline (giống terminal)<br />
+                            • <strong>aria-activedescendant</strong>: screen reader biết item nào đang active
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🚨 Edge Cases phải handle</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Race condition</strong>: user type nhanh → response cũ về sau response mới<br />
+                            • Empty state, loading state, error state, no results state<br />
+                            • Click outside to close, nhưng click vào suggestion → select<br />
+                            • Mobile: virtual keyboard pushes content → dropdown position
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">⚡ Performance Optimization</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Trie</strong> cho client-side filtering (nếu dataset nhỏ)<br />
+                            • <strong>Virtualize</strong> danh sách suggestions nếu nhiều results<br />
+                            • <strong>Prefetch</strong>: popular queries cached trước khi user gõ<br />
+                            • <strong>Service Worker</strong>: cache API responses offline
+                        </div>
                     </div>
                 </div>
+
+                <CodeBlock title="autocomplete.tsx">{`// Debounce + AbortController + Cache
+function useAutocomplete(query: string) {
+  const [suggestions, setSuggestions] = useState([])
+  const [loading, setLoading] = useState(false)
+  const cache = useRef(new Map())       // LRU cache
+  const abortRef = useRef<AbortController>()
+
+  useEffect(() => {
+    if (!query.trim()) { setSuggestions([]); return }
+
+    // 1. Check cache
+    if (cache.current.has(query)) {
+      setSuggestions(cache.current.get(query))
+      return
+    }
+
+    // 2. Cancel previous request
+    abortRef.current?.abort()
+    abortRef.current = new AbortController()
+
+    const timer = setTimeout(async () => {
+      setLoading(true)
+      try {
+        const res = await fetch(\`/api/search?q=\${query}\`, {
+          signal: abortRef.current!.signal
+        })
+        const data = await res.json()
+        cache.current.set(query, data.suggestions)
+        setSuggestions(data.suggestions)
+      } catch (e) {
+        if (e.name !== 'AbortError') console.error(e)
+      } finally { setLoading(false) }
+    }, 300) // debounce 300ms
+
+    return () => clearTimeout(timer)
+  }, [query])
+
+  return { suggestions, loading }
+}
+
+// Highlight matching text
+function HighlightMatch({ text, query }) {
+  const idx = text.toLowerCase().indexOf(query.toLowerCase())
+  if (idx === -1) return text
+  return <>
+    {text.slice(0, idx)}
+    <mark>{text.slice(idx, idx + query.length)}</mark>
+    {text.slice(idx + query.length)}
+  </>
+}`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: Hỏi ngay {'"Dataset bao lớn?"'} → quyết định <Highlight>client-side Trie</Highlight> hay <Highlight>server-side search</Highlight>.
+                    Nhắc race condition + AbortController — đây là điểm cộng lớn mà nhiều candidate bỏ qua.
+                </Callout>
             </TopicModal>
 
-            <TopicModal title="Design a Chat Application" emoji="💬" color="#a855f7" summary="WebSocket, offline support, presence, message ordering">
-                <Paragraph>Design Messenger/Slack — real-time communication system.</Paragraph>
+            <TopicModal title="Design a Chat Application" emoji="💬" color="#a855f7" summary="WebSocket, offline support, presence, message ordering — real-time system">
+                <Paragraph>Design Messenger/Slack — <Highlight>real-time communication system</Highlight> với nhiều thử thách frontend.</Paragraph>
+
                 <div className="my-3 space-y-2">
-                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                        <div className="text-blue-400 font-bold text-sm">Architecture</div>
-                        <div className="text-slate-300 text-sm mt-1">• <strong>WebSocket</strong> cho real-time messages (fallback: long polling, SSE)<br />• <strong>Message store</strong>: Normalize by conversationId → messageIds<br />• <strong>Pagination</strong>: Load 50 messages gần nhất, scroll up = load thêm<br />• <strong>Optimistic send</strong>: Hiển thị ngay với status pending → sent → delivered → read</div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🏗️ Component Architecture</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <InlineCode>{'{\'<ChatApp> → <ConversationList>, <ChatWindow> → <MessageList>, <MessageInput>, <TypingIndicator>\'}'}</InlineCode><br />
+                            • <strong>ConversationList</strong>: sorted by lastMessage timestamp<br />
+                            • <strong>MessageList</strong>: virtualized, scroll-to-bottom by default<br />
+                            • <strong>MessageInput</strong>: rich text, file upload, emoji picker
+                        </div>
                     </div>
+
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🔌 Real-time Communication</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>WebSocket</strong>: primary channel cho real-time messages<br />
+                            • <strong>Fallback</strong>: SSE → Long Polling (nếu WS bị block bởi proxy)<br />
+                            • <strong>Reconnection</strong>: exponential backoff (1s → 2s → 4s → max 30s)<br />
+                            • <strong>Heartbeat</strong>: ping/pong mỗi 30s để detect disconnect
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">💾 Data Model & State</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Normalize</strong>: conversations by ID, messages by conversationId<br />
+                            • <strong>Message status</strong>: sending → sent → delivered → read (4 states)<br />
+                            • <strong>Optimistic send</strong>: hiển thị ngay với temp ID → replace khi server confirm<br />
+                            • <strong>Ordering</strong>: server-assigned timestamp, handle clock skew
+                        </div>
+                    </div>
+
                     <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                        <div className="text-yellow-400 font-bold text-sm">Offline Support</div>
-                        <div className="text-slate-300 text-sm mt-1">• Queue messages locally khi offline (IndexedDB)<br />• Sync khi reconnect, resolve conflicts by timestamp<br />• Presence indicators: online/offline/typing via WebSocket heartbeats</div>
+                        <div className="text-yellow-400 font-bold text-sm">📴 Offline Support</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>IndexedDB</strong>: cache messages + conversations locally<br />
+                            • <strong>Outbox queue</strong>: queue messages khi offline, auto-send khi reconnect<br />
+                            • <strong>Conflict resolution</strong>: server timestamp wins (last-write-wins)<br />
+                            • <strong>Sync protocol</strong>: gửi lastSyncTimestamp → server gửi delta
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">👤 Presence & Typing</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Online/offline</strong>: WS heartbeat + lastSeen timestamp<br />
+                            • <strong>Typing indicator</strong>: debounce 500ms, auto-stop sau 3s<br />
+                            • <strong>Read receipts</strong>: batch send (mỗi 5s group read events)<br />
+                            • <strong>Unread count</strong>: badge per conversation, total in tab title
+                        </div>
                     </div>
                 </div>
+
+                <CodeBlock title="chat-architecture.tsx">{`// WebSocket manager with reconnection
+class ChatSocket {
+  private ws: WebSocket | null = null
+  private reconnectDelay = 1000
+
+  connect(url: string) {
+    this.ws = new WebSocket(url)
+    this.ws.onmessage = (e) => {
+      const msg = JSON.parse(e.data)
+      switch (msg.type) {
+        case 'message':    store.dispatch(addMessage(msg))
+        case 'typing':     store.dispatch(setTyping(msg))
+        case 'presence':   store.dispatch(updatePresence(msg))
+        case 'read':       store.dispatch(markRead(msg))
+      }
+    }
+    this.ws.onclose = () => this.reconnect(url)
+  }
+
+  private reconnect(url: string) {
+    setTimeout(() => {
+      this.reconnectDelay = Math.min(this.reconnectDelay * 2, 30000)
+      this.connect(url)
+    }, this.reconnectDelay)
+  }
+}
+
+// Optimistic message send
+function sendMessage(convId: string, text: string) {
+  const tempId = \`temp_\${Date.now()}\`
+  const optimistic = { id: tempId, text, status: 'sending', ts: Date.now() }
+
+  // 1. Show immediately
+  dispatch(addMessage(optimistic))
+  scrollToBottom()
+
+  // 2. Send via WS
+  socket.send(JSON.stringify({ type: 'message', convId, text, tempId }))
+
+  // 3. Server confirms → replace tempId with real ID
+  // 4. If timeout 10s → mark as 'failed', show retry button
+}`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: Hỏi ngay {'"1-1 chat hay group chat?"'} + {'"Cần offline support không?"'}
+                    Focus vào <Highlight>WebSocket lifecycle</Highlight> (connect → reconnect → heartbeat) và <Highlight>message ordering</Highlight> — đây là điểm differentiator.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="Design Google Docs (Collaborative Editor)" emoji="📝" color="#a855f7" summary="CRDT/OT, conflict resolution, cursor sync — bài khó nhất">
                 <Paragraph>Đây là bài <Highlight>level Hard</Highlight> — nhiều người chặn ở đây vì không hiểu CRDT/OT.</Paragraph>
+
                 <div className="my-3 space-y-2">
-                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                        <div className="text-red-400 font-bold text-sm">OT vs CRDT</div>
-                        <div className="text-slate-300 text-sm mt-1"><strong>OT (Operational Transform)</strong>: Transform operations to handle conflicts. Google Docs dùng.<br /><strong>CRDT (Conflict-free Replicated Data Type)</strong>: Data structure tự merge. Figma, Notion dùng.<br />CRDT dễ implement hơn, không cần central server.</div>
-                    </div>
                     <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                        <div className="text-purple-400 font-bold text-sm">Key Components</div>
-                        <div className="text-slate-300 text-sm mt-1">• Rich text editor (Slate.js, ProseMirror, Tiptap)<br />• Cursor awareness: hiển thị cursor + tên collaborators<br />• Version history: snapshot + diff<br />• Permissions: read/write/comment per user</div>
+                        <div className="text-purple-400 font-bold text-sm">🏗️ Component Architecture</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <InlineCode>{'{\'<Editor> → <Toolbar>, <DocumentBody>, <CursorOverlay>, <CommentSidebar>\'}'}</InlineCode><br />
+                            • <strong>DocumentBody</strong>: contenteditable div hoặc custom renderer<br />
+                            • <strong>CursorOverlay</strong>: layer hiển thị cursors của collaborators<br />
+                            • <strong>Toolbar</strong>: formatting commands (bold, italic, heading, list)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">⚔️ OT vs CRDT</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>OT (Operational Transform)</strong>:<br />
+                            • Transform operations against each other to maintain consistency<br />
+                            • Cần <strong>central server</strong> để order operations<br />
+                            • Google Docs, Etherpad dùng<br /><br />
+                            <strong>CRDT (Conflict-free Replicated Data Type)</strong>:<br />
+                            • Data structure designed to auto-merge without conflicts<br />
+                            • <strong>Không cần central server</strong> — P2P possible<br />
+                            • Figma, Notion, Yjs dùng
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🔄 Collaboration Flow</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            1. User edit → tạo <strong>operation</strong> (insert/delete/format)<br />
+                            2. Apply locally ngay (optimistic)<br />
+                            3. Gửi operation qua <strong>WebSocket</strong> đến server<br />
+                            4. Server broadcast + <strong>transform</strong> nếu concurrent edits<br />
+                            5. Clients nhận + apply transformed operations
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🔧 Key Technical Components</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Rich text editor</strong>: Slate.js, ProseMirror, Tiptap<br />
+                            • <strong>Cursor awareness</strong>: hiển thị cursor + tên + color per user<br />
+                            • <strong>Version history</strong>: snapshot mỗi 5 phút + incremental changes<br />
+                            • <strong>Permissions</strong>: read / write / comment per user<br />
+                            • <strong>Undo/Redo</strong>: per-user undo stack (không undo edit của người khác)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">⚡ Performance & Scale</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Document chunking</strong>: chia document lớn thành pages/blocks<br />
+                            • <strong>Lazy rendering</strong>: chỉ render visible blocks (giống virtualization)<br />
+                            • <strong>Batching operations</strong>: group rapid keystrokes → gửi 1 batch<br />
+                            • <strong>Presence throttle</strong>: cursor position update max 10fps
+                        </div>
                     </div>
                 </div>
-                <Callout type="tip">Không cần implement CRDT/OT full — chỉ cần <Highlight>giải thích concept</Highlight> và trade-offs là đủ ghi điểm.</Callout>
+
+                <CodeBlock title="collaborative-editor.ts">{`// Simplified OT: Insert operation
+interface Operation {
+  type: 'insert' | 'delete'
+  position: number
+  char?: string     // for insert
+  count?: number    // for delete
+  userId: string
+  version: number   // lamport clock
+}
+
+// Transform: resolve concurrent edits
+function transform(op1: Operation, op2: Operation): Operation {
+  // op2 đã apply trước → adjust op1
+  if (op1.type === 'insert' && op2.type === 'insert') {
+    if (op1.position > op2.position) {
+      return { ...op1, position: op1.position + 1 }
+    }
+  }
+  if (op1.type === 'insert' && op2.type === 'delete') {
+    if (op1.position > op2.position) {
+      return { ...op1, position: op1.position - op2.count! }
+    }
+  }
+  return op1
+}
+
+// Cursor sync
+interface CursorInfo {
+  userId: string
+  name: string
+  color: string      // unique color per user
+  position: number   // character offset
+  selection?: { start: number; end: number }
+}
+// → Render colored cursor + name label tại position`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: <Highlight>Không cần implement CRDT/OT full</Highlight> — chỉ cần giải thích concept và trade-offs.
+                    Focus vào: {'"OT cần server, CRDT không cần"'}, cursor sync, và version history. Vẽ sequence diagram cho 2 users edit cùng lúc.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="Design a Design System" emoji="🎨" color="#a855f7" summary="Component library, design tokens, theming, versioning — bài phỏng vấn thực tế cho Sr. Frontend">

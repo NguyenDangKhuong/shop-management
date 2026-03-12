@@ -2472,60 +2472,418 @@ function decodeString(s) {
         <div className="my-4 space-y-2">
             <TopicModal title="Design a News Feed" emoji="📰" color="#a855f7" summary="Infinite scroll, virtualization, caching, optimistic update — the most common exercise">
                 <Paragraph>Design a News Feed like Facebook/Twitter — this is the <Highlight>most classic</Highlight> FE System Design problem.</Paragraph>
+
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                        <div className="text-purple-400 font-bold text-sm">Component Architecture</div>
-                        <div className="text-slate-300 text-sm mt-1"><InlineCode>{'<Feed> → <FeedItem> → <PostContent>, <ActionBar>, <CommentSection>'}</InlineCode><br />Each FeedItem is an independent render unit → easy to virtualize.</div>
+                        <div className="text-purple-400 font-bold text-sm">🏗️ Component Architecture</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <InlineCode>{'{\'<App> → <Feed> → <FeedItem> → <PostHeader>, <PostContent>, <MediaGallery>, <ActionBar>, <CommentSection>\'}'}</InlineCode><br />
+                            • Each <strong>FeedItem</strong> is an independent render unit → easy to virtualize<br />
+                            • <strong>ActionBar</strong>: Like, Comment, Share — each action is an independent component<br />
+                            • <strong>CommentSection</strong>: lazy load, only fetch when user expands
+                        </div>
                     </div>
+
                     <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                        <div className="text-blue-400 font-bold text-sm">Key Techniques</div>
-                        <div className="text-slate-300 text-sm mt-1">• <strong>Infinite Scroll</strong>: IntersectionObserver + cursor-based pagination<br />• <strong>Virtualization</strong>: Only render ~20 visible items, unmount items outside viewport<br />• <strong>Optimistic Update</strong>: UI updates immediately → send API → rollback if fails<br />• <strong>Cache</strong>: Normalized data store (by ID), stale-while-revalidate</div>
+                        <div className="text-blue-400 font-bold text-sm">📜 Infinite Scroll & Virtualization</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>IntersectionObserver</strong>: detect when sentinel enters viewport → trigger fetch<br />
+                            • <strong>Cursor-based pagination</strong>: use lastPostId instead of page number (avoids duplicates when feed updates)<br />
+                            • <strong>Virtualization</strong>: Only render ~20 visible items in DOM, unmount items outside viewport<br />
+                            • Libraries: <strong>react-window</strong> or <strong>react-virtuoso</strong> — implement yourself if asked
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">💾 Data Model & Caching</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Normalize</strong>: posts by ID, users by ID — avoid duplicate data<br />
+                            • <strong>Stale-while-revalidate</strong>: show cache immediately → background refetch<br />
+                            • <strong>Optimistic update</strong>: Like on UI immediately → send API → rollback if fails<br />
+                            • <strong>Cache invalidation</strong>: WebSocket event or polling every 30s
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">⚡ Performance</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Image lazy loading</strong>: loading={'"lazy"'} + placeholder blur<br />
+                            • <strong>Code splitting</strong>: heavy components (video player, rich editor) → dynamic import<br />
+                            • <strong>Skeleton loading</strong>: UI placeholder while fetching<br />
+                            • <strong>Debounce scroll</strong>: prevent triggering too many fetches
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">♿ Accessibility & Edge Cases</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Keyboard navigation through posts (Tab, Enter, Space)<br />
+                            • Screen reader: aria-label for action buttons, aria-live for new posts<br />
+                            • Focus management when loading more posts<br />
+                            • Offline: show cached posts + banner {'"You are offline"'}
+                        </div>
                     </div>
                 </div>
-                <Callout type="tip">Always mention <Highlight>accessibility</Highlight>: keyboard navigation through posts, screen reader for action buttons, focus management when loading more.</Callout>
+
+                <CodeBlock title="news-feed-architecture.tsx">{`// Normalized data store
+interface FeedState {
+  posts: Record<string, Post>       // by ID
+  users: Record<string, User>       // by ID
+  feedIds: string[]                  // ordered list
+  cursor: string | null              // for pagination
+  hasMore: boolean
+}
+
+// Infinite scroll hook
+function useInfiniteScroll(fetchMore: () => void) {
+  const sentinelRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) fetchMore() },
+      { rootMargin: '200px' }  // prefetch 200px ahead
+    )
+    if (sentinelRef.current) observer.observe(sentinelRef.current)
+    return () => observer.disconnect()
+  }, [fetchMore])
+  return sentinelRef
+}
+
+// Optimistic like
+function handleLike(postId: string) {
+  // 1. Update UI immediately
+  dispatch({ type: 'TOGGLE_LIKE', postId })
+  // 2. Send API
+  api.likePost(postId).catch(() => {
+    // 3. Rollback on failure
+    dispatch({ type: 'TOGGLE_LIKE', postId })
+    toast.error('Could not like. Try again!')
+  })
+}`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: Start with <Highlight>component tree</Highlight> → discuss data flow →
+                    zoom into infinite scroll + virtualization → mention optimization + a11y. Always ask: {'"Does the feed need real-time updates?"'} → decides polling vs WebSocket.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="Design Autocomplete / Typeahead" emoji="🔍" color="#a855f7" summary="Debounce, caching, keyboard navigation — optimizing UX for search">
-                <Paragraph>Google Search, GitHub Code Search — a feature that seems simple but is extremely complex.</Paragraph>
+                <Paragraph>Google Search, GitHub Code Search — a feature that seems simple but is <Highlight>extremely complex</Highlight>.</Paragraph>
+
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                        <div className="text-purple-400 font-bold text-sm">Data Flow</div>
-                        <div className="text-slate-300 text-sm mt-1">1. User types → <strong>debounce 300ms</strong> → API call<br />2. Check <strong>cache</strong> first (LRU cache by query prefix)<br />3. Display results dropdown, <strong>highlight matching text</strong><br />4. Keyboard: ↑↓ navigate, Enter select, Esc close</div>
+                        <div className="text-purple-400 font-bold text-sm">🏗️ Component Architecture</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <InlineCode>{'{\'<Autocomplete> → <SearchInput>, <SuggestionList> → <SuggestionItem>\'}'}</InlineCode><br />
+                            • <strong>Combobox pattern</strong> (WAI-ARIA): input + listbox + options<br />
+                            • <strong>Controlled component</strong>: parent manages query state<br />
+                            • <strong>Portal</strong>: dropdown renders outside container (avoids overflow hidden)
+                        </div>
                     </div>
+
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🔄 Data Flow</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            1. User types → <strong>debounce 300ms</strong> → check cache → API call<br />
+                            2. Check <strong>LRU cache</strong> first (by query prefix, max ~50 entries)<br />
+                            3. Display results dropdown, <strong>highlight matching text</strong><br />
+                            4. <strong>AbortController</strong>: cancel previous request when user keeps typing
+                        </div>
+                    </div>
+
                     <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                        <div className="text-green-400 font-bold text-sm">Edge Cases to Handle</div>
-                        <div className="text-slate-300 text-sm mt-1">• Race condition: user types fast → cancel previous requests (AbortController)<br />• Empty state, loading state, error state<br />• Click outside to close, focus trap<br />• Mobile: virtual keyboard pushes content</div>
+                        <div className="text-green-400 font-bold text-sm">⌨️ Keyboard Navigation</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>↑↓</strong>: navigate through suggestions (wrap around)<br />
+                            • <strong>Enter</strong>: select highlighted item<br />
+                            • <strong>Escape</strong>: close dropdown, clear selection<br />
+                            • <strong>Tab</strong>: auto-complete inline (like terminal)<br />
+                            • <strong>aria-activedescendant</strong>: screen reader knows which item is active
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🚨 Edge Cases to Handle</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Race condition</strong>: user types fast → old response arrives after new one<br />
+                            • Empty state, loading state, error state, no results state<br />
+                            • Click outside to close, but clicking a suggestion → select<br />
+                            • Mobile: virtual keyboard pushes content → dropdown positioning
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">⚡ Performance Optimization</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Trie</strong> for client-side filtering (if dataset is small)<br />
+                            • <strong>Virtualize</strong> suggestion list if many results<br />
+                            • <strong>Prefetch</strong>: popular queries cached before user types<br />
+                            • <strong>Service Worker</strong>: cache API responses for offline
+                        </div>
                     </div>
                 </div>
+
+                <CodeBlock title="autocomplete.tsx">{`// Debounce + AbortController + Cache
+function useAutocomplete(query: string) {
+  const [suggestions, setSuggestions] = useState([])
+  const [loading, setLoading] = useState(false)
+  const cache = useRef(new Map())       // LRU cache
+  const abortRef = useRef<AbortController>()
+
+  useEffect(() => {
+    if (!query.trim()) { setSuggestions([]); return }
+
+    // 1. Check cache
+    if (cache.current.has(query)) {
+      setSuggestions(cache.current.get(query))
+      return
+    }
+
+    // 2. Cancel previous request
+    abortRef.current?.abort()
+    abortRef.current = new AbortController()
+
+    const timer = setTimeout(async () => {
+      setLoading(true)
+      try {
+        const res = await fetch(\`/api/search?q=\${query}\`, {
+          signal: abortRef.current!.signal
+        })
+        const data = await res.json()
+        cache.current.set(query, data.suggestions)
+        setSuggestions(data.suggestions)
+      } catch (e) {
+        if (e.name !== 'AbortError') console.error(e)
+      } finally { setLoading(false) }
+    }, 300) // debounce 300ms
+
+    return () => clearTimeout(timer)
+  }, [query])
+
+  return { suggestions, loading }
+}
+
+// Highlight matching text
+function HighlightMatch({ text, query }) {
+  const idx = text.toLowerCase().indexOf(query.toLowerCase())
+  if (idx === -1) return text
+  return <>
+    {text.slice(0, idx)}
+    <mark>{text.slice(idx, idx + query.length)}</mark>
+    {text.slice(idx + query.length)}
+  </>
+}`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: Ask immediately {'"How large is the dataset?"'} → decides <Highlight>client-side Trie</Highlight> or <Highlight>server-side search</Highlight>.
+                    Mention race condition + AbortController — this is a big plus that many candidates miss.
+                </Callout>
             </TopicModal>
 
-            <TopicModal title="Design a Chat Application" emoji="💬" color="#a855f7" summary="WebSocket, offline support, presence, message ordering">
-                <Paragraph>Design Messenger/Slack — a real-time communication system.</Paragraph>
+            <TopicModal title="Design a Chat Application" emoji="💬" color="#a855f7" summary="WebSocket, offline support, presence, message ordering — real-time system">
+                <Paragraph>Design Messenger/Slack — a <Highlight>real-time communication system</Highlight> with many frontend challenges.</Paragraph>
+
                 <div className="my-3 space-y-2">
-                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                        <div className="text-blue-400 font-bold text-sm">Architecture</div>
-                        <div className="text-slate-300 text-sm mt-1">• <strong>WebSocket</strong> for real-time messages (fallback: long polling, SSE)<br />• <strong>Message store</strong>: Normalize by conversationId → messageIds<br />• <strong>Pagination</strong>: Load latest 50 messages, scroll up = load more<br />• <strong>Optimistic send</strong>: Display immediately with status pending → sent → delivered → read</div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🏗️ Component Architecture</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <InlineCode>{'{\'<ChatApp> → <ConversationList>, <ChatWindow> → <MessageList>, <MessageInput>, <TypingIndicator>\'}'}</InlineCode><br />
+                            • <strong>ConversationList</strong>: sorted by lastMessage timestamp<br />
+                            • <strong>MessageList</strong>: virtualized, scroll-to-bottom by default<br />
+                            • <strong>MessageInput</strong>: rich text, file upload, emoji picker
+                        </div>
                     </div>
+
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🔌 Real-time Communication</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>WebSocket</strong>: primary channel for real-time messages<br />
+                            • <strong>Fallback</strong>: SSE → Long Polling (if WS blocked by proxy)<br />
+                            • <strong>Reconnection</strong>: exponential backoff (1s → 2s → 4s → max 30s)<br />
+                            • <strong>Heartbeat</strong>: ping/pong every 30s to detect disconnect
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">💾 Data Model & State</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Normalize</strong>: conversations by ID, messages by conversationId<br />
+                            • <strong>Message status</strong>: sending → sent → delivered → read (4 states)<br />
+                            • <strong>Optimistic send</strong>: display immediately with temp ID → replace when server confirms<br />
+                            • <strong>Ordering</strong>: server-assigned timestamp, handle clock skew
+                        </div>
+                    </div>
+
                     <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                        <div className="text-yellow-400 font-bold text-sm">Offline Support</div>
-                        <div className="text-slate-300 text-sm mt-1">• Queue messages locally when offline (IndexedDB)<br />• Sync on reconnect, resolve conflicts by timestamp<br />• Presence indicators: online/offline/typing via WebSocket heartbeats</div>
+                        <div className="text-yellow-400 font-bold text-sm">📴 Offline Support</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>IndexedDB</strong>: cache messages + conversations locally<br />
+                            • <strong>Outbox queue</strong>: queue messages when offline, auto-send on reconnect<br />
+                            • <strong>Conflict resolution</strong>: server timestamp wins (last-write-wins)<br />
+                            • <strong>Sync protocol</strong>: send lastSyncTimestamp → server sends delta
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">👤 Presence & Typing</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Online/offline</strong>: WS heartbeat + lastSeen timestamp<br />
+                            • <strong>Typing indicator</strong>: debounce 500ms, auto-stop after 3s<br />
+                            • <strong>Read receipts</strong>: batch send (group read events every 5s)<br />
+                            • <strong>Unread count</strong>: badge per conversation, total in tab title
+                        </div>
                     </div>
                 </div>
+
+                <CodeBlock title="chat-architecture.tsx">{`// WebSocket manager with reconnection
+class ChatSocket {
+  private ws: WebSocket | null = null
+  private reconnectDelay = 1000
+
+  connect(url: string) {
+    this.ws = new WebSocket(url)
+    this.ws.onmessage = (e) => {
+      const msg = JSON.parse(e.data)
+      switch (msg.type) {
+        case 'message':    store.dispatch(addMessage(msg))
+        case 'typing':     store.dispatch(setTyping(msg))
+        case 'presence':   store.dispatch(updatePresence(msg))
+        case 'read':       store.dispatch(markRead(msg))
+      }
+    }
+    this.ws.onclose = () => this.reconnect(url)
+  }
+
+  private reconnect(url: string) {
+    setTimeout(() => {
+      this.reconnectDelay = Math.min(this.reconnectDelay * 2, 30000)
+      this.connect(url)
+    }, this.reconnectDelay)
+  }
+}
+
+// Optimistic message send
+function sendMessage(convId: string, text: string) {
+  const tempId = \`temp_\${Date.now()}\`
+  const optimistic = { id: tempId, text, status: 'sending', ts: Date.now() }
+
+  // 1. Show immediately
+  dispatch(addMessage(optimistic))
+  scrollToBottom()
+
+  // 2. Send via WS
+  socket.send(JSON.stringify({ type: 'message', convId, text, tempId }))
+
+  // 3. Server confirms → replace tempId with real ID
+  // 4. If timeout 10s → mark as 'failed', show retry button
+}`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: Ask immediately {'"1-1 chat or group chat?"'} + {'"Need offline support?"'}
+                    Focus on <Highlight>WebSocket lifecycle</Highlight> (connect → reconnect → heartbeat) and <Highlight>message ordering</Highlight> — these are differentiators.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="Design Google Docs (Collaborative Editor)" emoji="📝" color="#a855f7" summary="CRDT/OT, conflict resolution, cursor sync — the hardest problem">
                 <Paragraph>This is a <Highlight>Hard level</Highlight> problem — many people get stuck because they don&apos;t understand CRDT/OT.</Paragraph>
+
                 <div className="my-3 space-y-2">
-                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                        <div className="text-red-400 font-bold text-sm">OT vs CRDT</div>
-                        <div className="text-slate-300 text-sm mt-1"><strong>OT (Operational Transform)</strong>: Transform operations to handle conflicts. Used by Google Docs.<br /><strong>CRDT (Conflict-free Replicated Data Type)</strong>: Data structure that auto-merges. Used by Figma, Notion.<br />CRDT is easier to implement, doesn&apos;t need a central server.</div>
-                    </div>
                     <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                        <div className="text-purple-400 font-bold text-sm">Key Components</div>
-                        <div className="text-slate-300 text-sm mt-1">• Rich text editor (Slate.js, ProseMirror, Tiptap)<br />• Cursor awareness: display cursor + collaborator names<br />• Version history: snapshot + diff<br />• Permissions: read/write/comment per user</div>
+                        <div className="text-purple-400 font-bold text-sm">🏗️ Component Architecture</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <InlineCode>{'{\'<Editor> → <Toolbar>, <DocumentBody>, <CursorOverlay>, <CommentSidebar>\'}'}</InlineCode><br />
+                            • <strong>DocumentBody</strong>: contenteditable div or custom renderer<br />
+                            • <strong>CursorOverlay</strong>: layer displaying collaborator cursors<br />
+                            • <strong>Toolbar</strong>: formatting commands (bold, italic, heading, list)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">⚔️ OT vs CRDT</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>OT (Operational Transform)</strong>:<br />
+                            • Transform operations against each other to maintain consistency<br />
+                            • Requires a <strong>central server</strong> to order operations<br />
+                            • Used by Google Docs, Etherpad<br /><br />
+                            <strong>CRDT (Conflict-free Replicated Data Type)</strong>:<br />
+                            • Data structure designed to auto-merge without conflicts<br />
+                            • <strong>No central server needed</strong> — P2P possible<br />
+                            • Used by Figma, Notion, Yjs
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🔄 Collaboration Flow</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            1. User edits → creates an <strong>operation</strong> (insert/delete/format)<br />
+                            2. Apply locally immediately (optimistic)<br />
+                            3. Send operation via <strong>WebSocket</strong> to server<br />
+                            4. Server broadcasts + <strong>transforms</strong> if concurrent edits<br />
+                            5. Clients receive + apply transformed operations
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🔧 Key Technical Components</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Rich text editor</strong>: Slate.js, ProseMirror, Tiptap<br />
+                            • <strong>Cursor awareness</strong>: display cursor + name + color per user<br />
+                            • <strong>Version history</strong>: snapshot every 5 min + incremental changes<br />
+                            • <strong>Permissions</strong>: read / write / comment per user<br />
+                            • <strong>Undo/Redo</strong>: per-user undo stack (don&apos;t undo other people&apos;s edits)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">⚡ Performance & Scale</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Document chunking</strong>: split large documents into pages/blocks<br />
+                            • <strong>Lazy rendering</strong>: only render visible blocks (like virtualization)<br />
+                            • <strong>Batching operations</strong>: group rapid keystrokes → send 1 batch<br />
+                            • <strong>Presence throttle</strong>: cursor position update max 10fps
+                        </div>
                     </div>
                 </div>
-                <Callout type="tip">You don&apos;t need to fully implement CRDT/OT — just <Highlight>explain the concept</Highlight> and trade-offs to score well.</Callout>
+
+                <CodeBlock title="collaborative-editor.ts">{`// Simplified OT: Insert operation
+interface Operation {
+  type: 'insert' | 'delete'
+  position: number
+  char?: string     // for insert
+  count?: number    // for delete
+  userId: string
+  version: number   // lamport clock
+}
+
+// Transform: resolve concurrent edits
+function transform(op1: Operation, op2: Operation): Operation {
+  // op2 was applied first → adjust op1
+  if (op1.type === 'insert' && op2.type === 'insert') {
+    if (op1.position > op2.position) {
+      return { ...op1, position: op1.position + 1 }
+    }
+  }
+  if (op1.type === 'insert' && op2.type === 'delete') {
+    if (op1.position > op2.position) {
+      return { ...op1, position: op1.position - op2.count! }
+    }
+  }
+  return op1
+}
+
+// Cursor sync
+interface CursorInfo {
+  userId: string
+  name: string
+  color: string      // unique color per user
+  position: number   // character offset
+  selection?: { start: number; end: number }
+}
+// → Render colored cursor + name label at position`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview: <Highlight>You don&apos;t need to fully implement CRDT/OT</Highlight> — just explain the concept and trade-offs.
+                    Focus on: {'"OT needs server, CRDT doesn\'t"'}, cursor sync, and version history. Draw a sequence diagram for 2 users editing simultaneously.
+                </Callout>
             </TopicModal>
 
             <TopicModal title="Design a Design System" emoji="🎨" color="#a855f7" summary="Component library, design tokens, theming, versioning — real-world Sr. Frontend interview question">
