@@ -26,6 +26,7 @@
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 
 type Lang = 'vi' | 'en'
 
@@ -309,12 +310,20 @@ export default function TranslateClient() {
             {/* ───────── Saved Vocabulary List ───────── */}
             {savedItems.length > 0 && (
                 <div className="w-full max-w-5xl mt-10">
-                    <div className="flex items-center gap-2 mb-4">
-                        <span className="text-xl">🔖</span>
-                        <h2 className="text-lg font-semibold text-white">
-                            Saved Vocabulary
-                            <span className="ml-2 text-sm font-normal text-slate-500">({savedItems.length})</span>
-                        </h2>
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                            <span className="text-xl">🔖</span>
+                            <h2 className="text-lg font-semibold text-white">
+                                Saved Vocabulary
+                                <span className="ml-2 text-sm font-normal text-slate-500">({savedItems.length})</span>
+                            </h2>
+                        </div>
+                        <Link
+                            href="/vocabulary-flashcards"
+                            className="px-4 py-2 text-xs font-medium rounded-lg bg-cyan-600/15 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-600/25 transition-all"
+                        >
+                            🃏 Flashcard Mode
+                        </Link>
                     </div>
 
                     <div className="space-y-2">
