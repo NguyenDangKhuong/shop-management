@@ -18,6 +18,7 @@ import nextjsKhaiNiemMoi from './nextjs-khai-niem-moi'
 import reactFeatures from './react-features'
 import reactHooks from './react-hooks-chi-tiet'
 import reactPerformance from './react-performance'
+import redisIntroduction from './redis-introduction'
 import slidingWindowPattern from './sliding-window-pattern'
 import stackPattern from './stack-pattern'
 import twoPointersPattern from './two-pointers-pattern'
@@ -48,6 +49,7 @@ export const blogPosts: BlogPost[] = [
     reactFeatures,
     nextjsFeatures,
     ecmascriptFeatures,
+    redisIntroduction,
 ]
 
 
