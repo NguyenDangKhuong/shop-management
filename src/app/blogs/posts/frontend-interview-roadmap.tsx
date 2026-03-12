@@ -2530,6 +2530,108 @@ function decodeString(s) {
                 </div>
                 <Callout type="tip">Không cần implement CRDT/OT full — chỉ cần <Highlight>giải thích concept</Highlight> và trade-offs là đủ ghi điểm.</Callout>
             </TopicModal>
+
+            <TopicModal title="Design a Design System" emoji="🎨" color="#a855f7" summary="Component library, design tokens, theming, versioning — bài phỏng vấn thực tế cho Sr. Frontend">
+                <Paragraph>Thiết kế Design System như <Highlight>Material UI, Ant Design, Chakra UI</Highlight> — câu hỏi rất phổ biến cho vị trí Senior/Staff Frontend.</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🏗️ Kiến trúc tổng quan</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Design Tokens</strong>: Color, spacing, typography, shadows — single source of truth<br />
+                            • <strong>Core Components</strong>: Button, Input, Select, Modal, Toast, etc.<br />
+                            • <strong>Theming Layer</strong>: Light/dark mode, brand customization via CSS variables<br />
+                            • <strong>Documentation</strong>: Storybook + MDX cho interactive docs<br />
+                            • <strong>Distribution</strong>: NPM package, tree-shakeable exports
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🎯 Interview Focus: Component API Design</div>
+                        <div className="text-slate-300 text-sm mt-1">Điểm mấu chốt interviewer đánh giá: thiết kế API sao cho <strong>flexible nhưng consistent</strong>.<br />
+                            • <strong>Variant pattern</strong>: {'<Button variant="primary" size="md">'}<br />
+                            • <strong>Compound components</strong>: {'<Select><Select.Option /><Select.Group /></Select>'}<br />
+                            • <strong>Polymorphic {'"as"'} prop</strong>: {'<Button as="a" href="/home">'} — render dạng khác nhau<br />
+                            • <strong>Slot pattern</strong>: startIcon, endIcon, prefix, suffix
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📐 Design Tokens</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Tokens = primitive values mà mọi component tham chiếu. Thay đổi 1 token = update toàn bộ UI.<br />
+                            • <strong>Primitive</strong>: blue-500 = #3b82f6<br />
+                            • <strong>Semantic</strong>: color-primary = blue-500, color-danger = red-500<br />
+                            • <strong>Component</strong>: button-bg-primary = color-primary<br />
+                            → 3 layers đem lại flexibility tối đa
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">♿ Accessibility (a11y) — BẮT BUỘC</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Design System phải <strong>accessible by default</strong>:<br />
+                            • Mọi interactive element có <strong>focus ring</strong> (keyboard nav)<br />
+                            • Color contrast ratio ≥ 4.5:1 (WCAG AA)<br />
+                            • ARIA attributes built-in: <strong>role, aria-label, aria-expanded</strong><br />
+                            • Focus trap trong Modal, Sheet, Dialog
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">📦 Versioning & Breaking Changes</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Semver</strong>: major (breaking), minor (feature), patch (fix)<br />
+                            • <strong>Codemods</strong>: script tự động migrate code khi breaking change<br />
+                            • <strong>Deprecation warnings</strong>: log cảnh báo 1 major version trước khi remove<br />
+                            • <strong>Changelogs</strong>: auto-generate từ conventional commits
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="design-system-button.tsx">{`// Ví dụ: Button component API — flexible, type-safe, accessible
+interface ButtonProps {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
+  size?: 'sm' | 'md' | 'lg'
+  isLoading?: boolean
+  leftIcon?: React.ReactNode
+  rightIcon?: React.ReactNode
+  as?: React.ElementType  // polymorphic: render as <a>, <Link>, etc.
+  children: React.ReactNode
+}
+
+// Design tokens → CSS variables → component styles
+const tokens = {
+  colors: {
+    primary: { base: '#3b82f6', hover: '#2563eb', active: '#1d4ed8' },
+    danger:  { base: '#ef4444', hover: '#dc2626', active: '#b91c1c' },
+  },
+  spacing: { sm: '8px', md: '12px', lg: '16px' },
+  radius:  { sm: '6px', md: '8px', lg: '12px' },
+}
+
+// Compound component pattern cho Select
+// <Select>
+//   <Select.Trigger>Choose...</Select.Trigger>
+//   <Select.Content>
+//     <Select.Group label="Fruits">
+//       <Select.Item value="apple">🍎 Apple</Select.Item>
+//       <Select.Item value="banana">🍌 Banana</Select.Item>
+//     </Select.Group>
+//   </Select.Content>
+// </Select>
+
+// Theming — CSS variables approach
+// :root { --color-primary: #3b82f6; }
+// [data-theme="dark"] { --color-primary: #60a5fa; }
+// → Component chỉ dùng var(--color-primary)
+// → Đổi theme = đổi biến, không đổi component`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview tip: Bắt đầu từ <Highlight>1 component cụ thể</Highlight> (VD: Button) → discuss API design →
+                    mở rộng ra tokens, theming, versioning. Đừng cố cover hết — interviewer muốn thấy <Highlight>depth, không phải breadth</Highlight>.
+                </Callout>
+            </TopicModal>
         </div>
 
         <Heading3>5.2 Framework trả lời</Heading3>

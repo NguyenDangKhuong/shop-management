@@ -2527,6 +2527,108 @@ function decodeString(s) {
                 </div>
                 <Callout type="tip">You don&apos;t need to fully implement CRDT/OT — just <Highlight>explain the concept</Highlight> and trade-offs to score well.</Callout>
             </TopicModal>
+
+            <TopicModal title="Design a Design System" emoji="🎨" color="#a855f7" summary="Component library, design tokens, theming, versioning — real-world Sr. Frontend interview question">
+                <Paragraph>Design a Design System like <Highlight>Material UI, Ant Design, Chakra UI</Highlight> — a very common question for Senior/Staff Frontend positions.</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🏗️ Architecture Overview</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Design Tokens</strong>: Color, spacing, typography, shadows — single source of truth<br />
+                            • <strong>Core Components</strong>: Button, Input, Select, Modal, Toast, etc.<br />
+                            • <strong>Theming Layer</strong>: Light/dark mode, brand customization via CSS variables<br />
+                            • <strong>Documentation</strong>: Storybook + MDX for interactive docs<br />
+                            • <strong>Distribution</strong>: NPM package, tree-shakeable exports
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🎯 Interview Focus: Component API Design</div>
+                        <div className="text-slate-300 text-sm mt-1">The key thing interviewers evaluate: designing APIs that are <strong>flexible yet consistent</strong>.<br />
+                            • <strong>Variant pattern</strong>: {'<Button variant="primary" size="md">'}<br />
+                            • <strong>Compound components</strong>: {'<Select><Select.Option /><Select.Group /></Select>'}<br />
+                            • <strong>Polymorphic {'"as"'} prop</strong>: {'<Button as="a" href="/home">'} — render as different elements<br />
+                            • <strong>Slot pattern</strong>: startIcon, endIcon, prefix, suffix
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📐 Design Tokens</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Tokens = primitive values referenced by all components. Change 1 token = update the entire UI.<br />
+                            • <strong>Primitive</strong>: blue-500 = #3b82f6<br />
+                            • <strong>Semantic</strong>: color-primary = blue-500, color-danger = red-500<br />
+                            • <strong>Component</strong>: button-bg-primary = color-primary<br />
+                            → 3 layers for maximum flexibility
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">♿ Accessibility (a11y) — REQUIRED</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            A Design System must be <strong>accessible by default</strong>:<br />
+                            • Every interactive element has a <strong>focus ring</strong> (keyboard nav)<br />
+                            • Color contrast ratio ≥ 4.5:1 (WCAG AA)<br />
+                            • ARIA attributes built-in: <strong>role, aria-label, aria-expanded</strong><br />
+                            • Focus trap in Modal, Sheet, Dialog
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">📦 Versioning & Breaking Changes</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Semver</strong>: major (breaking), minor (feature), patch (fix)<br />
+                            • <strong>Codemods</strong>: scripts to auto-migrate code on breaking changes<br />
+                            • <strong>Deprecation warnings</strong>: warn 1 major version before removing<br />
+                            • <strong>Changelogs</strong>: auto-generate from conventional commits
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="design-system-button.tsx">{`// Example: Button component API — flexible, type-safe, accessible
+interface ButtonProps {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
+  size?: 'sm' | 'md' | 'lg'
+  isLoading?: boolean
+  leftIcon?: React.ReactNode
+  rightIcon?: React.ReactNode
+  as?: React.ElementType  // polymorphic: render as <a>, <Link>, etc.
+  children: React.ReactNode
+}
+
+// Design tokens → CSS variables → component styles
+const tokens = {
+  colors: {
+    primary: { base: '#3b82f6', hover: '#2563eb', active: '#1d4ed8' },
+    danger:  { base: '#ef4444', hover: '#dc2626', active: '#b91c1c' },
+  },
+  spacing: { sm: '8px', md: '12px', lg: '16px' },
+  radius:  { sm: '6px', md: '8px', lg: '12px' },
+}
+
+// Compound component pattern for Select
+// <Select>
+//   <Select.Trigger>Choose...</Select.Trigger>
+//   <Select.Content>
+//     <Select.Group label="Fruits">
+//       <Select.Item value="apple">🍎 Apple</Select.Item>
+//       <Select.Item value="banana">🍌 Banana</Select.Item>
+//     </Select.Group>
+//   </Select.Content>
+// </Select>
+
+// Theming — CSS variables approach
+// :root { --color-primary: #3b82f6; }
+// [data-theme="dark"] { --color-primary: #60a5fa; }
+// → Components only use var(--color-primary)
+// → Switching theme = changing variables, not components`}</CodeBlock>
+
+                <Callout type="tip">
+                    Interview tip: Start with <Highlight>1 specific component</Highlight> (e.g. Button) → discuss API design →
+                    expand to tokens, theming, versioning. Don&apos;t try to cover everything — interviewers want to see <Highlight>depth, not breadth</Highlight>.
+                </Callout>
+            </TopicModal>
         </div>
 
         <Heading3>5.2 Answer Framework</Heading3>
