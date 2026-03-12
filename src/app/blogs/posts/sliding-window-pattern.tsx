@@ -86,7 +86,7 @@ for (let right = 0; right < arr.length; right++) {
         </div>
 
         {/* ───────── BÀI 1 ───────── */}
-        <Heading2>Bài 1: Longest Substring Without Repeating Characters (LeetCode #3)</Heading2>
+        <Heading2>Bài 1: Longest Substring Without Repeating Characters (<a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #3</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -154,7 +154,7 @@ function lengthOfLongestSubstring(s) {
 // → Kết quả: 3 ("abc") ✓`}</CodeBlock>
 
         {/* ───────── BÀI 2 ───────── */}
-        <Heading2>Bài 2: Minimum Window Substring (LeetCode #76)</Heading2>
+        <Heading2>Bài 2: Minimum Window Substring (<a href="https://leetcode.com/problems/minimum-window-substring/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #76</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -321,7 +321,7 @@ function slidingWindow(s) {
 }`}</CodeBlock>
 
         {/* ───────── BÀI 4: MAX AVERAGE SUBARRAY ───────── */}
-        <Heading2>Bài 4: Maximum Average Subarray I (LeetCode #643)</Heading2>
+        <Heading2>Bài 4: Maximum Average Subarray I (<a href="https://leetcode.com/problems/maximum-average-subarray-i/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #643</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -348,7 +348,7 @@ function findMaxAverage(nums, k) {
 // → maxSum/k = 51/4 = 12.75 ✓`}</CodeBlock>
 
         {/* ───────── BÀI 5: CONTAINS DUPLICATE II ───────── */}
-        <Heading2>Bài 5: Contains Duplicate II (LeetCode #219)</Heading2>
+        <Heading2>Bài 5: Contains Duplicate II (<a href="https://leetcode.com/problems/contains-duplicate-ii/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #219</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -378,7 +378,7 @@ function containsNearbyDuplicate(nums, k) {
 // i=3: 1 có trong window! → return true ✓`}</CodeBlock>
 
         {/* ───────── BÀI 6: LONGEST REPEATING ───────── */}
-        <Heading2>Bài 6: Longest Repeating Character Replacement (LeetCode #424)</Heading2>
+        <Heading2>Bài 6: Longest Repeating Character Replacement (<a href="https://leetcode.com/problems/longest-repeating-character-replacement/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #424</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -414,7 +414,7 @@ function characterReplacement(s, k) {
 // → maxLen = 4 ✓`}</CodeBlock>
 
         {/* ───────── BÀI 7: PERMUTATION IN STRING ───────── */}
-        <Heading2>Bài 7: Permutation in String (LeetCode #567)</Heading2>
+        <Heading2>Bài 7: Permutation in String (<a href="https://leetcode.com/problems/permutation-in-string/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #567</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -454,7 +454,7 @@ function checkInclusion(s1, s2) {
 // Window "ba": count = tất cả 0 → true ✓`}</CodeBlock>
 
         {/* ───────── BÀI 8: MIN SIZE SUBARRAY SUM ───────── */}
-        <Heading2>Bài 8: Minimum Size Subarray Sum (LeetCode #209)</Heading2>
+        <Heading2>Bài 8: Minimum Size Subarray Sum (<a href="https://leetcode.com/problems/minimum-size-subarray-sum/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #209</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -485,7 +485,7 @@ function minSubArrayLen(target, nums) {
 // right=5: sum=2+4+3=9 ≥ 7 → minLen=2 (subarray [4,3]) ✓`}</CodeBlock>
 
         {/* ───────── BÀI 9: FIND ALL ANAGRAMS ───────── */}
-        <Heading2>Bài 9: Find All Anagrams in a String (LeetCode #438)</Heading2>
+        <Heading2>Bài 9: Find All Anagrams in a String (<a href="https://leetcode.com/problems/find-all-anagrams-in-a-string/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #438</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -523,7 +523,7 @@ function findAnagrams(s, p) {
 // → [0, 6] ✓`}</CodeBlock>
 
         {/* ───────── BÀI 10: SLIDING WINDOW MAXIMUM ───────── */}
-        <Heading2>Bài 10: Sliding Window Maximum (LeetCode #239)</Heading2>
+        <Heading2>Bài 10: Sliding Window Maximum (<a href="https://leetcode.com/problems/sliding-window-maximum/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #239</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -648,7 +648,7 @@ for (let right = 0; right < arr.length; right++) {
             </div>
         </div>
 
-        <Heading2>Problem 1: Longest Substring Without Repeating (LeetCode #3)</Heading2>
+        <Heading2>Problem 1: Longest Substring Without Repeating (<a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #3</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -703,7 +703,7 @@ function lengthOfLongestSubstring(s) {
 //   set={b,c,a}, window="bca", maxLen=3
 // ... Result: 3 ("abc") ✓`}</CodeBlock>
 
-        <Heading2>Problem 2: Minimum Window Substring (LeetCode #76)</Heading2>
+        <Heading2>Problem 2: Minimum Window Substring (<a href="https://leetcode.com/problems/minimum-window-substring/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #76</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -837,7 +837,7 @@ function slidingWindow(s) {
             Fixed size → Fixed Window. Variable size → Variable Window.
         </Callout>
 
-        <Heading2>Problem 4: Maximum Average Subarray I (LeetCode #643)</Heading2>
+        <Heading2>Problem 4: Maximum Average Subarray I (<a href="https://leetcode.com/problems/maximum-average-subarray-i/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #643</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Given array <InlineCode>nums</InlineCode> and <InlineCode>k</InlineCode>, find the <Highlight>contiguous subarray with maximum average</Highlight> (size k).</Paragraph>
         <CodeBlock title="max-average.js">{`// LeetCode #643: Maximum Average Subarray I — O(n)
@@ -854,7 +854,7 @@ function findMaxAverage(nums, k) {
 }
 // Example: [1,12,-5,-6,50,3], k=4 → maxSum=51, 51/4=12.75 ✓`}</CodeBlock>
 
-        <Heading2>Problem 5: Contains Duplicate II (LeetCode #219)</Heading2>
+        <Heading2>Problem 5: Contains Duplicate II (<a href="https://leetcode.com/problems/contains-duplicate-ii/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #219</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Check if there are two equal elements <InlineCode>nums[i] === nums[j]</InlineCode> with <Highlight>|i - j| &lt;= k</Highlight>.</Paragraph>
         <CodeBlock title="contains-duplicate-ii.js">{`// LeetCode #219: Contains Duplicate II — O(n)
@@ -869,7 +869,7 @@ function containsNearbyDuplicate(nums, k) {
 }
 // Example: [1,2,3,1], k=3 → true ✓`}</CodeBlock>
 
-        <Heading2>Problem 6: Longest Repeating Character Replacement (LeetCode #424)</Heading2>
+        <Heading2>Problem 6: Longest Repeating Character Replacement (<a href="https://leetcode.com/problems/longest-repeating-character-replacement/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #424</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Given string <InlineCode>s</InlineCode> and <InlineCode>k</InlineCode>, you can replace at most k characters. Find the <Highlight>longest substring with same character</Highlight>.</Paragraph>
         <CodeBlock title="longest-repeating.js">{`// LeetCode #424: Longest Repeating Character Replacement — O(n)
@@ -891,7 +891,7 @@ function characterReplacement(s, k) {
 // Key: keep the most frequent char, replace the rest
 // Example: s = "AABABBA", k = 1 → maxLen = 4 ✓`}</CodeBlock>
 
-        <Heading2>Problem 7: Permutation in String (LeetCode #567)</Heading2>
+        <Heading2>Problem 7: Permutation in String (<a href="https://leetcode.com/problems/permutation-in-string/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #567</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Check if <InlineCode>s2</InlineCode> contains a <Highlight>permutation of s1</Highlight>.</Paragraph>
         <CodeBlock title="permutation-in-string.js">{`// LeetCode #567: Permutation in String — O(n)
@@ -915,7 +915,7 @@ function checkInclusion(s1, s2) {
 }
 // Example: s1="ab", s2="eidbaooo" → window "ba" matches → true ✓`}</CodeBlock>
 
-        <Heading2>Problem 8: Minimum Size Subarray Sum (LeetCode #209)</Heading2>
+        <Heading2>Problem 8: Minimum Size Subarray Sum (<a href="https://leetcode.com/problems/minimum-size-subarray-sum/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #209</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Given array of positive integers and <InlineCode>target</InlineCode>, find the <Highlight>shortest subarray</Highlight> with sum ≥ target.</Paragraph>
         <CodeBlock title="min-size-subarray.js">{`// LeetCode #209: Minimum Size Subarray Sum — O(n)
@@ -933,7 +933,7 @@ function minSubArrayLen(target, nums) {
 }
 // Example: target=7, [2,3,1,2,4,3] → minLen=2 ([4,3]) ✓`}</CodeBlock>
 
-        <Heading2>Problem 9: Find All Anagrams in a String (LeetCode #438)</Heading2>
+        <Heading2>Problem 9: Find All Anagrams in a String (<a href="https://leetcode.com/problems/find-all-anagrams-in-a-string/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #438</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Find <Highlight>all start indices</Highlight> of anagrams of <InlineCode>p</InlineCode> in <InlineCode>s</InlineCode>.</Paragraph>
         <CodeBlock title="find-anagrams.js">{`// LeetCode #438: Find All Anagrams — O(n)
@@ -957,7 +957,7 @@ function findAnagrams(s, p) {
 }
 // Example: s="cbaebabacd", p="abc" → [0, 6] ✓`}</CodeBlock>
 
-        <Heading2>Problem 10: Sliding Window Maximum (LeetCode #239)</Heading2>
+        <Heading2>Problem 10: Sliding Window Maximum (<a href="https://leetcode.com/problems/sliding-window-maximum/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #239</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Return the <Highlight>maximum value</Highlight> in each window of size <InlineCode>k</InlineCode> as it slides left to right.</Paragraph>
         <CodeBlock title="sliding-window-max.js">{`// LeetCode #239: Sliding Window Maximum — O(n)

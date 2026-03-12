@@ -90,7 +90,7 @@ function binarySearchOnAnswer(lo, hi) {
         </div>
 
         {/* ───────── BÀI 1 ───────── */}
-        <Heading2>Bài 1: Binary Search cổ điển (LeetCode #704)</Heading2>
+        <Heading2>Bài 1: Binary Search cổ điển (<a href="https://leetcode.com/problems/binary-search/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #704</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -152,7 +152,7 @@ function search(nums, target) {
 // left=2 > right=1 → return -1 ✓`}</CodeBlock>
 
         {/* ───────── BÀI 2 ───────── */}
-        <Heading2>Bài 2: Koko Eating Bananas (LeetCode #875)</Heading2>
+        <Heading2>Bài 2: Koko Eating Bananas (<a href="https://leetcode.com/problems/koko-eating-bananas/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #875</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -220,7 +220,7 @@ function minEatingSpeed(piles, h) {
 // left=4 === right=4 → return 4 ✓`}</CodeBlock>
 
         {/* ───────── BÀI 3 ───────── */}
-        <Heading2>Bài 3: Search in Rotated Sorted Array (LeetCode #33)</Heading2>
+        <Heading2>Bài 3: Search in Rotated Sorted Array (<a href="https://leetcode.com/problems/search-in-rotated-sorted-array/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #33</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -284,7 +284,7 @@ function search(nums, target) {
 // left=4, right=4: mid=4, nums[4]=0 === 0 → return 4 ✓`}</CodeBlock>
 
         {/* ───────── BÀI 4: SEARCH INSERT POSITION ───────── */}
-        <Heading2>Bài 4: Search Insert Position (LeetCode #35)</Heading2>
+        <Heading2>Bài 4: Search Insert Position (<a href="https://leetcode.com/problems/search-insert-position/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #35</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Cho mảng sorted và target, trả về index nếu tìm thấy hoặc <Highlight>vị trí chèn</Highlight> nếu không.</Paragraph>
         <CodeBlock title="search-insert.js">{`// LeetCode #35: Search Insert Position — O(log n)
@@ -305,7 +305,7 @@ function searchInsert(nums, target) {
 // target = 7 → return 4 (chèn vào cuối) ✓`}</CodeBlock>
 
         {/* ───────── BÀI 5: FIRST BAD VERSION ───────── */}
-        <Heading2>Bài 5: First Bad Version (LeetCode #278)</Heading2>
+        <Heading2>Bài 5: First Bad Version (<a href="https://leetcode.com/problems/first-bad-version/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #278</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Tìm <Highlight>version lỗi đầu tiên</Highlight>. API <InlineCode>isBadVersion(n)</InlineCode> cho biết version n có lỗi không.</Paragraph>
         <CodeBlock title="first-bad-version.js">{`// LeetCode #278: First Bad Version — O(log n)
@@ -330,7 +330,7 @@ function firstBadVersion(n) {
 // left=4=right → return 4 ✓`}</CodeBlock>
 
         {/* ───────── BÀI 6: FIND MINIMUM IN ROTATED SORTED ARRAY ───────── */}
-        <Heading2>Bài 6: Find Minimum in Rotated Sorted Array (LeetCode #153)</Heading2>
+        <Heading2>Bài 6: Find Minimum in Rotated Sorted Array (<a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #153</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Tìm <Highlight>giá trị nhỏ nhất</Highlight> trong mảng sorted bị xoay.</Paragraph>
         <CodeBlock title="find-minimum.js">{`// LeetCode #153: Find Minimum in Rotated Sorted Array — O(log n)
@@ -356,7 +356,7 @@ function findMin(nums) {
 // left=3=right → return nums[3]=1 ✓`}</CodeBlock>
 
         {/* ───────── BÀI 7: SEARCH A 2D MATRIX ───────── */}
-        <Heading2>Bài 7: Search a 2D Matrix (LeetCode #74)</Heading2>
+        <Heading2>Bài 7: Search a 2D Matrix (<a href="https://leetcode.com/problems/search-a-2d-matrix/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #74</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Tìm target trong ma trận m×n sorted (mỗi hàng sorted, hàng sau lớn hơn hàng trước).</Paragraph>
         <CodeBlock title="search-matrix.js">{`// LeetCode #74: Search a 2D Matrix — O(log(m*n))
@@ -380,7 +380,7 @@ function searchMatrix(matrix, target) {
 // index 1D → row = floor(i/n), col = i%n ✓`}</CodeBlock>
 
         {/* ───────── BÀI 8: FIND FIRST AND LAST POSITION ───────── */}
-        <Heading2>Bài 8: Find First and Last Position (LeetCode #34)</Heading2>
+        <Heading2>Bài 8: Find First and Last Position (<a href="https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #34</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Tìm <Highlight>vị trí đầu và cuối</Highlight> của target trong mảng sorted.</Paragraph>
         <CodeBlock title="find-first-last.js">{`// LeetCode #34: Find First and Last Position — O(log n)
@@ -508,7 +508,7 @@ function binarySearchOnAnswer(lo, hi) {
             </div>
         </div>
 
-        <Heading2>Problem 1: Classic Binary Search (LeetCode #704)</Heading2>
+        <Heading2>Problem 1: Classic Binary Search (<a href="https://leetcode.com/problems/binary-search/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #704</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -548,7 +548,7 @@ function search(nums, target) {
 // left=0, right=5: mid=2, nums[2]=3 < 9 → left=3
 // left=3, right=5: mid=4, nums[4]=9 === 9 → return 4 ✓`}</CodeBlock>
 
-        <Heading2>Problem 2: Koko Eating Bananas (LeetCode #875)</Heading2>
+        <Heading2>Problem 2: Koko Eating Bananas (<a href="https://leetcode.com/problems/koko-eating-bananas/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #875</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -598,7 +598,7 @@ function minEatingSpeed(piles, h) {
 // mid=4: hours=1+2+2+3=8 ≤ 8 → right=4
 // left=4=right → return 4 ✓`}</CodeBlock>
 
-        <Heading2>Problem 3: Search in Rotated Sorted Array (LeetCode #33)</Heading2>
+        <Heading2>Problem 3: Search in Rotated Sorted Array (<a href="https://leetcode.com/problems/search-in-rotated-sorted-array/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #33</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -652,7 +652,7 @@ function search(nums, target) {
 // mid=5(1): left half [0,1] sorted, 0 in [0,1) → right=4
 // mid=4(0): found! return 4 ✓`}</CodeBlock>
 
-        <Heading2>Problem 4: Search Insert Position (LeetCode #35)</Heading2>
+        <Heading2>Problem 4: Search Insert Position (<a href="https://leetcode.com/problems/search-insert-position/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #35</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Given sorted array and target, return index if found or <Highlight>insert position</Highlight> if not.</Paragraph>
         <CodeBlock title="search-insert.js">{`// LeetCode #35: Search Insert Position — O(log n)
@@ -667,7 +667,7 @@ function searchInsert(nums, target) {
 }
 // [1,3,5,6], target=5→2, target=2→1, target=7→4 ✓`}</CodeBlock>
 
-        <Heading2>Problem 5: First Bad Version (LeetCode #278)</Heading2>
+        <Heading2>Problem 5: First Bad Version (<a href="https://leetcode.com/problems/first-bad-version/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #278</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Find the <Highlight>first bad version</Highlight>. API <InlineCode>isBadVersion(n)</InlineCode> checks if version n is bad.</Paragraph>
         <CodeBlock title="first-bad-version.js">{`// LeetCode #278: First Bad Version — O(log n)
@@ -682,7 +682,7 @@ function firstBadVersion(n) {
 }
 // n=5, bad=4: mid=3(good)→left=4, mid=4(bad)→right=4, return 4 ✓`}</CodeBlock>
 
-        <Heading2>Problem 6: Find Minimum in Rotated Sorted Array (LeetCode #153)</Heading2>
+        <Heading2>Problem 6: Find Minimum in Rotated Sorted Array (<a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #153</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Find the <Highlight>minimum value</Highlight> in a rotated sorted array.</Paragraph>
         <CodeBlock title="find-minimum.js">{`// LeetCode #153: Find Minimum in Rotated Sorted Array — O(log n)
@@ -697,7 +697,7 @@ function findMin(nums) {
 }
 // [3,4,5,1,2]: mid=2(5)>2→left=3, mid=3(1)<2→right=3, return 1 ✓`}</CodeBlock>
 
-        <Heading2>Problem 7: Search a 2D Matrix (LeetCode #74)</Heading2>
+        <Heading2>Problem 7: Search a 2D Matrix (<a href="https://leetcode.com/problems/search-a-2d-matrix/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #74</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Find target in m×n sorted matrix (each row sorted, first element {'>'} last of previous row).</Paragraph>
         <CodeBlock title="search-matrix.js">{`// LeetCode #74: Search a 2D Matrix — O(log(m*n))
@@ -715,7 +715,7 @@ function searchMatrix(matrix, target) {
 }
 // Treat m×n matrix as 1D array: row=floor(i/n), col=i%n ✓`}</CodeBlock>
 
-        <Heading2>Problem 8: Find First and Last Position (LeetCode #34)</Heading2>
+        <Heading2>Problem 8: Find First and Last Position (<a href="https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #34</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Find <Highlight>first and last position</Highlight> of target in sorted array.</Paragraph>
         <CodeBlock title="find-first-last.js">{`// LeetCode #34: Find First and Last Position — O(log n)

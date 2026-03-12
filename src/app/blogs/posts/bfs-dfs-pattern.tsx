@@ -101,7 +101,7 @@ function dfsIterative(graph, start) {
         </div>
 
         {/* ───────── BÀI 1 ───────── */}
-        <Heading2>Bài 1: Number of Islands (LeetCode #200)</Heading2>
+        <Heading2>Bài 1: Number of Islands (<a href="https://leetcode.com/problems/number-of-islands/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #200</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -178,7 +178,7 @@ function numIslands(grid) {
 // → Kết quả: 3 ✓`}</CodeBlock>
 
         {/* ───────── BÀI 2 ───────── */}
-        <Heading2>Bài 2: Binary Tree Level Order Traversal (LeetCode #102)</Heading2>
+        <Heading2>Bài 2: Binary Tree Level Order Traversal (<a href="https://leetcode.com/problems/binary-tree-level-order-traversal/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #102</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -249,7 +249,7 @@ function levelOrder(root) {
 // → Kết quả: [[3],[9,20],[15,7]] ✓`}</CodeBlock>
 
         {/* ───────── BÀI 3 ───────── */}
-        <Heading2>Bài 3: Word Search (LeetCode #79)</Heading2>
+        <Heading2>Bài 3: Word Search (<a href="https://leetcode.com/problems/word-search/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #79</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -323,7 +323,7 @@ function exist(board, word) {
 //   k=6 === word.length → return true ✓
 // Mỗi bước backtrack khôi phục ô đã dùng`}</CodeBlock>
 
-        <Heading2>Bài 4: Flood Fill (LeetCode #733)</Heading2>
+        <Heading2>Bài 4: Flood Fill (<a href="https://leetcode.com/problems/flood-fill/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #733</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Tô màu lại tất cả ô <Highlight>cùng màu và kề nhau</Highlight> với ô gốc.</Paragraph>
         <CodeBlock title="flood-fill.js">{`// LeetCode #733: Flood Fill — O(m×n)
@@ -343,7 +343,7 @@ function floodFill(image, sr, sc, color) {
 }
 // Tương tự "paint bucket" trong Photoshop ✓`}</CodeBlock>
 
-        <Heading2>Bài 5: Rotting Oranges (LeetCode #994)</Heading2>
+        <Heading2>Bài 5: Rotting Oranges (<a href="https://leetcode.com/problems/rotting-oranges/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #994</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Cam thối lây lan sang cam tươi kề bên. Tìm <Highlight>số phút nhỏ nhất</Highlight> để tất cả cam thối. BFS multi-source.</Paragraph>
         <CodeBlock title="rotting-oranges.js">{`// LeetCode #994: Rotting Oranges — O(m×n) BFS
@@ -378,7 +378,7 @@ function orangesRotting(grid) {
 }
 // BFS lan từ nhiều nguồn cùng lúc → tìm thời gian ngắn nhất ✓`}</CodeBlock>
 
-        <Heading2>Bài 6: Max Area of Island (LeetCode #695)</Heading2>
+        <Heading2>Bài 6: Max Area of Island (<a href="https://leetcode.com/problems/max-area-of-island/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #695</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Tìm <Highlight>diện tích đảo lớn nhất</Highlight> trong lưới 2D.</Paragraph>
         <CodeBlock title="max-area-island.js">{`// LeetCode #695: Max Area of Island — O(m×n)
@@ -400,7 +400,7 @@ function maxAreaOfIsland(grid) {
 }
 // DFS trả về số ô đất của mỗi đảo ✓`}</CodeBlock>
 
-        <Heading2>Bài 7: Course Schedule (LeetCode #207)</Heading2>
+        <Heading2>Bài 7: Course Schedule (<a href="https://leetcode.com/problems/course-schedule/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #207</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Kiểm tra có thể hoàn thành tất cả môn học không (phát hiện <Highlight>chu trình trong đồ thị có hướng</Highlight>).</Paragraph>
         <CodeBlock title="course-schedule.js">{`// LeetCode #207: Course Schedule — O(V + E)
@@ -426,7 +426,7 @@ function canFinish(numCourses, prerequisites) {
 }
 // Topological sort: nếu có cycle → không thể hoàn thành ✓`}</CodeBlock>
 
-        <Heading2>Bài 8: Surrounded Regions (LeetCode #130)</Heading2>
+        <Heading2>Bài 8: Surrounded Regions (<a href="https://leetcode.com/problems/surrounded-regions/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #130</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Bắt tất cả vùng 'O' <Highlight>bị bao quanh</Highlight> bởi 'X'. Vùng 'O' chạm biên không bị bắt.</Paragraph>
         <CodeBlock title="surrounded-regions.js">{`// LeetCode #130: Surrounded Regions — O(m×n)
@@ -452,7 +452,7 @@ function solve(board) {
 }
 // Key: DFS từ biên, không phải DFS từ giữa ✓`}</CodeBlock>
 
-        <Heading2>Bài 9: Nearest Exit from Entrance (LeetCode #1926)</Heading2>
+        <Heading2>Bài 9: Nearest Exit from Entrance (<a href="https://leetcode.com/problems/nearest-exit-from-entrance-in-maze/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #1926</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Tìm <Highlight>đường ngắn nhất</Highlight> từ lối vào đến lối ra gần nhất (BFS).</Paragraph>
         <CodeBlock title="nearest-exit.js">{`// LeetCode #1926: Nearest Exit from Entrance — O(m×n)
@@ -476,7 +476,7 @@ function nearestExit(maze, entrance) {
 }
 // BFS đảm bảo đường ngắn nhất ✓`}</CodeBlock>
 
-        <Heading2>Bài 10: Diameter of Binary Tree (LeetCode #543)</Heading2>
+        <Heading2>Bài 10: Diameter of Binary Tree (<a href="https://leetcode.com/problems/diameter-of-binary-tree/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #543</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Tìm <Highlight>đường kính</Highlight> của cây nhị phân (đường dài nhất giữa 2 node bất kỳ).</Paragraph>
         <CodeBlock title="diameter-tree.js">{`// LeetCode #543: Diameter of Binary Tree — O(n)
@@ -602,7 +602,7 @@ function dfsIterative(graph, start) {
             </table>
         </div>
 
-        <Heading2>Problem 1: Number of Islands (LeetCode #200)</Heading2>
+        <Heading2>Problem 1: Number of Islands (<a href="https://leetcode.com/problems/number-of-islands/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #200</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -653,7 +653,7 @@ function numIslands(grid) {
 // (2,2)='1' → count=2, DFS sinks (2,2)
 // Result: 2 ✓`}</CodeBlock>
 
-        <Heading2>Problem 2: Binary Tree Level Order (LeetCode #102)</Heading2>
+        <Heading2>Problem 2: Binary Tree Level Order (<a href="https://leetcode.com/problems/binary-tree-level-order-traversal/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #102</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -705,7 +705,7 @@ function levelOrder(root) {
 // Level 1: queue=[9,20] → process both → [[3],[9,20]]
 // Level 2: queue=[15,7] → process both → [[3],[9,20],[15,7]] ✓`}</CodeBlock>
 
-        <Heading2>Problem 3: Word Search (LeetCode #79)</Heading2>
+        <Heading2>Problem 3: Word Search (<a href="https://leetcode.com/problems/word-search/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #79</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -760,7 +760,7 @@ function exist(board, word) {
 //       → (1,0) 'C' matches word[3]
 //         k=4 === word.length → return true ✓`}</CodeBlock>
 
-        <Heading2>Problem 4: Flood Fill (LeetCode #733)</Heading2>
+        <Heading2>Problem 4: Flood Fill (<a href="https://leetcode.com/problems/flood-fill/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #733</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Recolor all <Highlight>same-colored adjacent cells</Highlight> starting from a source cell.</Paragraph>
         <CodeBlock title="flood-fill.js">{`// LeetCode #733: Flood Fill — O(m×n)
@@ -778,7 +778,7 @@ function floodFill(image, sr, sc, color) {
 }
 // Like "paint bucket" tool ✓`}</CodeBlock>
 
-        <Heading2>Problem 5: Rotting Oranges (LeetCode #994)</Heading2>
+        <Heading2>Problem 5: Rotting Oranges (<a href="https://leetcode.com/problems/rotting-oranges/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #994</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Rotten oranges spread to fresh neighbors. Find <Highlight>minimum minutes</Highlight> until all rotten. Multi-source BFS.</Paragraph>
         <CodeBlock title="rotting-oranges.js">{`// LeetCode #994: Rotting Oranges — O(m×n)
@@ -808,7 +808,7 @@ function orangesRotting(grid) {
 }
 // Multi-source BFS spreads from all rotten simultaneously ✓`}</CodeBlock>
 
-        <Heading2>Problem 6: Max Area of Island (LeetCode #695)</Heading2>
+        <Heading2>Problem 6: Max Area of Island (<a href="https://leetcode.com/problems/max-area-of-island/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #695</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Find <Highlight>largest island area</Highlight> in a 2D grid.</Paragraph>
         <CodeBlock title="max-area-island.js">{`// LeetCode #695: Max Area of Island — O(m×n)
@@ -827,7 +827,7 @@ function maxAreaOfIsland(grid) {
 }
 // DFS returns count of land cells per island ✓`}</CodeBlock>
 
-        <Heading2>Problem 7: Course Schedule (LeetCode #207)</Heading2>
+        <Heading2>Problem 7: Course Schedule (<a href="https://leetcode.com/problems/course-schedule/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #207</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Can you finish all courses? Detect <Highlight>cycle in directed graph</Highlight>.</Paragraph>
         <CodeBlock title="course-schedule.js">{`// LeetCode #207: Course Schedule — O(V + E)
@@ -850,7 +850,7 @@ function canFinish(numCourses, prerequisites) {
 }
 // Cycle detection via DFS coloring ✓`}</CodeBlock>
 
-        <Heading2>Problem 8: Surrounded Regions (LeetCode #130)</Heading2>
+        <Heading2>Problem 8: Surrounded Regions (<a href="https://leetcode.com/problems/surrounded-regions/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #130</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Capture all 'O' regions <Highlight>surrounded by 'X'</Highlight>. Border 'O' regions are safe.</Paragraph>
         <CodeBlock title="surrounded-regions.js">{`// LeetCode #130: Surrounded Regions — O(m×n)
@@ -871,7 +871,7 @@ function solve(board) {
 }
 // Key: DFS from borders, not from center ✓`}</CodeBlock>
 
-        <Heading2>Problem 9: Nearest Exit from Entrance (LeetCode #1926)</Heading2>
+        <Heading2>Problem 9: Nearest Exit from Entrance (<a href="https://leetcode.com/problems/nearest-exit-from-entrance-in-maze/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #1926</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Find <Highlight>shortest path</Highlight> from entrance to nearest exit in a maze (BFS).</Paragraph>
         <CodeBlock title="nearest-exit.js">{`// LeetCode #1926: Nearest Exit — O(m×n)
@@ -894,7 +894,7 @@ function nearestExit(maze, entrance) {
 }
 // BFS guarantees shortest path ✓`}</CodeBlock>
 
-        <Heading2>Problem 10: Diameter of Binary Tree (LeetCode #543)</Heading2>
+        <Heading2>Problem 10: Diameter of Binary Tree (<a href="https://leetcode.com/problems/diameter-of-binary-tree/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #543</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Find <Highlight>diameter</Highlight> of a binary tree (longest path between any two nodes).</Paragraph>
         <CodeBlock title="diameter-tree.js">{`// LeetCode #543: Diameter of Binary Tree — O(n)

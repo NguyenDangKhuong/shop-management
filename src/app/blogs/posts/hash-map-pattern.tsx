@@ -221,7 +221,7 @@ function twoSumHash(nums, target) {
         </Callout>
 
         {/* ───────── BÀI 1: TWO SUM ───────── */}
-        <Heading2>Bài 1: Two Sum (LeetCode #1)</Heading2>
+        <Heading2>Bài 1: Two Sum (<a href="https://leetcode.com/problems/two-sum/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #1</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -335,7 +335,7 @@ function twoSum(nums: number[], target: number): number[] {
 }`}</CodeBlock>
 
         {/* ───────── BÀI 2: GROUP ANAGRAMS ───────── */}
-        <Heading2>Bài 2: Group Anagrams (LeetCode #49)</Heading2>
+        <Heading2>Bài 2: Group Anagrams (<a href="https://leetcode.com/problems/group-anagrams/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #49</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -426,7 +426,7 @@ arr.push("eat")
         </Callout>
 
         {/* ───────── BÀI 3: CONTAINS DUPLICATE ───────── */}
-        <Heading2>Bài 3: Contains Duplicate (LeetCode #217)</Heading2>
+        <Heading2>Bài 3: Contains Duplicate (<a href="https://leetcode.com/problems/contains-duplicate/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #217</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -474,7 +474,7 @@ function containsDuplicate(nums) {
 // const containsDuplicate = nums => new Set(nums).size !== nums.length`}</CodeBlock>
 
         {/* ───────── BÀI 4: VALID ANAGRAM ───────── */}
-        <Heading2>Bài 4: Valid Anagram (LeetCode #242)</Heading2>
+        <Heading2>Bài 4: Valid Anagram (<a href="https://leetcode.com/problems/valid-anagram/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #242</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -509,7 +509,7 @@ function isAnagram(s, t) {
 // Vòng 2: n→0, a→2, g→0, a→1, r→0, a→0, m→0 → true ✓`}</CodeBlock>
 
         {/* ───────── BÀI 5: RANSOM NOTE ───────── */}
-        <Heading2>Bài 5: Ransom Note (LeetCode #383)</Heading2>
+        <Heading2>Bài 5: Ransom Note (<a href="https://leetcode.com/problems/ransom-note/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #383</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -607,7 +607,7 @@ Các ký tự x, y, z dư → không sao (magazine được phép dư)`}</CodeBl
         </Callout>
 
         {/* ───────── BÀI 6: INTERSECTION OF TWO ARRAYS ───────── */}
-        <Heading2>Bài 6: Intersection of Two Arrays (LeetCode #349)</Heading2>
+        <Heading2>Bài 6: Intersection of Two Arrays (<a href="https://leetcode.com/problems/intersection-of-two-arrays/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #349</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -636,7 +636,7 @@ function intersection(nums1, nums2) {
 // → [2] ✓`}</CodeBlock>
 
         {/* ───────── BÀI 7: TOP K FREQUENT ELEMENTS ───────── */}
-        <Heading2>Bài 7: Top K Frequent Elements (LeetCode #347)</Heading2>
+        <Heading2>Bài 7: Top K Frequent Elements (<a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #347</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -674,7 +674,7 @@ function topKFrequent(nums, k) {
 // Duyệt ngược: bucket[3]=[1], bucket[2]=[2] → [1, 2] ✓`}</CodeBlock>
 
         {/* ───────── BÀI 8: LONGEST CONSECUTIVE SEQUENCE ───────── */}
-        <Heading2>Bài 8: Longest Consecutive Sequence (LeetCode #128)</Heading2>
+        <Heading2>Bài 8: Longest Consecutive Sequence (<a href="https://leetcode.com/problems/longest-consecutive-sequence/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #128</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -716,7 +716,7 @@ function longestConsecutive(nums) {
 // maxLen = 4`}</CodeBlock>
 
         {/* ───────── BÀI 9: SUBARRAY SUM EQUALS K ───────── */}
-        <Heading2>Bài 9: Subarray Sum Equals K (LeetCode #560)</Heading2>
+        <Heading2>Bài 9: Subarray Sum Equals K (<a href="https://leetcode.com/problems/subarray-sum-equals-k/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #560</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -756,7 +756,7 @@ function subarraySum(nums, k) {
 // num=3: sum=6, target=6-3=3, count+=1 → count=2 (subarray [1,2] và [3]) ✓`}</CodeBlock>
 
         {/* ───────── BÀI 10: VALID SUDOKU ───────── */}
-        <Heading2>Bài 10: Valid Sudoku (LeetCode #36)</Heading2>
+        <Heading2>Bài 10: Valid Sudoku (<a href="https://leetcode.com/problems/valid-sudoku/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #36</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -1080,7 +1080,7 @@ function twoSumHash(nums, target) {
             replacing the inner loop with a <Highlight>HashMap</Highlight> → reduces to O(n). Trade-off: O(n) extra memory — but totally worth it!
         </Callout>
 
-        <Heading2>Problem 1: Two Sum (LeetCode #1)</Heading2>
+        <Heading2>Problem 1: Two Sum (<a href="https://leetcode.com/problems/two-sum/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #1</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1193,7 +1193,7 @@ function twoSum(nums: number[], target: number): number[] {
     return []
 }`}</CodeBlock>
 
-        <Heading2>Problem 2: Group Anagrams (LeetCode #49)</Heading2>
+        <Heading2>Problem 2: Group Anagrams (<a href="https://leetcode.com/problems/group-anagrams/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #49</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1274,7 +1274,7 @@ arr.push("eat")
             When you <InlineCode>.push()</InlineCode>, the array mutates in place → Map still points to the same array → sees the new value automatically.
         </Callout>
 
-        <Heading2>Problem 3: Contains Duplicate (LeetCode #217)</Heading2>
+        <Heading2>Problem 3: Contains Duplicate (<a href="https://leetcode.com/problems/contains-duplicate/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #217</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1315,7 +1315,7 @@ function containsDuplicate(nums) {
 // num=3: seen = {1,2} → not found → seen = {1,2,3}
 // num=1: seen = {1,2,3} → HAS 1! → return true ✓`}</CodeBlock>
 
-        <Heading2>Problem 4: Valid Anagram (LeetCode #242)</Heading2>
+        <Heading2>Problem 4: Valid Anagram (<a href="https://leetcode.com/problems/valid-anagram/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #242</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1349,7 +1349,7 @@ function isAnagram(s, t) {
 // Loop 1: count = Map { a→3, n→1, g→1, r→1, m→1 }
 // Loop 2: n→0, a→2, g→0, a→1, r→0, a→0, m→0 → true ✓`}</CodeBlock>
 
-        <Heading2>Problem 5: Ransom Note (LeetCode #383)</Heading2>
+        <Heading2>Problem 5: Ransom Note (<a href="https://leetcode.com/problems/ransom-note/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #383</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1446,7 +1446,7 @@ Extra chars x, y, z → no problem (magazine can have surplus)`}</CodeBlock>
             • <strong>Ransom Note</strong>: magazine can have <Highlight>surplus characters</Highlight> → just need &quot;enough&quot;, not &quot;equal&quot;
         </Callout>
 
-        <Heading2>Problem 6: Intersection of Two Arrays (LeetCode #349)</Heading2>
+        <Heading2>Problem 6: Intersection of Two Arrays (<a href="https://leetcode.com/problems/intersection-of-two-arrays/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #349</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1474,7 +1474,7 @@ function intersection(nums1, nums2) {
 // num=2: result already has 2 (Set auto-dedup)
 // → [2] ✓`}</CodeBlock>
 
-        <Heading2>Problem 7: Top K Frequent Elements (LeetCode #347)</Heading2>
+        <Heading2>Problem 7: Top K Frequent Elements (<a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #347</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1511,7 +1511,7 @@ function topKFrequent(nums, k) {
 // buckets = [[], [3], [2], [1], ...]
 // Reverse: bucket[3]=[1], bucket[2]=[2] → [1, 2] ✓`}</CodeBlock>
 
-        <Heading2>Problem 8: Longest Consecutive Sequence (LeetCode #128)</Heading2>
+        <Heading2>Problem 8: Longest Consecutive Sequence (<a href="https://leetcode.com/problems/longest-consecutive-sequence/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #128</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1552,7 +1552,7 @@ function longestConsecutive(nums) {
 // num=1: 0 not in set → start → 1,2,3,4 → length=4 ✓
 // maxLen = 4`}</CodeBlock>
 
-        <Heading2>Problem 9: Subarray Sum Equals K (LeetCode #560)</Heading2>
+        <Heading2>Problem 9: Subarray Sum Equals K (<a href="https://leetcode.com/problems/subarray-sum-equals-k/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #560</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1591,7 +1591,7 @@ function subarraySum(nums, k) {
 // num=2: sum=3, target=3-3=0, count+=1 → prefixCount={0:1, 1:1, 3:1}
 // num=3: sum=6, target=6-3=3, count+=1 → count=2 (subarrays [1,2] and [3]) ✓`}</CodeBlock>
 
-        <Heading2>Problem 10: Valid Sudoku (LeetCode #36)</Heading2>
+        <Heading2>Problem 10: Valid Sudoku (<a href="https://leetcode.com/problems/valid-sudoku/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #36</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>

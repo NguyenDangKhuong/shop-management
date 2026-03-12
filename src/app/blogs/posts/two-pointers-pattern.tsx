@@ -93,7 +93,7 @@ result.push(...a.slice(i), ...b.slice(j))`}</CodeBlock>
         </div>
 
         {/* ───────── BÀI 1 ───────── */}
-        <Heading2>Bài 1: Two Sum II — Mảng đã sắp xếp (LeetCode #167)</Heading2>
+        <Heading2>Bài 1: Two Sum II — Mảng đã sắp xếp (<a href="https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #167</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -155,7 +155,7 @@ function twoSum(numbers, target) {
 // → Vì mảng ĐÃ SORTED → Two Pointers O(1) space, Hash Map O(n) space`}</CodeBlock>
 
         {/* ───────── BÀI 2 ───────── */}
-        <Heading2>Bài 2: Valid Palindrome (LeetCode #125)</Heading2>
+        <Heading2>Bài 2: Valid Palindrome (<a href="https://leetcode.com/problems/valid-palindrome/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #125</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -216,7 +216,7 @@ function isPalindrome(s) {
 // left=3 'e', right=4 'a' → ✗ → return false ✓`}</CodeBlock>
 
         {/* ───────── BÀI 3 ───────── */}
-        <Heading2>Bài 3: Container With Most Water (LeetCode #11)</Heading2>
+        <Heading2>Bài 3: Container With Most Water (<a href="https://leetcode.com/problems/container-with-most-water/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #11</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -281,7 +281,7 @@ function maxArea(height) {
 // ... tiếp tục → max = 49 ✓`}</CodeBlock>
 
         {/* ───────── BÀI 4: MERGE ───────── */}
-        <Heading2>Bài 4: Merge hai mảng đã sắp xếp (LeetCode #88)</Heading2>
+        <Heading2>Bài 4: Merge hai mảng đã sắp xếp (<a href="https://leetcode.com/problems/merge-sorted-array/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #88</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -348,7 +348,7 @@ function merge(nums1, m, nums2, n) {
         </Callout>
 
         {/* ───────── BÀI 5: REMOVE DUPLICATES ───────── */}
-        <Heading2>Bài 5: Remove Duplicates from Sorted Array (LeetCode #26)</Heading2>
+        <Heading2>Bài 5: Remove Duplicates from Sorted Array (<a href="https://leetcode.com/problems/remove-duplicates-from-sorted-array/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #26</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -439,7 +439,7 @@ slow fast
         </Callout>
 
         {/* ───────── BÀI 6: MOVE ZEROES ───────── */}
-        <Heading2>Bài 6: Move Zeroes (LeetCode #283)</Heading2>
+        <Heading2>Bài 6: Move Zeroes (<a href="https://leetcode.com/problems/move-zeroes/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #283</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -468,7 +468,7 @@ function moveZeroes(nums) {
 // fast=4: 12 → swap(2,4) → [1,3,12,0,0], slow=3 ✓`}</CodeBlock>
 
         {/* ───────── BÀI 7: REVERSE STRING ───────── */}
-        <Heading2>Bài 7: Reverse String (LeetCode #344)</Heading2>
+        <Heading2>Bài 7: Reverse String (<a href="https://leetcode.com/problems/reverse-string/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #344</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -492,7 +492,7 @@ function reverseString(s) {
 // left=2 === right=2 → done → ['o','l','l','e','h'] ✓`}</CodeBlock>
 
         {/* ───────── BÀI 8: SQUARES OF A SORTED ARRAY ───────── */}
-        <Heading2>Bài 8: Squares of a Sorted Array (LeetCode #977)</Heading2>
+        <Heading2>Bài 8: Squares of a Sorted Array (<a href="https://leetcode.com/problems/squares-of-a-sorted-array/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #977</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -529,7 +529,7 @@ function sortedSquares(nums) {
 // → [0, 1, 9, 16, 100] ✓`}</CodeBlock>
 
         {/* ───────── BÀI 9: 3SUM ───────── */}
-        <Heading2>Bài 9: 3Sum (LeetCode #15)</Heading2>
+        <Heading2>Bài 9: 3Sum (<a href="https://leetcode.com/problems/3sum/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #15</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -574,7 +574,7 @@ function threeSum(nums) {
 // → [[-1,-1,2], [-1,0,1]] ✓`}</CodeBlock>
 
         {/* ───────── BÀI 10: SORT COLORS ───────── */}
-        <Heading2>Bài 10: Sort Colors (LeetCode #75)</Heading2>
+        <Heading2>Bài 10: Sort Colors (<a href="https://leetcode.com/problems/sort-colors/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #75</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -609,7 +609,7 @@ function sortColors(nums) {
 // mid=3(1): mid=4 > high=3 → done → [0,0,1,1,2,2] ✓`}</CodeBlock>
 
         {/* ───────── BÀI 11: LINKED LIST CYCLE II ───────── */}
-        <Heading2>Bài 11: Linked List Cycle II (LeetCode #142)</Heading2>
+        <Heading2>Bài 11: Linked List Cycle II (<a href="https://leetcode.com/problems/linked-list-cycle-ii/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #142</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -647,7 +647,7 @@ function detectCycle(head) {
 // = khoảng cách từ meeting point đến cycle start (đi theo cycle)`}</CodeBlock>
 
         {/* ───────── BÀI 12: PRODUCT OF ARRAY EXCEPT SELF ───────── */}
-        <Heading2>Bài 12: Product of Array Except Self (LeetCode #238)</Heading2>
+        <Heading2>Bài 12: Product of Array Except Self (<a href="https://leetcode.com/problems/product-of-array-except-self/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #238</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -794,7 +794,7 @@ result.push(...a.slice(i), ...b.slice(j))`}</CodeBlock>
             </table>
         </div>
 
-        <Heading2>Problem 1: Two Sum II — Sorted Array (LeetCode #167)</Heading2>
+        <Heading2>Problem 1: Two Sum II — Sorted Array (<a href="https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #167</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -839,7 +839,7 @@ function twoSum(numbers, target) {
 // left=0, right=2: 2+11=13 > 9 → right--
 // left=0, right=1: 2+7=9 === 9 → return [1, 2] ✓`}</CodeBlock>
 
-        <Heading2>Problem 2: Valid Palindrome (LeetCode #125)</Heading2>
+        <Heading2>Problem 2: Valid Palindrome (<a href="https://leetcode.com/problems/valid-palindrome/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #125</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -880,7 +880,7 @@ function isPalindrome(s) {
 // left=1 'm' vs right=18 'm' → ✓
 // ... all match → return true ✓`}</CodeBlock>
 
-        <Heading2>Problem 3: Container With Most Water (LeetCode #11)</Heading2>
+        <Heading2>Problem 3: Container With Most Water (<a href="https://leetcode.com/problems/container-with-most-water/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #11</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -925,7 +925,7 @@ function maxArea(height) {
 // left=1(8), right=8(7): area=7*7=49, max=49 → right--
 // ... continues → max = 49 ✓`}</CodeBlock>
 
-        <Heading2>Problem 4: Merge Sorted Array (LeetCode #88)</Heading2>
+        <Heading2>Problem 4: Merge Sorted Array (<a href="https://leetcode.com/problems/merge-sorted-array/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #88</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -974,7 +974,7 @@ function merge(nums1, m, nums2, n) {
 // p1=1(2), p2=0(2): 2=2 → nums1[2]=2
 // → [1, 2, 2, 3, 5, 6] ✓`}</CodeBlock>
 
-        <Heading2>Problem 5: Remove Duplicates from Sorted Array (LeetCode #26)</Heading2>
+        <Heading2>Problem 5: Remove Duplicates from Sorted Array (<a href="https://leetcode.com/problems/remove-duplicates-from-sorted-array/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #26</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1062,7 +1062,7 @@ slow fast
             Need to <strong>partition/filter in-place</strong> → same direction (slow/fast).
         </Callout>
 
-        <Heading2>Problem 6: Move Zeroes (LeetCode #283)</Heading2>
+        <Heading2>Problem 6: Move Zeroes (<a href="https://leetcode.com/problems/move-zeroes/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #283</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1082,7 +1082,7 @@ function moveZeroes(nums) {
 
 // Example: [0, 1, 0, 3, 12] → [1, 3, 12, 0, 0] ✓`}</CodeBlock>
 
-        <Heading2>Problem 7: Reverse String (LeetCode #344)</Heading2>
+        <Heading2>Problem 7: Reverse String (<a href="https://leetcode.com/problems/reverse-string/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #344</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1100,7 +1100,7 @@ function reverseString(s) {
 
 // Example: ['h','e','l','l','o'] → ['o','l','l','e','h'] ✓`}</CodeBlock>
 
-        <Heading2>Problem 8: Squares of a Sorted Array (LeetCode #977)</Heading2>
+        <Heading2>Problem 8: Squares of a Sorted Array (<a href="https://leetcode.com/problems/squares-of-a-sorted-array/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #977</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1123,7 +1123,7 @@ function sortedSquares(nums) {
 
 // Example: [-4, -1, 0, 3, 10] → [0, 1, 9, 16, 100] ✓`}</CodeBlock>
 
-        <Heading2>Problem 9: 3Sum (LeetCode #15)</Heading2>
+        <Heading2>Problem 9: 3Sum (<a href="https://leetcode.com/problems/3sum/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #15</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1155,7 +1155,7 @@ function threeSum(nums) {
 
 // Example: [-1,0,1,2,-1,-4] → [[-1,-1,2], [-1,0,1]] ✓`}</CodeBlock>
 
-        <Heading2>Problem 10: Sort Colors (LeetCode #75)</Heading2>
+        <Heading2>Problem 10: Sort Colors (<a href="https://leetcode.com/problems/sort-colors/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #75</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1181,7 +1181,7 @@ function sortColors(nums) {
 
 // Example: [2, 0, 2, 1, 1, 0] → [0, 0, 1, 1, 2, 2] ✓`}</CodeBlock>
 
-        <Heading2>Problem 11: Linked List Cycle II (LeetCode #142)</Heading2>
+        <Heading2>Problem 11: Linked List Cycle II (<a href="https://leetcode.com/problems/linked-list-cycle-ii/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #142</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -1210,7 +1210,7 @@ function detectCycle(head) {
 
 // Floyd's algorithm: distance head→cycle start = meeting point→cycle start`}</CodeBlock>
 
-        <Heading2>Problem 12: Product of Array Except Self (LeetCode #238)</Heading2>
+        <Heading2>Problem 12: Product of Array Except Self (<a href="https://leetcode.com/problems/product-of-array-except-self/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #238</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>

@@ -63,7 +63,7 @@ for (let i = 0; i < arr.length; i++) {
         </div>
 
         {/* ───────── BÀI 1 ───────── */}
-        <Heading2>Bài 1: Valid Parentheses (LeetCode #20)</Heading2>
+        <Heading2>Bài 1: Valid Parentheses (<a href="https://leetcode.com/problems/valid-parentheses/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #20</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -129,7 +129,7 @@ function isValid(s) {
 // ')' → pop '[', pairs[')']='(' → '[' !== '(' → return false ✓`}</CodeBlock>
 
         {/* ───────── BÀI 2 ───────── */}
-        <Heading2>Bài 2: Daily Temperatures (LeetCode #739)</Heading2>
+        <Heading2>Bài 2: Daily Temperatures (<a href="https://leetcode.com/problems/daily-temperatures/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #739</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -192,7 +192,7 @@ function dailyTemperatures(temperatures) {
 // → answer = [1, 1, 4, 2, 1, 1, 0, 0] ✓`}</CodeBlock>
 
         {/* ───────── BÀI 3 ───────── */}
-        <Heading2>Bài 3: Min Stack (LeetCode #155)</Heading2>
+        <Heading2>Bài 3: Min Stack (<a href="https://leetcode.com/problems/min-stack/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #155</a>)</Heading2>
 
         <Heading3>Đề bài</Heading3>
         <Paragraph>
@@ -292,7 +292,7 @@ class MinStack {
         </Callout>
 
         {/* ───────── BÀI 4: IMPLEMENT QUEUE USING STACKS ───────── */}
-        <Heading2>Bài 4: Implement Queue using Stacks (LeetCode #232)</Heading2>
+        <Heading2>Bài 4: Implement Queue using Stacks (<a href="https://leetcode.com/problems/implement-queue-using-stacks/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #232</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Implement <Highlight>FIFO queue</Highlight> chỉ dùng 2 stacks.</Paragraph>
         <CodeBlock title="queue-using-stacks.js">{`// LeetCode #232: Implement Queue using Stacks — Amortized O(1)
@@ -334,7 +334,7 @@ class MyQueue {
 // pushStack→popStack: [1,2] → pop→[2,1] → peek=1, pop=1`}</CodeBlock>
 
         {/* ───────── BÀI 5: BACKSPACE STRING COMPARE ───────── */}
-        <Heading2>Bài 5: Backspace String Compare (LeetCode #844)</Heading2>
+        <Heading2>Bài 5: Backspace String Compare (<a href="https://leetcode.com/problems/backspace-string-compare/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #844</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>So sánh hai chuỗi trong đó <InlineCode>#</InlineCode> là <Highlight>backspace</Highlight>.</Paragraph>
         <CodeBlock title="backspace-compare.js">{`// LeetCode #844: Backspace String Compare — O(n)
@@ -357,7 +357,7 @@ function backspaceCompare(s, t) {
 // "ac" === "ac" → true ✓`}</CodeBlock>
 
         {/* ───────── BÀI 6: EVALUATE RPN ───────── */}
-        <Heading2>Bài 6: Evaluate Reverse Polish Notation (LeetCode #150)</Heading2>
+        <Heading2>Bài 6: Evaluate Reverse Polish Notation (<a href="https://leetcode.com/problems/evaluate-reverse-polish-notation/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #150</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Tính giá trị biểu thức <Highlight>Reverse Polish Notation</Highlight> (hậu tố).</Paragraph>
         <CodeBlock title="eval-rpn.js">{`// LeetCode #150: Evaluate RPN — O(n)
@@ -389,7 +389,7 @@ function evalRPN(tokens) {
 // → 9 ✓   (tương đương (2+1)*3 = 9)`}</CodeBlock>
 
         {/* ───────── BÀI 7: DECODE STRING ───────── */}
-        <Heading2>Bài 7: Decode String (LeetCode #394)</Heading2>
+        <Heading2>Bài 7: Decode String (<a href="https://leetcode.com/problems/decode-string/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #394</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Decode chuỗi encode dạng <InlineCode>k[encoded_string]</InlineCode>. Ví dụ: <InlineCode>3[a2[c]]</InlineCode> = <Highlight>accaccacc</Highlight>.</Paragraph>
         <CodeBlock title="decode-string.js">{`// LeetCode #394: Decode String — O(n)
@@ -426,7 +426,7 @@ function decodeString(s) {
 // ]→pop(3,""), str=""+"accaccacc"="accaccacc" ✓`}</CodeBlock>
 
         {/* ───────── BÀI 8: ASTEROID COLLISION ───────── */}
-        <Heading2>Bài 8: Asteroid Collision (LeetCode #735)</Heading2>
+        <Heading2>Bài 8: Asteroid Collision (<a href="https://leetcode.com/problems/asteroid-collision/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #735</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Các asteroid di chuyển cùng tốc độ. Dương đi phải, âm đi trái. Va chạm → <Highlight>nhỏ hơn nổ</Highlight>, bằng nhau → cả hai nổ.</Paragraph>
         <CodeBlock title="asteroid-collision.js">{`// LeetCode #735: Asteroid Collision — O(n)
@@ -458,7 +458,7 @@ function asteroidCollision(asteroids) {
 // 5→[5], 10→[5,10], -5: |-5|<10 → -5 nổ → [5,10] ✓`}</CodeBlock>
 
         {/* ───────── BÀI 9: CAR FLEET ───────── */}
-        <Heading2>Bài 9: Car Fleet (LeetCode #853)</Heading2>
+        <Heading2>Bài 9: Car Fleet (<a href="https://leetcode.com/problems/car-fleet/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #853</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Cho vị trí và tốc độ các xe, đếm số <Highlight>car fleet</Highlight> (nhóm xe đến đích cùng lúc).</Paragraph>
         <CodeBlock title="car-fleet.js">{`// LeetCode #853: Car Fleet — O(n log n)
@@ -487,7 +487,7 @@ function carFleet(target, position, speed) {
 // Nhưng wait - xe ở pos=8 mất 1s(=xe ở 10), merge! → 3 fleets ✓`}</CodeBlock>
 
         {/* ───────── BÀI 10: LARGEST RECT IN HISTOGRAM ───────── */}
-        <Heading2>Bài 10: Largest Rectangle in Histogram (LeetCode #84)</Heading2>
+        <Heading2>Bài 10: Largest Rectangle in Histogram (<a href="https://leetcode.com/problems/largest-rectangle-in-histogram/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #84</a>)</Heading2>
         <Heading3>Đề bài</Heading3>
         <Paragraph>Tìm <Highlight>hình chữ nhật lớn nhất</Highlight> trong histogram.</Paragraph>
         <CodeBlock title="largest-rectangle.js">{`// LeetCode #84: Largest Rectangle in Histogram — O(n)
@@ -581,7 +581,7 @@ for (let i = 0; i < arr.length; i++) {
             </table>
         </div>
 
-        <Heading2>Problem 1: Valid Parentheses (LeetCode #20)</Heading2>
+        <Heading2>Problem 1: Valid Parentheses (<a href="https://leetcode.com/problems/valid-parentheses/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #20</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -633,7 +633,7 @@ function isValid(s) {
 // ')' → pop '(', match ✓ → []
 // Empty → true ✓`}</CodeBlock>
 
-        <Heading2>Problem 2: Daily Temperatures (LeetCode #739)</Heading2>
+        <Heading2>Problem 2: Daily Temperatures (<a href="https://leetcode.com/problems/daily-temperatures/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #739</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -684,7 +684,7 @@ function dailyTemperatures(temperatures) {
 // i=7(73): push → stack=[6,7]
 // → [1, 1, 4, 2, 1, 1, 0, 0] ✓`}</CodeBlock>
 
-        <Heading2>Problem 3: Min Stack (LeetCode #155)</Heading2>
+        <Heading2>Problem 3: Min Stack (<a href="https://leetcode.com/problems/min-stack/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #155</a>)</Heading2>
 
         <Heading3>Problem</Heading3>
         <Paragraph>
@@ -772,7 +772,7 @@ class MinStack {
             → think <InlineCode>Monotonic Stack</InlineCode>.
         </Callout>
 
-        <Heading2>Problem 4: Implement Queue using Stacks (LeetCode #232)</Heading2>
+        <Heading2>Problem 4: Implement Queue using Stacks (<a href="https://leetcode.com/problems/implement-queue-using-stacks/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #232</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Implement <Highlight>FIFO queue</Highlight> using only 2 stacks.</Paragraph>
         <CodeBlock title="queue-using-stacks.js">{`// LeetCode #232: Implement Queue using Stacks — Amortized O(1)
@@ -790,7 +790,7 @@ class MyQueue {
 }
 // push(1),push(2),peek()→1,pop()→1 ✓`}</CodeBlock>
 
-        <Heading2>Problem 5: Backspace String Compare (LeetCode #844)</Heading2>
+        <Heading2>Problem 5: Backspace String Compare (<a href="https://leetcode.com/problems/backspace-string-compare/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #844</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Compare two strings where <InlineCode>#</InlineCode> is <Highlight>backspace</Highlight>.</Paragraph>
         <CodeBlock title="backspace-compare.js">{`// LeetCode #844: Backspace String Compare — O(n)
@@ -807,7 +807,7 @@ function backspaceCompare(s, t) {
 }
 // Example: "ab#c" vs "ad#c" → "ac"="ac" → true ✓`}</CodeBlock>
 
-        <Heading2>Problem 6: Evaluate Reverse Polish Notation (LeetCode #150)</Heading2>
+        <Heading2>Problem 6: Evaluate Reverse Polish Notation (<a href="https://leetcode.com/problems/evaluate-reverse-polish-notation/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #150</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Evaluate a <Highlight>Reverse Polish Notation</Highlight> (postfix) expression.</Paragraph>
         <CodeBlock title="eval-rpn.js">{`// LeetCode #150: Evaluate RPN — O(n)
@@ -827,7 +827,7 @@ function evalRPN(tokens) {
 }
 // Example: ["2","1","+","3","*"] → (2+1)*3 = 9 ✓`}</CodeBlock>
 
-        <Heading2>Problem 7: Decode String (LeetCode #394)</Heading2>
+        <Heading2>Problem 7: Decode String (<a href="https://leetcode.com/problems/decode-string/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #394</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Decode encoded string like <InlineCode>k[encoded_string]</InlineCode>. Example: <InlineCode>3[a2[c]]</InlineCode> = <Highlight>accaccacc</Highlight>.</Paragraph>
         <CodeBlock title="decode-string.js">{`// LeetCode #394: Decode String — O(n)
@@ -849,7 +849,7 @@ function decodeString(s) {
 }
 // "3[a2[c]]" → "accaccacc" ✓`}</CodeBlock>
 
-        <Heading2>Problem 8: Asteroid Collision (LeetCode #735)</Heading2>
+        <Heading2>Problem 8: Asteroid Collision (<a href="https://leetcode.com/problems/asteroid-collision/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #735</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Asteroids move at same speed. Positive goes right, negative left. Collision → <Highlight>smaller explodes</Highlight>, equal → both explode.</Paragraph>
         <CodeBlock title="asteroid-collision.js">{`// LeetCode #735: Asteroid Collision — O(n)
@@ -868,7 +868,7 @@ function asteroidCollision(asteroids) {
 }
 // [5, 10, -5] → -5 < 10 → -5 explodes → [5, 10] ✓`}</CodeBlock>
 
-        <Heading2>Problem 9: Car Fleet (LeetCode #853)</Heading2>
+        <Heading2>Problem 9: Car Fleet (<a href="https://leetcode.com/problems/car-fleet/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #853</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Given positions and speeds, count the number of <Highlight>car fleets</Highlight> arriving at target.</Paragraph>
         <CodeBlock title="car-fleet.js">{`// LeetCode #853: Car Fleet — O(n log n)
@@ -885,7 +885,7 @@ function carFleet(target, position, speed) {
 }
 // Cars that arrive faster merge with slower car ahead → fewer fleets`}</CodeBlock>
 
-        <Heading2>Problem 10: Largest Rectangle in Histogram (LeetCode #84)</Heading2>
+        <Heading2>Problem 10: Largest Rectangle in Histogram (<a href="https://leetcode.com/problems/largest-rectangle-in-histogram/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300">LeetCode #84</a>)</Heading2>
         <Heading3>Problem</Heading3>
         <Paragraph>Find the <Highlight>largest rectangle</Highlight> in a histogram.</Paragraph>
         <CodeBlock title="largest-rectangle.js">{`// LeetCode #84: Largest Rectangle in Histogram — O(n)
