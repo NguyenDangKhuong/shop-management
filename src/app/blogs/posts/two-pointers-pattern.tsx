@@ -370,10 +370,73 @@ function removeDuplicates(nums) {
     return slow + 1                 // Số phần tử unique
 }
 
-// Ví dụ: nums = [1, 1, 2]
+// Ví dụ: nums = [1, 1, 2, 2, 3]
 // fast=1: nums[1]=1 === nums[0]=1 → skip
-// fast=2: nums[2]=2 !== nums[0]=1 → slow=1, nums[1]=2
-// → nums = [1, 2, _], return 2 ✓`}</CodeBlock>
+// fast=2: nums[2]=2 !== nums[0]=1 → slow=1, nums[1]=2 → [1,2,2,2,3]
+// fast=3: nums[3]=2 === nums[1]=2 → skip
+// fast=4: nums[4]=3 !== nums[1]=2 → slow=2, nums[2]=3 → [1,2,3,2,3]
+// → return 3, nums = [1, 2, 3, ...] ✓`}</CodeBlock>
+
+        <Callout type="warning">
+            <strong>🤔 Tại sao bài này dùng cùng hướng (→ →) mà không dùng ngược hướng (← →)?</strong>
+        </Callout>
+
+        <Heading3>2 kiểu Two Pointers</Heading3>
+
+        <div className="my-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
+                <div className="text-blue-400 font-bold text-sm mb-2">↔️ Opposite Direction (2 đầu → giữa)</div>
+                <pre className="text-xs font-mono text-[var(--text-secondary)] bg-[var(--bg-tag)] p-2 rounded-lg">{`[1, 3, 5, 7, 9]
+ ↑              ↑
+left          right
+→ thu hẹp vào giữa`}</pre>
+                <p className="text-xs text-[var(--text-muted)] mt-2">Dùng khi: so sánh/kết hợp 2 đầu</p>
+            </div>
+            <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
+                <div className="text-green-400 font-bold text-sm mb-2">→→ Same Direction (cùng chiều)</div>
+                <pre className="text-xs font-mono text-[var(--text-secondary)] bg-[var(--bg-tag)] p-2 rounded-lg">{`[1, 1, 2, 2, 3]
+ ↑  ↑
+slow fast
+→ cùng chạy từ trái sang phải`}</pre>
+                <p className="text-xs text-[var(--text-muted)] mt-2">Dùng khi: phân vùng/lọc in-place</p>
+            </div>
+        </div>
+
+        <Paragraph>
+            Bài Remove Duplicates cần <Highlight>giữ phần tử unique ở đầu array</Highlight> (in-place).
+            Pointer <InlineCode>slow</InlineCode> đóng vai trò {`"`}ghi{`"`} — đánh dấu vị trí unique cuối cùng.
+            Pointer <InlineCode>fast</InlineCode> đóng vai trò {`"`}đọc{`"`} — quét hết array tìm giá trị mới.
+        </Paragraph>
+
+        <Paragraph>
+            <strong>Không thể dùng 2 đầu</strong> vì: (1) Element unique nằm rải rác tuần tự, không nằm ở 2 đầu.
+            (2) Cần ghi kết quả tuần tự từ trái sang phải. (3) Kéo <InlineCode>right</InlineCode> vào giữa sẽ mất thứ tự.
+        </Paragraph>
+
+        <div className="my-4 overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+                <thead>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Bài toán</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Hướng</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Lý do</th>
+                    </tr>
+                </thead>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3">Two Sum II</td><td className="p-3">← →</td><td className="p-3">So sánh tổng 2 đầu</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Valid Palindrome</td><td className="p-3">← →</td><td className="p-3">So sánh 2 đầu chuỗi</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Container With Water</td><td className="p-3">← →</td><td className="p-3">Max area từ 2 biên</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3"><strong>Remove Duplicates</strong></td><td className="p-3"><strong>→ →</strong></td><td className="p-3"><strong>Phân vùng unique/duplicate</strong></td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Move Zeroes</td><td className="p-3">→ →</td><td className="p-3">Phân vùng zero/non-zero</td></tr>
+                    <tr><td className="p-3">Merge Sorted Array</td><td className="p-3">← ←</td><td className="p-3">Ghi từ cuối tránh overwrite</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <Callout type="info">
+            💡 <strong>Quy tắc:</strong> Cần <strong>kết hợp 2 đầu</strong> → opposite direction.
+            Cần <strong>phân vùng/lọc in-place</strong> → same direction (slow/fast).
+        </Callout>
 
         {/* ───────── BÀI 6: MOVE ZEROES ───────── */}
         <Heading2>Bài 6: Move Zeroes (LeetCode #283)</Heading2>
@@ -931,7 +994,73 @@ function removeDuplicates(nums) {
     return slow + 1
 }
 
-// Example: nums = [1, 1, 2] → return 2, nums = [1, 2, _] ✓`}</CodeBlock>
+// Example: nums = [1, 1, 2, 2, 3]
+// fast=1: nums[1]=1 === nums[0]=1 → skip
+// fast=2: nums[2]=2 !== nums[0]=1 → slow=1, nums[1]=2 → [1,2,2,2,3]
+// fast=3: nums[3]=2 === nums[1]=2 → skip
+// fast=4: nums[4]=3 !== nums[1]=2 → slow=2, nums[2]=3 → [1,2,3,2,3]
+// → return 3, nums = [1, 2, 3, ...] ✓`}</CodeBlock>
+
+        <Callout type="warning">
+            <strong>🤔 Why does this problem use same-direction (→ →) instead of opposite-direction (← →)?</strong>
+        </Callout>
+
+        <Heading3>2 Types of Two Pointers</Heading3>
+
+        <div className="my-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
+                <div className="text-blue-400 font-bold text-sm mb-2">↔️ Opposite Direction (ends → middle)</div>
+                <pre className="text-xs font-mono text-[var(--text-secondary)] bg-[var(--bg-tag)] p-2 rounded-lg">{`[1, 3, 5, 7, 9]
+ ↑              ↑
+left          right
+→ shrink toward middle`}</pre>
+                <p className="text-xs text-[var(--text-muted)] mt-2">Use when: comparing/combining from both ends</p>
+            </div>
+            <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
+                <div className="text-green-400 font-bold text-sm mb-2">→→ Same Direction (both forward)</div>
+                <pre className="text-xs font-mono text-[var(--text-secondary)] bg-[var(--bg-tag)] p-2 rounded-lg">{`[1, 1, 2, 2, 3]
+ ↑  ↑
+slow fast
+→ both move left to right`}</pre>
+                <p className="text-xs text-[var(--text-muted)] mt-2">Use when: partitioning/filtering in-place</p>
+            </div>
+        </div>
+
+        <Paragraph>
+            Remove Duplicates needs to <Highlight>keep unique elements at the front of the array</Highlight> (in-place).
+            <InlineCode>slow</InlineCode> acts as a {`"`}write{`"`} pointer — marks the last unique position.
+            <InlineCode>fast</InlineCode> acts as a {`"`}read{`"`} pointer — scans the entire array for new values.
+        </Paragraph>
+
+        <Paragraph>
+            <strong>Opposite direction won{`'`}t work</strong> because: (1) Unique elements are scattered sequentially, not at both ends.
+            (2) Results must be written sequentially from left to right. (3) Moving <InlineCode>right</InlineCode> inward would lose ordering.
+        </Paragraph>
+
+        <div className="my-4 overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+                <thead>
+                    <tr className="border-b border-[var(--border-primary)]">
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Problem</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Direction</th>
+                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Reason</th>
+                    </tr>
+                </thead>
+                <tbody className="text-[var(--text-secondary)]">
+                    <tr className="border-b border-gray-100"><td className="p-3">Two Sum II</td><td className="p-3">← →</td><td className="p-3">Compare sum from both ends</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Valid Palindrome</td><td className="p-3">← →</td><td className="p-3">Compare chars from both ends</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Container With Water</td><td className="p-3">← →</td><td className="p-3">Max area from boundaries</td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3"><strong>Remove Duplicates</strong></td><td className="p-3"><strong>→ →</strong></td><td className="p-3"><strong>Partition unique/duplicate</strong></td></tr>
+                    <tr className="border-b border-gray-100"><td className="p-3">Move Zeroes</td><td className="p-3">→ →</td><td className="p-3">Partition zero/non-zero</td></tr>
+                    <tr><td className="p-3">Merge Sorted Array</td><td className="p-3">← ←</td><td className="p-3">Write from end to avoid overwrite</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <Callout type="info">
+            💡 <strong>Rule of thumb:</strong> Need to <strong>combine from both ends</strong> → opposite direction.
+            Need to <strong>partition/filter in-place</strong> → same direction (slow/fast).
+        </Callout>
 
         <Heading2>Problem 6: Move Zeroes (LeetCode #283)</Heading2>
 
