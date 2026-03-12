@@ -3310,7 +3310,102 @@ export const card = style({
   ':hover': { boxShadow: '0 4px 12px rgba(0,0,0,0.1)' },
 })
 // TypeScript error if you typo a property name!`}</CodeBlock>
-                <Callout type="tip">Interview: asked {'"How do you organize CSS in a large project?"'} → answer CSS Modules (simple) or Vanilla Extract (enterprise). Explaining <Highlight>trade-offs</Highlight> between approaches → senior answer.</Callout>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                        <div className="text-emerald-400 font-bold text-sm">🏆 Why Vanilla Extract wins for enterprise?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>1. Zero Runtime</strong> — CSS generated at build time, no JS injected at runtime<br />
+                            → styled-components/Emotion inject {'<style>'} via JS → slower, affects LCP/INP<br /><br />
+                            <strong>2. Full TypeScript</strong> — write styles in TypeScript<br />
+                            → Typo <InlineCode>backgroundCollor</InlineCode> → TS catches it immediately. CSS Modules typos only show in UI<br /><br />
+                            <strong>3. Theme Contract</strong> — <InlineCode>createThemeContract</InlineCode> enforces all themes must have all tokens<br />
+                            → Compile error if theme is missing a variable → impossible to ship broken theme<br /><br />
+                            <strong>4. Sprinkles</strong> — <InlineCode>createSprinkles</InlineCode> = type-safe utility classes (like Tailwind but with TS checks)<br /><br />
+                            <strong>5. SSR-friendly</strong> — no CSS hydration needed (styled-components must hydrate)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-slate-500/10 border border-slate-500/20">
+                        <div className="text-slate-300 font-bold text-sm">📊 Detailed Comparison</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-xs border-collapse mt-1">
+                                    <thead><tr className="border-b border-slate-600">
+                                        <th className="text-left p-1.5 text-slate-400">Approach</th>
+                                        <th className="text-left p-1.5 text-slate-400">Type Safe</th>
+                                        <th className="text-left p-1.5 text-slate-400">Runtime</th>
+                                        <th className="text-left p-1.5 text-slate-400">Scoped</th>
+                                        <th className="text-left p-1.5 text-slate-400">Best for</th>
+                                    </tr></thead>
+                                    <tbody>
+                                        <tr className="border-b border-slate-700"><td className="p-1.5 text-emerald-400 font-bold">Vanilla Extract</td><td className="p-1.5">✅ Full TS</td><td className="p-1.5 text-green-400">Zero</td><td className="p-1.5">✅</td><td className="p-1.5">Enterprise, design system</td></tr>
+                                        <tr className="border-b border-slate-700"><td className="p-1.5">CSS Modules</td><td className="p-1.5">❌</td><td className="p-1.5 text-green-400">Zero</td><td className="p-1.5">✅</td><td className="p-1.5">Simple–medium projects</td></tr>
+                                        <tr className="border-b border-slate-700"><td className="p-1.5">Tailwind</td><td className="p-1.5">❌</td><td className="p-1.5 text-green-400">Zero</td><td className="p-1.5">❌ Global</td><td className="p-1.5">Startups, rapid prototyping</td></tr>
+                                        <tr className="border-b border-slate-700"><td className="p-1.5">styled-components</td><td className="p-1.5">❌ Partial</td><td className="p-1.5 text-red-400">+12KB</td><td className="p-1.5">✅</td><td className="p-1.5">Legacy, component libs</td></tr>
+                                        <tr><td className="p-1.5">BEM</td><td className="p-1.5">❌</td><td className="p-1.5 text-green-400">Zero</td><td className="p-1.5">❌ Manual</td><td className="p-1.5">No build tool needed</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="vanilla-extract-advanced.ts">{`// === Theme Contract (enforce all themes have same tokens) ===
+import { createThemeContract, createTheme, style } from '@vanilla-extract/css'
+
+const vars = createThemeContract({
+  color: { primary: null, secondary: null, text: null, bg: null },
+  space: { sm: null, md: null, lg: null },
+  font: { body: null, heading: null },
+})
+
+// ✅ TypeScript enforces ALL tokens must be defined
+const lightTheme = createTheme(vars, {
+  color: { primary: '#3b82f6', secondary: '#8b5cf6', text: '#1e293b', bg: '#ffffff' },
+  space: { sm: '4px', md: '8px', lg: '16px' },
+  font: { body: 'Inter, sans-serif', heading: 'Outfit, sans-serif' },
+})
+
+// ❌ Compile error: missing 'bg' in color!
+// const brokenTheme = createTheme(vars, {
+//   color: { primary: '#fff', secondary: '#ccc', text: '#000' }, // ← Error: missing 'bg'
+//   ...
+// })
+
+// === Type-safe styles with autocomplete ===
+const card = style({
+  backgroundColor: vars.color.bg,    // ← autocomplete all tokens!
+  padding: vars.space.md,
+  fontFamily: vars.font.body,
+  borderRadius: 8,
+  // backgroundCollor: '...',  ← ❌ TypeScript error immediately!
+})
+
+// === Sprinkles = type-safe utility classes (like Tailwind with TS) ===
+import { defineProperties, createSprinkles } from '@vanilla-extract/sprinkles'
+
+const responsiveProps = defineProperties({
+  conditions: {
+    mobile: {}, tablet: { '@media': '(min-width: 768px)' },
+    desktop: { '@media': '(min-width: 1024px)' },
+  },
+  properties: {
+    display: ['none', 'flex', 'grid', 'block'],
+    padding: vars.space,  // ← only allows design tokens!
+    gap: vars.space,
+  },
+})
+
+const sprinkles = createSprinkles(responsiveProps)
+
+// Usage — like Tailwind but type-safe!
+<div className={sprinkles({
+  display: { mobile: 'block', desktop: 'grid' },
+  padding: 'md',     // ← autocomplete: 'sm' | 'md' | 'lg'
+  // padding: 'xxx', // ← ❌ TypeScript error!
+})} />`}</CodeBlock>
+
+                <Callout type="tip">Interview: asked {'"How do you organize CSS in a large project?"'} → answer CSS Modules (simple) or Vanilla Extract (enterprise). Explain: VE = <Highlight>TypeScript for CSS</Highlight> — zero runtime, theme contract enforces consistency, sprinkles = type-safe Tailwind. Senior answer = knowing trade-offs.</Callout>
             </TopicModal>
         </div>
 
