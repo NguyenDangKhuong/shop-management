@@ -1152,6 +1152,391 @@ Object.defineProperty(obj, "name", { value: "K", writable: false });
 obj.name = "X"; // ❌ TypeError — read-only`}</CodeBlock>
                 <Callout type="tip">Trong dự án React/Next.js hiện đại, code đã chạy <Highlight>strict mode sẵn</Highlight> vì dùng ES Modules. Nhưng hiểu strict mode vẫn rất quan trọng cho phỏng vấn!</Callout>
             </TopicModal>
+
+            <TopicModal title="DOM Manipulation & Event Delegation" emoji="🌐" color="#f97316" summary="querySelector, event bubbling/capturing, delegation — nền tảng để hiểu React">
+                <Paragraph>Hiểu <Highlight>DOM API gốc</Highlight> giúp bạn hiểu React hoạt động thế nào bên dưới — câu hỏi phổ biến ở mọi level.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                        <div className="text-orange-400 font-bold text-sm">🔍 DOM Selection</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <InlineCode>getElementById</InlineCode> — nhanh nhất, 1 element<br />
+                            • <InlineCode>querySelector / querySelectorAll</InlineCode> — CSS selector, flexible<br />
+                            • <InlineCode>getElementsByClassName</InlineCode> — trả về <strong>live HTMLCollection</strong> (auto-update)<br />
+                            • <InlineCode>querySelectorAll</InlineCode> trả về <strong>static NodeList</strong> (snapshot)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🫧 Event Bubbling vs Capturing</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Capturing</strong> (top → down): window → document → html → body → target<br />
+                            • <strong>Bubbling</strong> (bottom → up): target → parent → ... → body → html → document<br />
+                            • Default: bubbling. Capture: <InlineCode>addEventListener(event, fn, true)</InlineCode><br />
+                            • <InlineCode>e.stopPropagation()</InlineCode> — dừng bubble/capture<br />
+                            • <InlineCode>e.preventDefault()</InlineCode> — ngăn default action (form submit, link navigate)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🎯 Event Delegation</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Thay vì gắn listener cho <strong>mỗi child</strong>, gắn 1 listener cho <strong>parent</strong>:<br />
+                            • Performance: 1 listener thay vì 1000 (list items)<br />
+                            • Dynamic elements: elements thêm sau vẫn được handle<br />
+                            • Dùng <InlineCode>e.target</InlineCode> để biết element nào triggered event<br />
+                            • React dùng delegation ở root — đó là <strong>Synthetic Events</strong>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔧 DOM Manipulation</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <InlineCode>createElement + appendChild</InlineCode> — tạo và thêm element<br />
+                            • <InlineCode>insertAdjacentHTML</InlineCode> — nhanh hơn innerHTML, vị trí cụ thể<br />
+                            • <InlineCode>DocumentFragment</InlineCode> — batch DOM updates (tránh reflow)<br />
+                            • <InlineCode>cloneNode(true)</InlineCode> — deep clone DOM subtree<br />
+                            • <InlineCode>dataset</InlineCode> — đọc/ghi data-* attributes
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="event-delegation.js">{`// ❌ Bad: 1000 listeners
+document.querySelectorAll('li').forEach(li => {
+  li.addEventListener('click', () => handleClick(li.dataset.id))
+})
+
+// ✅ Good: Event Delegation — 1 listener
+document.querySelector('ul').addEventListener('click', (e) => {
+  const li = e.target.closest('li') // find parent li
+  if (!li) return                    // clicked outside li
+  handleClick(li.dataset.id)
+})
+
+// DocumentFragment — batch DOM updates
+const fragment = document.createDocumentFragment()
+items.forEach(item => {
+  const li = document.createElement('li')
+  li.textContent = item.name
+  fragment.appendChild(li) // NO reflow yet
+})
+list.appendChild(fragment) // 1 reflow only!`}</CodeBlock>
+                <Callout type="tip">Interview: {'"Build a todo list without React"'} — phải dùng event delegation + DocumentFragment. Biết giải thích <Highlight>tại sao React dùng Synthetic Events</Highlight> → điểm cộng lớn.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Web APIs — Observer Pattern" emoji="👁️" color="#06b6d4" summary="IntersectionObserver, MutationObserver, ResizeObserver — performance-friendly APIs">
+                <Paragraph>Modern Web APIs dùng <Highlight>Observer pattern</Highlight> thay vì polling — quan trọng cho performance.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                        <div className="text-cyan-400 font-bold text-sm">📐 IntersectionObserver</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Detect khi element visible trong viewport (không cần scroll event!).<br />
+                            • <strong>Lazy loading</strong> images: load khi scroll đến<br />
+                            • <strong>Infinite scroll</strong>: load more khi sentinel element visible<br />
+                            • <strong>Analytics</strong>: track impressions (ad, product card)<br />
+                            • <strong>Animation</strong>: trigger animation khi scroll into view
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔬 MutationObserver</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Watch for DOM changes (attributes, children, text content).<br />
+                            • Detect DOM changes từ third-party scripts<br />
+                            • Auto-process dynamically added elements<br />
+                            • Build custom element behaviors
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📏 ResizeObserver</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Detect element size changes (không cần window resize event!).<br />
+                            • Responsive components based on <strong>element size</strong> (not viewport)<br />
+                            • Container queries polyfill<br />
+                            • Auto-resize textarea, chart, canvas
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="observers.ts">{`// IntersectionObserver — Lazy loading + Infinite scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target as HTMLImageElement
+      img.src = img.dataset.src!  // load real image
+      observer.unobserve(img)     // stop observing
+    }
+  })
+}, { threshold: 0.1, rootMargin: '200px' }) // preload 200px before visible
+
+document.querySelectorAll('img[data-src]').forEach(img => observer.observe(img))
+
+// React hook: useIntersectionObserver
+function useIntersectionObserver(ref, options) {
+  const [isVisible, setIsVisible] = useState(false)
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsVisible(entry.isIntersecting)
+    }, options)
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [ref, options])
+  return isVisible
+}`}</CodeBlock>
+                <Callout type="tip">Interview: {'"Build infinite scroll"'} hoặc {'"Build lazy loading images"'} — dùng IntersectionObserver, <Highlight>không dùng scroll event + getBoundingClientRect</Highlight> (performance kém).</Callout>
+            </TopicModal>
+
+            <TopicModal title="Generators & Iterators" emoji="🔁" color="#a78bfa" summary="function*, yield, Symbol.iterator — lazy evaluation và custom iteration">
+                <Paragraph><Highlight>Generators</Highlight> = function có thể pause/resume. Ít dùng trực tiếp nhưng nền tảng của async/await và Redux-Saga.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔄 Iterator Protocol</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Object có method <InlineCode>next()</InlineCode> trả về <InlineCode>{'{value, done}'}</InlineCode>.<br />
+                            • for...of loop dùng iterator protocol bên dưới<br />
+                            • Array, Map, Set, String đều implement <InlineCode>Symbol.iterator</InlineCode><br />
+                            • Custom iterable: implement <InlineCode>[Symbol.iterator]()</InlineCode>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">⏸️ Generator Function</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <InlineCode>function*</InlineCode> + <InlineCode>yield</InlineCode> — pause execution, return value, resume later.<br />
+                            • <strong>Lazy evaluation</strong>: chỉ compute khi cần<br />
+                            • <strong>Infinite sequences</strong>: generate values on-demand<br />
+                            • <strong>async/await</strong> chính là syntactic sugar của generators
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="generators.ts">{`// Generator function
+function* fibonacci() {
+  let [a, b] = [0, 1]
+  while (true) {
+    yield a         // pause here, return a
+    ;[a, b] = [b, a + b]
+  }
+}
+const fib = fibonacci()
+fib.next() // { value: 0, done: false }
+fib.next() // { value: 1, done: false }
+fib.next() // { value: 1, done: false }
+fib.next() // { value: 2, done: false }
+
+// Practical: Paginated API fetch
+async function* fetchPages(url) {
+  let page = 1
+  while (true) {
+    const res = await fetch(\`\${url}?page=\${page}\`)
+    const data = await res.json()
+    if (data.items.length === 0) return // done
+    yield data.items
+    page++
+  }
+}
+// Usage: for await (const items of fetchPages('/api/users')) { ... }
+
+// Custom iterable
+class Range {
+  constructor(private start: number, private end: number) {}
+  *[Symbol.iterator]() {
+    for (let i = this.start; i <= this.end; i++) yield i
+  }
+}
+for (const n of new Range(1, 5)) console.log(n) // 1, 2, 3, 4, 5`}</CodeBlock>
+                <Callout type="tip">Interview: hiểu generators giúp trả lời {'"How does async/await work under the hood?"'} — async function = generator + Promise auto-runner.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Error Handling Patterns" emoji="🚨" color="#ef4444" summary="try/catch, custom errors, error boundaries, global handlers — production-ready error handling">
+                <Paragraph>Production code <Highlight>phải handle errors gracefully</Highlight> — crash = mất user. Interview hay hỏi các patterns xử lý lỗi.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">🎯 Error Types</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>SyntaxError</strong>: code sai cú pháp (parse time)<br />
+                            • <strong>ReferenceError</strong>: variable chưa khai báo<br />
+                            • <strong>TypeError</strong>: gọi method trên null/undefined<br />
+                            • <strong>RangeError</strong>: value ngoài range cho phép<br />
+                            • <strong>Custom Error</strong>: extend Error class cho business logic
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🔄 Async Error Handling</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>try/catch</strong>: wrap async/await<br />
+                            • <strong>.catch()</strong>: chain on promises<br />
+                            • <strong>Promise.allSettled()</strong>: không fail khi 1 promise reject<br />
+                            • ⚠️ <strong>Unhandled rejection</strong>: process crash (Node.js)!
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">⚛️ React Error Handling</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Error Boundary</strong>: catch render errors (class component only)<br />
+                            • <strong>Suspense</strong>: loading states cho async components<br />
+                            • <strong>react-error-boundary</strong>: HOC/hook API cho error boundaries<br />
+                            • ⚠️ Error Boundary <strong>không catch</strong>: event handlers, async code, SSR
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="error-handling.ts">{`// Custom Error class
+class ApiError extends Error {
+  constructor(public status: number, message: string) {
+    super(message)
+    this.name = 'ApiError'
+  }
+}
+
+// Pattern: Result type (no try/catch needed)
+type Result<T> = { ok: true; data: T } | { ok: false; error: Error }
+
+async function safeFetch<T>(url: string): Promise<Result<T>> {
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new ApiError(res.status, res.statusText)
+    return { ok: true, data: await res.json() }
+  } catch (error) {
+    return { ok: false, error: error as Error }
+  }
+}
+
+// Usage — no try/catch needed
+const result = await safeFetch<User[]>('/api/users')
+if (result.ok) {
+  console.log(result.data) // TypeScript knows it's User[]
+} else {
+  console.error(result.error.message)
+}
+
+// Global error handlers
+window.addEventListener('error', (e) => {
+  reportToSentry(e.error)       // JS errors
+})
+window.addEventListener('unhandledrejection', (e) => {
+  reportToSentry(e.reason)      // Unhandled promise rejections
+})`}</CodeBlock>
+                <Callout type="tip">Interview: nhắc đến <Highlight>Result type pattern</Highlight> (Go/Rust style) thay vì try/catch everywhere → shows engineering maturity. Biết Error Boundary limitations → senior level.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Web Workers & Service Workers" emoji="⚙️" color="#10b981" summary="Multi-threading trong browser, offline capability, background sync">
+                <Paragraph>Browser chạy JS trên <Highlight>main thread</Highlight> — heavy computation block UI. Web Workers giải quyết vấn đề này.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🧵 Web Workers</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Run JS trong <strong>background thread</strong> — không block UI.<br />
+                            • Communicate via <InlineCode>postMessage()</InlineCode> (structured clone)<br />
+                            • <strong>Không access</strong>: DOM, window, document<br />
+                            • Use cases: image processing, crypto, parsing large JSON/CSV<br />
+                            • <strong>SharedWorker</strong>: share 1 worker between tabs
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">📡 Service Workers</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Proxy giữa browser và network — <strong>offline capability</strong>.<br />
+                            • <strong>Cache API</strong>: cache responses cho offline access<br />
+                            • <strong>Push notifications</strong>: receive messages khi app closed<br />
+                            • <strong>Background sync</strong>: retry failed requests khi online lại<br />
+                            • PWA (Progressive Web App) yêu cầu service worker
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🆕 Các Web APIs quan trọng khác</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>requestAnimationFrame</strong>: smooth 60fps animations (thay vì setInterval)<br />
+                            • <strong>requestIdleCallback</strong>: defer non-critical work khi main thread free<br />
+                            • <strong>AbortController</strong>: cancel fetch requests (race conditions)<br />
+                            • <strong>Broadcast Channel</strong>: communicate giữa tabs/windows
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="web-workers.ts">{`// Web Worker — heavy computation off main thread
+// worker.ts
+self.onmessage = (e: MessageEvent) => {
+  const { data } = e
+  // Heavy computation here (doesn't block UI!)
+  const result = data.sort((a, b) => a - b) // sort 1M items
+  self.postMessage(result)
+}
+
+// main.ts
+const worker = new Worker(new URL('./worker.ts', import.meta.url))
+worker.postMessage(hugeArray)
+worker.onmessage = (e) => {
+  console.log('Sorted:', e.data) // received from worker
+}
+
+// AbortController — cancel fetch (prevent race conditions)
+const controller = new AbortController()
+fetch('/api/search?q=hello', { signal: controller.signal })
+  .then(res => res.json())
+  .then(data => setResults(data))
+  .catch(err => {
+    if (err.name === 'AbortError') return // cancelled, ignore
+    throw err
+  })
+// Later: cancel the request
+controller.abort()
+
+// requestAnimationFrame — smooth animations
+function animate() {
+  element.style.transform = \`translateX(\${x}px)\`
+  x += 2
+  if (x < 500) requestAnimationFrame(animate) // next frame
+}
+requestAnimationFrame(animate) // 60fps!`}</CodeBlock>
+                <Callout type="tip">Interview: {'"The page is janky when sorting a large list"'} → <Highlight>Web Worker</Highlight> cho sort. {'"Cancel previous search request khi user type tiếp"'} → AbortController.</Callout>
+            </TopicModal>
+
+            <TopicModal title="WeakMap, WeakRef & FinalizationRegistry" emoji="🧹" color="#8b5cf6" summary="Memory management, garbage collection awareness — senior-level interview topic">
+                <Paragraph><Highlight>WeakMap/WeakRef</Highlight> cho phép reference object mà không ngăn garbage collection — quan trọng cho memory management.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🗺️ WeakMap vs Map</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Map</strong>: keys có thể là bất kỳ type. <strong>Giữ reference</strong> → prevents GC<br />
+                            • <strong>WeakMap</strong>: keys <strong>phải là object</strong>. Weak reference → <strong>cho phép GC</strong><br />
+                            • WeakMap <strong>không iterable</strong> (no size, no forEach, no keys/values)<br />
+                            • Use case: cache metadata cho DOM elements, private data cho classes
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">👻 WeakRef & FinalizationRegistry</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>WeakRef</strong>: tham chiếu yếu — <InlineCode>ref.deref()</InlineCode> có thể trả về undefined<br />
+                            • <strong>FinalizationRegistry</strong>: callback khi object bị GC<br />
+                            • Use case: cache expensive objects mà không leak memory<br />
+                            • ⚠️ Rất ít khi dùng trực tiếp — nhưng hiểu = senior mindset
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="weak-references.ts">{`// WeakMap — private data for classes
+const privateData = new WeakMap()
+class User {
+  constructor(name: string, ssn: string) {
+    this.name = name
+    privateData.set(this, { ssn }) // truly private!
+  }
+  name: string
+  getSSN() { return privateData.get(this)?.ssn }
+}
+// When user is GC'd, privateData entry is also GC'd
+
+// WeakMap — cache DOM element metadata
+const elementCache = new WeakMap<HTMLElement, object>()
+function getMetadata(el: HTMLElement) {
+  if (!elementCache.has(el)) {
+    elementCache.set(el, computeExpensiveMetadata(el))
+  }
+  return elementCache.get(el)!
+  // When element is removed from DOM & GC'd → cache auto-cleaned!
+}
+
+// WeakRef — optional cache
+class Cache<T> {
+  private cache = new Map<string, WeakRef<T & object>>()
+  set(key: string, value: T & object) {
+    this.cache.set(key, new WeakRef(value))
+  }
+  get(key: string): T | undefined {
+    return this.cache.get(key)?.deref() // might be GC'd!
+  }
+}`}</CodeBlock>
+                <Callout type="tip">Interview: Khi được hỏi về <Highlight>memory leaks</Highlight> → nhắc tới WeakMap/WeakRef. Biết giải thích tại sao Map giữ reference ngăn GC → senior level answer.</Callout>
+            </TopicModal>
         </div>
 
         <Heading3>2.2 Implement từ scratch (click xem code mẫu)</Heading3>
@@ -2385,6 +2770,285 @@ elements.forEach((el, i) => el.style.height = heights[i] + 10)  // all writes`}<
                     Interview: Khi được hỏi {'"Trang web chậm, bạn sẽ làm gì?"'} → <Highlight>đo trước (Lighthouse)</Highlight> → xác định bottleneck (LCP? INP? CLS?) → apply giải pháp cụ thể. Không optimize mù!
                 </Callout>
                 <a href="/blogs/core-web-vitals" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+            </TopicModal>
+
+            <TopicModal title="CSS Specificity & Cascade" emoji="⚖️" color="#38bdf8" summary="Specificity calculation, cascade order, inheritance — tại sao CSS không apply đúng?">
+                <Paragraph><Highlight>Specificity</Highlight> quyết định rule CSS nào {'"thắng"'} khi có conflict — câu hỏi interview rất phổ biến.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">📊 Specificity Hierarchy (thấp → cao)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            1. <strong>Type selectors</strong>: <InlineCode>div</InlineCode>, <InlineCode>p</InlineCode>, <InlineCode>h1</InlineCode> → (0,0,1)<br />
+                            2. <strong>Class, pseudo-class, attribute</strong>: <InlineCode>.btn</InlineCode>, <InlineCode>:hover</InlineCode>, <InlineCode>[type=text]</InlineCode> → (0,1,0)<br />
+                            3. <strong>ID selectors</strong>: <InlineCode>#header</InlineCode> → (1,0,0)<br />
+                            4. <strong>Inline styles</strong>: style=&quot;...&quot; → (1,0,0,0)<br />
+                            5. <strong>!important</strong>: overrides everything (avoid!)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🎯 Cascade Order</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Khi specificity bằng nhau, cascade order quyết định:<br />
+                            1. <strong>Origin</strong>: User Agent → User → Author<br />
+                            2. <strong>Specificity</strong>: tính toán ở trên<br />
+                            3. <strong>Source order</strong>: rule sau ghi đè rule trước<br />
+                            4. <strong>@layer</strong> (new!): cascade layers — kiểm soát thứ tự
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🧬 Inheritance</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Inherited</strong>: color, font-*, text-*, line-height, visibility<br />
+                            • <strong>Not inherited</strong>: margin, padding, border, display, position<br />
+                            • <InlineCode>inherit</InlineCode>: force inheritance | <InlineCode>initial</InlineCode>: reset to default<br />
+                            • <InlineCode>unset</InlineCode>: inherit nếu inherited, initial nếu không
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="specificity.css">{`/* Specificity calculation: (ID, Class, Type) */
+p { color: blue; }                    /* (0,0,1) */
+.text { color: green; }               /* (0,1,0) ✅ wins over p */
+#main { color: red; }                 /* (1,0,0) ✅ wins over .text */
+p.text.highlight { }                  /* (0,2,1) */
+#main .text { }                       /* (1,1,0) */
+
+/* ❌ Common mistake: over-specific selectors */
+div#app > ul.nav > li.item > a.link { }  /* (1,3,4) — too specific! */
+
+/* ✅ Better: keep specificity low */
+.nav-link { }                          /* (0,1,0) — easy to override */
+
+/* @layer — cascade layers (modern CSS) */
+@layer base, components, utilities;
+@layer base { .btn { padding: 8px 16px; } }
+@layer components { .btn { background: blue; } }
+@layer utilities { .btn-lg { padding: 16px 32px; } }
+/* Order: base < components < utilities */`}</CodeBlock>
+                <Callout type="tip">Interview quiz: <InlineCode>{'.a.b'}</InlineCode> vs <InlineCode>{'.a .b'}</InlineCode> — cái đầu là <Highlight>AND</Highlight> (cùng element), cái sau là <Highlight>descendant</Highlight>. Biết tính specificity = senior CSS skill.</Callout>
+            </TopicModal>
+
+            <TopicModal title="CSS Animations & Transitions" emoji="✨" color="#38bdf8" summary="transition, keyframes, transform, will-change — micro-interactions cho UI premium">
+                <Paragraph><Highlight>Animations</Highlight> làm UI sống động và professional — nhưng phải hiểu performance implications.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🔄 Transition vs Animation</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Transition</strong>: A → B (2 states, triggered by state change)<br />
+                            • <strong>Animation</strong>: A → B → C → ... (@keyframes, auto-play, loop)<br />
+                            • Transition cho <strong>hover effects, state changes</strong><br />
+                            • Animation cho <strong>loading spinners, attention getters</strong>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🚀 Performance-safe Properties</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Composite-only</strong> (GPU accelerated, cheapest):<br />
+                            • <InlineCode>transform</InlineCode>: translate, scale, rotate<br />
+                            • <InlineCode>opacity</InlineCode><br />
+                            <strong>Avoid animating</strong> (triggers layout/paint):<br />
+                            • ❌ width, height, top, left, margin, padding<br />
+                            • Use <InlineCode>transform: translateX()</InlineCode> thay vì <InlineCode>left: Xpx</InlineCode>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🎭 Easing Functions</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <InlineCode>ease</InlineCode>: default, phổ biến nhất<br />
+                            • <InlineCode>ease-in-out</InlineCode>: smooth cho modal, page transitions<br />
+                            • <InlineCode>cubic-bezier()</InlineCode>: custom curve (bounce, spring)<br />
+                            • <InlineCode>steps()</InlineCode>: frame-by-frame (sprite animation)
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="animations.css">{`/* Transition — smooth hover effect */
+.button {
+  background: #3b82f6;
+  transform: translateY(0);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.button:hover {
+  transform: translateY(-2px);       /* GPU-accelerated! */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Keyframe Animation — loading spinner */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Slide-in animation */
+@keyframes slideIn {
+  from { transform: translateX(-100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+.sidebar { animation: slideIn 0.3s ease-out; }
+
+/* will-change — hint browser to optimize */
+.card:hover { will-change: transform; }
+.card:active { transform: scale(0.98); }
+
+/* prefers-reduced-motion — accessibility! */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}`}</CodeBlock>
+                <Callout type="tip">Interview: phải nhắc <Highlight>prefers-reduced-motion</Highlight> khi nói về animations — shows accessibility awareness. Chỉ animate <strong>transform + opacity</strong> cho 60fps.</Callout>
+            </TopicModal>
+
+            <TopicModal title="CSS Variables & Modern CSS" emoji="🎨" color="#38bdf8" summary="Custom properties, container queries, :has(), nesting — CSS đang ngày càng mạnh">
+                <Paragraph><Highlight>Modern CSS</Highlight> có nhiều feature mạnh mẽ — giảm phụ thuộc vào JS và preprocessors.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🎨 CSS Custom Properties (Variables)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Khai báo: <InlineCode>--color-primary: #3b82f6</InlineCode><br />
+                            • Sử dụng: <InlineCode>color: var(--color-primary)</InlineCode><br />
+                            • <strong>Cascade</strong>: follow CSS cascade (override per element/media query)<br />
+                            • <strong>Runtime dynamic</strong>: thay đổi bằng JS, SASS variables thì không<br />
+                            • Dùng cho: theming (dark/light), design tokens, responsive values
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📦 Container Queries</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Responsive based on <strong>parent container size</strong> thay vì viewport.<br />
+                            • <InlineCode>container-type: inline-size</InlineCode> trên parent<br />
+                            • <InlineCode>@container (min-width: 400px)</InlineCode> thay vì @media<br />
+                            • Component-level responsive — reusable everywhere!
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🆕 Modern CSS Selectors</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <InlineCode>:has()</InlineCode>: parent selector! <InlineCode>.card:has(img)</InlineCode> — card chứa img<br />
+                            • <InlineCode>:is() / :where()</InlineCode>: group selectors, reduce repetition<br />
+                            • <strong>CSS Nesting</strong> (native!): viết nested rules như SASS<br />
+                            • <InlineCode>:focus-visible</InlineCode>: only keyboard focus (not click)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🔧 Useful Modern Properties</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <InlineCode>aspect-ratio: 16/9</InlineCode>: maintain ratio without padding hack<br />
+                            • <InlineCode>gap</InlineCode>: works in flexbox now! (not just grid)<br />
+                            • <InlineCode>accent-color</InlineCode>: style checkboxes/radios natively<br />
+                            • <InlineCode>color-mix()</InlineCode>: blend colors in CSS<br />
+                            • <InlineCode>text-wrap: balance</InlineCode>: balanced text wrapping
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="modern-css.css">{`/* CSS Variables — theming */
+:root {
+  --color-primary: #3b82f6;
+  --color-bg: #ffffff;
+  --spacing: 8px;
+}
+[data-theme="dark"] {
+  --color-primary: #60a5fa;
+  --color-bg: #0f172a;
+}
+
+/* Container Queries — component responsive */
+.card-container { container-type: inline-size; }
+@container (min-width: 400px) {
+  .card { display: flex; gap: 16px; }
+}
+@container (max-width: 399px) {
+  .card { display: block; }
+}
+
+/* :has() — parent selector */
+.form-group:has(input:invalid) { border-color: red; }
+.card:has(> img) { padding-top: 0; } /* card with direct img child */
+
+/* CSS Nesting (native!) */
+.card {
+  padding: 16px;
+  & .title { font-size: 1.25rem; }
+  &:hover { box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+  @media (width > 768px) { padding: 24px; }
+}
+
+/* Modern utilities */
+.video { aspect-ratio: 16 / 9; }
+.balanced { text-wrap: balance; }
+input[type="checkbox"] { accent-color: var(--color-primary); }`}</CodeBlock>
+                <Callout type="tip">Interview: nhắc đến <Highlight>container queries</Highlight> và <Highlight>:has()</Highlight> → shows bạn follow CSS evolution. CSS Variables vs SASS variables: CSS vars là <strong>runtime dynamic</strong>, SASS compile-time.</Callout>
+            </TopicModal>
+
+            <TopicModal title="CSS Architecture — BEM, Modules, CSS-in-JS" emoji="🏗️" color="#38bdf8" summary="Naming conventions, scoping strategies, khi nào dùng approach nào">
+                <Paragraph>Dự án lớn cần <Highlight>CSS architecture</Highlight> để tránh naming conflicts và maintain code dễ dàng.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">📐 BEM (Block Element Modifier)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Block</strong>: <InlineCode>.card</InlineCode> — standalone component<br />
+                            • <strong>Element</strong>: <InlineCode>.card__title</InlineCode> — part of block<br />
+                            • <strong>Modifier</strong>: <InlineCode>.card--featured</InlineCode> — variant<br />
+                            • Pros: predictable, no nesting, flat specificity<br />
+                            • Cons: verbose class names
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🔒 CSS Modules</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Auto-generate unique class names (scoped by default)<br />
+                            • <InlineCode>import styles from &apos;./Card.module.css&apos;</InlineCode><br />
+                            • <InlineCode>className={'{styles.card}'}</InlineCode> → <InlineCode>.Card_card__x7f3k</InlineCode><br />
+                            • Next.js supports natively. No runtime cost
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">💅 CSS-in-JS</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Runtime</strong>: styled-components, Emotion → inject {'<style>'} at runtime<br />
+                            <strong>Zero-runtime</strong>: Vanilla Extract, Linaria → extract CSS at build time<br />
+                            • Runtime CSS-in-JS: <strong>performance overhead</strong> (style injection)<br />
+                            • Zero-runtime: <strong>best DX + zero overhead</strong> (type-safe + no runtime)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🆚 Comparison</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Utility-first</strong> (Tailwind): nhanh, nhưng HTML verbose<br />
+                            • <strong>CSS Modules</strong>: scoped, no runtime, simple. Best for most projects<br />
+                            • <strong>Zero-runtime CSS-in-JS</strong>: type-safe, co-located, enterprise<br />
+                            • <strong>BEM</strong>: legacy nhưng vẫn dùng nhiều, no build tool needed
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="css-architecture.tsx">{`/* BEM naming */
+.card { }
+.card__header { }
+.card__body { }
+.card--featured { border: 2px solid gold; }
+.card--disabled { opacity: 0.5; }
+
+/* CSS Modules */
+// Card.module.css
+.card { padding: 16px; border-radius: 8px; }
+.title { font-weight: bold; }
+
+// Card.tsx
+import styles from './Card.module.css'
+<div className={styles.card}>
+  <h2 className={styles.title}>Hello</h2>
+</div>
+// Output: <div class="Card_card__x7f3k">
+
+/* Vanilla Extract (zero-runtime, type-safe) */
+// card.css.ts
+import { style } from '@vanilla-extract/css'
+export const card = style({
+  padding: 16,
+  borderRadius: 8,
+  ':hover': { boxShadow: '0 4px 12px rgba(0,0,0,0.1)' },
+})
+// TypeScript error if you typo a property name!`}</CodeBlock>
+                <Callout type="tip">Interview: được hỏi {'"How do you organize CSS in a large project?"'} → trả lời CSS Modules (simple) hoặc Vanilla Extract (enterprise). Giải thích <Highlight>trade-offs</Highlight> giữa các approach → senior answer.</Callout>
             </TopicModal>
         </div>
 

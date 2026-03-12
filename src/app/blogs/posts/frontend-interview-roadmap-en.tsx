@@ -1149,6 +1149,358 @@ Object.defineProperty(obj, "name", { value: "K", writable: false });
 obj.name = "X"; // ❌ TypeError — read-only`}</CodeBlock>
                 <Callout type="tip">In modern React/Next.js projects, code already runs in <Highlight>strict mode by default</Highlight> because of ES Modules. But understanding strict mode is still crucial for interviews!</Callout>
             </TopicModal>
+
+            <TopicModal title="DOM Manipulation & Event Delegation" emoji="🌐" color="#f97316" summary="querySelector, event bubbling/capturing, delegation — foundation for understanding React">
+                <Paragraph>Understanding <Highlight>native DOM APIs</Highlight> helps you understand how React works under the hood — commonly asked at all levels.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                        <div className="text-orange-400 font-bold text-sm">🔍 DOM Selection</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <InlineCode>getElementById</InlineCode> — fastest, single element<br />
+                            • <InlineCode>querySelector / querySelectorAll</InlineCode> — CSS selectors, flexible<br />
+                            • <InlineCode>getElementsByClassName</InlineCode> — returns <strong>live HTMLCollection</strong> (auto-updates)<br />
+                            • <InlineCode>querySelectorAll</InlineCode> returns <strong>static NodeList</strong> (snapshot)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🫧 Event Bubbling vs Capturing</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Capturing</strong> (top → down): window → document → html → body → target<br />
+                            • <strong>Bubbling</strong> (bottom → up): target → parent → ... → body → html → document<br />
+                            • Default: bubbling. Capture: <InlineCode>addEventListener(event, fn, true)</InlineCode><br />
+                            • <InlineCode>e.stopPropagation()</InlineCode> — stop bubble/capture<br />
+                            • <InlineCode>e.preventDefault()</InlineCode> — prevent default action (form submit, link navigate)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🎯 Event Delegation</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Instead of attaching a listener to <strong>each child</strong>, attach 1 listener to <strong>parent</strong>:<br />
+                            • Performance: 1 listener instead of 1000 (list items)<br />
+                            • Dynamic elements: elements added later are still handled<br />
+                            • Use <InlineCode>e.target</InlineCode> to identify which element triggered the event<br />
+                            • React uses delegation at root — that&apos;s <strong>Synthetic Events</strong>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔧 DOM Manipulation</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <InlineCode>createElement + appendChild</InlineCode> — create and add elements<br />
+                            • <InlineCode>insertAdjacentHTML</InlineCode> — faster than innerHTML, precise position<br />
+                            • <InlineCode>DocumentFragment</InlineCode> — batch DOM updates (avoid reflow)<br />
+                            • <InlineCode>cloneNode(true)</InlineCode> — deep clone DOM subtree<br />
+                            • <InlineCode>dataset</InlineCode> — read/write data-* attributes
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="event-delegation.js">{`// ❌ Bad: 1000 listeners
+document.querySelectorAll('li').forEach(li => {
+  li.addEventListener('click', () => handleClick(li.dataset.id))
+})
+
+// ✅ Good: Event Delegation — 1 listener
+document.querySelector('ul').addEventListener('click', (e) => {
+  const li = e.target.closest('li') // find parent li
+  if (!li) return                    // clicked outside li
+  handleClick(li.dataset.id)
+})
+
+// DocumentFragment — batch DOM updates
+const fragment = document.createDocumentFragment()
+items.forEach(item => {
+  const li = document.createElement('li')
+  li.textContent = item.name
+  fragment.appendChild(li) // NO reflow yet
+})
+list.appendChild(fragment) // 1 reflow only!`}</CodeBlock>
+                <Callout type="tip">Interview: {'"Build a todo list without React"'} — must use event delegation + DocumentFragment. Being able to explain <Highlight>why React uses Synthetic Events</Highlight> → big bonus points.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Web APIs — Observer Pattern" emoji="👁️" color="#06b6d4" summary="IntersectionObserver, MutationObserver, ResizeObserver — performance-friendly APIs">
+                <Paragraph>Modern Web APIs use <Highlight>Observer pattern</Highlight> instead of polling — crucial for performance.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                        <div className="text-cyan-400 font-bold text-sm">📐 IntersectionObserver</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Detect when an element is visible in the viewport (no scroll event needed!).<br />
+                            • <strong>Lazy loading</strong> images: load when scrolled into view<br />
+                            • <strong>Infinite scroll</strong>: load more when sentinel element is visible<br />
+                            • <strong>Analytics</strong>: track impressions (ads, product cards)<br />
+                            • <strong>Animation</strong>: trigger animation on scroll into view
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔬 MutationObserver</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Watch for DOM changes (attributes, children, text content).<br />
+                            • Detect DOM changes from third-party scripts<br />
+                            • Auto-process dynamically added elements<br />
+                            • Build custom element behaviors
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📏 ResizeObserver</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Detect element size changes (no window resize event needed!).<br />
+                            • Responsive components based on <strong>element size</strong> (not viewport)<br />
+                            • Container queries polyfill<br />
+                            • Auto-resize textarea, chart, canvas
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="observers.ts">{`// IntersectionObserver — Lazy loading + Infinite scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target as HTMLImageElement
+      img.src = img.dataset.src!  // load real image
+      observer.unobserve(img)     // stop observing
+    }
+  })
+}, { threshold: 0.1, rootMargin: '200px' }) // preload 200px before visible
+
+document.querySelectorAll('img[data-src]').forEach(img => observer.observe(img))
+
+// React hook: useIntersectionObserver
+function useIntersectionObserver(ref, options) {
+  const [isVisible, setIsVisible] = useState(false)
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsVisible(entry.isIntersecting)
+    }, options)
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [ref, options])
+  return isVisible
+}`}</CodeBlock>
+                <Callout type="tip">Interview: {'"Build infinite scroll"'} or {'"Build lazy loading images"'} — use IntersectionObserver, <Highlight>not scroll event + getBoundingClientRect</Highlight> (poor performance).</Callout>
+            </TopicModal>
+
+            <TopicModal title="Generators & Iterators" emoji="🔁" color="#a78bfa" summary="function*, yield, Symbol.iterator — lazy evaluation and custom iteration">
+                <Paragraph><Highlight>Generators</Highlight> = functions that can pause/resume. Rarely used directly but foundational to async/await and Redux-Saga.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔄 Iterator Protocol</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Object with <InlineCode>next()</InlineCode> method returning <InlineCode>{'{value, done}'}</InlineCode>.<br />
+                            • for...of loop uses iterator protocol under the hood<br />
+                            • Array, Map, Set, String all implement <InlineCode>Symbol.iterator</InlineCode><br />
+                            • Custom iterable: implement <InlineCode>[Symbol.iterator]()</InlineCode>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">⏸️ Generator Function</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <InlineCode>function*</InlineCode> + <InlineCode>yield</InlineCode> — pause execution, return value, resume later.<br />
+                            • <strong>Lazy evaluation</strong>: only compute when needed<br />
+                            • <strong>Infinite sequences</strong>: generate values on-demand<br />
+                            • <strong>async/await</strong> is actually syntactic sugar over generators
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="generators.ts">{`// Generator function
+function* fibonacci() {
+  let [a, b] = [0, 1]
+  while (true) {
+    yield a         // pause here, return a
+    ;[a, b] = [b, a + b]
+  }
+}
+const fib = fibonacci()
+fib.next() // { value: 0, done: false }
+fib.next() // { value: 1, done: false }
+
+// Practical: Paginated API fetch
+async function* fetchPages(url) {
+  let page = 1
+  while (true) {
+    const res = await fetch(\`\${url}?page=\${page}\`)
+    const data = await res.json()
+    if (data.items.length === 0) return
+    yield data.items
+    page++
+  }
+}
+// Usage: for await (const items of fetchPages('/api/users')) { ... }
+
+// Custom iterable
+class Range {
+  constructor(private start: number, private end: number) {}
+  *[Symbol.iterator]() {
+    for (let i = this.start; i <= this.end; i++) yield i
+  }
+}
+for (const n of new Range(1, 5)) console.log(n) // 1, 2, 3, 4, 5`}</CodeBlock>
+                <Callout type="tip">Interview: understanding generators helps answer {'"How does async/await work under the hood?"'} — async function = generator + Promise auto-runner.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Error Handling Patterns" emoji="🚨" color="#ef4444" summary="try/catch, custom errors, error boundaries, global handlers — production-ready error handling">
+                <Paragraph>Production code <Highlight>must handle errors gracefully</Highlight> — crash = lost users. Interviews often ask about error handling patterns.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div className="text-red-400 font-bold text-sm">🎯 Error Types</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>SyntaxError</strong>: invalid syntax (parse time)<br />
+                            • <strong>ReferenceError</strong>: undeclared variable<br />
+                            • <strong>TypeError</strong>: calling method on null/undefined<br />
+                            • <strong>RangeError</strong>: value outside allowed range<br />
+                            • <strong>Custom Error</strong>: extend Error class for business logic
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🔄 Async Error Handling</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>try/catch</strong>: wrap async/await<br />
+                            • <strong>.catch()</strong>: chain on promises<br />
+                            • <strong>Promise.allSettled()</strong>: doesn&apos;t fail when 1 promise rejects<br />
+                            • ⚠️ <strong>Unhandled rejection</strong>: crashes the process (Node.js)!
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">⚛️ React Error Handling</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Error Boundary</strong>: catches render errors (class component only)<br />
+                            • <strong>Suspense</strong>: loading states for async components<br />
+                            • <strong>react-error-boundary</strong>: HOC/hook API for error boundaries<br />
+                            • ⚠️ Error Boundary <strong>does NOT catch</strong>: event handlers, async code, SSR
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="error-handling.ts">{`// Custom Error class
+class ApiError extends Error {
+  constructor(public status: number, message: string) {
+    super(message)
+    this.name = 'ApiError'
+  }
+}
+
+// Pattern: Result type (no try/catch needed)
+type Result<T> = { ok: true; data: T } | { ok: false; error: Error }
+
+async function safeFetch<T>(url: string): Promise<Result<T>> {
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new ApiError(res.status, res.statusText)
+    return { ok: true, data: await res.json() }
+  } catch (error) {
+    return { ok: false, error: error as Error }
+  }
+}
+
+// Global error handlers
+window.addEventListener('error', (e) => {
+  reportToSentry(e.error)       // JS errors
+})
+window.addEventListener('unhandledrejection', (e) => {
+  reportToSentry(e.reason)      // Unhandled promise rejections
+})`}</CodeBlock>
+                <Callout type="tip">Interview: mentioning <Highlight>Result type pattern</Highlight> (Go/Rust style) instead of try/catch everywhere → shows engineering maturity. Knowing Error Boundary limitations → senior level.</Callout>
+            </TopicModal>
+
+            <TopicModal title="Web Workers & Service Workers" emoji="⚙️" color="#10b981" summary="Multi-threading in the browser, offline capability, background sync">
+                <Paragraph>Browser runs JS on the <Highlight>main thread</Highlight> — heavy computation blocks UI. Web Workers solve this.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🧵 Web Workers</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Run JS in a <strong>background thread</strong> — doesn&apos;t block UI.<br />
+                            • Communicate via <InlineCode>postMessage()</InlineCode> (structured clone)<br />
+                            • <strong>Cannot access</strong>: DOM, window, document<br />
+                            • Use cases: image processing, crypto, parsing large JSON/CSV<br />
+                            • <strong>SharedWorker</strong>: share 1 worker between tabs
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">📡 Service Workers</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Proxy between browser and network — <strong>offline capability</strong>.<br />
+                            • <strong>Cache API</strong>: cache responses for offline access<br />
+                            • <strong>Push notifications</strong>: receive messages when app is closed<br />
+                            • <strong>Background sync</strong>: retry failed requests when back online<br />
+                            • PWA (Progressive Web App) requires a service worker
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🆕 Other Important Web APIs</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>requestAnimationFrame</strong>: smooth 60fps animations (instead of setInterval)<br />
+                            • <strong>requestIdleCallback</strong>: defer non-critical work when main thread is free<br />
+                            • <strong>AbortController</strong>: cancel fetch requests (race conditions)<br />
+                            • <strong>Broadcast Channel</strong>: communicate between tabs/windows
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="web-workers.ts">{`// Web Worker — heavy computation off main thread
+// worker.ts
+self.onmessage = (e: MessageEvent) => {
+  const { data } = e
+  const result = data.sort((a, b) => a - b) // sort 1M items
+  self.postMessage(result)
+}
+
+// main.ts
+const worker = new Worker(new URL('./worker.ts', import.meta.url))
+worker.postMessage(hugeArray)
+worker.onmessage = (e) => console.log('Sorted:', e.data)
+
+// AbortController — cancel fetch (prevent race conditions)
+const controller = new AbortController()
+fetch('/api/search?q=hello', { signal: controller.signal })
+  .then(res => res.json())
+  .then(data => setResults(data))
+  .catch(err => {
+    if (err.name === 'AbortError') return // cancelled, ignore
+    throw err
+  })
+controller.abort() // cancel the request`}</CodeBlock>
+                <Callout type="tip">Interview: {'"The page is janky when sorting a large list"'} → <Highlight>Web Worker</Highlight> for sorting. {'"Cancel previous search request when user keeps typing"'} → AbortController.</Callout>
+            </TopicModal>
+
+            <TopicModal title="WeakMap, WeakRef & FinalizationRegistry" emoji="🧹" color="#8b5cf6" summary="Memory management, garbage collection awareness — senior-level interview topic">
+                <Paragraph><Highlight>WeakMap/WeakRef</Highlight> allow referencing objects without preventing garbage collection — important for memory management.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🗺️ WeakMap vs Map</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Map</strong>: keys can be any type. <strong>Holds reference</strong> → prevents GC<br />
+                            • <strong>WeakMap</strong>: keys <strong>must be objects</strong>. Weak reference → <strong>allows GC</strong><br />
+                            • WeakMap is <strong>not iterable</strong> (no size, no forEach, no keys/values)<br />
+                            • Use case: cache metadata for DOM elements, private data for classes
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">👻 WeakRef & FinalizationRegistry</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>WeakRef</strong>: weak reference — <InlineCode>ref.deref()</InlineCode> may return undefined<br />
+                            • <strong>FinalizationRegistry</strong>: callback when object is GC&apos;d<br />
+                            • Use case: cache expensive objects without leaking memory<br />
+                            • ⚠️ Rarely used directly — but understanding = senior mindset
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="weak-references.ts">{`// WeakMap — private data for classes
+const privateData = new WeakMap()
+class User {
+  constructor(name: string, ssn: string) {
+    this.name = name
+    privateData.set(this, { ssn }) // truly private!
+  }
+  name: string
+  getSSN() { return privateData.get(this)?.ssn }
+}
+// When user is GC'd, privateData entry is also GC'd
+
+// WeakMap — cache DOM element metadata
+const elementCache = new WeakMap<HTMLElement, object>()
+function getMetadata(el: HTMLElement) {
+  if (!elementCache.has(el)) {
+    elementCache.set(el, computeExpensiveMetadata(el))
+  }
+  return elementCache.get(el)!
+  // When element is removed from DOM & GC'd → cache auto-cleaned!
+}`}</CodeBlock>
+                <Callout type="tip">Interview: When asked about <Highlight>memory leaks</Highlight> → mention WeakMap/WeakRef. Explaining why Map holds references and prevents GC → senior level answer.</Callout>
+            </TopicModal>
         </div>
 
         <Heading3>2.2 Implement from Scratch (click for sample code)</Heading3>
@@ -2379,6 +2731,265 @@ elements.forEach((el, i) => el.style.height = heights[i] + 10)  // all writes`}<
                     Interview: When asked {'"The site is slow, what would you do?"'} → <Highlight>measure first (Lighthouse)</Highlight> → identify bottleneck (LCP? INP? CLS?) → apply specific solutions. Don&apos;t optimize blindly!
                 </Callout>
                 <a href="/blogs/core-web-vitals" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+            </TopicModal>
+
+            <TopicModal title="CSS Specificity & Cascade" emoji="⚖️" color="#38bdf8" summary="Specificity calculation, cascade order, inheritance — why doesn't my CSS apply?">
+                <Paragraph><Highlight>Specificity</Highlight> determines which CSS rule {'"wins"'} when there&apos;s a conflict — very common interview question.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">📊 Specificity Hierarchy (low → high)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            1. <strong>Type selectors</strong>: <InlineCode>div</InlineCode>, <InlineCode>p</InlineCode>, <InlineCode>h1</InlineCode> → (0,0,1)<br />
+                            2. <strong>Class, pseudo-class, attribute</strong>: <InlineCode>.btn</InlineCode>, <InlineCode>:hover</InlineCode>, <InlineCode>[type=text]</InlineCode> → (0,1,0)<br />
+                            3. <strong>ID selectors</strong>: <InlineCode>#header</InlineCode> → (1,0,0)<br />
+                            4. <strong>Inline styles</strong>: style=&quot;...&quot; → (1,0,0,0)<br />
+                            5. <strong>!important</strong>: overrides everything (avoid!)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🎯 Cascade Order</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            When specificity is equal, cascade order decides:<br />
+                            1. <strong>Origin</strong>: User Agent → User → Author<br />
+                            2. <strong>Specificity</strong>: calculated above<br />
+                            3. <strong>Source order</strong>: later rule overrides earlier<br />
+                            4. <strong>@layer</strong> (new!): cascade layers — control ordering
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🧬 Inheritance</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Inherited</strong>: color, font-*, text-*, line-height, visibility<br />
+                            • <strong>Not inherited</strong>: margin, padding, border, display, position<br />
+                            • <InlineCode>inherit</InlineCode>: force inheritance | <InlineCode>initial</InlineCode>: reset to default<br />
+                            • <InlineCode>unset</InlineCode>: inherit if normally inherited, initial otherwise
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="specificity.css">{`/* Specificity calculation: (ID, Class, Type) */
+p { color: blue; }                    /* (0,0,1) */
+.text { color: green; }               /* (0,1,0) ✅ wins over p */
+#main { color: red; }                 /* (1,0,0) ✅ wins over .text */
+p.text.highlight { }                  /* (0,2,1) */
+#main .text { }                       /* (1,1,0) */
+
+/* ❌ Common mistake: over-specific selectors */
+div#app > ul.nav > li.item > a.link { }  /* (1,3,4) — too specific! */
+
+/* ✅ Better: keep specificity low */
+.nav-link { }                          /* (0,1,0) — easy to override */
+
+/* @layer — cascade layers (modern CSS) */
+@layer base, components, utilities;
+@layer base { .btn { padding: 8px 16px; } }
+@layer components { .btn { background: blue; } }
+@layer utilities { .btn-lg { padding: 16px 32px; } }
+/* Order: base < components < utilities */`}</CodeBlock>
+                <Callout type="tip">Interview quiz: <InlineCode>{'.a.b'}</InlineCode> vs <InlineCode>{'.a .b'}</InlineCode> — first is <Highlight>AND</Highlight> (same element), second is <Highlight>descendant</Highlight>. Being able to calculate specificity = senior CSS skill.</Callout>
+            </TopicModal>
+
+            <TopicModal title="CSS Animations & Transitions" emoji="✨" color="#38bdf8" summary="transition, keyframes, transform, will-change — micro-interactions for premium UI">
+                <Paragraph><Highlight>Animations</Highlight> make UI feel alive and professional — but you must understand performance implications.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🔄 Transition vs Animation</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Transition</strong>: A → B (2 states, triggered by state change)<br />
+                            • <strong>Animation</strong>: A → B → C → ... (@keyframes, auto-play, loop)<br />
+                            • Transition for <strong>hover effects, state changes</strong><br />
+                            • Animation for <strong>loading spinners, attention getters</strong>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🚀 Performance-safe Properties</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Composite-only</strong> (GPU accelerated, cheapest):<br />
+                            • <InlineCode>transform</InlineCode>: translate, scale, rotate<br />
+                            • <InlineCode>opacity</InlineCode><br />
+                            <strong>Avoid animating</strong> (triggers layout/paint):<br />
+                            • ❌ width, height, top, left, margin, padding<br />
+                            • Use <InlineCode>transform: translateX()</InlineCode> instead of <InlineCode>left: Xpx</InlineCode>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🎭 Easing Functions</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <InlineCode>ease</InlineCode>: default, most common<br />
+                            • <InlineCode>ease-in-out</InlineCode>: smooth for modal, page transitions<br />
+                            • <InlineCode>cubic-bezier()</InlineCode>: custom curve (bounce, spring)<br />
+                            • <InlineCode>steps()</InlineCode>: frame-by-frame (sprite animation)
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="animations.css">{`/* Transition — smooth hover effect */
+.button {
+  background: #3b82f6;
+  transform: translateY(0);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.button:hover {
+  transform: translateY(-2px);       /* GPU-accelerated! */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Keyframe Animation — loading spinner */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.spinner { animation: spin 1s linear infinite; }
+
+/* prefers-reduced-motion — accessibility! */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}`}</CodeBlock>
+                <Callout type="tip">Interview: always mention <Highlight>prefers-reduced-motion</Highlight> when discussing animations — shows accessibility awareness. Only animate <strong>transform + opacity</strong> for 60fps.</Callout>
+            </TopicModal>
+
+            <TopicModal title="CSS Variables & Modern CSS" emoji="🎨" color="#38bdf8" summary="Custom properties, container queries, :has(), nesting — CSS is getting more powerful">
+                <Paragraph><Highlight>Modern CSS</Highlight> has many powerful features — reducing dependency on JS and preprocessors.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🎨 CSS Custom Properties (Variables)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Declare: <InlineCode>--color-primary: #3b82f6</InlineCode><br />
+                            • Use: <InlineCode>color: var(--color-primary)</InlineCode><br />
+                            • <strong>Cascade</strong>: follows CSS cascade (override per element/media query)<br />
+                            • <strong>Runtime dynamic</strong>: changeable via JS, SASS variables cannot<br />
+                            • Use for: theming (dark/light), design tokens, responsive values
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📦 Container Queries</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Responsive based on <strong>parent container size</strong> instead of viewport.<br />
+                            • <InlineCode>container-type: inline-size</InlineCode> on parent<br />
+                            • <InlineCode>@container (min-width: 400px)</InlineCode> instead of @media<br />
+                            • Component-level responsive — reusable everywhere!
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🆕 Modern CSS Selectors</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <InlineCode>:has()</InlineCode>: parent selector! <InlineCode>.card:has(img)</InlineCode> — card containing img<br />
+                            • <InlineCode>:is() / :where()</InlineCode>: group selectors, reduce repetition<br />
+                            • <strong>CSS Nesting</strong> (native!): write nested rules like SASS<br />
+                            • <InlineCode>:focus-visible</InlineCode>: only keyboard focus (not click)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🔧 Useful Modern Properties</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <InlineCode>aspect-ratio: 16/9</InlineCode>: maintain ratio without padding hack<br />
+                            • <InlineCode>gap</InlineCode>: works in flexbox now! (not just grid)<br />
+                            • <InlineCode>accent-color</InlineCode>: style checkboxes/radios natively<br />
+                            • <InlineCode>color-mix()</InlineCode>: blend colors in CSS<br />
+                            • <InlineCode>text-wrap: balance</InlineCode>: balanced text wrapping
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="modern-css.css">{`/* CSS Variables — theming */
+:root {
+  --color-primary: #3b82f6;
+  --color-bg: #ffffff;
+}
+[data-theme="dark"] {
+  --color-primary: #60a5fa;
+  --color-bg: #0f172a;
+}
+
+/* Container Queries — component responsive */
+.card-container { container-type: inline-size; }
+@container (min-width: 400px) {
+  .card { display: flex; gap: 16px; }
+}
+
+/* :has() — parent selector */
+.form-group:has(input:invalid) { border-color: red; }
+
+/* CSS Nesting (native!) */
+.card {
+  padding: 16px;
+  & .title { font-size: 1.25rem; }
+  &:hover { box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+}
+
+/* Modern utilities */
+.video { aspect-ratio: 16 / 9; }
+input[type="checkbox"] { accent-color: var(--color-primary); }`}</CodeBlock>
+                <Callout type="tip">Interview: mentioning <Highlight>container queries</Highlight> and <Highlight>:has()</Highlight> → shows you follow CSS evolution. CSS Variables vs SASS variables: CSS vars are <strong>runtime dynamic</strong>, SASS is compile-time.</Callout>
+            </TopicModal>
+
+            <TopicModal title="CSS Architecture — BEM, Modules, CSS-in-JS" emoji="🏗️" color="#38bdf8" summary="Naming conventions, scoping strategies, when to use each approach">
+                <Paragraph>Large projects need <Highlight>CSS architecture</Highlight> to avoid naming conflicts and maintain code easily.</Paragraph>
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">📐 BEM (Block Element Modifier)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Block</strong>: <InlineCode>.card</InlineCode> — standalone component<br />
+                            • <strong>Element</strong>: <InlineCode>.card__title</InlineCode> — part of block<br />
+                            • <strong>Modifier</strong>: <InlineCode>.card--featured</InlineCode> — variant<br />
+                            • Pros: predictable, no nesting, flat specificity<br />
+                            • Cons: verbose class names
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🔒 CSS Modules</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Auto-generate unique class names (scoped by default)<br />
+                            • <InlineCode>import styles from &apos;./Card.module.css&apos;</InlineCode><br />
+                            • <InlineCode>className={'{styles.card}'}</InlineCode> → <InlineCode>.Card_card__x7f3k</InlineCode><br />
+                            • Next.js supports natively. No runtime cost
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">💅 CSS-in-JS</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Runtime</strong>: styled-components, Emotion → inject {'<style>'} at runtime<br />
+                            <strong>Zero-runtime</strong>: Vanilla Extract, Linaria → extract CSS at build time<br />
+                            • Runtime CSS-in-JS: <strong>performance overhead</strong> (style injection)<br />
+                            • Zero-runtime: <strong>best DX + zero overhead</strong> (type-safe + no runtime)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🆚 Comparison</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Utility-first</strong> (Tailwind): fast, but verbose HTML<br />
+                            • <strong>CSS Modules</strong>: scoped, no runtime, simple. Best for most projects<br />
+                            • <strong>Zero-runtime CSS-in-JS</strong>: type-safe, co-located, enterprise<br />
+                            • <strong>BEM</strong>: legacy but still widely used, no build tool needed
+                        </div>
+                    </div>
+                </div>
+                <CodeBlock title="css-architecture.tsx">{`/* BEM naming */
+.card { }
+.card__header { }
+.card__body { }
+.card--featured { border: 2px solid gold; }
+.card--disabled { opacity: 0.5; }
+
+/* CSS Modules */
+// Card.module.css
+.card { padding: 16px; border-radius: 8px; }
+.title { font-weight: bold; }
+
+// Card.tsx
+import styles from './Card.module.css'
+<div className={styles.card}>
+  <h2 className={styles.title}>Hello</h2>
+</div>
+// Output: <div class="Card_card__x7f3k">
+
+/* Vanilla Extract (zero-runtime, type-safe) */
+// card.css.ts
+import { style } from '@vanilla-extract/css'
+export const card = style({
+  padding: 16,
+  borderRadius: 8,
+  ':hover': { boxShadow: '0 4px 12px rgba(0,0,0,0.1)' },
+})
+// TypeScript error if you typo a property name!`}</CodeBlock>
+                <Callout type="tip">Interview: asked {'"How do you organize CSS in a large project?"'} → answer CSS Modules (simple) or Vanilla Extract (enterprise). Explaining <Highlight>trade-offs</Highlight> between approaches → senior answer.</Callout>
             </TopicModal>
         </div>
 
