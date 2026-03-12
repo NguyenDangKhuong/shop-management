@@ -343,7 +343,7 @@ export default function TranslateClient() {
                                 <button
                                     onClick={() => deleteVocabulary(item._id)}
                                     disabled={deletingId === item._id}
-                                    className="opacity-0 group-hover:opacity-100 text-xs text-slate-600 hover:text-red-400 transition-all px-1 py-0.5 rounded shrink-0"
+                                    className="opacity-50 group-hover:opacity-100 text-xs text-slate-600 hover:text-red-400 transition-all px-1 py-0.5 rounded shrink-0"
                                     title="Delete"
                                 >
                                     ✕
