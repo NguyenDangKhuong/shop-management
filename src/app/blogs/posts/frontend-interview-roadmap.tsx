@@ -2194,40 +2194,102 @@ const res = await fetch('https://api.myapp.com/profile', {
         <Heading3>3.1 React (click để xem chi tiết)</Heading3>
         <div className="my-4 space-y-2">
             <TopicModal title="Virtual DOM & Reconciliation" emoji="🌳" color="#61DAFB" summary="React diff algorithm — làm sao React biết cần update gì trên DOM thật">
-                <Paragraph>React không update DOM trực tiếp. Thay vào đó, nó dùng <Highlight>Virtual DOM</Highlight> — một bản copy nhẹ của DOM thật.</Paragraph>
+                <Paragraph>React không update DOM trực tiếp. Nó dùng <Highlight>Virtual DOM</Highlight> — JS object đại diện cho DOM thật. Khi state thay đổi, React so sánh cây cũ vs cây mới và chỉ cập nhật phần thay đổi.</Paragraph>
+
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                        <div className="text-blue-400 font-bold text-sm">🔄 Quy trình Rendering</div>
+                        <div className="text-blue-400 font-bold text-sm">🔄 Quy trình từng bước</div>
                         <div className="text-slate-300 text-sm mt-1">
-                            1. State/props thay đổi → React gọi <strong>render()</strong> tạo Virtual DOM mới<br />
-                            2. <strong>Diffing</strong>: So sánh VDOM cũ vs mới (O(n) nhờ heuristics thay vì O(n³))<br />
-                            3. <strong>Reconciliation</strong>: Tạo list minimal DOM operations cần thiết<br />
-                            4. <strong>Commit</strong>: Apply changes lên DOM thật (batched)<br />
+                            1. State/props thay đổi → React gọi render() tạo <strong>Virtual DOM mới</strong><br />
+                            2. <strong>Diffing</strong>: So sánh cây cũ vs mới — O(n) nhờ 2 heuristics thay vì O(n³)<br />
+                            3. <strong>Reconciliation</strong>: Đánh dấu effects (insert, update, delete)<br />
+                            4. <strong>Commit</strong>: Apply changes lên DOM thật (batched, đồng bộ)<br />
                             5. Browser repaint (layout → paint → composite)
                         </div>
                     </div>
 
                     <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                        <div className="text-purple-400 font-bold text-sm">📏 Diffing Heuristics (2 assumptions)</div>
+                        <div className="text-purple-400 font-bold text-sm">📏 2 Assumptions — Tại sao O(n) thay vì O(n³)</div>
                         <div className="text-slate-300 text-sm mt-1">
-                            • <strong>Khác type</strong> → destroy cây cũ, build cây mới (ví dụ: {'<div>'} → {'<span>'})<br />
-                            • <strong>Cùng type</strong> → giữ DOM node, chỉ update attributes thay đổi<br />
-                            • <strong>List items</strong>: dùng <InlineCode>key</InlineCode> prop để match — KHÔNG dùng index làm key!<br />
-                            • Key giúp React biết item nào thay đổi, thêm, xóa mà không cần re-render toàn bộ list
+                            <strong>Assumption 1: Khác type → xoá cây cũ, tạo cây mới</strong><br />
+                            • {'<div>'} → {'<span>'} = unmount toàn bộ subtree (kể cả children), mount mới<br />
+                            • {'<Counter />'} → {'<Timer />'} = xoá Counter (mất state!), tạo Timer<br /><br />
+                            <strong>Assumption 2: key xác định element nào giữ nguyên</strong><br />
+                            • Không có key → React so sánh theo <strong>index</strong> (thêm ở đầu = re-render tất cả!)<br />
+                            • Có key → React match theo <strong>key</strong> (chỉ insert/delete/move chính xác)
                         </div>
                     </div>
 
                     <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                        <div className="text-green-400 font-bold text-sm">⚡ React Fiber (React 18+)</div>
+                        <div className="text-green-400 font-bold text-sm">⚡ React Fiber — Reconciliation Engine</div>
                         <div className="text-slate-300 text-sm mt-1">
-                            Fiber = kiến trúc mới cho reconciliation — <strong>incremental rendering</strong>:<br />
-                            • <strong>Time slicing</strong>: chia rendering thành chunks nhỏ, không block main thread<br />
-                            • <strong>Priority lanes</strong>: user input (urgent) {'>'} animation {'>'} data fetch (low priority)<br />
+                            <strong>Trước (Stack Reconciler):</strong> render đồng bộ → block main thread → UI đơ<br />
+                            <strong>Sau (Fiber):</strong> render có thể <strong>pause, resume, abort</strong><br /><br />
+                            • <strong>Time slicing</strong>: chia rendering thành chunks nhỏ, yield cho browser<br />
+                            • <strong>Priority lanes</strong>: user input (urgent) {'>'} animation {'>'} data fetch (low)<br />
                             • <strong>Concurrent features</strong>: Suspense, startTransition, useDeferredValue<br />
-                            • <strong>Interruptible</strong>: React có thể pause rendering để xử lý user input trước
+                            • Mỗi component = 1 <strong>Fiber node</strong> trong linked list (không phải recursion)
                         </div>
                     </div>
+                </div>
 
+                <CodeBlock title="reconciliation-examples.tsx">{`// === 1. KHÁC TYPE → Xoá + Tạo mới ===
+// Trước:                      Sau:
+<div><Counter /></div>    →    <span><Counter /></span>
+// React xoá <div> + unmount Counter (MẤT STATE!)
+// Tạo <span> + mount Counter mới (state reset về 0)
+
+// === 2. CÙNG TYPE → Chỉ update attributes thay đổi ===
+// Trước:                                 Sau:
+<div className="old" title="a" />    →    <div className="new" title="a" />
+// Giữ DOM node, chỉ đổi className. title không đổi → skip
+
+// === 3. KEY: TẠI SAO QUAN TRỌNG ===
+// Danh sách ban đầu: ["A", "B"]
+// Thêm "C" ở đầu:   ["C", "A", "B"]
+
+// ❌ KHÔNG CÓ KEY (so sánh theo index):
+// [0] "A" → "C"  ← React nghĩ "A" biến thành "C" → update text
+// [1] "B" → "A"  ← React nghĩ "B" biến thành "A" → update text
+//          "B"  ← Tạo mới
+// → CẢ 3 element bị thay đổi! State input bị lẫn giữa items 😱
+
+// ✅ CÓ KEY (so sánh theo key):
+// key="c" → "C"  ← Mới! Insert vào DOM
+// key="a" → "A"  ← Nhận ra còn đó, di chuyển vị trí
+// key="b" → "B"  ← Nhận ra còn đó, di chuyển vị trí
+// → Chỉ INSERT 1 element, state giữ nguyên đúng item ✅
+
+// ❌ Bad: index làm key
+{items.map((item, index) => (
+  <Input key={index} defaultValue={item.name} />
+  // Sort list → DOM nodes giữ nguyên vị trí, chỉ props đổi
+  // → Input value CŨ hiển thị ở vị trí MỚI!
+))}
+
+// ✅ Good: unique ID làm key
+{items.map(item => (
+  <Input key={item.id} defaultValue={item.name} />
+  // React biết chính xác item nào move → DOM reorder đúng
+))}`}</CodeBlock>
+
+                <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-white/10">
+                            <th className="text-left p-3 text-slate-400 font-medium">Tình huống</th>
+                            <th className="text-left p-3 text-red-400 font-medium">❌ Không key (index)</th>
+                            <th className="text-left p-3 text-green-400 font-medium">✅ Có key</th>
+                        </tr></thead>
+                        <tbody className="text-slate-300">
+                            <tr className="border-b border-white/5"><td className="p-3 text-slate-400">Thêm ở đầu</td><td className="p-3">Re-render tất cả</td><td className="p-3">Chỉ insert 1</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3 text-slate-400">Xoá ở giữa</td><td className="p-3">Shift tất cả phía sau</td><td className="p-3">Chỉ xoá 1</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3 text-slate-400">Reorder</td><td className="p-3">Re-render tất cả</td><td className="p-3">Di chuyển DOM nodes</td></tr>
+                            <tr><td className="p-3 text-slate-400">State preservation</td><td className="p-3">State bị lẫn lộn!</td><td className="p-3">State đúng element</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                         <div className="text-yellow-400 font-bold text-sm">🆚 VDOM vs Direct DOM vs Signals</div>
                         <div className="text-slate-300 text-sm mt-1">
@@ -2239,34 +2301,28 @@ const res = await fetch('https://api.myapp.com/profile', {
                     </div>
                 </div>
 
-                <CodeBlock title="reconciliation-demo.tsx">{`// ❌ Bad: dùng index làm key → bug khi reorder
-{items.map((item, index) => (
-  <Input key={index} defaultValue={item.name} />
-  // Khi sort: DOM nodes giữ nguyên, chỉ props thay đổi
-  // → input value CŨ vẫn hiển thị ở vị trí MỚI!
-))}
+                <CodeBlock title="concurrent-rendering.tsx">{`// React 18+: Concurrent Rendering — ứng dụng của Fiber
+function SearchApp() {
+    const [query, setQuery] = useState('')
+    const deferredQuery = useDeferredValue(query)
 
-// ✅ Good: dùng unique ID làm key
-{items.map(item => (
-  <Input key={item.id} defaultValue={item.name} />
-  // React biết chính xác item nào move → DOM reorder đúng
-))}
-
-// React 18: Concurrent rendering
-function App() {
-  const [query, setQuery] = useState('')
-  const deferredQuery = useDeferredValue(query)
-  // Input updates ngay (urgent)
-  // SearchResults re-render với deferredQuery (low priority)
-  return <>
-    <input value={query} onChange={e => setQuery(e.target.value)} />
-    <SearchResults query={deferredQuery} />
-  </>
+    // Input updates NGAY (urgent lane)
+    // SearchResults re-render với deferredQuery (low priority lane)
+    // Fiber có thể PAUSE SearchResults nếu user tiếp tục type!
+    return <>
+        <input value={query} onChange={e => setQuery(e.target.value)} />
+        <Suspense fallback={<Spinner />}>
+            <SearchResults query={deferredQuery} />
+        </Suspense>
+    </>
 }`}</CodeBlock>
 
                 <Callout type="tip">
-                    Interview: Giải thích <Highlight>tại sao key quan trọng</Highlight> với ví dụ cụ thể (reorder list với input).
-                    Nhắc đến Fiber + concurrent rendering → cho thấy hiểu React hiện đại, không chỉ React cũ.
+                    Interview: <Highlight>Giải thích reconciliation = 3 trụ cột</Highlight>:<br />
+                    1️⃣ <strong>2 heuristics</strong> (khác type = rebuild, key = match) → O(n)<br />
+                    2️⃣ <strong>key</strong> tại sao quan trọng (ví dụ reorder list với input)<br />
+                    3️⃣ <strong>Fiber</strong> = interruptible rendering → Concurrent Mode<br />
+                    Nói được cả 3 → interviewer sẽ ấn tượng.
                 </Callout>
             </TopicModal>
 

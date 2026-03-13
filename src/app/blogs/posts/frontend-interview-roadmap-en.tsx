@@ -2160,41 +2160,103 @@ const res = await fetch('https://api.myapp.com/profile', {
 
         <Heading3>3.1 React (click for details)</Heading3>
         <div className="my-4 space-y-2">
-            <TopicModal title="Virtual DOM & Reconciliation" emoji="🌳" color="#61DAFB" summary="React diff algorithm — how React knows what to update on the real DOM">
-                <Paragraph>React doesn&apos;t update the DOM directly. Instead, it uses a <Highlight>Virtual DOM</Highlight> — a lightweight copy of the real DOM.</Paragraph>
+            <TopicModal title="Virtual DOM &amp; Reconciliation" emoji="🌳" color="#61DAFB" summary="React diff algorithm — how React knows what to update on the real DOM">
+                <Paragraph>React doesn&apos;t update the DOM directly. It uses a <Highlight>Virtual DOM</Highlight> — a JS object representing the real DOM. When state changes, React compares the old tree vs the new tree and only updates what changed.</Paragraph>
+
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                        <div className="text-blue-400 font-bold text-sm">🔄 Rendering Process</div>
+                        <div className="text-blue-400 font-bold text-sm">🔄 Step-by-step Process</div>
                         <div className="text-slate-300 text-sm mt-1">
-                            1. State/props change → React calls <strong>render()</strong> to create new Virtual DOM<br />
-                            2. <strong>Diffing</strong>: Compare old vs new VDOM (O(n) via heuristics instead of O(n³))<br />
-                            3. <strong>Reconciliation</strong>: Create list of minimal DOM operations needed<br />
-                            4. <strong>Commit</strong>: Apply changes to real DOM (batched)<br />
+                            1. State/props change → React calls render() to create <strong>new Virtual DOM</strong><br />
+                            2. <strong>Diffing</strong>: Compare old vs new tree — O(n) via 2 heuristics instead of O(n³)<br />
+                            3. <strong>Reconciliation</strong>: Mark effects (insert, update, delete)<br />
+                            4. <strong>Commit</strong>: Apply changes to real DOM (batched, synchronous)<br />
                             5. Browser repaint (layout → paint → composite)
                         </div>
                     </div>
 
                     <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                        <div className="text-purple-400 font-bold text-sm">📏 Diffing Heuristics (2 assumptions)</div>
+                        <div className="text-purple-400 font-bold text-sm">📏 2 Assumptions — Why O(n) instead of O(n³)</div>
                         <div className="text-slate-300 text-sm mt-1">
-                            • <strong>Different type</strong> → destroy old tree, build new tree (e.g., {'<div>'} → {'<span>'})<br />
-                            • <strong>Same type</strong> → keep DOM node, only update changed attributes<br />
-                            • <strong>List items</strong>: use <InlineCode>key</InlineCode> prop to match — NEVER use index as key!<br />
-                            • Key helps React know which items changed, were added, or removed without re-rendering the entire list
+                            <strong>Assumption 1: Different type → destroy old tree, build new</strong><br />
+                            • {'<div>'} → {'<span>'} = unmount entire subtree (including children), mount new<br />
+                            • {'<Counter />'} → {'<Timer />'} = destroy Counter (loses state!), create Timer<br /><br />
+                            <strong>Assumption 2: key identifies which elements persist</strong><br />
+                            • No key → React compares by <strong>index</strong> (prepend = re-render everything!)<br />
+                            • With key → React matches by <strong>key</strong> (precise insert/delete/move)
                         </div>
                     </div>
 
                     <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                        <div className="text-green-400 font-bold text-sm">⚡ React Fiber (React 18+)</div>
+                        <div className="text-green-400 font-bold text-sm">⚡ React Fiber — Reconciliation Engine</div>
                         <div className="text-slate-300 text-sm mt-1">
-                            Fiber = new architecture for reconciliation — <strong>incremental rendering</strong>:<br />
-                            • <strong>Time slicing</strong>: split rendering into small chunks, don&apos;t block main thread<br />
-                            • <strong>Priority lanes</strong>: user input (urgent) {'>'} animation {'>'} data fetch (low priority)<br />
+                            <strong>Before (Stack Reconciler):</strong> synchronous render → blocks main thread → UI freezes<br />
+                            <strong>After (Fiber):</strong> rendering can <strong>pause, resume, abort</strong><br /><br />
+                            • <strong>Time slicing</strong>: split rendering into small chunks, yield to browser<br />
+                            • <strong>Priority lanes</strong>: user input (urgent) {'>'} animation {'>'} data fetch (low)<br />
                             • <strong>Concurrent features</strong>: Suspense, startTransition, useDeferredValue<br />
-                            • <strong>Interruptible</strong>: React can pause rendering to handle user input first
+                            • Each component = 1 <strong>Fiber node</strong> in linked list (not recursion)
                         </div>
                     </div>
+                </div>
 
+                <CodeBlock title="reconciliation-examples.tsx">{`// === 1. DIFFERENT TYPE → Destroy + Rebuild ===
+// Before:                      After:
+<div><Counter /></div>    →    <span><Counter /></span>
+// React destroys <div> + unmounts Counter (LOSES STATE!)
+// Creates <span> + mounts new Counter (state resets to 0)
+
+// === 2. SAME TYPE → Only update changed attributes ===
+// Before:                                 After:
+<div className="old" title="a" />    →    <div className="new" title="a" />
+// Keeps DOM node, only changes className. title unchanged → skip
+
+// === 3. KEY: WHY IT MATTERS ===
+// Initial list: ["A", "B"]
+// Prepend "C":  ["C", "A", "B"]
+
+// ❌ WITHOUT KEY (compare by index):
+// [0] "A" → "C"  ← React thinks "A" became "C" → update text
+// [1] "B" → "A"  ← React thinks "B" became "A" → update text
+//          "B"  ← Create new
+// → ALL 3 elements modified! Input state mixed between items 😱
+
+// ✅ WITH KEY (compare by key):
+// key="c" → "C"  ← New! Insert into DOM
+// key="a" → "A"  ← Recognized, move position
+// key="b" → "B"  ← Recognized, move position
+// → Only INSERT 1 element, state preserved correctly ✅
+
+// ❌ Bad: index as key
+{items.map((item, index) => (
+  <Input key={index} defaultValue={item.name} />
+  // Sort list → DOM nodes stay at same position, only props change
+  // → OLD input values show at NEW positions!
+))}
+
+// ✅ Good: unique ID as key
+{items.map(item => (
+  <Input key={item.id} defaultValue={item.name} />
+  // React knows exactly which item moved → correct DOM reorder
+))}`}</CodeBlock>
+
+                <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-white/10">
+                            <th className="text-left p-3 text-slate-400 font-medium">Scenario</th>
+                            <th className="text-left p-3 text-red-400 font-medium">❌ No key (index)</th>
+                            <th className="text-left p-3 text-green-400 font-medium">✅ With key</th>
+                        </tr></thead>
+                        <tbody className="text-slate-300">
+                            <tr className="border-b border-white/5"><td className="p-3 text-slate-400">Prepend item</td><td className="p-3">Re-render everything</td><td className="p-3">Insert 1 only</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3 text-slate-400">Delete middle</td><td className="p-3">Shift all after it</td><td className="p-3">Remove 1 only</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3 text-slate-400">Reorder</td><td className="p-3">Re-render everything</td><td className="p-3">Move DOM nodes</td></tr>
+                            <tr><td className="p-3 text-slate-400">State preservation</td><td className="p-3">State gets mixed up!</td><td className="p-3">State stays with element</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                         <div className="text-yellow-400 font-bold text-sm">🆚 VDOM vs Direct DOM vs Signals</div>
                         <div className="text-slate-300 text-sm mt-1">
@@ -2206,34 +2268,28 @@ const res = await fetch('https://api.myapp.com/profile', {
                     </div>
                 </div>
 
-                <CodeBlock title="reconciliation-demo.tsx">{`// ❌ Bad: using index as key → bugs when reordering
-{items.map((item, index) => (
-  <Input key={index} defaultValue={item.name} />
-  // When sorting: DOM nodes stay the same, only props change
-  // → OLD input values still show at NEW positions!
-))}
+                <CodeBlock title="concurrent-rendering.tsx">{`// React 18+: Concurrent Rendering — Fiber in action
+function SearchApp() {
+    const [query, setQuery] = useState('')
+    const deferredQuery = useDeferredValue(query)
 
-// ✅ Good: use unique ID as key
-{items.map(item => (
-  <Input key={item.id} defaultValue={item.name} />
-  // React knows exactly which item moved → correct DOM reorder
-))}
-
-// React 18: Concurrent rendering
-function App() {
-  const [query, setQuery] = useState('')
-  const deferredQuery = useDeferredValue(query)
-  // Input updates immediately (urgent)
-  // SearchResults re-renders with deferredQuery (low priority)
-  return <>
-    <input value={query} onChange={e => setQuery(e.target.value)} />
-    <SearchResults query={deferredQuery} />
-  </>
+    // Input updates IMMEDIATELY (urgent lane)
+    // SearchResults re-renders with deferredQuery (low priority lane)
+    // Fiber can PAUSE SearchResults if user keeps typing!
+    return <>
+        <input value={query} onChange={e => setQuery(e.target.value)} />
+        <Suspense fallback={<Spinner />}>
+            <SearchResults query={deferredQuery} />
+        </Suspense>
+    </>
 }`}</CodeBlock>
 
                 <Callout type="tip">
-                    Interview: Explain <Highlight>why key matters</Highlight> with a concrete example (reorder list with inputs).
-                    Mention Fiber + concurrent rendering → shows understanding of modern React, not just legacy.
+                    Interview: <Highlight>Explain reconciliation in 3 pillars</Highlight>:<br />
+                    1️⃣ <strong>2 heuristics</strong> (different type = rebuild, key = match) → O(n)<br />
+                    2️⃣ <strong>key</strong> why it matters (example: reorder list with inputs)<br />
+                    3️⃣ <strong>Fiber</strong> = interruptible rendering → Concurrent Mode<br />
+                    Cover all 3 → interviewer will be impressed.
                 </Callout>
             </TopicModal>
 
