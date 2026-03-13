@@ -2368,7 +2368,8 @@ function UserProfile({ userId }) {
                             <strong>Controlled</strong>: React manages state (<InlineCode>value + onChange</InlineCode>). Single source of truth.<br />
                             <strong>Uncontrolled</strong>: DOM manages state (<InlineCode>useRef</InlineCode>). Use when integrating with non-React code.<br />
                             • Forms: controlled for real-time validation, uncontrolled for simple forms<br />
-                            • Best practice: <strong>support both</strong> (controlled when value prop exists, uncontrolled when not)
+                            • Best practice: <strong>support both</strong> (controlled when value prop exists, uncontrolled when not)<br />
+                            • 💡 <InlineCode>react-hook-form</InlineCode> internally uses <strong>uncontrolled</strong> (register via ref) → <Highlight>no re-render per keystroke</Highlight> → superior performance with 20-30 field forms
                         </div>
                     </div>
 

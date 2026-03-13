@@ -2401,7 +2401,8 @@ function UserProfile({ userId }) {
                             <strong>Controlled</strong>: React quản lý state (<InlineCode>value + onChange</InlineCode>). Single source of truth.<br />
                             <strong>Uncontrolled</strong>: DOM quản lý state (<InlineCode>useRef</InlineCode>). Dùng khi integration với non-React code.<br />
                             • Form: controlled cho validation real-time, uncontrolled cho simple forms<br />
-                            • Best practice: <strong>support both</strong> (controlled khi có value prop, uncontrolled khi không)
+                            • Best practice: <strong>support both</strong> (controlled khi có value prop, uncontrolled khi không)<br />
+                            • 💡 <InlineCode>react-hook-form</InlineCode> nội bộ dùng <strong>uncontrolled</strong> (register qua ref) → <Highlight>không re-render mỗi keystroke</Highlight> → hiệu suất vượt trội khi form có 20-30 fields
                         </div>
                     </div>
 
