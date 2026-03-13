@@ -1,5 +1,6 @@
 import { BlogPost } from '../types'
 import algorithmPatterns from './algorithm-patterns'
+import behavioralInterview from './behavioral-interview'
 import bfsDfsPattern from './bfs-dfs-pattern'
 import binarySearchPattern from './binary-search-pattern'
 import callbackPromiseAsyncAwait from './callback-promise-async-await'
@@ -56,6 +57,7 @@ export const blogPosts: BlogPost[] = [
     designSystemComponents,
     seoOptimization,
     accessibilityGuide,
+    behavioralInterview,
 ]
 
 
