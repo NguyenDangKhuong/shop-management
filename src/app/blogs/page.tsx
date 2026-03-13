@@ -42,6 +42,14 @@ export const metadata: Metadata = {
     },
     alternates: {
         canonical: `${SITE_URL}/blogs`,
+        languages: {
+            'vi': `${SITE_URL}/blogs?lang=vi`,
+            'en': `${SITE_URL}/blogs?lang=en`,
+            'x-default': `${SITE_URL}/blogs`,
+        },
+        types: {
+            'application/rss+xml': `${SITE_URL}/feed.xml`,
+        },
     },
     robots: {
         index: true,

@@ -47,6 +47,11 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
         },
         alternates: {
             canonical: url,
+            languages: {
+                'vi': `${url}?lang=vi`,
+                'en': `${url}?lang=en`,
+                'x-default': url,
+            },
         },
         robots: {
             index: true,
@@ -99,13 +104,44 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
         },
     }
 
+    // BreadcrumbList JSON-LD for navigation
+    const breadcrumbLd = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: SITE_URL,
+            },
+            {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Blog',
+                item: `${SITE_URL}/blogs`,
+            },
+            {
+                '@type': 'ListItem',
+                position: 3,
+                name: post.title.vi,
+                item: `${SITE_URL}/blogs/${slug}`,
+            },
+        ],
+    }
+
     return (
         <LangProvider>
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+            />
             <BlogDetailContent post={post} relatedPosts={relatedPosts} />
         </LangProvider>
     )
 }
+

@@ -21,9 +21,41 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'TheTapHoa',
-  description: 'TheTapHoa, TPHCM, Viet Nam',
+  metadataBase: new URL('https://thetaphoa.com'),
+  title: {
+    default: 'TheTapHoa — Frontend Knowledge Blog | Nguyen Dang Khuong',
+    template: '%s | TheTapHoa',
+  },
+  description: 'Chia sẻ kiến thức Frontend chuyên sâu: JavaScript, React, Next.js, TypeScript, System Design, Algorithm Patterns — dành cho developer Việt Nam muốn phỏng vấn Big Tech.',
+  keywords: [
+    'Frontend', 'JavaScript', 'React', 'Next.js', 'TypeScript',
+    'System Design', 'Algorithm', 'LeetCode', 'Interview',
+    'Nguyen Dang Khuong', 'TheTapHoa', 'Web Development',
+  ],
+  authors: [{ name: 'Nguyen Dang Khuong', url: 'https://thetaphoa.com' }],
+  creator: 'Nguyen Dang Khuong',
+  publisher: 'TheTapHoa',
   manifest: '/favicon_io/site.webmanifest',
+  openGraph: {
+    type: 'website',
+    locale: 'vi_VN',
+    alternateLocale: 'en_US',
+    url: 'https://thetaphoa.com',
+    siteName: 'TheTapHoa',
+    title: 'TheTapHoa — Frontend Knowledge Blog',
+    description: 'Chia sẻ kiến thức Frontend chuyên sâu: JavaScript, React, Next.js, TypeScript, System Design.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'TheTapHoa — Frontend Knowledge Blog',
+    description: 'Chia sẻ kiến thức Frontend chuyên sâu cho developer Việt Nam.',
+  },
+  alternates: {
+    canonical: 'https://thetaphoa.com',
+    types: {
+      'application/rss+xml': '/feed.xml',
+    },
+  },
   // PWA meta tags
   appleWebApp: {
     capable: true,
