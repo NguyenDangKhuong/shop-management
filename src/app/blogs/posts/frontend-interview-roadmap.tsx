@@ -2387,8 +2387,62 @@ function SearchApp() {
                             <strong>Timeline:</strong> Render → DOM mutation → <Highlight>useLayoutEffect</Highlight> (sync) → Paint → <Highlight>useEffect</Highlight> (async)<br /><br />
                             • <strong>useEffect</strong> (99%): chạy <strong>SAU paint</strong> — không block UI, dùng cho API calls, subscriptions<br />
                             • <strong>useLayoutEffect</strong>: chạy <strong>TRƯỚC paint</strong> — block paint, dùng khi cần <strong>đo DOM rồi update</strong> mà không muốn user thấy flash<br />
-                            • Ví dụ: tooltip position, scroll sync, auto-resize element<br />
                             • ⚠️ Lạm dụng useLayoutEffect = <strong>block render</strong> = UI đơ. Chỉ dùng khi cần tránh visual flicker
+                        </div>
+
+                        <div className="mt-3 p-3 rounded-lg bg-slate-800/60 border border-white/5">
+                            <div className="text-cyan-300 font-bold text-xs mb-2">🏠 Memory Palace — Phép ẩn dụ &quot;Sơn nhà&quot;</div>
+                            <div className="text-slate-300 text-sm">
+                                Tưởng tượng bạn <strong>sơn lại phòng khách</strong>:<br /><br />
+                                <strong>🖌️ useEffect (thợ sơn bình thường):</strong><br />
+                                Thợ sơn &quot;dán tranh lên tường xong, khách vào ngồi, RỒI MỚI sơn lại tranh&quot;.
+                                Khách <strong>thấy tranh cũ 1 giây rồi mới thấy tranh mới</strong> → <em>flicker!</em><br /><br />
+                                <strong>🚨 useLayoutEffect (thợ sơn khẩn cấp):</strong><br />
+                                Thợ sơn &quot;DÁN TRANH + SƠN LẠI XONG trước khi mở cửa cho khách vào&quot;.
+                                Khách <strong>chỉ thấy tranh mới</strong> — không bao giờ thấy tranh cũ → <em>no flicker!</em><br /><br />
+                                ⚡ <strong>Cái giá:</strong> useLayoutEffect = thợ sơn khẩn cấp = <strong>khách phải đợi ngoài cửa</strong> (block paint).
+                                Nếu sơn lâu quá → UI đơ.
+                            </div>
+                        </div>
+
+                        <div className="mt-3 p-3 rounded-lg bg-slate-800/60 border border-white/5">
+                            <div className="text-cyan-300 font-bold text-xs mb-2">💻 Ví dụ thực tế — Tooltip position</div>
+                            <div className="text-slate-300 text-xs font-mono whitespace-pre-wrap bg-slate-900/60 p-2 rounded mt-1">{`// ❌ useEffect — tooltip NHẢY vị trí (flicker)
+function Tooltip({ anchor }) {
+  const [pos, setPos] = useState({ x: 0, y: 0 })
+
+  useEffect(() => {
+    // Chạy SAU paint → user thấy tooltip ở (0,0)
+    // rồi MỚI nhảy đến vị trí đúng → GIẬT!
+    const rect = anchor.getBoundingClientRect()
+    setPos({ x: rect.left, y: rect.bottom })
+  }, [anchor])
+
+  return <div style={{ left: pos.x, top: pos.y }}>...</div>
+}
+
+// ✅ useLayoutEffect — tooltip ĐÚNG vị trí ngay
+function Tooltip({ anchor }) {
+  const [pos, setPos] = useState({ x: 0, y: 0 })
+
+  useLayoutEffect(() => {
+    // Chạy TRƯỚC paint → đo + set position
+    // → user chỉ thấy tooltip ở vị trí đúng
+    const rect = anchor.getBoundingClientRect()
+    setPos({ x: rect.left, y: rect.bottom })
+  }, [anchor])
+
+  return <div style={{ left: pos.x, top: pos.y }}>...</div>
+}`}
+                            </div>
+                        </div>
+
+                        <div className="mt-3 p-3 rounded-lg bg-slate-800/60 border border-white/5">
+                            <div className="text-cyan-300 font-bold text-xs mb-2">📋 Khi nào dùng cái nào?</div>
+                            <div className="text-slate-300 text-sm">
+                                <strong>useEffect (99%):</strong> API calls, event listeners, analytics, subscriptions — mọi thứ <strong>không liên quan đến layout</strong><br /><br />
+                                <strong>useLayoutEffect (1%):</strong> đo DOM size/position, scroll sync, tooltip/popover positioning, animation setup — khi cần <strong>đo rồi update trước khi user nhìn thấy</strong>
+                            </div>
                         </div>
                     </div>
 

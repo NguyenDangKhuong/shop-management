@@ -2354,8 +2354,62 @@ function SearchApp() {
                             <strong>Timeline:</strong> Render → DOM mutation → <Highlight>useLayoutEffect</Highlight> (sync) → Paint → <Highlight>useEffect</Highlight> (async)<br /><br />
                             • <strong>useEffect</strong> (99%): runs <strong>AFTER paint</strong> — doesn&apos;t block UI, use for API calls, subscriptions<br />
                             • <strong>useLayoutEffect</strong>: runs <strong>BEFORE paint</strong> — blocks paint, use when you need to <strong>measure DOM then update</strong> without user seeing a flash<br />
-                            • Examples: tooltip positioning, scroll sync, auto-resize elements<br />
                             • ⚠️ Overusing useLayoutEffect = <strong>blocking render</strong> = frozen UI. Only use to prevent visual flicker
+                        </div>
+
+                        <div className="mt-3 p-3 rounded-lg bg-slate-800/60 border border-white/5">
+                            <div className="text-cyan-300 font-bold text-xs mb-2">🏠 Memory Palace — The &quot;House Painting&quot; Analogy</div>
+                            <div className="text-slate-300 text-sm">
+                                Imagine you&apos;re <strong>repainting your living room</strong>:<br /><br />
+                                <strong>🖌️ useEffect (regular painter):</strong><br />
+                                The painter &quot;hangs the painting on the wall, lets guests in, THEN repaints the painting&quot;.
+                                Guests <strong>see the old painting for a second before the new one appears</strong> → <em>flicker!</em><br /><br />
+                                <strong>🚨 useLayoutEffect (emergency painter):</strong><br />
+                                The painter &quot;hangs + repaints EVERYTHING before opening the door for guests&quot;.
+                                Guests <strong>only ever see the new painting</strong> — never the old one → <em>no flicker!</em><br /><br />
+                                ⚡ <strong>The cost:</strong> useLayoutEffect = emergency painter = <strong>guests wait outside</strong> (blocks paint).
+                                If painting takes too long → UI freezes.
+                            </div>
+                        </div>
+
+                        <div className="mt-3 p-3 rounded-lg bg-slate-800/60 border border-white/5">
+                            <div className="text-cyan-300 font-bold text-xs mb-2">💻 Real Example — Tooltip positioning</div>
+                            <div className="text-slate-300 text-xs font-mono whitespace-pre-wrap bg-slate-900/60 p-2 rounded mt-1">{`// ❌ useEffect — tooltip JUMPS position (flicker)
+function Tooltip({ anchor }) {
+  const [pos, setPos] = useState({ x: 0, y: 0 })
+
+  useEffect(() => {
+    // Runs AFTER paint → user sees tooltip at (0,0)
+    // then it JUMPS to correct position → JANK!
+    const rect = anchor.getBoundingClientRect()
+    setPos({ x: rect.left, y: rect.bottom })
+  }, [anchor])
+
+  return <div style={{ left: pos.x, top: pos.y }}>...</div>
+}
+
+// ✅ useLayoutEffect — tooltip in correct position immediately
+function Tooltip({ anchor }) {
+  const [pos, setPos] = useState({ x: 0, y: 0 })
+
+  useLayoutEffect(() => {
+    // Runs BEFORE paint → measure + set position
+    // → user only sees tooltip in the right spot
+    const rect = anchor.getBoundingClientRect()
+    setPos({ x: rect.left, y: rect.bottom })
+  }, [anchor])
+
+  return <div style={{ left: pos.x, top: pos.y }}>...</div>
+}`}
+                            </div>
+                        </div>
+
+                        <div className="mt-3 p-3 rounded-lg bg-slate-800/60 border border-white/5">
+                            <div className="text-cyan-300 font-bold text-xs mb-2">📋 When to use which?</div>
+                            <div className="text-slate-300 text-sm">
+                                <strong>useEffect (99%):</strong> API calls, event listeners, analytics, subscriptions — anything <strong>not related to layout</strong><br /><br />
+                                <strong>useLayoutEffect (1%):</strong> measuring DOM size/position, scroll sync, tooltip/popover positioning, animation setup — when you need to <strong>measure then update before the user sees anything</strong>
+                            </div>
                         </div>
                     </div>
 
