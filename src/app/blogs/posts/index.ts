@@ -6,6 +6,7 @@ import callbackPromiseAsyncAwait from './callback-promise-async-await'
 import coreWebVitals from './core-web-vitals'
 import csrSsrSsgIsr from './csr-ssr-ssg-isr'
 import dataTypesStructures from './data-types-structures'
+import designSystemComponents from './design-system-components'
 import dynamicProgrammingPattern from './dynamic-programming-pattern'
 import ecmascriptFeatures from './ecmascript-features'
 import eventLoop from './event-loop'
@@ -50,6 +51,7 @@ export const blogPosts: BlogPost[] = [
     nextjsFeatures,
     ecmascriptFeatures,
     redisIntroduction,
+    designSystemComponents,
 ]
 
 
