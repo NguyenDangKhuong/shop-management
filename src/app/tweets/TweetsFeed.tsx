@@ -8,7 +8,9 @@ interface SavedUser {
     username: string
 }
 
-type FeedMode = 'for_you' | 'following' | 'user'
+type FeedMode = 'for_you' | 'following' | 'pinned_user' | 'user'
+
+const PINNED_USERNAME = 'linhnhi_69'
 
 /**
  * TweetsFeed — Unified feed combining HomeFeed + GraphQLTimeline
@@ -97,6 +99,12 @@ export function TweetsFeed() {
         }
     }, [mode, fetchHomeTweets])
 
+    const handlePinnedTab = () => {
+        setMode('pinned_user')
+        setSelectedUser(null)
+        setUserHistory([])
+    }
+
     // ─── Infinite scroll for home feed ───────────────────────────────────
     const sentinelRef = useRef<HTMLDivElement>(null)
     const loadingMoreRef = useRef(false)
@@ -106,7 +114,7 @@ export function TweetsFeed() {
 
     useEffect(() => {
         const el = sentinelRef.current
-        if (!el || mode === 'user') return
+        if (!el || mode === 'user' || mode === 'pinned_user') return
 
         const observer = new IntersectionObserver(
             ([entry]) => {
@@ -170,6 +178,12 @@ export function TweetsFeed() {
         setMode(newMode)
         setSelectedUser(null)
         setUserHistory([])
+    }
+
+    const handlePinnedUserClick = (username: string) => {
+        setPreviousMode('for_you')
+        setSelectedUser(username)
+        setMode('user')
     }
 
     // ─── Render ──────────────────────────────────────────────────────────
@@ -272,6 +286,19 @@ export function TweetsFeed() {
                                 )}
                             </button>
                         ))}
+                        <button
+                            onClick={handlePinnedTab}
+                            className={`flex-1 py-3 text-sm font-semibold transition relative cursor-pointer ${mode === 'pinned_user'
+                                ? 'text-white'
+                                : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                                }`}
+                        >
+                            <span className="mr-1.5">📌</span>
+                            @{PINNED_USERNAME}
+                            {mode === 'pinned_user' && (
+                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-[#1d9bf0] rounded-full" />
+                            )}
+                        </button>
                     </div>
                 </div>
 
@@ -289,7 +316,10 @@ export function TweetsFeed() {
                 )}
 
                 {/* ═══ Tweet List ═══ */}
-                {mode === 'user' && selectedUser ? (
+                {mode === 'pinned_user' ? (
+                    /* Pinned user timeline */
+                    <GraphQLTweets key={`pinned-${PINNED_USERNAME}`} username={PINNED_USERNAME} onUserClick={handlePinnedUserClick} />
+                ) : mode === 'user' && selectedUser ? (
                     /* User timeline — uses GraphQLTweets with its own pagination */
                     <GraphQLTweets key={selectedUser} username={selectedUser} onUserClick={handleUserClick} />
                 ) : (
