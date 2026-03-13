@@ -18,6 +18,7 @@ export function TweetSearch() {
     // Cookie state
     const [cookieModal, setCookieModal] = useState(false)
     const [cookieInput, setCookieInput] = useState('')
+    const [bearerInput, setBearerInput] = useState('')
     const [cookieStatus, setCookieStatus] = useState<string | null>(null)
     const [cookieSaving, setCookieSaving] = useState(false)
     const [cookieError, setCookieError] = useState('')
@@ -95,7 +96,9 @@ export function TweetSearch() {
             const res = await fetch('/api/twitter-token')
             const data = await res.json()
             if (data.success && data.data) {
-                setCookieStatus(`auth_token: ${data.data.authToken}`)
+                const parts = [`auth: ${data.data.authToken}`, `ct0: ${data.data.ct0}`]
+                if (data.data.att) parts.push(`att: ${data.data.att}`)
+                setCookieStatus(parts.join(' · '))
             } else {
                 setCookieStatus(null)
             }
@@ -107,15 +110,22 @@ export function TweetSearch() {
         setCookieSaving(true)
         setCookieError('')
         try {
+            const payload: Record<string, string> = { cookieText: cookieInput }
+            if (bearerInput.trim()) {
+                payload.bearerToken = bearerInput.trim()
+            }
             const res = await fetch('/api/twitter-token', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cookieText: cookieInput }),
+                body: JSON.stringify(payload),
             })
             const data = await res.json()
             if (data.success) {
-                setCookieStatus(`auth_token: ${data.data.authToken}`)
+                const parts = [`auth: ${data.data.authToken}`, `ct0: ${data.data.ct0 || '...'}`]
+                if (data.data.att) parts.push(`att: ${data.data.att}`)
+                setCookieStatus(parts.join(' · '))
                 setCookieInput('')
+                setBearerInput('')
                 setCookieModal(false)
             } else {
                 setCookieError(data.error)
@@ -124,7 +134,7 @@ export function TweetSearch() {
             setCookieError('Lỗi kết nối')
         }
         setCookieSaving(false)
-    }, [cookieInput])
+    }, [cookieInput, bearerInput])
 
     const displayUsers = selectedUser
         ? users.filter(u => u.username === selectedUser)
@@ -357,22 +367,31 @@ export function TweetSearch() {
             {cookieModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
                     <div className="bg-slate-800 border border-white/10 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
-                        <h3 className="text-white font-semibold text-lg mb-1">🍪 Cookie X</h3>
+                        <h3 className="text-white font-semibold text-lg mb-1">🍪 Cookie X (GraphQL)</h3>
                         <p className="text-slate-400 text-xs mb-4">
-                            Paste cookie từ DevTools (Application → Cookies → x.com). Cần auth_token và ct0.
+                            DevTools → Network → bấm vào request x.com → copy <strong>Cookie</strong> header và <strong>Authorization</strong> header.
                         </p>
                         {cookieStatus && (
                             <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg bg-green-500/10 border border-green-500/20">
-                                <span className="w-2 h-2 bg-green-500 rounded-full" />
-                                <span className="text-green-400 text-xs">{cookieStatus}</span>
+                                <span className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0" />
+                                <span className="text-green-400 text-xs truncate">{cookieStatus}</span>
                             </div>
                         )}
+                        <label className="text-slate-400 text-[10px] uppercase tracking-wider font-semibold mb-1 block">Cookie string</label>
                         <textarea
                             value={cookieInput}
                             onChange={(e) => { setCookieInput(e.target.value); setCookieError('') }}
-                            placeholder={'auth_token: xxx\nct0: yyy\natt: zzz (optional)'}
-                            rows={4}
-                            className="w-full px-3 py-2 rounded-lg bg-slate-900/80 border border-white/10 text-white text-xs font-mono placeholder:text-slate-600 focus:outline-none focus:border-[#38bdf8]/50 resize-none"
+                            placeholder={'auth_token=xxx; ct0=yyy; att=zzz'}
+                            rows={3}
+                            className="w-full px-3 py-2 rounded-lg bg-slate-900/80 border border-white/10 text-white text-xs font-mono placeholder:text-slate-600 focus:outline-none focus:border-[#38bdf8]/50 resize-none mb-3"
+                        />
+                        <label className="text-slate-400 text-[10px] uppercase tracking-wider font-semibold mb-1 block">Bearer Token <span className="text-slate-600">(Authorization header)</span></label>
+                        <input
+                            type="text"
+                            value={bearerInput}
+                            onChange={(e) => setBearerInput(e.target.value)}
+                            placeholder="Bearer AAAAAAAAAAAAAAAAAAAAANRILg..."
+                            className="w-full px-3 py-2 rounded-lg bg-slate-900/80 border border-white/10 text-white text-xs font-mono placeholder:text-slate-600 focus:outline-none focus:border-[#38bdf8]/50"
                         />
                         {cookieError && <p className="text-red-400 text-xs mt-2">{cookieError}</p>}
                         <div className="flex gap-3 justify-end mt-4">
