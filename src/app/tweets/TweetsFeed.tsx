@@ -194,7 +194,7 @@ export function TweetsFeed() {
                 <button
                     onClick={() => setSearchExpanded(!searchExpanded)}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs transition cursor-pointer ${searchExpanded
-                        ? 'bg-[#1d9bf0]/10 border-[#1d9bf0]/30 text-[#1d9bf0]'
+                        ? 'bg-[#ff9900]/10 border-[#ff9900]/30 text-[#ff9900]'
                         : 'bg-slate-800/60 border-white/10 text-slate-400 hover:text-white hover:border-white/20'
                         }`}
                 >
@@ -217,12 +217,12 @@ export function TweetsFeed() {
                                 onChange={e => setInputUser(e.target.value)}
                                 onKeyDown={e => e.key === 'Enter' && handleQuickAdd()}
                                 placeholder="Enter @username to browse..."
-                                className="flex-1 px-4 py-2.5 rounded-xl bg-slate-800/60 border border-white/10 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-[#1d9bf0]/50 transition"
+                                className="flex-1 px-4 py-2.5 rounded-xl bg-slate-800/60 border border-white/10 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-[#ff9900]/50 transition"
                             />
                             <button
                                 onClick={handleQuickAdd}
                                 disabled={!inputUser.trim()}
-                                className="px-4 py-2.5 rounded-xl bg-[#1d9bf0] text-white text-sm font-semibold hover:bg-[#1a8cd8] transition disabled:opacity-40 cursor-pointer"
+                                className="px-4 py-2.5 rounded-xl bg-[#ff9900] text-white text-sm font-semibold hover:bg-[#e68a00] transition disabled:opacity-40 cursor-pointer"
                             >
                                 Browse
                             </button>
@@ -251,7 +251,7 @@ export function TweetsFeed() {
                                             key={u._id}
                                             onClick={() => { handleUserClick(u.username); setTagsExpanded(false); setUserHistory([]) }}
                                             className={`px-3 py-1 rounded-full text-xs transition cursor-pointer ${mode === 'user' && selectedUser === u.username
-                                                ? 'bg-[#1d9bf0]/20 text-[#1d9bf0] border border-[#1d9bf0]/40'
+                                                ? 'bg-[#ff9900]/20 text-[#ff9900] border border-[#ff9900]/40'
                                                 : 'bg-slate-800/60 text-slate-400 border border-white/10 hover:border-white/20'
                                                 }`}
                                         >
@@ -282,7 +282,7 @@ export function TweetsFeed() {
                                 <span className="mr-1.5">{emoji}</span>
                                 {label}
                                 {mode === key && (
-                                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-[#1d9bf0] rounded-full" />
+                                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-[#ff9900] rounded-full" />
                                 )}
                             </button>
                         ))}
@@ -296,7 +296,7 @@ export function TweetsFeed() {
                             <span className="mr-1.5">📌</span>
                             @{PINNED_USERNAME}
                             {mode === 'pinned_user' && (
-                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-[#1d9bf0] rounded-full" />
+                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-[#ff9900] rounded-full" />
                             )}
                         </button>
                     </div>
@@ -328,7 +328,7 @@ export function TweetsFeed() {
                         {loading && (
                             <div className="bg-slate-900/40 rounded-2xl border border-white/10 overflow-hidden">
                                 <div className="flex items-center justify-center py-16">
-                                    <div className="w-6 h-6 border-2 border-[#1d9bf0] border-t-transparent rounded-full animate-spin" />
+                                    <div className="w-6 h-6 border-2 border-[#ff9900] border-t-transparent rounded-full animate-spin" />
                                 </div>
                             </div>
                         )}
@@ -338,7 +338,7 @@ export function TweetsFeed() {
                                 <p className="text-red-400 text-sm">{error}</p>
                                 <button
                                     onClick={() => fetchHomeTweets(mode as 'for_you' | 'following')}
-                                    className="mt-3 text-[#1d9bf0] text-sm hover:underline cursor-pointer"
+                                    className="mt-3 text-[#ff9900] text-sm hover:underline cursor-pointer"
                                 >
                                     Thử lại
                                 </button>
@@ -373,13 +373,13 @@ export function TweetsFeed() {
                                     <div ref={sentinelRef} className="px-4 py-4 text-center">
                                         {loadingMore ? (
                                             <div className="flex items-center justify-center gap-2 text-slate-400 text-sm">
-                                                <span className="w-4 h-4 border-2 border-[#1d9bf0] border-t-transparent rounded-full animate-spin" />
+                                                <span className="w-4 h-4 border-2 border-[#ff9900] border-t-transparent rounded-full animate-spin" />
                                                 Loading more...
                                             </div>
                                         ) : (
                                             <button
                                                 onClick={() => fetchHomeTweets(mode as 'for_you' | 'following', cursorBottom)}
-                                                className="text-[#1d9bf0] text-xs hover:underline opacity-50 cursor-pointer"
+                                                className="text-[#ff9900] text-xs hover:underline opacity-50 cursor-pointer"
                                             >
                                                 Load more
                                             </button>

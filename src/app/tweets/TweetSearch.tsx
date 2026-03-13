@@ -172,7 +172,7 @@ export function TweetSearch() {
                 <button
                     onClick={() => setShowControls(!showControls)}
                     className={`px-3 py-2 rounded-xl text-sm transition-all ${showControls
-                        ? 'bg-[#38bdf8]/20 border border-[#38bdf8]/40 text-[#38bdf8]'
+                        ? 'bg-[#ff9900]/20 border border-[#ff9900]/40 text-[#ff9900]'
                         : 'bg-slate-800/60 border border-white/10 text-slate-400 hover:border-white/20'
                         }`}
                     title="Hiển thị/Ẩn controls"
@@ -191,12 +191,12 @@ export function TweetSearch() {
                             onChange={(e) => { setInput(e.target.value); setError('') }}
                             onKeyDown={handleKeyDown}
                             placeholder="Nhập username — vd: vercel, reactjs, dan_abramov"
-                            className="flex-1 px-4 py-3 rounded-xl bg-slate-800/60 border border-white/10 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-[#38bdf8]/50 focus:ring-1 focus:ring-[#38bdf8]/30 transition"
+                            className="flex-1 px-4 py-3 rounded-xl bg-slate-800/60 border border-white/10 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-[#ff9900]/50 focus:ring-1 focus:ring-[#ff9900]/30 transition"
                         />
                         <button
                             onClick={handleAdd}
                             disabled={!input.trim() || adding}
-                            className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#38bdf8] to-[#c084fc] text-white font-semibold text-sm hover:opacity-90 active:scale-95 transition-all whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#ff9900] to-[#ffb833] text-white font-semibold text-sm hover:opacity-90 active:scale-95 transition-all whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                             {adding ? '⏳' : '+'} Thêm
                         </button>
@@ -245,7 +245,7 @@ export function TweetSearch() {
                                 key={user._id}
                                 onClick={() => { setSelectedUser(selectedUser === user.username ? null : user.username); setTagsExpanded(false) }}
                                 className={`flex items-center gap-1.5 pl-3 pr-1.5 py-1.5 rounded-full text-sm cursor-pointer transition-all ${selectedUser === user.username
-                                    ? 'bg-[#38bdf8]/20 text-[#38bdf8] border border-[#38bdf8]/40'
+                                    ? 'bg-[#ff9900]/20 text-[#ff9900] border border-[#ff9900]/40'
                                     : 'bg-slate-800/60 text-slate-300 border border-white/10 hover:border-white/20'
                                     }`}
                             >
@@ -258,7 +258,7 @@ export function TweetSearch() {
                                 <button
                                     onClick={(e) => { e.stopPropagation(); setDeleteConfirm(user) }}
                                     className={`w-6 h-6 md:w-5 md:h-5 rounded-full flex items-center justify-center text-[10px] transition ${selectedUser === user.username
-                                        ? 'text-[#38bdf8]/60 hover:bg-red-500 hover:text-white'
+                                        ? 'text-[#ff9900]/60 hover:bg-red-500 hover:text-white'
                                         : 'text-slate-500 hover:bg-red-500 hover:text-white'
                                         }`}
                                     title={`Xóa @${user.username}`}
@@ -308,7 +308,7 @@ export function TweetSearch() {
             {!sectionExpanded && (
                 <button
                     onClick={() => setSectionExpanded(true)}
-                    className="md:hidden fixed bottom-4 left-4 z-50 w-11 h-11 rounded-full bg-gradient-to-r from-[#38bdf8] to-[#c084fc] text-white shadow-lg shadow-[#38bdf8]/30 flex items-center justify-center text-lg hover:scale-110 active:scale-95 transition-transform"
+                    className="md:hidden fixed bottom-4 left-4 z-50 w-11 h-11 rounded-full bg-gradient-to-r from-[#ff9900] to-[#ffb833] text-white shadow-lg shadow-[#ff9900]/30 flex items-center justify-center text-lg hover:scale-110 active:scale-95 transition-transform"
                     aria-label="Open Embed Tweets"
                 >
                     🔗
@@ -369,7 +369,7 @@ export function TweetSearch() {
                     <div className="bg-slate-800 border border-white/10 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
                         <h3 className="text-white font-semibold text-lg mb-2">Xóa username?</h3>
                         <p className="text-slate-400 text-sm mb-6">
-                            Bạn có chắc muốn xóa <span className="text-[#38bdf8] font-semibold">@{deleteConfirm.username}</span> khỏi danh sách?
+                            Bạn có chắc muốn xóa <span className="text-[#ff9900] font-semibold">@{deleteConfirm.username}</span> khỏi danh sách?
                         </p>
                         <div className="flex gap-3 justify-end">
                             <button
@@ -411,7 +411,7 @@ export function TweetSearch() {
                             onChange={(e) => { setCookieInput(e.target.value); setCookieError('') }}
                             placeholder={'{ "http": { "headers": { "Cookie": "...", "authorization": "..." } } }\n\nhoặc:\n\nauth_token=xxx; ct0=yyy; att=zzz'}
                             rows={6}
-                            className="w-full px-3 py-2 rounded-lg bg-slate-900/80 border border-white/10 text-white text-xs font-mono placeholder:text-slate-600 focus:outline-none focus:border-[#38bdf8]/50 resize-none"
+                            className="w-full px-3 py-2 rounded-lg bg-slate-900/80 border border-white/10 text-white text-xs font-mono placeholder:text-slate-600 focus:outline-none focus:border-[#ff9900]/50 resize-none"
                         />
                         {cookieError && <p className="text-red-400 text-xs mt-2">{cookieError}</p>}
                         <div className="flex gap-3 justify-end mt-4">
@@ -424,7 +424,7 @@ export function TweetSearch() {
                             <button
                                 onClick={handleSaveCookie}
                                 disabled={!cookieInput.trim() || cookieSaving}
-                                className="px-4 py-2 rounded-lg text-sm bg-gradient-to-r from-[#38bdf8] to-[#c084fc] text-white hover:opacity-90 transition disabled:opacity-40"
+                                className="px-4 py-2 rounded-lg text-sm bg-gradient-to-r from-[#ff9900] to-[#ffb833] text-white hover:opacity-90 transition disabled:opacity-40"
                             >
                                 {cookieSaving ? 'Đang lưu...' : 'Lưu'}
                             </button>
