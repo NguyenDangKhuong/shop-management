@@ -2306,6 +2306,18 @@ function SearchApp() {
                         </div>
                     </div>
 
+                    <div className="p-3 rounded-lg bg-slate-500/10 border border-slate-500/20">
+                        <div className="text-slate-300 font-bold text-sm">⚙️ After setState — what happens?</div>
+                        <div className="text-slate-400 text-sm mt-1">
+                            1. React <strong>schedules update</strong> (doesn&apos;t apply immediately!)<br />
+                            2. <strong>Batching</strong>: groups multiple setStates into 1 render (React 18+ batches everywhere)<br />
+                            3. <strong>Render Phase</strong>: re-calls component → creates new VDOM → diffs old vs new<br />
+                            4. <strong>Commit Phase</strong>: applies DOM changes → useLayoutEffect → paint → useEffect<br />
+                            5. If <InlineCode>Object.is(oldState, newState)</InlineCode> = true → <Highlight>bail out</Highlight> (no re-render)<br />
+                            6. Parent re-renders → <strong>all children re-render</strong> too (unless <InlineCode>React.memo</InlineCode>)
+                        </div>
+                    </div>
+
                     <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <div className="text-green-400 font-bold text-sm">🔄 useEffect — Side Effects</div>
                         <div className="text-slate-300 text-sm mt-1">

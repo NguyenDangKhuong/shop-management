@@ -2339,6 +2339,18 @@ function SearchApp() {
                         </div>
                     </div>
 
+                    <div className="p-3 rounded-lg bg-slate-500/10 border border-slate-500/20">
+                        <div className="text-slate-300 font-bold text-sm">⚙️ setState gọi xong — chuyện gì xảy ra?</div>
+                        <div className="text-slate-400 text-sm mt-1">
+                            1. React <strong>schedule update</strong> (không apply ngay!)<br />
+                            2. <strong>Batching</strong>: gộp nhiều setState vào 1 render (React 18+ batch mọi nơi)<br />
+                            3. <strong>Render Phase</strong>: gọi lại component → tạo VDOM mới → diff cũ vs mới<br />
+                            4. <strong>Commit Phase</strong>: apply DOM changes → useLayoutEffect → paint → useEffect<br />
+                            5. Nếu <InlineCode>Object.is(oldState, newState)</InlineCode> = true → <Highlight>bail out</Highlight> (không re-render)<br />
+                            6. Parent re-render → <strong>tất cả children re-render</strong> (trừ khi <InlineCode>React.memo</InlineCode>)
+                        </div>
+                    </div>
+
                     <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <div className="text-green-400 font-bold text-sm">🔄 useEffect — Side Effects</div>
                         <div className="text-slate-300 text-sm mt-1">
