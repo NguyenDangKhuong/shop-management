@@ -801,6 +801,339 @@ function MyForm() {
                     </div>
                 </div>
 
+                {/* ===== React.memo ===== */}
+                <Heading2>12. React.memo — Tối ưu Re-render</Heading2>
+
+                <Paragraph>
+                    <InlineCode>React.memo</InlineCode> là Higher-Order Component (HOC) bọc quanh component để{' '}
+                    <Highlight>tránh re-render không cần thiết</Highlight>. Nó so sánh shallow props — nếu props không đổi, component không re-render.
+                </Paragraph>
+
+                <CodeBlock title="react-memo.tsx">{`import { memo, useState, useCallback } from 'react'
+
+// ❌ KHÔNG có memo — re-render MỖI LẦN parent render
+function ExpensiveList({ items, onDelete }) {
+    console.log('ExpensiveList rendered!')  // Chạy mỗi lần
+    return (
+        <ul>
+            {items.map(item => (
+                <li key={item.id}>
+                    {item.name}
+                    <button onClick={() => onDelete(item.id)}>Xoá</button>
+                </li>
+            ))}
+        </ul>
+    )
+}
+
+// ✅ CÓ memo — chỉ re-render khi items hoặc onDelete thay đổi
+const MemoizedList = memo(function ExpensiveList({ items, onDelete }) {
+    console.log('ExpensiveList rendered!')  // Chỉ chạy khi props đổi
+    return (
+        <ul>
+            {items.map(item => (
+                <li key={item.id}>
+                    {item.name}
+                    <button onClick={() => onDelete(item.id)}>Xoá</button>
+                </li>
+            ))}
+        </ul>
+    )
+})
+
+// ✅ Custom comparison function
+const MemoizedUser = memo(
+    function UserCard({ user }) {
+        return <div>{user.name} - {user.email}</div>
+    },
+    (prevProps, nextProps) => {
+        // Return true = KHÔNG re-render (props "bằng nhau")
+        return prevProps.user.id === nextProps.user.id
+            && prevProps.user.name === nextProps.user.name
+    }
+)
+
+// ⚠️ memo CHỈ hiệu quả khi kết hợp useCallback/useMemo
+function Parent() {
+    const [count, setCount] = useState(0)
+    const [items] = useState([{ id: 1, name: 'A' }, { id: 2, name: 'B' }])
+
+    // ❌ Mỗi lần Parent render → tạo hàm mới → MemoizedList re-render!
+    // const handleDelete = (id) => console.log('delete', id)
+
+    // ✅ useCallback giữ reference ổn định
+    const handleDelete = useCallback((id) => {
+        console.log('delete', id)
+    }, [])
+
+    return (
+        <div>
+            <p>{count}</p>
+            <button onClick={() => setCount(c => c + 1)}>+1</button>
+            <MemoizedList items={items} onDelete={handleDelete} />
+        </div>
+    )
+}`}</CodeBlock>
+
+                <Callout type="tip">
+                    <strong>Khi nào dùng React.memo:</strong><br />
+                    ✅ Component render tốn (danh sách lớn, charts)<br />
+                    ✅ Component nhận props ít thay đổi<br />
+                    ✅ Component re-render thường xuyên do parent<br />
+                    ❌ Không dùng cho component đơn giản (overhead memoization &gt; re-render cost)
+                </Callout>
+
+                {/* ===== Suspense ===== */}
+                <Heading2>13. Suspense — Xử lý Loading State</Heading2>
+
+                <Paragraph>
+                    <InlineCode>Suspense</InlineCode> cho phép component con &quot;chờ&quot; một thứ gì đó (data, code) và{' '}
+                    <Highlight>hiện fallback UI</Highlight> trong khi chờ. Ra mắt React 16.6 cho lazy loading, mở rộng trong React 18 cho data fetching.
+                </Paragraph>
+
+                <CodeBlock title="suspense.tsx">{`import { Suspense, lazy, useState, useTransition } from 'react'
+
+// 1️⃣ Code Splitting — lazy load component
+const HeavyChart = lazy(() => import('./HeavyChart'))
+const AdminPanel = lazy(() => import('./AdminPanel'))
+
+function App() {
+    const [tab, setTab] = useState('home')
+
+    return (
+        <div>
+            <nav>
+                <button onClick={() => setTab('home')}>Home</button>
+                <button onClick={() => setTab('chart')}>Chart</button>
+                <button onClick={() => setTab('admin')}>Admin</button>
+            </nav>
+
+            {/* Suspense bọc component lazy — hiện fallback khi loading */}
+            <Suspense fallback={<div>⏳ Đang tải...</div>}>
+                {tab === 'chart' && <HeavyChart />}
+                {tab === 'admin' && <AdminPanel />}
+            </Suspense>
+        </div>
+    )
+}
+
+// 2️⃣ Data Fetching (React 18+ với framework hỗ trợ)
+// Next.js App Router dùng Suspense mặc định
+async function UserProfile({ userId }) {
+    const user = await fetchUser(userId) // Server Component
+    return <div>{user.name}</div>
+}
+
+// Trong page.tsx:
+export default function Page() {
+    return (
+        <Suspense fallback={<ProfileSkeleton />}>
+            <UserProfile userId="123" />
+        </Suspense>
+    )
+}
+
+// 3️⃣ Nested Suspense — loading granular
+function Dashboard() {
+    return (
+        <div>
+            <Suspense fallback={<HeaderSkeleton />}>
+                <Header />          {/* Load nhanh → hiện sớm */}
+            </Suspense>
+            <Suspense fallback={<ChartSkeleton />}>
+                <AnalyticsChart />  {/* Load chậm → hiện skeleton riêng */}
+            </Suspense>
+            <Suspense fallback={<TableSkeleton />}>
+                <DataTable />       {/* Load chậm → skeleton riêng */}
+            </Suspense>
+        </div>
+    )
+}`}</CodeBlock>
+
+                <div className="my-6 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-white/10">
+                            <th className="text-left p-3 text-slate-400 font-medium">Tính năng</th>
+                            <th className="text-left p-3 text-slate-400 font-medium">React Version</th>
+                            <th className="text-left p-3 text-slate-400 font-medium">Mô tả</th>
+                        </tr></thead>
+                        <tbody className="text-slate-300">
+                            <tr className="border-b border-white/5"><td className="p-3">Code Splitting</td><td className="p-3">16.6+</td><td className="p-3"><InlineCode>lazy()</InlineCode> + Suspense</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Data Fetching</td><td className="p-3">18+</td><td className="p-3">Với framework (Next.js, Relay)</td></tr>
+                            <tr><td className="p-3">Streaming SSR</td><td className="p-3">18+</td><td className="p-3">Server render từng phần</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* ===== Fiber ===== */}
+                <Heading2>14. React Fiber — Engine Bên Trong</Heading2>
+
+                <Paragraph>
+                    <Highlight>React Fiber</Highlight> là reconciliation engine mới từ React 16 (2017). Nó thay thế stack-based reconciler cũ
+                    bằng kiến trúc <Highlight>incremental rendering</Highlight> — cho phép React chia nhỏ render work và ưu tiên tasks.
+                </Paragraph>
+
+                <div className="my-6 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🧬 Fiber Node là gì?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Mỗi React element tạo ra một <strong>Fiber node</strong> — một JavaScript object chứa:<br />
+                            • <InlineCode>type</InlineCode> — component type (div, MyComponent)<br />
+                            • <InlineCode>props</InlineCode> — current props<br />
+                            • <InlineCode>stateNode</InlineCode> — DOM node hoặc class instance<br />
+                            • <InlineCode>child</InlineCode>, <InlineCode>sibling</InlineCode>, <InlineCode>return</InlineCode> — linked list structure<br />
+                            • <InlineCode>memoizedState</InlineCode> — linked list of hooks (useState, useEffect...)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">⚡ Tại sao Fiber quan trọng?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Trước Fiber (Stack Reconciler):</strong><br />
+                            • Render đồng bộ — block main thread cho đến khi hoàn tất<br />
+                            • UI freezes khi render cây lớn<br /><br />
+                            <strong>Sau Fiber:</strong><br />
+                            • Render có thể <strong>pause, resume, abort</strong><br />
+                            • Ưu tiên user interaction (click, type) trên background work<br />
+                            • Cho phép <InlineCode>Suspense</InlineCode>, <InlineCode>useTransition</InlineCode>, <InlineCode>Concurrent Mode</InlineCode>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔄 2 Phases của Fiber</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>1. Render Phase</strong> (có thể async, pause/resume):<br />
+                            • Tạo Fiber tree mới từ JSX<br />
+                            • So sánh (diff) với Fiber tree cũ<br />
+                            • Đánh dấu thay đổi (effects)<br /><br />
+                            <strong>2. Commit Phase</strong> (đồng bộ, không thể ngắt):<br />
+                            • Apply tất cả DOM changes<br />
+                            • Chạy useLayoutEffect<br />
+                            • Schedule useEffect
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="fiber-concept.tsx">{`// Mỗi component = 1 Fiber node trong tree
+// React traverse bằng linked list, không phải recursion
+
+// Fiber tree structure:
+// App (fiber) 
+//   ├── child: Header (fiber)
+//   │     └── child: Logo (fiber)
+//   │           └── sibling: Nav (fiber)
+//   └── sibling: Main (fiber)
+//         └── child: ProductList (fiber)
+
+// Hooks được lưu trong fiber.memoizedState dưới dạng linked list:
+// fiber.memoizedState → { useState: count } → { useEffect: fetchData } → { useRef: inputRef } → null
+
+// Đây là lý do hooks phải gọi theo THỨ TỰ cố định —
+// React dựa vào vị trí trong linked list để match hook với state!
+
+// ❌ Nếu bạn bọc hook trong if:
+if (condition) {
+    const [a, setA] = useState(0)  // Lần 1: hook #1
+}                                   // Lần 2: BỎ QUA → mọi hook bị lệch!
+const [b, setB] = useState(0)      // Lần 1: hook #2, Lần 2: hook #1 😱`}</CodeBlock>
+
+                <Callout type="info">
+                    Bạn không trực tiếp tương tác với Fiber, nhưng hiểu cách nó hoạt động giúp giải thích:
+                    tại sao hooks phải gọi theo thứ tự, tại sao <InlineCode>useTransition</InlineCode> hoạt động,
+                    và tại sao React có thể render mượt mà với Concurrent Mode.
+                </Callout>
+
+                {/* ===== Portal ===== */}
+                <Heading2>15. Portal — Render Ngoài DOM Parent</Heading2>
+
+                <Paragraph>
+                    <InlineCode>createPortal</InlineCode> cho phép render children vào một DOM node <Highlight>bên ngoài parent hierarchy</Highlight>,
+                    nhưng vẫn giữ React event bubbling và context. Dùng cho modal, tooltip, dropdown.
+                </Paragraph>
+
+                <CodeBlock title="portal.tsx">{`import { createPortal } from 'react-dom'
+import { useState, useEffect, useRef } from 'react'
+
+// 1️⃣ Modal Portal — render vào document.body
+function Modal({ isOpen, onClose, children }) {
+    if (!isOpen) return null
+
+    return createPortal(
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <button onClick={onClose} aria-label="Đóng">✕</button>
+                {children}
+            </div>
+        </div>,
+        document.body  // ← Render vào body thay vì parent component
+    )
+}
+
+// Usage:
+function App() {
+    const [showModal, setShowModal] = useState(false)
+    return (
+        <div style={{ overflow: 'hidden' }}>
+            {/* Modal KHÔNG bị ảnh hưởng bởi overflow: hidden */}
+            <button onClick={() => setShowModal(true)}>Mở Modal</button>
+            <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+                <h2>Xin chào từ Portal!</h2>
+                <p>Modal này render ở document.body</p>
+            </Modal>
+        </div>
+    )
+}
+
+// 2️⃣ Tooltip Portal — thoát container overflow
+function Tooltip({ text, children }) {
+    const [show, setShow] = useState(false)
+    const [pos, setPos] = useState({ top: 0, left: 0 })
+    const ref = useRef<HTMLDivElement>(null)
+
+    const handleMouseEnter = () => {
+        if (ref.current) {
+            const rect = ref.current.getBoundingClientRect()
+            setPos({ top: rect.bottom + 8, left: rect.left })
+        }
+        setShow(true)
+    }
+
+    return (
+        <>
+            <div ref={ref} onMouseEnter={handleMouseEnter}
+                 onMouseLeave={() => setShow(false)}>
+                {children}
+            </div>
+            {show && createPortal(
+                <div style={{ position: 'fixed', top: pos.top, left: pos.left }}
+                     className="tooltip">
+                    {text}
+                </div>,
+                document.body
+            )}
+        </>
+    )
+}`}</CodeBlock>
+
+                <div className="my-6 space-y-2">
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">✅ Khi nào dùng Portal</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Modals/Dialogs</strong> — thoát khỏi <InlineCode>overflow: hidden</InlineCode> và <InlineCode>z-index</InlineCode> stacking<br />
+                            • <strong>Tooltips/Popovers</strong> — vị trí chính xác không bị container clip<br />
+                            • <strong>Toast notifications</strong> — render ở góc màn hình<br />
+                            • <strong>Dropdown menus</strong> — thoát khỏi scroll container
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">⚠️ Lưu ý quan trọng</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Events vẫn bubble theo <strong>React tree</strong> (không phải DOM tree)<br />
+                            • Context vẫn hoạt động bình thường qua Portal<br />
+                            • Portal node phải tồn tại trong DOM trước khi render<br />
+                            • Nhớ cleanup khi unmount (tránh memory leak)
+                        </div>
+                    </div>
+                </div>
+
                 {/* ===== Tóm tắt ===== */}
                 <Heading2>📌 Tóm tắt</Heading2>
 
@@ -1674,6 +2007,339 @@ function MyForm() {
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                         <span className="text-green-400 mt-0.5">✅</span>
                         <span className="text-slate-300">Custom Hooks must start with <InlineCode>use</InlineCode> (e.g., <InlineCode>useAuth</InlineCode>, <InlineCode>useFetch</InlineCode>)</span>
+                    </div>
+                </div>
+
+                {/* ===== React.memo ===== */}
+                <Heading2>12. React.memo — Optimize Re-renders</Heading2>
+
+                <Paragraph>
+                    <InlineCode>React.memo</InlineCode> is a Higher-Order Component (HOC) that wraps a component to{' '}
+                    <Highlight>prevent unnecessary re-renders</Highlight>. It shallow-compares props — if props haven&apos;t changed, the component skips re-rendering.
+                </Paragraph>
+
+                <CodeBlock title="react-memo.tsx">{`import { memo, useState, useCallback } from 'react'
+
+// ❌ WITHOUT memo — re-renders EVERY TIME parent renders
+function ExpensiveList({ items, onDelete }) {
+    console.log('ExpensiveList rendered!')  // Runs every time
+    return (
+        <ul>
+            {items.map(item => (
+                <li key={item.id}>
+                    {item.name}
+                    <button onClick={() => onDelete(item.id)}>Delete</button>
+                </li>
+            ))}
+        </ul>
+    )
+}
+
+// ✅ WITH memo — only re-renders when items or onDelete change
+const MemoizedList = memo(function ExpensiveList({ items, onDelete }) {
+    console.log('ExpensiveList rendered!')  // Only runs when props change
+    return (
+        <ul>
+            {items.map(item => (
+                <li key={item.id}>
+                    {item.name}
+                    <button onClick={() => onDelete(item.id)}>Delete</button>
+                </li>
+            ))}
+        </ul>
+    )
+})
+
+// ✅ Custom comparison function
+const MemoizedUser = memo(
+    function UserCard({ user }) {
+        return <div>{user.name} - {user.email}</div>
+    },
+    (prevProps, nextProps) => {
+        // Return true = DON'T re-render (props are "equal")
+        return prevProps.user.id === nextProps.user.id
+            && prevProps.user.name === nextProps.user.name
+    }
+)
+
+// ⚠️ memo ONLY works when combined with useCallback/useMemo
+function Parent() {
+    const [count, setCount] = useState(0)
+    const [items] = useState([{ id: 1, name: 'A' }, { id: 2, name: 'B' }])
+
+    // ❌ Every Parent render → new function → MemoizedList re-renders!
+    // const handleDelete = (id) => console.log('delete', id)
+
+    // ✅ useCallback keeps stable reference
+    const handleDelete = useCallback((id) => {
+        console.log('delete', id)
+    }, [])
+
+    return (
+        <div>
+            <p>{count}</p>
+            <button onClick={() => setCount(c => c + 1)}>+1</button>
+            <MemoizedList items={items} onDelete={handleDelete} />
+        </div>
+    )
+}`}</CodeBlock>
+
+                <Callout type="tip">
+                    <strong>When to use React.memo:</strong><br />
+                    ✅ Expensive render components (large lists, charts)<br />
+                    ✅ Component receives props that rarely change<br />
+                    ✅ Component re-renders frequently due to parent<br />
+                    ❌ Don&apos;t use for simple components (memoization overhead &gt; re-render cost)
+                </Callout>
+
+                {/* ===== Suspense ===== */}
+                <Heading2>13. Suspense — Handle Loading States</Heading2>
+
+                <Paragraph>
+                    <InlineCode>Suspense</InlineCode> lets child components &quot;wait&quot; for something (data, code) and{' '}
+                    <Highlight>show a fallback UI</Highlight> while waiting. Introduced in React 16.6 for lazy loading, expanded in React 18 for data fetching.
+                </Paragraph>
+
+                <CodeBlock title="suspense.tsx">{`import { Suspense, lazy, useState } from 'react'
+
+// 1️⃣ Code Splitting — lazy load components
+const HeavyChart = lazy(() => import('./HeavyChart'))
+const AdminPanel = lazy(() => import('./AdminPanel'))
+
+function App() {
+    const [tab, setTab] = useState('home')
+
+    return (
+        <div>
+            <nav>
+                <button onClick={() => setTab('home')}>Home</button>
+                <button onClick={() => setTab('chart')}>Chart</button>
+                <button onClick={() => setTab('admin')}>Admin</button>
+            </nav>
+
+            {/* Suspense wraps lazy components — shows fallback while loading */}
+            <Suspense fallback={<div>⏳ Loading...</div>}>
+                {tab === 'chart' && <HeavyChart />}
+                {tab === 'admin' && <AdminPanel />}
+            </Suspense>
+        </div>
+    )
+}
+
+// 2️⃣ Data Fetching (React 18+ with framework support)
+// Next.js App Router uses Suspense by default
+async function UserProfile({ userId }) {
+    const user = await fetchUser(userId) // Server Component
+    return <div>{user.name}</div>
+}
+
+// In page.tsx:
+export default function Page() {
+    return (
+        <Suspense fallback={<ProfileSkeleton />}>
+            <UserProfile userId="123" />
+        </Suspense>
+    )
+}
+
+// 3️⃣ Nested Suspense — granular loading states
+function Dashboard() {
+    return (
+        <div>
+            <Suspense fallback={<HeaderSkeleton />}>
+                <Header />          {/* Loads fast → appears first */}
+            </Suspense>
+            <Suspense fallback={<ChartSkeleton />}>
+                <AnalyticsChart />  {/* Loads slow → own skeleton */}
+            </Suspense>
+            <Suspense fallback={<TableSkeleton />}>
+                <DataTable />       {/* Loads slow → own skeleton */}
+            </Suspense>
+        </div>
+    )
+}`}</CodeBlock>
+
+                <div className="my-6 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-white/10">
+                            <th className="text-left p-3 text-slate-400 font-medium">Feature</th>
+                            <th className="text-left p-3 text-slate-400 font-medium">React Version</th>
+                            <th className="text-left p-3 text-slate-400 font-medium">Description</th>
+                        </tr></thead>
+                        <tbody className="text-slate-300">
+                            <tr className="border-b border-white/5"><td className="p-3">Code Splitting</td><td className="p-3">16.6+</td><td className="p-3"><InlineCode>lazy()</InlineCode> + Suspense</td></tr>
+                            <tr className="border-b border-white/5"><td className="p-3">Data Fetching</td><td className="p-3">18+</td><td className="p-3">With frameworks (Next.js, Relay)</td></tr>
+                            <tr><td className="p-3">Streaming SSR</td><td className="p-3">18+</td><td className="p-3">Server renders in chunks</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* ===== Fiber ===== */}
+                <Heading2>14. React Fiber — The Engine Inside</Heading2>
+
+                <Paragraph>
+                    <Highlight>React Fiber</Highlight> is the new reconciliation engine introduced in React 16 (2017). It replaced the old stack-based reconciler
+                    with an <Highlight>incremental rendering</Highlight> architecture — allowing React to split render work into chunks and prioritize tasks.
+                </Paragraph>
+
+                <div className="my-6 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🧬 What is a Fiber Node?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Each React element creates a <strong>Fiber node</strong> — a JavaScript object containing:<br />
+                            • <InlineCode>type</InlineCode> — component type (div, MyComponent)<br />
+                            • <InlineCode>props</InlineCode> — current props<br />
+                            • <InlineCode>stateNode</InlineCode> — DOM node or class instance<br />
+                            • <InlineCode>child</InlineCode>, <InlineCode>sibling</InlineCode>, <InlineCode>return</InlineCode> — linked list structure<br />
+                            • <InlineCode>memoizedState</InlineCode> — linked list of hooks (useState, useEffect...)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">⚡ Why Fiber Matters</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Before Fiber (Stack Reconciler):</strong><br />
+                            • Synchronous rendering — blocks main thread until complete<br />
+                            • UI freezes when rendering large trees<br /><br />
+                            <strong>After Fiber:</strong><br />
+                            • Rendering can <strong>pause, resume, abort</strong><br />
+                            • Prioritizes user interaction (click, type) over background work<br />
+                            • Enables <InlineCode>Suspense</InlineCode>, <InlineCode>useTransition</InlineCode>, <InlineCode>Concurrent Mode</InlineCode>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔄 2 Phases of Fiber</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>1. Render Phase</strong> (can be async, pausable):<br />
+                            • Creates new Fiber tree from JSX<br />
+                            • Diffs against the old Fiber tree<br />
+                            • Marks changes as effects<br /><br />
+                            <strong>2. Commit Phase</strong> (synchronous, uninterruptible):<br />
+                            • Applies all DOM changes<br />
+                            • Runs useLayoutEffect<br />
+                            • Schedules useEffect
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="fiber-concept.tsx">{`// Each component = 1 Fiber node in the tree
+// React traverses using linked list, not recursion
+
+// Fiber tree structure:
+// App (fiber) 
+//   ├── child: Header (fiber)
+//   │     └── child: Logo (fiber)
+//   │           └── sibling: Nav (fiber)
+//   └── sibling: Main (fiber)
+//         └── child: ProductList (fiber)
+
+// Hooks are stored in fiber.memoizedState as a linked list:
+// fiber.memoizedState → { useState: count } → { useEffect: fetchData } → { useRef: inputRef } → null
+
+// This is WHY hooks must be called in FIXED ORDER —
+// React uses position in the linked list to match hook with state!
+
+// ❌ If you wrap hook in if:
+if (condition) {
+    const [a, setA] = useState(0)  // Run 1: hook #1
+}                                   // Run 2: SKIPPED → all hooks shift!
+const [b, setB] = useState(0)      // Run 1: hook #2, Run 2: hook #1 😱`}</CodeBlock>
+
+                <Callout type="info">
+                    You don&apos;t directly interact with Fiber, but understanding how it works explains:
+                    why hooks must be called in order, why <InlineCode>useTransition</InlineCode> works,
+                    and why React can render smoothly with Concurrent Mode.
+                </Callout>
+
+                {/* ===== Portal ===== */}
+                <Heading2>15. Portal — Render Outside DOM Parent</Heading2>
+
+                <Paragraph>
+                    <InlineCode>createPortal</InlineCode> lets you render children into a DOM node <Highlight>outside the parent hierarchy</Highlight>,
+                    while preserving React event bubbling and context. Used for modals, tooltips, dropdowns.
+                </Paragraph>
+
+                <CodeBlock title="portal.tsx">{`import { createPortal } from 'react-dom'
+import { useState, useRef } from 'react'
+
+// 1️⃣ Modal Portal — render into document.body
+function Modal({ isOpen, onClose, children }) {
+    if (!isOpen) return null
+
+    return createPortal(
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <button onClick={onClose} aria-label="Close">✕</button>
+                {children}
+            </div>
+        </div>,
+        document.body  // ← Renders into body instead of parent component
+    )
+}
+
+// Usage:
+function App() {
+    const [showModal, setShowModal] = useState(false)
+    return (
+        <div style={{ overflow: 'hidden' }}>
+            {/* Modal is NOT affected by overflow: hidden */}
+            <button onClick={() => setShowModal(true)}>Open Modal</button>
+            <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+                <h2>Hello from Portal!</h2>
+                <p>This modal renders at document.body</p>
+            </Modal>
+        </div>
+    )
+}
+
+// 2️⃣ Tooltip Portal — escapes container overflow
+function Tooltip({ text, children }) {
+    const [show, setShow] = useState(false)
+    const [pos, setPos] = useState({ top: 0, left: 0 })
+    const ref = useRef<HTMLDivElement>(null)
+
+    const handleMouseEnter = () => {
+        if (ref.current) {
+            const rect = ref.current.getBoundingClientRect()
+            setPos({ top: rect.bottom + 8, left: rect.left })
+        }
+        setShow(true)
+    }
+
+    return (
+        <>
+            <div ref={ref} onMouseEnter={handleMouseEnter}
+                 onMouseLeave={() => setShow(false)}>
+                {children}
+            </div>
+            {show && createPortal(
+                <div style={{ position: 'fixed', top: pos.top, left: pos.left }}
+                     className="tooltip">
+                    {text}
+                </div>,
+                document.body
+            )}
+        </>
+    )
+}`}</CodeBlock>
+
+                <div className="my-6 space-y-2">
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">✅ When to use Portal</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Modals/Dialogs</strong> — escape <InlineCode>overflow: hidden</InlineCode> and <InlineCode>z-index</InlineCode> stacking<br />
+                            • <strong>Tooltips/Popovers</strong> — precise positioning without container clipping<br />
+                            • <strong>Toast notifications</strong> — render at screen corners<br />
+                            • <strong>Dropdown menus</strong> — escape scroll containers
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">⚠️ Important Notes</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Events still bubble through the <strong>React tree</strong> (not DOM tree)<br />
+                            • Context works normally through Portals<br />
+                            • Portal node must exist in DOM before rendering<br />
+                            • Remember cleanup on unmount (avoid memory leaks)
+                        </div>
                     </div>
                 </div>
 

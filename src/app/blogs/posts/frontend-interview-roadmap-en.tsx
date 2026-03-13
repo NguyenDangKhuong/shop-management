@@ -2653,6 +2653,144 @@ function LikeButton() {
 }`}</CodeBlock>
                 <Callout type="tip">Interview: {'"Explain SSR vs SSG vs ISR"'} is <Highlight>almost guaranteed</Highlight> if the JD mentions Next.js. Knowing App Router + Server Components → shows you&apos;re up-to-date.</Callout>
             </TopicModal>
+
+            <TopicModal title="Server Components & Server Actions" emoji="🖥️" color="#0ea5e9" summary="RSC = zero JS bundle, Server Actions = RPC-style mutations — the new React/Next.js architecture">
+                <Paragraph><Highlight>React Server Components (RSC)</Highlight> change how we think about rendering. Instead of shipping JS for every component, RSC runs on the server and sends HTML. Only components needing interactivity ship JS.</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🖥️ Server Components (default in App Router)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Render on server, <strong>0 JS sent to client</strong><br />
+                            • Direct access to database, file system, env variables<br />
+                            • Cannot use: useState, useEffect, onClick, browser APIs<br />
+                            • <InlineCode>async/await</InlineCode> directly in component<br />
+                            • Can import client components but <strong>not vice versa</strong>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📱 Client Components ({`'use client'`})</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Add <InlineCode>{`'use client'`}</InlineCode> at top of file → opt-in<br />
+                            • Can use: useState, useEffect, onClick, browser APIs<br />
+                            • JS is shipped to client (hydration)<br />
+                            • Should be <strong>minimized</strong>: only for interactive parts
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">⚡ Server Actions ({`'use server'`})</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Server-side functions callable directly from client<br />
+                            • Replace API routes for mutations (POST, PUT, DELETE)<br />
+                            • Auto serialize/deserialize params<br />
+                            • Work with <InlineCode>&lt;form action&gt;</InlineCode> or direct invocation<br />
+                            • Progressive Enhancement: forms submit without JS loaded
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="rsc-pattern.tsx">{`// ===== SERVER COMPONENT (default) =====
+// File: app/products/page.tsx  — no need for 'use server'
+import { db } from '@/lib/database'
+import AddToCartButton from './AddToCartButton'
+
+async function ProductPage() {
+    const products = await db.product.findMany()  // Direct DB access!
+    return (
+        <div>
+            <h1>Products ({products.length})</h1>
+            {products.map(p => (
+                <div key={p.id}>
+                    <h2>{p.name} - \${p.price}</h2>
+                    <AddToCartButton productId={p.id} />  {/* Client component */}
+                </div>
+            ))}
+        </div>
+    )
+}
+
+// ===== CLIENT COMPONENT =====
+// File: app/products/AddToCartButton.tsx
+'use client'
+import { useState } from 'react'
+import { addToCart } from './actions'
+
+export default function AddToCartButton({ productId }) {
+    const [isPending, setIsPending] = useState(false)
+    return (
+        <button onClick={async () => {
+            setIsPending(true)
+            await addToCart(productId)
+            setIsPending(false)
+        }} disabled={isPending}>
+            {isPending ? '⏳' : '🛒 Add to Cart'}
+        </button>
+    )
+}`}</CodeBlock>
+
+                <CodeBlock title="server-actions.tsx">{`// ===== SERVER ACTION =====
+// File: app/products/actions.ts
+'use server'
+
+import { db } from '@/lib/database'
+import { revalidatePath } from 'next/cache'
+
+export async function addToCart(productId: string) {
+    await db.cart.create({ data: { productId, quantity: 1 } })
+    revalidatePath('/cart')
+}
+
+export async function createProduct(formData: FormData) {
+    const name = formData.get('name') as string
+    const price = Number(formData.get('price'))
+    if (!name) return { error: 'Name is required' }
+
+    await db.product.create({ data: { name, price } })
+    revalidatePath('/products')
+    return { success: true }
+}
+
+// Use in form — Progressive Enhancement!
+function CreateForm() {
+    return (
+        <form action={createProduct}>
+            <input name="name" required />
+            <input name="price" type="number" required />
+            <button type="submit">Create</button>
+        </form>
+    )
+}
+
+// React 19 — useActionState
+'use client'
+import { useActionState } from 'react'
+import { createProduct } from './actions'
+
+function CreateProductForm() {
+    const [state, action, isPending] = useActionState(createProduct, null)
+    return (
+        <form action={action}>
+            <input name="name" required />
+            <button disabled={isPending}>{isPending ? '...' : 'Create'}</button>
+            {state?.error && <span className="text-red-500">{state.error}</span>}
+        </form>
+    )
+}`}</CodeBlock>
+
+                <div className="my-3">
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🧠 Rule: Server vs Client</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Fetch data</strong> → Server Component (async/await directly)<br />
+                            • <strong>Click, hover, type</strong> → Client Component (useState, events)<br />
+                            • <strong>Form submit / mutation</strong> → Server Action ({`'use server'`})<br />
+                            • Goal: keep Client Components <Highlight>as small as possible</Highlight>
+                        </div>
+                    </div>
+                </div>
+
+                <Callout type="tip">Interview: {`"RSC vs SSR?"`} → RSC renders on server but <Highlight>doesn&apos;t hydrate</Highlight> (0 JS). SSR renders HTML on server then <Highlight>hydrates the entire app</Highlight>. RSC is more efficient because it only ships JS for interactive parts.</Callout>
+            </TopicModal>
         </div>
 
         <Heading3>3.2 HTML/CSS (click for details)</Heading3>

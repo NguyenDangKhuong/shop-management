@@ -2689,6 +2689,144 @@ function LikeButton() {
 }`}</CodeBlock>
                 <Callout type="tip">VN Interview: {'"Giải thích SSR vs SSG vs ISR"'} = câu hỏi <Highlight>gần như chắc chắn</Highlight> gặp nếu JD có Next.js. Biết thêm App Router + Server Components → shows bạn up-to-date.</Callout>
             </TopicModal>
+
+            <TopicModal title="Server Components & Server Actions" emoji="🖥️" color="#0ea5e9" summary="RSC = zero JS bundle, Server Actions = RPC-style mutations — kiến trúc mới của React/Next.js">
+                <Paragraph><Highlight>React Server Components (RSC)</Highlight> thay đổi cách chúng ta nghĩ về rendering. Thay vì ship JS cho mọi component, RSC chạy trên server và gửi HTML. Chỉ component nào cần interactivity mới ship JS.</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🖥️ Server Components (default trong App Router)</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Render trên server, <strong>0 JS gửi về client</strong><br />
+                            • Truy cập trực tiếp database, file system, env variables<br />
+                            • Không dùng được: useState, useEffect, onClick, browser APIs<br />
+                            • <InlineCode>async/await</InlineCode> trực tiếp trong component<br />
+                            • Import client components nhưng <strong>không ngược lại</strong>
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📱 Client Components ({`'use client'`})</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Thêm <InlineCode>{`'use client'`}</InlineCode> ở đầu file → opt-in<br />
+                            • Dùng được: useState, useEffect, onClick, browser APIs<br />
+                            • JS được ship về client (hydration)<br />
+                            • Nên <strong>tối thiểu hoá</strong>: chỉ dùng cho phần cần interactivity
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">⚡ Server Actions ({`'use server'`})</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Server-side functions gọi trực tiếp từ client<br />
+                            • Thay thế API routes cho mutations (POST, PUT, DELETE)<br />
+                            • Tự động serialize/deserialize params<br />
+                            • Hoạt động với <InlineCode>&lt;form action&gt;</InlineCode> hoặc gọi trực tiếp<br />
+                            • Progressive Enhancement: form submit khi JS chưa load
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="rsc-pattern.tsx">{`// ===== SERVER COMPONENT (default) =====
+// File: app/products/page.tsx  — không cần 'use server'
+import { db } from '@/lib/database'
+import AddToCartButton from './AddToCartButton'
+
+async function ProductPage() {
+    const products = await db.product.findMany()  // Truy cập DB trực tiếp!
+    return (
+        <div>
+            <h1>Sản phẩm ({products.length})</h1>
+            {products.map(p => (
+                <div key={p.id}>
+                    <h2>{p.name} - {p.price}đ</h2>
+                    <AddToCartButton productId={p.id} />  {/* Client component */}
+                </div>
+            ))}
+        </div>
+    )
+}
+
+// ===== CLIENT COMPONENT =====
+// File: app/products/AddToCartButton.tsx
+'use client'
+import { useState } from 'react'
+import { addToCart } from './actions'
+
+export default function AddToCartButton({ productId }) {
+    const [isPending, setIsPending] = useState(false)
+    return (
+        <button onClick={async () => {
+            setIsPending(true)
+            await addToCart(productId)
+            setIsPending(false)
+        }} disabled={isPending}>
+            {isPending ? '⏳' : '🛒 Thêm vào giỏ'}
+        </button>
+    )
+}`}</CodeBlock>
+
+                <CodeBlock title="server-actions.tsx">{`// ===== SERVER ACTION =====
+// File: app/products/actions.ts
+'use server'
+
+import { db } from '@/lib/database'
+import { revalidatePath } from 'next/cache'
+
+export async function addToCart(productId: string) {
+    await db.cart.create({ data: { productId, quantity: 1 } })
+    revalidatePath('/cart')
+}
+
+export async function createProduct(formData: FormData) {
+    const name = formData.get('name') as string
+    const price = Number(formData.get('price'))
+    if (!name) return { error: 'Tên không được trống' }
+
+    await db.product.create({ data: { name, price } })
+    revalidatePath('/products')
+    return { success: true }
+}
+
+// Dùng trong form — Progressive Enhancement!
+function CreateForm() {
+    return (
+        <form action={createProduct}>
+            <input name="name" required />
+            <input name="price" type="number" required />
+            <button type="submit">Tạo</button>
+        </form>
+    )
+}
+
+// React 19 — useActionState
+'use client'
+import { useActionState } from 'react'
+import { createProduct } from './actions'
+
+function CreateProductForm() {
+    const [state, action, isPending] = useActionState(createProduct, null)
+    return (
+        <form action={action}>
+            <input name="name" required />
+            <button disabled={isPending}>{isPending ? '...' : 'Tạo'}</button>
+            {state?.error && <span className="text-red-500">{state.error}</span>}
+        </form>
+    )
+}`}</CodeBlock>
+
+                <div className="my-3">
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">🧠 Quy tắc: Server vs Client</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>Fetch data</strong> → Server Component (async/await trực tiếp)<br />
+                            • <strong>Click, hover, type</strong> → Client Component (useState, events)<br />
+                            • <strong>Form submit / mutation</strong> → Server Action ({`'use server'`})<br />
+                            • Mục tiêu: giữ Client Component <Highlight>nhỏ nhất có thể</Highlight>
+                        </div>
+                    </div>
+                </div>
+
+                <Callout type="tip">Interview: {`"RSC vs SSR?"`} → RSC render trên server nhưng <Highlight>không hydrate</Highlight> (0 JS). SSR render HTML trên server rồi <Highlight>hydrate toàn bộ</Highlight>. RSC hiệu quả hơn vì chỉ ship JS cho interactive parts.</Callout>
+            </TopicModal>
         </div>
 
         <Heading3>3.2 HTML/CSS (click để xem chi tiết)</Heading3>
