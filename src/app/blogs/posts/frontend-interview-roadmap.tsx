@@ -2369,6 +2369,17 @@ function SearchApp() {
                         </div>
                     </div>
 
+                    <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                        <div className="text-cyan-400 font-bold text-sm">⏱️ useLayoutEffect vs useEffect</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Timeline:</strong> Render → DOM mutation → <Highlight>useLayoutEffect</Highlight> (sync) → Paint → <Highlight>useEffect</Highlight> (async)<br /><br />
+                            • <strong>useEffect</strong> (99%): chạy <strong>SAU paint</strong> — không block UI, dùng cho API calls, subscriptions<br />
+                            • <strong>useLayoutEffect</strong>: chạy <strong>TRƯỚC paint</strong> — block paint, dùng khi cần <strong>đo DOM rồi update</strong> mà không muốn user thấy flash<br />
+                            • Ví dụ: tooltip position, scroll sync, auto-resize element<br />
+                            • ⚠️ Lạm dụng useLayoutEffect = <strong>block render</strong> = UI đơ. Chỉ dùng khi cần tránh visual flicker
+                        </div>
+                    </div>
+
                     <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <div className="text-red-400 font-bold text-sm">🌐 useContext — Global State</div>
                         <div className="text-slate-300 text-sm mt-1">

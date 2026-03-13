@@ -2336,6 +2336,17 @@ function SearchApp() {
                         </div>
                     </div>
 
+                    <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                        <div className="text-cyan-400 font-bold text-sm">⏱️ useLayoutEffect vs useEffect</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Timeline:</strong> Render → DOM mutation → <Highlight>useLayoutEffect</Highlight> (sync) → Paint → <Highlight>useEffect</Highlight> (async)<br /><br />
+                            • <strong>useEffect</strong> (99%): runs <strong>AFTER paint</strong> — doesn&apos;t block UI, use for API calls, subscriptions<br />
+                            • <strong>useLayoutEffect</strong>: runs <strong>BEFORE paint</strong> — blocks paint, use when you need to <strong>measure DOM then update</strong> without user seeing a flash<br />
+                            • Examples: tooltip positioning, scroll sync, auto-resize elements<br />
+                            • ⚠️ Overusing useLayoutEffect = <strong>blocking render</strong> = frozen UI. Only use to prevent visual flicker
+                        </div>
+                    </div>
+
                     <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <div className="text-red-400 font-bold text-sm">🌐 useContext — Global State</div>
                         <div className="text-slate-300 text-sm mt-1">
