@@ -361,6 +361,155 @@ function ProductList({ products, searchTerm }) {
                     Nếu filter một mảng nhỏ (&lt;100 items), không cần memo.
                 </Callout>
 
+                <Heading3>useMemo vs useEffect — Tại sao không dùng useEffect?</Heading3>
+
+                <Paragraph>
+                    Lỗi phổ biến: dùng <InlineCode>useEffect</InlineCode> + <InlineCode>useState</InlineCode> để tính derived data.
+                    Đây là <Highlight>anti-pattern</Highlight> vì gây <strong>2 lần render thay vì 1</strong>.
+                </Paragraph>
+
+                <CodeBlock title="usememo-vs-useeffect.tsx">{`// ❌ ANTI-PATTERN: useEffect + useState cho derived data
+function ProductList({ products, searchTerm }) {
+    const [filtered, setFiltered] = useState([])
+
+    useEffect(() => {
+        // Render lần 1: filtered = [] (data cũ/sai)
+        // Effect chạy SAU render → set state → trigger render lần 2
+        setFiltered(
+            products.filter(p => p.name.includes(searchTerm))
+        )
+    }, [products, searchTerm])
+    // Render lần 2: filtered = data đúng
+    // → User thấy FLASH: data cũ → data mới 😵
+
+    return <ul>{filtered.map(p => <li key={p.id}>{p.name}</li>)}</ul>
+}
+
+// ✅ CORRECT: useMemo — tính TRONG render, chỉ 1 lần render
+function ProductList({ products, searchTerm }) {
+    const filtered = useMemo(() => {
+        return products.filter(p => p.name.includes(searchTerm))
+    }, [products, searchTerm])
+    // → filtered luôn đúng ngay lần render đầu tiên
+
+    return <ul>{filtered.map(p => <li key={p.id}>{p.name}</li>)}</ul>
+}`}</CodeBlock>
+
+                <div className="my-6 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead>
+                            <tr className="border-b border-white/10">
+                                <th className="text-left p-3 text-slate-400 font-medium">Tiêu chí</th>
+                                <th className="text-left p-3 text-red-400 font-medium">❌ useEffect + useState</th>
+                                <th className="text-left p-3 text-green-400 font-medium">✅ useMemo</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-slate-300">
+                            <tr className="border-b border-white/5">
+                                <td className="p-3 text-slate-400">Khi nào tính?</td>
+                                <td className="p-3">SAU render (async)</td>
+                                <td className="p-3">TRONG render (sync)</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3 text-slate-400">Số lần render</td>
+                                <td className="p-3">2 lần (cũ → mới)</td>
+                                <td className="p-3">1 lần (đúng ngay)</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3 text-slate-400">UI flash?</td>
+                                <td className="p-3">Có (data cũ → mới)</td>
+                                <td className="p-3">Không</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3 text-slate-400">Thêm state?</td>
+                                <td className="p-3">Cần useState riêng</td>
+                                <td className="p-3">Không cần</td>
+                            </tr>
+                            <tr>
+                                <td className="p-3 text-slate-400">Dùng khi</td>
+                                <td className="p-3">Side effects (API, timer)</td>
+                                <td className="p-3">Derived/computed data</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <Heading3>🔧 Cơ chế hoạt động bên trong useMemo</Heading3>
+
+                <Paragraph>
+                    <InlineCode>useMemo</InlineCode> hoạt động dựa trên <Highlight>Fiber node&apos;s memoizedState</Highlight> — nó lưu cả giá trị lẫn deps vào linked list của hooks.
+                </Paragraph>
+
+                <CodeBlock title="usememo-internals.tsx">{`// Pseudocode: React làm gì khi gặp useMemo
+
+// === LẦN MOUNT ĐẦU TIÊN ===
+function mountMemo(factory, deps) {
+    const hook = createNewHook()    // Tạo hook node trong linked list
+    const value = factory()          // Chạy callback, lấy giá trị
+    hook.memoizedState = [value, deps]  // Lưu [giá trị, deps]
+    return value
+}
+
+// === CÁC LẦN RENDER SAU ===
+function updateMemo(factory, deps) {
+    const hook = getExistingHook()   // Lấy hook từ linked list (theo vị trí)
+    const [prevValue, prevDeps] = hook.memoizedState
+
+    // So sánh từng dependency bằng Object.is()
+    if (areEqual(prevDeps, deps)) {
+        return prevValue             // ✅ Deps không đổi → trả về cache
+    }
+
+    // ❌ Deps thay đổi → tính lại
+    const newValue = factory()       // Chạy lại callback
+    hook.memoizedState = [newValue, deps]  // Cập nhật cache
+    return newValue
+}
+
+// === SO SÁNH DEPS ===
+function areEqual(prevDeps, nextDeps) {
+    for (let i = 0; i < prevDeps.length; i++) {
+        if (!Object.is(prevDeps[i], nextDeps[i])) {
+            return false  // Chỉ cần 1 dep khác → tính lại
+        }
+    }
+    return true  // Tất cả deps giống → dùng cache
+}
+
+// ⚠️ Object.is() so sánh REFERENCE, không phải deep equal!
+Object.is(1, 1)           // true  (primitive)
+Object.is('a', 'a')       // true  (primitive)
+Object.is({}, {})         // false (khác reference!)
+Object.is([1,2], [1,2])   // false (khác reference!)
+
+// → Đây là lý do tại sao:
+const obj = { a: 1 }
+useMemo(() => compute(obj), [obj])  // ❌ Tính lại MỖI render!
+// Vì mỗi render tạo obj mới → reference khác → Object.is = false
+
+// Fix:
+useMemo(() => compute(obj), [obj.a])  // ✅ Dùng primitive
+// hoặc:
+const stableObj = useMemo(() => ({ a: 1 }), [])  // ✅ Stable reference`}</CodeBlock>
+
+                <div className="my-6 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">📊 Timeline so sánh</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>useMemo:</strong> Render → useMemo check deps → (cache hoặc tính lại) → Kết quả có ngay → Paint<br /><br />
+                            <strong>useEffect:</strong> Render (data cũ) → Paint (user thấy data cũ) → Effect chạy → setState → Render lại → Paint (data mới)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📌 Quy tắc vàng</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Nếu giá trị <strong>tính được từ props/state hiện tại</strong> → <InlineCode>useMemo</InlineCode><br />
+                            • Nếu cần <strong>side effect</strong> (fetch API, update DOM, subscribe) → <InlineCode>useEffect</InlineCode><br />
+                            • Nếu giá trị đơn giản (string concat, boolean check) → <strong>không cần gì cả</strong>, tính trực tiếp
+                        </div>
+                    </div>
+                </div>
+
                 {/* ===== useCallback ===== */}
                 <Heading2>5. useCallback — Ghi nhớ function</Heading2>
 
@@ -1569,6 +1718,155 @@ function ProductList({ products, searchTerm }) {
                     Don&apos;t overuse <InlineCode>useMemo</InlineCode>! Only use it when computation is truly expensive.
                     If filtering a small array (&lt;100 items), no memo needed.
                 </Callout>
+
+                <Heading3>useMemo vs useEffect — Why NOT useEffect?</Heading3>
+
+                <Paragraph>
+                    Common mistake: using <InlineCode>useEffect</InlineCode> + <InlineCode>useState</InlineCode> to compute derived data.
+                    This is an <Highlight>anti-pattern</Highlight> because it causes <strong>2 renders instead of 1</strong>.
+                </Paragraph>
+
+                <CodeBlock title="usememo-vs-useeffect.tsx">{`// ❌ ANTI-PATTERN: useEffect + useState for derived data
+function ProductList({ products, searchTerm }) {
+    const [filtered, setFiltered] = useState([])
+
+    useEffect(() => {
+        // Render 1: filtered = [] (stale/wrong data)
+        // Effect runs AFTER render → sets state → triggers render 2
+        setFiltered(
+            products.filter(p => p.name.includes(searchTerm))
+        )
+    }, [products, searchTerm])
+    // Render 2: filtered = correct data
+    // → User sees FLASH: old data → new data 😵
+
+    return <ul>{filtered.map(p => <li key={p.id}>{p.name}</li>)}</ul>
+}
+
+// ✅ CORRECT: useMemo — computes DURING render, only 1 render
+function ProductList({ products, searchTerm }) {
+    const filtered = useMemo(() => {
+        return products.filter(p => p.name.includes(searchTerm))
+    }, [products, searchTerm])
+    // → filtered is always correct on the first render
+
+    return <ul>{filtered.map(p => <li key={p.id}>{p.name}</li>)}</ul>
+}`}</CodeBlock>
+
+                <div className="my-6 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead>
+                            <tr className="border-b border-white/10">
+                                <th className="text-left p-3 text-slate-400 font-medium">Criteria</th>
+                                <th className="text-left p-3 text-red-400 font-medium">❌ useEffect + useState</th>
+                                <th className="text-left p-3 text-green-400 font-medium">✅ useMemo</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-slate-300">
+                            <tr className="border-b border-white/5">
+                                <td className="p-3 text-slate-400">When computed?</td>
+                                <td className="p-3">AFTER render (async)</td>
+                                <td className="p-3">DURING render (sync)</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3 text-slate-400">Render count</td>
+                                <td className="p-3">2 renders (stale → correct)</td>
+                                <td className="p-3">1 render (correct immediately)</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3 text-slate-400">UI flash?</td>
+                                <td className="p-3">Yes (old → new data)</td>
+                                <td className="p-3">No</td>
+                            </tr>
+                            <tr className="border-b border-white/5">
+                                <td className="p-3 text-slate-400">Extra state?</td>
+                                <td className="p-3">Needs separate useState</td>
+                                <td className="p-3">Not needed</td>
+                            </tr>
+                            <tr>
+                                <td className="p-3 text-slate-400">Use when</td>
+                                <td className="p-3">Side effects (API, timer)</td>
+                                <td className="p-3">Derived/computed data</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <Heading3>🔧 How useMemo Works Internally</Heading3>
+
+                <Paragraph>
+                    <InlineCode>useMemo</InlineCode> works through the <Highlight>Fiber node&apos;s memoizedState</Highlight> — it stores both the value and deps in the hooks linked list.
+                </Paragraph>
+
+                <CodeBlock title="usememo-internals.tsx">{`// Pseudocode: what React does when it encounters useMemo
+
+// === FIRST MOUNT ===
+function mountMemo(factory, deps) {
+    const hook = createNewHook()    // Create hook node in linked list
+    const value = factory()          // Run callback, get value
+    hook.memoizedState = [value, deps]  // Store [value, deps]
+    return value
+}
+
+// === SUBSEQUENT RENDERS ===
+function updateMemo(factory, deps) {
+    const hook = getExistingHook()   // Get hook from linked list (by position)
+    const [prevValue, prevDeps] = hook.memoizedState
+
+    // Compare each dependency using Object.is()
+    if (areEqual(prevDeps, deps)) {
+        return prevValue             // ✅ Deps unchanged → return cached
+    }
+
+    // ❌ Deps changed → recalculate
+    const newValue = factory()       // Run callback again
+    hook.memoizedState = [newValue, deps]  // Update cache
+    return newValue
+}
+
+// === DEPENDENCY COMPARISON ===
+function areEqual(prevDeps, nextDeps) {
+    for (let i = 0; i < prevDeps.length; i++) {
+        if (!Object.is(prevDeps[i], nextDeps[i])) {
+            return false  // Any dep different → recalculate
+        }
+    }
+    return true  // All deps same → use cache
+}
+
+// ⚠️ Object.is() compares REFERENCE, not deep equality!
+Object.is(1, 1)           // true  (primitive)
+Object.is('a', 'a')       // true  (primitive)
+Object.is({}, {})         // false (different reference!)
+Object.is([1,2], [1,2])   // false (different reference!)
+
+// → This is why:
+const obj = { a: 1 }
+useMemo(() => compute(obj), [obj])  // ❌ Recalculates EVERY render!
+// Because each render creates new obj → different reference → Object.is = false
+
+// Fix:
+useMemo(() => compute(obj), [obj.a])  // ✅ Use primitive
+// or:
+const stableObj = useMemo(() => ({ a: 1 }), [])  // ✅ Stable reference`}</CodeBlock>
+
+                <div className="my-6 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">📊 Timeline Comparison</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>useMemo:</strong> Render → useMemo checks deps → (cache or recalculate) → Result ready → Paint<br /><br />
+                            <strong>useEffect:</strong> Render (stale data) → Paint (user sees stale) → Effect runs → setState → Re-render → Paint (correct data)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">📌 Golden Rule</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • If value is <strong>derivable from current props/state</strong> → <InlineCode>useMemo</InlineCode><br />
+                            • If you need a <strong>side effect</strong> (fetch API, update DOM, subscribe) → <InlineCode>useEffect</InlineCode><br />
+                            • If value is simple (string concat, boolean check) → <strong>nothing needed</strong>, compute directly
+                        </div>
+                    </div>
+                </div>
 
                 {/* ===== useCallback ===== */}
                 <Heading2>5. useCallback — Memoize Functions</Heading2>
