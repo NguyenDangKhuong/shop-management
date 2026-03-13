@@ -2391,6 +2391,61 @@ function SearchApp() {
                     </div>
                 </div>
 
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                        <div className="text-orange-400 font-bold text-sm">🔀 useReducer — State phức tạp</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Thay thế useState khi state có <strong>nhiều sub-values</strong> hoặc <strong>logic phức tạp</strong><br />
+                            • Pattern: <InlineCode>const [state, dispatch] = useReducer(reducer, initialState)</InlineCode><br />
+                            • <strong>Khi nào dùng:</strong> form nhiều fields, state machine, khi next state phụ thuộc vào action type<br />
+                            • Kết hợp <InlineCode>useContext + useReducer</InlineCode> = mini Redux (không cần thư viện)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+                        <div className="text-indigo-400 font-bold text-sm">🆕 React 18+ Hooks mới</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>useTransition</strong>: đánh dấu state update là <Highlight>non-urgent</Highlight> → UI vẫn responsive khi heavy render<br />
+                            • <strong>useDeferredValue</strong>: defer giá trị → input update ngay, kết quả render sau<br />
+                            • <strong>useId</strong>: tạo unique ID stable giữa server + client (SSR-safe)<br />
+                            • <strong>useActionState</strong> (React 19): quản lý form action state (pending, error, result)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-pink-500/10 border border-pink-500/20">
+                        <div className="text-pink-400 font-bold text-sm">🛡️ React.memo — Tối ưu re-render</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • HOC wrap component → <strong>skip re-render</strong> nếu props không đổi (shallow comparison)<br />
+                            • Chỉ hiệu quả khi kết hợp <InlineCode>useCallback</InlineCode> (cho function props) + <InlineCode>useMemo</InlineCode> (cho object props)<br />
+                            • Custom comparator: <InlineCode>React.memo(Comp, areEqual)</InlineCode><br />
+                            • ⚠️ Không memo mọi thứ — chỉ khi component render tốn kém hoặc re-render thường xuyên
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-sky-500/10 border border-sky-500/20">
+                        <div className="text-sky-400 font-bold text-sm">⏳ Suspense + 🌀 Portal</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Suspense:</strong> khai báo loading UI cho async operations<br />
+                            • <InlineCode>React.lazy()</InlineCode> code splitting, data fetching, nested boundaries<br />
+                            • Streaming SSR: gửi HTML shell trước, component lazy load sau<br /><br />
+                            <strong>Portal:</strong> render component <strong>ngoài parent DOM</strong> nhưng vẫn trong React tree<br />
+                            • <InlineCode>createPortal(children, domNode)</InlineCode><br />
+                            • Dùng cho: modals, tooltips, dropdowns, toasts — event vẫn bubble lên React tree
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-teal-500/10 border border-teal-500/20">
+                        <div className="text-teal-400 font-bold text-sm">📊 Hooks vs Class Lifecycle</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <InlineCode>componentDidMount</InlineCode> → <InlineCode>useEffect(fn, [])</InlineCode><br />
+                            • <InlineCode>componentDidUpdate</InlineCode> → <InlineCode>useEffect(fn, [deps])</InlineCode><br />
+                            • <InlineCode>componentWillUnmount</InlineCode> → <InlineCode>useEffect(() =&gt; cleanup, [])</InlineCode><br />
+                            • <InlineCode>shouldComponentUpdate</InlineCode> → <InlineCode>React.memo()</InlineCode><br />
+                            • Interview: biết map lifecycle → hooks = <Highlight>hiểu migration path</Highlight>
+                        </div>
+                    </div>
+                </div>
+
                 <CodeBlock title="hooks-pitfalls.tsx">{`// ⚠️ Pitfall 1: Stale closure
 function Counter() {
   const [count, setCount] = useState(0)

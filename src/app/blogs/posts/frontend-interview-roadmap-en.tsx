@@ -2358,6 +2358,61 @@ function SearchApp() {
                     </div>
                 </div>
 
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                        <div className="text-orange-400 font-bold text-sm">🔀 useReducer — Complex State</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Replaces useState when state has <strong>multiple sub-values</strong> or <strong>complex logic</strong><br />
+                            • Pattern: <InlineCode>const [state, dispatch] = useReducer(reducer, initialState)</InlineCode><br />
+                            • <strong>When to use:</strong> multi-field forms, state machines, when next state depends on action type<br />
+                            • Combine <InlineCode>useContext + useReducer</InlineCode> = mini Redux (no library needed)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+                        <div className="text-indigo-400 font-bold text-sm">🆕 React 18+ New Hooks</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>useTransition</strong>: mark state updates as <Highlight>non-urgent</Highlight> → UI stays responsive during heavy renders<br />
+                            • <strong>useDeferredValue</strong>: defer a value → input updates immediately, results render later<br />
+                            • <strong>useId</strong>: generate unique IDs stable across server + client (SSR-safe)<br />
+                            • <strong>useActionState</strong> (React 19): manage form action state (pending, error, result)
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-pink-500/10 border border-pink-500/20">
+                        <div className="text-pink-400 font-bold text-sm">🛡️ React.memo — Optimize Re-renders</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • HOC wrapping component → <strong>skips re-render</strong> if props unchanged (shallow comparison)<br />
+                            • Only effective with <InlineCode>useCallback</InlineCode> (for function props) + <InlineCode>useMemo</InlineCode> (for object props)<br />
+                            • Custom comparator: <InlineCode>React.memo(Comp, areEqual)</InlineCode><br />
+                            • ⚠️ Don&apos;t memo everything — only when render is expensive or re-renders are frequent
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-sky-500/10 border border-sky-500/20">
+                        <div className="text-sky-400 font-bold text-sm">⏳ Suspense + 🌀 Portal</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Suspense:</strong> declarative loading UI for async operations<br />
+                            • <InlineCode>React.lazy()</InlineCode> code splitting, data fetching, nested boundaries<br />
+                            • Streaming SSR: send HTML shell first, lazy load components later<br /><br />
+                            <strong>Portal:</strong> render component <strong>outside parent DOM</strong> but still in React tree<br />
+                            • <InlineCode>createPortal(children, domNode)</InlineCode><br />
+                            • Used for: modals, tooltips, dropdowns, toasts — events still bubble up React tree
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-teal-500/10 border border-teal-500/20">
+                        <div className="text-teal-400 font-bold text-sm">📊 Hooks vs Class Lifecycle</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <InlineCode>componentDidMount</InlineCode> → <InlineCode>useEffect(fn, [])</InlineCode><br />
+                            • <InlineCode>componentDidUpdate</InlineCode> → <InlineCode>useEffect(fn, [deps])</InlineCode><br />
+                            • <InlineCode>componentWillUnmount</InlineCode> → <InlineCode>useEffect(() =&gt; cleanup, [])</InlineCode><br />
+                            • <InlineCode>shouldComponentUpdate</InlineCode> → <InlineCode>React.memo()</InlineCode><br />
+                            • Interview: knowing lifecycle → hooks mapping = <Highlight>understands migration path</Highlight>
+                        </div>
+                    </div>
+                </div>
+
                 <CodeBlock title="hooks-pitfalls.tsx">{`// ⚠️ Pitfall 1: Stale closure
 function Counter() {
   const [count, setCount] = useState(0)
