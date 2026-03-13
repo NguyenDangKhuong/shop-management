@@ -3016,6 +3016,111 @@ function CreateProductForm() {
 
                 <Callout type="tip">Interview: {`"RSC vs SSR?"`} → RSC render trên server nhưng <Highlight>không hydrate</Highlight> (0 JS). SSR render HTML trên server rồi <Highlight>hydrate toàn bộ</Highlight>. RSC hiệu quả hơn vì chỉ ship JS cho interactive parts.</Callout>
             </TopicModal>
+
+            <TopicModal title="State Management trong Next.js" emoji="🗃️" color="#8b5cf6" summary="Tại sao ít cần Context/Redux trong App Router — và khi nào vẫn cần">
+                <Paragraph><Highlight>Next.js App Router thay đổi cách nghĩ về state.</Highlight> Phần lớn global state mà trước đây cần Redux/Context giờ được xử lý bởi Server Components và URL params.</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔄 Trước vs Sau App Router</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Trước (CRA + Redux):</strong><br />
+                            Page load → client fetch API → loading spinner → dispatch action → set Redux store → render<br /><br />
+                            <strong>Sau (Next.js App Router):</strong><br />
+                            Server fetch data → render HTML → gửi về client (đã có data sẵn)<br />
+                            → <Highlight>Không cần global store để giữ data!</Highlight>
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🌐 URL = State Manager miễn phí</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Filters, pagination, search → dùng <Highlight>searchParams</Highlight><br /><br />
+                            <code className="text-xs bg-slate-900 px-2 py-0.5 rounded">/products?category=shoes&amp;sort=price&amp;page=2</code><br /><br />
+                            → Không cần Redux store cho filters!<br />
+                            → Shareable URL, SEO-friendly, back button works
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🧩 Chỉ cần client state cho UI state</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Modal open/close → <strong>useState</strong><br />
+                            • Theme dark/light → <strong>useContext</strong> (nhỏ, local)<br />
+                            • Form input → <strong>useState</strong> / React Hook Form<br />
+                            • Complex form logic → <strong>useReducer</strong><br /><br />
+                            → Đều <Highlight>nhỏ và local</Highlight>, không cần Redux!
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">📋 Khi nào dùng gì?</div>
+                        <div className="text-slate-300 text-sm mt-2">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-xs">
+                                    <thead>
+                                        <tr className="border-b border-white/10">
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Tool</th>
+                                            <th className="text-left py-1.5 text-slate-400 font-semibold">Khi nào dùng</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-slate-300">
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-green-400">useState</td><td>UI state đơn giản (modal, toggle, form)</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-green-400">useContext</td><td>Theme, locale, auth status — ít thay đổi</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-blue-400">Zustand</td><td>Client state phức tạp, nhiều component share</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-purple-400">Redux</td><td>App rất lớn, cần time-travel debug, middleware</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-cyan-400">TanStack Query</td><td>Server state caching + revalidation trên client</td></tr>
+                                        <tr><td className="py-1.5 pr-2 font-mono text-yellow-400">URL params</td><td>Filters, pagination, search — shareable + SEO</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="url-state-example.tsx">{`// ✅ URL params thay thế Redux cho filters
+// File: app/products/page.tsx (Server Component)
+export default async function ProductsPage({
+    searchParams
+}: {
+    searchParams: Promise<{ category?: string; sort?: string; page?: string }>
+}) {
+    const { category, sort, page } = await searchParams
+    const products = await db.product.findMany({
+        where: category ? { category } : {},
+        orderBy: { [sort || 'createdAt']: 'desc' },
+        skip: ((Number(page) || 1) - 1) * 20,
+        take: 20,
+    })
+    return <ProductGrid products={products} />
+}
+
+// Client component chỉ update URL — không cần Redux!
+'use client'
+import { useRouter, useSearchParams } from 'next/navigation'
+
+function FilterBar() {
+    const router = useRouter()
+    const params = useSearchParams()
+
+    const setFilter = (key: string, value: string) => {
+        const newParams = new URLSearchParams(params)
+        newParams.set(key, value)
+        newParams.delete('page') // reset page khi đổi filter
+        router.push('/products?' + newParams)
+    }
+
+                    return (
+                    <select onChange={e => setFilter('category', e.target.value)}>
+                        <option value="">Tất cả</option>
+                        <option value="shoes">Giày</option>
+                        <option value="shirts">Áo</option>
+                    </select>
+                    )
+}`}</CodeBlock>
+
+                <Callout type="tip">Interview: {`"Bạn quản lý state thế nào trong Next.js App Router?"`} → <Highlight>Server Components fetch data trực tiếp, URL params thay filter state, chỉ còn UI state nhỏ dùng useState/useContext. Nếu cần client state phức tạp → Zustand vì nhẹ hơn Redux.</Highlight></Callout>
+            </TopicModal>
         </div>
 
         <Heading3>3.2 HTML/CSS (click để xem chi tiết)</Heading3>

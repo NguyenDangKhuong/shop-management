@@ -2980,6 +2980,111 @@ function CreateProductForm() {
 
                 <Callout type="tip">Interview: {`"RSC vs SSR?"`} → RSC renders on server but <Highlight>doesn&apos;t hydrate</Highlight> (0 JS). SSR renders HTML on server then <Highlight>hydrates the entire app</Highlight>. RSC is more efficient because it only ships JS for interactive parts.</Callout>
             </TopicModal>
+
+            <TopicModal title="State Management in Next.js" emoji="🗃️" color="#8b5cf6" summary="Why Context/Redux is less needed in App Router — and when you still need them">
+                <Paragraph><Highlight>Next.js App Router changes how we think about state.</Highlight> Most global state that previously required Redux/Context is now handled by Server Components and URL params.</Paragraph>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="text-purple-400 font-bold text-sm">🔄 Before vs After App Router</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            <strong>Before (CRA + Redux):</strong><br />
+                            Page load → client fetches API → loading spinner → dispatch action → set Redux store → render<br /><br />
+                            <strong>After (Next.js App Router):</strong><br />
+                            Server fetches data → renders HTML → sends to client (data already there)<br />
+                            → <Highlight>No need for a global store to hold data!</Highlight>
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">🌐 URL = Free State Manager</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            Filters, pagination, search → use <Highlight>searchParams</Highlight><br /><br />
+                            <code className="text-xs bg-slate-900 px-2 py-0.5 rounded">/products?category=shoes&amp;sort=price&amp;page=2</code><br /><br />
+                            → No Redux store needed for filters!<br />
+                            → Shareable URL, SEO-friendly, back button works
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">🧩 Client state is only for UI state</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • Modal open/close → <strong>useState</strong><br />
+                            • Theme dark/light → <strong>useContext</strong> (small, local)<br />
+                            • Form input → <strong>useState</strong> / React Hook Form<br />
+                            • Complex form logic → <strong>useReducer</strong><br /><br />
+                            → All <Highlight>small and local</Highlight>, no Redux needed!
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">📋 When to use what?</div>
+                        <div className="text-slate-300 text-sm mt-2">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-xs">
+                                    <thead>
+                                        <tr className="border-b border-white/10">
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Tool</th>
+                                            <th className="text-left py-1.5 text-slate-400 font-semibold">When to use</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-slate-300">
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-green-400">useState</td><td>Simple UI state (modal, toggle, form)</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-green-400">useContext</td><td>Theme, locale, auth status — rarely changes</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-blue-400">Zustand</td><td>Complex client state, shared across components</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-purple-400">Redux</td><td>Very large apps, time-travel debugging, middleware</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-cyan-400">TanStack Query</td><td>Server state caching + revalidation on client</td></tr>
+                                        <tr><td className="py-1.5 pr-2 font-mono text-yellow-400">URL params</td><td>Filters, pagination, search — shareable + SEO</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="url-state-example.tsx">{`// ✅ URL params replace Redux for filters
+// File: app/products/page.tsx (Server Component)
+export default async function ProductsPage({
+    searchParams
+}: {
+    searchParams: Promise<{ category?: string; sort?: string; page?: string }>
+}) {
+    const { category, sort, page } = await searchParams
+    const products = await db.product.findMany({
+        where: category ? { category } : {},
+        orderBy: { [sort || 'createdAt']: 'desc' },
+        skip: ((Number(page) || 1) - 1) * 20,
+        take: 20,
+    })
+    return <ProductGrid products={products} />
+}
+
+// Client component just updates the URL — no Redux needed!
+'use client'
+import { useRouter, useSearchParams } from 'next/navigation'
+
+function FilterBar() {
+    const router = useRouter()
+    const params = useSearchParams()
+
+    const setFilter = (key: string, value: string) => {
+        const newParams = new URLSearchParams(params)
+        newParams.set(key, value)
+        newParams.delete('page') // reset page on filter change
+        router.push('/products?' + newParams)
+    }
+
+    return (
+        <select onChange={e => setFilter('category', e.target.value)}>
+            <option value="">All</option>
+            <option value="shoes">Shoes</option>
+            <option value="shirts">Shirts</option>
+        </select>
+    )
+}`}</CodeBlock>
+
+                <Callout type="tip">Interview: {`"How do you manage state in Next.js App Router?"`} → <Highlight>Server Components fetch data directly, URL params replace filter state, only small UI state uses useState/useContext. For complex client state → Zustand because it&apos;s lighter than Redux.</Highlight></Callout>
+            </TopicModal>
         </div>
 
         <Heading3>3.2 HTML/CSS (click for details)</Heading3>
