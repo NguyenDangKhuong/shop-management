@@ -8,6 +8,7 @@ const JWT_MAX_AGE = 24 * 60 * 60 // 1 day in seconds
 const REFRESH_WINDOW = 7 * 24 * 60 * 60 // 7 days in seconds
 
 export const authConfig = {
+  trustHost: true, // Allow login from reverse proxy domains (khuong.theworkpc.com)
   pages: {
     signIn: '/login'
   },
