@@ -148,8 +148,146 @@ tailscale status              # Connected devices
 tailscale ip                  # Show Tailscale IPs
 ```
 
+## Domain & DDNS
+
+| Domain | Service | Target |
+|--------|---------|--------|
+| `khuong.theworkpc.com` | Dynu DDNS | → Vercel (shop) |
+| `server.khuong.theworkpc.com` | Dynu wildcard | → ESXi (192.168.1.100:9443 via subnet) |
+| `n8n.khuong.theworkpc.com` | Dynu wildcard | → n8n (100.108.169.39:5678 via Tailscale) |
+| `cli-proxy.khuong.theworkpc.com` | Dynu wildcard | → cli-proxy (100.108.169.39:8317 via Tailscale) |
+| `openclaw.khuong.theworkpc.com` | Dynu wildcard | → openclaw (100.108.169.39:18789 via Tailscale) |
+| `*.khuong.theworkpc.com` | Dynu wildcard | → VPS (add more subdomains) |
+
+**Provider**: [Dynu](https://www.dynu.com) — free, no confirmation, wildcard support
+
+## SSL (Let's Encrypt + Certbot)
+
+```bash
+# View current certificates
+sudo certbot certificates
+
+# Force renew
+sudo certbot renew --force-renewal
+
+# Add SSL for new subdomain
+sudo certbot --nginx -d newsubdomain.khuong.theworkpc.com --non-interactive --agree-tos --email nguyendangkhuong96@gmail.com --redirect
+```
+
+Auto-renew: `certbot.timer` runs 2x/day, renews 30 days before expiry.
+
+## Nginx Reverse Proxy
+
+### Architecture
+
+```
+                         🌍 INTERNET
+                              │
+                    Dynu DNS (*.khuong.theworkpc.com)
+                              │
+                              ▼
+              ┌═══════════════════════════════════┐
+              ║  ☁️ VPS Oracle (161.118.197.104)   ║
+              ║  Nginx Reverse Proxy (port 443)    ║
+              ╠═══════════════════════════════════╣
+              ║                                    ║
+              ║  khuong.theworkpc.com               ║
+              ║  → proxy_pass Vercel               ║
+              ║                                    ║
+              ║  server.khuong.theworkpc.com        ║
+              ║  → proxy_pass 192.168.1.100:9443   ║
+              ║    (via Tailscale subnet routing)   ║
+              ║                                    ║
+              ╚════════════╤══════════════════════╝
+                           │ Tailscale VPN
+                           │ (subnet: 192.168.1.0/24)
+                           ▼
+              ┌═══════════════════════════════════┐
+              ║  🖥️ Ubuntu VM (100.108.169.39)     ║
+              ║  (khuong-ubuntu-esxi)              ║
+              ║  Subnet Router → forwards LAN      ║
+              ╚════════════╤══════════════════════╝
+                           │ LAN
+                           ▼
+              ┌═══════════════════════════════════┐
+              ║  🖥️ ESXi Host (192.168.1.100)      ║
+              ║  vSphere Web UI (:9443)            ║
+              ╚═══════════════════════════════════╝
+```
+
+### Config files
+
+```bash
+# List all sites
+ls /etc/nginx/sites-enabled/
+
+# Edit a site
+sudo nano /etc/nginx/sites-available/khuong.theworkpc.com
+
+# Test & reload
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+### Add new subdomain service
+
+```bash
+# 1. Create nginx config
+sudo tee /etc/nginx/sites-available/myapp.khuong.theworkpc.com > /dev/null << 'EOF'
+server {
+    listen 80;
+    server_name myapp.khuong.theworkpc.com;
+    location / {
+        proxy_pass http://localhost:PORT;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+EOF
+
+# 2. Enable & reload
+sudo ln -s /etc/nginx/sites-available/myapp.khuong.theworkpc.com /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+
+# 3. Add SSL
+sudo certbot --nginx -d myapp.khuong.theworkpc.com --non-interactive --agree-tos --email nguyendangkhuong96@gmail.com --redirect
+```
+
+## Tailscale Subnet Routing
+
+VPS accesses local LAN (192.168.1.0/24) through Ubuntu VM subnet router.
+
+| Machine | Tailscale IP | Role |
+|---------|-------------|------|
+| **heyyolo-free-vps** | 100.118.218.99 | `--accept-routes --ssh` |
+| **khuong-ubuntu-esxi** | 100.108.169.39 | `--advertise-routes=192.168.1.0/24` |
+| **macbook-pro-may-cty** | 100.90.20.107 | Client |
+| **khuongnas** | 100.116.76.83 | NAS |
+| **iphone-13-pro-max** | 100.65.129.97 | Mobile |
+
+```bash
+# VPS: accept subnet routes
+sudo tailscale up --accept-routes --ssh
+
+# Ubuntu VM: advertise LAN
+sudo tailscale up --advertise-routes=192.168.1.0/24 --accept-routes
+```
+
+## Budget Alert
+
+Oracle Console → Billing → Budgets → `free-tier-alert`
+- Budget: $1/month
+- Alert: Actual Spend ≥ 1% → email notification
+
 ## Web Access
 
-- **Public**: http://161.118.197.104
-- **Tailscale**: http://100.118.218.99
-- Landing page: `/var/www/html/index.html`
+| URL | Target |
+|-----|--------|
+| https://khuong.theworkpc.com | Vercel shop |
+| https://server.khuong.theworkpc.com | ESXi Web UI |
+| https://n8n.khuong.theworkpc.com | n8n (local via Tailscale) |
+| https://cli-proxy.khuong.theworkpc.com | cli-proxy (local via Tailscale) |
+| https://openclaw.khuong.theworkpc.com | openclaw (local via Tailscale) |
+| http://161.118.197.104 | VPS direct |
+| http://100.118.218.99 | VPS via Tailscale |
