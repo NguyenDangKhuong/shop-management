@@ -291,3 +291,20 @@ Oracle Console → Billing → Budgets → `free-tier-alert`
 | https://openclaw.khuong.theworkpc.com | openclaw (local via Tailscale) |
 | http://161.118.197.104 | VPS direct |
 | http://100.118.218.99 | VPS via Tailscale |
+
+## ⚠️ Known Limitations
+
+### Login/Auth không hoạt động qua VPS reverse proxy
+
+`khuong.theworkpc.com` chỉ dùng được cho **public pages** (blogs, portfolio, tweets).
+**Login/Auth sẽ bị 500 Error** vì:
+
+1. Browser ở `khuong.theworkpc.com` nhưng Vercel tạo cookie cho `thetaphoa.vercel.app`
+2. NextAuth v5 dùng `__Host-` cookie prefix → **bắt buộc match domain**
+3. Browser từ chối lưu cookie cross-domain → login thất bại
+
+**Login chỉ hoạt động trên:**
+- `shop.thetaphoa.store` ✅
+- `thetaphoa.vercel.app` ✅
+
+**Fix:** Cần thêm domain vào Vercel Domains (yêu cầu CNAME record, Dynu free không hỗ trợ) hoặc mua domain riêng ~$10/năm.
