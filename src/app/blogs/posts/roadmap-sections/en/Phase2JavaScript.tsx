@@ -162,18 +162,49 @@ team.show();
                     <Callout type="tip">Priority order: <strong>new &gt; explicit &gt; implicit &gt; default</strong>. Arrow functions bypass all these rules.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Prototype & Inheritance" emoji="🧬" color="#34d399" summary="Prototype chain, __proto__, Object.create">
+                <TopicModal title="Prototype & Inheritance" emoji="🧬" color="#34d399" summary="Prototype = 'family inheritance' for objects — the chain works like asking your parents, then grandparents">
+                    <Paragraph><InlineCode>Prototype</InlineCode> in JS is like <Highlight>&quot;family inheritance&quot;</Highlight> — children inherit assets from parents, grandparents:</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                            <div className="text-emerald-400 font-bold text-sm">{'👨‍👩‍👦 Example: Family Inheritance'}</div>
+                            <div className="text-slate-300 text-sm mt-1 font-mono">
+                                {'👴 Grandpa has: house, car, cookbook'}<br />
+                                {'👨 Dad doesn\'t have his own house → borrows GRANDPA\'s house'}<br />
+                                {'👦 Son doesn\'t have a car → asks DAD → dad doesn\'t have one either → asks GRANDPA'}<br /><br />
+                                <strong>{'Prototype chain = family inheritance — keep asking up the chain until you find it!'}</strong>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">{'🏠 Own property = Bought it YOURSELF'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'If son BUYS his own car → uses his own, no need to ask dad/grandpa.'}<br />
+                                {'→ '}<strong>Own property always takes priority</strong>{' over the prototype chain'}
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">{'❌ Not found = End of family line'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Son asks dad → dad asks grandpa → grandpa asks... nobody has it → undefined'}<br />
+                                {'→ End of chain is always '}<strong>Object.prototype → null</strong>{' (no more ancestors!)'}
+                            </div>
+                        </div>
+                    </div>
+
                     <Paragraph>JS uses <Highlight>Prototypal Inheritance</Highlight> — every object has a hidden link (<InlineCode>__proto__</InlineCode>) pointing to its prototype.</Paragraph>
                     <Paragraph>When you access a property that doesn&apos;t exist on the object, JS <strong>walks up the prototype chain</strong> until it reaches <InlineCode>null</InlineCode>.</Paragraph>
                     <CodeBlock title="Prototype chain">{`const animal = { eat: true };
 const dog = Object.create(animal); // dog.__proto__ = animal
 dog.bark = true;
 
-dog.bark; // true (own property)
-dog.eat;  // true (from prototype chain!)
-dog.fly;  // undefined (not found)
+dog.bark; // true (own property — bought it yourself!)
+dog.eat;  // true (from prototype chain — inherited from animal!)
+dog.fly;  // undefined (nobody in the family has it)
 
-// Chain: dog → animal → Object.prototype → null`}</CodeBlock>
+// Chain: dog → animal → Object.prototype → null
+// 👦 son → 👨 dad → 👴 grandpa → ❌ end`}</CodeBlock>
                     <Callout type="warning">ES6 Class is just <Highlight>syntactic sugar</Highlight> — underneath it still uses prototypes. Understanding prototypes = understanding JS at a deep level.</Callout>
                 </TopicModal>
 
@@ -439,21 +470,52 @@ const result = await Promise.race([
                     <a href="/blogs/ecmascript-features" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== vs ===, truthy/falsy, implicit conversion traps">
+                <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== is like a chill teacher who lets everything pass, === is the strict teacher who checks everything">
+                    <Paragraph><InlineCode>Type Coercion</InlineCode> in JS is like <Highlight>&quot;grading homework&quot;</Highlight> at school — there are 2 types of teachers:</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                            <div className="text-orange-400 font-bold text-sm">{'🏫 Example: Grading homework'}</div>
+                            <div className="text-slate-300 text-sm mt-1 font-mono">
+                                {'📝 Assignment: "Write the number 1"'}<br />
+                                {'👦 Student writes: "1" (string)'}<br />
+                                {'👨‍🏫 Chill teacher (==): "Yeah that\'s right, 1 is 1!" → ✅'}<br />
+                                {'👨‍🏫 Strict teacher (===): "WRONG! I need NUMBER 1, not STRING \'1\'!" → ❌'}<br /><br />
+                                <strong>{'== auto-converts types to compare, === checks both type AND value!'}</strong>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm">{'✅ === (Strict) = Strict teacher 👨‍🏫'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Checks BOTH content AND data type — "1" !== 1, false !== 0'}<br />
+                                {'→ '}<strong>Always use === to avoid bugs</strong>{' — clear, no surprises'}
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">{'❌ == (Loose) = Chill teacher 😅'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Auto-corrects the student\'s answer before grading: "" → 0 → false, leading to unexpected results!'}<br />
+                                {'→ '}<strong>Avoid ==</strong>{' unless intentional (only useful: x == null checks both null and undefined)'}
+                            </div>
+                        </div>
+                    </div>
+
                     <Paragraph>JS automatically converts types when comparing with <InlineCode>==</InlineCode>. This is the source of many confusing bugs.</Paragraph>
-                    <CodeBlock title="Type coercion gotchas">{`// == (loose equality) — converts types
-'' == false     // true!
-0 == false      // true!
- null == undefined // true!
-[] == false     // true!
+                    <CodeBlock title="Type coercion gotchas">{`// == (loose equality) — chill teacher, auto-converts types
+'' == false     // true!  ('' → 0 → false, "yeah same thing!")
+0 == false      // true!  (0 → false, "close enough!")
+ null == undefined // true!  ("they're basically the same!")
+[] == false     // true!  ([] → '' → 0 → false, "I'll fix it for you!")
 
-// === (strict equality) — NO conversion
-'' === false    // false
-0 === false     // false
+// === (strict equality) — strict teacher, checks exact type
+'' === false    // false  ("string ≠ boolean, WRONG!")
+0 === false     // false  ("number ≠ boolean, WRONG!")
 
-// Truthy / Falsy
+// Truthy / Falsy — 6 "fake" values to memorize
 // Falsy: false, 0, '', null, undefined, NaN
-// Truthy: everything else (including [] and {}!)`}</CodeBlock>
+// Truthy: EVERYTHING else (including [] and {}!)`}</CodeBlock>
                     <Callout type="tip">Simple rule: <Highlight>always use ===</Highlight> unless you INTENTIONALLY want type coercion (rare). And memorize the 6 falsy values.</Callout>
                 </TopicModal>
 

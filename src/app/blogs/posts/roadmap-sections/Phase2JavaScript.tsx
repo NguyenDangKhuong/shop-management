@@ -162,18 +162,49 @@ team.show();
                     <Callout type="tip">Thứ tự ưu tiên: <strong>new &gt; explicit &gt; implicit &gt; default</strong>. Arrow function bỏ qua tất cả rules này.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Prototype & Inheritance" emoji="🧬" color="#34d399" summary="Prototype chain, __proto__, Object.create">
+                <TopicModal title="Prototype & Inheritance" emoji="🧬" color="#34d399" summary="Prototype = 'gia tài' mà object con thừa kế từ object cha — chuỗi thừa kế giống dòng họ">
+                    <Paragraph><InlineCode>Prototype</InlineCode> trong JS giống <Highlight>&quot;gia tài gia đình&quot;</Highlight> — con cháu được thừa kế tài sản từ cha mẹ, ông bà:</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                            <div className="text-emerald-400 font-bold text-sm">{'👨‍👩‍👦 Ví dụ: Gia tài gia đình'}</div>
+                            <div className="text-slate-300 text-sm mt-1 font-mono">
+                                {'👴 Ông có: nhà, xe, sách nấu ăn'}<br />
+                                {'👨 Bố không có nhà riêng → mượn nhà ÔNG'}<br />
+                                {'👦 Con không có xe riêng → mượn xe BỐ → nếu bố cũng không có → mượn xe ÔNG'}<br /><br />
+                                <strong>{'Prototype chain = chuỗi thừa kế gia đình — cứ đi lên trên hỏi cho đến khi tìm thấy!'}</strong>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">{'🏠 Own property = Tài sản TỰ MUA'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Nếu con TỰ MUA xe → dùng xe của mình, không cần hỏi bố/ông nữa.'}<br />
+                                {'→ '}<strong>Own property luôn được ưu tiên</strong>{' trước prototype chain'}
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">{'❌ Tìm không thấy = Hết dòng họ'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Con hỏi bố → bố hỏi ông → ông hỏi... không ai có → undefined'}<br />
+                                {'→ Cuối chain luôn là '}<strong>Object.prototype → null</strong>{' (hết dòng họ rồi!)'}
+                            </div>
+                        </div>
+                    </div>
+
                     <Paragraph>JS dùng <Highlight>Prototypal Inheritance</Highlight> — mỗi object có một link ẩn (<InlineCode>__proto__</InlineCode>) trỏ đến prototype của nó.</Paragraph>
                     <Paragraph>Khi bạn truy cập property không có trên object, JS sẽ <strong>đi lên prototype chain</strong> tìm cho đến khi gặp <InlineCode>null</InlineCode>.</Paragraph>
                     <CodeBlock title="Prototype chain">{`const animal = { eat: true };
 const dog = Object.create(animal); // dog.__proto__ = animal
 dog.bark = true;
 
-dog.bark; // true (own property)
-dog.eat;  // true (từ prototype chain!)
-dog.fly;  // undefined (không tìm thấy)
+dog.bark; // true (own property — tài sản tự mua!)
+dog.eat;  // true (từ prototype chain — thừa kế từ animal!)
+dog.fly;  // undefined (không ai trong dòng họ có)
 
-// Chain: dog → animal → Object.prototype → null`}</CodeBlock>
+// Chain: dog → animal → Object.prototype → null
+// 👦 con → 👨 bố → 👴 ông → ❌ hết`}</CodeBlock>
                     <Callout type="warning">ES6 Class chỉ là <Highlight>syntactic sugar</Highlight> — bên dưới vẫn dùng prototype. Hiểu prototype = hiểu JS ở level sâu.</Callout>
                 </TopicModal>
 
@@ -439,21 +470,52 @@ const result = await Promise.race([
                     <a href="/blogs/ecmascript-features" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== vs ===, truthy/falsy, implicit conversion traps">
+                <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== giống thầy dễ tính cho qua hết, === giống thầy nghiêm khắc kiểm tra kỹ">
+                    <Paragraph><InlineCode>Type Coercion</InlineCode> trong JS giống <Highlight>&quot;kiểm tra bài&quot;</Highlight> ở trường — có 2 loại thầy giáo:</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                            <div className="text-orange-400 font-bold text-sm">{'🏫 Ví dụ: Kiểm tra bài tập'}</div>
+                            <div className="text-slate-300 text-sm mt-1 font-mono">
+                                {'📝 Đề bài: "Viết số 1"'}<br />
+                                {'👦 Học sinh viết: "1" (string)'}<br />
+                                {'👨‍🏫 Thầy dễ (==): "Ừ đúng rồi, 1 là 1 mà!" → ✅'}<br />
+                                {'👨‍🏫 Thầy nghiêm (===): "SAI! Tôi cần SỐ 1, không phải CHỮ \'1\'!" → ❌'}<br /><br />
+                                <strong>{'== tự ý chuyển đổi type để so sánh, === bắt đúng cả type lẫn value!'}</strong>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm">{'✅ === (Strict) = Thầy nghiêm khắc 👨‍🏫'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Kiểm tra CẢ nội dung VÀ kiểu dữ liệu — "1" !== 1, false !== 0'}<br />
+                                {'→ '}<strong>Luôn dùng === để tránh bugs</strong>{' — rõ ràng, không bất ngờ'}
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">{'❌ == (Loose) = Thầy dễ tính 😅'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Tự ý sửa bài cho học sinh trước khi chấm: "" → 0 → false, dẫn đến kết quả bất ngờ!'}<br />
+                                {'→ '}<strong>Tránh dùng ==</strong>{' trừ khi cố ý (duy nhất hữu ích: x == null kiểm tra cả null và undefined)'}
+                            </div>
+                        </div>
+                    </div>
+
                     <Paragraph>JS tự động convert types khi so sánh với <InlineCode>==</InlineCode>. Đây là nguồn gốc nhiều bugs khó hiểu.</Paragraph>
-                    <CodeBlock title="Type coercion gotchas">{`// == (loose equality) — converts types
-'' == false     // true!
-0 == false      // true!
- null == undefined // true!
-[] == false     // true!
+                    <CodeBlock title="Type coercion gotchas">{`// == (loose equality) — thầy dễ tính, tự ý chuyển đổi type
+'' == false     // true!  ('' → 0 → false, "ừ giống nhau mà!")
+0 == false      // true!  (0 → false, "cho qua!")
+ null == undefined // true!  ("cũng gần giống nhau thôi!")
+[] == false     // true!  ([] → '' → 0 → false, "sửa mấy bước cũng cho qua!")
 
-// === (strict equality) — NO conversion
-'' === false    // false
-0 === false     // false
+// === (strict equality) — thầy nghiêm, kiểm tra đúng type
+'' === false    // false  ("string khác boolean, SAI!")
+0 === false     // false  ("number khác boolean, SAI!")
 
-// Truthy / Falsy
+// Truthy / Falsy — 6 giá trị "giả" cần nhớ thuộc lòng
 // Falsy: false, 0, '', null, undefined, NaN
-// Truthy: everything else (including [] and {}!)`}</CodeBlock>
+// Truthy: TẤT CẢ còn lại (kể cả [] và {}!)`}</CodeBlock>
                     <Callout type="tip">Rule đơn giản: <Highlight>luôn dùng === </Highlight> trừ khi bạn CỐ Ý muốn type coercion (hiếm). Và hãy biết thuộc 6 falsy values.</Callout>
                 </TopicModal>
 
