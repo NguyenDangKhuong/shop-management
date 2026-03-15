@@ -3,3 +3,6 @@ main = "src/worker.ts"
 compatibility_date = "2024-01-01"
 
 # Deploy sẽ tạo URL dạng: https://twitter-video-proxy.<your-subdomain>.workers.dev
+# Set ALLOWED_ORIGINS as a secret (not committed to git):
+#   npx wrangler secret put ALLOWED_ORIGINS
+#   Then paste: https://your-domain.com (comma-separated for multiple)

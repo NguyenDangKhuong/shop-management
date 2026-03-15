@@ -59,7 +59,7 @@ export async function middleware(request: NextRequest) {
   const hostname = request.headers.get('host')?.split(':')[0] || ''
   const pathname = request.nextUrl.pathname
 
-  // 1. Domain chỉ cho phép /tweets (xvn.vercel.app)
+  // 1. Domain chỉ cho phép /tweets (TWEETS_ONLY_DOMAIN)
   //    Vào root hoặc bất kỳ path khác → redirect về /tweets
   //    Nhưng cho phép /api/ (cần cho tweets API) và /sw.js (service worker)
   if (TWEETS_ONLY_DOMAINS.includes(hostname)) {
@@ -73,7 +73,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // 2. Chặn /tweets trên domain chính (SITE_DOMAIN)
-  //    Tweets chỉ truy cập được qua xvn.vercel.app
+  //    Tweets chỉ truy cập được qua TWEETS_ONLY_DOMAIN
   if (
     pathname.startsWith('/tweets') &&
     BLOCKED_DOMAINS_FOR_TWEETS.includes(hostname)
@@ -95,14 +95,14 @@ export async function middleware(request: NextRequest) {
  * Matcher: catch-all cho mọi page routes (trừ static assets).
  *
  * Tại sao catch-all thay vì list từng route?
- * → Cần chặn xvn.vercel.app truy cập BẤT KỲ page nào ngoài /tweets
+ * → Cần chặn TWEETS_ONLY_DOMAIN truy cập BẤT KỲ page nào ngoài /tweets
  * → Nếu chỉ list cụ thể, route mới (blogs, projects) sẽ bị miss
  *
  * Pattern loại trừ: _next (static files), favicon, files có extension (.css, .js, .ico...)
  */
 export const config = {
   matcher: [
-    // Catch-all: chặn mọi route trên xvn.vercel.app (trừ static assets)
+    // Catch-all: chặn mọi route trên tweets-only domains (trừ static assets)
     // Cũng dùng cho admin auth + domain-based routing
     '/((?!_next|favicon|.*\\..*).*)',
   ]

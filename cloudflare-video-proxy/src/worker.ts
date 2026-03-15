@@ -15,18 +15,21 @@
  *   npx wrangler deploy
  */
 
-const ALLOWED_ORIGINS = [
-    'https://xvn.vercel.app',
-    'https://shop.thetaphoa.store',
-    'http://localhost:3000',
-    'http://localhost:3001',
-]
+interface Env {
+    ALLOWED_ORIGINS?: string
+}
+
+function getAllowedOrigins(env: Env): string[] {
+    const origins = (env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean)
+    return [...origins, 'http://localhost:3000', 'http://localhost:3001']
+}
 
 export default {
-    async fetch(request: Request): Promise<Response> {
+    async fetch(request: Request, env: Env): Promise<Response> {
+        const allowedOrigins = getAllowedOrigins(env)
         // Handle CORS preflight
         if (request.method === 'OPTIONS') {
-            return handleCors(request, new Response(null, { status: 204 }))
+            return handleCors(request, allowedOrigins, new Response(null, { status: 204 }))
         }
 
         const url = new URL(request.url)
@@ -34,7 +37,7 @@ export default {
 
         // Validate URL
         if (!videoUrl || !videoUrl.includes('video.twimg.com')) {
-            return handleCors(request, Response.json(
+            return handleCors(request, allowedOrigins, Response.json(
                 { error: 'Invalid video URL. Must be from video.twimg.com' },
                 { status: 400 }
             ))
@@ -55,7 +58,7 @@ export default {
             const res = await fetch(videoUrl, { headers })
 
             if (!res.ok && res.status !== 206) {
-                return handleCors(request, Response.json(
+                return handleCors(request, allowedOrigins, Response.json(
                     { error: `Twitter returned ${res.status}` },
                     { status: res.status }
                 ))
@@ -74,12 +77,12 @@ export default {
             const contentRange = res.headers.get('Content-Range')
             if (contentRange) responseHeaders['Content-Range'] = contentRange
 
-            return handleCors(request, new Response(res.body, {
+            return handleCors(request, allowedOrigins, new Response(res.body, {
                 status: res.status,
                 headers: responseHeaders,
             }))
         } catch {
-            return handleCors(request, Response.json(
+            return handleCors(request, allowedOrigins, Response.json(
                 { error: 'Failed to proxy video' },
                 { status: 500 }
             ))
@@ -90,9 +93,9 @@ export default {
 /**
  * Add CORS headers to response
  */
-function handleCors(request: Request, response: Response): Response {
+function handleCors(request: Request, allowedOrigins: string[], response: Response): Response {
     const origin = request.headers.get('Origin') || ''
-    const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0]
+    const allowed = allowedOrigins.includes(origin) ? origin : allowedOrigins[0] || '*'
 
     const headers = new Headers(response.headers)
     headers.set('Access-Control-Allow-Origin', allowed)

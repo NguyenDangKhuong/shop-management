@@ -25,17 +25,17 @@ const nextConfig = {
   // i18n config không được hỗ trợ trong App Router
   // i18n,
 
-  // xvn.vercel.app: chỉ cho phép /tweets, redirect tất cả path khác về /tweets
+  // TWEETS_ONLY_DOMAIN: chỉ cho phép /tweets, redirect tất cả path khác về /tweets
   // Chạy ở CDN level → không tốn Vercel Function transfer
   async redirects() {
-    return [
-      {
-        source: '/:path((?!tweets|_next|api|favicon).*)',
-        has: [{ type: 'host', value: 'xvn.vercel.app' }],
-        destination: '/tweets',
-        permanent: false,
-      },
-    ]
+    const tweetsOnlyDomain = process.env.TWEETS_ONLY_DOMAIN || ''
+    if (!tweetsOnlyDomain) return []
+    return tweetsOnlyDomain.split(',').map(domain => ({
+      source: '/:path((?!tweets|_next|api|favicon).*)',
+      has: [{ type: 'host', value: domain.trim() }],
+      destination: '/tweets',
+      permanent: false,
+    }))
   },
 }
 
