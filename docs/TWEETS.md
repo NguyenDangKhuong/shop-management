@@ -4,12 +4,25 @@ Trang hiển thị Twitter/X timelines của các username đã lưu.
 
 ## Tính năng
 
+- **Feed tabs** — For You, Following, @linhnhi_69 (pinned), ❤️ Liked
+- **Liked tweets** — Hiển thị tweets mà user pinned đã like (GraphQL Likes API)
 - **Thêm username** — Nhập username X (vd: `vercel`, `@reactjs`) → bấm "Thêm" hoặc Enter
 - **Lưu vào DB** — Usernames được lưu trong MongoDB (`twitterusers` collection)
 - **Hiển thị feed** — Tất cả users' timelines hiển thị xếp dọc
+- **Infinite scroll** — Tự load thêm tweets khi cuộn xuống cuối
+- **Repost navigation** — Click username trên "xxx reposted" → chuyển sang timeline user đó
 - **Filter** — Click tag để xem 1 user, click "Tất cả" để xem toàn bộ
 - **Xóa** — Nút ✕ trên tag + popup confirm trước khi xóa
 - **Public** — Không cần đăng nhập, ai cũng xem được
+
+## Domain routing
+
+| Env var | Mô tả |
+|---------|------|
+| `TWEETS_ONLY_DOMAIN` | Domain chỉ cho phép /tweets (redirect path khác → /tweets) |
+| `BLOCKED_DOMAINS_FOR_TWEETS` | Domain bị chặn truy cập /tweets (comma-separated) |
+
+Cả hai cấu hình trong `.env.local` và Vercel Dashboard.
 
 ## Cấu trúc files
 
@@ -18,37 +31,67 @@ src/
 ├── app/
 │   ├── tweets/
 │   │   ├── page.tsx              # Server component, layout + metadata
+│   │   ├── TweetsFeed.tsx        # Client component, feed tabs + mode management
 │   │   ├── TweetSearch.tsx       # Client component, CRUD UI
+│   │   ├── GraphQLTweets.tsx     # GraphQL tweets + infinite scroll
+│   │   ├── BackToTop.tsx         # Scroll to top button
 │   │   └── __tests__/
-│   │       └── TweetSearch.test.tsx
 │   └── api/
 │       ├── tweets/
-│       │   └── route.ts          # Proxy Twitter syndication (bypass rate limit)
+│       │   ├── route.ts          # Proxy Twitter syndication
+│       │   ├── graphql/
+│       │   │   ├── route.ts      # GraphQL UserTweets proxy
+│       │   │   ├── likes/
+│       │   │   │   └── route.ts  # GraphQL Likes timeline proxy
+│       │   │   └── tweetParser.ts # Tweet response parser
+│       │   ├── home/
+│       │   │   └── route.ts      # Home timeline (For You / Following)
+│       │   ├── like/
+│       │   │   └── route.ts      # Like/Unlike mutation
+│       │   └── repost/
+│       │       └── route.ts      # Repost/Unrepost mutation
 │       └── twitter-users/
-│           ├── route.ts          # CRUD API (GET/POST/DELETE)
-│           └── __tests__/
-│               └── route.test.ts
+│           └── route.ts          # CRUD API (GET/POST/DELETE)
 └── models/
-    └── TwitterUser.ts            # Mongoose model
+    ├── TwitterUser.ts            # Mongoose model
+    └── TwitterToken.ts           # Twitter auth credentials
 ```
 
 ## API Routes
 
+### `GET /api/tweets/graphql?username=xxx&cursor=yyy`
+Proxy GraphQL UserTweets endpoint. Pagination via cursor.
+
+### `GET /api/tweets/graphql/likes?username=xxx&cursor=yyy`
+Proxy GraphQL Likes timeline. Env: `TWITTER_LIKES_QID` (query ID).
+
+### `GET /api/tweets/home?tab=for_you|following&count=20`
+Home timeline (For You / Following feeds).
+
 ### `GET /api/twitter-users`
-Trả về danh sách usernames đã lưu.
+Danh sách usernames đã lưu.
 
 ### `POST /api/twitter-users`
-Thêm username mới. Body: `{ "username": "vercel" }`. Tự strip `@`, lowercase, trim.
+Thêm username. Body: `{ "username": "vercel" }`.
 
 ### `DELETE /api/twitter-users?id=<id>`
 Xóa username theo MongoDB ID.
 
-### `GET /api/tweets?username=<username>`
-Proxy server-side fetch Twitter syndication timeline → bypass browser rate limit.
+## Env variables
+
+| Variable | Mô tả |
+|----------|------|
+| `TWITTER_DEFAULT_BEARER` | Bearer token cho Twitter API |
+| `TWITTER_LIKES_QID` | GraphQL query ID cho Likes endpoint |
+| `TWITTER_USER_BY_SCREEN_NAME_QID` | Query ID cho UserByScreenName |
+| `TWEETS_ONLY_DOMAIN` | Domain chỉ cho phép /tweets |
+| `BLOCKED_DOMAINS_FOR_TWEETS` | Domain bị chặn /tweets |
+| `NEXT_PUBLIC_VIDEO_PROXY_URL` | Cloudflare video proxy URL |
 
 ## Tech Stack
 
-- **react-tweet** (installed, available for future single tweet embeds)
-- **Twitter Syndication API** via server proxy
-- **MongoDB** cho lưu trữ usernames
+- **Twitter GraphQL API** via server proxy (UserTweets, Likes, Home)
+- **DOMPurify** cho XSS sanitization trong tweet rendering
+- **MongoDB** cho usernames + Twitter credentials
+- **IntersectionObserver** cho infinite scroll
 - **Next.js API Routes** cho proxy + CRUD

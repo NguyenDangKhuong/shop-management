@@ -40,6 +40,18 @@ npx wrangler deploy           # deploy worker
 npx wrangler tail             # xem logs realtime
 ```
 
+### CORS Origins
+
+Allowed origins được lưu dưới dạng **Cloudflare Secret** (không hiện trong code):
+
+```bash
+npx wrangler secret put ALLOWED_ORIGINS
+# Paste: https://your-tweets-domain.vercel.app
+# Nhiều domain: https://domain1.com,https://domain2.com
+```
+
+`localhost:3000` và `localhost:3001` luôn được cho phép (hardcoded cho dev).
+
 ## Free tier limits
 
 - **100,000 requests/ngày** (free)
