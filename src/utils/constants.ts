@@ -41,3 +41,6 @@ export const TIKTOK_DEFAULT_HOUR_GAP = 1 // Khoảng cách mặc định giữa 
 export const SITE_DOMAIN = 'shop.thetaphoa.store'
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || `https://${SITE_DOMAIN}`
 export const SITE_NAME = 'TheTapHoa'
+
+// Admin domain (for login/dashboard when accessing from proxy domains like khuong.theworkpc.com)
+export const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://thetaphoa.vercel.app'

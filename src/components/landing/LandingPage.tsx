@@ -5,6 +5,7 @@ import Image from 'next/image'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
 import SiteHeader from '@/components/ui/SiteHeader'
 import { useTranslation } from '@/i18n'
+import { useLoginUrl } from '@/hooks/useLoginUrl'
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -132,6 +133,7 @@ const skillCategories = [
 
 export default function LandingPage() {
     const { t, language, setLanguage } = useTranslation()
+    const loginUrl = useLoginUrl()
 
     return (
         <>
@@ -146,7 +148,7 @@ export default function LandingPage() {
                         <>
                             <LanguageSwitcher lang={language} onToggle={() => setLanguage(language === 'en' ? 'vi' : 'en')} />
                             <Link
-                                href="/login"
+                                href={loginUrl}
                                 className="group relative px-6 py-2 rounded-full bg-[var(--bg-tag)] border border-[var(--border-primary)] overflow-hidden transition-all hover:border-[#38bdf8]/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]"
                             >
                                 <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
@@ -328,7 +330,7 @@ export default function LandingPage() {
                                         <Link href="/products" className="text-[#38bdf8] hover:underline">
                                             {t('landing.liveDemo')}
                                         </Link>
-                                        <Link href="/login" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline">
+                                        <Link href={loginUrl} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline">
                                             {t('landing.adminPanel')}
                                         </Link>
                                     </div>
