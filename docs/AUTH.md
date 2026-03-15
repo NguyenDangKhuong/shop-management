@@ -99,5 +99,34 @@ Request → authorized() callback
 
 ---
 
+## 🌐 Proxy Domain Login Redirect
+
+### Vấn đề
+
+Login qua VPS reverse proxy (`khuong.theworkpc.com`) sẽ 500 Error vì NextAuth v5 dùng `__Host-` cookie prefix — bắt buộc match domain. Browser từ chối lưu cookie cross-domain.
+
+### Workaround
+
+Hook `useLoginUrl` (`src/hooks/useLoginUrl.ts`) tự detect hostname:
+- Trên proxy domain (vd: `khuong.theworkpc.com`) → nút Login trỏ sang `thetaphoa.vercel.app/login`
+- Trên domain chính (`shop.thetaphoa.store` / `thetaphoa.vercel.app` / `localhost`) → giữ `/login` (relative)
+
+### Config
+
+| Constant | File | Mô tả |
+|----------|------|-------|
+| `ADMIN_URL` | `src/utils/constants.ts` | URL admin app (default: `https://thetaphoa.vercel.app`) |
+| `SITE_DOMAIN` | `src/utils/constants.ts` | Domain chính (default: `shop.thetaphoa.store`) |
+
+### Files
+
+| File | Mô tả |
+|------|-------|
+| `src/hooks/useLoginUrl.ts` | Hook detect hostname → return login URL |
+| `src/components/landing/LandingPage.tsx` | Sử dụng `useLoginUrl()` cho 2 login links |
+
+---
+
 *Tài liệu tạo: 11/02/2026*
 *Cập nhật: 16/02/2026 — Protect all routes, add /shopee-links to public*
+*Cập nhật: 15/03/2026 — Proxy domain login redirect workaround*

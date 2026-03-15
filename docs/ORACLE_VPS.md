@@ -309,7 +309,7 @@ Oracle Console → Billing → Budgets → `free-tier-alert`
 - `shop.thetaphoa.store` ✅
 - `thetaphoa.vercel.app` ✅
 
-**Fix:** Cần thêm domain vào Vercel Domains (yêu cầu CNAME record, Dynu free không hỗ trợ) hoặc mua domain riêng ~$10/năm.
+**Workaround:** Xem `docs/AUTH.md` → phần "Proxy Domain Login Redirect"
 
 ## Service Lifetime
 
