@@ -82,19 +82,37 @@ for (var i = 0; i < 5; i++) {
 // IIFE creates a new scope, "copies" the value of i into j.`}</CodeBlock>
                 </TopicModal>
 
-                <TopicModal title="this keyword" emoji="👉" color="#f472b6" summary="4 binding rules: default, implicit, explicit, new">
-                    <Paragraph><InlineCode>this</InlineCode> in JS is <Highlight>not fixed</Highlight> — it depends on <strong>how the function is called</strong>, not where it&apos;s written.</Paragraph>
-                    <div className="my-3 overflow-x-auto">
-                        <table className="w-full text-sm border-collapse">
-                            <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Rule</th><th className="text-left p-2 text-slate-400">this =</th><th className="text-left p-2 text-slate-400">Example</th></tr></thead>
-                            <tbody className="text-[var(--text-secondary)]">
-                                <tr className="border-b border-gray-100"><td className="p-2 text-yellow-400">Default</td><td className="p-2">window / undefined</td><td className="p-2"><InlineCode>foo()</InlineCode></td></tr>
-                                <tr className="border-b border-gray-100"><td className="p-2 text-blue-400">Implicit</td><td className="p-2">object before the dot</td><td className="p-2"><InlineCode>obj.foo()</InlineCode></td></tr>
-                                <tr className="border-b border-gray-100"><td className="p-2 text-green-400">Explicit</td><td className="p-2">first argument</td><td className="p-2"><InlineCode>foo.call(obj)</InlineCode></td></tr>
-                                <tr><td className="p-2 text-purple-400">new</td><td className="p-2">newly created object</td><td className="p-2"><InlineCode>new Foo()</InlineCode></td></tr>
-                            </tbody>
-                        </table>
+                <TopicModal title="this keyword" emoji="👉" color="#f472b6" summary="this = the word 'me' in JS — changes based on who's calling (regular) or who wrote it (arrow)">
+                    <Paragraph><InlineCode>this</InlineCode> in JS is like the word <Highlight>&quot;me&quot;</Highlight> — it changes depending on <strong>who&apos;s speaking</strong>:</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-pink-500/10 border border-pink-500/20">
+                            <div className="text-pink-400 font-bold text-sm">{'🏠 Example: "My house"'}</div>
+                            <div className="text-slate-300 text-sm mt-1 font-mono">
+                                {'👨 Khuong says "my house" → Khuong\'s house'}<br />
+                                {'👩 Lan says "my house" → Lan\'s house'}<br />
+                                {'📞 Khuong asks Lan to say "my house" → LAN\'s house (not Khuong\'s!)'}<br /><br />
+                                <strong>{'this = the word "me" — changes based on who\'s calling the function'}</strong>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">{'🔴 Regular Function = Writing on paper ✍️'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'You write "my house" on paper → give it to someone else to read → "me" = the reader, not you!'}<br />
+                                {'→ '}<strong>this changes</strong>{' depending on WHO is calling the function'}
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm">{'🟢 Arrow Function = Voice recording 🎙️'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'You record "my house" with your voice → whoever presses play, the voice is still yours'}<br />
+                                {'→ '}<strong>this is fixed</strong>{' = where the arrow function was CREATED'}
+                            </div>
+                        </div>
                     </div>
+
                     <Paragraph><Highlight>Arrow functions</Highlight> do NOT have their own this — they inherit this from the parent scope (lexical this). That&apos;s why arrow functions are ideal for callbacks.</Paragraph>
                     <CodeBlock title="Example of each rule">{`// 1️⃣ Default binding — this = window (browser) / undefined (strict mode)
 function showThis() {

@@ -82,19 +82,37 @@ for (var i = 0; i < 5; i++) {
 // IIFE tạo scope mới, "copy" giá trị i vào j.`}</CodeBlock>
                 </TopicModal>
 
-                <TopicModal title="this keyword" emoji="👉" color="#f472b6" summary="4 rules binding: default, implicit, explicit, new">
-                    <Paragraph><InlineCode>this</InlineCode> trong JS <Highlight>không cố định</Highlight> — nó phụ thuộc vào <strong>cách function được gọi</strong>, không phải nơi nó được viết.</Paragraph>
-                    <div className="my-3 overflow-x-auto">
-                        <table className="w-full text-sm border-collapse">
-                            <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Rule</th><th className="text-left p-2 text-slate-400">this =</th><th className="text-left p-2 text-slate-400">Ví dụ</th></tr></thead>
-                            <tbody className="text-[var(--text-secondary)]">
-                                <tr className="border-b border-gray-100"><td className="p-2 text-yellow-400">Default</td><td className="p-2">window / undefined</td><td className="p-2"><InlineCode>foo()</InlineCode></td></tr>
-                                <tr className="border-b border-gray-100"><td className="p-2 text-blue-400">Implicit</td><td className="p-2">object trước dấu .</td><td className="p-2"><InlineCode>obj.foo()</InlineCode></td></tr>
-                                <tr className="border-b border-gray-100"><td className="p-2 text-green-400">Explicit</td><td className="p-2">argument đầu</td><td className="p-2"><InlineCode>foo.call(obj)</InlineCode></td></tr>
-                                <tr><td className="p-2 text-purple-400">new</td><td className="p-2">object mới tạo</td><td className="p-2"><InlineCode>new Foo()</InlineCode></td></tr>
-                            </tbody>
-                        </table>
+                <TopicModal title="this keyword" emoji="👉" color="#f472b6" summary="this = chữ 'tôi' trong JS — thay đổi tùy ai đang gọi (regular) hoặc ai đã viết (arrow)">
+                    <Paragraph><InlineCode>this</InlineCode> trong JS giống chữ <Highlight>&quot;tôi&quot;</Highlight> — nó thay đổi tùy <strong>ai đang nói</strong>:</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-pink-500/10 border border-pink-500/20">
+                            <div className="text-pink-400 font-bold text-sm">{'🏠 Ví dụ: "Nhà của tôi"'}</div>
+                            <div className="text-slate-300 text-sm mt-1 font-mono">
+                                {'👨 Khuong nói "nhà của tôi" → nhà Khuong'}<br />
+                                {'👩 Lan nói "nhà của tôi" → nhà Lan'}<br />
+                                {'📞 Khuong nhờ Lan nói "nhà của tôi" → nhà LAN (không phải Khuong!)'}<br /><br />
+                                <strong>{'this = chữ "tôi" — thay đổi tùy ai đang gọi function'}</strong>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">{'🔴 Regular Function = Viết trên giấy ✍️'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Bạn viết câu "nhà của tôi" lên giấy → đưa cho người khác đọc → "tôi" = người đọc, không phải bạn!'}<br />
+                                {'→ '}<strong>this thay đổi</strong>{' tùy AI đang gọi function'}
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm">{'🟢 Arrow Function = Ghi âm giọng nói 🎙️'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Bạn ghi âm câu "nhà của tôi" → dù ai bấm play, giọng vẫn là của bạn'}<br />
+                                {'→ '}<strong>this cố định</strong>{' = nơi arrow function được TẠO RA'}
+                            </div>
+                        </div>
                     </div>
+
                     <Paragraph><Highlight>Arrow function</Highlight> KHÔNG có this riêng — nó kế thừa this từ scope cha (lexical this). Đây là lý do arrow function phù hợp cho callbacks.</Paragraph>
                     <CodeBlock title="Ví dụ từng rule">{`// 1️⃣ Default binding — this = window (browser) / undefined (strict mode)
 function showThis() {
