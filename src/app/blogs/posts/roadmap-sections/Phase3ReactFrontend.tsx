@@ -178,6 +178,40 @@ export default function Phase3ReactFrontend() {
                                 • Pattern: <InlineCode>usePrevious(value)</InlineCode> — lưu giá trị render trước<br />
                                 • ⚠️ Không đọc/ghi ref trong render body — chỉ trong effects hoặc handlers
                             </div>
+
+                            <CodeBlock title="useRef-demo.tsx">{`import { useRef, useState } from 'react'
+
+function RefVsState() {
+  const [stateCount, setStateCount] = useState(0)
+  const refCount = useRef(0)
+  const renderCount = useRef(0)
+  renderCount.current++ // tăng mỗi render
+
+  return (
+    <div>
+      {/* Click → re-render → UI update */}
+      <button onClick={() => setStateCount(p => p + 1)}>
+        useState: {stateCount}
+      </button>
+
+      {/* Click → KHÔNG re-render → UI KHÔNG update */}
+      <button onClick={() => { refCount.current++ }}>
+        useRef: {refCount.current}
+      </button>
+
+      <p>Rendered {renderCount.current} times</p>
+      {/* 💡 Click useRef 5 lần → UI vẫn hiện 0
+          Click useState 1 lần → UI hiện useRef = 5 (đã thay đổi ngầm!) */}
+    </div>
+  )
+}
+
+// 📌 Pattern: usePrevious — lưu giá trị render trước
+function usePrevious<T>(value: T): T | undefined {
+  const ref = useRef<T>()
+  useEffect(() => { ref.current = value })
+  return ref.current // trả về giá trị CŨ (trước khi effect chạy)
+}`}</CodeBlock>
                         </div>
 
                         <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
@@ -411,6 +445,46 @@ function UserProfile({ userId }) {
                                 • <strong>Pros</strong>: composable, no wrapper hell, dễ test<br />
                                 • Convention: tên bắt đầu bằng <InlineCode>use</InlineCode>, return object hoặc tuple
                             </div>
+
+                            <CodeBlock title="useLocalStorage.ts — Custom Hook thực tế">{`import { useState, useCallback } from 'react'
+
+// Custom hook: đọc/ghi localStorage với type safety
+function useLocalStorage<T>(key: string, initialValue: T) {
+  const [stored, setStored] = useState<T>(() => {
+    try {
+      const item = localStorage.getItem(key)
+      return item ? JSON.parse(item) : initialValue
+    } catch { return initialValue }
+  })
+
+  const setValue = useCallback((value: T | ((prev: T) => T)) => {
+    setStored(prev => {
+      const next = value instanceof Function ? value(prev) : value
+      localStorage.setItem(key, JSON.stringify(next))
+      return next
+    })
+  }, [key])
+
+  return [stored, setValue] as const
+}
+
+// Usage — reuse ở bất kỳ component nào
+function Settings() {
+  const [theme, setTheme] = useLocalStorage('theme', 'dark')
+  const [lang, setLang] = useLocalStorage('lang', 'vi')
+  return (
+    <>
+      <button onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
+        {theme}
+      </button>
+      <select value={lang} onChange={e => setLang(e.target.value)}>
+        <option value="vi">Tiếng Việt</option>
+        <option value="en">English</option>
+      </select>
+      {/* 💡 Refresh page → giá trị vẫn giữ nguyên! */}
+    </>
+  )
+}`}</CodeBlock>
                         </div>
                     </div>
 

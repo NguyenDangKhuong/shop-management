@@ -177,6 +177,40 @@ export default function Phase3ReactFrontend() {
                                 • Pattern: <InlineCode>usePrevious(value)</InlineCode> — store value from previous render<br />
                                 • ⚠️ Don&apos;t read/write ref in render body — only in effects or handlers
                             </div>
+
+                            <CodeBlock title="useRef-demo.tsx">{`import { useRef, useState, useEffect } from 'react'
+
+function RefVsState() {
+  const [stateCount, setStateCount] = useState(0)
+  const refCount = useRef(0)
+  const renderCount = useRef(0)
+  renderCount.current++ // increments every render
+
+  return (
+    <div>
+      {/* Click → re-render → UI updates */}
+      <button onClick={() => setStateCount(p => p + 1)}>
+        useState: {stateCount}
+      </button>
+
+      {/* Click → NO re-render → UI does NOT update */}
+      <button onClick={() => { refCount.current++ }}>
+        useRef: {refCount.current}
+      </button>
+
+      <p>Rendered {renderCount.current} times</p>
+      {/* 💡 Click useRef 5 times → UI still shows 0
+          Click useState once → UI shows useRef = 5 (silently changed!) */}
+    </div>
+  )
+}
+
+// 📌 Pattern: usePrevious — store value from previous render
+function usePrevious<T>(value: T): T | undefined {
+  const ref = useRef<T>()
+  useEffect(() => { ref.current = value })
+  return ref.current // returns OLD value (before effect runs)
+}`}</CodeBlock>
                         </div>
 
                         <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
@@ -410,6 +444,46 @@ function UserProfile({ userId }) {
                                 • <strong>Pros</strong>: composable, no wrapper hell, easy to test<br />
                                 • Convention: name starts with <InlineCode>use</InlineCode>, return object or tuple
                             </div>
+
+                            <CodeBlock title="useLocalStorage.ts — Custom Hook example">{`import { useState, useCallback } from 'react'
+
+// Custom hook: read/write localStorage with type safety
+function useLocalStorage<T>(key: string, initialValue: T) {
+  const [stored, setStored] = useState<T>(() => {
+    try {
+      const item = localStorage.getItem(key)
+      return item ? JSON.parse(item) : initialValue
+    } catch { return initialValue }
+  })
+
+  const setValue = useCallback((value: T | ((prev: T) => T)) => {
+    setStored(prev => {
+      const next = value instanceof Function ? value(prev) : value
+      localStorage.setItem(key, JSON.stringify(next))
+      return next
+    })
+  }, [key])
+
+  return [stored, setValue] as const
+}
+
+// Usage — reuse in any component
+function Settings() {
+  const [theme, setTheme] = useLocalStorage('theme', 'dark')
+  const [lang, setLang] = useLocalStorage('lang', 'en')
+  return (
+    <>
+      <button onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
+        {theme}
+      </button>
+      <select value={lang} onChange={e => setLang(e.target.value)}>
+        <option value="en">English</option>
+        <option value="vi">Vietnamese</option>
+      </select>
+      {/* 💡 Refresh page → values persist! */}
+    </>
+  )
+}`}</CodeBlock>
                         </div>
                     </div>
 
