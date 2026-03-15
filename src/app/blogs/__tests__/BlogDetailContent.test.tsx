@@ -26,6 +26,9 @@ jest.mock('@/components/ui/LanguageSwitcher', () => {
     MockLangSwitcher.displayName = 'LangSwitcher'
     return MockLangSwitcher
 })
+jest.mock('@/app/blogs/components/TableOfContents', () => ({
+    TableOfContents: () => <nav data-testid="toc">TOC</nav>,
+}))
 
 import { BlogDetailContent } from '@/app/blogs/components/BlogDetailContent'
 
@@ -141,5 +144,11 @@ describe('BlogDetailContent', () => {
         render(<BlogDetailContent post={mockPost} relatedPosts={[]} />)
 
         expect(screen.getByText(/Built with Next.js/)).toBeInTheDocument()
+    })
+
+    it('renders table of contents sidebar', () => {
+        render(<BlogDetailContent post={mockPost} relatedPosts={[]} />)
+
+        expect(screen.getByTestId('toc')).toBeInTheDocument()
     })
 })

@@ -6,6 +6,7 @@ import { BlogPost } from '../types'
 import { useLang } from './LangContext'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
 import SiteHeader from '@/components/ui/SiteHeader'
+import { TableOfContents } from './TableOfContents'
 
 export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; relatedPosts: BlogPost[] }) {
     const { t, lang, setLang } = useLang()
@@ -53,7 +54,10 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
             />
 
             {/* Content wrapper — px matches SiteHeader's outer padding */}
-            <div className="w-full px-4 md:px-8">
+            <div className="w-full px-4 md:px-8 relative">
+                {/* TOC — absolute left, doesn't affect article centering */}
+                <TableOfContents />
+
                 {/* Article */}
                 <article className="w-full max-w-3xl mx-auto z-10 mt-8">
                     {/* Article Header */}
