@@ -34,7 +34,8 @@ Rules:
 - Preserve formatting, line breaks, and punctuation
 - Keep technical terms, brand names, and code as-is
 - Use natural, fluent ${toLang} (not robotic/literal)
-- If the text is already in ${toLang}, return it unchanged`,
+- Fix grammar, spelling, and punctuation errors in the translation
+- If the text is already in ${toLang}, fix any grammar/spelling errors and return the corrected version`,
                     },
                     {
                         role: 'user',
