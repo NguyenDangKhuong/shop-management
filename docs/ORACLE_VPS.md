@@ -157,6 +157,7 @@ tailscale ip                  # Show Tailscale IPs
 | `n8n.khuong.theworkpc.com` | Dynu wildcard | → n8n (100.108.169.39:5678 via Tailscale) |
 | `cli-proxy.khuong.theworkpc.com` | Dynu wildcard | → cli-proxy (100.108.169.39:8317 via Tailscale) |
 | `openclaw.khuong.theworkpc.com` | Dynu wildcard | → openclaw (100.108.169.39:18789 via Tailscale) |
+| `nas.khuong.theworkpc.com` | Dynu wildcard | → NAS Synology (192.168.1.200:5001 via subnet) |
 | `*.khuong.theworkpc.com` | Dynu wildcard | → VPS (add more subdomains) |
 
 **Provider**: [Dynu](https://www.dynu.com) — free, no confirmation, wildcard support
@@ -289,6 +290,7 @@ Oracle Console → Billing → Budgets → `free-tier-alert`
 | https://n8n.khuong.theworkpc.com | n8n (local via Tailscale) |
 | https://cli-proxy.khuong.theworkpc.com | cli-proxy (local via Tailscale) |
 | https://openclaw.khuong.theworkpc.com | openclaw (local via Tailscale) |
+| https://nas.khuong.theworkpc.com | NAS Synology (local via subnet) |
 | http://161.118.197.104 | VPS direct |
 | http://100.118.218.99 | VPS via Tailscale |
 
@@ -308,3 +310,67 @@ Oracle Console → Billing → Budgets → `free-tier-alert`
 - `thetaphoa.vercel.app` ✅
 
 **Fix:** Cần thêm domain vào Vercel Domains (yêu cầu CNAME record, Dynu free không hỗ trợ) hoặc mua domain riêng ~$10/năm.
+
+## Service Lifetime
+
+| Service | Free? | Hết hạn? | Cần làm gì? |
+|---------|-------|---------|-------------|
+| ☁️ Oracle VPS | ✅ Forever | Không | stress-ng giữ alive |
+| 🌐 Dynu DDNS | ✅ Forever | Không | Không cần confirm |
+| 🔒 SSL Certbot | ✅ Forever | 90 ngày | Auto-renew (ko cần làm gì) |
+| 🚀 Vercel | ✅ Free tier | Không | Giới hạn 100GB bandwidth/tháng |
+| 🔗 Tailscale | ✅ Free (≤100 devices) | Không | Đang dùng 5/100 |
+| ☁️ Cloudflare Tunnel | ✅ Free | Không | Cần domain trên CF |
+| 🐙 GitHub | ✅ Free | Không | Repo unlimited |
+| 🍃 MongoDB Atlas | ✅ Free tier | Không | Giới hạn 512MB storage |
+| 🐳 Docker | ✅ Free | Không | — |
+| 🏪 **thetaphoa.store** | ⚠️ **~$10-15/năm** | **Hàng năm** | **Phải gia hạn!** |
+
+**Chỉ trả phí duy nhất:** `thetaphoa.store` ~$10-15/năm. Tất cả còn lại FREE.
+
+## Domain Inventory
+
+### 🔴 Trả phí
+
+| Domain | Provider | Dùng cho |
+|--------|---------|---------|
+| `thetaphoa.store` | Cloudflare | CF Tunnel + Vercel custom domain |
+
+### 🟢 Miễn phí (Dynu DDNS — qua VPS reverse proxy)
+
+| Domain | Target | Routing |
+|--------|--------|---------|
+| `khuong.theworkpc.com` | Vercel shop (public only) | VPS → Vercel |
+| `server.khuong.theworkpc.com` | ESXi Web UI | VPS → subnet → 192.168.1.100:9443 |
+| `n8n.khuong.theworkpc.com` | n8n | VPS → Tailscale → 100.108.169.39:5678 |
+| `cli-proxy.khuong.theworkpc.com` | CLI Proxy API | VPS → Tailscale → 100.108.169.39:8317 |
+| `openclaw.khuong.theworkpc.com` | OpenClaw | VPS → Tailscale → 100.108.169.39:18789 |
+| `nas.khuong.theworkpc.com` | NAS Synology | VPS → subnet → 192.168.1.200:5001 |
+| `thetaphoa.vercel.app` | Vercel (default) | Direct |
+
+### 🔵 Cloudflare Tunnel (cần `thetaphoa.store`)
+
+| Domain | Target | Có backup Dynu? |
+|--------|--------|-----------------|
+| `shop.thetaphoa.store` | Vercel (login hoạt động) | ⚠️ Có nhưng ko login đc |
+| `n8n.thetaphoa.store` | 192.168.1.38:5678 | ✅ `n8n.khuong.theworkpc.com` |
+| `server.thetaphoa.store` | 192.168.1.100:9443 | ✅ `server.khuong.theworkpc.com` |
+| `cli-proxy.thetaphoa.store` | 192.168.1.38:8317 | ✅ `cli-proxy.khuong.theworkpc.com` |
+| `openclaw.thetaphoa.store` | 192.168.1.38:18789 | ✅ `openclaw.khuong.theworkpc.com` |
+| `nas.thetaphoa.store` | 192.168.1.200:5001 | ✅ `nas.khuong.theworkpc.com` |
+
+## Khi `thetaphoa.store` hết hạn — Migration Plan
+
+### Bị ảnh hưởng
+- ❌ Tất cả `*.thetaphoa.store` subdomains → mất
+- ❌ `shop.thetaphoa.store` Vercel custom domain → mất (login qua đây sẽ die)
+
+### Không ảnh hưởng
+- ✅ VPS Oracle, Tailscale, Docker → vẫn chạy
+- ✅ `*.khuong.theworkpc.com` → vẫn hoạt động
+- ✅ `thetaphoa.vercel.app` → vẫn hoạt động (login qua đây)
+
+### Cần làm khi hết hạn
+1. Login shop qua `thetaphoa.vercel.app` thay vì `shop.thetaphoa.store`
+2. Tất cả local services đã có backup trên `*.khuong.theworkpc.com` → không cần làm gì thêm
+3. Hoặc mua domain mới ~$10/năm → setup lại CF Tunnel
