@@ -377,9 +377,10 @@ export function TweetCard({ tweet, videoProxyUrl, onUserClick, onImageClick }: {
 interface GraphQLTweetsProps {
     username: string
     onUserClick?: (username: string) => void
+    apiEndpoint?: string
 }
 
-export function GraphQLTweets({ username, onUserClick }: GraphQLTweetsProps) {
+export function GraphQLTweets({ username, onUserClick, apiEndpoint = '/api/tweets/graphql' }: GraphQLTweetsProps) {
     const [tweets, setTweets] = useState<TweetData[]>([])
     const [loading, setLoading] = useState(false)
     const [loadingMore, setLoadingMore] = useState(false)
@@ -399,7 +400,7 @@ export function GraphQLTweets({ username, onUserClick }: GraphQLTweetsProps) {
         try {
             const params = new URLSearchParams({ username, count: '20' })
             if (cursor) params.set('cursor', cursor)
-            const res = await fetch(`/api/tweets/graphql?${params}`)
+            const res = await fetch(`${apiEndpoint}?${params}`)
             const data = await res.json()
 
             if (!data.success) {
@@ -423,7 +424,7 @@ export function GraphQLTweets({ username, onUserClick }: GraphQLTweetsProps) {
             setLoading(false)
             setLoadingMore(false)
         }
-    }, [username])
+    }, [username, apiEndpoint])
 
     // ─── Infinite scroll ──────────────────────────────────────────────────
     const sentinelRef = useRef<HTMLDivElement>(null)

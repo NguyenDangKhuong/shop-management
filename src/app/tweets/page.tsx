@@ -4,7 +4,9 @@ import { TweetSearch } from './TweetSearch'
 import { BackToTop } from './BackToTop'
 
 export const metadata: Metadata = {
-    title: 'X Tweets',
+    title: {
+        absolute: 'X Tweets',
+    },
     description: 'View tweets from X (Twitter).',
     icons: [],
     manifest: null,

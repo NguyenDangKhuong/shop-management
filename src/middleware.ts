@@ -31,15 +31,17 @@ import { SITE_DOMAIN } from '@/utils/constants'
 
 /**
  * Domain bị chặn không cho truy cập /tweets.
- * User vào SITE_DOMAIN/tweets → rewrite /not-found
+ * User vào các domain này/tweets → rewrite /not-found
+ * Default: SITE_DOMAIN. Override bằng env BLOCKED_DOMAINS_FOR_TWEETS (comma-separated).
  */
-const BLOCKED_DOMAINS_FOR_TWEETS = [SITE_DOMAIN]
+const BLOCKED_DOMAINS_FOR_TWEETS = (process.env.BLOCKED_DOMAINS_FOR_TWEETS || SITE_DOMAIN || '').split(',').map(d => d.trim()).filter(Boolean)
 
 /**
  * Domain CHỈ cho phép truy cập /tweets.
- * Vào xvn.vercel.app/ hoặc bất kỳ path nào khác → redirect 302 về /tweets
+ * Vào TWEETS_ONLY_DOMAIN/ hoặc bất kỳ path nào khác → redirect 302 về /tweets
+ * Set bằng env TWEETS_ONLY_DOMAIN (comma-separated).
  */
-const TWEETS_ONLY_DOMAINS = ['xvn.vercel.app']
+const TWEETS_ONLY_DOMAINS = (process.env.TWEETS_ONLY_DOMAIN || '').split(',').map(d => d.trim()).filter(Boolean)
 
 /**
  * Các path cần auth (admin dashboard).

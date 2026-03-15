@@ -8,7 +8,7 @@ interface SavedUser {
     username: string
 }
 
-type FeedMode = 'for_you' | 'following' | 'pinned_user' | 'user'
+type FeedMode = 'for_you' | 'following' | 'pinned_user' | 'likes' | 'user'
 
 const PINNED_USERNAME = 'linhnhi_69'
 
@@ -299,6 +299,19 @@ export function TweetsFeed() {
                                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-[#ff9900] rounded-full" />
                             )}
                         </button>
+                        <button
+                            onClick={() => { setMode('likes'); setSelectedUser(null); setUserHistory([]) }}
+                            className={`flex-1 py-3 text-sm font-semibold transition relative cursor-pointer ${mode === 'likes'
+                                ? 'text-white'
+                                : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                                }`}
+                        >
+                            <span className="mr-1.5">❤️</span>
+                            Liked
+                            {mode === 'likes' && (
+                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-[#ff9900] rounded-full" />
+                            )}
+                        </button>
                     </div>
                 </div>
 
@@ -316,7 +329,10 @@ export function TweetsFeed() {
                 )}
 
                 {/* ═══ Tweet List ═══ */}
-                {mode === 'pinned_user' ? (
+                {mode === 'likes' ? (
+                    /* Liked tweets by pinned user */
+                    <GraphQLTweets key={`likes-${PINNED_USERNAME}`} username={PINNED_USERNAME} onUserClick={handlePinnedUserClick} apiEndpoint="/api/tweets/graphql/likes" />
+                ) : mode === 'pinned_user' ? (
                     /* Pinned user timeline */
                     <GraphQLTweets key={`pinned-${PINNED_USERNAME}`} username={PINNED_USERNAME} onUserClick={handlePinnedUserClick} />
                 ) : mode === 'user' && selectedUser ? (
