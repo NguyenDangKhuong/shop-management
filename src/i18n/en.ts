@@ -18,7 +18,7 @@ const en = {
     'landing.contact': 'Contact',
     'landing.performanceStats': 'Performance Stats',
     'landing.darkMode': 'Dark Mode',
-    'landing.footer': '© 2026 TheTapHoa. All rights reserved.',
+    'landing.footer': '© 2026 Khuong.Dev. All rights reserved.',
     'landing.privacy': 'Privacy Policy',
     'landing.terms': 'Terms of Service',
     'landing.login': 'Login',

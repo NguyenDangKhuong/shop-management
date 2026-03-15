@@ -40,7 +40,9 @@ export const TIKTOK_DEFAULT_HOUR_GAP = 1 // Khoảng cách mặc định giữa 
 // Site domain (đổi domain ở đây khi migrate)
 export const SITE_DOMAIN = 'shop.thetaphoa.store'
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || `https://${SITE_DOMAIN}`
-export const SITE_NAME = 'TheTapHoa'
+export const SITE_NAME = 'TheTapHoa' // Admin/internal branding
+export const PUBLIC_SITE_NAME = 'Khuong.Dev' // Public-facing branding (portfolio, blogs)
+export const AUTHOR_NAME = 'Nguyen Dang Khuong'
 
 // Admin domain (for login/dashboard when accessing from proxy domains like khuong.theworkpc.com)
 export const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://thetaphoa.vercel.app'

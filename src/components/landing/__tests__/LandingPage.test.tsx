@@ -29,11 +29,11 @@ describe('LandingPage Component', () => {
         expect(loginLinks[0]).toHaveAttribute('href', '/login')
     })
 
-    it('shows TheTapHoa branding', () => {
+    it('shows Khuong.Dev branding', () => {
         render(<LandingPage />)
 
-        // Text appears multiple times, check it exists
-        expect(screen.getAllByText(/taphoa/i).length).toBeGreaterThan(0)
+        // Logo text is split: "Khuong" + <span>.Dev</span>
+        expect(screen.getAllByText('.Dev').length).toBeGreaterThan(0)
     })
 
     it('renders "Side Projects" button', () => {

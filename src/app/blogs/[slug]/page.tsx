@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { blogPosts, getBlogBySlug, getAllSlugs } from '../blogData'
 import { LangProvider } from '../components/LangContext'
 import { BlogDetailContent } from '../components/BlogDetailContent'
-import { SITE_URL } from '@/utils/constants'
+import { SITE_URL, PUBLIC_SITE_NAME, AUTHOR_NAME } from '@/utils/constants'
 
 interface BlogDetailPageProps {
     params: Promise<{ slug: string }>
@@ -18,16 +18,16 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
     const post = getBlogBySlug(slug)
     if (!post) return { title: 'Not Found' }
 
-    const title = `${post.title.vi} | Blog - Nguyen Dang Khuong`
+    const title = `${post.title.vi} | Blog - ${AUTHOR_NAME}`
     const description = post.description.vi
     const url = `${SITE_URL}/blogs/${slug}`
 
     return {
         title,
         description,
-        keywords: [...post.tags, 'Frontend', 'JavaScript', 'Nguyen Dang Khuong'],
-        authors: [{ name: 'Nguyen Dang Khuong', url: SITE_URL }],
-        creator: 'Nguyen Dang Khuong',
+        keywords: [...post.tags, 'Frontend', 'JavaScript', AUTHOR_NAME],
+        authors: [{ name: AUTHOR_NAME, url: SITE_URL }],
+        creator: AUTHOR_NAME,
         openGraph: {
             type: 'article',
             locale: 'vi_VN',
@@ -35,9 +35,9 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
             url,
             title: post.title.vi,
             description,
-            siteName: 'TheTapHoa',
+            siteName: PUBLIC_SITE_NAME,
             publishedTime: post.date,
-            authors: ['Nguyen Dang Khuong'],
+            authors: [AUTHOR_NAME],
             tags: post.tags,
         },
         twitter: {
@@ -87,12 +87,12 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
         dateModified: post.date,
         author: {
             '@type': 'Person',
-            name: 'Nguyen Dang Khuong',
+            name: AUTHOR_NAME,
             url: SITE_URL,
         },
         publisher: {
             '@type': 'Organization',
-            name: 'TheTapHoa',
+            name: PUBLIC_SITE_NAME,
             url: SITE_URL,
         },
         url: `${SITE_URL}/blogs/${slug}`,

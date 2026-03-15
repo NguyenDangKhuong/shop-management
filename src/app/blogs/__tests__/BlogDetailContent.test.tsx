@@ -90,11 +90,11 @@ describe('BlogDetailContent', () => {
         expect(screen.getAllByText('← Tất cả bài viết')[0]).toBeInTheDocument()
     })
 
-    it('renders logo with TheTapHoa text', () => {
+    it('renders logo with Khuong.Dev text', () => {
         render(<BlogDetailContent post={mockPost} relatedPosts={[]} />)
 
-        // Logo renders in both mobile and desktop views
-        expect(screen.getAllByText('TapHoa').length).toBeGreaterThanOrEqual(1)
+        // Logo text is split: "Khuong" + <span>.Dev</span>
+        expect(screen.getAllByText('.Dev').length).toBeGreaterThanOrEqual(1)
     })
 
     it('renders ThemeToggle and LangSwitcher', () => {

@@ -20,7 +20,7 @@ const vi: Record<TranslationKeys, string> = {
     'landing.contact': 'Liên hệ',
     'landing.performanceStats': 'Hiệu suất',
     'landing.darkMode': 'Chế độ tối',
-    'landing.footer': '© 2026 TheTapHoa. Bảo lưu mọi quyền.',
+    'landing.footer': '© 2026 Khuong.Dev. Bảo lưu mọi quyền.',
     'landing.privacy': 'Chính sách bảo mật',
     'landing.terms': 'Điều khoản sử dụng',
     'landing.login': 'Đăng nhập',

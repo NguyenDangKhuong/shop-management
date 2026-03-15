@@ -78,7 +78,7 @@ export default function SiteHeader({
                                     className={`font-bold tracking-tight transition-all duration-300 ${scrolled ? 'text-base' : 'text-xl'}`}
                                     style={{ color: 'var(--text-primary)' }}
                                 >
-                                    The<span className="text-[#38bdf8]">TapHoa</span>
+                                    Khuong<span className="text-[#38bdf8]">.Dev</span>
                                 </span>
                             </Link>
                         </div>
@@ -97,7 +97,7 @@ export default function SiteHeader({
                                 className={`font-bold tracking-tight transition-all duration-300 ${scrolled ? 'text-base' : 'text-xl'}`}
                                 style={{ color: 'var(--text-primary)' }}
                             >
-                                The<span className="text-[#38bdf8]">TapHoa</span>
+                                Khuong<span className="text-[#38bdf8]">.Dev</span>
                             </span>
                         </Link>
                         <div className="flex items-center gap-3">

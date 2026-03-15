@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { PUBLIC_SITE_NAME, AUTHOR_NAME } from '@/utils/constants'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
 
@@ -23,31 +24,31 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL('https://thetaphoa.com'),
   title: {
-    default: 'TheTapHoa — Frontend Knowledge Blog | Nguyen Dang Khuong',
-    template: '%s | TheTapHoa',
+    default: `${PUBLIC_SITE_NAME} — Frontend Knowledge Blog | ${AUTHOR_NAME}`,
+    template: `%s | ${PUBLIC_SITE_NAME}`,
   },
   description: 'Chia sẻ kiến thức Frontend chuyên sâu: JavaScript, React, Next.js, TypeScript, System Design, Algorithm Patterns — dành cho developer Việt Nam muốn phỏng vấn Big Tech.',
   keywords: [
     'Frontend', 'JavaScript', 'React', 'Next.js', 'TypeScript',
     'System Design', 'Algorithm', 'LeetCode', 'Interview',
-    'Nguyen Dang Khuong', 'TheTapHoa', 'Web Development',
+    AUTHOR_NAME, PUBLIC_SITE_NAME, 'Web Development',
   ],
-  authors: [{ name: 'Nguyen Dang Khuong', url: 'https://thetaphoa.com' }],
-  creator: 'Nguyen Dang Khuong',
-  publisher: 'TheTapHoa',
+  authors: [{ name: AUTHOR_NAME, url: 'https://thetaphoa.com' }],
+  creator: AUTHOR_NAME,
+  publisher: PUBLIC_SITE_NAME,
   manifest: '/favicon_io/site.webmanifest',
   openGraph: {
     type: 'website',
     locale: 'vi_VN',
     alternateLocale: 'en_US',
     url: 'https://thetaphoa.com',
-    siteName: 'TheTapHoa',
-    title: 'TheTapHoa — Frontend Knowledge Blog',
+    siteName: PUBLIC_SITE_NAME,
+    title: `${PUBLIC_SITE_NAME} — Frontend Knowledge Blog`,
     description: 'Chia sẻ kiến thức Frontend chuyên sâu: JavaScript, React, Next.js, TypeScript, System Design.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'TheTapHoa — Frontend Knowledge Blog',
+    title: `${PUBLIC_SITE_NAME} — Frontend Knowledge Blog`,
     description: 'Chia sẻ kiến thức Frontend chuyên sâu cho developer Việt Nam.',
   },
   alternates: {
@@ -60,7 +61,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'TheTapHoa',
+    title: PUBLIC_SITE_NAME,
   },
   formatDetection: {
     telephone: false,

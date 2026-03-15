@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
+import { SITE_NAME } from '@/utils/constants'
 
 import AntdProvider from '@/components/providers/AntdProvider'
 
 export const metadata: Metadata = {
-    title: 'Register - TheTapHoa',
-    description: 'Register for TheTapHoa'
+    title: `Register - ${SITE_NAME}`,
+    description: `Register for ${SITE_NAME}`
 }
 
 export default function RegisterLayout({ children }: { children: React.ReactNode }) {
