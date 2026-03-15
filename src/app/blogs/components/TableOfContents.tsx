@@ -22,11 +22,20 @@ export function TableOfContents() {
 
         function scanHeadings() {
             const headings = article!.querySelectorAll('h2[id], h3[id]')
-            const tocItems: TocItem[] = Array.from(headings).map((heading) => ({
+            const allItems: TocItem[] = Array.from(headings).map((heading) => ({
                 id: heading.id,
                 text: heading.textContent?.replace(/^[^\w\s]*\s*/, '') || '',
                 level: heading.tagName === 'H2' ? 2 : 3,
             }))
+
+            // Filter out h3 headings with duplicate text (e.g., repeated "Problem", "Solution")
+            const h3TextCount = new Map<string, number>()
+            allItems.filter((i) => i.level === 3).forEach((i) => {
+                h3TextCount.set(i.text, (h3TextCount.get(i.text) || 0) + 1)
+            })
+            const tocItems = allItems.filter(
+                (item) => item.level === 2 || (h3TextCount.get(item.text) || 0) <= 1
+            )
             setItems(tocItems)
 
             // Reconnect IntersectionObserver with new headings
@@ -45,12 +54,15 @@ export function TableOfContents() {
 
         scanHeadings()
 
+        let debounceTimer: ReturnType<typeof setTimeout>
         mutationRef.current = new MutationObserver(() => {
-            scanHeadings()
+            clearTimeout(debounceTimer)
+            debounceTimer = setTimeout(scanHeadings, 150)
         })
         mutationRef.current.observe(article, { childList: true, subtree: true })
 
         return () => {
+            clearTimeout(debounceTimer)
             observerRef.current?.disconnect()
             mutationRef.current?.disconnect()
         }

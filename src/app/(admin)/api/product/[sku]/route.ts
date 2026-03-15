@@ -4,8 +4,6 @@ import ProductModel from '@/models/Product'
 import { errorResponse } from '@/utils/apiResponse'
 import connectDb from '@/utils/connectDb'
 
-connectDb()
-
 export const GET = async (req: NextRequest, { params }: { params: Promise<{ sku: string }> }) => {
   try {
     await connectDb()

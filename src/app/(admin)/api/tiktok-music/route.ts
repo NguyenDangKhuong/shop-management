@@ -1,5 +1,5 @@
 import TikTokMusicModel from '@/models/TikTokMusic'
-import connectDB from '@/utils/connectDb'
+import connectDb from '@/utils/connectDb'
 import { v2 as cloudinary } from 'cloudinary'
 import { NextRequest, NextResponse } from 'next/server'
 import { API_KEY_CLOUDINARY, API_SECRET_CLOUDINARY, CLOUD_NAME_CLOUDINARY } from '@/utils/constants'
@@ -14,7 +14,7 @@ cloudinary.config({
 // GET - Fetch all music or random one (?random=1)
 export async function GET(request: NextRequest) {
     try {
-        await connectDB()
+        await connectDb()
         const { searchParams } = new URL(request.url)
         const random = searchParams.get('random')
 
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
 // POST - Create new music
 export async function POST(request: NextRequest) {
     try {
-        await connectDB()
+        await connectDb()
         const body = await request.json()
 
         if (!body.name) {
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 // PUT - Update music
 export async function PUT(request: NextRequest) {
     try {
-        await connectDB()
+        await connectDb()
         const body = await request.json()
         const { id, ...data } = body
 
@@ -115,7 +115,7 @@ export async function PUT(request: NextRequest) {
 // DELETE - Delete music (also removes from Cloudinary)
 export async function DELETE(request: NextRequest) {
     try {
-        await connectDB()
+        await connectDb()
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
 
