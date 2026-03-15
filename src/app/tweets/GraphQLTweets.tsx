@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState, useRef } from 'react'
+import DOMPurify from 'dompurify'
 
 export interface TweetMedia {
     type: 'photo' | 'video' | 'animated_gif'
@@ -68,7 +69,10 @@ export function formatTweetText(text: string): string {
         /#(\w+)/g,
         '<span class="text-[#ff9900]">#$1</span>'
     )
-    return cleaned
+    return DOMPurify.sanitize(cleaned, {
+        ALLOWED_TAGS: ['a', 'span'],
+        ALLOWED_ATTR: ['href', 'target', 'rel', 'class'],
+    })
 }
 
 export function ImagePreview({ images, index, onClose, onNavigate }: { images: string[]; index: number; onClose: () => void; onNavigate: (index: number) => void }) {

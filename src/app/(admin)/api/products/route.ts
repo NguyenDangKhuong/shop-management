@@ -19,8 +19,9 @@ export const GET = async (req: NextRequest) => {
     const totalDocs = await ProductModel.countDocuments()
     const totalPages = Math.ceil(totalDocs / pageSize)
     if (name) {
+      const safeName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
       const products = await ProductModel.find({
-        name: { $regex: name, $options: 'i' }
+        name: { $regex: safeName, $options: 'i' }
       })
         .sort({ createdAt: 1 })
         .lean()

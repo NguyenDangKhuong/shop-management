@@ -105,7 +105,7 @@ function executeCode(code: string, testCases: Problem['testCases']): Promise<Tes
                     const testCases = ${JSON.stringify(testCases)};
                     const results = testCases.map(tc => {
                         try {
-                            const args = eval('[' + tc.input + ']');
+                            const args = new Function('return [' + tc.input + ']')();
                             const result = ${fnName}(...args);
                             const actual = JSON.stringify(result);
                             const expected = tc.expected;
