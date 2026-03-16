@@ -253,6 +253,184 @@ child.house;    // '🏠' (thừa kế từ ông — đi lên 2 level!)
                     <Callout type="warning">ES6 Class chỉ là <Highlight>syntactic sugar</Highlight> — bên dưới vẫn dùng prototype. Hiểu prototype = hiểu JS ở level sâu.</Callout>
                 </TopicModal>
 
+                <TopicModal title="OOP trong JavaScript" emoji="🏗️" color="#f59e0b" summary="4 trụ cột OOP: Encapsulation, Inheritance, Polymorphism, Abstraction — JS dùng Prototypal OOP, class chỉ là sugar">
+                    <Paragraph>JS dùng <Highlight>Prototypal OOP</Highlight> — object kế thừa trực tiếp từ object khác, không cần class blueprint như Java/C#. ES6 Class chỉ là syntactic sugar bọc prototype.</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                            <div className="text-yellow-400 font-bold text-sm">4 trụ cột OOP</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Encapsulation</strong> — đóng gói data + methods, ẩn chi tiết bên trong<br />
+                                • <strong>Inheritance</strong> — kế thừa tính năng từ class cha<br />
+                                • <strong>Polymorphism</strong> — cùng method, khác hành vi tùy class con<br />
+                                • <strong>Abstraction</strong> — ẩn complexity, chỉ expose interface cần thiết
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="oop-trong-js.js">{`// ═══ 1. ENCAPSULATION (Đóng gói) ═══
+class BankAccount {
+  #balance = 0  // # = private field (ES2022)
+
+  deposit(amount) { this.#balance += amount }
+  getBalance() { return this.#balance }
+}
+const acc = new BankAccount()
+acc.deposit(100)
+acc.#balance    // ❌ SyntaxError — private, không truy cập được!
+acc.getBalance() // ✅ 100
+
+// ═══ 2. INHERITANCE (Kế thừa) ═══
+class Animal {
+  constructor(name) { this.name = name }
+  speak() { return \`\${this.name} makes a sound\` }
+}
+class Dog extends Animal {
+  speak() { return \`\${this.name} barks 🐕\` } // override method cha
+}
+new Dog('Rex').speak() // "Rex barks 🐕"
+
+// ═══ 3. POLYMORPHISM (Đa hình) ═══
+const animals = [new Animal('Cat'), new Dog('Rex')]
+animals.forEach(a => console.log(a.speak()))
+// "Cat makes a sound"
+// "Rex barks 🐕"  ← cùng .speak() nhưng output khác nhau!
+
+// ═══ 4. ABSTRACTION (Trừu tượng) ═══
+class Shape {
+  area() { throw new Error('Phải implement area()!') }
+}
+class Circle extends Shape {
+  constructor(r) { super(); this.r = r }
+  area() { return Math.PI * this.r ** 2 }
+}
+// new Shape().area() → ❌ Error — buộc class con phải implement`}</CodeBlock>
+
+                    <CodeBlock title="class-vs-prototype.js">{`// ES6 Class CHỈ LÀ syntactic sugar:
+class Person {
+  greet() { return 'Hi' }
+}
+// ↑ tương đương ↓
+function Person() {}
+Person.prototype.greet = function() { return 'Hi' }
+
+typeof Person // "function" — class không phải kiểu dữ liệu mới!`}</CodeBlock>
+
+                    <Callout type="tip">Interview: {`"JS dùng prototypal inheritance — object kế thừa trực tiếp từ object. ES6 class là syntactic sugar, bên dưới vẫn là prototype chain. Khác Java ở chỗ không có 'blueprint' cứng — mọi thứ đều là object."`}</Callout>
+                </TopicModal>
+
+                <TopicModal title="Functional Programming" emoji="λ" color="#06b6d4" summary="Pure functions, immutability, higher-order functions, composition — paradigm mà React dùng rất nhiều">
+                    <Paragraph>JS là <Highlight>multi-paradigm</Highlight> — hỗ trợ cả OOP lẫn FP. React hiện đại dùng FP rất nhiều (hooks, pure components, composition over inheritance).</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                            <div className="text-cyan-400 font-bold text-sm">Nguyên tắc cốt lõi FP</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Pure Functions</strong> — cùng input → cùng output, không side effects<br />
+                                • <strong>Immutability</strong> — không mutate, luôn tạo data mới<br />
+                                • <strong>Higher-Order Functions</strong> — function làm tham số / return value<br />
+                                • <strong>Composition</strong> — ghép nhiều function nhỏ thành function phức tạp
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="functional-programming.js">{`// ═══ 1. PURE vs IMPURE ═══
+// ❌ Impure — thay đổi biến bên ngoài
+let total = 0
+function addToTotal(x) { total += x; return total }
+
+// ✅ Pure — không side effects, dự đoán được
+function add(a, b) { return a + b }
+add(2, 3) // luôn = 5, gọi bao nhiêu lần cũng vậy
+
+// ═══ 2. IMMUTABILITY ═══
+// ❌ Mutate
+const arr = [1, 2, 3]
+arr.push(4) // thay đổi mảng gốc!
+
+// ✅ Immutable — tạo mảng MỚI
+const newArr = [...arr, 4]
+const updated = arr.map(x => x * 2) // [2, 4, 6] — gốc không đổi
+
+// ═══ 3. HIGHER-ORDER FUNCTIONS ═══
+const multiply = (factor) => (x) => x * factor
+const double = multiply(2)
+const triple = multiply(3)
+double(5)  // 10
+triple(5)  // 15
+
+// Built-in: map, filter, reduce
+[1, 2, 3, 4, 5]
+  .filter(n => n % 2 !== 0)  // [1, 3, 5]
+  .map(n => n ** 2)           // [1, 9, 25]
+  .reduce((sum, n) => sum + n, 0) // 35
+
+// ═══ 4. COMPOSITION ═══
+const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x)
+
+const addOne = x => x + 1
+const square = x => x * x
+
+const transform = pipe(addOne, square, double)
+transform(3)  // pipe: 3 → 4 → 16 → 32`}</CodeBlock>
+
+                    <Callout type="tip">Interview: {`"React hooks chính là FP — useState là closure, useEffect quản lý side effects riêng, components là pure functions of props. FP giúp code React dễ predict và test."`}</Callout>
+                </TopicModal>
+
+                <TopicModal title="Callback" emoji="📞" color="#ef4444" summary="Function truyền vào function khác — nền tảng của async JS, event handling, và higher-order functions">
+                    <Paragraph><Highlight>Callback</Highlight> = function được truyền làm tham số cho function khác, và được gọi lại (call back) khi cần. Đây là nền tảng của mọi thứ async trong JS.</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">Callback ở đâu?</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <InlineCode>addEventListener</InlineCode> — click handler là callback<br />
+                                • <InlineCode>setTimeout</InlineCode> — function chạy sau delay<br />
+                                • <InlineCode>.map()</InlineCode>, <InlineCode>.filter()</InlineCode> — transform function là callback<br />
+                                • <InlineCode>fetch().then()</InlineCode> — .then() nhận callback<br />
+                                • Node.js — <InlineCode>fs.readFile(path, callback)</InlineCode>
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="callback.js">{`// ═══ CALLBACK CƠ BẢN ═══
+function greet(name, callback) {
+  console.log('Hi ' + name)
+  callback() // gọi lại function được truyền vào
+}
+greet('Khuong', () => console.log('Done!'))
+// "Hi Khuong" → "Done!"
+
+// ═══ CALLBACK TRONG ASYNC ═══
+console.log('1. Bắt đầu')
+setTimeout(() => {
+  console.log('2. Callback chạy sau 1 giây')
+}, 1000)
+console.log('3. Code tiếp tục chạy (không đợi)')
+// Output: 1 → 3 → 2 (sau 1s)
+
+// ═══ CALLBACK HELL ═══ (vấn đề lớn nhất)
+// ❌ Lồng callback 5-6 cấp → khó đọc, khó debug
+getUser(id, (user) => {
+  getOrders(user, (orders) => {
+    getDetails(orders[0], (detail) => {
+      getShipping(detail, (shipping) => {
+        // 😵 pyramid of doom!
+      })
+    })
+  })
+})
+
+// ✅ Fix bằng Promise → async/await
+const user = await getUser(id)
+const orders = await getOrders(user)
+const detail = await getDetails(orders[0])
+const shipping = await getShipping(detail)
+// 🎉 phẳng, dễ đọc, dễ debug!`}</CodeBlock>
+
+                    <Callout type="warning">Callback hell là lý do Promise ra đời → rồi async/await ra đời. Hiểu callback = hiểu <Highlight>tại sao</Highlight> cần Promise/async-await.</Callout>
+                </TopicModal>
+
                 <TopicModal title="Event Loop" emoji="🔄" color="#60a5fa" summary="Call Stack, Microtask Queue, Macrotask Queue">
                     <Paragraph>JS là <Highlight>single-threaded</Highlight> nhưng vẫn xử lý async nhờ <Highlight>Event Loop</Highlight>. Hiểu Event Loop = hiểu tại sao code async chạy theo thứ tự &quot;lạ&quot;.</Paragraph>
                     <div className="my-3 space-y-2">

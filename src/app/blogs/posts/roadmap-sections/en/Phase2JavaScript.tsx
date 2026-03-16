@@ -254,6 +254,186 @@ child.house;    // '🏠' (inherited from grandpa — 2 levels up!)
                     <Callout type="warning">ES6 Class is just <Highlight>syntactic sugar</Highlight> — underneath it still uses prototypes. Understanding prototypes = understanding JS at a deep level.</Callout>
                 </TopicModal>
 
+                <TopicModal title="OOP in JavaScript" emoji="🏗️" color="#f59e0b" summary="4 pillars of OOP: Encapsulation, Inheritance, Polymorphism, Abstraction — JS uses Prototypal OOP, class is just sugar">
+                    <Paragraph>JS uses <Highlight>Prototypal OOP</Highlight> — objects inherit directly from other objects, no class blueprint needed like Java/C#. ES6 Class is just syntactic sugar wrapping prototypes.</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                            <div className="text-yellow-400 font-bold text-sm">4 Pillars of OOP</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Encapsulation</strong> — bundle data + methods, hide internal details<br />
+                                • <strong>Inheritance</strong> — inherit features from parent class<br />
+                                • <strong>Polymorphism</strong> — same method, different behavior per subclass<br />
+                                • <strong>Abstraction</strong> — hide complexity, expose only what{"'"}s needed
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="oop-in-js.js">{`// ═══ 1. ENCAPSULATION ═══
+class BankAccount {
+  #balance = 0  // # = private field (ES2022)
+
+  deposit(amount) { this.#balance += amount }
+  getBalance() { return this.#balance }
+}
+const acc = new BankAccount()
+acc.deposit(100)
+acc.#balance    // ❌ SyntaxError — private!
+acc.getBalance() // ✅ 100
+
+// ═══ 2. INHERITANCE ═══
+class Animal {
+  constructor(name) { this.name = name }
+  speak() { return \`\${this.name} makes a sound\` }
+}
+class Dog extends Animal {
+  speak() { return \`\${this.name} barks 🐕\` } // override parent
+}
+new Dog('Rex').speak() // "Rex barks 🐕"
+
+// ═══ 3. POLYMORPHISM ═══
+const animals = [new Animal('Cat'), new Dog('Rex')]
+animals.forEach(a => console.log(a.speak()))
+// "Cat makes a sound"
+// "Rex barks 🐕"  ← same .speak(), different output!
+
+// ═══ 4. ABSTRACTION ═══
+class Shape {
+  area() { throw new Error('Must implement area()!') }
+}
+class Circle extends Shape {
+  constructor(r) { super(); this.r = r }
+  area() { return Math.PI * this.r ** 2 }
+}
+// new Shape().area() → ❌ Error — forces subclass to implement`}</CodeBlock>
+
+                    <CodeBlock title="class-vs-prototype.js">{`// ES6 Class IS JUST syntactic sugar:
+class Person {
+  greet() { return 'Hi' }
+}
+// ↑ equivalent to ↓
+function Person() {}
+Person.prototype.greet = function() { return 'Hi' }
+
+typeof Person // "function" — class is NOT a new data type!`}</CodeBlock>
+
+                    <Callout type="tip">Interview: {`"JS uses prototypal inheritance — objects inherit directly from objects. ES6 class is syntactic sugar, underneath it's still prototype chain. Unlike Java, there's no rigid 'blueprint' — everything is an object."`}</Callout>
+                </TopicModal>
+
+                <TopicModal title="Functional Programming" emoji="λ" color="#06b6d4" summary="Pure functions, immutability, higher-order functions, composition — the other paradigm JS excels at">
+                    <Paragraph>JS is <Highlight>multi-paradigm</Highlight> — supports both OOP and FP. Modern React heavily uses FP patterns (hooks, pure components, composition over inheritance).</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                            <div className="text-cyan-400 font-bold text-sm">Core FP Principles</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Pure Functions</strong> — same input → same output, no side effects<br />
+                                • <strong>Immutability</strong> — never mutate, always create new data<br />
+                                • <strong>Higher-Order Functions</strong> — functions as arguments/return values<br />
+                                • <strong>Composition</strong> — combine small functions into complex ones
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="functional-programming.js">{`// ═══ 1. PURE vs IMPURE ═══
+// ❌ Impure — modifies external state
+let total = 0
+function addToTotal(x) { total += x; return total }
+
+// ✅ Pure — no side effects, predictable
+function add(a, b) { return a + b }
+add(2, 3) // always 5, no matter how many times called
+
+// ═══ 2. IMMUTABILITY ═══
+// ❌ Mutate
+const arr = [1, 2, 3]
+arr.push(4) // modifies original array!
+
+// ✅ Immutable — create NEW array
+const newArr = [...arr, 4]
+const updated = arr.map(x => x * 2) // [2, 4, 6] — original unchanged
+
+// ═══ 3. HIGHER-ORDER FUNCTIONS ═══
+// Function that takes/returns functions
+const multiply = (factor) => (x) => x * factor
+const double = multiply(2)
+const triple = multiply(3)
+double(5)  // 10
+triple(5)  // 15
+
+// Built-in: map, filter, reduce
+[1, 2, 3, 4, 5]
+  .filter(n => n % 2 !== 0)  // [1, 3, 5]
+  .map(n => n ** 2)           // [1, 9, 25]
+  .reduce((sum, n) => sum + n, 0) // 35
+
+// ═══ 4. COMPOSITION ═══
+const compose = (...fns) => (x) => fns.reduceRight((v, f) => f(v), x)
+const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x)
+
+const addOne = x => x + 1
+const square = x => x * x
+
+const transform = pipe(addOne, square, double)
+transform(3)  // pipe: 3 → 4 → 16 → 32`}</CodeBlock>
+
+                    <Callout type="tip">Interview: {`"React hooks are FP in action — useState is a closure, useEffect manages side effects separately, components are pure functions of props. FP makes React code predictable and testable."`}</Callout>
+                </TopicModal>
+
+                <TopicModal title="Callback" emoji="📞" color="#ef4444" summary="A function passed into another function — the foundation of async JS, event handling, and higher-order functions">
+                    <Paragraph><Highlight>Callback</Highlight> = a function passed as an argument to another function, to be called back when needed. This is the foundation of everything async in JS.</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">Where are callbacks?</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <InlineCode>addEventListener</InlineCode> — click handler is a callback<br />
+                                • <InlineCode>setTimeout</InlineCode> — function runs after delay<br />
+                                • <InlineCode>.map()</InlineCode>, <InlineCode>.filter()</InlineCode> — transform function is a callback<br />
+                                • <InlineCode>fetch().then()</InlineCode> — .then() receives a callback<br />
+                                • Node.js — <InlineCode>fs.readFile(path, callback)</InlineCode>
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="callback.js">{`// ═══ BASIC CALLBACK ═══
+function greet(name, callback) {
+  console.log('Hi ' + name)
+  callback() // call back the function passed in
+}
+greet('Khuong', () => console.log('Done!'))
+// "Hi Khuong" → "Done!"
+
+// ═══ ASYNC CALLBACK ═══
+console.log('1. Start')
+setTimeout(() => {
+  console.log('2. Callback runs after 1 second')
+}, 1000)
+console.log('3. Code continues (doesn\\'t wait)')
+// Output: 1 → 3 → 2 (after 1s)
+
+// ═══ CALLBACK HELL ═══ (the biggest problem)
+// ❌ Nested callbacks 5-6 levels deep → hard to read, hard to debug
+getUser(id, (user) => {
+  getOrders(user, (orders) => {
+    getDetails(orders[0], (detail) => {
+      getShipping(detail, (shipping) => {
+        // 😵 pyramid of doom!
+      })
+    })
+  })
+})
+
+// ✅ Fix with Promise → async/await
+const user = await getUser(id)
+const orders = await getOrders(user)
+const detail = await getDetails(orders[0])
+const shipping = await getShipping(detail)
+// 🎉 flat, readable, debuggable!`}</CodeBlock>
+
+                    <Callout type="warning">Callback hell is why Promises were created → then async/await was created. Understanding callbacks = understanding <Highlight>why</Highlight> we need Promise/async-await.</Callout>
+                </TopicModal>
+
                 <TopicModal title="Event Loop" emoji="🔄" color="#60a5fa" summary="Call Stack, Microtask Queue, Macrotask Queue">
                     <Paragraph>JS is <Highlight>single-threaded</Highlight> but handles async thanks to the <Highlight>Event Loop</Highlight>. Understanding the Event Loop = understanding why async code runs in a &quot;strange&quot; order.</Paragraph>
                     <div className="my-3 space-y-2">
