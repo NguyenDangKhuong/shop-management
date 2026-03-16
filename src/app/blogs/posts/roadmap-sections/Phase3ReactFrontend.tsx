@@ -179,7 +179,7 @@ export default function Phase3ReactFrontend() {
                                 • ⚠️ Không đọc/ghi ref trong render body — chỉ trong effects hoặc handlers
                             </div>
 
-                            <CodeBlock title="useRef-demo.tsx">{`import { useRef, useState } from 'react'
+                            <CodeBlock title="useRef-demo.tsx">{`import { useRef, useState, useEffect } from 'react'
 
 function RefVsState() {
   const [stateCount, setStateCount] = useState(0)
@@ -211,6 +211,38 @@ function usePrevious<T>(value: T): T | undefined {
   const ref = useRef<T>()
   useEffect(() => { ref.current = value })
   return ref.current // trả về giá trị CŨ (trước khi effect chạy)
+}
+
+// 🔥 Ví dụ thực tế: Reading Progress Bar
+// Tại sao dùng useRef thay useState? Vì scroll event bắn ~60 lần/giây
+// useState → 60 re-renders/s 😱 | useRef → 0 re-renders ✅
+function ReadingProgressBar() {
+  const barRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (!barRef.current) return
+      const docH = document.documentElement.scrollHeight - window.innerHeight
+      const pct = docH > 0 ? Math.min(window.scrollY / docH, 1) : 0
+      // Ghi trực tiếp vào DOM — KHÔNG qua setState!
+      barRef.current.style.transform = \`scaleX(\${pct})\`
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  return (
+    <div className="fixed top-0 left-0 w-full h-[3px] z-50">
+      <div
+        ref={barRef} // ← useRef để truy cập DOM trực tiếp
+        className="h-full w-full origin-left bg-gradient-to-r
+                   from-cyan-400 via-blue-500 to-purple-500"
+        style={{ transform: 'scaleX(0)' }}
+      />
+    </div>
+  )
+  // 💡 scaleX thay vì width → chạy trên GPU, không trigger layout
+  // 💡 passive: true → browser biết sẽ không preventDefault → scroll mượt hơn
 }`}</CodeBlock>
                         </div>
 

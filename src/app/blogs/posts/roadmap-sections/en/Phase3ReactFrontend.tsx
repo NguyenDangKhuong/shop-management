@@ -210,6 +210,38 @@ function usePrevious<T>(value: T): T | undefined {
   const ref = useRef<T>()
   useEffect(() => { ref.current = value })
   return ref.current // returns OLD value (before effect runs)
+}
+
+// 🔥 Real-world example: Reading Progress Bar
+// Why useRef instead of useState? Scroll fires ~60 times/sec
+// useState → 60 re-renders/s 😱 | useRef → 0 re-renders ✅
+function ReadingProgressBar() {
+  const barRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (!barRef.current) return
+      const docH = document.documentElement.scrollHeight - window.innerHeight
+      const pct = docH > 0 ? Math.min(window.scrollY / docH, 1) : 0
+      // Write directly to DOM — NO setState!
+      barRef.current.style.transform = \`scaleX(\${pct})\`
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  return (
+    <div className="fixed top-0 left-0 w-full h-[3px] z-50">
+      <div
+        ref={barRef} // ← useRef for direct DOM access
+        className="h-full w-full origin-left bg-gradient-to-r
+                   from-cyan-400 via-blue-500 to-purple-500"
+        style={{ transform: 'scaleX(0)' }}
+      />
+    </div>
+  )
+  // 💡 scaleX instead of width → runs on GPU, no layout trigger
+  // 💡 passive: true → browser knows no preventDefault → smoother scroll
 }`}</CodeBlock>
                         </div>
 

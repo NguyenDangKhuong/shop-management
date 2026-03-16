@@ -155,4 +155,32 @@
     border: 1px solid var(--border-primary);
     transition: all 0.3s;
   }
+
+  /* Custom thin scrollbar — auto-hide, theme-aware */
+  .scrollbar-thin {
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: transparent transparent; /* Firefox — hide by default */
+  }
+  .scrollbar-thin:hover {
+    scrollbar-color: var(--border-primary) transparent; /* Firefox — show on hover */
+  }
+
+  /* WebKit (Chrome, Safari, Edge) */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 9999px;
+    transition: background 0.2s;
+  }
+  .scrollbar-thin:hover::-webkit-scrollbar-thumb {
+    background: var(--border-primary);
+  }
+  .scrollbar-thin:hover::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+  }
 }
