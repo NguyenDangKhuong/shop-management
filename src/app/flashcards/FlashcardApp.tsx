@@ -407,18 +407,25 @@ export default function FlashcardApp() {
     const [interviewIndex, setInterviewIndex] = useState(0)
     const [interviewFlipped, setInterviewFlipped] = useState(false)
     const [interviewKnown, setInterviewKnown] = useState<Set<string>>(new Set())
+    const [shuffleSeed, setShuffleSeed] = useState(0)
 
-    // Filter interview cards
+    // Filter + shuffle interview cards
     const filteredInterviewCards = useMemo(() => {
-        let cards = interviewCards
+        let cards = [...interviewCards]
         if (selectedTopics.size > 0) {
             cards = cards.filter(c => selectedTopics.has(c.topic))
         }
         if (selectedDifficulty !== 'All') {
             cards = cards.filter(c => c.difficulty === selectedDifficulty)
         }
+        if (shuffleSeed > 0) {
+            for (let i = cards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cards[i], cards[j]] = [cards[j], cards[i]]
+            }
+        }
         return cards
-    }, [selectedTopics, selectedDifficulty])
+    }, [selectedTopics, selectedDifficulty, shuffleSeed])
 
     // Reset index when filters change
     useEffect(() => {
@@ -451,6 +458,8 @@ export default function FlashcardApp() {
     const shuffle = useCallback(() => {
         if (tab === 'algorithm') {
             setAlgoCards(prev => [...prev].sort(() => Math.random() - 0.5))
+        } else {
+            setShuffleSeed(s => s + 1)
         }
         setIndex(0)
         setFlipped(false)
