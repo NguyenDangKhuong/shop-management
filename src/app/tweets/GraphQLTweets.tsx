@@ -190,13 +190,14 @@ export function LazyVideo({ src, poster, isGif }: { src: string; poster: string;
             >
                 {hasLoaded && <source src={src} type="video/mp4" />}
             </video>
-            {/* Poster overlay — fades out smoothly when video is ready */}
-            <img
-                src={poster}
-                alt=""
-                className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-300"
-                style={{ opacity: isReady ? 0 : 1 }}
-            />
+            {/* Poster overlay — only shows during load→play transition to prevent jank */}
+            {hasLoaded && !isReady && (
+                <img
+                    src={poster}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-300"
+                />
+            )}
             {isGif && (
                 <span className="absolute bottom-2 left-2 px-1.5 py-0.5 bg-black/70 text-white text-[10px] rounded font-semibold">GIF</span>
             )}

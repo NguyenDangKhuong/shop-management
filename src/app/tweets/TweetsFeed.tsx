@@ -319,7 +319,7 @@ export function TweetsFeed() {
                 {mode === 'user' && (
                     <button
                         onClick={handleBack}
-                        className="fixed bottom-4 left-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/80 backdrop-blur-sm border border-white/10 text-slate-400 text-xs hover:text-white hover:border-white/20 transition cursor-pointer"
+                        className="fixed bottom-4 left-4 md:bottom-auto md:top-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/80 backdrop-blur-sm border border-white/10 text-slate-400 text-xs hover:text-white hover:border-white/20 transition cursor-pointer"
                     >
                         <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current">
                             <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z" />

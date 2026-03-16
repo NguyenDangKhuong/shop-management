@@ -135,9 +135,9 @@ describe('LazyVideo', () => {
         const video = container.querySelector('video')!
         expect(video).toBeInTheDocument()
         expect(video.getAttribute('preload')).toBe('none')
-        // Poster is now an overlay img, not a video attribute
-        const posterImg = container.querySelector('img[src="/poster.jpg"]')
-        expect(posterImg).toBeInTheDocument()
+        expect(video.getAttribute('poster')).toBe('/poster.jpg')
+        // Poster overlay only appears after video source loads (hasLoaded && !isReady)
+        // On initial render, hasLoaded is false so no overlay img
         expect(container.querySelector('source')).toBeNull()
     })
 
