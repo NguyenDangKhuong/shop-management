@@ -532,11 +532,23 @@ export function GraphQLTweets({ username, onUserClick, apiEndpoint = '/api/tweet
             <div className="bg-slate-900/40 rounded-2xl border border-white/10 overflow-hidden">
                 {/* Header */}
                 <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
-                    <img src={tweets[0].user.avatar} alt="" className="w-8 h-8 rounded-full" />
-                    <div>
-                        <span className="font-bold text-white text-sm">{tweets[0].user.name}</span>
-                        <span className="text-slate-500 text-sm ml-1.5">@{username}</span>
-                    </div>
+                    {apiEndpoint.includes('likes') ? (
+                        <>
+                            <span className="text-lg">❤️</span>
+                            <div>
+                                <span className="font-bold text-white text-sm">Liked by</span>
+                                <span className="text-slate-500 text-sm ml-1.5">@{username}</span>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <img src={tweets[0].user.avatar} alt="" className="w-8 h-8 rounded-full" />
+                            <div>
+                                <span className="font-bold text-white text-sm">{tweets[0].user.name}</span>
+                                <span className="text-slate-500 text-sm ml-1.5">@{username}</span>
+                            </div>
+                        </>
+                    )}
                     <span className="ml-auto text-slate-600 text-xs">{tweets.length} tweets</span>
                 </div>
 
