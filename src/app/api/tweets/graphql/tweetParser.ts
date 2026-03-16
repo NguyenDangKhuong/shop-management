@@ -53,8 +53,18 @@ export function parseTweetResult(result: any): ParsedTweet | null {
         if (!result?.legacy) return null
 
         const legacy = result.legacy
-        const user = result.core?.user_results?.result?.legacy
-        if (!user) return null
+        const userResult = result.core?.user_results?.result
+        // Twitter moved name/screen_name from legacy to core (2025+)
+        // Check both paths for backward compatibility
+        const userLegacy = userResult?.legacy || {}
+        const userCore = userResult?.core || {}
+        const userName = userCore.name || userLegacy.name
+        const userScreenName = userCore.screen_name || userLegacy.screen_name
+        const userAvatar = userResult?.avatar?.image_url
+            || userLegacy.profile_image_url_https
+            || ''
+        if (!userName && !userScreenName) return null
+        const user = { ...userLegacy, name: userName, screen_name: userScreenName, profile_image_url_https: userAvatar }
 
         // Check if this tweet is a retweet — if so, unwrap to get the original tweet's data.
         // We keep track of tweetResult (full object) separately from tweetLegacy (legacy data)
@@ -68,13 +78,24 @@ export function parseTweetResult(result: any): ParsedTweet | null {
         if (isRetweet) {
             retweetUser = { name: user.name, screenName: user.screen_name }
             const rtResult = legacy.retweeted_status_result?.result
+            const extractUser = (r: any) => {
+                const ur = r?.core?.user_results?.result
+                const uLeg = ur?.legacy || {}
+                const uCore = ur?.core || {}
+                return {
+                    ...uLeg,
+                    name: uCore.name || uLeg.name,
+                    screen_name: uCore.screen_name || uLeg.screen_name,
+                    profile_image_url_https: ur?.avatar?.image_url || uLeg.profile_image_url_https || '',
+                }
+            }
             if (rtResult?.__typename === 'TweetWithVisibilityResults') {
                 tweetLegacy = rtResult.tweet?.legacy || legacy
-                tweetUser = rtResult.tweet?.core?.user_results?.result?.legacy || user
+                tweetUser = extractUser(rtResult.tweet) || user
                 tweetResult = rtResult.tweet || result
             } else if (rtResult) {
                 tweetLegacy = rtResult.legacy || legacy
-                tweetUser = rtResult.core?.user_results?.result?.legacy || user
+                tweetUser = extractUser(rtResult) || user
                 tweetResult = rtResult
             }
         }

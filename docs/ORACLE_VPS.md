@@ -68,7 +68,7 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | **Sonoff LAN** (AlexxIT/HACS) | 22 công tắc eWeLink | ☁️ Cloud | ✅ |
 | **Tuya** (official) | Tuya devices | ☁️ Cloud (Western America DC) | ✅ |
 | **Google Home** (HACS) | Loa Google Home (2) | 📶 Cần LAN (mDNS) | ⚠️ Không thấy devices |
-| **Xiaomi Home** | 12 devices (camera, robot, air purifier) | 📶 Cần LAN (miio UDP) | ⚠️ Cần HA local |
+| **Xiaomi Home** (official) | 12 devices (camera, robot, air purifier) | ☁️ Cloud (OAuth, server: cn) | ✅ |
 
 ### ⚠️ Giới hạn HA trên VPS
 
@@ -78,8 +78,8 @@ HA trên VPS **chỉ dùng được cloud integrations**. Thiết bị cần LAN
 |---|---|
 | eWeLink / Sonoff LAN (cloud mode) | Loa Google Home (mDNS) |
 | Tuya | Máy lạnh Casper (SmartHome app) |
-| Automations chéo eWeLink + Tuya | Xiaomi devices (miio UDP) |
-| Remote access qua app ĐT | Broadlink IR / HomeKit |
+| Xiaomi Home (camera controls, motion alerts) | Xiaomi camera live stream (RTSP) |
+| Automations chéo tất cả | Broadlink IR / HomeKit |
 
 **Giải pháp cho local devices:** Cài thêm HA trên `khuong-ubuntu-esxi` (cùng LAN) → dùng **Remote Home Assistant** integration liên kết 2 HA.
 
