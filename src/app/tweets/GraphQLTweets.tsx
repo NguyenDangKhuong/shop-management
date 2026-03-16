@@ -504,7 +504,7 @@ export function GraphQLTweets({ username, onUserClick, apiEndpoint = '/api/tweet
         )
         observer.observe(el)
         return () => observer.disconnect()
-    }, [fetchTweets])
+    }, [fetchTweets, loading])
 
     useEffect(() => {
         fetchTweets()

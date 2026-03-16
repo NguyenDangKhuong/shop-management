@@ -315,11 +315,11 @@ export function TweetsFeed() {
                     </div>
                 </div>
 
-                {/* ═══ Back button (when viewing user) — fixed at top ═══ */}
+                {/* ═══ Back button (when viewing user) — fixed at bottom-left ═══ */}
                 {mode === 'user' && (
                     <button
                         onClick={handleBack}
-                        className="fixed top-4 left-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/80 backdrop-blur-sm border border-white/10 text-slate-400 text-xs hover:text-white hover:border-white/20 transition cursor-pointer"
+                        className="fixed bottom-4 left-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/80 backdrop-blur-sm border border-white/10 text-slate-400 text-xs hover:text-white hover:border-white/20 transition cursor-pointer"
                     >
                         <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current">
                             <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z" />
@@ -328,90 +328,89 @@ export function TweetsFeed() {
                     </button>
                 )}
 
-                {/* ═══ Tweet List ═══ */}
-                {mode === 'likes' ? (
-                    /* Liked tweets by pinned user */
+                {/* ═══ User/Pinned/Likes views — mount on demand ═══ */}
+                {mode === 'likes' && (
                     <GraphQLTweets key={`likes-${PINNED_USERNAME}`} username={PINNED_USERNAME} onUserClick={handlePinnedUserClick} apiEndpoint="/api/tweets/graphql/likes" />
-                ) : mode === 'pinned_user' ? (
-                    /* Pinned user timeline */
-                    <GraphQLTweets key={`pinned-${PINNED_USERNAME}`} username={PINNED_USERNAME} onUserClick={handlePinnedUserClick} />
-                ) : mode === 'user' && selectedUser ? (
-                    /* User timeline — uses GraphQLTweets with its own pagination */
-                    <GraphQLTweets key={selectedUser} username={selectedUser} onUserClick={handleUserClick} />
-                ) : (
-                    /* Home feed — For You / Following */
-                    <>
-                        {loading && (
-                            <div className="bg-slate-900/40 rounded-2xl border border-white/10 overflow-hidden">
-                                <div className="flex items-center justify-center py-16">
-                                    <div className="w-6 h-6 border-2 border-[#ff9900] border-t-transparent rounded-full animate-spin" />
-                                </div>
-                            </div>
-                        )}
-
-                        {error && !loading && (
-                            <div className="bg-slate-900/40 rounded-2xl border border-white/10 p-6 text-center">
-                                <p className="text-red-400 text-sm">{error}</p>
-                                <button
-                                    onClick={() => fetchHomeTweets(mode as 'for_you' | 'following')}
-                                    className="mt-3 text-[#ff9900] text-sm hover:underline cursor-pointer"
-                                >
-                                    Thử lại
-                                </button>
-                            </div>
-                        )}
-
-                        {!loading && !error && tweets.length > 0 && (
-                            <div className="bg-slate-900/40 rounded-2xl border border-white/10 overflow-hidden">
-                                <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
-                                    <span className="text-lg">{mode === 'for_you' ? '✨' : '👥'}</span>
-                                    <span className="font-bold text-white text-sm">
-                                        {mode === 'for_you' ? 'For You' : 'Following'}
-                                    </span>
-                                    <span className="ml-auto text-slate-600 text-xs">{tweets.length} tweets</span>
-                                </div>
-
-                                {tweets.map(tweet => (
-                                    <TweetCard
-                                        key={tweet.id}
-                                        tweet={tweet}
-                                        videoProxyUrl={videoProxyUrl}
-                                        onUserClick={handleUserClick}
-                                        onImageClick={(url) => {
-                                            const allPhotos = tweet.media.filter(m => m.type === 'photo').map(m => m.url)
-                                            const idx = allPhotos.indexOf(url)
-                                            setPreviewState({ images: allPhotos, index: idx >= 0 ? idx : 0 })
-                                        }}
-                                    />
-                                ))}
-
-                                {hasMore && (
-                                    <div ref={sentinelRef} className="px-4 py-4 text-center">
-                                        {loadingMore ? (
-                                            <div className="flex items-center justify-center gap-2 text-slate-400 text-sm">
-                                                <span className="w-4 h-4 border-2 border-[#ff9900] border-t-transparent rounded-full animate-spin" />
-                                                Loading more...
-                                            </div>
-                                        ) : (
-                                            <button
-                                                onClick={() => fetchHomeTweets(mode as 'for_you' | 'following', cursorBottom)}
-                                                className="text-[#ff9900] text-xs hover:underline opacity-50 cursor-pointer"
-                                            >
-                                                Load more
-                                            </button>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        {!loading && !error && tweets.length === 0 && (
-                            <div className="text-center py-8 text-slate-500 text-sm">
-                                No tweets found. Try refreshing or check credentials.
-                            </div>
-                        )}
-                    </>
                 )}
+                {mode === 'pinned_user' && (
+                    <GraphQLTweets key={`pinned-${PINNED_USERNAME}`} username={PINNED_USERNAME} onUserClick={handlePinnedUserClick} />
+                )}
+                {mode === 'user' && selectedUser && (
+                    <GraphQLTweets key={selectedUser} username={selectedUser} onUserClick={handleUserClick} />
+                )}
+
+                {/* ═══ Home feed — always mounted, hidden when viewing other tabs ═══ */}
+                <div style={{ display: (mode === 'for_you' || mode === 'following') ? 'block' : 'none' }}>
+                    {loading && (
+                        <div className="bg-slate-900/40 rounded-2xl border border-white/10 overflow-hidden">
+                            <div className="flex items-center justify-center py-16">
+                                <div className="w-6 h-6 border-2 border-[#ff9900] border-t-transparent rounded-full animate-spin" />
+                            </div>
+                        </div>
+                    )}
+
+                    {error && !loading && (
+                        <div className="bg-slate-900/40 rounded-2xl border border-white/10 p-6 text-center">
+                            <p className="text-red-400 text-sm">{error}</p>
+                            <button
+                                onClick={() => fetchHomeTweets(mode as 'for_you' | 'following')}
+                                className="mt-3 text-[#ff9900] text-sm hover:underline cursor-pointer"
+                            >
+                                Thử lại
+                            </button>
+                        </div>
+                    )}
+
+                    {!loading && !error && tweets.length > 0 && (
+                        <div className="bg-slate-900/40 rounded-2xl border border-white/10 overflow-hidden">
+                            <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
+                                <span className="text-lg">{mode === 'for_you' ? '✨' : '👥'}</span>
+                                <span className="font-bold text-white text-sm">
+                                    {mode === 'for_you' ? 'For You' : 'Following'}
+                                </span>
+                                <span className="ml-auto text-slate-600 text-xs">{tweets.length} tweets</span>
+                            </div>
+
+                            {tweets.map(tweet => (
+                                <TweetCard
+                                    key={tweet.id}
+                                    tweet={tweet}
+                                    videoProxyUrl={videoProxyUrl}
+                                    onUserClick={handleUserClick}
+                                    onImageClick={(url) => {
+                                        const allPhotos = tweet.media.filter(m => m.type === 'photo').map(m => m.url)
+                                        const idx = allPhotos.indexOf(url)
+                                        setPreviewState({ images: allPhotos, index: idx >= 0 ? idx : 0 })
+                                    }}
+                                />
+                            ))}
+
+                            {hasMore && (
+                                <div ref={sentinelRef} className="px-4 py-4 text-center">
+                                    {loadingMore ? (
+                                        <div className="flex items-center justify-center gap-2 text-slate-400 text-sm">
+                                            <span className="w-4 h-4 border-2 border-[#ff9900] border-t-transparent rounded-full animate-spin" />
+                                            Loading more...
+                                        </div>
+                                    ) : (
+                                        <button
+                                            onClick={() => fetchHomeTweets(mode as 'for_you' | 'following', cursorBottom)}
+                                            className="text-[#ff9900] text-xs hover:underline opacity-50 cursor-pointer"
+                                        >
+                                            Load more
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {!loading && !error && tweets.length === 0 && (
+                        <div className="text-center py-8 text-slate-500 text-sm">
+                            No tweets found. Try refreshing or check credentials.
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Image Preview Lightbox */}
