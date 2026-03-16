@@ -182,6 +182,7 @@ export function LazyVideo({ src, poster, isGif }: { src: string; poster: string;
                 controls
                 playsInline
                 preload="none"
+                poster={poster}
                 className="w-full max-h-[500px]"
                 loop={isGif}
                 muted={isGif}
