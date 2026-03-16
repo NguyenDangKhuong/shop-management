@@ -51,7 +51,97 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | **Tailscale** | enabled | SSH without key, private network |
 | **Docker** 28.2.2 | enabled | Container runtime |
 | **Nginx** 1.24.0 | enabled | Web server (port 80) |
+| **Home Assistant** | enabled | Smart home (Docker, port 8123) |
 | **stress-ng** | enabled | Keep VPS alive (anti-reclaim) |
+
+## Home Assistant
+
+**URL:** https://ha.khuong.theworkpc.com
+**Config:** `~/homeassistant/config/`
+**Docker Compose:** `~/homeassistant/docker-compose.yml`
+**Restart policy:** `unless-stopped` (tự start khi VPS reboot)
+
+### Integrations
+
+| Integration | Devices | Kết nối qua | Status |
+|---|---|---|---|
+| **Sonoff LAN** (AlexxIT/HACS) | 22 công tắc eWeLink | ☁️ Cloud | ✅ |
+| **Tuya** (official) | Tuya devices | ☁️ Cloud (Western America DC) | ✅ |
+| **Google Home** (HACS) | Loa Google Home (2) | 📶 Cần LAN (mDNS) | ⚠️ Không thấy devices |
+| **Xiaomi Home** | 12 devices (camera, robot, air purifier) | 📶 Cần LAN (miio UDP) | ⚠️ Cần HA local |
+
+### ⚠️ Giới hạn HA trên VPS
+
+HA trên VPS **chỉ dùng được cloud integrations**. Thiết bị cần LAN sẽ không hoạt động:
+
+| Hoạt động (Cloud) | Không hoạt động (Cần LAN) |
+|---|---|
+| eWeLink / Sonoff LAN (cloud mode) | Loa Google Home (mDNS) |
+| Tuya | Máy lạnh Casper (SmartHome app) |
+| Automations chéo eWeLink + Tuya | Xiaomi devices (miio UDP) |
+| Remote access qua app ĐT | Broadlink IR / HomeKit |
+
+**Giải pháp cho local devices:** Cài thêm HA trên `khuong-ubuntu-esxi` (cùng LAN) → dùng **Remote Home Assistant** integration liên kết 2 HA.
+
+### Xiaomi Devices (cho HA Local sau này)
+
+**Account:** User ID `6264427179` | Server: `cn` | Login: QR code (app Mi Home)
+**Token Extractor:** https://github.com/PiotrMachowski/Xiaomi-cloud-tokens-extractor
+
+#### Home 712001156110
+
+| Tên | Model | IP | Token |
+|---|---|---|---|
+| Nhà kho (Camera) | chuangmi.camera.ipc019 | 192.168.1.10 | `4159436b564e5a565a366d4e42425863` |
+| Phòng khách (Camera) | chuangmi.camera.ipc019 | 192.168.1.11 | `5458796361664e7757776c4e4c614946` |
+| Nhà bếp (Camera) | chuangmi.camera.ip029a | 192.168.1.17 | `6a5245304863687368724267697a4950` |
+| Sân trước (Camera) | chuangmi.camera.ip029a | 192.168.1.13 | `65476e696d42507170424a4276397964` |
+| **Robot dọn nhà** | viomi.vacuum.v7 | 192.168.1.19 | `6633466f374f66684976676156467636` |
+
+#### Home 712001156147
+
+| Tên | Model | IP | Token |
+|---|---|---|---|
+| Camera sân sau | chuangmi.camera.ipc019 | 192.168.1.5 | `6c77683934344d70677539456b6f474f` |
+
+#### Home 712001219337
+
+| Tên | Model | IP | Token |
+|---|---|---|---|
+| Cam di động | chuangmi.camera.ipc019 | 192.168.8.109 | `5a79665357706e38346439394253336d` |
+| Phòng khách (Camera) | chuangmi.camera.ipc019 | 192.168.1.7 | `52416f304452624c5541714c42334354` |
+| Cam trước | chuangmi.camera.ip029a | 192.168.1.42 | `45416245554f57776c4e41304b374e72` |
+| Cam cổng | chuangmi.camera.ip029a | 192.168.1.96 | `315268664f52464a3538417565317672` |
+| Sân trước (Camera) | chuangmi.camera.025b02 | 192.168.1.18 | `52444c36396863497866326d7676326b` |
+| **Air Purifier 4 Lite** | zhimi.airp.rmb1 | 192.168.1.22 | `ac2f7018ab0eb1ca9398193c3454b6ee` |
+
+> ⚠️ Token có thể thay đổi khi reset WiFi thiết bị. Chạy lại token extractor nếu cần.
+
+### Quản lý
+
+```bash
+# Status
+cd ~/homeassistant && docker compose ps
+
+# Logs
+cd ~/homeassistant && docker compose logs -f
+
+# Restart
+cd ~/homeassistant && docker compose restart
+
+# Update HA
+cd ~/homeassistant && docker compose pull && docker compose up -d
+
+# Backup config
+tar czf ~/ha-backup-$(date +%F).tar.gz -C ~/homeassistant/config .
+```
+
+### Master Token (Google Home)
+
+Lấy master token cho Google Home integration:
+1. Mở https://accounts.google.com/EmbeddedSetup → login → lấy cookie `oauth_token`
+2. Chạy trên Mac: `python3 -c "import gpsoauth; print(gpsoauth.exchange_token('EMAIL', 'OAUTH_TOKEN', '0123456789abcdef')['Token'])"`
+3. Dán vào HA → Google Home integration
 
 ## Anti-Reclaim (stress-ng)
 
@@ -146,6 +236,13 @@ sudo systemctl reload nginx   # Reload config
 # Tailscale
 tailscale status              # Connected devices
 tailscale ip                  # Show Tailscale IPs
+
+# Home Assistant
+cd ~/homeassistant && docker compose logs -f   # Logs
+cd ~/homeassistant && docker compose restart    # Restart
+cd ~/homeassistant && docker compose down       # Stop
+cd ~/homeassistant && docker compose up -d      # Start
+cd ~/homeassistant && docker compose pull && docker compose up -d  # Update
 ```
 
 ## Domain & DDNS
@@ -158,6 +255,7 @@ tailscale ip                  # Show Tailscale IPs
 | `cli-proxy.khuong.theworkpc.com` | Dynu wildcard | → cli-proxy (100.108.169.39:8317 via Tailscale) |
 | `openclaw.khuong.theworkpc.com` | Dynu wildcard | → openclaw (100.108.169.39:18789 via Tailscale) |
 | `nas.khuong.theworkpc.com` | Dynu wildcard | → NAS Synology (192.168.1.200:5001 via subnet) |
+| `ha.khuong.theworkpc.com` | Dynu wildcard | → Home Assistant (localhost:8123) |
 | `*.khuong.theworkpc.com` | Dynu wildcard | → VPS (add more subdomains) |
 
 **Provider**: [Dynu](https://www.dynu.com) — free, no confirmation, wildcard support
@@ -291,6 +389,7 @@ Oracle Console → Billing → Budgets → `free-tier-alert`
 | https://cli-proxy.khuong.theworkpc.com | cli-proxy (local via Tailscale) |
 | https://openclaw.khuong.theworkpc.com | openclaw (local via Tailscale) |
 | https://nas.khuong.theworkpc.com | NAS Synology (local via subnet) |
+| https://ha.khuong.theworkpc.com | Home Assistant (smart home) |
 | http://161.118.197.104 | VPS direct |
 | http://100.118.218.99 | VPS via Tailscale |
 
@@ -346,6 +445,7 @@ Oracle Console → Billing → Budgets → `free-tier-alert`
 | `cli-proxy.khuong.theworkpc.com` | CLI Proxy API | VPS → Tailscale → 100.108.169.39:8317 |
 | `openclaw.khuong.theworkpc.com` | OpenClaw | VPS → Tailscale → 100.108.169.39:18789 |
 | `nas.khuong.theworkpc.com` | NAS Synology | VPS → subnet → 192.168.1.200:5001 |
+| `ha.khuong.theworkpc.com` | Home Assistant | VPS → localhost:8123 |
 | `thetaphoa.vercel.app` | Vercel (default) | Direct |
 
 ### 🔵 Cloudflare Tunnel (cần `thetaphoa.store`)

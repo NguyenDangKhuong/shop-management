@@ -141,6 +141,59 @@ export function ImagePreview({ images, index, onClose, onNavigate }: { images: s
     )
 }
 
+export function LazyVideo({ src, poster, isGif }: { src: string; poster: string; isGif: boolean }) {
+    const containerRef = useRef<HTMLDivElement>(null)
+    const videoRef = useRef<HTMLVideoElement>(null)
+    const [isVisible, setIsVisible] = useState(false)
+    const [hasLoaded, setHasLoaded] = useState(false)
+
+    useEffect(() => {
+        const el = containerRef.current
+        if (!el) return
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsVisible(entry.isIntersecting)
+                if (entry.isIntersecting && !hasLoaded) {
+                    setHasLoaded(true)
+                }
+            },
+            { rootMargin: '200px' }
+        )
+        observer.observe(el)
+        return () => observer.disconnect()
+    }, [hasLoaded])
+
+    // Pause video when scrolled out of view
+    useEffect(() => {
+        const video = videoRef.current
+        if (!video) return
+        if (!isVisible && !video.paused) {
+            video.pause()
+        }
+    }, [isVisible])
+
+    return (
+        <div ref={containerRef} className="relative rounded-2xl overflow-hidden">
+            <video
+                ref={videoRef}
+                controls
+                playsInline
+                preload="none"
+                poster={poster}
+                className="w-full max-h-[500px]"
+                loop={isGif}
+                muted={isGif}
+            >
+                {hasLoaded && <source src={src} type="video/mp4" />}
+            </video>
+            {isGif && (
+                <span className="absolute bottom-2 left-2 px-1.5 py-0.5 bg-black/70 text-white text-[10px] rounded font-semibold">GIF</span>
+            )}
+        </div>
+    )
+}
+
 export function MediaGrid({ media, videoProxyUrl, onImageClick }: { media: TweetMedia[]; videoProxyUrl: string; onImageClick?: (url: string) => void }) {
     if (media.length === 0) return null
 
@@ -177,22 +230,12 @@ export function MediaGrid({ media, videoProxyUrl, onImageClick }: { media: Tweet
                         ? `${videoProxyUrl}/?url=${encodeURIComponent(m.videoUrl || '')}`
                         : `/api/tweets/video?url=${encodeURIComponent(m.videoUrl || '')}`
                     return (
-                        <div key={i} className="relative rounded-2xl overflow-hidden">
-                            <video
-                                controls
-                                playsInline
-                                preload="metadata"
-                                poster={m.url}
-                                className="w-full max-h-[500px]"
-                                loop={m.type === 'animated_gif'}
-                                muted={m.type === 'animated_gif'}
-                            >
-                                <source src={src} type="video/mp4" />
-                            </video>
-                            {m.type === 'animated_gif' && (
-                                <span className="absolute bottom-2 left-2 px-1.5 py-0.5 bg-black/70 text-white text-[10px] rounded font-semibold">GIF</span>
-                            )}
-                        </div>
+                        <LazyVideo
+                            key={i}
+                            src={src}
+                            poster={m.url}
+                            isGif={m.type === 'animated_gif'}
+                        />
                     )
                 }
                 return null
