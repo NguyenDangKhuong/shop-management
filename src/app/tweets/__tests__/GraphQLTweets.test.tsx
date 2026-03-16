@@ -127,15 +127,17 @@ describe('formatTweetText', () => {
 
 // ─── LazyVideo ──────────────────────────────────────────────────────────
 describe('LazyVideo', () => {
-    it('renders with poster but no source initially', () => {
+    it('renders with poster overlay but no source initially', () => {
         const { container } = render(
             <LazyVideo src="/video.mp4" poster="/poster.jpg" isGif={false} />
         )
 
         const video = container.querySelector('video')!
         expect(video).toBeInTheDocument()
-        expect(video.getAttribute('poster')).toBe('/poster.jpg')
         expect(video.getAttribute('preload')).toBe('none')
+        // Poster is now an overlay img, not a video attribute
+        const posterImg = container.querySelector('img[src="/poster.jpg"]')
+        expect(posterImg).toBeInTheDocument()
         expect(container.querySelector('source')).toBeNull()
     })
 

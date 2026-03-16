@@ -173,6 +173,8 @@ export function LazyVideo({ src, poster, isGif }: { src: string; poster: string;
         }
     }, [isVisible])
 
+    const [isReady, setIsReady] = useState(false)
+
     return (
         <div ref={containerRef} className="relative rounded-2xl overflow-hidden">
             <video
@@ -180,13 +182,20 @@ export function LazyVideo({ src, poster, isGif }: { src: string; poster: string;
                 controls
                 playsInline
                 preload="none"
-                poster={poster}
                 className="w-full max-h-[500px]"
                 loop={isGif}
                 muted={isGif}
+                onCanPlay={() => setIsReady(true)}
             >
                 {hasLoaded && <source src={src} type="video/mp4" />}
             </video>
+            {/* Poster overlay — fades out smoothly when video is ready */}
+            <img
+                src={poster}
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-300"
+                style={{ opacity: isReady ? 0 : 1 }}
+            />
             {isGif && (
                 <span className="absolute bottom-2 left-2 px-1.5 py-0.5 bg-black/70 text-white text-[10px] rounded font-semibold">GIF</span>
             )}
