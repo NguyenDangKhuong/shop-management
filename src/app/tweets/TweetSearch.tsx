@@ -308,7 +308,7 @@ export function TweetSearch() {
             {!sectionExpanded && (
                 <button
                     onClick={() => setSectionExpanded(true)}
-                    className="md:hidden fixed bottom-4 right-4 z-50 w-11 h-11 rounded-full bg-gradient-to-r from-[#ff9900] to-[#ffb833] text-white shadow-lg shadow-[#ff9900]/30 flex items-center justify-center text-lg hover:scale-110 active:scale-95 transition-transform"
+                    className="md:hidden fixed bottom-18 right-4 z-50 w-11 h-11 rounded-full bg-gradient-to-r from-[#ff9900] to-[#ffb833] text-white shadow-lg shadow-[#ff9900]/30 flex items-center justify-center text-lg hover:scale-110 active:scale-95 transition-transform"
                     aria-label="Open Embed Tweets"
                 >
                     🔗
