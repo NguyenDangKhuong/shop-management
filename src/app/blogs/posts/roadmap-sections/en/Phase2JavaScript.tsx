@@ -166,52 +166,99 @@ for (var i = 0; i < 5; i++) {
                     </div>
 
                     <Paragraph><Highlight>Arrow functions</Highlight> do NOT have their own this — they inherit this from the parent scope (lexical this). That&apos;s why arrow functions are ideal for callbacks.</Paragraph>
-                    <CodeBlock title="Example of each rule">{`// 1️⃣ Default binding — this = window (browser) / undefined (strict mode)
+                    <CodeBlock title="this-each-rule.js">{`// 1️⃣ Default binding — this = window (browser) / undefined (strict mode)
 function showThis() {
     console.log(this);
 }
 showThis(); // window (non-strict) / undefined (strict)
 
 // 2️⃣ Implicit binding — this = object before the dot
-const user = {
+const khuong = {
     name: 'Khuong',
-    greet() { console.log(this.name); }
+    greet() { console.log('Hi, I am ' + this.name) }
 };
-user.greet(); // "Khuong" ✅
-const fn = user.greet;
-fn(); // undefined ❌ (lost context!)
+khuong.greet(); // "Hi, I am Khuong" ✅
 
-// 3️⃣ Explicit binding — call / apply / bind
-function greet(greeting) {
-    console.log(greeting + ', ' + this.name);
+const fn = khuong.greet;
+fn(); // "Hi, I am undefined" ❌ (lost context!)
+// → When you detach a method from its object, this is lost!
+
+// 3️⃣ Explicit binding — call / apply / bind (see detail below)
+function introduce(greeting, emoji) {
+    console.log(greeting + ', I am ' + this.name + ' ' + emoji);
 }
-greet.call({ name: 'An' }, 'Hi');    // "Hi, An"
-greet.apply({ name: 'An' }, ['Hi']); // "Hi, An"
-const bound = greet.bind({ name: 'An' });
-bound('Hello'); // "Hello, An"
+const lan = { name: 'Lan' }
+const binh = { name: 'Binh' }
+
+introduce.call(lan, 'Hey', '👋');    // "Hey, I am Lan 👋"
+introduce.apply(binh, ['Hi', '🤝']); // "Hi, I am Binh 🤝"
+const boundFn = introduce.bind(lan, 'Hello');
+boundFn('😄'); // "Hello, I am Lan 😄"
 
 // 4️⃣ new binding — this = newly created object
 function Person(name) {
     this.name = name; // this = new {}
 }
-const p = new Person('Binh');
-console.log(p.name); // "Binh"
+const p = new Person('Minh');
+console.log(p.name); // "Minh"
 
 // 5️⃣ Arrow function — NO own this
 const team = {
     name: 'Frontend',
-    members: ['A', 'B'],
+    members: ['Khuong', 'Lan'],
     show() {
         this.members.forEach((m) => {
-            console.log(m + ' belongs to ' + this.name);
+            console.log(m + ' belongs to team ' + this.name);
             // Arrow inherits this from show() → team
         });
     }
 };
 team.show();
-// "A belongs to Frontend"
-// "B belongs to Frontend"`}</CodeBlock>
-                    <Callout type="tip">Priority order: <strong>new &gt; explicit &gt; implicit &gt; default</strong>. Arrow functions bypass all these rules.</Callout>
+// "Khuong belongs to team Frontend"
+// "Lan belongs to team Frontend"`}</CodeBlock>
+
+                    <CodeBlock title="call-bind-apply.js">{`// 🎯 call, bind, apply — 3 ways to "force" this for a function
+//
+// Real example: Khuong has an introduce() method
+// but wants Lan to "speak on his behalf" → use call/apply/bind
+
+function introduce(greeting) {
+    return greeting + ', I am ' + this.name;
+}
+
+const khuong = { name: 'Khuong' }
+const lan = { name: 'Lan' }
+
+// ═══ CALL — invoke NOW, pass args ONE BY ONE ═══
+introduce.call(khuong, 'Hey')  // "Hey, I am Khuong"
+introduce.call(lan, 'Hi')     // "Hi, I am Lan"
+// → call(thisArg, arg1, arg2, ...)
+
+// ═══ APPLY — invoke NOW, pass args AS ARRAY ═══
+introduce.apply(khuong, ['Hello'])  // "Hello, I am Khuong"
+// → apply(thisArg, [arg1, arg2, ...])
+// → Difference from call: args passed as ARRAY
+
+// ═══ BIND — does NOT invoke, returns NEW function ═══
+const khuongIntro = introduce.bind(khuong)
+khuongIntro('Hey')   // "Hey, I am Khuong"
+khuongIntro('Yo')    // "Yo, I am Khuong"
+// → bind creates a new function with this "locked" = khuong
+// → No matter how many times called, this stays the same
+
+// 📌 SUMMARY:
+// call  → invoke NOW + individual args  → fn.call(obj, a, b)
+// apply → invoke NOW + ARRAY args       → fn.apply(obj, [a, b])
+// bind  → create NEW function (no call) → const newFn = fn.bind(obj)
+
+// 💡 When to use?
+// call/apply: when you want to "borrow" a method once
+// bind: when passing a function elsewhere (event handler, callback)
+
+// Real example: bind in React (old class components)
+// this.handleClick = this.handleClick.bind(this) ← keep this = component`}</CodeBlock>
+
+                    <Callout type="tip">Priority order: <strong>new &gt; explicit (call/apply/bind) &gt; implicit (obj.method) &gt; default (window)</strong>. Arrow functions bypass all these rules.</Callout>
                 </TopicModal>
 
                 <TopicModal title="Prototype & Inheritance" emoji="🧬" color="#34d399" summary="Prototype = 'family inheritance' for objects — the chain works like asking your parents, then grandparents">
@@ -264,6 +311,48 @@ child.house;    // '🏠' (inherited from grandpa — 2 levels up!)
 
 // Chain: child → dad → grandpa → Object.prototype → null
 // 👦 child → 👨 dad → 👴 grandpa → ❌ end`}</CodeBlock>
+
+                    <CodeBlock title="prototype-practical-usage.js">{`// ═══ 1. WHY DOES [1,2,3].map() WORK? ═══
+// Because .map() lives on Array.prototype!
+const arr = [1, 2, 3]
+arr.map(x => x * 2)  // [2, 4, 6]
+// arr doesn't have .map() → JS goes up arr.__proto__ = Array.prototype → found!
+
+// Same idea:
+'hello'.toUpperCase() // String.prototype.toUpperCase
+(5).toFixed(2)        // Number.prototype.toFixed
+
+// ═══ 2. ADD METHOD TO ALL ARRAYS (Polyfill) ═══
+Array.prototype.last = function() {
+    return this[this.length - 1]
+}
+[1, 2, 3].last()  // 3 — ALL arrays now have .last()!
+// ⚠️ Warning: don't modify built-in prototypes in production
+
+// ═══ 3. METHOD BORROWING ═══
+const arrayLike = { 0: 'a', 1: 'b', length: 2 }
+// arrayLike is NOT an array → has no .join()
+// → Borrow from Array.prototype:
+Array.prototype.join.call(arrayLike, '-')  // "a-b"
+
+// ═══ 4. PERFORMANCE: PROTOTYPE vs INSTANCE ═══
+// ❌ Each instance RECREATES the function → wastes memory
+function Dog(name) {
+    this.name = name
+    this.bark = function() { return this.name + ' woof!' }
+    // → 1000 dogs = 1000 copies of bark()
+}
+
+// ✅ Put on prototype → SHARE 1 single function
+function Dog(name) { this.name = name }
+Dog.prototype.bark = function() { return this.name + ' woof!' }
+// → 1000 dogs still share just 1 bark() on prototype!
+
+// ═══ 5. hasOwnProperty — OWN vs INHERITED ═══
+const child = Object.create({ inherited: true })
+child.own = true
+child.hasOwnProperty('own')       // true  — own property
+child.hasOwnProperty('inherited') // false — inherited from prototype`}</CodeBlock>
                     <Callout type="warning">ES6 Class is just <Highlight>syntactic sugar</Highlight> — underneath it still uses prototypes. Understanding prototypes = understanding JS at a deep level.</Callout>
                 </TopicModal>
 
@@ -707,6 +796,70 @@ const result = await Promise.race([
                         ))}
                     </div>
                     <a href="/blogs/ecmascript-features" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
+                </TopicModal>
+
+                <TopicModal title="Dynamic Import + Suspense" emoji="📦" color="#8b5cf6" summary="Code splitting — split bundle into small chunks, load on demand, reduce page load time">
+                    <Paragraph><Highlight>Dynamic Import</Highlight> lets you load code <strong>when needed</strong> instead of loading everything upfront — smaller bundle, faster page render.</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-violet-500/10 border border-violet-500/20">
+                            <div className="text-violet-400 font-bold text-sm">Static vs Dynamic Import</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Static</strong>: <InlineCode>import X from Y</InlineCode> — loads EVERYTHING upfront, big bundle<br />
+                                • <strong>Dynamic</strong>: <InlineCode>{'import(\'./X\')'}</InlineCode> — loads WHEN NEEDED, splits into small chunks
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="dynamic-import.js">{`// ═══ STATIC IMPORT — loads EVERYTHING upfront ═══
+import HeavyChart from './HeavyChart' // 500KB in main bundle
+
+// ═══ DYNAMIC IMPORT — loads WHEN NEEDED ═══
+const module = await import('./HeavyChart') // returns a Promise!
+const HeavyChart = module.default
+
+// ═══ Without Dynamic Import ═══
+// [main.js: 2MB] ← user waits for ALL 2MB before seeing the page
+
+// ═══ With Dynamic Import ═══
+// [main.js: 500KB] → page shows IMMEDIATELY
+//   ↓ user clicks "View chart"
+// [chart-chunk.js: 300KB] → only loads now
+//   ↓ user opens settings
+// [settings-chunk.js: 200KB] → loads later`}</CodeBlock>
+
+                    <CodeBlock title="react-lazy-suspense.jsx">{`// ═══ 1. React.lazy + Suspense ═══
+import { lazy, Suspense } from 'react'
+
+const HeavyChart = lazy(() => import('./HeavyChart'))
+// → Component does NOT load upfront
+// → Only downloads when component renders for the first time
+
+function Dashboard() {
+  return (
+    <Suspense fallback={<div>Loading chart...</div>}>
+      <HeavyChart />
+    </Suspense>
+  )
+}
+// Suspense "catches" the loading state
+// → shows fallback → swaps when chunk finishes loading
+
+// ═══ 2. Next.js dynamic() — more options ═══
+import dynamic from 'next/dynamic'
+
+const Chart = dynamic(() => import('./HeavyChart'), {
+  loading: () => <p>Loading...</p>,  // fallback UI
+  ssr: false  // do NOT render on server (for window, canvas, etc.)
+})
+
+// ═══ 3. WHEN TO USE? ═══
+// ✅ Heavy components (chart, editor, map) → reduce initial bundle
+// ✅ Rarely-seen components (modal, hidden tabs) → load on demand
+// ✅ Components using browser APIs (window, canvas) → ssr: false
+// ❌ Lightweight, always-visible components → use static import`}</CodeBlock>
+
+                    <Callout type="tip">Interview: {`"Dynamic import = code splitting. Split bundle into chunks, load on demand. React.lazy + Suspense handles loading UI. Next.js dynamic() adds ssr: false for client-only components."`}</Callout>
                 </TopicModal>
 
                 <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== is like a chill teacher who lets everything pass, === is the strict teacher who checks everything">

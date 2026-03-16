@@ -165,52 +165,99 @@ for (var i = 0; i < 5; i++) {
                     </div>
 
                     <Paragraph><Highlight>Arrow function</Highlight> KHÔNG có this riêng — nó kế thừa this từ scope cha (lexical this). Đây là lý do arrow function phù hợp cho callbacks.</Paragraph>
-                    <CodeBlock title="Ví dụ từng rule">{`// 1️⃣ Default binding — this = window (browser) / undefined (strict mode)
+                    <CodeBlock title="this-theo-tung-rule.js">{`// 1️⃣ Default binding — this = window (browser) / undefined (strict mode)
 function showThis() {
     console.log(this);
 }
 showThis(); // window (non-strict) / undefined (strict)
 
 // 2️⃣ Implicit binding — this = object trước dấu chấm
-const user = {
+const khuong = {
     name: 'Khuong',
-    greet() { console.log(this.name); }
+    greet() { console.log('Xin chào, tôi là ' + this.name) }
 };
-user.greet(); // "Khuong" ✅
-const fn = user.greet;
-fn(); // undefined ❌ (bị mất context!)
+khuong.greet(); // "Xin chào, tôi là Khuong" ✅
 
-// 3️⃣ Explicit binding — call / apply / bind
-function greet(greeting) {
-    console.log(greeting + ', ' + this.name);
+const fn = khuong.greet;
+fn(); // "Xin chào, tôi là undefined" ❌ (bị mất context!)
+// → Khi tách method ra khỏi object, this bị mất!
+
+// 3️⃣ Explicit binding — call / apply / bind (xem chi tiết bên dưới)
+function introduce(greeting, emoji) {
+    console.log(greeting + ', tôi là ' + this.name + ' ' + emoji);
 }
-greet.call({ name: 'An' }, 'Hi');    // "Hi, An"
-greet.apply({ name: 'An' }, ['Hi']); // "Hi, An"
-const bound = greet.bind({ name: 'An' });
-bound('Hello'); // "Hello, An"
+const lan = { name: 'Lan' }
+const binh = { name: 'Binh' }
+
+introduce.call(lan, 'Hey', '👋');    // "Hey, tôi là Lan 👋"
+introduce.apply(binh, ['Hi', '🤝']); // "Hi, tôi là Binh 🤝"
+const boundFn = introduce.bind(lan, 'Hello');
+boundFn('😄'); // "Hello, tôi là Lan 😄"
 
 // 4️⃣ new binding — this = object mới tạo
 function Person(name) {
     this.name = name; // this = {} mới
 }
-const p = new Person('Binh');
-console.log(p.name); // "Binh"
+const p = new Person('Minh');
+console.log(p.name); // "Minh"
 
 // 5️⃣ Arrow function — KHÔNG có this riêng
 const team = {
     name: 'Frontend',
-    members: ['A', 'B'],
+    members: ['Khuong', 'Lan'],
     show() {
         this.members.forEach((m) => {
-            console.log(m + ' thuộc ' + this.name);
+            console.log(m + ' thuộc team ' + this.name);
             // Arrow kế thừa this từ show() → team
         });
     }
 };
 team.show();
-// "A thuộc Frontend"
-// "B thuộc Frontend"`}</CodeBlock>
-                    <Callout type="tip">Thứ tự ưu tiên: <strong>new &gt; explicit &gt; implicit &gt; default</strong>. Arrow function bỏ qua tất cả rules này.</Callout>
+// "Khuong thuộc team Frontend"
+// "Lan thuộc team Frontend"`}</CodeBlock>
+
+                    <CodeBlock title="call-bind-apply.js">{`// 🎯 call, bind, apply — 3 cách "ép" this cho function
+//
+// Ví dụ thực tế: Khuong có method introduce()
+// nhưng muốn NHỜ Lan "nói hộ" → dùng call/apply/bind
+
+function introduce(greeting) {
+    return greeting + ', tôi là ' + this.name;
+}
+
+const khuong = { name: 'Khuong' }
+const lan = { name: 'Lan' }
+
+// ═══ CALL — gọi NGAY, truyền args TỪNG CÁI ═══
+introduce.call(khuong, 'Hey')  // "Hey, tôi là Khuong"
+introduce.call(lan, 'Hi')     // "Hi, tôi là Lan"
+// → call(thisArg, arg1, arg2, ...)
+
+// ═══ APPLY — gọi NGAY, truyền args BẰNG MẢNG ═══
+introduce.apply(khuong, ['Hello'])  // "Hello, tôi là Khuong"
+// → apply(thisArg, [arg1, arg2, ...])
+// → Khác call ở chỗ: args truyền bằng ARRAY
+
+// ═══ BIND — KHÔNG gọi ngay, trả về function MỚI ═══
+const khuongIntro = introduce.bind(khuong)
+khuongIntro('Chào')  // "Chào, tôi là Khuong"
+khuongIntro('Hey')   // "Hey, tôi là Khuong"
+// → bind tạo function mới với this "khóa cứng" = khuong
+// → Gọi bao nhiêu lần cũng giữ nguyên this
+
+// 📌 TÓM TẮT:
+// call  → gọi NGAY + args riêng lẻ     → fn.call(obj, a, b)
+// apply → gọi NGAY + args MẢNG         → fn.apply(obj, [a, b])
+// bind  → tạo function MỚI (chưa gọi)  → const newFn = fn.bind(obj)
+
+// 💡 Dùng khi nào?
+// call/apply: khi muốn "mượn" method 1 lần
+// bind: khi cần truyền function đi nơi khác (event handler, callback)
+
+// Ví dụ thực tế: bind trong React (class component cũ)
+// this.handleClick = this.handleClick.bind(this) ← giữ this = component`}</CodeBlock>
+
+                    <Callout type="tip">Thứ tự ưu tiên: <strong>new &gt; explicit (call/apply/bind) &gt; implicit (obj.method) &gt; default (window)</strong>. Arrow function bỏ qua tất cả rules này.</Callout>
                 </TopicModal>
 
                 <TopicModal title="Prototype & Inheritance" emoji="🧬" color="#34d399" summary="Prototype = 'gia tài' mà object con thừa kế từ object cha — chuỗi thừa kế giống dòng họ">
@@ -263,6 +310,48 @@ child.house;    // '🏠' (thừa kế từ ông — đi lên 2 level!)
 
 // Chain: child → dad → grandpa → Object.prototype → null
 // 👦 con → 👨 bố → 👴 ông → ❌ hết`}</CodeBlock>
+
+                    <CodeBlock title="prototype-ung-dung-thuc-te.js">{`// ═══ 1. TẠI SAO [1,2,3].map() CHẠY ĐƯỢC? ═══
+// Vì .map() nằm trên Array.prototype!
+const arr = [1, 2, 3]
+arr.map(x => x * 2)  // [2, 4, 6]
+// arr không có .map() → JS đi lên arr.__proto__ = Array.prototype → tìm thấy!
+
+// Tương tự:
+'hello'.toUpperCase() // String.prototype.toUpperCase
+(5).toFixed(2)        // Number.prototype.toFixed
+
+// ═══ 2. THÊM METHOD CHO TẤT CẢ ARRAY (Polyfill) ═══
+Array.prototype.last = function() {
+    return this[this.length - 1]
+}
+[1, 2, 3].last()  // 3 — TẤT CẢ array đều có .last() ngay!
+// ⚠️ Cẩn thận: không nên modify built-in prototypes trong production
+
+// ═══ 3. MƯỢN METHOD (Method Borrowing) ═══
+const arrayLike = { 0: 'a', 1: 'b', length: 2 }
+// arrayLike KHÔNG phải array → không có .join()
+// → Mượn từ Array.prototype:
+Array.prototype.join.call(arrayLike, '-')  // "a-b"
+
+// ═══ 4. PERFORMANCE: PROTOTYPE vs INSTANCE ═══
+// ❌ Mỗi instance TẠO LẠI function mới → tốn bộ nhớ
+function Dog(name) {
+    this.name = name
+    this.bark = function() { return this.name + ' woof!' }
+    // → 1000 dogs = 1000 bản copy bark()
+}
+
+// ✅ Đặt trên prototype → CHIA SẺ 1 function duy nhất
+function Dog(name) { this.name = name }
+Dog.prototype.bark = function() { return this.name + ' woof!' }
+// → 1000 dogs vẫn chỉ có 1 bark() trên prototype!
+
+// ═══ 5. hasOwnProperty — PHÂN BIỆT gia tài tự có vs thừa kế ═══
+const child = Object.create({ inherited: true })
+child.own = true
+child.hasOwnProperty('own')       // true  — tài sản tự có
+child.hasOwnProperty('inherited') // false — thừa kế từ prototype`}</CodeBlock>
                     <Callout type="warning">ES6 Class chỉ là <Highlight>syntactic sugar</Highlight> — bên dưới vẫn dùng prototype. Hiểu prototype = hiểu JS ở level sâu.</Callout>
                 </TopicModal>
 
@@ -704,6 +793,70 @@ const result = await Promise.race([
                         ))}
                     </div>
                     <a href="/blogs/ecmascript-features" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
+                </TopicModal>
+
+                <TopicModal title="Dynamic Import + Suspense" emoji="📦" color="#8b5cf6" summary="Code splitting — chia bundle thành chunks nhỏ, load theo nhu cầu, giảm thời gian tải trang">
+                    <Paragraph><Highlight>Dynamic Import</Highlight> cho phép load code <strong>khi cần</strong> thay vì load hết lúc đầu — giảm bundle size, trang hiện nhanh hơn.</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-violet-500/10 border border-violet-500/20">
+                            <div className="text-violet-400 font-bold text-sm">Static vs Dynamic Import</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Static</strong>: <InlineCode>import X from Y</InlineCode> — load TẤT CẢ lúc đầu, bundle to<br />
+                                • <strong>Dynamic</strong>: <InlineCode>{'import(\'./X\')'}</InlineCode> — load KHI CẦN, chia thành chunk nhỏ
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="dynamic-import.js">{`// ═══ STATIC IMPORT — load TẤT CẢ lúc đầu ═══
+import HeavyChart from './HeavyChart' // 500KB nằm trong main bundle
+
+// ═══ DYNAMIC IMPORT — load KHI CẦN ═══
+const module = await import('./HeavyChart') // trả về Promise!
+const HeavyChart = module.default
+
+// ═══ Không có Dynamic Import ═══
+// [main.js: 2MB] ← user đợi load HẾT 2MB mới thấy trang
+
+// ═══ Có Dynamic Import ═══
+// [main.js: 500KB] → trang hiện NGAY
+//   ↓ user click "Xem biểu đồ"
+// [chart-chunk.js: 300KB] → chỉ load lúc này
+//   ↓ user mở settings
+// [settings-chunk.js: 200KB] → load sau`}</CodeBlock>
+
+                    <CodeBlock title="react-lazy-suspense.jsx">{`// ═══ 1. React.lazy + Suspense ═══
+import { lazy, Suspense } from 'react'
+
+const HeavyChart = lazy(() => import('./HeavyChart'))
+// → Component KHÔNG load lúc đầu
+// → Chỉ download file khi component render lần đầu
+
+function Dashboard() {
+  return (
+    <Suspense fallback={<div>Đang tải biểu đồ...</div>}>
+      <HeavyChart />
+    </Suspense>
+  )
+}
+// Suspense "bắt" trạng thái loading
+// → hiện fallback → swap khi chunk load xong
+
+// ═══ 2. Next.js dynamic() — nhiều options hơn ═══
+import dynamic from 'next/dynamic'
+
+const Chart = dynamic(() => import('./HeavyChart'), {
+  loading: () => <p>Đang tải...</p>,  // fallback UI
+  ssr: false  // KHÔNG render trên server (dùng cho window, canvas)
+})
+
+// ═══ 3. KHI NÀO DÙNG? ═══
+// ✅ Component nặng (chart, editor, map) → giảm initial bundle
+// ✅ Component ít user thấy (modal, tab ẩn) → load khi cần
+// ✅ Component dùng browser API (window, canvas) → ssr: false
+// ❌ Component nhẹ, luôn hiển thị → static import bình thường`}</CodeBlock>
+
+                    <Callout type="tip">Interview: {`"Dynamic import = code splitting. Chia bundle thành chunks, load theo nhu cầu. React.lazy + Suspense xử lý loading UI. Next.js dynamic() thêm ssr: false cho client-only components."`}</Callout>
                 </TopicModal>
 
                 <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== giống thầy dễ tính cho qua hết, === giống thầy nghiêm khắc kiểm tra kỹ">
