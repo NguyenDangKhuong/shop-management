@@ -10,7 +10,7 @@ interface SavedUser {
 
 type FeedMode = 'for_you' | 'following' | 'pinned_user' | 'likes' | 'user'
 
-const PINNED_USERNAME = 'linhnhi_69'
+const PINNED_USERNAME = process.env.NEXT_PUBLIC_PINNED_USERNAME || ''
 
 /**
  * TweetsFeed — Unified feed combining HomeFeed + GraphQLTimeline

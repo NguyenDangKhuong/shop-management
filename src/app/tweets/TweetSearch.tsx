@@ -13,7 +13,7 @@ export function TweetSearch() {
     const [users, setUsers] = useState<SavedUser[]>([])
     const [adding, setAdding] = useState(false)
     const [error, setError] = useState('')
-    const [selectedUser, setSelectedUser] = useState<string | null>('linhnhi_69')
+    const [selectedUser, setSelectedUser] = useState<string | null>(process.env.NEXT_PUBLIC_PINNED_USERNAME || null)
     const [deleteConfirm, setDeleteConfirm] = useState<SavedUser | null>(null)
     // Cookie state
     const [cookieModal, setCookieModal] = useState(false)

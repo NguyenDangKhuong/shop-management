@@ -44,6 +44,32 @@ function greet() { console.log("Hello!"); }`}</CodeBlock>
                             <div className="text-slate-300 text-sm mt-1">• <strong>Global</strong> — accessible everywhere<br />• <strong>Function</strong> — only accessible within the function<br />• <strong>Block</strong> (let/const) — only within {'{}'}</div>
                         </div>
                     </div>
+                    <CodeBlock title="3-types-of-scope.js">{`// ═══ 1. GLOBAL SCOPE ═══
+var globalVar = 'I am everywhere'       // global (var outside function)
+let globalLet = 'I am also global'      // global (let outside block)
+// → Accessible from ANYWHERE in the file
+
+// ═══ 2. FUNCTION SCOPE ═══
+function greet() {
+  var secret = 'only I know'            // function scope
+  let also = 'me too'                   // function scope (inside function)
+  console.log(globalVar)                // ✅ accessing global OK
+}
+console.log(secret)                     // ❌ ReferenceError — outside function!
+
+// ═══ 3. BLOCK SCOPE ═══ (let/const inside {})
+if (true) {
+  var leaked = 'I escaped!'            // ⚠️ var has NO block scope → leaks out of if
+  let trapped = 'I am trapped'         // ✅ let HAS block scope → stays inside if
+  const also = 'me too'                // ✅ const also has block scope
+}
+console.log(leaked)                     // ✅ 'I escaped!' — var leaks out of block!
+console.log(trapped)                    // ❌ ReferenceError — let is trapped in block
+
+// 📌 Summary:
+// var   → function scope (ignores block {})
+// let   → block scope    (respects block {})
+// const → block scope    (like let, but no re-assignment)`}</CodeBlock>
                     <Paragraph><Highlight>Closure</Highlight> = a function that &quot;remembers&quot; the scope where it was created, even when executed elsewhere.</Paragraph>
                     <CodeBlock title="Closure classic example">{`function makeCounter() {
     let count = 0; // "Private" variable
@@ -62,24 +88,37 @@ counter.getCount();  // 2
 for (var i = 0; i < 5; i++) {
     setTimeout(() => console.log(i), 100);
 }
-// Why? var has function scope, not block scope.
-// When setTimeout runs, the loop has ended, i = 5.
-// All 5 callbacks reference THE SAME variable i.
+// 🔍 STEP BY STEP:
+// 1. The for loop runs SYNCHRONOUSLY: i = 0, 1, 2, 3, 4, then i = 5 → stops
+// 2. setTimeout places 5 callbacks into the task queue (to run AFTER 100ms)
+// 3. var has FUNCTION scope → there is only ONE variable i
+// 4. After 100ms, all 5 callbacks run → they all read the SAME i → i = 5
+//
+// Timeline:
+// t=0ms:  for loop runs → i=0,1,2,3,4,5 (done) | 5 callbacks waiting in queue
+// t=100ms: callback 1 runs → console.log(i) → i is already 5 → prints 5
+//          callback 2 runs → console.log(i) → i is still 5 → prints 5
+//          ... (all print 5)
 
 // ✅ Using let — prints 0, 1, 2, 3, 4
 for (let i = 0; i < 5; i++) {
     setTimeout(() => console.log(i), 100);
 }
-// Why? let has block scope — each iteration creates
-// a NEW variable i, the callback closure "captures" the right value.
+// 🔍 EXPLANATION:
+// let has BLOCK scope → each iteration creates a DIFFERENT variable i
+// Iteration 0: creates i₀ = 0, callback captures i₀
+// Iteration 1: creates i₁ = 1, callback captures i₁
+// Iteration 2: creates i₂ = 2, callback captures i₂
+// → Each callback closure "remembers" ITS OWN value of i
 
-// ✅ Fix with IIFE (before let existed)
+// ✅ Fix with IIFE (old way before let existed)
 for (var i = 0; i < 5; i++) {
     (function(j) {
         setTimeout(() => console.log(j), 100);
     })(i);
 }
-// IIFE creates a new scope, "copies" the value of i into j.`}</CodeBlock>
+// IIFE creates a new function scope, "copies" the value of i into j
+// → Same idea as let creating a new block scope`}</CodeBlock>
                 </TopicModal>
 
                 <TopicModal title="this keyword" emoji="👉" color="#f472b6" summary="this = the word 'me' in JS — changes based on who's calling (regular) or who wrote it (arrow)">

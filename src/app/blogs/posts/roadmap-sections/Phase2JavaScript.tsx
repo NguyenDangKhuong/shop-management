@@ -40,10 +40,35 @@ function greet() { console.log("Hello!"); }`}</CodeBlock>
                     <Paragraph><Highlight>Scope</Highlight> = phạm vi truy cập biến. JS dùng <Highlight>Lexical Scope</Highlight> — scope được xác định lúc code được viết, không phải lúc chạy.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                            <div className="text-purple-400 font-bold text-sm">3 loại Scope</div>
                             <div className="text-slate-300 text-sm mt-1">• <strong>Global</strong> — truy cập ở mọi nơi<br />• <strong>Function</strong> — chỉ truy cập trong function<br />• <strong>Block</strong> (let/const) — chỉ trong {'{}'}</div>
                         </div>
                     </div>
+                    <CodeBlock title="3-loại-scope.js">{`// ═══ 1. GLOBAL SCOPE ═══
+var globalVar = 'tôi ở khắp nơi'     // global (var ngoài function)
+let globalLet = 'tôi cũng global'     // global (let ngoài block)
+// → Truy cập được từ BẤT KỲ ĐÂU trong file
+
+// ═══ 2. FUNCTION SCOPE ═══
+function greet() {
+  var secret = 'chỉ tôi biết'        // function scope
+  let also = 'tôi cũng vậy'          // function scope (vì trong function)
+  console.log(globalVar)              // ✅ truy cập global OK
+}
+console.log(secret)                   // ❌ ReferenceError — ra ngoài function rồi!
+
+// ═══ 3. BLOCK SCOPE ═══ (let/const trong {})
+if (true) {
+  var leaked = 'tôi thoát ra!'       // ⚠️ var KHÔNG có block scope → thoát ra ngoài if
+  let trapped = 'tôi bị nhốt'        // ✅ let CÓ block scope → chỉ trong if
+  const also = 'tôi cũng bị nhốt'    // ✅ const cũng block scope
+}
+console.log(leaked)                   // ✅ 'tôi thoát ra!' — var thoát block!
+console.log(trapped)                  // ❌ ReferenceError — let bị nhốt trong block
+
+// 📌 Tóm tắt:
+// var   → function scope (bỏ qua block {})
+// let   → block scope    (tôn trọng block {})
+// const → block scope    (giống let, nhưng không re-assign)`}</CodeBlock>
                     <Paragraph><Highlight>Closure</Highlight> = function &quot;nhớ&quot; scope lúc nó được tạo, kể cả khi chạy ở nơi khác.</Paragraph>
                     <CodeBlock title="Closure classic example">{`function makeCounter() {
     let count = 0; // Biến "private"
@@ -62,24 +87,37 @@ counter.getCount();  // 2
 for (var i = 0; i < 5; i++) {
     setTimeout(() => console.log(i), 100);
 }
-// Tại sao? var có function scope, không có block scope.
-// Khi setTimeout chạy, vòng for đã kết thúc, i = 5.
-// Tất cả 5 callback đều tham chiếu CÙNG MỘT biến i.
+// 🔍 GIẢI THÍCH TỪNG BƯỚC:
+// 1. Vòng for chạy ĐỒNG BỘ: i = 0, 1, 2, 3, 4, rồi i = 5 → dừng
+// 2. setTimeout đặt 5 callback vào hàng đợi (sẽ chạy SAU 100ms)
+// 3. var có FUNCTION scope → chỉ có 1 biến i duy nhất
+// 4. Khi 100ms trôi qua, 5 callback chạy → đều đọc CÙNG biến i → i = 5
+//
+// Timeline:
+// t=0ms:  for chạy → i=0,1,2,3,4,5 (xong) | 5 callback chờ trong queue
+// t=100ms: callback 1 chạy → console.log(i) → i đã = 5 → in 5
+//          callback 2 chạy → console.log(i) → i vẫn = 5 → in 5
+//          ... (tất cả in 5)
 
 // ✅ Dùng let — in ra 0, 1, 2, 3, 4
 for (let i = 0; i < 5; i++) {
     setTimeout(() => console.log(i), 100);
 }
-// Tại sao? let có block scope — mỗi vòng lặp tạo
-// một biến i MỚI, callback closure "bắt" đúng giá trị.
+// 🔍 GIẢI THÍCH:
+// let có BLOCK scope → mỗi vòng lặp tạo biến i KHÁC NHAU
+// Vòng 0: tạo i₀ = 0, callback bắt i₀
+// Vòng 1: tạo i₁ = 1, callback bắt i₁
+// Vòng 2: tạo i₂ = 2, callback bắt i₂
+// → Mỗi callback closure "nhớ" đúng giá trị i CỦA MÌNH
 
-// ✅ Fix bằng IIFE (trước khi có let)
+// ✅ Fix bằng IIFE (cách cũ trước khi có let)
 for (var i = 0; i < 5; i++) {
     (function(j) {
         setTimeout(() => console.log(j), 100);
     })(i);
 }
-// IIFE tạo scope mới, "copy" giá trị i vào j.`}</CodeBlock>
+// IIFE tạo function scope mới, "copy" giá trị i vào j
+// → Giống cách let tạo block scope mới`}</CodeBlock>
                 </TopicModal>
 
                 <TopicModal title="this keyword" emoji="👉" color="#f472b6" summary="this = chữ 'tôi' trong JS — thay đổi tùy ai đang gọi (regular) hoặc ai đã viết (arrow)">

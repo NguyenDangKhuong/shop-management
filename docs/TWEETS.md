@@ -4,7 +4,7 @@ Trang hiển thị Twitter/X timelines của các username đã lưu.
 
 ## Tính năng
 
-- **Feed tabs** — For You, Following, @linhnhi_69 (pinned), ❤️ Liked
+- **Feed tabs** — For You, Following, @pinned (from env), ❤️ Liked
 - **Liked tweets** — Hiển thị tweets mà user pinned đã like (GraphQL Likes API)
 - **Thêm username** — Nhập username X (vd: `vercel`, `@reactjs`) → bấm "Thêm" hoặc Enter
 - **Lưu vào DB** — Usernames được lưu trong MongoDB (`twitterusers` collection)
@@ -87,6 +87,7 @@ Xóa username theo MongoDB ID.
 | `TWEETS_ONLY_DOMAIN` | Domain chỉ cho phép /tweets |
 | `BLOCKED_DOMAINS_FOR_TWEETS` | Domain bị chặn /tweets |
 | `NEXT_PUBLIC_VIDEO_PROXY_URL` | Cloudflare video proxy URL |
+| `NEXT_PUBLIC_PINNED_USERNAME` | Pinned username tab in tweets feed |
 
 ## Tech Stack
 
