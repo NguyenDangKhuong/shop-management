@@ -343,6 +343,131 @@ const difficultyConfig: Record<Difficulty, { color: string; bg: string }> = {
 const allTopics: Topic[] = ['JavaScript', 'React', 'CSS', 'HTML', 'Async', 'OOP', 'Closure', 'Security', 'Performance', 'Networking', 'Web APIs', 'Testing']
 
 // ═══════════════════════════════════════════════
+//  Answer Renderer (lightweight markdown-like)
+// ═══════════════════════════════════════════════
+
+function AnswerRenderer({ text }: { text: string }) {
+    const blocks = text.split('\n')
+    const elements: React.ReactNode[] = []
+    let i = 0
+
+    while (i < blocks.length) {
+        const line = blocks[i]
+
+        // Code block: ```...```
+        if (line.startsWith('```')) {
+            const codeLines: string[] = []
+            i++
+            while (i < blocks.length && !blocks[i].startsWith('```')) {
+                codeLines.push(blocks[i])
+                i++
+            }
+            i++ // skip closing ```
+            elements.push(
+                <pre key={`code-${i}`} className="p-3 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed my-2"
+                    style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}>
+                    {codeLines.join('\n')}
+                </pre>
+            )
+            continue
+        }
+
+        // Table: lines starting with |
+        if (line.startsWith('|')) {
+            const tableLines: string[] = []
+            while (i < blocks.length && blocks[i].startsWith('|')) {
+                // skip separator rows like |---|---|
+                if (!/^\|[\s-|]+\|$/.test(blocks[i])) {
+                    tableLines.push(blocks[i])
+                }
+                i++
+            }
+            const rows = tableLines.map(r => r.split('|').filter(c => c.trim() !== ''))
+            elements.push(
+                <table key={`tbl-${i}`} className="w-full text-xs my-2 border-collapse">
+                    {rows.length > 0 && (
+                        <thead>
+                            <tr>{rows[0].map((h, hi) => (
+                                <th key={hi} className="text-left px-2 py-1.5 font-semibold border-b" style={{ borderColor: 'var(--border-primary)', color: 'var(--text-primary)' }}>{h.trim()}</th>
+                            ))}</tr>
+                        </thead>
+                    )}
+                    <tbody>
+                        {rows.slice(1).map((row, ri) => (
+                            <tr key={ri}>
+                                {row.map((cell, ci) => (
+                                    <td key={ci} className="px-2 py-1.5 border-b" style={{ borderColor: 'var(--border-primary)', color: 'var(--text-secondary)' }}>
+                                        <InlineCode text={cell.trim()} />
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )
+            continue
+        }
+
+        // Bullet list: lines starting with • or -
+        if (line.match(/^[•\-]\s/)) {
+            const items: string[] = []
+            while (i < blocks.length && blocks[i].match(/^[•\-]\s/)) {
+                items.push(blocks[i].replace(/^[•\-]\s/, ''))
+                i++
+            }
+            elements.push(
+                <ul key={`ul-${i}`} className="text-sm space-y-1 my-1 ml-1">
+                    {items.map((item, ii) => (
+                        <li key={ii} className="flex gap-2" style={{ color: 'var(--text-secondary)' }}>
+                            <span className="text-[var(--text-muted)] select-none">•</span>
+                            <span><InlineCode text={item} /></span>
+                        </li>
+                    ))}
+                </ul>
+            )
+            continue
+        }
+
+        // Empty line = spacer
+        if (line.trim() === '') {
+            elements.push(<div key={`sp-${i}`} className="h-1" />)
+            i++
+            continue
+        }
+
+        // Regular text line with inline code
+        elements.push(
+            <p key={`p-${i}`} className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                <InlineCode text={line} />
+            </p>
+        )
+        i++
+    }
+
+    return <div className="space-y-1">{elements}</div>
+}
+
+// Inline code renderer: wraps `code` in styled <code> tags
+function InlineCode({ text }: { text: string }) {
+    const parts = text.split(/(`[^`]+`)/g)
+    return (
+        <>
+            {parts.map((part, i) => {
+                if (part.startsWith('`') && part.endsWith('`')) {
+                    return (
+                        <code key={i} className="px-1.5 py-0.5 rounded text-xs font-mono"
+                            style={{ background: 'var(--bg-tag)', color: '#e879f9', border: '1px solid var(--border-primary)' }}>
+                            {part.slice(1, -1)}
+                        </code>
+                    )
+                }
+                return <span key={i}>{part}</span>
+            })}
+        </>
+    )
+}
+
+// ═══════════════════════════════════════════════
 //  Study Tips Component
 // ═══════════════════════════════════════════════
 
@@ -790,12 +915,12 @@ export default function FlashcardApp() {
                                                     <p className="text-[var(--text-muted)] text-xs uppercase tracking-wider mb-2">
                                                         {lang === 'vi' ? '💡 Câu trả lời' : '💡 Answer'}
                                                     </p>
-                                                    <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
-                                                        {lang === 'vi'
+                                                    <AnswerRenderer
+                                                        text={lang === 'vi'
                                                             ? (currentCard as typeof interviewCards[0]).answer_vi
                                                             : (currentCard as typeof interviewCards[0]).answer_en
                                                         }
-                                                    </p>
+                                                    />
                                                 </div>
                                             </>
                                         )}
