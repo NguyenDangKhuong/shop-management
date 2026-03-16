@@ -93,11 +93,11 @@ for (var i = 0; i < 5; i++) {
 // 3. var có FUNCTION scope → chỉ có 1 biến i duy nhất
 // 4. Khi 100ms trôi qua, 5 callback chạy → đều đọc CÙNG biến i → i = 5
 //
-// Timeline:
-// t=0ms:  for chạy → i=0,1,2,3,4,5 (xong) | 5 callback chờ trong queue
-// t=100ms: callback 1 chạy → console.log(i) → i đã = 5 → in 5
-//          callback 2 chạy → console.log(i) → i vẫn = 5 → in 5
-//          ... (tất cả in 5)
+// 📦 BỘ NHỚ: [i] ← CHỈ 1 Ô NHỚ
+// callback 1 → nhìn [i]
+// callback 2 → nhìn [i]  ← CÙNG ô nhớ!
+// callback 3 → nhìn [i]
+// Kết thúc for: [i] = 5 → tất cả đọc 5
 
 // ✅ Dùng let — in ra 0, 1, 2, 3, 4
 for (let i = 0; i < 5; i++) {
@@ -109,6 +109,19 @@ for (let i = 0; i < 5; i++) {
 // Vòng 1: tạo i₁ = 1, callback bắt i₁
 // Vòng 2: tạo i₂ = 2, callback bắt i₂
 // → Mỗi callback closure "nhớ" đúng giá trị i CỦA MÌNH
+//
+// 📦 BỘ NHỚ: [i₀] [i₁] [i₂] [i₃] [i₄] ← 5 Ô NHỚ RIÊNG
+// callback 1 → nhìn [i₀] = 0
+// callback 2 → nhìn [i₁] = 1  ← ô nhớ KHÁC!
+// callback 3 → nhìn [i₂] = 2
+//
+// 💡 TÓM TẮT:
+// var = 1 ô nhớ chung → 5 callback cùng đọc ô đó (đã = 5)
+// let = 5 ô nhớ riêng → mỗi callback đọc ô của mình (đúng giá trị)
+//
+// 🔑 CLOSURE ở đây: callback "nhớ" reference đến biến i lúc nó được tạo.
+// Với var → nhớ reference đến 1 biến duy nhất (chung cho cả vòng for)
+// Với let → nhớ reference đến biến riêng của vòng lặp đó
 
 // ✅ Fix bằng IIFE (cách cũ trước khi có let)
 for (var i = 0; i < 5; i++) {

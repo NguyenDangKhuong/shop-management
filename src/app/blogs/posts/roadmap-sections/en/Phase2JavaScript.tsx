@@ -94,11 +94,11 @@ for (var i = 0; i < 5; i++) {
 // 3. var has FUNCTION scope → there is only ONE variable i
 // 4. After 100ms, all 5 callbacks run → they all read the SAME i → i = 5
 //
-// Timeline:
-// t=0ms:  for loop runs → i=0,1,2,3,4,5 (done) | 5 callbacks waiting in queue
-// t=100ms: callback 1 runs → console.log(i) → i is already 5 → prints 5
-//          callback 2 runs → console.log(i) → i is still 5 → prints 5
-//          ... (all print 5)
+// 📦 MEMORY: [i] ← ONLY 1 MEMORY CELL
+// callback 1 → looks at [i]
+// callback 2 → looks at [i]  ← SAME cell!
+// callback 3 → looks at [i]
+// After loop: [i] = 5 → all read 5
 
 // ✅ Using let — prints 0, 1, 2, 3, 4
 for (let i = 0; i < 5; i++) {
@@ -110,6 +110,19 @@ for (let i = 0; i < 5; i++) {
 // Iteration 1: creates i₁ = 1, callback captures i₁
 // Iteration 2: creates i₂ = 2, callback captures i₂
 // → Each callback closure "remembers" ITS OWN value of i
+//
+// 📦 MEMORY: [i₀] [i₁] [i₂] [i₃] [i₄] ← 5 SEPARATE CELLS
+// callback 1 → looks at [i₀] = 0
+// callback 2 → looks at [i₁] = 1  ← DIFFERENT cell!
+// callback 3 → looks at [i₂] = 2
+//
+// 💡 SUMMARY:
+// var = 1 shared memory cell → 5 callbacks all read that cell (already = 5)
+// let = 5 separate memory cells → each callback reads its own cell (correct value)
+//
+// 🔑 CLOSURE here: callback "remembers" a reference to variable i when created.
+// With var → remembers reference to 1 single variable (shared across the loop)
+// With let → remembers reference to that iteration's own variable
 
 // ✅ Fix with IIFE (old way before let existed)
 for (var i = 0; i < 5; i++) {
