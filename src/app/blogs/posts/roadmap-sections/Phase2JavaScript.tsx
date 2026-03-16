@@ -195,15 +195,22 @@ team.show();
 
                     <Paragraph>JS dùng <Highlight>Prototypal Inheritance</Highlight> — mỗi object có một link ẩn (<InlineCode>__proto__</InlineCode>) trỏ đến prototype của nó.</Paragraph>
                     <Paragraph>Khi bạn truy cập property không có trên object, JS sẽ <strong>đi lên prototype chain</strong> tìm cho đến khi gặp <InlineCode>null</InlineCode>.</Paragraph>
-                    <CodeBlock title="Prototype chain">{`const animal = { eat: true };
-const dog = Object.create(animal); // dog.__proto__ = animal
-dog.bark = true;
+                    <CodeBlock title="Prototype chain">{`const grandpa = { house: '🏠', car: '🚗', cookbook: '📖' };
+const dad = Object.create(grandpa); // dad.__proto__ = grandpa
+dad.laptop = '💻'; // bố tự mua laptop
 
-dog.bark; // true (own property — tài sản tự mua!)
-dog.eat;  // true (từ prototype chain — thừa kế từ animal!)
-dog.fly;  // undefined (không ai trong dòng họ có)
+dad.laptop;   // '💻' (own property — tài sản tự mua!)
+dad.house;    // '🏠' (từ prototype chain — thừa kế từ ông!)
+dad.bitcoin;  // undefined (không ai trong dòng họ có)
 
-// Chain: dog → animal → Object.prototype → null
+const child = Object.create(dad); // child.__proto__ = dad
+child.phone = '📱'; // con tự mua phone
+
+child.phone;    // '📱' (own property)
+child.laptop;   // '💻' (thừa kế từ bố)
+child.house;    // '🏠' (thừa kế từ ông — đi lên 2 level!)
+
+// Chain: child → dad → grandpa → Object.prototype → null
 // 👦 con → 👨 bố → 👴 ông → ❌ hết`}</CodeBlock>
                     <Callout type="warning">ES6 Class chỉ là <Highlight>syntactic sugar</Highlight> — bên dưới vẫn dùng prototype. Hiểu prototype = hiểu JS ở level sâu.</Callout>
                 </TopicModal>

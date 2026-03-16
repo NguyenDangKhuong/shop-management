@@ -659,6 +659,16 @@ function SearchBar() {
 
                 <TopicModal title="State Management — Redux, Zustand, Context" emoji="🗃️" color="#764ABC" summary="Comparing 3 popular state management approaches — very common interview question">
                     <Paragraph>Enterprise projects commonly use <Highlight>Redux</Highlight>, but you should also know alternatives.</Paragraph>
+
+                    <Callout type="info">🏦 <strong>Analogy: Redux = A Bank</strong><br /><br />
+                        <strong>Store</strong> = Vault — holds all the money (state)<br />
+                        <strong>Action</strong> = Transaction slip — {'"I want to withdraw $500"'} <InlineCode>{`{ type: 'WITHDRAW', amount: 500 }`}</InlineCode><br />
+                        <strong>Dispatch</strong> = Submit the slip to the teller<br />
+                        <strong>Reducer</strong> = Bank teller — reads the slip, calculates, updates the balance<br />
+                        <strong>Selector</strong> = Bank statement — check your current balance<br /><br />
+                        You <strong>cannot open the vault yourself</strong> (mutate state directly) — you must submit a slip (dispatch action) → teller processes it (reducer) → vault is updated (new state)
+                    </Callout>
+
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
                             <div className="text-purple-400 font-bold text-sm">🔴 Redux (Redux Toolkit)</div>

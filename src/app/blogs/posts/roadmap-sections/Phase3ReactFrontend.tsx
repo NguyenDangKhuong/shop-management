@@ -663,6 +663,16 @@ function SearchBar() {
 
                 <TopicModal title="State Management — Redux, Zustand, Context" emoji="🗃️" color="#764ABC" summary="So sánh 3 cách quản lý state phổ biến — câu hỏi cực kỳ phổ biến ở VN interview">
                     <Paragraph>Công ty VN <Highlight>rất hay hỏi Redux</Highlight> vì đa số dự án enterprise đều dùng. Nhưng cần biết cả alternatives.</Paragraph>
+
+                    <Callout type="info">🏦 <strong>Ẩn dụ: Redux = Ngân hàng</strong><br /><br />
+                        <strong>Store</strong> = Két sắt — nơi giữ toàn bộ tiền (state)<br />
+                        <strong>Action</strong> = Phiếu giao dịch — {'"Tôi muốn rút 500k"'} <InlineCode>{`{ type: 'WITHDRAW', amount: 500 }`}</InlineCode><br />
+                        <strong>Dispatch</strong> = Nộp phiếu cho nhân viên<br />
+                        <strong>Reducer</strong> = Nhân viên xử lý — đọc phiếu, tính toán, cập nhật số dư<br />
+                        <strong>Selector</strong> = Sao kê — xem số dư hiện tại<br /><br />
+                        Bạn <strong>không được tự mở két lấy tiền</strong> (mutate state trực tiếp) — phải nộp phiếu (dispatch action) → nhân viên xử lý (reducer) → két sắt được cập nhật (new state)
+                    </Callout>
+
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
                             <div className="text-purple-400 font-bold text-sm">🔴 Redux (Redux Toolkit)</div>

@@ -195,16 +195,23 @@ team.show();
 
                     <Paragraph>JS uses <Highlight>Prototypal Inheritance</Highlight> — every object has a hidden link (<InlineCode>__proto__</InlineCode>) pointing to its prototype.</Paragraph>
                     <Paragraph>When you access a property that doesn&apos;t exist on the object, JS <strong>walks up the prototype chain</strong> until it reaches <InlineCode>null</InlineCode>.</Paragraph>
-                    <CodeBlock title="Prototype chain">{`const animal = { eat: true };
-const dog = Object.create(animal); // dog.__proto__ = animal
-dog.bark = true;
+                    <CodeBlock title="Prototype chain">{`const grandpa = { house: '🏠', car: '🚗', cookbook: '📖' };
+const dad = Object.create(grandpa); // dad.__proto__ = grandpa
+dad.laptop = '💻'; // dad bought his own laptop
 
-dog.bark; // true (own property — bought it yourself!)
-dog.eat;  // true (from prototype chain — inherited from animal!)
-dog.fly;  // undefined (nobody in the family has it)
+dad.laptop;   // '💻' (own property — bought it yourself!)
+dad.house;    // '🏠' (from prototype chain — inherited from grandpa!)
+dad.bitcoin;  // undefined (nobody in the family has it)
 
-// Chain: dog → animal → Object.prototype → null
-// 👦 son → 👨 dad → 👴 grandpa → ❌ end`}</CodeBlock>
+const child = Object.create(dad); // child.__proto__ = dad
+child.phone = '📱'; // child bought their own phone
+
+child.phone;    // '📱' (own property)
+child.laptop;   // '💻' (inherited from dad)
+child.house;    // '🏠' (inherited from grandpa — 2 levels up!)
+
+// Chain: child → dad → grandpa → Object.prototype → null
+// 👦 child → 👨 dad → 👴 grandpa → ❌ end`}</CodeBlock>
                     <Callout type="warning">ES6 Class is just <Highlight>syntactic sugar</Highlight> — underneath it still uses prototypes. Understanding prototypes = understanding JS at a deep level.</Callout>
                 </TopicModal>
 
