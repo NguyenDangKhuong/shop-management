@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
+import { interviewCards, type Topic, type Difficulty } from './interviewFlashcards'
 
 // ═══════════════════════════════════════════════
-//  Flashcard Data
+//  Algorithm Flashcard Data (original)
 // ═══════════════════════════════════════════════
 
-interface Flashcard {
+interface AlgoFlashcard {
     id: string
     pattern: string
     emoji: string
@@ -23,7 +24,7 @@ interface Flashcard {
     }
 }
 
-const flashcards: Flashcard[] = [
+const algoFlashcards: AlgoFlashcard[] = [
     {
         id: 'hashmap-twosum',
         pattern: 'HashMap',
@@ -316,6 +317,32 @@ return dp[n]`,
 ]
 
 // ═══════════════════════════════════════════════
+//  Topic colors + emoji
+// ═══════════════════════════════════════════════
+const topicConfig: Record<Topic, { color: string; emoji: string }> = {
+    JavaScript: { color: '#fbbf24', emoji: '⚡' },
+    React: { color: '#61dafb', emoji: '⚛️' },
+    CSS: { color: '#38bdf8', emoji: '🎨' },
+    HTML: { color: '#f97316', emoji: '📄' },
+    'Web APIs': { color: '#a78bfa', emoji: '🌐' },
+    Security: { color: '#ef4444', emoji: '🔒' },
+    Performance: { color: '#22c55e', emoji: '⚡' },
+    Testing: { color: '#06b6d4', emoji: '🧪' },
+    Async: { color: '#818cf8', emoji: '⏳' },
+    OOP: { color: '#f472b6', emoji: '🧬' },
+    Networking: { color: '#14b8a6', emoji: '📡' },
+    Closure: { color: '#e879f9', emoji: '📦' },
+}
+
+const difficultyConfig: Record<Difficulty, { color: string; bg: string }> = {
+    Easy: { color: '#4ade80', bg: 'rgba(74, 222, 128, 0.15)' },
+    Medium: { color: '#fbbf24', bg: 'rgba(251, 191, 36, 0.15)' },
+    Hard: { color: '#ef4444', bg: 'rgba(239, 68, 68, 0.15)' },
+}
+
+const allTopics: Topic[] = ['JavaScript', 'React', 'CSS', 'HTML', 'Async', 'OOP', 'Closure', 'Security', 'Performance', 'Networking', 'Web APIs', 'Testing']
+
+// ═══════════════════════════════════════════════
 //  Study Tips Component
 // ═══════════════════════════════════════════════
 
@@ -337,11 +364,8 @@ function StudyTips() {
             {isOpen && (
                 <div className="mt-3 p-5 rounded-xl text-sm leading-relaxed space-y-6"
                     style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}>
-
-                    {/* Tip 1 */}
                     <div>
                         <h3 className="font-bold text-[var(--text-primary)] mb-2">1. Nhớ Pattern, không nhớ code</h3>
-                        <p className="mb-2 text-[var(--text-muted)]">Đừng cố thuộc từng dòng code. Nhớ <strong className="text-[var(--text-primary)]">skeleton</strong> (bộ khung) của mỗi pattern:</p>
                         <pre className="p-3 rounded-lg text-xs font-mono leading-relaxed" style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)' }}>
                             {`🗂️ HashMap:      "Duyệt 1 lần, check Map trước, lưu Map sau"
 👉 Two Pointers:  "2 con trỏ, thu hẹp từ 2 đầu"
@@ -350,77 +374,9 @@ function StudyTips() {
 🔍 Binary Search: "while left <= right, mid = floor((l+r)/2)"`}
                         </pre>
                     </div>
-
-                    {/* Tip 2 */}
                     <div>
-                        <h3 className="font-bold text-[var(--text-primary)] mb-2">2. Viết pseudocode bằng tiếng Việt trước</h3>
-                        <pre className="p-3 rounded-lg text-xs font-mono leading-relaxed" style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)' }}>
-                            {`// Two Sum - HashMap:
-// 1. Tạo Map rỗng
-// 2. Duyệt từng số:
-//    - Tính complement = target - số hiện tại
-//    - Map có complement? → trả kết quả
-//    - Chưa có? → lưu số hiện tại vào Map`}
-                        </pre>
-                        <p className="mt-2 text-[var(--text-muted)]">Phỏng vấn: nghĩ bằng tiếng Việt → dịch ra code sẽ dễ hơn nhiều.</p>
-                    </div>
-
-                    {/* Tip 3 */}
-                    <div>
-                        <h3 className="font-bold text-[var(--text-primary)] mb-2">3. Quy tắc 3 lần viết tay</h3>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-xs border-collapse">
-                                <thead><tr className="border-b border-[var(--border-primary)]">
-                                    <th className="text-left p-2 text-[var(--text-muted)]">Lần</th>
-                                    <th className="text-left p-2 text-[var(--text-muted)]">Cách làm</th>
-                                </tr></thead>
-                                <tbody>
-                                    <tr className="border-b border-[var(--border-primary)]"><td className="p-2 font-semibold">Lần 1</td><td className="p-2">Đọc solution, hiểu logic, tự code lại</td></tr>
-                                    <tr className="border-b border-[var(--border-primary)]"><td className="p-2 font-semibold">Lần 2</td><td className="p-2">Ngày hôm sau, code lại <strong>không xem</strong> solution</td></tr>
-                                    <tr><td className="p-2 font-semibold">Lần 3</td><td className="p-2">1 tuần sau, code lại lần nữa</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <p className="mt-2 text-[var(--text-muted)]">Sau 3 lần → bộ khung algorithm thành <strong className="text-[var(--text-primary)]">muscle memory</strong> 💪</p>
-                    </div>
-
-                    {/* Tip 4 */}
-                    <div>
-                        <h3 className="font-bold text-[var(--text-primary)] mb-2">4. Tạo flashcard cho mỗi pattern</h3>
-                        <pre className="p-3 rounded-lg text-xs font-mono leading-relaxed" style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)' }}>
-                            {`📌 Mặt trước: "Tìm 2 số cộng = target"
-📌 Mặt sau:
-   - Pattern: HashMap
-   - Key insight: complement = target - num
-   - Template: Map + 1 vòng for + check trước lưu sau
-   - Time: O(n), Space: O(n)`}
-                        </pre>
-                    </div>
-
-                    {/* Tip 5 */}
-                    <div>
-                        <h3 className="font-bold text-[var(--text-primary)] mb-2">5. Nhóm bài theo tín hiệu nhận diện</h3>
-                        <pre className="p-3 rounded-lg text-xs font-mono leading-relaxed" style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)' }}>
-                            {`Thấy "2 số cộng = X"             → HashMap
-Thấy "sorted array + 2 phần tử"  → Two Pointers
-Thấy "substring/subarray liên tục" → Sliding Window
-Thấy "dấu ngoặc, undo/redo"      → Stack
-Thấy "tìm trong sorted"           → Binary Search
-Thấy "tất cả combinations"        → Backtracking`}
-                        </pre>
-                        <p className="mt-2 text-[var(--text-muted)]">Phỏng vấn = <strong className="text-[var(--text-primary)]">nhận diện pattern</strong> + <strong className="text-[var(--text-primary)]">viết template</strong> + <strong className="text-[var(--text-primary)]">custom logic</strong></p>
-                    </div>
-
-                    {/* Tip 6 */}
-                    <div>
-                        <h3 className="font-bold text-[var(--text-primary)] mb-2">6. 🔥 Mẹo: Code mỗi ngày 1 bài, 30 ngày</h3>
-                        <pre className="p-3 rounded-lg text-xs font-mono leading-relaxed" style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)' }}>
-                            {`Tuần 1: HashMap (5 bài) + Two Pointers (2 bài)
-Tuần 2: Sliding Window (3 bài) + Stack (4 bài)
-Tuần 3: BFS/DFS (5 bài) + Binary Search (2 bài)
-Tuần 4: DP Easy (3 bài) + Ôn lại tuần 1-3`}
-                        </pre>
-                        <p className="mt-2 text-[var(--text-muted)]">Sau 30 ngày, mấy cái template sẽ <strong className="text-[var(--text-primary)]">tự động chảy ra tay</strong> mà không cần nghĩ! 🚀</p>
+                        <h3 className="font-bold text-[var(--text-primary)] mb-2">2. Quy tắc 3 lần viết tay</h3>
+                        <p className="text-[var(--text-muted)]">Lần 1: Đọc + hiểu + tự code lại → Lần 2: Ngày hôm sau, code lại <strong>không xem</strong> → Lần 3: 1 tuần sau. Sau 3 lần → <strong className="text-[var(--text-primary)]">muscle memory</strong> 💪</p>
                     </div>
                 </div>
             )}
@@ -429,49 +385,101 @@ Tuần 4: DP Easy (3 bài) + Ôn lại tuần 1-3`}
 }
 
 // ═══════════════════════════════════════════════
-//  Flashcard Component
+//  Flashcard App (Tabs: Algorithm | Interview)
 // ═══════════════════════════════════════════════
 
+type TabMode = 'algorithm' | 'interview'
+type Lang = 'vi' | 'en'
+
 export default function FlashcardApp() {
-    const [currentIndex, setCurrentIndex] = useState(0)
-    const [isFlipped, setIsFlipped] = useState(false)
-    const [knownCards, setKnownCards] = useState<Set<string>>(new Set())
-    const [cards, setCards] = useState(flashcards)
-    const [showShortcuts, setShowShortcuts] = useState(false)
+    const [tab, setTab] = useState<TabMode>('interview')
+    const [lang, setLang] = useState<Lang>('vi')
+    const [selectedTopics, setSelectedTopics] = useState<Set<Topic>>(new Set())
+    const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | 'All'>('All')
 
-    const card = cards[currentIndex]
-    const progress = knownCards.size
-    const total = cards.length
+    // Algorithm state
+    const [algoIndex, setAlgoIndex] = useState(0)
+    const [algoFlipped, setAlgoFlipped] = useState(false)
+    const [algoKnown, setAlgoKnown] = useState<Set<string>>(new Set())
+    const [algoCards, setAlgoCards] = useState(algoFlashcards)
 
-    const shuffle = useCallback(() => {
-        setCards(prev => [...prev].sort(() => Math.random() - 0.5))
-        setCurrentIndex(0)
-        setIsFlipped(false)
-    }, [])
+    // Interview state
+    const [interviewIndex, setInterviewIndex] = useState(0)
+    const [interviewFlipped, setInterviewFlipped] = useState(false)
+    const [interviewKnown, setInterviewKnown] = useState<Set<string>>(new Set())
+
+    // Filter interview cards
+    const filteredInterviewCards = useMemo(() => {
+        let cards = interviewCards
+        if (selectedTopics.size > 0) {
+            cards = cards.filter(c => selectedTopics.has(c.topic))
+        }
+        if (selectedDifficulty !== 'All') {
+            cards = cards.filter(c => c.difficulty === selectedDifficulty)
+        }
+        return cards
+    }, [selectedTopics, selectedDifficulty])
+
+    // Reset index when filters change
+    useEffect(() => {
+        setInterviewIndex(0)
+        setInterviewFlipped(false)
+    }, [selectedTopics, selectedDifficulty])
+
+    // Current card
+    const currentCards = tab === 'algorithm' ? algoCards : filteredInterviewCards
+    const currentIndex = tab === 'algorithm' ? algoIndex : interviewIndex
+    const isFlipped = tab === 'algorithm' ? algoFlipped : interviewFlipped
+    const knownCards = tab === 'algorithm' ? algoKnown : interviewKnown
+
+    const currentCard = currentCards[currentIndex]
+
+    const setFlipped = tab === 'algorithm' ? setAlgoFlipped : setInterviewFlipped
+    const setIndex = tab === 'algorithm' ? setAlgoIndex : setInterviewIndex
+    const setKnown = tab === 'algorithm' ? setAlgoKnown : setInterviewKnown
 
     const goNext = useCallback(() => {
-        setIsFlipped(false)
-        setTimeout(() => setCurrentIndex(i => (i + 1) % cards.length), 150)
-    }, [cards.length])
+        setFlipped(false)
+        setTimeout(() => setIndex(i => (i + 1) % currentCards.length), 150)
+    }, [currentCards.length, setFlipped, setIndex])
 
     const goPrev = useCallback(() => {
-        setIsFlipped(false)
-        setTimeout(() => setCurrentIndex(i => (i - 1 + cards.length) % cards.length), 150)
-    }, [cards.length])
+        setFlipped(false)
+        setTimeout(() => setIndex(i => (i - 1 + currentCards.length) % currentCards.length), 150)
+    }, [currentCards.length, setFlipped, setIndex])
+
+    const shuffle = useCallback(() => {
+        if (tab === 'algorithm') {
+            setAlgoCards(prev => [...prev].sort(() => Math.random() - 0.5))
+        }
+        setIndex(0)
+        setFlipped(false)
+    }, [tab, setIndex, setFlipped])
 
     const toggleKnown = useCallback(() => {
-        setKnownCards(prev => {
+        if (!currentCard) return
+        const id = 'id' in currentCard ? currentCard.id : ''
+        setKnown(prev => {
             const next = new Set(prev)
-            if (next.has(card.id)) next.delete(card.id)
-            else next.add(card.id)
+            if (next.has(id)) next.delete(id)
+            else next.add(id)
             return next
         })
-    }, [card?.id])
+    }, [currentCard, setKnown])
+
+    const toggleTopic = (topic: Topic) => {
+        setSelectedTopics(prev => {
+            const next = new Set(prev)
+            if (next.has(topic)) next.delete(topic)
+            else next.add(topic)
+            return next
+        })
+    }
 
     // Keyboard shortcuts
     useEffect(() => {
         const handleKey = (e: KeyboardEvent) => {
-            if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setIsFlipped(f => !f) }
+            if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setFlipped(f => !f) }
             if (e.key === 'ArrowRight' || e.key === 'l') goNext()
             if (e.key === 'ArrowLeft' || e.key === 'h') goPrev()
             if (e.key === 'k') toggleKnown()
@@ -479,220 +487,383 @@ export default function FlashcardApp() {
         }
         window.addEventListener('keydown', handleKey)
         return () => window.removeEventListener('keydown', handleKey)
-    }, [goNext, goPrev, toggleKnown, shuffle])
+    }, [goNext, goPrev, toggleKnown, shuffle, setFlipped])
+
+    const progress = knownCards.size
+    const total = currentCards.length
+
+    const cardId = currentCard && 'id' in currentCard ? currentCard.id : ''
 
     return (
         <div className="dark">
             <div className="min-h-screen bg-[var(--bg-page)] text-[var(--text-primary)] p-4 sm:p-8">
                 <div className="max-w-2xl mx-auto">
-                    {/* Progress + Counter */}
+                    {/* Tab Bar */}
+                    <div className="flex gap-2 mb-6">
+                        <button
+                            onClick={() => setTab('algorithm')}
+                            className="flex-1 py-3 rounded-xl text-sm font-semibold transition-all duration-200"
+                            style={{
+                                background: tab === 'algorithm' ? 'rgba(251, 191, 36, 0.15)' : 'var(--bg-card)',
+                                border: tab === 'algorithm' ? '1px solid rgba(251, 191, 36, 0.4)' : '1px solid var(--border-primary)',
+                                color: tab === 'algorithm' ? '#fbbf24' : 'var(--text-muted)',
+                            }}
+                        >
+                            🧮 Algorithm ({algoCards.length})
+                        </button>
+                        <button
+                            onClick={() => setTab('interview')}
+                            className="flex-1 py-3 rounded-xl text-sm font-semibold transition-all duration-200"
+                            style={{
+                                background: tab === 'interview' ? 'rgba(56, 189, 248, 0.15)' : 'var(--bg-card)',
+                                border: tab === 'interview' ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid var(--border-primary)',
+                                color: tab === 'interview' ? '#38bdf8' : 'var(--text-muted)',
+                            }}
+                        >
+                            💼 Interview ({interviewCards.length})
+                        </button>
+                    </div>
+
+                    {/* Interview Filters */}
+                    {tab === 'interview' && (
+                        <div className="mb-4 space-y-3">
+                            {/* Language toggle + Difficulty */}
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <button
+                                    onClick={() => setLang(l => l === 'vi' ? 'en' : 'vi')}
+                                    className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+                                    style={{
+                                        background: 'rgba(168, 85, 247, 0.15)',
+                                        border: '1px solid rgba(168, 85, 247, 0.4)',
+                                        color: '#a855f7',
+                                    }}
+                                >
+                                    {lang === 'vi' ? '🇻🇳 VI' : '🇬🇧 EN'}
+                                </button>
+                                <div className="h-4 w-px bg-[var(--border-primary)]" />
+                                {(['All', 'Easy', 'Medium', 'Hard'] as const).map(d => (
+                                    <button
+                                        key={d}
+                                        onClick={() => setSelectedDifficulty(d)}
+                                        className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+                                        style={{
+                                            background: selectedDifficulty === d
+                                                ? (d === 'All' ? 'rgba(255,255,255,0.1)' : difficultyConfig[d as Difficulty].bg)
+                                                : 'var(--bg-tag)',
+                                            border: selectedDifficulty === d
+                                                ? `1px solid ${d === 'All' ? 'var(--border-primary)' : difficultyConfig[d as Difficulty].color}40`
+                                                : '1px solid transparent',
+                                            color: selectedDifficulty === d
+                                                ? (d === 'All' ? 'var(--text-secondary)' : difficultyConfig[d as Difficulty].color)
+                                                : 'var(--text-muted)',
+                                        }}
+                                    >
+                                        {d}
+                                    </button>
+                                ))}
+                            </div>
+                            {/* Topic pills */}
+                            <div className="flex flex-wrap gap-1.5">
+                                {allTopics.map(topic => {
+                                    const isSelected = selectedTopics.has(topic)
+                                    const cfg = topicConfig[topic]
+                                    const count = interviewCards.filter(c => c.topic === topic).length
+                                    return (
+                                        <button
+                                            key={topic}
+                                            onClick={() => toggleTopic(topic)}
+                                            className="px-2.5 py-1 rounded-lg text-xs font-medium transition-all"
+                                            style={{
+                                                background: isSelected ? `${cfg.color}20` : 'var(--bg-tag)',
+                                                border: isSelected ? `1px solid ${cfg.color}40` : '1px solid transparent',
+                                                color: isSelected ? cfg.color : 'var(--text-muted)',
+                                            }}
+                                        >
+                                            {cfg.emoji} {topic} ({count})
+                                        </button>
+                                    )
+                                })}
+                                {selectedTopics.size > 0 && (
+                                    <button
+                                        onClick={() => setSelectedTopics(new Set())}
+                                        className="px-2.5 py-1 rounded-lg text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
+                                    >
+                                        ✕ Clear
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Progress */}
                     <div className="mb-6">
                         <div className="flex justify-between text-xs text-[var(--text-muted)] mb-1">
                             <span>🧠 Đã thuộc: {progress}/{total}</span>
-                            <span>{currentIndex + 1} / {cards.length}</span>
+                            <span>{total > 0 ? currentIndex + 1 : 0} / {total}</span>
                         </div>
                         <div className="h-2 rounded-full bg-[var(--bg-tag)] overflow-hidden">
                             <div
                                 className="h-full rounded-full transition-all duration-500"
                                 style={{
-                                    width: `${(progress / total) * 100}%`,
+                                    width: `${total > 0 ? (progress / total) * 100 : 0}%`,
                                     background: 'linear-gradient(90deg, #4ade80, #22d3ee, #818cf8)',
                                 }}
                             />
                         </div>
                     </div>
 
-                    {/* Flashcard */}
-                    <div
-                        className="relative cursor-pointer mb-6"
-                        style={{ perspective: '1000px', minHeight: '380px' }}
-                        onClick={() => setIsFlipped(f => !f)}
-                    >
-                        <div
-                            className="relative w-full transition-transform duration-500"
-                            style={{
-                                transformStyle: 'preserve-3d',
-                                transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                                minHeight: '380px',
-                            }}
-                        >
-                            {/* FRONT — chỉ hiện bài toán, KHÔNG hiện pattern */}
-                            <div
-                                className="absolute inset-0 rounded-2xl p-6 sm:p-8 flex flex-col justify-between"
-                                style={{
-                                    backfaceVisibility: 'hidden',
-                                    background: `linear-gradient(135deg, var(--bg-card), var(--bg-surface))`,
-                                    border: '1px solid var(--border-primary)',
-                                    boxShadow: 'var(--shadow-xl)',
-                                }}
+                    {/* Empty state */}
+                    {total === 0 && (
+                        <div className="text-center py-20 text-[var(--text-muted)]">
+                            <p className="text-4xl mb-3">🔍</p>
+                            <p className="text-sm">Không có câu hỏi nào phù hợp bộ lọc</p>
+                            <button
+                                onClick={() => { setSelectedTopics(new Set()); setSelectedDifficulty('All') }}
+                                className="mt-3 px-4 py-2 rounded-lg text-xs font-medium"
+                                style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}
                             >
-                                <div>
-                                    <div className="mb-2">
-                                        <span className="px-3 py-1 rounded-full text-xs font-medium bg-[var(--bg-tag)] border border-[var(--border-primary)] text-[var(--text-muted)]">
-                                            🤔 Bài toán này dùng thuật toán gì?
-                                        </span>
-                                    </div>
-
-                                    <div className="mb-6 mt-6">
-                                        <p className="text-xl sm:text-2xl font-bold leading-snug">{card?.front.signal}</p>
-                                    </div>
-
-                                    <div className="p-4 rounded-xl bg-[var(--bg-tag)] border border-[var(--border-primary)]">
-                                        <p className="text-[var(--text-muted)] text-xs mb-1">Ví dụ:</p>
-                                        <code className="text-sm text-[var(--text-secondary)] font-mono">{card?.front.question}</code>
-                                    </div>
-                                </div>
-
-                                <p className="text-center text-[var(--text-muted)] text-xs mt-4 animate-pulse">
-                                    👆 Click để xem đáp án
-                                </p>
-                            </div>
-
-                            {/* BACK */}
-                            <div
-                                className="absolute inset-0 rounded-2xl p-6 sm:p-8 overflow-y-auto"
-                                style={{
-                                    backfaceVisibility: 'hidden',
-                                    transform: 'rotateY(180deg)',
-                                    background: `linear-gradient(135deg, var(--bg-card), var(--bg-surface))`,
-                                    border: `1px solid ${card?.color}33`,
-                                    boxShadow: `0 0 40px ${card?.color}15`,
-                                }}
-                            >
-                                <div className="flex items-center gap-2 mb-4">
-                                    <span className="text-2xl">{card?.emoji}</span>
-                                    <span
-                                        className="px-3 py-1 rounded-full text-xs font-bold"
-                                        style={{
-                                            background: `${card?.color}20`,
-                                            color: card?.color,
-                                            border: `1px solid ${card?.color}40`,
-                                        }}
-                                    >
-                                        {card?.pattern}
-                                    </span>
-                                </div>
-
-                                <div className="mb-3">
-                                    <p className="text-[var(--text-muted)] text-xs uppercase tracking-wider mb-1">Cách tiếp cận</p>
-                                    <p className="text-base font-semibold" style={{ color: card?.color }}>{card?.back.approach}</p>
-                                </div>
-
-                                <div className="mb-3">
-                                    <p className="text-[var(--text-muted)] text-xs uppercase tracking-wider mb-1">Template Code</p>
-                                    <pre
-                                        className="p-3 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed"
-                                        style={{
-                                            background: 'var(--bg-tag)',
-                                            border: '1px solid var(--border-primary)',
-                                            color: 'var(--text-secondary)',
-                                        }}
-                                    >
-                                        {card?.back.template}
-                                    </pre>
-                                </div>
-
-                                <div className="flex gap-3 text-xs">
-                                    <div className="flex-1 p-2 rounded-lg bg-[var(--bg-tag)] border border-[var(--border-primary)]">
-                                        <span className="text-[var(--text-muted)]">⏱️ </span>
-                                        <span className="text-[var(--text-secondary)]">{card?.back.complexity}</span>
-                                    </div>
-                                </div>
-
-                                <div className="mt-3">
-                                    <p className="text-[var(--text-muted)] text-xs uppercase tracking-wider mb-1">Bài LeetCode</p>
-                                    <p className="text-xs text-[var(--text-secondary)]">{card?.back.example}</p>
-                                </div>
-
-                                <p className="text-center text-[var(--text-muted)] text-xs mt-3">
-                                    👆 Click để quay lại
-                                </p>
-                            </div>
+                                Clear filters
+                            </button>
                         </div>
-                    </div>
+                    )}
 
-                    {/* Controls */}
-                    <div className="flex items-center justify-center gap-3">
-                        <button
-                            onClick={(e) => { e.stopPropagation(); goPrev() }}
-                            className="w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110"
-                            style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)' }}
-                            title="Trước (←)"
-                        >
-                            ←
-                        </button>
+                    {/* Flashcard */}
+                    {currentCard && total > 0 && (
+                        <>
+                            <div
+                                className="relative cursor-pointer mb-6"
+                                style={{ perspective: '1000px', minHeight: tab === 'algorithm' ? '380px' : '340px' }}
+                                onClick={() => setFlipped(f => !f)}
+                            >
+                                <div
+                                    className="relative w-full transition-transform duration-500"
+                                    style={{
+                                        transformStyle: 'preserve-3d',
+                                        transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                                        minHeight: tab === 'algorithm' ? '380px' : '340px',
+                                    }}
+                                >
+                                    {/* ═══ FRONT ═══ */}
+                                    <div
+                                        className="absolute inset-0 rounded-2xl p-6 sm:p-8 flex flex-col justify-between"
+                                        style={{
+                                            backfaceVisibility: 'hidden',
+                                            background: `linear-gradient(135deg, var(--bg-card), var(--bg-surface))`,
+                                            border: '1px solid var(--border-primary)',
+                                            boxShadow: 'var(--shadow-xl)',
+                                        }}
+                                    >
+                                        {tab === 'algorithm' ? (
+                                            /* Algorithm Front */
+                                            <div>
+                                                <div className="mb-2">
+                                                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-[var(--bg-tag)] border border-[var(--border-primary)] text-[var(--text-muted)]">
+                                                        🤔 Bài toán này dùng thuật toán gì?
+                                                    </span>
+                                                </div>
+                                                <div className="mb-6 mt-6">
+                                                    <p className="text-xl sm:text-2xl font-bold leading-snug">{(currentCard as AlgoFlashcard).front.signal}</p>
+                                                </div>
+                                                <div className="p-4 rounded-xl bg-[var(--bg-tag)] border border-[var(--border-primary)]">
+                                                    <p className="text-[var(--text-muted)] text-xs mb-1">Ví dụ:</p>
+                                                    <code className="text-sm text-[var(--text-secondary)] font-mono">{(currentCard as AlgoFlashcard).front.question}</code>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            /* Interview Front */
+                                            <div>
+                                                <div className="flex items-center gap-2 mb-4 flex-wrap">
+                                                    <span
+                                                        className="px-2.5 py-1 rounded-lg text-xs font-medium"
+                                                        style={{
+                                                            background: `${topicConfig[(currentCard as typeof interviewCards[0]).topic].color}20`,
+                                                            color: topicConfig[(currentCard as typeof interviewCards[0]).topic].color,
+                                                            border: `1px solid ${topicConfig[(currentCard as typeof interviewCards[0]).topic].color}30`,
+                                                        }}
+                                                    >
+                                                        {topicConfig[(currentCard as typeof interviewCards[0]).topic].emoji} {(currentCard as typeof interviewCards[0]).topic}
+                                                    </span>
+                                                    <span
+                                                        className="px-2.5 py-1 rounded-lg text-xs font-medium"
+                                                        style={{
+                                                            background: difficultyConfig[(currentCard as typeof interviewCards[0]).difficulty].bg,
+                                                            color: difficultyConfig[(currentCard as typeof interviewCards[0]).difficulty].color,
+                                                        }}
+                                                    >
+                                                        {(currentCard as typeof interviewCards[0]).difficulty}
+                                                    </span>
+                                                </div>
+                                                <p className="text-lg sm:text-xl font-bold leading-relaxed mt-4">{(currentCard as typeof interviewCards[0]).question}</p>
+                                            </div>
+                                        )}
+                                        <p className="text-center text-[var(--text-muted)] text-xs mt-4 animate-pulse">
+                                            👆 Click để xem đáp án
+                                        </p>
+                                    </div>
 
-                        <button
-                            onClick={(e) => { e.stopPropagation(); setIsFlipped(f => !f) }}
-                            className="px-5 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 hover:scale-105"
-                            style={{
-                                background: 'rgba(56, 189, 248, 0.15)',
-                                border: '1px solid rgba(56, 189, 248, 0.4)',
-                                color: '#38bdf8',
-                            }}
-                            title="Lật thẻ (Space)"
-                        >
-                            🔄 Lật
-                        </button>
-
-                        <button
-                            onClick={(e) => { e.stopPropagation(); shuffle() }}
-                            className="px-5 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 hover:scale-105"
-                            style={{
-                                background: 'rgba(251, 191, 36, 0.15)',
-                                border: '1px solid rgba(251, 191, 36, 0.4)',
-                                color: '#fbbf24',
-                            }}
-                            title="Trộn thẻ (S)"
-                        >
-                            🎲 Trộn
-                        </button>
-
-                        <button
-                            onClick={(e) => { e.stopPropagation(); toggleKnown() }}
-                            className="px-5 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 hover:scale-105"
-                            style={{
-                                background: knownCards.has(card?.id) ? 'rgba(74, 222, 128, 0.2)' : 'var(--bg-tag)',
-                                border: knownCards.has(card?.id) ? '1px solid rgba(74, 222, 128, 0.5)' : '1px solid var(--border-primary)',
-                                color: knownCards.has(card?.id) ? '#4ade80' : 'var(--text-secondary)',
-                            }}
-                            title="Đánh dấu đã thuộc (K)"
-                        >
-                            {knownCards.has(card?.id) ? '✅ Thuộc' : '☐ Thuộc?'}
-                        </button>
-
-                        <button
-                            onClick={(e) => { e.stopPropagation(); goNext() }}
-                            className="w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110"
-                            style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)' }}
-                            title="Sau (→)"
-                        >
-                            →
-                        </button>
-                    </div>
-
-                    {/* Keyboard Shortcuts */}
-                    <div className="mt-8 text-center">
-                        <button
-                            onClick={() => setShowShortcuts(s => !s)}
-                            className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
-                        >
-                            ⌨️ {showShortcuts ? 'Ẩn' : 'Hiện'} phím tắt
-                        </button>
-                        {showShortcuts && (
-                            <div className="mt-2 grid grid-cols-2 gap-1 max-w-xs mx-auto text-xs text-[var(--text-muted)]">
-                                <span className="text-right pr-2"><kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono">Space</kbd></span>
-                                <span className="text-left">Lật thẻ</span>
-                                <span className="text-right pr-2"><kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono">← →</kbd></span>
-                                <span className="text-left">Chuyển thẻ</span>
-                                <span className="text-right pr-2"><kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono">K</kbd></span>
-                                <span className="text-left">Đánh dấu đã thuộc</span>
+                                    {/* ═══ BACK ═══ */}
+                                    <div
+                                        className="absolute inset-0 rounded-2xl p-6 sm:p-8 overflow-y-auto"
+                                        style={{
+                                            backfaceVisibility: 'hidden',
+                                            transform: 'rotateY(180deg)',
+                                            background: `linear-gradient(135deg, var(--bg-card), var(--bg-surface))`,
+                                            border: tab === 'algorithm'
+                                                ? `1px solid ${(currentCard as AlgoFlashcard).color}33`
+                                                : `1px solid ${topicConfig[(currentCard as typeof interviewCards[0]).topic]?.color || '#888'}33`,
+                                            boxShadow: tab === 'algorithm'
+                                                ? `0 0 40px ${(currentCard as AlgoFlashcard).color}15`
+                                                : `0 0 40px ${topicConfig[(currentCard as typeof interviewCards[0]).topic]?.color || '#888'}15`,
+                                        }}
+                                    >
+                                        {tab === 'algorithm' ? (
+                                            /* Algorithm Back */
+                                            <>
+                                                <div className="flex items-center gap-2 mb-4">
+                                                    <span className="text-2xl">{(currentCard as AlgoFlashcard).emoji}</span>
+                                                    <span
+                                                        className="px-3 py-1 rounded-full text-xs font-bold"
+                                                        style={{
+                                                            background: `${(currentCard as AlgoFlashcard).color}20`,
+                                                            color: (currentCard as AlgoFlashcard).color,
+                                                            border: `1px solid ${(currentCard as AlgoFlashcard).color}40`,
+                                                        }}
+                                                    >
+                                                        {(currentCard as AlgoFlashcard).pattern}
+                                                    </span>
+                                                </div>
+                                                <div className="mb-3">
+                                                    <p className="text-[var(--text-muted)] text-xs uppercase tracking-wider mb-1">Cách tiếp cận</p>
+                                                    <p className="text-base font-semibold" style={{ color: (currentCard as AlgoFlashcard).color }}>{(currentCard as AlgoFlashcard).back.approach}</p>
+                                                </div>
+                                                <div className="mb-3">
+                                                    <p className="text-[var(--text-muted)] text-xs uppercase tracking-wider mb-1">Template Code</p>
+                                                    <pre className="p-3 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed"
+                                                        style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}>
+                                                        {(currentCard as AlgoFlashcard).back.template}
+                                                    </pre>
+                                                </div>
+                                                <div className="flex gap-3 text-xs">
+                                                    <div className="flex-1 p-2 rounded-lg bg-[var(--bg-tag)] border border-[var(--border-primary)]">
+                                                        <span className="text-[var(--text-muted)]">⏱️ </span>
+                                                        <span className="text-[var(--text-secondary)]">{(currentCard as AlgoFlashcard).back.complexity}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="mt-3">
+                                                    <p className="text-[var(--text-muted)] text-xs uppercase tracking-wider mb-1">Bài LeetCode</p>
+                                                    <p className="text-xs text-[var(--text-secondary)]">{(currentCard as AlgoFlashcard).back.example}</p>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            /* Interview Back */
+                                            <>
+                                                <div className="flex items-center gap-2 mb-4">
+                                                    <span
+                                                        className="px-2.5 py-1 rounded-lg text-xs font-medium"
+                                                        style={{
+                                                            background: `${topicConfig[(currentCard as typeof interviewCards[0]).topic].color}20`,
+                                                            color: topicConfig[(currentCard as typeof interviewCards[0]).topic].color,
+                                                        }}
+                                                    >
+                                                        {topicConfig[(currentCard as typeof interviewCards[0]).topic].emoji} {(currentCard as typeof interviewCards[0]).topic}
+                                                    </span>
+                                                    <span
+                                                        className="px-2.5 py-1 rounded-lg text-xs font-medium"
+                                                        style={{
+                                                            background: difficultyConfig[(currentCard as typeof interviewCards[0]).difficulty].bg,
+                                                            color: difficultyConfig[(currentCard as typeof interviewCards[0]).difficulty].color,
+                                                        }}
+                                                    >
+                                                        {(currentCard as typeof interviewCards[0]).difficulty}
+                                                    </span>
+                                                </div>
+                                                <div className="mb-3">
+                                                    <p className="text-[var(--text-muted)] text-xs uppercase tracking-wider mb-2">
+                                                        {lang === 'vi' ? '💡 Câu trả lời' : '💡 Answer'}
+                                                    </p>
+                                                    <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
+                                                        {lang === 'vi'
+                                                            ? (currentCard as typeof interviewCards[0]).answer_vi
+                                                            : (currentCard as typeof interviewCards[0]).answer_en
+                                                        }
+                                                    </p>
+                                                </div>
+                                            </>
+                                        )}
+                                        <p className="text-center text-[var(--text-muted)] text-xs mt-3">
+                                            👆 Click để quay lại
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
-                        )}
+
+                            {/* Controls */}
+                            <div className="flex items-center justify-center gap-3 flex-wrap">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); goPrev() }}
+                                    className="w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110"
+                                    style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)' }}
+                                    title="Trước (←)"
+                                >←</button>
+
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setFlipped(f => !f) }}
+                                    className="px-5 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 hover:scale-105"
+                                    style={{
+                                        background: 'rgba(56, 189, 248, 0.15)',
+                                        border: '1px solid rgba(56, 189, 248, 0.4)',
+                                        color: '#38bdf8',
+                                    }}
+                                    title="Lật thẻ (Space)"
+                                >🔄 Lật</button>
+
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); shuffle() }}
+                                    className="px-5 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 hover:scale-105"
+                                    style={{
+                                        background: 'rgba(251, 191, 36, 0.15)',
+                                        border: '1px solid rgba(251, 191, 36, 0.4)',
+                                        color: '#fbbf24',
+                                    }}
+                                    title="Trộn thẻ (S)"
+                                >🎲 Trộn</button>
+
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); toggleKnown() }}
+                                    className="px-5 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 hover:scale-105"
+                                    style={{
+                                        background: knownCards.has(cardId) ? 'rgba(74, 222, 128, 0.2)' : 'var(--bg-tag)',
+                                        border: knownCards.has(cardId) ? '1px solid rgba(74, 222, 128, 0.5)' : '1px solid var(--border-primary)',
+                                        color: knownCards.has(cardId) ? '#4ade80' : 'var(--text-secondary)',
+                                    }}
+                                    title="Đánh dấu đã thuộc (K)"
+                                >{knownCards.has(cardId) ? '✅ Thuộc' : '☐ Thuộc?'}</button>
+
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); goNext() }}
+                                    className="w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110"
+                                    style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)' }}
+                                    title="Sau (→)"
+                                >→</button>
+                            </div>
+                        </>
+                    )}
+
+                    {/* Keyboard shortcuts hint */}
+                    <div className="mt-6 text-center">
+                        <p className="text-xs text-[var(--text-muted)]">
+                            ⌨️ <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">Space</kbd> Lật
+                            {' · '}
+                            <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">← →</kbd> Chuyển
+                            {' · '}
+                            <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">K</kbd> Thuộc
+                            {' · '}
+                            <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">S</kbd> Trộn
+                        </p>
                     </div>
 
-                    {/* Study Tips */}
-                    <StudyTips />
+                    {/* Study Tips (only for algorithm tab) */}
+                    {tab === 'algorithm' && <StudyTips />}
                 </div>
             </div>
         </div>
