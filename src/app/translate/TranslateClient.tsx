@@ -307,23 +307,25 @@ export default function TranslateClient() {
             </div>
 
             {/* ───────── Language Selector ───────── */}
-            <div className="w-full max-w-5xl flex items-center gap-3 mb-4">
+            <div className="w-full max-w-5xl flex items-center gap-2 md:gap-3 mb-4">
                 <button
-                    className="flex-1 py-3 px-4 rounded-xl text-center font-medium transition-all bg-slate-800/80 border border-white/10 hover:border-blue-500/50 text-white"
+                    className="flex-1 py-2 md:py-3 px-3 md:px-4 rounded-xl text-center font-medium transition-all bg-slate-800/80 border border-white/10 hover:border-blue-500/50 text-white text-sm md:text-base"
                 >
-                    {langLabel[from]}
+                    <span className="md:hidden">{from === 'vi' ? '🇻🇳 VI' : '🇬🇧 EN'}</span>
+                    <span className="hidden md:inline">{langLabel[from]}</span>
                 </button>
                 <button
                     onClick={swapLanguages}
-                    className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-500 transition-all flex items-center justify-center text-white text-xl shadow-lg shadow-blue-600/20 hover:shadow-blue-500/30 active:scale-95 shrink-0"
+                    className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-blue-600 hover:bg-blue-500 transition-all flex items-center justify-center text-white text-lg md:text-xl shadow-lg shadow-blue-600/20 hover:shadow-blue-500/30 active:scale-95 shrink-0"
                     title="Swap languages"
                 >
                     ⇄
                 </button>
                 <button
-                    className="flex-1 py-3 px-4 rounded-xl text-center font-medium transition-all bg-slate-800/80 border border-white/10 hover:border-blue-500/50 text-white"
+                    className="flex-1 py-2 md:py-3 px-3 md:px-4 rounded-xl text-center font-medium transition-all bg-slate-800/80 border border-white/10 hover:border-blue-500/50 text-white text-sm md:text-base"
                 >
-                    {langLabel[to]}
+                    <span className="md:hidden">{to === 'vi' ? '🇻🇳 VI' : '🇬🇧 EN'}</span>
+                    <span className="hidden md:inline">{langLabel[to]}</span>
                 </button>
             </div>
 
