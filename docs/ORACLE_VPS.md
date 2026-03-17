@@ -56,6 +56,8 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | **Uptime Kuma** | 3002 | ✅ unless-stopped | Docker (kuma-net) | Website/service monitoring |
 | **Zalo Bot Relay** | 3003 | ✅ unless-stopped | Docker (kuma-net) | Webhook relay → Zalo notification |
 | **Portainer** | 9443 | ✅ unless-stopped | Docker | Docker web management UI |
+| **CLI Proxy API** | 8317 | ✅ unless-stopped | Docker | AI proxy (Gemini, OpenRouter, Codex...) |
+| **OpenClaw Gateway** | 18789 | ✅ unless-stopped | Docker | AI assistant (Telegram @heyyolo_bot, Zalo) |
 | **stress-ng** | — | ✅ enabled | systemd | Anti-reclaim CPU/RAM |
 | **vocab-push.timer** | — | ✅ enabled | systemd timer | Vocab reminder mỗi giờ |
 
