@@ -7,7 +7,7 @@
 // - HTML pages: Network First (fallback to cache)
 // ═══════════════════════════════════════════════════════════════
 
-const CACHE_NAME = 'thetaphoa-v2'
+const CACHE_NAME = 'khuongdev-v3'
 
 // Assets to pre-cache on install
 const PRE_CACHE = [
