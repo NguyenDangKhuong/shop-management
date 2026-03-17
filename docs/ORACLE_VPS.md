@@ -46,14 +46,53 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 
 ## Installed Services
 
-| Service | Status | Purpose |
-|---------|--------|---------|
-| **Tailscale** | enabled | SSH without key, private network |
-| **Docker** 28.2.2 | enabled | Container runtime |
-| **Nginx** 1.24.0 | enabled | Web server (port 80) |
-| **Home Assistant** | enabled | Smart home (Docker, port 8123) |
-| **AdGuard Home** | enabled | DNS ad blocker (Docker, port 53 + 3001) |
-| **stress-ng** | enabled | Keep VPS alive (anti-reclaim) |
+| Service | Port | Auto-start | Mechanism | Purpose |
+|---------|------|-----------|-----------|---------|
+| **Tailscale** | — | ✅ enabled | systemd | SSH without key, private network |
+| **Docker** 28.2.2 | — | ✅ enabled | systemd | Container runtime |
+| **Nginx** 1.24.0 | 80, 443 | ✅ enabled | systemd | Reverse proxy (9 domains) |
+| **AdGuard Home** | 53, 3001 | ✅ unless-stopped | Docker | DNS ad blocker |
+| **Home Assistant** | 8123 | ✅ unless-stopped | Docker | Smart home |
+| **stress-ng** | — | ✅ enabled | systemd | Anti-reclaim CPU/RAM |
+| **vocab-push.timer** | — | ✅ enabled | systemd timer | Vocab reminder mỗi giờ |
+
+> Tất cả service tự start lại sau VPS reboot.
+
+## AdGuard Home
+
+**URL:** https://adguard.khuong.theworkpc.com
+**Credentials:** see `.env.local` → `ADGUARD_USER` / `ADGUARD_PASS`
+**Docs chi tiết:** [ADGUARD.md](./ADGUARD.md)
+
+```
+📱 iPhone ─┐
+💻 MacBook ─┤── Tailscale DNS (100.118.218.99) ──→ AdGuard ──→ Cloudflare/Google DoH
+🖥️ Ubuntu  ─┘                                      │
+                                                    ├─ ✅ google.com → forward
+                                                    └─ ❌ ad.doubleclick.net → 0.0.0.0
+```
+
+### Quản lý
+
+```bash
+# Status
+docker ps --filter name=adguardhome
+
+# Logs
+docker logs -f adguardhome
+
+# Restart
+docker restart adguardhome
+
+# Update
+docker pull adguard/adguardhome:latest
+docker stop adguardhome && docker rm adguardhome
+docker run -d --name adguardhome --restart unless-stopped \
+  -p 3000:3000 -p 3001:3001 -p 53:53/tcp -p 53:53/udp \
+  -v ~/adguard/work:/opt/adguardhome/work \
+  -v ~/adguard/conf:/opt/adguardhome/conf \
+  adguard/adguardhome:latest
+```
 
 ## Home Assistant
 
