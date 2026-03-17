@@ -245,6 +245,56 @@ X-RateLimit-Remaining: 99         ← Rate limiting
 
             <TopicModal title="DNS, TCP/IP, WebSocket" emoji="📡" color="#ef4444" summary="Cách browser tìm server và duy trì kết nối">
                 <Paragraph>Khi bạn gõ <InlineCode>google.com</InlineCode>, đây là toàn bộ hành trình:</Paragraph>
+
+                <Callout type="info">🎬 <strong>Ví dụ thực tế:</strong> Bạn muốn gọi điện cho Khuong nhưng chỉ biết tên, không biết số. Đây là flow tương tự khi browser gõ URL!</Callout>
+
+                <CodeBlock title="🗺️ The Full Journey — gõ google.com + Enter">{`① DNS (Danh bạ điện thoại)
+   google.com → 142.250.80.46
+   "Số nhà của Google ở đâu?"
+   ╰─ Check: Browser cache → OS cache → Router → ISP → Root DNS
+
+② TCP (Bắt tay — tôi muốn nói chuyện)
+   🤝 3-way Handshake:
+   Client: "Ê, nghe được không?" ──── SYN ────→ Server
+   Client: ←── SYN-ACK ──── "Nghe, bạn nghe tôi không?"
+   Client: "Nghe rõ, nói đi!" ──── ACK ────→ Server
+   ╰─ Giờ 2 bên có kênh tin cậy, data đúng thứ tự, không mất gói
+
+③ TLS (Khóa cửa — nếu HTTPS)
+   Thêm 1-2 vòng bắt tay nữa để encrypt
+   ╰─ Server đưa "CMND" (certificate) → Client verify → tạo shared key mã hóa
+
+④ HTTP (Gửi thư — hỏi và trả lời)
+   Client gửi: GET / HTTP/1.1 (xin trang chủ)
+   Server trả: 200 OK + HTML file
+   ╰─ Stateless: mỗi request độc lập, không nhớ request trước
+
+⑤ Browser (Vẽ trang web)
+   Parse HTML → Build DOM → Parse CSS → Layout → Paint → Display!`}</CodeBlock>
+
+                <Heading3>HTTP vs WebSocket vs SSE — khi nào dùng gì?</Heading3>
+                <CodeBlock title="3 cách giao tiếp Client ↔ Server">{`HTTP:      Client hỏi → Server trả lời → ĐÓNG
+           📬 Giống gửi thư: hỏi 1 câu, đợi trả lời, xong
+
+WebSocket: Client ↔ Server giữ kết nối MỞ → nói qua nói lại
+           📞 Giống gọi điện: 2 bên nói bất cứ lúc nào
+
+SSE:       Server → Client (1 chiều, server push liên tục)
+           📻 Giống nghe radio: server phát, client nghe`}</CodeBlock>
+
+                <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tình huống</th><th className="text-left p-2 text-blue-400">Dùng</th><th className="text-left p-2 text-green-400">Ví dụ</th></tr></thead>
+                        <tbody className="text-[var(--text-secondary)]">
+                            <tr className="border-b border-gray-100"><td className="p-2">Lấy data bình thường</td><td className="p-2"><strong>HTTP (REST)</strong></td><td className="p-2">GET /api/products</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Chat real-time 2 chiều</td><td className="p-2"><strong>WebSocket</strong></td><td className="p-2">Messenger, Slack</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Live notifications</td><td className="p-2"><strong>SSE</strong></td><td className="p-2">GitHub deploy status</td></tr>
+                            <tr><td className="p-2">Live stock prices</td><td className="p-2"><strong>SSE / WebSocket</strong></td><td className="p-2">Trading app</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <Heading3>Chi tiết từng bước</Heading3>
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                         <div className="text-yellow-400 font-bold text-sm">1. DNS Resolution (“Danh bạ Internet”)</div>

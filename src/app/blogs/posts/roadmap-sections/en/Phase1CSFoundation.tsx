@@ -245,6 +245,56 @@ X-RateLimit-Remaining: 99         ← Rate limiting
 
             <TopicModal title="DNS, TCP/IP, WebSocket" emoji="📡" color="#ef4444" summary="How browsers find servers and maintain connections">
                 <Paragraph>When you type <InlineCode>google.com</InlineCode>, here&apos;s the complete journey:</Paragraph>
+
+                <Callout type="info">🎬 <strong>Real-world analogy:</strong> You want to call Khuong but only know his name, not his number. This is the same flow as when a browser hits a URL!</Callout>
+
+                <CodeBlock title="🗺️ The Full Journey — type google.com + Enter">{`① DNS (Phone Book)
+   google.com → 142.250.80.46
+   "What's Google's address?"
+   ╰─ Check: Browser cache → OS cache → Router → ISP → Root DNS
+
+② TCP (Handshake — I want to talk)
+   🤝 3-way Handshake:
+   Client: "Hey, can you hear me?" ──── SYN ────→ Server
+   Client: ←── SYN-ACK ──── "Yes, can you hear me?"
+   Client: "Loud and clear!" ──── ACK ────→ Server
+   ╰─ Now both sides have a reliable channel, in-order, no packet loss
+
+③ TLS (Lock the door — if HTTPS)
+   1-2 more round-trips to encrypt
+   ╰─ Server shows "ID card" (certificate) → Client verifies → create shared encryption key
+
+④ HTTP (Send letter — ask and answer)
+   Client sends: GET / HTTP/1.1 (requesting homepage)
+   Server replies: 200 OK + HTML file
+   ╰─ Stateless: each request is independent, no memory of previous ones
+
+⑤ Browser (Paint the page)
+   Parse HTML → Build DOM → Parse CSS → Layout → Paint → Display!`}</CodeBlock>
+
+                <Heading3>HTTP vs WebSocket vs SSE — when to use what?</Heading3>
+                <CodeBlock title="3 ways Client ↔ Server communicate">{`HTTP:      Client asks → Server answers → CLOSE
+           📬 Like sending mail: ask once, wait for reply, done
+
+WebSocket: Client ↔ Server keep connection OPEN → talk back and forth
+           📞 Like a phone call: either side speaks anytime
+
+SSE:       Server → Client (one-way, server pushes continuously)
+           📻 Like listening to radio: server broadcasts, client listens`}</CodeBlock>
+
+                <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Scenario</th><th className="text-left p-2 text-blue-400">Use</th><th className="text-left p-2 text-green-400">Example</th></tr></thead>
+                        <tbody className="text-[var(--text-secondary)]">
+                            <tr className="border-b border-gray-100"><td className="p-2">Normal data fetching</td><td className="p-2"><strong>HTTP (REST)</strong></td><td className="p-2">GET /api/products</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Two-way real-time chat</td><td className="p-2"><strong>WebSocket</strong></td><td className="p-2">Messenger, Slack</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Live notifications</td><td className="p-2"><strong>SSE</strong></td><td className="p-2">GitHub deploy status</td></tr>
+                            <tr><td className="p-2">Live stock prices</td><td className="p-2"><strong>SSE / WebSocket</strong></td><td className="p-2">Trading app</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <Heading3>Step-by-step details</Heading3>
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                         <div className="text-yellow-400 font-bold text-sm">1. DNS Resolution (&quot;The Internet&apos;s Phone Book&quot;)</div>
