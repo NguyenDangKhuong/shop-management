@@ -481,7 +481,7 @@ export default function TranslateClient() {
             )}
 
             {/* ───────── Push Notification Reminder ───────── */}
-            {pushSupported && savedItems.length > 0 && (
+            {savedItems.length > 0 && (
                 <div className="w-full max-w-5xl mt-8">
                     <div className="px-5 py-4 rounded-xl bg-slate-900/60 border border-white/5">
                         <div className="flex items-center justify-between flex-wrap gap-3">
@@ -493,35 +493,41 @@ export default function TranslateClient() {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3">
-                                {/* Frequency selector */}
-                                <select
-                                    value={pushFrequency}
-                                    onChange={(e) => updateFrequency(Number(e.target.value))}
-                                    disabled={pushLoading}
-                                    className="px-3 py-1.5 text-xs rounded-lg bg-slate-800 border border-white/10 text-slate-300 focus:outline-none focus:border-blue-500/50"
-                                >
-                                    <option value={1}>Mỗi 1 giờ</option>
-                                    <option value={2}>Mỗi 2 giờ</option>
-                                    <option value={4}>Mỗi 4 giờ</option>
-                                    <option value={6}>Mỗi 6 giờ</option>
-                                    <option value={12}>Mỗi 12 giờ</option>
-                                    <option value={24}>Mỗi ngày</option>
-                                </select>
+                            {pushSupported ? (
+                                <div className="flex items-center gap-3">
+                                    {/* Frequency selector */}
+                                    <select
+                                        value={pushFrequency}
+                                        onChange={(e) => updateFrequency(Number(e.target.value))}
+                                        disabled={pushLoading}
+                                        className="px-3 py-1.5 text-xs rounded-lg bg-slate-800 border border-white/10 text-slate-300 focus:outline-none focus:border-blue-500/50"
+                                    >
+                                        <option value={1}>Mỗi 1 giờ</option>
+                                        <option value={2}>Mỗi 2 giờ</option>
+                                        <option value={4}>Mỗi 4 giờ</option>
+                                        <option value={6}>Mỗi 6 giờ</option>
+                                        <option value={12}>Mỗi 12 giờ</option>
+                                        <option value={24}>Mỗi ngày</option>
+                                    </select>
 
-                                {/* Toggle button */}
-                                <button
-                                    onClick={togglePush}
-                                    disabled={pushLoading}
-                                    className={`px-4 py-1.5 text-xs font-medium rounded-lg transition-all ${
-                                        pushEnabled
-                                            ? 'bg-green-600/15 border border-green-500/30 text-green-400 hover:bg-red-600/15 hover:border-red-500/30 hover:text-red-400'
-                                            : 'bg-blue-600/15 border border-blue-500/30 text-blue-400 hover:bg-blue-600/25'
-                                    } disabled:opacity-50`}
-                                >
-                                    {pushLoading ? '...' : pushEnabled ? '✓ Đang bật' : 'Bật nhắc'}
-                                </button>
-                            </div>
+                                    {/* Toggle button */}
+                                    <button
+                                        onClick={togglePush}
+                                        disabled={pushLoading}
+                                        className={`px-4 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                                            pushEnabled
+                                                ? 'bg-green-600/15 border border-green-500/30 text-green-400 hover:bg-red-600/15 hover:border-red-500/30 hover:text-red-400'
+                                                : 'bg-blue-600/15 border border-blue-500/30 text-blue-400 hover:bg-blue-600/25'
+                                        } disabled:opacity-50`}
+                                    >
+                                        {pushLoading ? '...' : pushEnabled ? '✓ Đang bật' : 'Bật nhắc'}
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="text-xs text-amber-400/80 max-w-[280px] text-right">
+                                    📱 iOS: Bấm <strong>Share → Add to Home Screen</strong> rồi mở từ Home Screen để nhận notification
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
