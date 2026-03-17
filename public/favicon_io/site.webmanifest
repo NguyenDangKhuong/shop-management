@@ -6,7 +6,9 @@
     "scope": "/",
     "id": "/",
     "display": "standalone",
+    "display_override": ["standalone", "minimal-ui"],
     "orientation": "portrait",
+    "categories": ["education", "utilities"],
     "icons": [
         {
             "src": "/favicon_io/android-chrome-192x192.png",

@@ -11,6 +11,7 @@ import AntdProvider from '@/components/providers/AntdProvider'
 import { LanguageProvider } from '@/i18n'
 
 import { ThemeProvider } from '@/contexts/ThemeContext'
+import MobileTabBar from '@/components/MobileTabBar'
 
 import './globals.css'
 
@@ -60,7 +61,7 @@ export const metadata: Metadata = {
   // PWA meta tags
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: PUBLIC_SITE_NAME,
   },
   formatDetection: {
@@ -99,6 +100,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
             <ThemeProvider>
               <AntdProvider>
                 {children}
+                <MobileTabBar />
               </AntdProvider>
             </ThemeProvider>
           </LanguageProvider>
