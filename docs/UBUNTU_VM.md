@@ -19,7 +19,7 @@ Chạy bằng `systemctl --user` — tự start khi user `khuong` login vào Ubu
 |---------|------|-------|
 | `shop-nextjs.service` | `:3000` | Next.js dev server (`npx next dev`) |
 | `shop-ws-bridge.service` | `:3001, :3002` | Veo3 WS Bridge (Chrome Extension ↔ Next.js) |
-| `openclaw-node.service` | `:18789` | OpenClaw Node Host |
+| `openclaw-node.service` | — | OpenClaw Node (connects to VPS gateway) |
 
 ```bash
 # Quản lý
@@ -48,9 +48,8 @@ journalctl --user -u shop-nextjs -f
 | **n8n-mcp** | n8n-n8n-mcp | `:3100` | MCP server |
 | **postgres** | postgres:16 | internal | DB cho n8n |
 | **redis** | redis:alpine | internal | Queue cho n8n |
-| **openclaw-gateway** | openclaw:local | `:18789-18790` | OpenClaw AI |
 
-> ℹ️ **CLI Proxy** đã chuyển sang Oracle VPS (17/03/2026). Xem [ORACLE_VPS.md](./ORACLE_VPS.md).
+> ℹ️ **CLI Proxy** và **OpenClaw** đã chuyển sang Oracle VPS (17/03/2026). Xem [ORACLE_VPS.md](./ORACLE_VPS.md).
 
 ## System Services
 
@@ -66,10 +65,10 @@ journalctl --user -u shop-nextjs -f
 | ❌ Mất | ✅ Vẫn chạy |
 |--------|-------------|
 | n8n (`n8n.thetaphoa.store`) | Shop app (`shop.thetaphoa.store` — Vercel) |
-| OpenClaw (`openclaw.thetaphoa.store`) | CLI Proxy (`cli-proxy.khuong.theworkpc.com` — VPS) |
-| WS Bridge (Veo3 gen video) | Cloudflare R2 / Workers |
-| ESXi access (`server.thetaphoa.store`) | Oracle VPS (`161.118.197.104`) |
-| NAS access (`nas.thetaphoa.store`) | AdGuard, Uptime Kuma, Home Assistant (VPS) |
+| WS Bridge (Veo3 gen video) | CLI Proxy (`cli-proxy.khuong.theworkpc.com` — VPS) |
+| ESXi access (`server.thetaphoa.store`) | OpenClaw (`openclaw.khuong.theworkpc.com` — VPS) |
+| NAS access (`nas.thetaphoa.store`) | Cloudflare R2 / Workers |
+| | Oracle VPS (`161.118.197.104`) |
 
 ---
 
