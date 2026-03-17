@@ -39,6 +39,18 @@ interface VocabItem {
     createdAt: string
 }
 
+// Convert VAPID base64 key to Uint8Array for PushManager.subscribe
+function urlBase64ToUint8Array(base64String: string): Uint8Array {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4)
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+    const rawData = atob(base64)
+    const outputArray = new Uint8Array(rawData.length)
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i)
+    }
+    return outputArray
+}
+
 export default function TranslateClient() {
     // ─── Translation state ────────────────────────────────────────────
     const [from, setFrom] = useState<Lang>('vi')
@@ -57,8 +69,107 @@ export default function TranslateClient() {
     const [savedFeedback, setSavedFeedback] = useState(false)  // Hiệu ứng "Saved!"
     const [deletingId, setDeletingId] = useState<string | null>(null) // ID đang xóa
 
+    // ─── Push notification state ──────────────────────────────────────
+    const [pushEnabled, setPushEnabled] = useState(false)
+    const [pushFrequency, setPushFrequency] = useState(4)
+    const [pushLoading, setPushLoading] = useState(false)
+    const [pushSupported, setPushSupported] = useState(false)
+
     const langLabel: Record<Lang, string> = { vi: '🇻🇳 Tiếng Việt', en: '🇬🇧 English' }
-    const langFlag: Record<Lang, string> = { vi: '🇻🇳', en: '🇬🇧' }
+
+    // ─── Check push notification support on mount ─────────────────────
+    useEffect(() => {
+        const supported = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window
+        setPushSupported(supported)
+
+        if (supported && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.ready.then(async (reg) => {
+                const sub = await reg.pushManager.getSubscription()
+                if (sub) {
+                    setPushEnabled(true)
+                    // Lấy frequency từ localStorage
+                    const savedFreq = localStorage.getItem('push-frequency')
+                    if (savedFreq) setPushFrequency(parseInt(savedFreq))
+                }
+            })
+        }
+    }, [])
+
+    // ─── Subscribe/Unsubscribe push ───────────────────────────────────
+    const togglePush = async () => {
+        if (pushLoading) return
+        setPushLoading(true)
+
+        try {
+            const reg = await navigator.serviceWorker.ready
+
+            if (pushEnabled) {
+                // Unsubscribe
+                const sub = await reg.pushManager.getSubscription()
+                if (sub) {
+                    await fetch('/api/push/subscribe', {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ endpoint: sub.endpoint }),
+                    })
+                    await sub.unsubscribe()
+                }
+                setPushEnabled(false)
+                localStorage.removeItem('push-frequency')
+            } else {
+                // Request permission
+                const permission = await Notification.requestPermission()
+                if (permission !== 'granted') {
+                    setPushLoading(false)
+                    return
+                }
+
+                // Subscribe
+                const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+                if (!vapidKey) throw new Error('VAPID key not found')
+
+                const sub = await reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(vapidKey).buffer as ArrayBuffer,
+                })
+
+                await fetch('/api/push/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ subscription: sub.toJSON(), frequency: pushFrequency }),
+                })
+
+                setPushEnabled(true)
+                localStorage.setItem('push-frequency', String(pushFrequency))
+            }
+        } catch (err) {
+            console.error('Push toggle error:', err)
+        } finally {
+            setPushLoading(false)
+        }
+    }
+
+    // Update frequency on server
+    const updateFrequency = async (freq: number) => {
+        setPushFrequency(freq)
+        localStorage.setItem('push-frequency', String(freq))
+
+        if (pushEnabled) {
+            try {
+                const reg = await navigator.serviceWorker.ready
+                const sub = await reg.pushManager.getSubscription()
+                if (sub) {
+                    await fetch('/api/push/subscribe', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ subscription: sub.toJSON(), frequency: freq }),
+                    })
+                }
+            } catch (err) {
+                console.error('Update frequency error:', err)
+            }
+        }
+    }
 
     // ─── Auto-translate (debounce 800ms) ──────────────────────────────
     const translate = useCallback(async (text: string, fromLang: Lang, toLang: Lang) => {
@@ -365,6 +476,53 @@ export default function TranslateClient() {
                             </div>
                             )
                         })}
+                    </div>
+                </div>
+            )}
+
+            {/* ───────── Push Notification Reminder ───────── */}
+            {pushSupported && savedItems.length > 0 && (
+                <div className="w-full max-w-5xl mt-8">
+                    <div className="px-5 py-4 rounded-xl bg-slate-900/60 border border-white/5">
+                        <div className="flex items-center justify-between flex-wrap gap-3">
+                            <div className="flex items-center gap-3">
+                                <span className="text-xl">🔔</span>
+                                <div>
+                                    <div className="text-sm font-medium text-white">Nhắc ôn từ vựng</div>
+                                    <div className="text-xs text-slate-500">Push notification random 1 từ đã lưu</div>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                {/* Frequency selector */}
+                                <select
+                                    value={pushFrequency}
+                                    onChange={(e) => updateFrequency(Number(e.target.value))}
+                                    disabled={pushLoading}
+                                    className="px-3 py-1.5 text-xs rounded-lg bg-slate-800 border border-white/10 text-slate-300 focus:outline-none focus:border-blue-500/50"
+                                >
+                                    <option value={1}>Mỗi 1 giờ</option>
+                                    <option value={2}>Mỗi 2 giờ</option>
+                                    <option value={4}>Mỗi 4 giờ</option>
+                                    <option value={6}>Mỗi 6 giờ</option>
+                                    <option value={12}>Mỗi 12 giờ</option>
+                                    <option value={24}>Mỗi ngày</option>
+                                </select>
+
+                                {/* Toggle button */}
+                                <button
+                                    onClick={togglePush}
+                                    disabled={pushLoading}
+                                    className={`px-4 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                                        pushEnabled
+                                            ? 'bg-green-600/15 border border-green-500/30 text-green-400 hover:bg-red-600/15 hover:border-red-500/30 hover:text-red-400'
+                                            : 'bg-blue-600/15 border border-blue-500/30 text-blue-400 hover:bg-blue-600/25'
+                                    } disabled:opacity-50`}
+                                >
+                                    {pushLoading ? '...' : pushEnabled ? '✓ Đang bật' : 'Bật nhắc'}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

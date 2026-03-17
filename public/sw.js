@@ -7,7 +7,7 @@
 // - HTML pages: Network First (fallback to cache)
 // ═══════════════════════════════════════════════════════════════
 
-const CACHE_NAME = 'thetaphoa-v1'
+const CACHE_NAME = 'thetaphoa-v2'
 
 // Assets to pre-cache on install
 const PRE_CACHE = [
@@ -116,3 +116,43 @@ function isStaticAsset(pathname) {
         pathname.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf)$/)
     )
 }
+
+// ─── Push Notification: nhắc ôn từ vựng ─────────────────────
+self.addEventListener('push', (event) => {
+    if (!event.data) return
+
+    const data = event.data.json()
+    const options = {
+        body: data.body || '',
+        icon: '/favicon_io/android-chrome-192x192.png',
+        badge: '/favicon_io/android-chrome-192x192.png',
+        tag: data.tag || 'vocab-reminder',
+        renotify: true,
+        data: { url: data.url || '/translate' },
+        vibrate: [100, 50, 100],
+    }
+
+    event.waitUntil(
+        self.registration.showNotification(data.title || '📖 Ôn từ vựng', options)
+    )
+})
+
+// ─── Click notification → mở /translate ─────────────────────
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close()
+
+    const url = event.notification.data?.url || '/translate'
+
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+            // Nếu đã mở tab → focus
+            for (const client of windowClients) {
+                if (client.url.includes(url) && 'focus' in client) {
+                    return client.focus()
+                }
+            }
+            // Chưa mở → mở tab mới
+            return clients.openWindow(url)
+        })
+    )
+})
