@@ -50,9 +50,11 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 |---------|------|-----------|-----------|---------|
 | **Tailscale** | — | ✅ enabled | systemd | SSH without key, private network |
 | **Docker** 28.2.2 | — | ✅ enabled | systemd | Container runtime |
-| **Nginx** 1.24.0 | 80, 443 | ✅ enabled | systemd | Reverse proxy (9 domains) |
+| **Nginx** 1.24.0 | 80, 443 | ✅ enabled | systemd | Reverse proxy (11 domains) |
 | **AdGuard Home** | 53, 3001 | ✅ unless-stopped | Docker | DNS ad blocker |
 | **Home Assistant** | 8123 | ✅ unless-stopped | Docker | Smart home |
+| **Uptime Kuma** | 3002 | ✅ unless-stopped | Docker (kuma-net) | Website/service monitoring |
+| **Zalo Bot Relay** | 3003 | ✅ unless-stopped | Docker (kuma-net) | Webhook relay → Zalo notification |
 | **stress-ng** | — | ✅ enabled | systemd | Anti-reclaim CPU/RAM |
 | **vocab-push.timer** | — | ✅ enabled | systemd timer | Vocab reminder mỗi giờ |
 
@@ -93,6 +95,122 @@ docker run -d --name adguardhome --restart unless-stopped \
   -v ~/adguard/conf:/opt/adguardhome/conf \
   adguard/adguardhome:latest
 ```
+
+## Uptime Kuma
+
+**URL:** https://uptime.khuong.theworkpc.com
+**Credentials:** tạo account lần đầu truy cập
+
+Monitor website/service uptime, gửi alert qua Zalo Bot khi site down.
+
+```
+📱 User nhắn Zalo Bot
+     │
+     ▼
+Zalo Bot API ──webhook──→ Zalo Relay (Docker) ──→ trả về health check report
+                               │
+Uptime Kuma (Docker) ──webhook─┘──→ gửi alert DOWN/UP qua Zalo Bot API ──→ 📱 Zalo
+     kuma-net                            kuma-net
+```
+
+### Docker Network
+
+Cả 2 container cùng network `kuma-net` để giao tiếp qua tên container:
+
+```bash
+# Tạo network (chỉ cần 1 lần)
+docker network create kuma-net
+```
+
+### Uptime Kuma Container
+
+```bash
+docker run -d \
+  --name uptime-kuma \
+  --restart unless-stopped \
+  --network kuma-net \
+  -p 3002:3001 \
+  -v uptime-kuma:/app/data \
+  louislam/uptime-kuma:latest
+```
+
+- **Port:** 3002 (host) → 3001 (container)
+- **Data:** Docker volume `uptime-kuma` → `/app/data`
+- **Nginx:** `uptime.khuong.theworkpc.com` → `localhost:3002`
+
+### Zalo Bot Relay Container
+
+```bash
+docker run -d \
+  --name zalo-relay \
+  --restart unless-stopped \
+  --network kuma-net \
+  -p 3003:3003 \
+  -v /home/ubuntu/zalo-relay:/app \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -e ZALO_BOT_TOKEN="<token>" \
+  -w /app \
+  --add-host=host.docker.internal:host-gateway \
+  python:3.12-slim python3 relay.py
+```
+
+- **Script:** `~/zalo-relay/relay.py`
+- **Chat ID:** `~/zalo-relay/chat_id.txt` (tự lưu khi user nhắn bot)
+- **Token:** xem `.env.local` → `ZALO_UPTIME_BOT_TOKEN`
+- **Nginx:** `zalo-relay.khuong.theworkpc.com` → `localhost:3003`
+
+### Zalo Bot Webhook
+
+```bash
+# Set webhook (chỉ cần 1 lần, hoặc khi đổi URL/token)
+curl -X POST "https://bot-api.zaloplatforms.com/bot<TOKEN>/setWebhook" \
+  -H "Content-Type: application/json" \
+  -d '{"url":"https://zalo-relay.khuong.theworkpc.com/zalo-webhook","secret_token":"khuongdev-uptime-2026"}'
+```
+
+### Notification trong Uptime Kuma
+
+- **Type:** Webhook
+- **Post URL:** `http://zalo-relay:3003/uptime-webhook`
+- ⚠️ Dùng tên container `zalo-relay`, KHÔNG dùng `localhost` (Docker network)
+
+### Relay Endpoints
+
+| Path | Method | Mô tả |
+|------|--------|--------|
+| `/zalo-webhook` | POST | Nhận tin nhắn từ Zalo → lưu chat_id + trả health check |
+| `/uptime-webhook` | POST | Nhận alert từ Uptime Kuma → gửi Zalo |
+
+### Quản lý
+
+```bash
+# Status
+docker ps --filter name=uptime-kuma --filter name=zalo-relay
+
+# Logs
+docker logs -f uptime-kuma
+docker logs -f zalo-relay
+
+# Restart
+docker restart uptime-kuma zalo-relay
+
+# Đổi Zalo Bot token
+# 1. Sửa token mới
+docker stop zalo-relay && docker rm zalo-relay
+# 2. Chạy lại lệnh docker run ở trên với token mới
+# 3. Gọi setWebhook với token mới
+
+# Update Uptime Kuma
+docker pull louislam/uptime-kuma:latest
+docker stop uptime-kuma && docker rm uptime-kuma
+# Chạy lại lệnh docker run ở trên (data giữ trong volume)
+```
+
+### Lưu ý
+
+- **2 Zalo Bot riêng biệt:** Bot cũ cho OpenClaw, bot mới cho Uptime Kuma
+- **Không ghi đè webhook:** Mỗi bot chỉ có 1 webhook URL, nếu set lại sẽ mất bot cũ
+- **Health check:** Nhắn bất kỳ tin nhắn nào cho bot Uptime Kuma → nhận report health check
 
 ## Home Assistant
 
