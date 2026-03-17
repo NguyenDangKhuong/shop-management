@@ -738,27 +738,61 @@ function App() {
                     <Callout type="tip">VN Interview: 90% sẽ hỏi Redux flow (action → reducer → store). Biết giải thích <Highlight>tại sao dùng Zustand thay Redux</Highlight> (less boilerplate, auto-optimized re-renders) → senior answer.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Next.js — SSR, SSG, ISR, App Router" emoji="▲" color="#000000" summary="Rendering strategies — công ty VN dùng Next.js rất nhiều, phải biết rõ">
-                    <Paragraph>Next.js là framework React <Highlight>phổ biến nhất ở VN</Highlight>. Phỏng vấn hay hỏi về rendering strategies.</Paragraph>
+                <TopicModal title="Next.js — Rendering Strategies (App Router)" emoji="▲" color="#000000" summary="SSG, ISR, SSR, CSR, PPR — kiểu App Router mới nhất, kèm ví dụ code thực tế">
+                    <Paragraph>Next.js là framework React <Highlight>phổ biến nhất ở VN</Highlight>. Phỏng vấn hay hỏi về rendering strategies. App Router (Next.js 13+) thay đổi hoàn toàn cách config rendering — <Highlight>không còn getStaticProps / getServerSideProps</Highlight>.</Paragraph>
+
+                    <Callout type="info">🏪 <strong>Ẩn dụ: Rendering = Cách phục vụ quán ăn</strong><br /><br />
+                        <strong>SSG</strong> = Cơm hộp đóng sẵn — nấu từ trước, ai đến lấy ngay. <strong>Nhanh nhất!</strong><br />
+                        <strong>ISR</strong> = Cơm hộp + nấu lại mỗi 60 giây — vẫn nhanh, nhưng <strong>không quá cũ</strong><br />
+                        <strong>SSR</strong> = Nấu tại chỗ mỗi khi khách order — <strong>tươi nhất</strong>, nhưng phải đợi<br />
+                        <strong>CSR</strong> = Cho khách nguyên liệu, tự nấu trên bếp (browser) — <strong>bếp trống mà khách chờ lâu</strong><br />
+                        <strong>PPR</strong> = Phần cơm hộp sẵn + phần nấu tại chỗ — <Highlight>best of both worlds!</Highlight>
+                    </Callout>
+
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20">
-                            <div className="text-gray-300 font-bold text-sm">📊 So sánh Rendering Strategies</div>
-                            <div className="text-slate-300 text-sm mt-1">
-                                • <strong>CSR</strong> (Client-Side Rendering): HTML trống + JS bundle → render trên browser<br />
-                                • <strong>SSR</strong> (Server-Side Rendering): render trên server mỗi request → HTML đầy đủ<br />
-                                • <strong>SSG</strong> (Static Site Generation): render lúc build → HTML tĩnh, CDN cache<br />
-                                • <strong>ISR</strong> (Incremental Static Regeneration): SSG + revalidate sau N giây
+                            <div className="text-gray-300 font-bold text-sm">📊 So sánh Rendering Strategies (App Router)</div>
+                            <div className="text-slate-300 text-sm mt-2">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-xs">
+                                        <thead>
+                                            <tr className="border-b border-white/10">
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Strategy</th>
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Khi nào render</th>
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Cache</th>
+                                                <th className="text-left py-1.5 text-slate-400 font-semibold">App Router config</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-slate-300">
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-green-400">SSG</td><td className="py-1.5 pr-2">Build time</td><td className="py-1.5 pr-2">Mãi mãi</td><td className="py-1.5 font-mono text-[10px]">generateStaticParams</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-blue-400">ISR</td><td className="py-1.5 pr-2">Build + revalidate</td><td className="py-1.5 pr-2">N giây</td><td className="py-1.5 font-mono text-[10px]">{`revalidate = 60`}</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-yellow-400">SSR</td><td className="py-1.5 pr-2">Mỗi request</td><td className="py-1.5 pr-2">Không</td><td className="py-1.5 font-mono text-[10px]">{`dynamic = 'force-dynamic'`}</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-red-400">CSR</td><td className="py-1.5 pr-2">Trên browser</td><td className="py-1.5 pr-2">Không</td><td className="py-1.5 font-mono text-[10px]">{`'use client' + useEffect`}</td></tr>
+                                            <tr><td className="py-1.5 pr-2 font-bold text-purple-400">PPR</td><td className="py-1.5 pr-2">Static shell + streaming</td><td className="py-1.5 pr-2">Shell: mãi mãi</td><td className="py-1.5 font-mono text-[10px]">Suspense boundary</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                         <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                            <div className="text-green-400 font-bold text-sm">🆕 App Router (Next.js 13+)</div>
+                            <div className="text-green-400 font-bold text-sm">🆕 App Router — Mọi thứ là Server Component</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                • <strong>Server Components</strong> (default): render trên server, 0 JS bundle<br />
-                                • <strong>&apos;use client&apos;</strong>: opt-in to client component (hooks, events, browser API)<br />
-                                • <strong>layout.tsx</strong>: shared layout (persistent across navigation)<br />
-                                • <strong>loading.tsx</strong>: React Suspense boundary<br />
-                                • <strong>error.tsx</strong>: Error Boundary<br />
-                                • <strong>Server Actions</strong>: gọi server-side function trực tiếp từ client
+                                • <strong>Mọi page/layout</strong> mặc định là Server Component → 0 JS<br />
+                                • Rendering strategy quyết định bởi <strong>cách fetch data</strong>, không phải tên function<br />
+                                • <InlineCode>generateStaticParams</InlineCode> → SSG (build time)<br />
+                                • <InlineCode>{`export const revalidate = N`}</InlineCode> → ISR (revalidate sau N giây)<br />
+                                • <InlineCode>{`export const dynamic = 'force-dynamic'`}</InlineCode> → SSR (mỗi request)<br />
+                                • Không export gì → Next.js <strong>tự quyết định</strong> (Static nếu không có dynamic data)
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                            <div className="text-purple-400 font-bold text-sm">⚡ PPR — Partial Pre-rendering (Next.js 15+)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Mới nhất!</strong> Kết hợp Static + Dynamic trong cùng 1 page<br />
+                                • Static shell (header, layout) → render lúc build, serve từ CDN<br />
+                                • Dynamic parts (user data, cart) → stream từ server khi request<br />
+                                • Dùng <InlineCode>{'<Suspense>'}</InlineCode> để đánh dấu phần dynamic<br />
+                                • <Highlight>TTFB cực nhanh</Highlight> (static shell) + data tươi (streaming)
                             </div>
                         </div>
                         <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
@@ -767,11 +801,16 @@ function App() {
                                 • <strong>SSG</strong>: blogs, landing pages, docs (content ít thay đổi)<br />
                                 • <strong>ISR</strong>: e-commerce products, news (thay đổi vài phút/giờ)<br />
                                 • <strong>SSR</strong>: user dashboard, search results (data real-time, SEO cần)<br />
-                                • <strong>CSR</strong>: admin panel, private pages (không cần SEO)
+                                • <strong>CSR</strong>: admin panel, private pages (không cần SEO)<br />
+                                • <strong>PPR</strong>: product page (layout static + giá/stock dynamic)
                             </div>
                         </div>
                     </div>
-                    <CodeBlock title="nextjs-rendering.tsx">{`// SSG — build time (getStaticProps — Pages Router)
+                    <CodeBlock title="nextjs-rendering.tsx">{`// ╔════════════════════════════════════════╗
+// ║  📦 PAGES ROUTER (cũ — vẫn hoạt động) ║
+// ╚════════════════════════════════════════╝
+
+// SSG — build time
 export async function getStaticProps() {
   const posts = await fetchPosts()
   return { props: { posts } }
@@ -789,19 +828,86 @@ export async function getServerSideProps(ctx) {
   return { props: { user } }
 }
 
-// App Router — Server Component (default)
-async function ProductPage({ params }) {
-  const product = await db.product.findById(params.id) // direct DB!
-  return <div>{product.name}</div>
+// ╔════════════════════════════════════════════╗
+// ║  🆕 APP ROUTER (mới — recommended)        ║
+// ║  Không còn getStaticProps/getServerSideProps║
+// ║  Mọi thứ quyết định bằng export const     ║
+// ╚════════════════════════════════════════════╝
+
+// ═══ 1. SSG — generateStaticParams ═══
+// File: app/blog/[slug]/page.tsx
+export async function generateStaticParams() {
+  const posts = await db.post.findMany({ select: { slug: true } })
+  return posts.map(p => ({ slug: p.slug }))
+}
+// ↑ Tương đương getStaticPaths + getStaticProps
+
+export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const post = await db.post.findUnique({ where: { slug } })
+  return <article><h1>{post.title}</h1><p>{post.content}</p></article>
 }
 
-// App Router — Client Component
+// ═══ 2. ISR — export const revalidate ═══
+// File: app/products/page.tsx
+export const revalidate = 60
+// ↑ Tương đương getStaticProps({ revalidate: 60 })
+
+export default async function ProductsPage() {
+  const products = await db.product.findMany()
+  return <div>{products.map(p => <Card key={p.id} product={p} />)}</div>
+}
+
+// ═══ 3. SSR — export const dynamic ═══
+// File: app/dashboard/page.tsx
+export const dynamic = 'force-dynamic'
+// ↑ Tương đương getServerSideProps
+
+export default async function DashboardPage() {
+  const user = await getUser()
+  return <div>Xin chào, {user.name}</div>
+}
+
+// ═══ 4. CSR — 'use client' + useEffect ═══
+// Giống nhau ở cả Pages Router và App Router
 'use client'
-function LikeButton() {
-  const [liked, setLiked] = useState(false) // hooks OK here
-  return <button onClick={() => setLiked(!liked)}>❤️</button>
+import { useState, useEffect } from 'react'
+
+function LiveChat() {
+  const [messages, setMessages] = useState([])
+  useEffect(() => {
+    const ws = new WebSocket('/api/chat')
+    ws.onmessage = (e) => setMessages(prev => [...prev, JSON.parse(e.data)])
+    return () => ws.close()
+  }, [])
+  return <div>{messages.map(m => <p key={m.id}>{m.text}</p>)}</div>
+}
+
+// ═══ 5. PPR — Partial Pre-rendering (Next.js 15+, CHỈ App Router) ═══
+// Static shell + dynamic content trong cùng 1 page!
+import { Suspense } from 'react'
+
+export default async function ProductPage({ params }) {
+  const { id } = await params
+  const product = await db.product.findUnique({ where: { id } })
+
+  return (
+    <div>
+      {/* ⚡ Static shell — CDN cached */}
+      <h1>{product.name}</h1>
+      <p>{product.description}</p>
+
+      {/* 🔄 Dynamic — streamed mỗi request */}
+      <Suspense fallback={<PriceSkeleton />}>
+        <LivePrice productId={id} />
+      </Suspense>
+      <Suspense fallback={<CartSkeleton />}>
+        <CartStatus />
+      </Suspense>
+    </div>
+  )
 }`}</CodeBlock>
-                    <Callout type="tip">VN Interview: {'"Giải thích SSR vs SSG vs ISR"'} = câu hỏi <Highlight>gần như chắc chắn</Highlight> gặp nếu JD có Next.js. Biết thêm App Router + Server Components → shows bạn up-to-date.</Callout>
+                    <Callout type="tip">VN Interview: {'"Giải thích SSR vs SSG vs ISR"'} = câu hỏi <Highlight>gần như chắc chắn</Highlight> gặp nếu JD có Next.js. Biết cả 2 kiểu: Pages Router (getStaticProps) cho legacy + App Router (export const) cho mới → senior answer. Bonus: biết <Highlight>PPR</Highlight> → shows bạn theo dõi Next.js mới nhất!</Callout>
                 </TopicModal>
 
                 <TopicModal title="Server Components & Server Actions" emoji="🖥️" color="#0ea5e9" summary="RSC = zero JS bundle, Server Actions = RPC-style mutations — kiến trúc mới của React/Next.js">

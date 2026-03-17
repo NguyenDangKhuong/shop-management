@@ -734,27 +734,61 @@ function App() {
                     <Callout type="tip">Interview: 90% will ask Redux flow (action → reducer → store). Knowing <Highlight>why use Zustand over Redux</Highlight> (less boilerplate, auto-optimized re-renders) → senior answer.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Next.js — SSR, SSG, ISR, App Router" emoji="▲" color="#000000" summary="Rendering strategies — Next.js is extremely popular, must know well">
-                    <Paragraph>Next.js is the <Highlight>most popular React framework</Highlight>. Interviews frequently ask about rendering strategies.</Paragraph>
+                <TopicModal title="Next.js — Rendering Strategies (App Router)" emoji="▲" color="#000000" summary="SSG, ISR, SSR, CSR, PPR — latest App Router patterns with real code examples">
+                    <Paragraph>Next.js is the <Highlight>most popular React framework</Highlight>. Interviews frequently ask about rendering strategies. App Router (Next.js 13+) completely changed how rendering is configured — <Highlight>no more getStaticProps / getServerSideProps</Highlight>.</Paragraph>
+
+                    <Callout type="info">🏪 <strong>Analogy: Rendering = Restaurant Service</strong><br /><br />
+                        <strong>SSG</strong> = Pre-packaged meals — cooked beforehand, grab and go. <strong>Fastest!</strong><br />
+                        <strong>ISR</strong> = Pre-packaged + refresh every 60s — still fast, but <strong>not stale</strong><br />
+                        <strong>SSR</strong> = Cook fresh per order — <strong>freshest</strong>, but customer waits<br />
+                        <strong>CSR</strong> = Give customer raw ingredients, cook in their kitchen (browser) — <strong>empty plate, long wait</strong><br />
+                        <strong>PPR</strong> = Pre-packaged sides + cook main dish fresh — <Highlight>best of both worlds!</Highlight>
+                    </Callout>
+
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20">
-                            <div className="text-gray-300 font-bold text-sm">📊 Rendering Strategies Comparison</div>
-                            <div className="text-slate-300 text-sm mt-1">
-                                • <strong>CSR</strong> (Client-Side Rendering): empty HTML + JS bundle → renders in browser<br />
-                                • <strong>SSR</strong> (Server-Side Rendering): renders on server each request → full HTML<br />
-                                • <strong>SSG</strong> (Static Site Generation): renders at build time → static HTML, CDN cached<br />
-                                • <strong>ISR</strong> (Incremental Static Regeneration): SSG + revalidate after N seconds
+                            <div className="text-gray-300 font-bold text-sm">📊 Rendering Strategies Comparison (App Router)</div>
+                            <div className="text-slate-300 text-sm mt-2">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-xs">
+                                        <thead>
+                                            <tr className="border-b border-white/10">
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Strategy</th>
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">When rendered</th>
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Cache</th>
+                                                <th className="text-left py-1.5 text-slate-400 font-semibold">App Router config</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-slate-300">
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-green-400">SSG</td><td className="py-1.5 pr-2">Build time</td><td className="py-1.5 pr-2">Forever</td><td className="py-1.5 font-mono text-[10px]">generateStaticParams</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-blue-400">ISR</td><td className="py-1.5 pr-2">Build + revalidate</td><td className="py-1.5 pr-2">N seconds</td><td className="py-1.5 font-mono text-[10px]">{`revalidate = 60`}</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-yellow-400">SSR</td><td className="py-1.5 pr-2">Every request</td><td className="py-1.5 pr-2">None</td><td className="py-1.5 font-mono text-[10px]">{`dynamic = 'force-dynamic'`}</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-red-400">CSR</td><td className="py-1.5 pr-2">In browser</td><td className="py-1.5 pr-2">None</td><td className="py-1.5 font-mono text-[10px]">{`'use client' + useEffect`}</td></tr>
+                                            <tr><td className="py-1.5 pr-2 font-bold text-purple-400">PPR</td><td className="py-1.5 pr-2">Static shell + streaming</td><td className="py-1.5 pr-2">Shell: forever</td><td className="py-1.5 font-mono text-[10px]">Suspense boundary</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                         <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                            <div className="text-green-400 font-bold text-sm">🆕 App Router (Next.js 13+)</div>
+                            <div className="text-green-400 font-bold text-sm">🆕 App Router — Everything is a Server Component</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                • <strong>Server Components</strong> (default): render on server, 0 JS bundle<br />
-                                • <strong>&apos;use client&apos;</strong>: opt-in to client component (hooks, events, browser API)<br />
-                                • <strong>layout.tsx</strong>: shared layout (persistent across navigation)<br />
-                                • <strong>loading.tsx</strong>: React Suspense boundary<br />
-                                • <strong>error.tsx</strong>: Error Boundary<br />
-                                • <strong>Server Actions</strong>: call server-side functions directly from client
+                                • <strong>Every page/layout</strong> defaults to Server Component → 0 JS<br />
+                                • Rendering strategy decided by <strong>how you fetch data</strong>, not function names<br />
+                                • <InlineCode>generateStaticParams</InlineCode> → SSG (build time)<br />
+                                • <InlineCode>{`export const revalidate = N`}</InlineCode> → ISR (revalidate after N seconds)<br />
+                                • <InlineCode>{`export const dynamic = 'force-dynamic'`}</InlineCode> → SSR (every request)<br />
+                                • No exports → Next.js <strong>auto-decides</strong> (Static if no dynamic data)
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                            <div className="text-purple-400 font-bold text-sm">⚡ PPR — Partial Pre-rendering (Next.js 15+)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Newest!</strong> Combine Static + Dynamic in a single page<br />
+                                • Static shell (header, layout) → rendered at build, served from CDN<br />
+                                • Dynamic parts (user data, cart) → streamed from server per request<br />
+                                • Use <InlineCode>{'<Suspense>'}</InlineCode> to mark dynamic sections<br />
+                                • <Highlight>Ultra-fast TTFB</Highlight> (static shell) + fresh data (streaming)
                             </div>
                         </div>
                         <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
@@ -763,11 +797,16 @@ function App() {
                                 • <strong>SSG</strong>: blogs, landing pages, docs (content rarely changes)<br />
                                 • <strong>ISR</strong>: e-commerce products, news (changes every few minutes/hours)<br />
                                 • <strong>SSR</strong>: user dashboard, search results (real-time data, needs SEO)<br />
-                                • <strong>CSR</strong>: admin panel, private pages (no SEO needed)
+                                • <strong>CSR</strong>: admin panel, private pages (no SEO needed)<br />
+                                • <strong>PPR</strong>: product page (static layout + dynamic price/stock)
                             </div>
                         </div>
                     </div>
-                    <CodeBlock title="nextjs-rendering.tsx">{`// SSG — build time (getStaticProps — Pages Router)
+                    <CodeBlock title="nextjs-rendering.tsx">{`// ╔════════════════════════════════════════╗
+// ║  📦 PAGES ROUTER (legacy — still works) ║
+// ╚════════════════════════════════════════╝
+
+// SSG — build time
 export async function getStaticProps() {
   const posts = await fetchPosts()
   return { props: { posts } }
@@ -785,19 +824,86 @@ export async function getServerSideProps(ctx) {
   return { props: { user } }
 }
 
-// App Router — Server Component (default)
-async function ProductPage({ params }) {
-  const product = await db.product.findById(params.id) // direct DB!
-  return <div>{product.name}</div>
+// ╔════════════════════════════════════════════╗
+// ║  🆕 APP ROUTER (new — recommended)        ║
+// ║  No more getStaticProps/getServerSideProps ║
+// ║  Everything via export const              ║
+// ╚════════════════════════════════════════════╝
+
+// ═══ 1. SSG — generateStaticParams ═══
+// File: app/blog/[slug]/page.tsx
+export async function generateStaticParams() {
+  const posts = await db.post.findMany({ select: { slug: true } })
+  return posts.map(p => ({ slug: p.slug }))
+}
+// ↑ Equivalent to getStaticPaths + getStaticProps
+
+export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const post = await db.post.findUnique({ where: { slug } })
+  return <article><h1>{post.title}</h1><p>{post.content}</p></article>
 }
 
-// App Router — Client Component
+// ═══ 2. ISR — export const revalidate ═══
+// File: app/products/page.tsx
+export const revalidate = 60
+// ↑ Equivalent to getStaticProps({ revalidate: 60 })
+
+export default async function ProductsPage() {
+  const products = await db.product.findMany()
+  return <div>{products.map(p => <Card key={p.id} product={p} />)}</div>
+}
+
+// ═══ 3. SSR — export const dynamic ═══
+// File: app/dashboard/page.tsx
+export const dynamic = 'force-dynamic'
+// ↑ Equivalent to getServerSideProps
+
+export default async function DashboardPage() {
+  const user = await getUser()
+  return <div>Welcome, {user.name}</div>
+}
+
+// ═══ 4. CSR — 'use client' + useEffect ═══
+// Same in both Pages Router and App Router
 'use client'
-function LikeButton() {
-  const [liked, setLiked] = useState(false) // hooks OK here
-  return <button onClick={() => setLiked(!liked)}>❤️</button>
+import { useState, useEffect } from 'react'
+
+function LiveChat() {
+  const [messages, setMessages] = useState([])
+  useEffect(() => {
+    const ws = new WebSocket('/api/chat')
+    ws.onmessage = (e) => setMessages(prev => [...prev, JSON.parse(e.data)])
+    return () => ws.close()
+  }, [])
+  return <div>{messages.map(m => <p key={m.id}>{m.text}</p>)}</div>
+}
+
+// ═══ 5. PPR — Partial Pre-rendering (Next.js 15+, APP ROUTER ONLY) ═══
+// Static shell + dynamic content in the same page!
+import { Suspense } from 'react'
+
+export default async function ProductPage({ params }) {
+  const { id } = await params
+  const product = await db.product.findUnique({ where: { id } })
+
+  return (
+    <div>
+      {/* ⚡ Static shell — CDN cached */}
+      <h1>{product.name}</h1>
+      <p>{product.description}</p>
+
+      {/* 🔄 Dynamic — streamed per request */}
+      <Suspense fallback={<PriceSkeleton />}>
+        <LivePrice productId={id} />
+      </Suspense>
+      <Suspense fallback={<CartSkeleton />}>
+        <CartStatus />
+      </Suspense>
+    </div>
+  )
 }`}</CodeBlock>
-                    <Callout type="tip">Interview: {'"Explain SSR vs SSG vs ISR"'} is <Highlight>almost guaranteed</Highlight> if the JD mentions Next.js. Knowing App Router + Server Components → shows you&apos;re up-to-date.</Callout>
+                    <Callout type="tip">Interview: {'"Explain SSR vs SSG vs ISR"'} is <Highlight>almost guaranteed</Highlight> if the JD mentions Next.js. Know both styles: Pages Router (getStaticProps) for legacy + App Router (export const) for new → senior answer. Bonus: mention <Highlight>PPR</Highlight> → shows you follow the latest Next.js updates!</Callout>
                 </TopicModal>
 
                 <TopicModal title="Server Components & Server Actions" emoji="🖥️" color="#0ea5e9" summary="RSC = zero JS bundle, Server Actions = RPC-style mutations — the new React/Next.js architecture">
