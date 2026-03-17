@@ -33,7 +33,83 @@ let b = 2;
 
 greet(); // "Hello!" — function hoisted nguyên vẹn
 function greet() { console.log("Hello!"); }`}</CodeBlock>
-                    <Callout type="tip">Interview tip: Giải thích được <Highlight>TDZ</Highlight> (Temporal Dead Zone) của let/const sẽ ghi điểm cực lớn.</Callout>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm">{'\u2705'} Benefit: Function Declaration Hoisting</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {`G\u1ECDi function TR\u01AF\u1EDAC khi khai b\u00E1o \u2192 vi\u1EBFt`} <strong>main logic {'\u1EDF'} tr\u00EAn, helpers {'\u1EDF'} d\u01B0\u1EDBi</strong> {'\u2192'} code d\u1EC5 {'\u0111\u1ECDc'} top-down.<br />
+                                {'\u0110\u00E2y l\u00E0 l\u00FD do duy nh\u1EA5t hoisting "h\u1EEFu \u00EDch".'} 
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">{'\u26A0\uFE0F'} Bad behavior c\u1EA7n tr\u00E1nh</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'\u2022'} <strong>var hoisting</strong> {'\u2192'} {`gi\u00E1 tr\u1ECB`} <InlineCode>undefined</InlineCode> thay {`v\u00EC l\u1ED7i \u2192`} <Highlight>silent bug nguy hi\u1EC3m</Highlight><br />
+                                {'\u2022'} <strong>Function expression / arrow</strong> {'\u2192 KH\u00D4NG hoist \u2192 TypeError n\u1EBFu g\u1ECDi tr\u01B0\u1EDBc'}<br />
+                                {'\u2022'} <strong>class hoisting</strong> {'\u2192 TDZ gi\u1ED1ng let/const \u2192 ReferenceError'}<br />
+                                {'\u2192 Lu\u00F4n d\u00F9ng'} <InlineCode>let</InlineCode>/<InlineCode>const</InlineCode> {'\u2014 TDZ b\u1EAFt bug s\u1EDBm thay v\u00EC \u0111\u1EC3 l\u1ECDt'}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20 my-3">
+                        <div className="text-gray-300 font-bold text-sm">{'\uD83D\uDCCA'} Hoisting Summary Table</div>
+                        <div className="text-slate-300 text-sm mt-2">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-xs">
+                                    <thead>
+                                        <tr className="border-b border-white/10">
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Ki\u1EC3u</th>
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Hoist?</th>
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">{`Gi\u00E1 tr\u1ECB khi access s\u1EDBm`}</th>
+                                            <th className="text-left py-1.5 text-slate-400 font-semibold">{`Khuy\u1EBFn ngh\u1ECB`}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-slate-300">
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-red-400">var</td><td className="py-1.5 pr-2">{'\u2705'}</td><td className="py-1.5 pr-2">{`undefined (nguy hi\u1EC3m!)`}</td><td className="py-1.5">{'\u274C Tr\u00E1nh'}</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-green-400">let / const</td><td className="py-1.5 pr-2">{'\u2705 (TDZ)'}</td><td className="py-1.5 pr-2">{`ReferenceError (an to\u00E0n)`}</td><td className="py-1.5">{'\u2705 Lu\u00F4n d\u00F9ng'}</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-blue-400">function declaration</td><td className="py-1.5 pr-2">{'\u2705'}</td><td className="py-1.5 pr-2">{`Function \u0111\u1EA7y \u0111\u1EE7`}</td><td className="py-1.5">{'\u2705 OK'}</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-yellow-400">function expression</td><td className="py-1.5 pr-2">{'\u274C'}</td><td className="py-1.5 pr-2">TypeError</td><td className="py-1.5">{'\u2705 OK'}</td></tr>
+                                        <tr><td className="py-1.5 pr-2 font-bold text-purple-400">class</td><td className="py-1.5 pr-2">{'\u2705 (TDZ)'}</td><td className="py-1.5 pr-2">ReferenceError</td><td className="py-1.5">{'\u2705 OK'}</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="hoisting-pitfalls.js">{`// ═══ 1. var HOISTING — SILENT BUG ═══
+console.log(name) // undefined (KHÔNG lỗi, nhưng sai logic!)
+var name = 'Khuong'
+// JS hiểu thành:
+// var name           ← hoisted lên top → undefined
+// console.log(name)  ← undefined
+// name = 'Khuong'    ← gán sau
+
+// ═══ 2. let/const — TDZ BẮT BUG SỚM ═══
+console.log(x) // ❌ ReferenceError (tốt hơn undefined!)
+let x = 5
+// let VẪN bị hoist, nhưng ở trạng thái "uninitialized"
+// Vùng từ đầu scope → dòng khai báo = TDZ
+
+// ═══ 3. FUNCTION EXPRESSION KHÔNG HOIST ═══
+greet() // ❌ TypeError: greet is not a function
+const greet = function() { console.log('Hi') }
+// const greet = () => console.log('Hi')  ← cũng không hoist
+
+// ═══ 4. LỢI ÍCH: TOP-DOWN CODE ═══
+function main() {
+  const data = fetchData()        // gọi trước khai báo OK!
+  const result = processData(data)
+  return formatOutput(result)
+}
+
+// Helper functions ở dưới — nhờ hoisting
+function fetchData() { /* ... */ }
+function processData(data) { /* ... */ }
+function formatOutput(result) { /* ... */ }`}</CodeBlock>
+
+                    <Callout type="tip">Interview: {`"Hoisting hữu ích với function declarations để organize code top-down. Nhưng với biến, nên dùng let/const vì TDZ giúp catch bug sớm. var hoisting tạo silent bugs với undefined — đó là bad behavior cần tránh."`}</Callout>
                 </TopicModal>
 
                 <TopicModal title="Scope & Closure" emoji="🔒" color="#a78bfa" summary="Lexical scope, closure patterns, module pattern">

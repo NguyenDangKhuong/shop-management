@@ -532,6 +532,173 @@ const tokens = {
                     </Callout>
                 </TopicModal>
 
+                <TopicModal title="Kubernetes & Cloud Run — Deploy Frontend" emoji="☸️" color="#326CE5" summary="Container orchestration, serverless deploy, Dockerfile, scaling — deploying Next.js to production">
+                    <Paragraph>Knowing how to deploy apps on <Highlight>Kubernetes (K8s)</Highlight> or <Highlight>Cloud Run</Highlight> is an important skill for Senior Frontend. You don&apos;t need to become a DevOps expert, but understanding containers + orchestration is essential.</Paragraph>
+
+                    <Callout type="info">🚗 <strong>Analogy: Deploy = Fleet Management</strong><br /><br />
+                        <strong>Traditional VPS</strong> = Driving your own car → manage everything (gas, repairs, parking)<br />
+                        <strong>Cloud Run</strong> = Calling a Grab/Uber → <Highlight>pay only when riding</Highlight>, no car to maintain<br />
+                        <strong>Kubernetes</strong> = Managing a bus fleet → <Highlight>decide how many buses, which routes</Highlight>, complex but powerful
+                    </Callout>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20">
+                            <div className="text-gray-300 font-bold text-sm">📊 Comparison: K8s vs Cloud Run vs VPS</div>
+                            <div className="text-slate-300 text-sm mt-2">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-xs">
+                                        <thead>
+                                            <tr className="border-b border-white/10">
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Criteria</th>
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">VPS (Oracle/AWS EC2)</th>
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Cloud Run</th>
+                                                <th className="text-left py-1.5 text-slate-400 font-semibold">Kubernetes (GKE/EKS)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-slate-300">
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-semibold">Setup</td><td className="py-1.5 pr-2">SSH + manual</td><td className="py-1.5 pr-2 text-green-400 font-bold">1 command</td><td className="py-1.5">Complex</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-semibold">Auto-scale</td><td className="py-1.5 pr-2">No</td><td className="py-1.5 pr-2 text-green-400 font-bold">0 → N automatic</td><td className="py-1.5 text-blue-400">Yes (HPA)</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-semibold">Scale to zero</td><td className="py-1.5 pr-2">No</td><td className="py-1.5 pr-2 text-green-400 font-bold">Yes</td><td className="py-1.5">Yes (KEDA)</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-semibold">Cost</td><td className="py-1.5 pr-2">Fixed/month</td><td className="py-1.5 pr-2">Pay per request</td><td className="py-1.5">Cluster fee + nodes</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-semibold">Control</td><td className="py-1.5 pr-2 text-blue-400">Full control</td><td className="py-1.5 pr-2">Limited</td><td className="py-1.5 text-blue-400 font-bold">Full control</td></tr>
+                                            <tr><td className="py-1.5 pr-2 font-semibold">Best for</td><td className="py-1.5 pr-2">Side projects</td><td className="py-1.5 pr-2">Startups/MVPs</td><td className="py-1.5">Enterprise</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">☸️ Kubernetes — Core Concepts</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Pod</strong> = 1 container running an app (smallest unit)<br />
+                                • <strong>Deployment</strong> = manages multiple pods (replicas, rolling updates)<br />
+                                • <strong>Service</strong> = exposes pods externally (ClusterIP, LoadBalancer)<br />
+                                • <strong>Ingress</strong> = HTTP routing (domain → service)<br />
+                                • <strong>HPA</strong> = auto-scale pods based on CPU/memory/custom metrics
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm">☁️ Cloud Run — Serverless Container</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Push Docker image</strong> → Cloud Run runs it instantly, no K8s cluster needed<br />
+                                • <Highlight>Scale to zero</Highlight>: no requests → no containers → no cost<br />
+                                • Auto-scales 0 → N instances based on traffic<br />
+                                • Automatic HTTPS, custom domains, revision management<br />
+                                • <strong>Free tier</strong>: 2 million requests/month — enough for side projects
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                            <div className="text-yellow-400 font-bold text-sm">🎯 When to use what?</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Cloud Run</strong>: startups, MVPs, APIs, SSR Next.js — <Highlight>simple, fast, cheap</Highlight><br />
+                                • <strong>K8s</strong>: enterprise, microservices, need service mesh, custom networking<br />
+                                • <strong>VPS</strong>: side projects, need full control, fixed budget<br />
+                                • <strong>Vercel/Netlify</strong>: static sites, JAMstack — no Docker needed
+                            </div>
+                        </div>
+                    </div>
+                    <CodeBlock title="deploy-nextjs.yaml">{`# ═══ 1. Dockerfile for Next.js (Multi-stage build) ═══
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+EXPOSE 3000
+CMD ["node", "server.js"]
+# → Image size ~150MB (vs ~1GB without multi-stage)
+
+# ═══ 2. Kubernetes — deployment.yaml ═══
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shop-management
+spec:
+  replicas: 2                    # run 2 pods
+  selector:
+    matchLabels:
+      app: shop-management
+  template:
+    metadata:
+      labels:
+        app: shop-management
+    spec:
+      containers:
+      - name: app
+        image: gcr.io/my-project/shop-management:latest
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        env:
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: mongodb-uri
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shop-management-svc
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: shop-management
+---
+# HPA — auto-scale 2→10 pods when CPU > 70%
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: shop-management
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+
+# ═══ 3. Cloud Run — Deploy in 1 command ═══
+# Build + push Docker image
+# gcloud builds submit --tag gcr.io/my-project/shop-management
+#
+# Deploy to Cloud Run
+# gcloud run deploy shop-management \\
+#   --image gcr.io/my-project/shop-management \\
+#   --platform managed \\
+#   --region asia-southeast1 \\
+#   --allow-unauthenticated \\
+#   --memory 512Mi \\
+#   --min-instances 0 \\
+#   --max-instances 10 \\
+#   --set-env-vars "NODE_ENV=production"
+#
+# → URL: https://shop-management-xxx.a.run.app
+# → Auto HTTPS, auto-scale, scale to zero!`}</CodeBlock>
+                    <Callout type="tip">Interview: Senior Frontend engineers should know how to deploy apps in containers. When asked {'"How do you scale a frontend?"'} → <Highlight>Cloud Run for serverless (simple) or K8s + HPA for enterprise (full control)</Highlight>. Bonus: mention multi-stage Docker builds reducing image size from 1GB to 150MB.</Callout>
+                </TopicModal>
+
                 <TopicModal title="Functional vs Non-Functional Requirements" emoji="📋" color="#f59e0b" summary="The first step in System Design — distinguishing 'what it does' vs 'how well it does it'">
                     <Paragraph>When starting any System Design problem, the first step is <Highlight>Clarify Requirements</Highlight>. You must clearly distinguish 2 types:</Paragraph>
 

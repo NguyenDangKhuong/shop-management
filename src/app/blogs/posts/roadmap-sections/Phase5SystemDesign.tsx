@@ -532,6 +532,173 @@ const tokens = {
                     </Callout>
                 </TopicModal>
 
+                <TopicModal title="Kubernetes & Cloud Run — Deploy Frontend" emoji="☸️" color="#326CE5" summary="Container orchestration, serverless deploy, Dockerfile, scaling — deploy Next.js lên production">
+                    <Paragraph>Biết deploy app lên <Highlight>Kubernetes (K8s)</Highlight> hoặc <Highlight>Cloud Run</Highlight> là kỹ năng quan trọng cho Senior Frontend. Không cần thành DevOps expert, nhưng phải hiểu container + orchestration.</Paragraph>
+
+                    <Callout type="info">🚗 <strong>Ẩn dụ: Deploy = Quản lý đội xe</strong><br /><br />
+                        <strong>VPS truyền thống</strong> = Tự lái xe riêng → quản lý mọi thứ (xăng, sửa, đỗ)<br />
+                        <strong>Cloud Run</strong> = Gọi taxi Grab → <Highlight>chỉ trả tiền khi đi</Highlight>, không cần lo xe<br />
+                        <strong>Kubernetes</strong> = Quản lý đội xe bus → <Highlight>tự quyết định bao nhiêu xe, tuyến nào</Highlight>, phức tạp nhưng mạnh
+                    </Callout>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20">
+                            <div className="text-gray-300 font-bold text-sm">📊 So sánh: K8s vs Cloud Run vs VPS</div>
+                            <div className="text-slate-300 text-sm mt-2">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-xs">
+                                        <thead>
+                                            <tr className="border-b border-white/10">
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Tiêu chí</th>
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">VPS (Oracle/AWS EC2)</th>
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Cloud Run</th>
+                                                <th className="text-left py-1.5 text-slate-400 font-semibold">Kubernetes (GKE/EKS)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-slate-300">
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-semibold">Setup</td><td className="py-1.5 pr-2">SSH + manual</td><td className="py-1.5 pr-2 text-green-400 font-bold">1 command</td><td className="py-1.5">Phức tạp</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-semibold">Auto-scale</td><td className="py-1.5 pr-2">Không</td><td className="py-1.5 pr-2 text-green-400 font-bold">0 → N tự động</td><td className="py-1.5 text-blue-400">Có (HPA)</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-semibold">Scale to zero</td><td className="py-1.5 pr-2">Không</td><td className="py-1.5 pr-2 text-green-400 font-bold">Có</td><td className="py-1.5">Có (KEDA)</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-semibold">Chi phí</td><td className="py-1.5 pr-2">Cố định/tháng</td><td className="py-1.5 pr-2">Trả theo request</td><td className="py-1.5">Cluster fee + nodes</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-semibold">Control</td><td className="py-1.5 pr-2 text-blue-400">Full control</td><td className="py-1.5 pr-2">Hạn chế</td><td className="py-1.5 text-blue-400 font-bold">Full control</td></tr>
+                                            <tr><td className="py-1.5 pr-2 font-semibold">Phù hợp</td><td className="py-1.5 pr-2">Side project</td><td className="py-1.5 pr-2">Startup/MVP</td><td className="py-1.5">Enterprise</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">☸️ Kubernetes — Core Concepts</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Pod</strong> = 1 container chạy app (đơn vị nhỏ nhất)<br />
+                                • <strong>Deployment</strong> = quản lý nhiều pods (replicas, rolling update)<br />
+                                • <strong>Service</strong> = expose pods ra ngoài (ClusterIP, LoadBalancer)<br />
+                                • <strong>Ingress</strong> = routing HTTP (domain → service)<br />
+                                • <strong>HPA</strong> = auto-scale pods theo CPU/memory/custom metrics
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm">☁️ Cloud Run — Serverless Container</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Push Docker image</strong> → Cloud Run chạy ngay, không cần K8s cluster<br />
+                                • <Highlight>Scale to zero</Highlight>: không request → không container → không tốn tiền<br />
+                                • Auto-scale 0 → N instances theo traffic<br />
+                                • HTTPS tự động, custom domain, revision management<br />
+                                • <strong>Free tier</strong>: 2 triệu requests/tháng — đủ cho side project
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                            <div className="text-yellow-400 font-bold text-sm">🎯 Khi nào dùng gì?</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Cloud Run</strong>: startups, MVPs, APIs, SSR Next.js — <Highlight>đơn giản, nhanh, rẻ</Highlight><br />
+                                • <strong>K8s</strong>: enterprise, microservices, cần service mesh, custom networking<br />
+                                • <strong>VPS</strong>: side project, cần full control, budget cố định<br />
+                                • <strong>Vercel/Netlify</strong>: static sites, JAMstack — không cần Docker
+                            </div>
+                        </div>
+                    </div>
+                    <CodeBlock title="deploy-nextjs.yaml">{`# ═══ 1. Dockerfile cho Next.js (Multi-stage build) ═══
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+EXPOSE 3000
+CMD ["node", "server.js"]
+# → Image size ~150MB (vs ~1GB without multi-stage)
+
+# ═══ 2. Kubernetes — deployment.yaml ═══
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shop-management
+spec:
+  replicas: 2                    # chạy 2 pods
+  selector:
+    matchLabels:
+      app: shop-management
+  template:
+    metadata:
+      labels:
+        app: shop-management
+    spec:
+      containers:
+      - name: app
+        image: gcr.io/my-project/shop-management:latest
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        env:
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: mongodb-uri
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shop-management-svc
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: shop-management
+---
+# HPA — auto-scale 2→10 pods khi CPU > 70%
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: shop-management
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+
+# ═══ 3. Cloud Run — Deploy 1 command ═══
+# Build + push Docker image
+# gcloud builds submit --tag gcr.io/my-project/shop-management
+#
+# Deploy lên Cloud Run
+# gcloud run deploy shop-management \\
+#   --image gcr.io/my-project/shop-management \\
+#   --platform managed \\
+#   --region asia-southeast1 \\
+#   --allow-unauthenticated \\
+#   --memory 512Mi \\
+#   --min-instances 0 \\
+#   --max-instances 10 \\
+#   --set-env-vars "NODE_ENV=production"
+#
+# → URL: https://shop-management-xxx.a.run.app
+# → Auto HTTPS, auto-scale, scale to zero!`}</CodeBlock>
+                    <Callout type="tip">Interview: Senior Frontend nên biết deploy app lên container. Khi hỏi {'"Làm sao scale frontend?"'} → <Highlight>Cloud Run cho serverless (đơn giản) hoặc K8s + HPA cho enterprise (kiểm soát đầy đủ)</Highlight>. Bonus: nhắc multi-stage Docker build giảm image size từ 1GB xuống 150MB.</Callout>
+                </TopicModal>
+
                 <TopicModal title="Functional vs Non-Functional Requirements" emoji="📋" color="#f59e0b" summary="Bước đầu tiên trong System Design — phân biệt 'nó làm gì' vs 'nó tốt thế nào'">
                     <Paragraph>Khi bắt đầu bất kỳ bài System Design nào, bước đầu tiên là <Highlight>Clarify Requirements</Highlight>. Bạn phải phân biệt rõ 2 loại:</Paragraph>
 

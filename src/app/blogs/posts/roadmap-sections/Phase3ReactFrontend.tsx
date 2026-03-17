@@ -1152,6 +1152,180 @@ function FilterBar() {
 
                     <Callout type="tip">Interview: {`"Bạn quản lý state thế nào trong Next.js App Router?"`} → <Highlight>Server Components fetch data trực tiếp, URL params thay filter state, chỉ còn UI state nhỏ dùng useState/useContext. Nếu cần client state phức tạp → Zustand vì nhẹ hơn Redux.</Highlight></Callout>
                 </TopicModal>
+
+                <TopicModal title="Micro-Frontend (MFE)" emoji="🧩" color="#06b6d4" summary="Module Federation, Import Maps, Single-SPA, Multi-Zones — khi nào nên/không nên tách frontend">
+                    <Paragraph>Micro-Frontend là kiến trúc <Highlight>chia frontend thành các app độc lập</Highlight>, mỗi team sở hữu 1 phần. Giống microservices nhưng cho frontend.</Paragraph>
+
+                    <Callout type="info">🏬 <strong>Ẩn dụ: MFE = Trung tâm thương mại</strong><br /><br />
+                        <strong>Monolith</strong> = 1 cửa hàng lớn bán tất cả → đội to quản lý 1 codebase → chậm deploy<br />
+                        <strong>MFE</strong> = Trung tâm thương mại → mỗi gian hàng (team) <Highlight>tự trang trí, tự mở cửa, tự đóng cửa</Highlight><br />
+                        • Gian hàng A dùng React, gian hàng B dùng Vue → <strong>vẫn chung 1 tòa nhà</strong><br />
+                        • Mỗi gian hàng deploy độc lập → 1 team lỗi không ảnh hưởng cả mall
+                    </Callout>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20">
+                            <div className="text-gray-300 font-bold text-sm">📊 So sánh các approach MFE</div>
+                            <div className="text-slate-300 text-sm mt-2">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-xs">
+                                        <thead>
+                                            <tr className="border-b border-white/10">
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Approach</th>
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Runtime</th>
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Shared deps</th>
+                                                <th className="text-left py-1.5 text-slate-400 font-semibold">Use case</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-slate-300">
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-blue-400">Module Federation</td><td className="py-1.5 pr-2">Build + Runtime</td><td className="py-1.5 pr-2">Có (shared React)</td><td className="py-1.5">Enterprise dashboard</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-green-400">Import Maps</td><td className="py-1.5 pr-2">Runtime (ESM)</td><td className="py-1.5 pr-2">Via import map</td><td className="py-1.5">Progressive migration</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-yellow-400">Single-SPA</td><td className="py-1.5 pr-2">Runtime orchestrator</td><td className="py-1.5 pr-2">Tùy chọn</td><td className="py-1.5">Multi-framework (React+Vue)</td></tr>
+                                            <tr><td className="py-1.5 pr-2 font-bold text-purple-400">Next.js Multi-Zones</td><td className="py-1.5 pr-2">Server routing</td><td className="py-1.5 pr-2">Không cần</td><td className="py-1.5">Nhiều Next.js apps chung domain</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">📦 Module Federation (Webpack 5 / Rspack)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • Phổ biến nhất trong enterprise. <strong>Share code runtime</strong> giữa các app<br />
+                                • App A expose component → App B import <strong>trực tiếp qua URL</strong><br />
+                                • Shared dependencies (React, React-DOM) → <Highlight>load 1 lần, dùng chung</Highlight><br />
+                                • Rspack/Rsbuild hỗ trợ native, nhanh hơn Webpack 10x
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm">🗺️ Import Maps (Native Browser)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • Dùng <InlineCode>{'<script type="importmap">'}</InlineCode> trong HTML<br />
+                                • Map package name → CDN URL, browser resolve runtime<br />
+                                • <strong>Không cần bundler</strong> → mỗi team deploy ESM module riêng<br />
+                                • Kết hợp tốt với Single-SPA
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                            <div className="text-yellow-400 font-bold text-sm">🎭 Single-SPA — Orchestrator</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Framework-agnostic</strong>: App A = React, App B = Vue, App C = Angular<br />
+                                • Root config quyết định mount/unmount app theo route<br />
+                                • Lifecycle hooks: bootstrap → mount → unmount<br />
+                                • Phù hợp <Highlight>migration dần từ legacy (Angular → React)</Highlight>
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                            <div className="text-purple-400 font-bold text-sm">🔀 Next.js Multi-Zones</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • Nhiều Next.js apps chạy dưới <strong>cùng 1 domain</strong><br />
+                                • Proxy/reverse proxy route: <InlineCode>/blog</InlineCode> → App A, <InlineCode>/shop</InlineCode> → App B<br />
+                                • Mỗi app build + deploy <strong>độc lập</strong>, SSR/SSG riêng<br />
+                                • Đơn giản nhất cho team đã dùng Next.js
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">🚫 Khi nào KHÔNG nên dùng MFE?</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • Team nhỏ ({`< 3 teams`}) → overhead lớn hơn lợi ích<br />
+                                • App đơn giản, ít features → monolith tốt hơn<br />
+                                • Shared state nhiều giữa các phần → coupling cao = MFE phức tạp<br />
+                                • <Highlight>MFE giải quyết vấn đề tổ chức (team), không phải vấn đề kỹ thuật</Highlight>
+                            </div>
+                        </div>
+                    </div>
+                    <CodeBlock title="micro-frontend.ts">{`// ╔═══════════════════════════════════════╗
+// ║  1. Module Federation (Webpack 5)     ║
+// ╚═══════════════════════════════════════╝
+
+// Remote App (Header) — webpack.config.js
+new ModuleFederationPlugin({
+  name: 'header',
+  filename: 'remoteEntry.js',
+  exposes: {
+    './Header': './src/components/Header',
+  },
+  shared: {
+    react: { singleton: true, requiredVersion: '^18' },
+    'react-dom': { singleton: true },
+  },
+})
+
+// Host App — import remote component
+const Header = React.lazy(() => import('header/Header'))
+
+function App() {
+  return (
+    <Suspense fallback={<HeaderSkeleton />}>
+      <Header />  {/* Loaded from header app's remoteEntry.js */}
+      <main>...</main>
+    </Suspense>
+  )
+}
+
+// ╔═══════════════════════════════════════╗
+// ║  2. Import Maps (Native Browser)      ║
+// ╚═══════════════════════════════════════╝
+
+// index.html
+// <script type="importmap">
+// {
+//   "imports": {
+//     "react": "https://cdn.example.com/react@18/index.mjs",
+//     "@team-a/header": "https://team-a.cdn.com/header.mjs",
+//     "@team-b/cart": "https://team-b.cdn.com/cart.mjs"
+//   }
+// }
+// </script>
+// <script type="module" src="/app.mjs"></script>
+
+// app.mjs — import bình thường, browser resolve qua import map
+import { Header } from '@team-a/header'
+import { Cart } from '@team-b/cart'
+
+// ╔═══════════════════════════════════════╗
+// ║  3. Single-SPA — Root Config          ║
+// ╚═══════════════════════════════════════╝
+
+import { registerApplication, start } from 'single-spa'
+
+registerApplication({
+  name: '@org/navbar',
+  app: () => System.import('@org/navbar'),  // load từ CDN/server
+  activeWhen: '/',  // luôn active
+})
+
+registerApplication({
+  name: '@org/dashboard',
+  app: () => System.import('@org/dashboard'),
+  activeWhen: '/dashboard',  // chỉ mount khi route match
+})
+
+start()  // Single-SPA bắt đầu quản lý lifecycle
+
+// ╔═══════════════════════════════════════╗
+// ║  4. Next.js Multi-Zones              ║
+// ╚═══════════════════════════════════════╝
+
+// next.config.js (Main app)
+module.exports = {
+  async rewrites() {
+    return [
+      {
+        source: '/blog/:path*',
+        destination: 'https://blog-app.vercel.app/blog/:path*',
+      },
+      {
+        source: '/shop/:path*',
+        destination: 'https://shop-app.vercel.app/shop/:path*',
+      },
+    ]
+  },
+}
+// → /blog/* → Blog Next.js app (team A)
+// → /shop/* → Shop Next.js app (team B)
+// → /* → Main Next.js app`}</CodeBlock>
+                    <Callout type="tip">Interview: Hỏi {'"Tại sao dùng MFE?"'} → trả lời <Highlight>team autonomy + independent deploy</Highlight>, KHÔNG phải vì kỹ thuật. Nếu interviewer hỏi bạn chọn approach nào → Module Federation cho enterprise React, Multi-Zones cho Next.js team, Single-SPA cho multi-framework migration.</Callout>
+                </TopicModal>
             </div >
 
             <Heading3>3.2 HTML/CSS (click để xem chi tiết)</Heading3>

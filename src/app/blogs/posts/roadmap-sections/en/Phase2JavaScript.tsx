@@ -33,7 +33,83 @@ let b = 2;
 
 greet(); // "Hello!" — function hoisted entirely
 function greet() { console.log("Hello!"); }`}</CodeBlock>
-                    <Callout type="tip">Interview tip: Being able to explain <Highlight>TDZ</Highlight> (Temporal Dead Zone) of let/const will earn you major points.</Callout>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm">{'\u2705'} Only Benefit: Function Declaration Hoisting</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                Call functions BEFORE declaring them {'\u2192'} write <strong>main logic at top, helpers at bottom</strong> {'\u2192'} easy top-down reading.<br />
+                                This is the only reason hoisting is actually useful.
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">{'\u26A0\uFE0F'} Bad behavior to avoid</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'\u2022'} <strong>var hoisting</strong> {'\u2192'} value is <InlineCode>undefined</InlineCode> instead of error {'\u2192'} <Highlight>dangerous silent bug</Highlight><br />
+                                {'\u2022'} <strong>Function expression / arrow</strong> {'\u2192'} NOT hoisted {'\u2192'} TypeError if called early<br />
+                                {'\u2022'} <strong>class hoisting</strong> {'\u2192'} TDZ like let/const {'\u2192'} ReferenceError<br />
+                                {'\u2192'} Always use <InlineCode>let</InlineCode>/<InlineCode>const</InlineCode> {'\u2014'} TDZ catches bugs early instead of letting them slip
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20 my-3">
+                        <div className="text-gray-300 font-bold text-sm">{'\uD83D\uDCCA'} Hoisting Summary Table</div>
+                        <div className="text-slate-300 text-sm mt-2">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-xs">
+                                    <thead>
+                                        <tr className="border-b border-white/10">
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Type</th>
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Hoisted?</th>
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Value when accessed early</th>
+                                            <th className="text-left py-1.5 text-slate-400 font-semibold">Recommendation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-slate-300">
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-red-400">var</td><td className="py-1.5 pr-2">{'\u2705'}</td><td className="py-1.5 pr-2">undefined (dangerous!)</td><td className="py-1.5">{'\u274C Avoid'}</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-green-400">let / const</td><td className="py-1.5 pr-2">{'\u2705 (TDZ)'}</td><td className="py-1.5 pr-2">ReferenceError (safe)</td><td className="py-1.5">{'\u2705 Always use'}</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-blue-400">function declaration</td><td className="py-1.5 pr-2">{'\u2705'}</td><td className="py-1.5 pr-2">Full function</td><td className="py-1.5">{'\u2705 OK'}</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-yellow-400">function expression</td><td className="py-1.5 pr-2">{'\u274C'}</td><td className="py-1.5 pr-2">TypeError</td><td className="py-1.5">{'\u2705 OK'}</td></tr>
+                                        <tr><td className="py-1.5 pr-2 font-bold text-purple-400">class</td><td className="py-1.5 pr-2">{'\u2705 (TDZ)'}</td><td className="py-1.5 pr-2">ReferenceError</td><td className="py-1.5">{'\u2705 OK'}</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="hoisting-pitfalls.js">{`// ═══ 1. var HOISTING — SILENT BUG ═══
+console.log(name) // undefined (NO error, but wrong logic!)
+var name = 'Khuong'
+// JS interprets as:
+// var name           ← hoisted to top → undefined
+// console.log(name)  ← undefined
+// name = 'Khuong'    ← assigned later
+
+// ═══ 2. let/const — TDZ CATCHES BUGS EARLY ═══
+console.log(x) // ❌ ReferenceError (better than undefined!)
+let x = 5
+// let IS still hoisted, but in "uninitialized" state
+// Zone from scope start → declaration line = TDZ
+
+// ═══ 3. FUNCTION EXPRESSIONS ARE NOT HOISTED ═══
+greet() // ❌ TypeError: greet is not a function
+const greet = function() { console.log('Hi') }
+// const greet = () => console.log('Hi')  ← also not hoisted
+
+// ═══ 4. THE BENEFIT: TOP-DOWN CODE ═══
+function main() {
+  const data = fetchData()        // call before declaration OK!
+  const result = processData(data)
+  return formatOutput(result)
+}
+
+// Helper functions below — thanks to hoisting
+function fetchData() { /* ... */ }
+function processData(data) { /* ... */ }
+function formatOutput(result) { /* ... */ }`}</CodeBlock>
+
+                    <Callout type="tip">Interview: {`"Hoisting is useful for function declarations to organize code top-down. But for variables, always use let/const — TDZ catches bugs early. var hoisting creates silent bugs with undefined — that's bad behavior to avoid."`}</Callout>
                 </TopicModal>
 
                 <TopicModal title="Scope & Closure" emoji="🔒" color="#a78bfa" summary="Lexical scope, closure patterns, module pattern">

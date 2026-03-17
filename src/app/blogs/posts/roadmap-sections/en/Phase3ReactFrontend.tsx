@@ -1148,6 +1148,180 @@ function FilterBar() {
 
                     <Callout type="tip">Interview: {`"How do you manage state in Next.js App Router?"`} → <Highlight>Server Components fetch data directly, URL params replace filter state, only small UI state uses useState/useContext. For complex client state → Zustand because it&apos;s lighter than Redux.</Highlight></Callout>
                 </TopicModal>
+
+                <TopicModal title="Micro-Frontend (MFE)" emoji="🧩" color="#06b6d4" summary="Module Federation, Import Maps, Single-SPA, Multi-Zones — when to split / not split your frontend">
+                    <Paragraph>Micro-Frontend is an architecture that <Highlight>splits the frontend into independent apps</Highlight>, each owned by a team. Like microservices but for the frontend.</Paragraph>
+
+                    <Callout type="info">🏬 <strong>Analogy: MFE = Shopping Mall</strong><br /><br />
+                        <strong>Monolith</strong> = One giant store selling everything → big team managing 1 codebase → slow deploys<br />
+                        <strong>MFE</strong> = Shopping mall → each store (team) <Highlight>decorates independently, opens/closes on their own schedule</Highlight><br />
+                        • Store A uses React, store B uses Vue → <strong>still in the same building</strong><br />
+                        • Each store deploys independently → 1 team&apos;s bug doesn&apos;t take down the mall
+                    </Callout>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20">
+                            <div className="text-gray-300 font-bold text-sm">📊 MFE Approaches Comparison</div>
+                            <div className="text-slate-300 text-sm mt-2">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-xs">
+                                        <thead>
+                                            <tr className="border-b border-white/10">
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Approach</th>
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Runtime</th>
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Shared deps</th>
+                                                <th className="text-left py-1.5 text-slate-400 font-semibold">Use case</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-slate-300">
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-blue-400">Module Federation</td><td className="py-1.5 pr-2">Build + Runtime</td><td className="py-1.5 pr-2">Yes (shared React)</td><td className="py-1.5">Enterprise dashboard</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-green-400">Import Maps</td><td className="py-1.5 pr-2">Runtime (ESM)</td><td className="py-1.5 pr-2">Via import map</td><td className="py-1.5">Progressive migration</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-yellow-400">Single-SPA</td><td className="py-1.5 pr-2">Runtime orchestrator</td><td className="py-1.5 pr-2">Optional</td><td className="py-1.5">Multi-framework (React+Vue)</td></tr>
+                                            <tr><td className="py-1.5 pr-2 font-bold text-purple-400">Next.js Multi-Zones</td><td className="py-1.5 pr-2">Server routing</td><td className="py-1.5 pr-2">Not needed</td><td className="py-1.5">Multiple Next.js apps, one domain</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">📦 Module Federation (Webpack 5 / Rspack)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • Most popular in enterprise. <strong>Share code at runtime</strong> between apps<br />
+                                • App A exposes component → App B imports <strong>directly via URL</strong><br />
+                                • Shared dependencies (React, React-DOM) → <Highlight>loaded once, shared across</Highlight><br />
+                                • Rspack/Rsbuild has native support, 10x faster than Webpack
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm">🗺️ Import Maps (Native Browser)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • Use <InlineCode>{'<script type="importmap">'}</InlineCode> in HTML<br />
+                                • Map package names → CDN URLs, browser resolves at runtime<br />
+                                • <strong>No bundler needed</strong> → each team deploys ESM modules independently<br />
+                                • Works great with Single-SPA
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                            <div className="text-yellow-400 font-bold text-sm">🎭 Single-SPA — Orchestrator</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Framework-agnostic</strong>: App A = React, App B = Vue, App C = Angular<br />
+                                • Root config decides which app to mount/unmount per route<br />
+                                • Lifecycle hooks: bootstrap → mount → unmount<br />
+                                • Perfect for <Highlight>gradual migration from legacy (Angular → React)</Highlight>
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                            <div className="text-purple-400 font-bold text-sm">🔀 Next.js Multi-Zones</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • Multiple Next.js apps running under <strong>one domain</strong><br />
+                                • Proxy/reverse proxy routing: <InlineCode>/blog</InlineCode> → App A, <InlineCode>/shop</InlineCode> → App B<br />
+                                • Each app builds + deploys <strong>independently</strong>, own SSR/SSG<br />
+                                • Simplest approach for teams already using Next.js
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">🚫 When NOT to use MFE?</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • Small team ({`< 3 teams`}) → overhead outweighs benefits<br />
+                                • Simple app, few features → monolith is better<br />
+                                • Heavy shared state between parts → high coupling = MFE adds complexity<br />
+                                • <Highlight>MFE solves organizational (team) problems, not technical ones</Highlight>
+                            </div>
+                        </div>
+                    </div>
+                    <CodeBlock title="micro-frontend.ts">{`// ╔═══════════════════════════════════════╗
+// ║  1. Module Federation (Webpack 5)     ║
+// ╚═══════════════════════════════════════╝
+
+// Remote App (Header) — webpack.config.js
+new ModuleFederationPlugin({
+  name: 'header',
+  filename: 'remoteEntry.js',
+  exposes: {
+    './Header': './src/components/Header',
+  },
+  shared: {
+    react: { singleton: true, requiredVersion: '^18' },
+    'react-dom': { singleton: true },
+  },
+})
+
+// Host App — import remote component
+const Header = React.lazy(() => import('header/Header'))
+
+function App() {
+  return (
+    <Suspense fallback={<HeaderSkeleton />}>
+      <Header />  {/* Loaded from header app's remoteEntry.js */}
+      <main>...</main>
+    </Suspense>
+  )
+}
+
+// ╔═══════════════════════════════════════╗
+// ║  2. Import Maps (Native Browser)      ║
+// ╚═══════════════════════════════════════╝
+
+// index.html
+// <script type="importmap">
+// {
+//   "imports": {
+//     "react": "https://cdn.example.com/react@18/index.mjs",
+//     "@team-a/header": "https://team-a.cdn.com/header.mjs",
+//     "@team-b/cart": "https://team-b.cdn.com/cart.mjs"
+//   }
+// }
+// </script>
+// <script type="module" src="/app.mjs"></script>
+
+// app.mjs — normal imports, browser resolves via import map
+import { Header } from '@team-a/header'
+import { Cart } from '@team-b/cart'
+
+// ╔═══════════════════════════════════════╗
+// ║  3. Single-SPA — Root Config          ║
+// ╚═══════════════════════════════════════╝
+
+import { registerApplication, start } from 'single-spa'
+
+registerApplication({
+  name: '@org/navbar',
+  app: () => System.import('@org/navbar'),  // load from CDN/server
+  activeWhen: '/',  // always active
+})
+
+registerApplication({
+  name: '@org/dashboard',
+  app: () => System.import('@org/dashboard'),
+  activeWhen: '/dashboard',  // mount only when route matches
+})
+
+start()  // Single-SPA manages lifecycle
+
+// ╔═══════════════════════════════════════╗
+// ║  4. Next.js Multi-Zones              ║
+// ╚═══════════════════════════════════════╝
+
+// next.config.js (Main app)
+module.exports = {
+  async rewrites() {
+    return [
+      {
+        source: '/blog/:path*',
+        destination: 'https://blog-app.vercel.app/blog/:path*',
+      },
+      {
+        source: '/shop/:path*',
+        destination: 'https://shop-app.vercel.app/shop/:path*',
+      },
+    ]
+  },
+}
+// → /blog/* → Blog Next.js app (team A)
+// → /shop/* → Shop Next.js app (team B)
+// → /* → Main Next.js app`}</CodeBlock>
+                    <Callout type="tip">Interview: When asked {'"Why use MFE?"'} → answer <Highlight>team autonomy + independent deploy</Highlight>, NOT for technical reasons. When asked to pick an approach → Module Federation for enterprise React, Multi-Zones for Next.js teams, Single-SPA for multi-framework migration.</Callout>
+                </TopicModal>
             </div>
 
             <Heading3>3.2 HTML/CSS (click for details)</Heading3>
