@@ -20,6 +20,7 @@ export interface IPushSubscription extends Document {
         auth: string
     }
     frequency: number       // hours between reminders
+    lastSentVocabIds: string[] // last N sent vocab IDs to avoid repeats
     lastPushedAt: Date | null
     active: boolean
     createdAt?: Date
@@ -33,6 +34,7 @@ const PushSubscriptionSchema = new Schema({
         auth: { type: String, required: true },
     },
     frequency: { type: Number, required: true, default: 4, enum: [1, 2, 4, 6, 12, 24] },
+    lastSentVocabIds: { type: [String], default: [] },
     lastPushedAt: { type: Date, default: null },
     active: { type: Boolean, default: true },
 }, {

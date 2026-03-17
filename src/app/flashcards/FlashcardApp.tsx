@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect, useMemo } from 'react'
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { interviewCards, type Topic, type Difficulty } from './interviewFlashcards'
 
 // ═══════════════════════════════════════════════
@@ -538,6 +538,13 @@ export default function FlashcardApp() {
     const [interviewKnown, setInterviewKnown] = useState<Set<string>>(new Set())
     const [shuffleSeed, setShuffleSeed] = useState(0)
 
+    // ── Drag state (Tinder swipe) ──
+    const [dragX, setDragX] = useState(0)
+    const [dragY, setDragY] = useState(0)
+    const [isDragging, setIsDragging] = useState(false)
+    const [flyOut, setFlyOut] = useState<'left' | 'right' | null>(null)
+    const startRef = useRef({ x: 0, y: 0 })
+
     // Filter + shuffle interview cards
     const filteredInterviewCards = useMemo(() => {
         let cards = [...interviewCards]
@@ -574,15 +581,80 @@ export default function FlashcardApp() {
     const setIndex = tab === 'algorithm' ? setAlgoIndex : setInterviewIndex
     const setKnown = tab === 'algorithm' ? setAlgoKnown : setInterviewKnown
 
+    const resetDrag = () => { setDragX(0); setDragY(0); setFlyOut(null) }
+
     const goNext = useCallback(() => {
         setFlipped(false)
+        resetDrag()
         setTimeout(() => setIndex(i => (i + 1) % currentCards.length), 150)
     }, [currentCards.length, setFlipped, setIndex])
 
     const goPrev = useCallback(() => {
         setFlipped(false)
+        resetDrag()
         setTimeout(() => setIndex(i => (i - 1 + currentCards.length) % currentCards.length), 150)
     }, [currentCards.length, setFlipped, setIndex])
+
+    // ── Swipe handlers ──
+    const handleSwipeRight = useCallback(() => {
+        if (!currentCard) return
+        const id = 'id' in currentCard ? currentCard.id : ''
+        setKnown(prev => new Set(prev).add(id))
+        setFlyOut('right')
+        setTimeout(() => {
+            setFlipped(false)
+            resetDrag()
+            setIndex(i => (i + 1) % currentCards.length)
+        }, 300)
+    }, [currentCard, currentCards.length, setFlipped, setIndex, setKnown])
+
+    const handleSwipeLeft = useCallback(() => {
+        if (!currentCard) return
+        setFlyOut('left')
+        setTimeout(() => {
+            setFlipped(false)
+            resetDrag()
+            setIndex(i => (i + 1) % currentCards.length)
+        }, 300)
+    }, [currentCard, currentCards.length, setFlipped, setIndex])
+
+    // ── Drag handlers ──
+    const handleDragStart = (clientX: number, clientY: number) => {
+        setIsDragging(true)
+        startRef.current = { x: clientX, y: clientY }
+    }
+    const handleDragMove = (clientX: number, clientY: number) => {
+        if (!isDragging) return
+        setDragX(clientX - startRef.current.x)
+        setDragY(clientY - startRef.current.y)
+    }
+    const handleDragEnd = () => {
+        setIsDragging(false)
+        const threshold = 120
+        if (dragX > threshold) handleSwipeRight()
+        else if (dragX < -threshold) handleSwipeLeft()
+        else { setDragX(0); setDragY(0) }
+    }
+
+    const onMouseDown = (e: React.MouseEvent) => handleDragStart(e.clientX, e.clientY)
+    const onMouseMove = (e: React.MouseEvent) => handleDragMove(e.clientX, e.clientY)
+    const onMouseUp = () => handleDragEnd()
+    const onTouchStart = (e: React.TouchEvent) => handleDragStart(e.touches[0].clientX, e.touches[0].clientY)
+    const onTouchMove = (e: React.TouchEvent) => handleDragMove(e.touches[0].clientX, e.touches[0].clientY)
+    const onTouchEnd = () => handleDragEnd()
+
+    // Swipe visual state
+    const rotation = flyOut ? (flyOut === 'right' ? 30 : -30) : dragX * 0.1
+    const translateX = flyOut ? (flyOut === 'right' ? 600 : -600) : dragX
+    const translateY = flyOut ? -100 : dragY * 0.3
+    const rightOpacity = Math.min(Math.max(dragX / 120, 0), 1)
+    const leftOpacity = Math.min(Math.max(-dragX / 120, 0), 1)
+    const swipeCardStyle = {
+        transform: `translate(${translateX}px, ${translateY}px) rotate(${rotation}deg)`,
+        transition: isDragging ? 'none' : flyOut ? 'transform 0.3s ease-out, opacity 0.3s' : 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        opacity: flyOut ? 0 : 1,
+        cursor: isDragging ? 'grabbing' : 'grab',
+    }
 
     const shuffle = useCallback(() => {
         if (tab === 'algorithm') {
@@ -592,6 +664,7 @@ export default function FlashcardApp() {
         }
         setIndex(0)
         setFlipped(false)
+        resetDrag()
     }, [tab, setIndex, setFlipped])
 
     const toggleKnown = useCallback(() => {
@@ -618,14 +691,14 @@ export default function FlashcardApp() {
     useEffect(() => {
         const handleKey = (e: KeyboardEvent) => {
             if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setFlipped(f => !f) }
-            if (e.key === 'ArrowRight' || e.key === 'l') goNext()
-            if (e.key === 'ArrowLeft' || e.key === 'h') goPrev()
+            if (e.key === 'ArrowRight' || e.key === 'l') handleSwipeRight()
+            if (e.key === 'ArrowLeft' || e.key === 'h') handleSwipeLeft()
             if (e.key === 'k') toggleKnown()
             if (e.key === 's') shuffle()
         }
         window.addEventListener('keydown', handleKey)
         return () => window.removeEventListener('keydown', handleKey)
-    }, [goNext, goPrev, toggleKnown, shuffle, setFlipped])
+    }, [handleSwipeRight, handleSwipeLeft, toggleKnown, shuffle, setFlipped])
 
     const progress = knownCards.size
     const total = currentCards.length
@@ -768,11 +841,42 @@ export default function FlashcardApp() {
                     {/* Flashcard */}
                     {currentCard && total > 0 && (
                         <>
+                            <div className="relative mb-6" style={{ minHeight: tab === 'algorithm' ? '380px' : '340px' }}>
+                                {/* Background cards (stack effect) */}
+                                {total > 2 && (
+                                    <div className="absolute inset-0 rounded-2xl"
+                                        style={{ transform: 'scale(0.92) translateY(16px)', background: 'var(--bg-card)', border: '1px solid var(--border-primary)', opacity: 0.4 }} />
+                                )}
+                                {total > 1 && (
+                                    <div className="absolute inset-0 rounded-2xl"
+                                        style={{ transform: 'scale(0.96) translateY(8px)', background: 'var(--bg-card)', border: '1px solid var(--border-primary)', opacity: 0.6 }} />
+                                )}
+
                             <div
-                                className="relative cursor-pointer mb-6"
-                                style={{ perspective: '1000px', minHeight: tab === 'algorithm' ? '380px' : '340px' }}
-                                onClick={() => setFlipped(f => !f)}
+                                className="absolute inset-0 select-none"
+                                style={{ ...swipeCardStyle, perspective: '1000px' }}
+                                onMouseDown={onMouseDown}
+                                onMouseMove={isDragging ? onMouseMove : undefined}
+                                onMouseUp={onMouseUp}
+                                onMouseLeave={isDragging ? onMouseUp : undefined}
+                                onTouchStart={onTouchStart}
+                                onTouchMove={onTouchMove}
+                                onTouchEnd={onTouchEnd}
+                                onClick={() => { if (!isDragging || (Math.abs(dragX) < 5 && Math.abs(dragY) < 5)) setFlipped(f => !f) }}
                             >
+                                {/* Swipe indicators */}
+                                <div className="absolute inset-0 rounded-2xl pointer-events-none z-10"
+                                    style={{ boxShadow: `inset 0 0 60px rgba(74, 222, 128, ${rightOpacity * 0.5})`, opacity: rightOpacity }}>
+                                    <div className="absolute top-6 left-6 text-green-400 font-bold text-xl" style={{ opacity: rightOpacity }}>
+                                        ✅ THUỘC
+                                    </div>
+                                </div>
+                                <div className="absolute inset-0 rounded-2xl pointer-events-none z-10"
+                                    style={{ boxShadow: `inset 0 0 60px rgba(239, 68, 68, ${leftOpacity * 0.5})`, opacity: leftOpacity }}>
+                                    <div className="absolute top-6 right-6 text-red-400 font-bold text-xl" style={{ opacity: leftOpacity }}>
+                                        ❌ SKIP
+                                    </div>
+                                </div>
                                 <div
                                     className="relative w-full transition-transform duration-500"
                                     style={{
@@ -934,55 +1038,37 @@ export default function FlashcardApp() {
                                     </div>
                                 </div>
                             </div>
+                            </div>
 
-                            {/* Controls */}
-                            <div className="flex items-center justify-center gap-3 flex-wrap">
+                            {/* Controls — Tinder style */}
+                            <div className="flex items-center justify-center gap-4">
                                 <button
-                                    onClick={(e) => { e.stopPropagation(); goPrev() }}
-                                    className="w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110"
-                                    style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)' }}
-                                    title="Trước (←)"
-                                >←</button>
+                                    onClick={(e) => { e.stopPropagation(); handleSwipeLeft() }}
+                                    className="w-16 h-16 rounded-full flex items-center justify-center text-2xl transition-all hover:scale-110 active:scale-95"
+                                    style={{ background: 'rgba(239, 68, 68, 0.15)', border: '2px solid rgba(239, 68, 68, 0.4)' }}
+                                    title="Skip (←)"
+                                >❌</button>
 
                                 <button
                                     onClick={(e) => { e.stopPropagation(); setFlipped(f => !f) }}
-                                    className="px-5 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 hover:scale-105"
-                                    style={{
-                                        background: 'rgba(56, 189, 248, 0.15)',
-                                        border: '1px solid rgba(56, 189, 248, 0.4)',
-                                        color: '#38bdf8',
-                                    }}
+                                    className="w-12 h-12 rounded-full flex items-center justify-center text-lg transition-all hover:scale-110 active:scale-95"
+                                    style={{ background: 'rgba(56, 189, 248, 0.15)', border: '2px solid rgba(56, 189, 248, 0.4)' }}
                                     title="Lật thẻ (Space)"
-                                >🔄 Lật</button>
+                                >🔄</button>
 
                                 <button
                                     onClick={(e) => { e.stopPropagation(); shuffle() }}
-                                    className="px-5 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 hover:scale-105"
-                                    style={{
-                                        background: 'rgba(251, 191, 36, 0.15)',
-                                        border: '1px solid rgba(251, 191, 36, 0.4)',
-                                        color: '#fbbf24',
-                                    }}
+                                    className="w-12 h-12 rounded-full flex items-center justify-center text-lg transition-all hover:scale-110 active:scale-95"
+                                    style={{ background: 'rgba(251, 191, 36, 0.15)', border: '2px solid rgba(251, 191, 36, 0.4)' }}
                                     title="Trộn thẻ (S)"
-                                >🎲 Trộn</button>
+                                >🎲</button>
 
                                 <button
-                                    onClick={(e) => { e.stopPropagation(); toggleKnown() }}
-                                    className="px-5 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 hover:scale-105"
-                                    style={{
-                                        background: knownCards.has(cardId) ? 'rgba(74, 222, 128, 0.2)' : 'var(--bg-tag)',
-                                        border: knownCards.has(cardId) ? '1px solid rgba(74, 222, 128, 0.5)' : '1px solid var(--border-primary)',
-                                        color: knownCards.has(cardId) ? '#4ade80' : 'var(--text-secondary)',
-                                    }}
-                                    title="Đánh dấu đã thuộc (K)"
-                                >{knownCards.has(cardId) ? '✅ Thuộc' : '☐ Thuộc?'}</button>
-
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); goNext() }}
-                                    className="w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all duration-200 hover:scale-110"
-                                    style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)' }}
-                                    title="Sau (→)"
-                                >→</button>
+                                    onClick={(e) => { e.stopPropagation(); handleSwipeRight() }}
+                                    className="w-16 h-16 rounded-full flex items-center justify-center text-2xl transition-all hover:scale-110 active:scale-95"
+                                    style={{ background: 'rgba(74, 222, 128, 0.15)', border: '2px solid rgba(74, 222, 128, 0.4)' }}
+                                    title="Đã thuộc (→)"
+                                >✅</button>
                             </div>
                         </>
                     )}
@@ -992,9 +1078,9 @@ export default function FlashcardApp() {
                         <p className="text-xs text-[var(--text-muted)]">
                             ⌨️ <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">Space</kbd> Lật
                             {' · '}
-                            <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">← →</kbd> Chuyển
+                            <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">←</kbd> Skip
                             {' · '}
-                            <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">K</kbd> Thuộc
+                            <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">→</kbd> Thuộc
                             {' · '}
                             <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">S</kbd> Trộn
                         </p>

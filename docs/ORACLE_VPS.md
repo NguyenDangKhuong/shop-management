@@ -50,11 +50,12 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 |---------|------|-----------|-----------|---------|
 | **Tailscale** | — | ✅ enabled | systemd | SSH without key, private network |
 | **Docker** 28.2.2 | — | ✅ enabled | systemd | Container runtime |
-| **Nginx** 1.24.0 | 80, 443 | ✅ enabled | systemd | Reverse proxy (11 domains) |
+| **Nginx** 1.24.0 | 80, 443 | ✅ enabled | systemd | Reverse proxy (12 domains) |
 | **AdGuard Home** | 53, 3001 | ✅ unless-stopped | Docker | DNS ad blocker |
 | **Home Assistant** | 8123 | ✅ unless-stopped | Docker | Smart home |
 | **Uptime Kuma** | 3002 | ✅ unless-stopped | Docker (kuma-net) | Website/service monitoring |
 | **Zalo Bot Relay** | 3003 | ✅ unless-stopped | Docker (kuma-net) | Webhook relay → Zalo notification |
+| **Portainer** | 9443 | ✅ unless-stopped | Docker | Docker web management UI |
 | **stress-ng** | — | ✅ enabled | systemd | Anti-reclaim CPU/RAM |
 | **vocab-push.timer** | — | ✅ enabled | systemd timer | Vocab reminder mỗi giờ |
 
@@ -211,6 +212,36 @@ docker stop uptime-kuma && docker rm uptime-kuma
 - **2 Zalo Bot riêng biệt:** Bot cũ cho OpenClaw, bot mới cho Uptime Kuma
 - **Không ghi đè webhook:** Mỗi bot chỉ có 1 webhook URL, nếu set lại sẽ mất bot cũ
 - **Health check:** Nhắn bất kỳ tin nhắn nào cho bot Uptime Kuma → nhận report health check
+
+## Portainer
+
+**URL:** https://portainer.khuong.theworkpc.com
+**Credentials:** tạo admin account lần đầu truy cập
+
+Docker management UI — xem containers, logs, images, volumes qua web.
+
+```bash
+docker run -d \
+  --name portainer \
+  --restart unless-stopped \
+  -p 9443:9443 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v portainer_data:/data \
+  portainer/portainer-ce:lts
+```
+
+- **Port:** 9443 (HTTPS built-in)
+- **Data:** Docker volume `portainer_data`
+- **Nginx:** `portainer.khuong.theworkpc.com` → `https://127.0.0.1:9443`
+
+### Quản lý
+
+```bash
+# Update
+docker pull portainer/portainer-ce:lts
+docker stop portainer && docker rm portainer
+# Chạy lại lệnh docker run ở trên (data giữ trong volume)
+```
 
 ## Home Assistant
 

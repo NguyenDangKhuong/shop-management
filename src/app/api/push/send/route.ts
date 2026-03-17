@@ -8,9 +8,9 @@
  *
  * Flow:
  *   1. Tìm subscriptions cần gửi (active + đã đến lúc theo frequency)
- *   2. Random 1 từ vựng từ MongoDB
+ *   2. Random 1 từ vựng từ MongoDB (không lặp lại 20 từ gần nhất)
  *   3. Gửi push notification cho từng subscription
- *   4. Cập nhật lastPushedAt
+ *   4. Cập nhật lastPushedAt + lastSentVocabIds
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -19,6 +19,7 @@ const webpush = require('web-push')
 import connectDB from '@/utils/connectDb'
 import PushSubscriptionModel from '@/models/PushSubscription'
 import VocabularyModel from '@/models/Vocabulary'
+import mongoose from 'mongoose'
 
 export const dynamic = 'force-dynamic'
 
@@ -55,18 +56,37 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: 'No subscriptions due', sent: 0 })
         }
 
-        // Random 1 từ vựng
-        const totalVocab = await VocabularyModel.countDocuments()
-        if (totalVocab === 0) {
+        // Random 1 từ vựng — avoid repeats
+        // Collect all recently sent vocab IDs across due subscriptions
+        const recentIds = [...new Set(
+            dueSubscriptions.flatMap((sub) =>
+                (sub.lastSentVocabIds || []).map((id: string) => new mongoose.Types.ObjectId(id))
+            )
+        )]
+
+        // Use $sample with $nin to exclude recently sent words
+        const pipeline: mongoose.PipelineStage[] = [
+            ...(recentIds.length > 0 ? [{ $match: { _id: { $nin: recentIds } } }] : []),
+            { $sample: { size: 1 } },
+        ]
+
+        let vocabResult = await VocabularyModel.aggregate(pipeline)
+
+        // Fallback: if all words have been sent recently, reset and pick any
+        if (vocabResult.length === 0) {
+            vocabResult = await VocabularyModel.aggregate([{ $sample: { size: 1 } }])
+            // Reset lastSentVocabIds for all due subscriptions
+            await PushSubscriptionModel.updateMany(
+                { endpoint: { $in: dueSubscriptions.map((s) => s.endpoint) } },
+                { lastSentVocabIds: [] }
+            )
+        }
+
+        if (vocabResult.length === 0) {
             return NextResponse.json({ message: 'No vocabulary to send', sent: 0 })
         }
 
-        const randomIndex = Math.floor(Math.random() * totalVocab)
-        const vocab = await VocabularyModel.findOne().skip(randomIndex).lean() as { original: string; translated: string; from: string; to: string } | null
-
-        if (!vocab) {
-            return NextResponse.json({ message: 'No vocabulary found', sent: 0 })
-        }
+        const vocab = vocabResult[0] as { _id: mongoose.Types.ObjectId; original: string; translated: string; from: string; to: string }
 
         // Chuẩn bị payload — normalize sang EN → VI
         const isEnToVi = vocab.from === 'en'
@@ -84,6 +104,7 @@ export async function POST(req: NextRequest) {
         let sent = 0
         let failed = 0
         const failedEndpoints: string[] = []
+        const MAX_HISTORY = 20 // Track last 20 words
 
         for (const sub of dueSubscriptions) {
             try {
@@ -91,10 +112,11 @@ export async function POST(req: NextRequest) {
                     { endpoint: sub.endpoint, keys: sub.keys as { p256dh: string; auth: string } },
                     payload
                 )
-                // Cập nhật lastPushedAt
+                // Cập nhật lastPushedAt + add vocab ID to history (keep last N)
+                const updatedIds = [...(sub.lastSentVocabIds || []), vocab._id.toString()].slice(-MAX_HISTORY)
                 await PushSubscriptionModel.updateOne(
                     { endpoint: sub.endpoint },
-                    { lastPushedAt: now }
+                    { lastPushedAt: now, lastSentVocabIds: updatedIds }
                 )
                 sent++
             } catch (err: unknown) {
