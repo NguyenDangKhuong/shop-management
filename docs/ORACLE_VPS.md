@@ -52,6 +52,7 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | **Docker** 28.2.2 | enabled | Container runtime |
 | **Nginx** 1.24.0 | enabled | Web server (port 80) |
 | **Home Assistant** | enabled | Smart home (Docker, port 8123) |
+| **AdGuard Home** | enabled | DNS ad blocker (Docker, port 53 + 3001) |
 | **stress-ng** | enabled | Keep VPS alive (anti-reclaim) |
 
 ## Home Assistant
