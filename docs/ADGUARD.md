@@ -11,8 +11,8 @@ AdGuard Home chạy trên VPS Oracle, block quảng cáo + tracker ở tầng DN
 | Key | Value |
 |-----|-------|
 | **URL** | https://adguard.khuong.theworkpc.com |
-| **Username** | `admin` |
-| **Password** | `khuongdev2024` |
+| **Username** | (see `.env.local` → `ADGUARD_USER`) |
+| **Password** | (see `.env.local` → `ADGUARD_PASS`) |
 | **Docker** | `adguard/adguardhome:latest` |
 | **DNS Port** | 53 (TCP + UDP) |
 | **Web Port** | 3001 |
