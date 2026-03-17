@@ -383,12 +383,16 @@ function AnswerRenderer({ text }: { text: string }) {
                 i++
             }
             const rows = tableLines.map(r => r.split('|').filter(c => c.trim() !== ''))
+            const colCount = rows[0]?.length || 1
             elements.push(
-                <table key={`tbl-${i}`} className="w-full text-xs my-2 border-collapse">
+                <table key={`tbl-${i}`} className="w-full text-xs my-2 border-collapse table-fixed">
                     {rows.length > 0 && (
                         <thead>
                             <tr>{rows[0].map((h, hi) => (
-                                <th key={hi} className="text-left px-2 py-1.5 font-semibold border-b" style={{ borderColor: 'var(--border-primary)', color: 'var(--text-primary)' }}>{h.trim()}</th>
+                                <th key={hi} className="text-left px-2 py-1.5 font-semibold border-b"
+                                    style={{ borderColor: 'var(--border-primary)', color: 'var(--text-primary)', width: hi === 0 && h.trim() === '' ? '20%' : `${80 / (colCount - (rows[0][0]?.trim() === '' ? 1 : 0))}%` }}>
+                                    <InlineCode text={h.trim()} />
+                                </th>
                             ))}</tr>
                         </thead>
                     )}
@@ -396,7 +400,7 @@ function AnswerRenderer({ text }: { text: string }) {
                         {rows.slice(1).map((row, ri) => (
                             <tr key={ri}>
                                 {row.map((cell, ci) => (
-                                    <td key={ci} className="px-2 py-1.5 border-b" style={{ borderColor: 'var(--border-primary)', color: 'var(--text-secondary)' }}>
+                                    <td key={ci} className="px-2 py-1.5 border-b" style={{ borderColor: 'var(--border-primary)', color: ci === 0 ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
                                         <InlineCode text={cell.trim()} />
                                     </td>
                                 ))}

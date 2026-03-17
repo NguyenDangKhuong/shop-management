@@ -36,42 +36,42 @@ function greet() { console.log("Hello!"); }`}</CodeBlock>
 
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                            <div className="text-green-400 font-bold text-sm">{'\u2705'} Benefit: Function Declaration Hoisting</div>
+                            <div className="text-green-400 font-bold text-sm">✅ Lợi ích: Function Declaration Hoisting</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                {`G\u1ECDi function TR\u01AF\u1EDAC khi khai b\u00E1o \u2192 vi\u1EBFt`} <strong>main logic {'\u1EDF'} tr\u00EAn, helpers {'\u1EDF'} d\u01B0\u1EDBi</strong> {'\u2192'} code d\u1EC5 {'\u0111\u1ECDc'} top-down.<br />
-                                {'\u0110\u00E2y l\u00E0 l\u00FD do duy nh\u1EA5t hoisting "h\u1EEFu \u00EDch".'} 
+                                Gọi function TRƯỚC khi khai báo → viết <strong>main logic ở trên, helpers ở dưới</strong> → code dễ đọc top-down.<br />
+                                Đây là lý do duy nhất hoisting &quot;hữu ích&quot;.
                             </div>
                         </div>
                         <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                            <div className="text-red-400 font-bold text-sm">{'\u26A0\uFE0F'} Bad behavior c\u1EA7n tr\u00E1nh</div>
+                            <div className="text-red-400 font-bold text-sm">⚠️ Bad behavior cần tránh</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                {'\u2022'} <strong>var hoisting</strong> {'\u2192'} {`gi\u00E1 tr\u1ECB`} <InlineCode>undefined</InlineCode> thay {`v\u00EC l\u1ED7i \u2192`} <Highlight>silent bug nguy hi\u1EC3m</Highlight><br />
-                                {'\u2022'} <strong>Function expression / arrow</strong> {'\u2192 KH\u00D4NG hoist \u2192 TypeError n\u1EBFu g\u1ECDi tr\u01B0\u1EDBc'}<br />
-                                {'\u2022'} <strong>class hoisting</strong> {'\u2192 TDZ gi\u1ED1ng let/const \u2192 ReferenceError'}<br />
-                                {'\u2192 Lu\u00F4n d\u00F9ng'} <InlineCode>let</InlineCode>/<InlineCode>const</InlineCode> {'\u2014 TDZ b\u1EAFt bug s\u1EDBm thay v\u00EC \u0111\u1EC3 l\u1ECDt'}
+                                • <strong>var hoisting</strong> → giá trị <InlineCode>undefined</InlineCode> thay vì lỗi → <Highlight>silent bug nguy hiểm</Highlight><br />
+                                • <strong>Function expression / arrow</strong> → KHÔNG hoist → TypeError nếu gọi trước<br />
+                                • <strong>class hoisting</strong> → TDZ giống let/const → ReferenceError<br />
+                                → Luôn dùng <InlineCode>let</InlineCode>/<InlineCode>const</InlineCode> — TDZ bắt bug sớm thay vì để lọt
                             </div>
                         </div>
                     </div>
 
                     <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20 my-3">
-                        <div className="text-gray-300 font-bold text-sm">{'\uD83D\uDCCA'} Hoisting Summary Table</div>
+                        <div className="text-gray-300 font-bold text-sm">📊 Hoisting Summary Table</div>
                         <div className="text-slate-300 text-sm mt-2">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-xs">
                                     <thead>
                                         <tr className="border-b border-white/10">
-                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Ki\u1EC3u</th>
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Kiểu</th>
                                             <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Hoist?</th>
-                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">{`Gi\u00E1 tr\u1ECB khi access s\u1EDBm`}</th>
-                                            <th className="text-left py-1.5 text-slate-400 font-semibold">{`Khuy\u1EBFn ngh\u1ECB`}</th>
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Giá trị khi access sớm</th>
+                                            <th className="text-left py-1.5 text-slate-400 font-semibold">Khuyến nghị</th>
                                         </tr>
                                     </thead>
                                     <tbody className="text-slate-300">
-                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-red-400">var</td><td className="py-1.5 pr-2">{'\u2705'}</td><td className="py-1.5 pr-2">{`undefined (nguy hi\u1EC3m!)`}</td><td className="py-1.5">{'\u274C Tr\u00E1nh'}</td></tr>
-                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-green-400">let / const</td><td className="py-1.5 pr-2">{'\u2705 (TDZ)'}</td><td className="py-1.5 pr-2">{`ReferenceError (an to\u00E0n)`}</td><td className="py-1.5">{'\u2705 Lu\u00F4n d\u00F9ng'}</td></tr>
-                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-blue-400">function declaration</td><td className="py-1.5 pr-2">{'\u2705'}</td><td className="py-1.5 pr-2">{`Function \u0111\u1EA7y \u0111\u1EE7`}</td><td className="py-1.5">{'\u2705 OK'}</td></tr>
-                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-yellow-400">function expression</td><td className="py-1.5 pr-2">{'\u274C'}</td><td className="py-1.5 pr-2">TypeError</td><td className="py-1.5">{'\u2705 OK'}</td></tr>
-                                        <tr><td className="py-1.5 pr-2 font-bold text-purple-400">class</td><td className="py-1.5 pr-2">{'\u2705 (TDZ)'}</td><td className="py-1.5 pr-2">ReferenceError</td><td className="py-1.5">{'\u2705 OK'}</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-red-400">var</td><td className="py-1.5 pr-2">✅</td><td className="py-1.5 pr-2">undefined (nguy hiểm!)</td><td className="py-1.5">❌ Tránh</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-green-400">let / const</td><td className="py-1.5 pr-2">✅ (TDZ)</td><td className="py-1.5 pr-2">ReferenceError (an toàn)</td><td className="py-1.5">✅ Luôn dùng</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-blue-400">function declaration</td><td className="py-1.5 pr-2">✅</td><td className="py-1.5 pr-2">Function đầy đủ</td><td className="py-1.5">✅ OK</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-yellow-400">function expression</td><td className="py-1.5 pr-2">❌</td><td className="py-1.5 pr-2">TypeError</td><td className="py-1.5">✅ OK</td></tr>
+                                        <tr><td className="py-1.5 pr-2 font-bold text-purple-400">class</td><td className="py-1.5 pr-2">✅ (TDZ)</td><td className="py-1.5 pr-2">ReferenceError</td><td className="py-1.5">✅ OK</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -871,6 +871,117 @@ const result = await Promise.race([
                     <a href="/blogs/ecmascript-features" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
+                <TopicModal title="Regular Expressions (Regex)" emoji="🔍" color="#ec4899" summary={'Regex = "Tìm GÌ, BAO NHIÊU, Ở ĐÂU" — công cụ xử lý text mạnh nhất trong mọi ngôn ngữ'}>
+                    <Paragraph>Regex trông đáng sợ nhưng thật ra chỉ cần nhớ <Highlight>3 câu hỏi</Highlight>: Tìm <strong>GÌ</strong>? <strong>Bao nhiêu</strong>? <strong>Ở đâu</strong>?</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-pink-500/10 border border-pink-500/20">
+                            <div className="text-pink-400 font-bold text-sm">1. Tìm GÌ? (Character Classes)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                <InlineCode>.</InlineCode> bất kỳ ký tự &nbsp;|&nbsp; <InlineCode>\d</InlineCode> = <strong>d</strong>igit (0-9) &nbsp;|&nbsp; <InlineCode>\w</InlineCode> = <strong>w</strong>ord (a-z, 0-9, _) &nbsp;|&nbsp; <InlineCode>\s</InlineCode> = <strong>s</strong>pace<br />
+                                Viết HOA = phủ định: <InlineCode>\D</InlineCode> = không phải số, <InlineCode>\W</InlineCode> = không phải word<br />
+                                <InlineCode>[abc]</InlineCode> = a hoặc b hoặc c &nbsp;|&nbsp; <InlineCode>[^abc]</InlineCode> = KHÔNG phải a, b, c
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">2. BAO NHIÊU? (Quantifiers)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                <InlineCode>*</InlineCode> = 0 hoặc nhiều (sao = vô hạn) &nbsp;|&nbsp; <InlineCode>+</InlineCode> = 1 hoặc nhiều (cộng = ít nhất 1)<br />
+                                <InlineCode>?</InlineCode> = 0 hoặc 1 (có hoặc không) &nbsp;|&nbsp; <InlineCode>{'{3}'}</InlineCode> = đúng 3 lần &nbsp;|&nbsp; <InlineCode>{'{2,5}'}</InlineCode> = 2 đến 5 lần
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm">3. Ở ĐÂU? (Anchors)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                <InlineCode>^</InlineCode> = đầu chuỗi &nbsp;|&nbsp; <InlineCode>$</InlineCode> = cuối chuỗi &nbsp;|&nbsp; <InlineCode>\b</InlineCode> = ranh giới từ (<strong>b</strong>oundary)
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                            <div className="text-yellow-400 font-bold text-sm">4. Nhóm & Nâng cao</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                <InlineCode>(abc)</InlineCode> = nhóm capture &nbsp;|&nbsp; <InlineCode>{'(?:abc)'}</InlineCode> = nhóm không capture &nbsp;|&nbsp; <InlineCode>a|b</InlineCode> = a HOẶC b<br />
+                                <InlineCode>{'(?=abc)'}</InlineCode> = lookahead &nbsp;|&nbsp; <InlineCode>{'(?!abc)'}</InlineCode> = negative lookahead
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20 my-3">
+                        <div className="text-gray-300 font-bold text-sm">📊 Regex Cheat Sheet</div>
+                        <div className="text-slate-300 text-sm mt-2">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-xs">
+                                    <thead>
+                                        <tr className="border-b border-white/10">
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Pattern</th>
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Nghĩa</th>
+                                            <th className="text-left py-1.5 text-slate-400 font-semibold">Mẹo nhớ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-slate-300">
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-pink-400">\d</td><td className="py-1.5 pr-2">Digit 0-9</td><td className="py-1.5"><strong>d</strong>igit</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-pink-400">\w</td><td className="py-1.5 pr-2">Word char</td><td className="py-1.5"><strong>w</strong>ord</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-pink-400">\s</td><td className="py-1.5 pr-2">Whitespace</td><td className="py-1.5"><strong>s</strong>pace</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-blue-400">*</td><td className="py-1.5 pr-2">0 hoặc nhiều</td><td className="py-1.5">Sao = vô hạn</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-blue-400">+</td><td className="py-1.5 pr-2">1 hoặc nhiều</td><td className="py-1.5">Cộng = ít nhất 1</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-blue-400">?</td><td className="py-1.5 pr-2">0 hoặc 1</td><td className="py-1.5">Hỏi = có hay không</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-green-400">^</td><td className="py-1.5 pr-2">Đầu chuỗi</td><td className="py-1.5">Mũ = lên đầu</td></tr>
+                                        <tr><td className="py-1.5 pr-2 font-mono text-green-400">$</td><td className="py-1.5 pr-2">Cuối chuỗi</td><td className="py-1.5">Tiền = cuối</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="regex-thuc-te.js">{`// ═══ 5 REGEX HAY DÙNG NHẤT (nhớ mấy cái này = đủ 90%) ═══
+
+// 1. Validate SĐT Việt Nam (10 số, bắt đầu bằng 0)
+const phoneRegex = /^0\\d{9}$/
+phoneRegex.test('0901234567')  // true
+phoneRegex.test('901234567')   // false (thiếu 0 đầu)
+
+// 2. Validate email đơn giản
+const emailRegex = /\\w+@\\w+\\.\\w+/
+emailRegex.test('khuong@gmail.com')  // true
+
+// 3. Validate URL
+const urlRegex = /^https?:\\/\\/.+/
+urlRegex.test('https://thetaphoa.store')  // true
+
+// 4. Tách số có dấu phẩy: "1,000,000" → match
+const numberRegex = /\\d{1,3}(,\\d{3})*/
+'1,000,000'.match(numberRegex)  // ["1,000,000"]
+
+// 5. Extract slug (kebab-case)
+const slugRegex = /[-\\w]+/g
+'hello-world 123'.match(slugRegex)  // ["hello-world", "123"]
+
+// ═══ REGEX METHODS TRONG JS ═══
+const str = 'Khuong - age 25, Lan - age 23'
+
+// test() → true/false
+/\\d+/.test(str)                    // true
+
+// match() → tìm matches
+str.match(/\\d+/g)                  // ["25", "23"]
+
+// replace() → thay thế
+str.replace(/\\d+/g, 'XX')          // "Khuong - age XX, Lan - age XX"
+
+// matchAll() → iterator với capture groups
+const regex = /(\\w+) - age (\\d+)/g
+for (const m of str.matchAll(regex)) {
+  console.log(m[1], m[2])         // "Khuong" "25", "Lan" "23"
+}
+
+// ═══ ĐỌC REGEX NHƯ ĐỌC CÂU (trái → phải) ═══
+// ^0\\d{9}$
+// ^ đầu chuỗi → 0 → \\d{9} 9 chữ số → $ cuối chuỗi
+// = "Chuỗi bắt đầu bằng 0, theo sau 9 chữ số, hết"`}</CodeBlock>
+
+                    <Callout type="info">💡 <strong>Pro tip</strong>: Không cần nhớ hết regex — chỉ cần biết đủ để <Highlight>đọc hiểu</Highlight> regex người khác viết + dùng <a href="https://regex101.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">regex101.com</a> để build và test khi cần.</Callout>
+                    <Callout type="tip">Interview: {`"Regex hoạt động bằng 3 câu hỏi: tìm GÌ (\\d, \\w, [abc]), bao NHIÊU (*, +, {n}), ở ĐÂU (^, $, \\b). Đọc từ trái sang phải như đọc câu."`}</Callout>
+                </TopicModal>
+
                 <TopicModal title="Dynamic Import + Suspense" emoji="📦" color="#8b5cf6" summary="Code splitting — chia bundle thành chunks nhỏ, load theo nhu cầu, giảm thời gian tải trang">
                     <Paragraph><Highlight>Dynamic Import</Highlight> cho phép load code <strong>khi cần</strong> thay vì load hết lúc đầu — giảm bundle size, trang hiện nhanh hơn.</Paragraph>
 
@@ -935,53 +1046,100 @@ const Chart = dynamic(() => import('./HeavyChart'), {
                     <Callout type="tip">Interview: {`"Dynamic import = code splitting. Chia bundle thành chunks, load theo nhu cầu. React.lazy + Suspense xử lý loading UI. Next.js dynamic() thêm ssr: false cho client-only components."`}</Callout>
                 </TopicModal>
 
-                <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== giống thầy dễ tính cho qua hết, === giống thầy nghiêm khắc kiểm tra kỹ">
-                    <Paragraph><InlineCode>Type Coercion</InlineCode> trong JS giống <Highlight>&quot;kiểm tra bài&quot;</Highlight> ở trường — có 2 loại thầy giáo:</Paragraph>
+                <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== chỉ check giá trị (tự convert type), === check cả type VÀ giá trị — luôn dùng ===">
+                    <Paragraph><InlineCode>==</InlineCode> và <InlineCode>===</InlineCode> khác nhau ở <Highlight>một bước duy nhất</Highlight>: có tự chuyển đổi kiểu dữ liệu hay không.</Paragraph>
 
                     <div className="my-3 space-y-2">
-                        <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                            <div className="text-orange-400 font-bold text-sm">{'🏫 Ví dụ: Kiểm tra bài tập'}</div>
-                            <div className="text-slate-300 text-sm mt-1 font-mono">
-                                {'📝 Đề bài: "Viết số 1"'}<br />
-                                {'👦 Học sinh viết: "1" (string)'}<br />
-                                {'👨‍🏫 Thầy dễ (==): "Ừ đúng rồi, 1 là 1 mà!" → ✅'}<br />
-                                {'👨‍🏫 Thầy nghiêm (===): "SAI! Tôi cần SỐ 1, không phải CHỮ \'1\'!" → ❌'}<br /><br />
-                                <strong>{'== tự ý chuyển đổi type để so sánh, === bắt đúng cả type lẫn value!'}</strong>
-                            </div>
-                        </div>
-
                         <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                            <div className="text-green-400 font-bold text-sm">{'✅ === (Strict) = Thầy nghiêm khắc 👨‍🏫'}</div>
+                            <div className="text-green-400 font-bold text-sm">✅ === (Strict Equality) — So sánh THẬT</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                {'Kiểm tra CẢ nội dung VÀ kiểu dữ liệu — "1" !== 1, false !== 0'}<br />
-                                {'→ '}<strong>Luôn dùng === để tránh bugs</strong>{' — rõ ràng, không bất ngờ'}
+                                <strong>Bước 1:</strong> Kiểm tra type → khác type? → <strong>false ngay</strong>, không cần xét tiếp<br />
+                                <strong>Bước 2:</strong> Cùng type → so sánh value<br /><br />
+                                <InlineCode>1 === &quot;1&quot;</InlineCode> → number ≠ string → <strong>false ngay</strong> (không convert gì hết)<br />
+                                <InlineCode>1 === 1</InlineCode> → number = number → so sánh value → <strong>true</strong>
                             </div>
                         </div>
 
                         <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                            <div className="text-red-400 font-bold text-sm">{'❌ == (Loose) = Thầy dễ tính 😅'}</div>
+                            <div className="text-red-400 font-bold text-sm">⚠️ == (Loose Equality) — So sánh CÓ Convert</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                {'Tự ý sửa bài cho học sinh trước khi chấm: "" → 0 → false, dẫn đến kết quả bất ngờ!'}<br />
-                                {'→ '}<strong>Tránh dùng ==</strong>{' trừ khi cố ý (duy nhất hữu ích: x == null kiểm tra cả null và undefined)'}
+                                <strong>Bước 1:</strong> Kiểm tra type → cùng type? → so sánh bình thường<br />
+                                <strong>Bước 2:</strong> Khác type? → <strong>TỰ ĐỘNG convert</strong> rồi mới so sánh<br /><br />
+                                <InlineCode>1 == &quot;1&quot;</InlineCode> → number ≠ string → convert &quot;1&quot; → 1 → <InlineCode>1 == 1</InlineCode> → <strong>true</strong><br />
+                                Vấn đề: bạn KHÔNG biết JS sẽ convert thế nào → <strong>bugs bất ngờ!</strong>
                             </div>
                         </div>
                     </div>
 
-                    <Paragraph>JS tự động convert types khi so sánh với <InlineCode>==</InlineCode>. Đây là nguồn gốc nhiều bugs khó hiểu.</Paragraph>
-                    <CodeBlock title="Type coercion gotchas">{`// == (loose equality) — thầy dễ tính, tự ý chuyển đổi type
-'' == false     // true!  ('' → 0 → false, "ừ giống nhau mà!")
-0 == false      // true!  (0 → false, "cho qua!")
- null == undefined // true!  ("cũng gần giống nhau thôi!")
-[] == false     // true!  ([] → '' → 0 → false, "sửa mấy bước cũng cho qua!")
+                    <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20 my-3">
+                        <div className="text-orange-400 font-bold text-sm">🔄 == Convert như thế nào? (Đây là phần gây rối)</div>
+                        <div className="text-slate-300 text-sm mt-2 space-y-1">
+                            <div>① <strong>null == undefined</strong> → true (quy tắc đặc biệt, chỉ bằng nhau với nhau)</div>
+                            <div>② <strong>number vs string</strong> → convert string → number: <InlineCode>&quot;5&quot; → 5</InlineCode></div>
+                            <div>③ <strong>boolean vs bất kỳ</strong> → convert boolean → number trước: <InlineCode>true → 1, false → 0</InlineCode></div>
+                            <div>④ <strong>object vs primitive</strong> → gọi .valueOf() hoặc .toString(): <InlineCode>[] → &quot;&quot; → 0</InlineCode></div>
+                        </div>
+                    </div>
 
-// === (strict equality) — thầy nghiêm, kiểm tra đúng type
-'' === false    // false  ("string khác boolean, SAI!")
-0 === false     // false  ("number khác boolean, SAI!")
+                    <CodeBlock title="type-coercion.js">{`// ═══ === STRICT: Khác type = false NGAY ═══
+1 === "1"      // false ← number ≠ string, dừng
+0 === false    // false ← number ≠ boolean, dừng
+"" === false   // false ← string ≠ boolean, dừng
+null === undefined // false ← khác type!
 
-// Truthy / Falsy — 6 giá trị "giả" cần nhớ thuộc lòng
-// Falsy: false, 0, '', null, undefined, NaN
-// Truthy: TẤT CẢ còn lại (kể cả [] và {}!)`}</CodeBlock>
-                    <Callout type="tip">Rule đơn giản: <Highlight>luôn dùng === </Highlight> trừ khi bạn CỐ Ý muốn type coercion (hiếm). Và hãy biết thuộc 6 falsy values.</Callout>
+// ═══ == LOOSE: Tự convert rồi mới so sánh ═══
+1 == "1"       // true  ← "1" → 1, rồi 1 == 1 ✓
+
+// ⚠️ Những case GÂY RỐI:
+0 == false     // true  ← false → 0, rồi 0 == 0 ✓
+"" == false    // true  ← false → 0, "" → 0, rồi 0 == 0 ✓
+"" == 0        // true  ← "" → 0, rồi 0 == 0 ✓
+[] == false    // true  ← [] → "" → 0, false → 0, rồi 0 == 0 ✓
+[] == 0        // true  ← [] → "" → 0, rồi 0 == 0 ✓
+"0" == false   // true  ← false → 0, "0" → 0, rồi 0 == 0 ✓
+
+// 🤯 WTF cases:
+[] == ![]      // true!! ← ![] = false → 0, [] → "" → 0
+NaN == NaN     // false! ← NaN không bằng chính nó
+
+// ═══ UNIQUE CASE: == hữu ích DUY NHẤT ═══
+// Kiểm tra null HOẶC undefined cùng lúc
+if (x == null) { /* x là null HOẶC undefined */ }
+// tương đương:
+if (x === null || x === undefined) { /* dài hơn */ }
+
+// ═══ TRUTHY / FALSY ═══
+// 6 giá trị FALSY (nhớ thuộc lòng):
+// false, 0, "", null, undefined, NaN
+// TẤT CẢ còn lại = TRUTHY (kể cả [], {}, "0", "false"!)`}</CodeBlock>
+
+                    <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20 my-3">
+                        <div className="text-gray-300 font-bold text-sm">📊 So sánh nhanh</div>
+                        <div className="text-slate-300 text-sm mt-2">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-xs">
+                                    <thead>
+                                        <tr className="border-b border-white/10">
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Expression</th>
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">==</th>
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">===</th>
+                                            <th className="text-left py-1.5 text-slate-400 font-semibold">Vì sao?</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-slate-300">
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono">1 vs &quot;1&quot;</td><td className="py-1.5 pr-2 text-yellow-400">true</td><td className="py-1.5 pr-2 text-green-400">false</td><td className="py-1.5">== convert &quot;1&quot;→1</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono">0 vs false</td><td className="py-1.5 pr-2 text-yellow-400">true</td><td className="py-1.5 pr-2 text-green-400">false</td><td className="py-1.5">== convert false→0</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono">&quot;&quot; vs false</td><td className="py-1.5 pr-2 text-yellow-400">true</td><td className="py-1.5 pr-2 text-green-400">false</td><td className="py-1.5">== convert cả 2→0</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono">null vs undefined</td><td className="py-1.5 pr-2 text-yellow-400">true</td><td className="py-1.5 pr-2 text-green-400">false</td><td className="py-1.5">== quy tắc riêng</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono">[] vs false</td><td className="py-1.5 pr-2 text-yellow-400">true</td><td className="py-1.5 pr-2 text-green-400">false</td><td className="py-1.5">== convert []→&quot;&quot;→0</td></tr>
+                                        <tr><td className="py-1.5 pr-2 font-mono">NaN vs NaN</td><td className="py-1.5 pr-2 text-red-400">false</td><td className="py-1.5 pr-2 text-red-400">false</td><td className="py-1.5">NaN ≠ chính nó!</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Callout type="tip">Interview: {`"== chỉ so sánh giá trị — nó tự convert type trước khi so, dẫn đến bugs bất ngờ. === so sánh cả type VÀ giá trị — khác type là false ngay. Luôn dùng === trừ trường hợp x == null để check cả null lẫn undefined."`}</Callout>
                 </TopicModal>
 
                 <TopicModal title="for vs while — Khi nào dùng?" emoji="🔄" color="#10b981" summary="for = biết trước số lần lặp, while = lặp đến khi điều kiện sai — pattern quan trọng trong DSA">

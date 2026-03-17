@@ -874,6 +874,117 @@ const result = await Promise.race([
                     <a href="/blogs/ecmascript-features" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
+                <TopicModal title="Regular Expressions (Regex)" emoji="🔍" color="#ec4899" summary={'Regex = "Find WHAT, HOW MANY, WHERE" — the most powerful text processing tool in any language'}>
+                    <Paragraph>Regex looks scary but you only need to remember <Highlight>3 questions</Highlight>: Find <strong>WHAT</strong>? <strong>How many</strong>? <strong>Where</strong>?</Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-pink-500/10 border border-pink-500/20">
+                            <div className="text-pink-400 font-bold text-sm">1. Find WHAT? (Character Classes)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                <InlineCode>.</InlineCode> any character &nbsp;|&nbsp; <InlineCode>\d</InlineCode> = <strong>d</strong>igit (0-9) &nbsp;|&nbsp; <InlineCode>\w</InlineCode> = <strong>w</strong>ord (a-z, 0-9, _) &nbsp;|&nbsp; <InlineCode>\s</InlineCode> = <strong>s</strong>pace<br />
+                                UPPERCASE = negation: <InlineCode>\D</InlineCode> = not a digit, <InlineCode>\W</InlineCode> = not a word char<br />
+                                <InlineCode>[abc]</InlineCode> = a or b or c &nbsp;|&nbsp; <InlineCode>[^abc]</InlineCode> = NOT a, b, or c
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">2. HOW MANY? (Quantifiers)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                <InlineCode>*</InlineCode> = 0 or more (star = infinite) &nbsp;|&nbsp; <InlineCode>+</InlineCode> = 1 or more (plus = at least 1)<br />
+                                <InlineCode>?</InlineCode> = 0 or 1 (optional) &nbsp;|&nbsp; <InlineCode>{'{3}'}</InlineCode> = exactly 3 times &nbsp;|&nbsp; <InlineCode>{'{2,5}'}</InlineCode> = 2 to 5 times
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm">3. WHERE? (Anchors)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                <InlineCode>^</InlineCode> = start of string &nbsp;|&nbsp; <InlineCode>$</InlineCode> = end of string &nbsp;|&nbsp; <InlineCode>\b</InlineCode> = word <strong>b</strong>oundary
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                            <div className="text-yellow-400 font-bold text-sm">4. Groups & Advanced</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                <InlineCode>(abc)</InlineCode> = capture group &nbsp;|&nbsp; <InlineCode>{'(?:abc)'}</InlineCode> = non-capturing group &nbsp;|&nbsp; <InlineCode>a|b</InlineCode> = a OR b<br />
+                                <InlineCode>{'(?=abc)'}</InlineCode> = lookahead &nbsp;|&nbsp; <InlineCode>{'(?!abc)'}</InlineCode> = negative lookahead
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20 my-3">
+                        <div className="text-gray-300 font-bold text-sm">📊 Regex Cheat Sheet</div>
+                        <div className="text-slate-300 text-sm mt-2">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-xs">
+                                    <thead>
+                                        <tr className="border-b border-white/10">
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Pattern</th>
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Meaning</th>
+                                            <th className="text-left py-1.5 text-slate-400 font-semibold">Memory trick</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-slate-300">
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-pink-400">\d</td><td className="py-1.5 pr-2">Digit 0-9</td><td className="py-1.5"><strong>d</strong>igit</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-pink-400">\w</td><td className="py-1.5 pr-2">Word char</td><td className="py-1.5"><strong>w</strong>ord</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-pink-400">\s</td><td className="py-1.5 pr-2">Whitespace</td><td className="py-1.5"><strong>s</strong>pace</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-blue-400">*</td><td className="py-1.5 pr-2">0 or more</td><td className="py-1.5">Star = infinite</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-blue-400">+</td><td className="py-1.5 pr-2">1 or more</td><td className="py-1.5">Plus = at least 1</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-blue-400">?</td><td className="py-1.5 pr-2">0 or 1</td><td className="py-1.5">Question = optional</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono text-green-400">^</td><td className="py-1.5 pr-2">Start of string</td><td className="py-1.5">Hat = on top</td></tr>
+                                        <tr><td className="py-1.5 pr-2 font-mono text-green-400">$</td><td className="py-1.5 pr-2">End of string</td><td className="py-1.5">Dollar = the end</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="regex-practical.js">{`// ═══ 5 MOST USED REGEX (know these = 90% covered) ═══
+
+// 1. Validate phone number (10 digits, starts with 0)
+const phoneRegex = /^0\\d{9}$/
+phoneRegex.test('0901234567')  // true
+phoneRegex.test('901234567')   // false (missing leading 0)
+
+// 2. Simple email validation
+const emailRegex = /\\w+@\\w+\\.\\w+/
+emailRegex.test('khuong@gmail.com')  // true
+
+// 3. Validate URL
+const urlRegex = /^https?:\\/\\/.+/
+urlRegex.test('https://example.com')  // true
+
+// 4. Match comma-separated numbers: "1,000,000"
+const numberRegex = /\\d{1,3}(,\\d{3})*/
+'1,000,000'.match(numberRegex)  // ["1,000,000"]
+
+// 5. Extract slug (kebab-case)
+const slugRegex = /[-\\w]+/g
+'hello-world 123'.match(slugRegex)  // ["hello-world", "123"]
+
+// ═══ REGEX METHODS IN JS ═══
+const str = 'Khuong - age 25, Lan - age 23'
+
+// test() → true/false
+/\\d+/.test(str)                    // true
+
+// match() → find matches
+str.match(/\\d+/g)                  // ["25", "23"]
+
+// replace() → substitute
+str.replace(/\\d+/g, 'XX')          // "Khuong - age XX, Lan - age XX"
+
+// matchAll() → iterator with capture groups
+const regex = /(\\w+) - age (\\d+)/g
+for (const m of str.matchAll(regex)) {
+  console.log(m[1], m[2])         // "Khuong" "25", "Lan" "23"
+}
+
+// ═══ READ REGEX LIKE A SENTENCE (left → right) ═══
+// ^0\\d{9}$
+// ^ start → 0 → \\d{9} nine digits → $ end
+// = "String starts with 0, followed by 9 digits, end"`}</CodeBlock>
+
+                    <Callout type="info">💡 <strong>Pro tip</strong>: You don&apos;t need to memorize all regex — just know enough to <Highlight>read and understand</Highlight> other people&apos;s regex + use <a href="https://regex101.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">regex101.com</a> to build and test when needed.</Callout>
+                    <Callout type="tip">Interview: {`"Regex works by answering 3 questions: find WHAT (\\d, \\w, [abc]), HOW MANY (*, +, {n}), WHERE (^, $, \\b). Read left to right like a sentence."`}</Callout>
+                </TopicModal>
+
                 <TopicModal title="Dynamic Import + Suspense" emoji="📦" color="#8b5cf6" summary="Code splitting — split bundle into small chunks, load on demand, reduce page load time">
                     <Paragraph><Highlight>Dynamic Import</Highlight> lets you load code <strong>when needed</strong> instead of loading everything upfront — smaller bundle, faster page render.</Paragraph>
 
@@ -938,53 +1049,100 @@ const Chart = dynamic(() => import('./HeavyChart'), {
                     <Callout type="tip">Interview: {`"Dynamic import = code splitting. Split bundle into chunks, load on demand. React.lazy + Suspense handles loading UI. Next.js dynamic() adds ssr: false for client-only components."`}</Callout>
                 </TopicModal>
 
-                <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== is like a chill teacher who lets everything pass, === is the strict teacher who checks everything">
-                    <Paragraph><InlineCode>Type Coercion</InlineCode> in JS is like <Highlight>&quot;grading homework&quot;</Highlight> at school — there are 2 types of teachers:</Paragraph>
+                <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== only checks value (auto-converts type), === checks both type AND value — always use ===">
+                    <Paragraph><InlineCode>==</InlineCode> and <InlineCode>===</InlineCode> differ by <Highlight>one single step</Highlight>: whether types are auto-converted or not.</Paragraph>
 
                     <div className="my-3 space-y-2">
-                        <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                            <div className="text-orange-400 font-bold text-sm">{'🏫 Example: Grading homework'}</div>
-                            <div className="text-slate-300 text-sm mt-1 font-mono">
-                                {'📝 Assignment: "Write the number 1"'}<br />
-                                {'👦 Student writes: "1" (string)'}<br />
-                                {'👨‍🏫 Chill teacher (==): "Yeah that\'s right, 1 is 1!" → ✅'}<br />
-                                {'👨‍🏫 Strict teacher (===): "WRONG! I need NUMBER 1, not STRING \'1\'!" → ❌'}<br /><br />
-                                <strong>{'== auto-converts types to compare, === checks both type AND value!'}</strong>
-                            </div>
-                        </div>
-
                         <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                            <div className="text-green-400 font-bold text-sm">{'✅ === (Strict) = Strict teacher 👨‍🏫'}</div>
+                            <div className="text-green-400 font-bold text-sm">✅ === (Strict Equality) — Real comparison</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                {'Checks BOTH content AND data type — "1" !== 1, false !== 0'}<br />
-                                {'→ '}<strong>Always use === to avoid bugs</strong>{' — clear, no surprises'}
+                                <strong>Step 1:</strong> Check type → different type? → <strong>false immediately</strong>, no further check<br />
+                                <strong>Step 2:</strong> Same type → compare value<br /><br />
+                                <InlineCode>1 === &quot;1&quot;</InlineCode> → number ≠ string → <strong>false immediately</strong> (no conversion)<br />
+                                <InlineCode>1 === 1</InlineCode> → number = number → compare value → <strong>true</strong>
                             </div>
                         </div>
 
                         <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                            <div className="text-red-400 font-bold text-sm">{'❌ == (Loose) = Chill teacher 😅'}</div>
+                            <div className="text-red-400 font-bold text-sm">⚠️ == (Loose Equality) — Compares WITH conversion</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                {'Auto-corrects the student\'s answer before grading: "" → 0 → false, leading to unexpected results!'}<br />
-                                {'→ '}<strong>Avoid ==</strong>{' unless intentional (only useful: x == null checks both null and undefined)'}
+                                <strong>Step 1:</strong> Check type → same type? → compare normally<br />
+                                <strong>Step 2:</strong> Different type? → <strong>AUTO-CONVERT</strong> then compare<br /><br />
+                                <InlineCode>1 == &quot;1&quot;</InlineCode> → number ≠ string → convert &quot;1&quot; → 1 → <InlineCode>1 == 1</InlineCode> → <strong>true</strong><br />
+                                Problem: you DON&apos;T know how JS will convert → <strong>unexpected bugs!</strong>
                             </div>
                         </div>
                     </div>
 
-                    <Paragraph>JS automatically converts types when comparing with <InlineCode>==</InlineCode>. This is the source of many confusing bugs.</Paragraph>
-                    <CodeBlock title="Type coercion gotchas">{`// == (loose equality) — chill teacher, auto-converts types
-'' == false     // true!  ('' → 0 → false, "yeah same thing!")
-0 == false      // true!  (0 → false, "close enough!")
- null == undefined // true!  ("they're basically the same!")
-[] == false     // true!  ([] → '' → 0 → false, "I'll fix it for you!")
+                    <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20 my-3">
+                        <div className="text-orange-400 font-bold text-sm">🔄 How does == convert? (This is the confusing part)</div>
+                        <div className="text-slate-300 text-sm mt-2 space-y-1">
+                            <div>① <strong>null == undefined</strong> → true (special rule, only equal to each other)</div>
+                            <div>② <strong>number vs string</strong> → convert string → number: <InlineCode>&quot;5&quot; → 5</InlineCode></div>
+                            <div>③ <strong>boolean vs anything</strong> → convert boolean → number first: <InlineCode>true → 1, false → 0</InlineCode></div>
+                            <div>④ <strong>object vs primitive</strong> → call .valueOf() or .toString(): <InlineCode>[] → &quot;&quot; → 0</InlineCode></div>
+                        </div>
+                    </div>
 
-// === (strict equality) — strict teacher, checks exact type
-'' === false    // false  ("string ≠ boolean, WRONG!")
-0 === false     // false  ("number ≠ boolean, WRONG!")
+                    <CodeBlock title="type-coercion.js">{`// ═══ === STRICT: Different type = false IMMEDIATELY ═══
+1 === "1"      // false ← number ≠ string, stop
+0 === false    // false ← number ≠ boolean, stop
+"" === false   // false ← string ≠ boolean, stop
+null === undefined // false ← different types!
 
-// Truthy / Falsy — 6 "fake" values to memorize
-// Falsy: false, 0, '', null, undefined, NaN
-// Truthy: EVERYTHING else (including [] and {}!)`}</CodeBlock>
-                    <Callout type="tip">Simple rule: <Highlight>always use ===</Highlight> unless you INTENTIONALLY want type coercion (rare). And memorize the 6 falsy values.</Callout>
+// ═══ == LOOSE: Auto-convert then compare ═══
+1 == "1"       // true  ← "1" → 1, then 1 == 1 ✓
+
+// ⚠️ Confusing cases:
+0 == false     // true  ← false → 0, then 0 == 0 ✓
+"" == false    // true  ← false → 0, "" → 0, then 0 == 0 ✓
+"" == 0        // true  ← "" → 0, then 0 == 0 ✓
+[] == false    // true  ← [] → "" → 0, false → 0, then 0 == 0 ✓
+[] == 0        // true  ← [] → "" → 0, then 0 == 0 ✓
+"0" == false   // true  ← false → 0, "0" → 0, then 0 == 0 ✓
+
+// 🤯 WTF cases:
+[] == ![]      // true!! ← ![] = false → 0, [] → "" → 0
+NaN == NaN     // false! ← NaN is not equal to itself
+
+// ═══ ONLY useful case for == ═══
+// Check null OR undefined at once
+if (x == null) { /* x is null OR undefined */ }
+// equivalent to:
+if (x === null || x === undefined) { /* longer */ }
+
+// ═══ TRUTHY / FALSY ═══
+// 6 FALSY values (memorize these):
+// false, 0, "", null, undefined, NaN
+// EVERYTHING else = TRUTHY (including [], {}, "0", "false"!)`}</CodeBlock>
+
+                    <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20 my-3">
+                        <div className="text-gray-300 font-bold text-sm">📊 Quick comparison</div>
+                        <div className="text-slate-300 text-sm mt-2">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-xs">
+                                    <thead>
+                                        <tr className="border-b border-white/10">
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">Expression</th>
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">==</th>
+                                            <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold">===</th>
+                                            <th className="text-left py-1.5 text-slate-400 font-semibold">Why?</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-slate-300">
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono">1 vs &quot;1&quot;</td><td className="py-1.5 pr-2 text-yellow-400">true</td><td className="py-1.5 pr-2 text-green-400">false</td><td className="py-1.5">== converts &quot;1&quot;→1</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono">0 vs false</td><td className="py-1.5 pr-2 text-yellow-400">true</td><td className="py-1.5 pr-2 text-green-400">false</td><td className="py-1.5">== converts false→0</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono">&quot;&quot; vs false</td><td className="py-1.5 pr-2 text-yellow-400">true</td><td className="py-1.5 pr-2 text-green-400">false</td><td className="py-1.5">== converts both→0</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono">null vs undefined</td><td className="py-1.5 pr-2 text-yellow-400">true</td><td className="py-1.5 pr-2 text-green-400">false</td><td className="py-1.5">== special rule</td></tr>
+                                        <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-mono">[] vs false</td><td className="py-1.5 pr-2 text-yellow-400">true</td><td className="py-1.5 pr-2 text-green-400">false</td><td className="py-1.5">== converts []→&quot;&quot;→0</td></tr>
+                                        <tr><td className="py-1.5 pr-2 font-mono">NaN vs NaN</td><td className="py-1.5 pr-2 text-red-400">false</td><td className="py-1.5 pr-2 text-red-400">false</td><td className="py-1.5">NaN ≠ itself!</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Callout type="tip">Interview: {`"== only compares values — it auto-converts types before comparing, leading to unexpected bugs. === compares both type AND value — different type means false immediately. Always use === except for x == null to check both null and undefined."`}</Callout>
                 </TopicModal>
 
                 <TopicModal title="for vs while — When to Use?" emoji="🔄" color="#10b981" summary="for = known iteration count, while = loop until condition is false — crucial pattern in DSA">
