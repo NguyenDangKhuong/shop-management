@@ -327,38 +327,44 @@ export default function TranslateClient() {
                     </div>
 
                     <div className="space-y-2">
-                        {savedItems.map((item) => (
+                        {savedItems.map((item) => {
+                            // Normalize: luôn hiển thị EN → VI
+                            const isReversed = item.from === 'vi' && item.to === 'en'
+                            const enText = isReversed ? item.translated : item.original
+                            const viText = isReversed ? item.original : item.translated
+                            return (
                             <div
                                 key={item._id}
                                 className={`group grid grid-cols-[1fr_auto_1fr_auto] items-center gap-3 px-4 py-3 rounded-xl bg-slate-900/60 border border-white/5 hover:border-white/10 transition-colors ${deletingId === item._id ? 'opacity-50' : ''
                                     }`}
                             >
-                                {/* Original text + flag */}
+                                {/* English text */}
                                 <div className="min-w-0">
-                                    <span className="text-xs text-slate-500 mr-1">{langFlag[item.from]}</span>
-                                    <span className="text-sm text-slate-300 break-words">{item.original}</span>
+                                    <span className="text-xs text-slate-500 mr-1">🇬🇧</span>
+                                    <span className="text-sm text-slate-300 break-words">{enText}</span>
                                 </div>
 
                                 {/* Arrow */}
                                 <span className="text-slate-600 text-xs shrink-0">→</span>
 
-                                {/* Translated text + flag */}
+                                {/* Vietnamese text */}
                                 <div className="min-w-0">
-                                    <span className="text-xs text-slate-500 mr-1">{langFlag[item.to]}</span>
-                                    <span className="text-sm text-white break-words">{item.translated}</span>
+                                    <span className="text-xs text-slate-500 mr-1">🇻🇳</span>
+                                    <span className="text-sm text-white break-words">{viText}</span>
                                 </div>
 
-                                {/* Delete button — ẩn mặc định, hiện khi hover */}
+                                {/* Delete button */}
                                 <button
                                     onClick={() => deleteVocabulary(item._id)}
                                     disabled={deletingId === item._id}
-                                    className="opacity-50 group-hover:opacity-100 text-xs text-slate-600 hover:text-red-400 transition-all px-1 py-0.5 rounded shrink-0"
+                                    className="text-xs text-slate-600 hover:text-red-400 transition-all px-1 py-0.5 rounded shrink-0 md:opacity-0 md:group-hover:opacity-100"
                                     title="Delete"
                                 >
                                     ✕
                                 </button>
                             </div>
-                        ))}
+                            )
+                        })}
                     </div>
                 </div>
             )}

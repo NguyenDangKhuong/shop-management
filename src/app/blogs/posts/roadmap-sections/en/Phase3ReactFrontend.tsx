@@ -1420,6 +1420,503 @@ module.exports = {
                     </Callout>
                 </TopicModal>
 
+
+                <TopicModal title="DOM Manipulation & Event Delegation" emoji="🎯" color="#f97316" summary={'Bubbling, Capturing, Delegation — how events propagate through the DOM'}>
+                    <Paragraph>Frontend interviews <Highlight>frequently ask</Highlight> about event propagation. Understanding how events travel through the DOM = debugging any click/submit issue.</Paragraph>
+
+                    <Callout type="info">{'🏢 '}<strong>Analogy: Event Propagation = Office Gossip</strong><br /><br />
+                        {'You (employee) tell '}<strong>gossip</strong>{' to your direct manager:'}<br /><br />
+                        <strong>{'🔽 Capturing (going down)'}</strong>{' = CEO hears it → passes down → Director → Manager → reaches you'}<br />
+                        <strong>{'🎯 Target'}</strong>{' = Gossip '}<strong>reaches the person who told it</strong>{' (you)'}<br />
+                        <strong>{'🔼 Bubbling (going up)'}</strong>{' = You tell → Manager hears → Director hears → CEO hears too!'}<br /><br />
+                        {"Clicking a child = you're also clicking ALL its ancestors! 🫧"}
+                    </Callout>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                            <div className="text-orange-400 font-bold text-sm">{'🔄 Event Propagation — 3 Phases'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                <strong>Flow:</strong>{' Capturing ↓ → Target 🎯 → Bubbling ↑'}<br /><br />
+                                <InlineCode>{'window → document → html → body → div → p → a (Target)'}</InlineCode><br />
+                                <InlineCode>{'a (Target) → p → div → body → html → document → window'}</InlineCode><br /><br />
+                                {'• '}<strong>Capturing</strong>{': from root (window) down to target — rarely used'}<br />
+                                {'• '}<strong>Target</strong>{': event reaches the exact element that was clicked'}<br />
+                                {'• '}<strong>Bubbling</strong>{': from target back up to root — '}<Highlight>this is the default!</Highlight>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">{'🫧 Event Bubbling — Click child = click parent!'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'When you click a child element, the event '}<strong>bubbles up</strong>{' through all ancestors:'}<br /><br />
+                                {'Click <p> → alert "p" → alert "div" → alert "form"'}<br /><br />
+                                {'• '}<strong>Default</strong>{': event listeners use the bubbling phase'}<br />
+                                {'• Most events bubble ('}<InlineCode>click</InlineCode>{', '}<InlineCode>input</InlineCode>{', '}<InlineCode>submit</InlineCode>{'...)'}<br />
+                                {'• Some do NOT bubble: '}<InlineCode>focus</InlineCode>{', '}<InlineCode>blur</InlineCode>{', '}<InlineCode>scroll</InlineCode>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">{'🔽 Event Capturing — Catch before reaching target'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Capture = '}<strong>intercept the event before</strong>{' it reaches the target:'}<br /><br />
+                                <InlineCode>{`addEventListener('click', handler, true)`}</InlineCode>{' ← '}<strong>true</strong>{' = capture mode'}<br />
+                                <InlineCode>{`addEventListener('click', handler, { capture: true })`}</InlineCode><br /><br />
+                                {'• Rarely used in practice, but interviews love asking about it'}<br />
+                                {'• Use case: '}<strong>global click handler</strong>{' that needs to intercept before children handle it'}
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm">{'🎪 Event Delegation — Delegate to the parent'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Instead of attaching events to '}<strong>each child</strong>{', attach once to the '}<strong>parent</strong>{'!'}<br /><br />
+                                {'• 1000 '}<InlineCode>{'<li>'}</InlineCode>{' → only need '}<strong>1 listener</strong>{' on '}<InlineCode>{'<ul>'}</InlineCode><br />
+                                {'• Use '}<InlineCode>event.target</InlineCode>{' to determine which child was clicked'}<br />
+                                {'• '}<strong>Why?</strong>{' Saves memory + works for dynamically added elements'}<br />
+                                {'• '}<Highlight>The most common pattern in practice!</Highlight>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                            <div className="text-yellow-400 font-bold text-sm">{'🛑 stopPropagation & preventDefault'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                <strong>stopPropagation()</strong>{': prevents event from propagating further (no bubbling up)'}<br />
+                                <strong>preventDefault()</strong>{': prevents the default behavior (form submit, link navigation)'}<br /><br />
+                                {'• Different! '}<InlineCode>stopPropagation</InlineCode>{' ≠ '}<InlineCode>preventDefault</InlineCode><br />
+                                {'• '}<InlineCode>stopImmediatePropagation()</InlineCode>{': also prevents other listeners on the same element'}<br />
+                                {'• ⚠️ Avoid overusing stopPropagation — can break analytics, 3rd party libs'}
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                            <div className="text-cyan-400 font-bold text-sm">{'⚛️ React & Events — How is it different from Vanilla JS?'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'React uses '}<strong>Synthetic Events</strong>{' — a cross-browser wrapper:'}<br /><br />
+                                {'• React attaches '}<strong>a single listener at the root</strong>{' (delegation pattern!)'}<br />
+                                {'• '}<InlineCode>onClick</InlineCode>{' in React = '}<strong>bubbling phase</strong>{' by default'}<br />
+                                {'• '}<InlineCode>onClickCapture</InlineCode>{' = capture phase'}<br />
+                                {'• '}<InlineCode>e.stopPropagation()</InlineCode>{' in React stops both synthetic + native events (React 17+)'}<br />
+                                {'• '}<InlineCode>e.nativeEvent</InlineCode>{' to access the raw DOM event'}
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="event-propagation.js">{`// ═══ 1. BUBBLING — Click child, parent also "hears" ═══
+<form onclick="alert('form')">
+  <div onclick="alert('div')">
+    <p onclick="alert('p')">Click me!</p>
+  </div>
+</form>
+// Click <p> → alert "p" → "div" → "form" (bubbles up!)
+// Click <div> → alert "div" → "form" (skips <p>)
+
+// ═══ 2. BUBBLING WITH addEventListener ═══
+const divs = document.querySelectorAll('div')
+
+divs.forEach(div => div.addEventListener('click', function(e) {
+  console.log(this.classList.value) // logs the class of clicked div
+}))
+
+// <div class="1"><div class="2"><div class="3">Click</div></div></div>
+// Click div.3 → log: "3" → "2" → "1" (bubbling!)
+
+// ═══ 3. stopPropagation — Stop bubbling ═══
+divs.forEach(div => div.addEventListener('click', function(e) {
+  e.stopPropagation() // 🛑 Stop! Don't bubble up
+  console.log(this.classList.value)
+}))
+// Click div.3 → log: "3" (only itself, parent doesn't receive!)
+
+// ═══ 4. CAPTURING — Catch from top down ═══
+document.querySelector('.1').addEventListener('click', () => {
+  console.log('Capture: div.1') // ← runs FIRST
+}, true) // 👈 true = capture mode
+
+document.querySelector('.3').addEventListener('click', () => {
+  console.log('Bubble: div.3') // ← runs AFTER
+})
+// Click div.3 → "Capture: div.1" → "Bubble: div.3"
+
+// ═══ 5. EVENT DELEGATION — Most important pattern ═══
+// ❌ Bad: attach listener to EACH item (1000 items = 1000 listeners!)
+document.querySelectorAll('li').forEach(li => {
+  li.addEventListener('click', handleClick) // 💀 memory waste
+})
+
+// ✅ Good: attach 1 listener to parent, use event.target
+document.getElementById('taskList').addEventListener('click', (e) => {
+  if (e.target.tagName === 'LI') {
+    e.target.classList.toggle('completed')
+    console.log('Clicked:', e.target.textContent)
+  }
+})
+// Add new <li> later? STILL WORKS! No need to re-attach listeners
+// → This is how React works under the hood (delegation at root)
+
+// ═══ 6. preventDefault vs stopPropagation ═══
+// preventDefault: prevents DEFAULT BEHAVIOR
+document.querySelector('a').addEventListener('click', (e) => {
+  e.preventDefault() // link doesn't navigate
+  console.log('Link clicked but not navigated')
+})
+
+document.querySelector('form').addEventListener('submit', (e) => {
+  e.preventDefault() // form doesn't reload page
+  // validate + submit via fetch() instead of form action
+})
+
+// stopPropagation: prevents PROPAGATION (event doesn't bubble up)
+document.querySelector('.modal').addEventListener('click', (e) => {
+  e.stopPropagation() // click inside modal doesn't close overlay
+})
+document.querySelector('.overlay').addEventListener('click', () => {
+  closeModal() // only closes when clicking OUTSIDE modal
+})`}</CodeBlock>
+
+                    <CodeBlock title="react-events.tsx">{`// React Synthetic Events — delegation pattern built-in!
+
+// 1. onClick = bubbling (default)
+function App() {
+  return (
+    <div onClick={() => console.log('div')}>
+      <button onClick={(e) => {
+        e.stopPropagation() // prevent bubble to div
+        console.log('button')
+      }}>
+        Click me
+      </button>
+    </div>
+  )
+}
+// Click button → "button" (doesn't log "div" thanks to stopPropagation)
+
+// 2. onClickCapture = capturing phase
+function CaptureExample() {
+  return (
+    <div onClickCapture={() => console.log('1. capture: div')}>
+      <button onClick={() => console.log('2. bubble: button')}>
+        Click me
+      </button>
+    </div>
+  )
+}
+// Click button → "1. capture: div" → "2. bubble: button"
+
+// 3. Event Delegation in React — TaskList
+function TaskList() {
+  const [tasks, setTasks] = useState([
+    { id: 1, text: 'Task 1', done: false },
+    { id: 2, text: 'Task 2', done: false },
+    { id: 3, text: 'Task 3', done: false },
+  ])
+
+  // ✅ 1 handler for the entire list — delegation pattern!
+  const handleClick = (e: React.MouseEvent) => {
+    const li = (e.target as HTMLElement).closest('li')
+    if (!li) return
+    const id = Number(li.dataset.id)
+    setTasks(prev => prev.map(t =>
+      t.id === id ? { ...t, done: !t.done } : t
+    ))
+  }
+
+  return (
+    <ul onClick={handleClick}>
+      {tasks.map(t => (
+        <li key={t.id} data-id={t.id}
+            style={{ textDecoration: t.done ? 'line-through' : 'none' }}>
+          {t.text}
+        </li>
+      ))}
+    </ul>
+  )
+}`}</CodeBlock>
+
+                    <div className="my-3 overflow-x-auto">
+                        <table className="w-full text-sm border-collapse">
+                            <thead><tr className="border-b border-white/10">
+                                <th className="text-left p-3 text-slate-400 font-medium">Concept</th>
+                                <th className="text-left p-3 text-slate-400 font-medium">Direction</th>
+                                <th className="text-left p-3 text-slate-400 font-medium">Description</th>
+                            </tr></thead>
+                            <tbody className="text-slate-300">
+                                <tr className="border-b border-white/5"><td className="p-3 font-bold text-blue-400">Capturing</td><td className="p-3">↓ Down</td><td className="p-3">window → ... → target</td></tr>
+                                <tr className="border-b border-white/5"><td className="p-3 font-bold text-orange-400">Target</td><td className="p-3">🎯</td><td className="p-3">Element that was clicked</td></tr>
+                                <tr className="border-b border-white/5"><td className="p-3 font-bold text-red-400">Bubbling</td><td className="p-3">↑ Up</td><td className="p-3">{'target → ... → window'}</td></tr>
+                                <tr className="border-b border-white/5"><td className="p-3 font-bold text-green-400">Delegation</td><td className="p-3">—</td><td className="p-3">Attach listener on parent, use event.target</td></tr>
+                                <tr className="border-b border-white/5"><td className="p-3 font-bold text-yellow-400">stopPropagation</td><td className="p-3">🛑</td><td className="p-3">Prevent event from propagating further</td></tr>
+                                <tr><td className="p-3 font-bold text-pink-400">preventDefault</td><td className="p-3">🚫</td><td className="p-3">Prevent default behavior (submit, navigate)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <Callout type="tip">
+                        {'Interview asks about Events? Remember '}<Highlight>4 key points</Highlight>{':'}<br />
+                        {'1️⃣ '}<strong>Flow</strong>{': Capturing ↓ → Target 🎯 → Bubbling ↑'}<br />
+                        {'2️⃣ '}<strong>Bubbling</strong>{': click child = click parent (default behavior)'}<br />
+                        {'3️⃣ '}<strong>Delegation</strong>{': 1 listener on parent, use event.target — saves memory + dynamic elements'}<br />
+                        {'4️⃣ '}<strong>React</strong>{': SyntheticEvent + delegation at root + onClickCapture for capture phase'}
+                    </Callout>
+                </TopicModal>
+
+
+                <TopicModal title="Web APIs — Observer Pattern" emoji="🔭" color="#14b8a6" summary={'IntersectionObserver, ResizeObserver, MutationObserver — why not use scroll events?'}>
+                    <Paragraph>Browsers provide <Highlight>Observer APIs</Highlight> to monitor DOM changes — far more efficient than the old approach of scroll events + getBoundingClientRect.</Paragraph>
+
+                    <Callout type="info">{'📦 '}<strong>Analogy: Observer = Delivery Notifications</strong><br /><br />
+                        <strong>{'❌ Old way (Polling)'}</strong>{' = Calling the driver every second: "Is it here yet? Not yet? Not yet?" 📞📞📞 → energy waste'}<br />
+                        <strong>{'✅ Observer (Push)'}</strong>{' = Enable notifications, driver '}<strong>calls you</strong>{' when arrived 🔔 → hands free, efficient'}<br /><br />
+                        {'scroll event = polling (asking constantly). Observer = push notification (browser tells you when needed).'}
+                    </Callout>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">{'❌ Old way: scroll + getBoundingClientRect'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'• Scroll event fires '}<strong>60-120 times/second</strong>{' — a light scroll = dozens of callbacks'}<br />
+                                {'• '}<InlineCode>getBoundingClientRect()</InlineCode>{' = '}<strong>forced reflow</strong>{' — browser must recalculate layout EVERY call'}<br />
+                                {'• Everything runs on '}<strong>main thread</strong>{' → UI janky, drains mobile battery'}<br />
+                                {'• Even '}<InlineCode>throttle</InlineCode>{'/'}<InlineCode>debounce</InlineCode>{' still calls getBoundingClientRect → still forced reflow!'}<br />
+                                {'• Using '}<InlineCode>useState</InlineCode>{' + scroll = '}<Highlight>60-120 re-renders/second</Highlight>{' 💀'}
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-teal-500/10 border border-teal-500/20">
+                            <div className="text-teal-400 font-bold text-sm">{'👁️ IntersectionObserver — is element in viewport?'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Replaces: '}<InlineCode>scroll</InlineCode>{' + '}<InlineCode>getBoundingClientRect()</InlineCode><br /><br />
+                                {'• Runs '}<strong>off main thread</strong>{' — doesn\'t block UI'}<br />
+                                {'• Callback only fires '}<strong>when element enters/leaves viewport</strong>{' (2 times vs 120/sec!)'}<br />
+                                {'• '}<InlineCode>threshold</InlineCode>{': how much % visible to fire (0, 0.5, 1)'}<br />
+                                {'• '}<InlineCode>rootMargin</InlineCode>{': expand detection zone (preload 200px ahead)'}<br />
+                                {'• Use cases: '}<Highlight>lazy load images, infinite scroll, analytics tracking, scroll animations</Highlight>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">{'📐 ResizeObserver — element size changes'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Replaces: '}<InlineCode>window.resize</InlineCode>{' + '}<InlineCode>offsetWidth/offsetHeight</InlineCode><br /><br />
+                                {'• Monitors '}<strong>individual elements</strong>{', not the whole window'}<br />
+                                {'• Detects resize from '}<strong>content changes</strong>{', not just window resize'}<br />
+                                {'• '}<InlineCode>contentRect</InlineCode>{', '}<InlineCode>borderBoxSize</InlineCode>{' — detailed size info'}<br />
+                                {'• Use cases: '}<Highlight>responsive components, chart resize, text truncation</Highlight>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                            <div className="text-purple-400 font-bold text-sm">{'🧬 MutationObserver — DOM changes'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Replaces: '}<InlineCode>DOMSubtreeModified</InlineCode>{' (deprecated!)'}<br /><br />
+                                {'• Monitors: '}<strong>attributes</strong>{', '}<strong>childList</strong>{', '}<strong>characterData</strong><br />
+                                {'• '}<strong>Batched + async</strong>{' — groups multiple mutations into one callback'}<br />
+                                {'• Use cases: '}<Highlight>3rd party script injection detection, dynamic DOM changes, WYSIWYG editors</Highlight>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                            <div className="text-orange-400 font-bold text-sm">{'📊 Comparison: Old way vs Observer'}</div>
+                            <div className="text-slate-300 text-sm mt-2">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-xs">
+                                        <thead>
+                                            <tr className="border-b border-white/10">
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold"></th>
+                                                <th className="text-left py-1.5 pr-2 text-red-400 font-semibold">Old way ❌</th>
+                                                <th className="text-left py-1.5 text-teal-400 font-semibold">Observer ✅</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-slate-300">
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold">Callback</td><td className="py-1.5 pr-2">60-120 times/sec</td><td className="py-1.5">Only on change (2 times)</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold">Thread</td><td className="py-1.5 pr-2">Main thread (blocks UI)</td><td className="py-1.5">Off main thread</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold">Layout</td><td className="py-1.5 pr-2">Forced reflow every frame</td><td className="py-1.5">Browser handles internally</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold">Re-renders</td><td className="py-1.5 pr-2">60-120/sec with useState</td><td className="py-1.5">2 times (enter + leave)</td></tr>
+                                            <tr><td className="py-1.5 pr-2 font-bold">Code</td><td className="py-1.5 pr-2">throttle + getBoundingClientRect + logic</td><td className="py-1.5">5 lines observer.observe()</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="observers.js">{`// ═══ 1. IntersectionObserver — Lazy load + Infinite scroll ═══
+
+// ❌ Old way: scroll event + getBoundingClientRect (VERY BAD!)
+window.addEventListener('scroll', () => {
+  const rect = img.getBoundingClientRect() // forced reflow EVERY FRAME!
+  if (rect.top < window.innerHeight) {
+    img.src = img.dataset.src // load image
+  }
+}) // 💀 60-120 calls/sec, blocks main thread
+
+// ✅ Observer: browser notifies when element enters viewport
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target
+      img.src = img.dataset.src
+      observer.unobserve(img) // done loading → stop observing
+    }
+  })
+}, {
+  rootMargin: '200px', // preload 200px before viewport
+  threshold: 0.1       // 10% visible → fire
+})
+
+document.querySelectorAll('img[data-src]').forEach(img => {
+  observer.observe(img) // set & forget! 🎉
+})
+
+// ═══ 2. Infinite Scroll ═══
+const sentinel = document.getElementById('load-more')
+
+const scrollObserver = new IntersectionObserver(async ([entry]) => {
+  if (entry.isIntersecting) {
+    const data = await fetch('/api/posts?page=' + nextPage)
+    appendPosts(data)
+    nextPage++
+  }
+})
+scrollObserver.observe(sentinel)
+// User scrolls near bottom → sentinel enters viewport → load more
+
+// ═══ 3. ResizeObserver — Responsive component ═══
+
+// ❌ Old way: window.resize only detects WINDOW changes
+window.addEventListener('resize', () => {
+  const width = chart.offsetWidth // forced reflow
+  redrawChart(width)
+})
+
+// ✅ ResizeObserver: detects ELEMENT changes (even from content)
+const resizeObserver = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    const { width, height } = entry.contentRect
+    console.log('New size:', width, 'x', height)
+    redrawChart(width) // only fires when element actually changes size
+  }
+})
+resizeObserver.observe(chartContainer)
+
+// ═══ 4. MutationObserver — Detect DOM changes ═══
+const mutationObserver = new MutationObserver((mutations) => {
+  mutations.forEach(mutation => {
+    if (mutation.type === 'childList') {
+      console.log('Nodes added:', mutation.addedNodes)
+      console.log('Nodes removed:', mutation.removedNodes)
+    }
+    if (mutation.type === 'attributes') {
+      console.log('Attr changed:', mutation.attributeName)
+    }
+  })
+})
+
+mutationObserver.observe(document.body, {
+  childList: true,   // add/remove child nodes
+  attributes: true,  // attribute changes
+  subtree: true,     // monitor all descendants
+})`}</CodeBlock>
+
+                    <CodeBlock title="react-observers.tsx">{`// React + IntersectionObserver = Custom Hook
+
+// ✅ useInView — reusable hook
+function useInView(options?: IntersectionObserverInit) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [isInView, setIsInView] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsInView(entry.isIntersecting)
+      // setState ONLY 2 times (enter + leave) instead of 120/sec!
+    }, options)
+
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [options])
+
+  return { ref, isInView }
+}
+
+// Usage:
+function LazySection() {
+  const { ref, isInView } = useInView({ threshold: 0.1 })
+  return (
+    <div ref={ref}>
+      {isInView ? <HeavyChart /> : <Skeleton />}
+    </div>
+  )
+}
+
+// ✅ Infinite scroll with IntersectionObserver
+function InfiniteList() {
+  const [items, setItems] = useState([])
+  const [page, setPage] = useState(1)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setPage(p => p + 1) // load more when sentinel is visible
+      }
+    })
+    if (sentinelRef.current) observer.observe(sentinelRef.current)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/items?page=' + page)
+      .then(r => r.json())
+      .then(data => setItems(prev => [...prev, ...data]))
+  }, [page])
+
+  return (
+    <>
+      {items.map(item => <Card key={item.id} {...item} />)}
+      <div ref={sentinelRef} /> {/* invisible sentinel */}
+    </>
+  )
+}
+
+// ✅ ResizeObserver hook
+function useElementSize() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [size, setSize] = useState({ width: 0, height: 0 })
+
+  useEffect(() => {
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      setSize({ width, height })
+    })
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+
+  return { ref, ...size }
+}
+
+// Usage: responsive component without media queries!
+function ResponsiveGrid() {
+  const { ref, width } = useElementSize()
+  const columns = width > 800 ? 3 : width > 500 ? 2 : 1
+  return (
+    <div ref={ref} style={{
+      display: 'grid',
+      gridTemplateColumns: \`repeat(\${columns}, 1fr)\`
+    }}>
+      {children}
+    </div>
+  )
+}`}</CodeBlock>
+
+                    <Callout type="tip">
+                        {'Interview asks about Observers? Remember '}<Highlight>3 key points</Highlight>{':'}<br />
+                        {'1️⃣ '}<strong>Why?</strong>{' Scroll events block main thread + forced reflow. Observers run off main thread, fire only on change.'}<br />
+                        {'2️⃣ '}<strong>3 Observers</strong>{': IntersectionObserver (viewport), ResizeObserver (size), MutationObserver (DOM changes)'}<br />
+                        {'3️⃣ '}<strong>React pattern</strong>{': custom hooks (useInView, useElementSize) + cleanup observer.disconnect() in useEffect return'}
+                    </Callout>
+                </TopicModal>
+
                 <TopicModal title="CSS Layout — Flexbox & Grid" emoji="📐" color="#38bdf8" summary="Layout from scratch without frameworks — an important interview skill">
                     <Paragraph>Frontend coding interviews often require building layouts <Highlight>from scratch without TailwindCSS</Highlight>. Must master both Flexbox and Grid.</Paragraph>
 

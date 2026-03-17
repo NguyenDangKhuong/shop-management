@@ -1424,6 +1424,502 @@ module.exports = {
                     </Callout>
                 </TopicModal>
 
+                <TopicModal title="DOM Manipulation & Event Delegation" emoji="🎯" color="#f97316" summary={'Bubbling, Capturing, Delegation — hiểu event lan truyền thế nào trong DOM'}>
+                    <Paragraph>Phỏng vấn frontend <Highlight>rất hay hỏi</Highlight> về event propagation. Hiểu cách event di chuyển trong DOM = debug được mọi vấn đề click/submit.</Paragraph>
+
+                    <Callout type="info">{'🏢 '}<strong>Ẩn dụ: Event Propagation = Tin đồn trong công ty</strong><br /><br />
+                        {'Bạn (nhân viên) kể '}<strong>tin đồn</strong>{' cho quản lý trực tiếp:'}<br /><br />
+                        <strong>{'🔽 Capturing (đi xuống)'}</strong>{' = CEO nghe tin → truyền xuống → Director → Manager → đến bạn'}<br />
+                        <strong>{'🎯 Target'}</strong>{' = Tin đồn '}<strong>đến đúng người kể</strong>{' (bạn)'}<br />
+                        <strong>{'🔼 Bubbling (nổi bọt)'}</strong>{' = Bạn kể → Manager nghe → Director nghe → CEO cũng nghe!'}<br /><br />
+                        {'Click vào con = bạn cũng đang click vào TẤT CẢ tổ tiên của nó! 🫧'}
+                    </Callout>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                            <div className="text-orange-400 font-bold text-sm">{'🔄 Event Propagation — 3 giai đoạn'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                <strong>Flow:</strong>{' Capturing ↓ → Target 🎯 → Bubbling ↑'}<br /><br />
+                                <InlineCode>{'window → document → html → body → div → p → a (Target)'}</InlineCode><br />
+                                <InlineCode>{'a (Target) → p → div → body → html → document → window'}</InlineCode><br /><br />
+                                {'• '}<strong>Capturing</strong>{': đi từ gốc (window) xuống đến target — ít khi dùng'}<br />
+                                {'• '}<strong>Target</strong>{': event đến đúng element được click'}<br />
+                                {'• '}<strong>Bubbling</strong>{': đi từ target ngược lên gốc — '}<Highlight>đây là mặc định!</Highlight>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">{'🫧 Event Bubbling — Click con = click cha!'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Khi click vào element con, event '}<strong>nổi bọt lên</strong>{' qua tất cả tổ tiên:'}<br /><br />
+                                {'Click <p> → alert "p" → alert "div" → alert "form"'}<br /><br />
+                                {'• '}<strong>Mặc định</strong>{': event listeners dùng bubbling phase'}<br />
+                                {'• Hầu hết events đều bubble ('}<InlineCode>click</InlineCode>{', '}<InlineCode>input</InlineCode>{', '}<InlineCode>submit</InlineCode>{'...)'}<br />
+                                {'• Một số KHÔNG bubble: '}<InlineCode>focus</InlineCode>{', '}<InlineCode>blur</InlineCode>{', '}<InlineCode>scroll</InlineCode>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">{'🔽 Event Capturing — Bắt trước khi xuống'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Capture = '}<strong>chặn event trước</strong>{' khi nó đến target:'}<br /><br />
+                                <InlineCode>{`addEventListener('click', handler, true)`}</InlineCode>{' ← '}<strong>true</strong>{' = capture mode'}<br />
+                                <InlineCode>{`addEventListener('click', handler, { capture: true })`}</InlineCode><br /><br />
+                                {'• Ít dùng trong thực tế, nhưng phỏng vấn hay hỏi'}<br />
+                                {'• Use case: '}<strong>global click handler</strong>{' cần chặn trước khi child xử lý'}
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm">{'🎪 Event Delegation — Ủy quyền cho cha'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Thay vì gắn event cho '}<strong>mỗi child</strong>{', gắn 1 lần cho '}<strong>parent</strong>{'!'}<br /><br />
+                                {'• 1000 '}<InlineCode>{'<li>'}</InlineCode>{' → chỉ cần '}<strong>1 listener</strong>{' trên '}<InlineCode>{'<ul>'}</InlineCode><br />
+                                {'• Dùng '}<InlineCode>event.target</InlineCode>{' để biết click vào child nào'}<br />
+                                {'• '}<strong>Tại sao?</strong>{' Tiết kiệm memory + hoạt động cho elements thêm động (dynamically added)'}<br />
+                                {'• '}<Highlight>Pattern phổ biến nhất trong thực tế!</Highlight>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                            <div className="text-yellow-400 font-bold text-sm">{'🛑 stopPropagation & preventDefault'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                <strong>stopPropagation()</strong>{': ngăn event lan truyền tiếp (không bubble lên cha)'}<br />
+                                <strong>preventDefault()</strong>{': ngăn hành vi mặc định (form submit, link navigate)'}<br /><br />
+                                {'• Khác nhau! '}<InlineCode>stopPropagation</InlineCode>{' ≠ '}<InlineCode>preventDefault</InlineCode><br />
+                                {'• '}<InlineCode>stopImmediatePropagation()</InlineCode>{': ngăn cả các listeners khác trên cùng element'}<br />
+                                {'• ⚠️ Tránh lạm dụng stopPropagation — có thể phá analytics, 3rd party libs'}
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                            <div className="text-cyan-400 font-bold text-sm">{'⚛️ React & Event — Khác gì Vanilla JS?'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'React dùng '}<strong>Synthetic Events</strong>{' — wrapper chuẩn hóa cross-browser:'}<br /><br />
+                                {'• React gắn '}<strong>1 listener duy nhất ở root</strong>{' (delegation pattern!)'}<br />
+                                {'• '}<InlineCode>onClick</InlineCode>{' trong React = '}<strong>bubbling phase</strong>{' mặc định'}<br />
+                                {'• '}<InlineCode>onClickCapture</InlineCode>{' = capture phase'}<br />
+                                {'• '}<InlineCode>e.stopPropagation()</InlineCode>{' trong React chặn cả synthetic + native events (React 17+)'}<br />
+                                {'• '}<InlineCode>e.nativeEvent</InlineCode>{' để truy cập event DOM gốc'}
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="event-propagation.js">{`// ═══ 1. BUBBLING — Click con, cha cũng "nghe" ═══
+<form onclick="alert('form')">
+  <div onclick="alert('div')">
+    <p onclick="alert('p')">Click tôi!</p>
+  </div>
+</form>
+// Click <p> → alert "p" → "div" → "form" (nổi bọt lên!)
+// Click <div> → alert "div" → "form" (skip <p>)
+
+// ═══ 2. BUBBLING VỚI addEventListener ═══
+const divs = document.querySelectorAll('div')
+
+divs.forEach(div => div.addEventListener('click', function(e) {
+  console.log(this.classList.value) // log class của div được click
+}))
+
+// <div class="1"><div class="2"><div class="3">Click</div></div></div>
+// Click div.3 → log: "3" → "2" → "1" (bubbling!)
+
+// ═══ 3. stopPropagation — Ngăn bubbling ═══
+divs.forEach(div => div.addEventListener('click', function(e) {
+  e.stopPropagation() // 🛑 Dừng! Không bubble lên nữa
+  console.log(this.classList.value)
+}))
+// Click div.3 → log: "3" (chỉ mình nó, cha không nhận!)
+
+// ═══ 4. CAPTURING — Bắt từ trên xuống ═══
+document.querySelector('.1').addEventListener('click', () => {
+  console.log('Capture: div.1') // ← chạy TRƯỚC
+}, true) // 👈 true = capture mode
+
+document.querySelector('.3').addEventListener('click', () => {
+  console.log('Bubble: div.3') // ← chạy SAU
+})
+// Click div.3 → "Capture: div.1" → "Bubble: div.3"
+
+// ═══ 5. EVENT DELEGATION — Pattern quan trọng nhất ═══
+// ❌ Bad: gắn listener cho MỖI item (1000 items = 1000 listeners!)
+document.querySelectorAll('li').forEach(li => {
+  li.addEventListener('click', handleClick) // 💀 memory waste
+})
+
+// ✅ Good: gắn 1 listener cho parent, dùng event.target
+document.getElementById('taskList').addEventListener('click', (e) => {
+  if (e.target.tagName === 'LI') {
+    e.target.classList.toggle('completed')
+    console.log('Clicked:', e.target.textContent)
+  }
+})
+// Thêm <li> mới sau? VẪN HOẠT ĐỘNG! Không cần gắn listener lại
+// → Đây là cách React hoạt động bên dưới (delegation ở root)
+
+// ═══ 6. preventDefault vs stopPropagation ═══
+// preventDefault: ngăn HÀNH VI MẶC ĐỊNH
+document.querySelector('a').addEventListener('click', (e) => {
+  e.preventDefault() // link không navigate
+  console.log('Link clicked but not navigated')
+})
+
+document.querySelector('form').addEventListener('submit', (e) => {
+  e.preventDefault() // form không reload page
+  // validate + submit bằng fetch() thay vì form action
+})
+
+// stopPropagation: ngăn LAN TRUYỀN (event không bubble lên cha)
+document.querySelector('.modal').addEventListener('click', (e) => {
+  e.stopPropagation() // click trong modal không đóng overlay
+})
+document.querySelector('.overlay').addEventListener('click', () => {
+  closeModal() // chỉ close khi click NGOÀI modal
+})`}</CodeBlock>
+
+                    <CodeBlock title="react-events.tsx">{`// React Synthetic Events — delegation pattern built-in!
+
+// 1. onClick = bubbling (mặc định)
+function App() {
+  return (
+    <div onClick={() => console.log('div')}>
+      <button onClick={(e) => {
+        e.stopPropagation() // ngăn bubble lên div
+        console.log('button')
+      }}>
+        Click me
+      </button>
+    </div>
+  )
+}
+// Click button → "button" (không log "div" nhờ stopPropagation)
+
+// 2. onClickCapture = capturing phase
+function CaptureExample() {
+  return (
+    <div onClickCapture={() => console.log('1. capture: div')}>
+      <button onClick={() => console.log('2. bubble: button')}>
+        Click me
+      </button>
+    </div>
+  )
+}
+// Click button → "1. capture: div" → "2. bubble: button"
+
+// 3. Event Delegation trong React — TaskList
+function TaskList() {
+  const [tasks, setTasks] = useState([
+    { id: 1, text: 'Task 1', done: false },
+    { id: 2, text: 'Task 2', done: false },
+    { id: 3, text: 'Task 3', done: false },
+  ])
+
+  // ✅ 1 handler cho cả list — delegation pattern!
+  const handleClick = (e: React.MouseEvent) => {
+    const li = (e.target as HTMLElement).closest('li')
+    if (!li) return
+    const id = Number(li.dataset.id)
+    setTasks(prev => prev.map(t =>
+      t.id === id ? { ...t, done: !t.done } : t
+    ))
+  }
+
+  return (
+    <ul onClick={handleClick}>
+      {tasks.map(t => (
+        <li key={t.id} data-id={t.id}
+            style={{ textDecoration: t.done ? 'line-through' : 'none' }}>
+          {t.text}
+        </li>
+      ))}
+    </ul>
+  )
+}`}</CodeBlock>
+
+                    <div className="my-3 overflow-x-auto">
+                        <table className="w-full text-sm border-collapse">
+                            <thead><tr className="border-b border-white/10">
+                                <th className="text-left p-3 text-slate-400 font-medium">Khái niệm</th>
+                                <th className="text-left p-3 text-slate-400 font-medium">Hướng</th>
+                                <th className="text-left p-3 text-slate-400 font-medium">Mô tả</th>
+                            </tr></thead>
+                            <tbody className="text-slate-300">
+                                <tr className="border-b border-white/5"><td className="p-3 font-bold text-blue-400">Capturing</td><td className="p-3">↓ Xuống</td><td className="p-3">window → ... → target</td></tr>
+                                <tr className="border-b border-white/5"><td className="p-3 font-bold text-orange-400">Target</td><td className="p-3">🎯</td><td className="p-3">Element được click</td></tr>
+                                <tr className="border-b border-white/5"><td className="p-3 font-bold text-red-400">Bubbling</td><td className="p-3">↑ Lên</td><td className="p-3">{'target → ... → window'}</td></tr>
+                                <tr className="border-b border-white/5"><td className="p-3 font-bold text-green-400">Delegation</td><td className="p-3">—</td><td className="p-3">Gắn listener ở cha, dùng event.target</td></tr>
+                                <tr className="border-b border-white/5"><td className="p-3 font-bold text-yellow-400">stopPropagation</td><td className="p-3">🛑</td><td className="p-3">Ngăn event lan truyền tiếp</td></tr>
+                                <tr><td className="p-3 font-bold text-pink-400">preventDefault</td><td className="p-3">🚫</td><td className="p-3">Ngăn hành vi mặc định (submit, navigate)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <Callout type="tip">
+                        {'Phỏng vấn hỏi Event? Nhớ '}<Highlight>4 ý chính</Highlight>{':'}<br />
+                        {'1️⃣ '}<strong>Flow</strong>{': Capturing ↓ → Target 🎯 → Bubbling ↑'}<br />
+                        {'2️⃣ '}<strong>Bubbling</strong>{': click con = click cha (mặc định)'}<br />
+                        {'3️⃣ '}<strong>Delegation</strong>{': 1 listener ở cha, dùng event.target — tiết kiệm memory + dynamic elements'}<br />
+                        {'4️⃣ '}<strong>React</strong>{': SyntheticEvent + delegation ở root + onClickCapture cho capture phase'}
+                    </Callout>
+                </TopicModal>
+
+
+                <TopicModal title="Web APIs — Observer Pattern" emoji="🔭" color="#14b8a6" summary={'IntersectionObserver, ResizeObserver, MutationObserver — tại sao không dùng scroll event cũ?'}>
+                    <Paragraph>Browser cung cấp <Highlight>Observer APIs</Highlight> để theo dõi DOM thay đổi — hiệu quả hơn nhiều so với cách cũ dùng scroll event + getBoundingClientRect.</Paragraph>
+
+                    <Callout type="info">{'📦 '}<strong>Ẩn dụ: Observer = Thông báo giao hàng</strong><br /><br />
+                        <strong>{'❌ Cách cũ (Polling)'}</strong>{' = Cứ mỗi giây gọi shipper: "Hàng tới chưa? Chưa? Chưa?" 📞📞📞 → tốn năng lượng'}<br />
+                        <strong>{'✅ Observer (Push)'}</strong>{' = Bật thông báo, shipper '}<strong>tự gọi bạn</strong>{' khi tới 🔔 → rảnh tay, hiệu quả'}<br /><br />
+                        {'scroll event = polling (hỏi liên tục). Observer = push notification (browser báo khi cần).'}
+                    </Callout>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <div className="text-red-400 font-bold text-sm">{'❌ Cách cũ: scroll + getBoundingClientRect'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'• Scroll event fires '}<strong>60-120 lần/giây</strong>{' — mỗi lần scroll nhẹ = hàng chục callback'}<br />
+                                {'• '}<InlineCode>getBoundingClientRect()</InlineCode>{' = '}<strong>forced reflow</strong>{' — browser phải tính lại layout MỖI LẦN gọi'}<br />
+                                {'• Tất cả chạy trên '}<strong>main thread</strong>{' → UI janky, tốn pin mobile'}<br />
+                                {'• Thậm chí '}<InlineCode>throttle</InlineCode>{'/'}<InlineCode>debounce</InlineCode>{' vẫn gọi getBoundingClientRect → vẫn forced reflow!'}<br />
+                                {'• Dùng '}<InlineCode>useState</InlineCode>{' + scroll = '}<Highlight>60-120 re-renders/giây</Highlight>{' 💀'}
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-teal-500/10 border border-teal-500/20">
+                            <div className="text-teal-400 font-bold text-sm">{'👁️ IntersectionObserver — element có trong viewport không?'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Thay thế: '}<InlineCode>scroll</InlineCode>{' + '}<InlineCode>getBoundingClientRect()</InlineCode><br /><br />
+                                {'• Chạy '}<strong>off main thread</strong>{' — không block UI'}<br />
+                                {'• Callback chỉ fire '}<strong>khi element vào/ra viewport</strong>{' (2 lần vs 120 lần/giây!)'}<br />
+                                {'• '}<InlineCode>threshold</InlineCode>{': bao nhiêu % visible thì fire (0, 0.5, 1)'}<br />
+                                {'• '}<InlineCode>rootMargin</InlineCode>{': mở rộng vùng detect (preload trước 200px)'}<br />
+                                {'• Use cases: '}<Highlight>lazy load images, infinite scroll, analytics tracking, animation on scroll</Highlight>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">{'📐 ResizeObserver — element thay đổi kích thước'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Thay thế: '}<InlineCode>window.resize</InlineCode>{' + '}<InlineCode>offsetWidth/offsetHeight</InlineCode><br /><br />
+                                {'• Theo dõi '}<strong>từng element</strong>{', không phải cả window'}<br />
+                                {'• Phát hiện resize do '}<strong>content thay đổi</strong>{', không chỉ window resize'}<br />
+                                {'• '}<InlineCode>contentRect</InlineCode>{', '}<InlineCode>borderBoxSize</InlineCode>{' — thông tin chi tiết'}<br />
+                                {'• Use cases: '}<Highlight>responsive components, chart resize, text truncation</Highlight>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                            <div className="text-purple-400 font-bold text-sm">{'🧬 MutationObserver — DOM thay đổi'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Thay thế: '}<InlineCode>DOMSubtreeModified</InlineCode>{' (deprecated!)'}<br /><br />
+                                {'• Theo dõi: '}<strong>attributes</strong>{', '}<strong>childList</strong>{', '}<strong>characterData</strong><br />
+                                {'• '}<strong>Batched + async</strong>{' — gom nhiều mutations lại rồi fire 1 lần'}<br />
+                                {'• Use cases: '}<Highlight>3rd party script injection detection, dynamic DOM changes, WYSIWYG editor</Highlight>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                            <div className="text-orange-400 font-bold text-sm">{'📊 So sánh: Cách cũ vs Observer'}</div>
+                            <div className="text-slate-300 text-sm mt-2">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-xs">
+                                        <thead>
+                                            <tr className="border-b border-white/10">
+                                                <th className="text-left py-1.5 pr-2 text-slate-400 font-semibold"></th>
+                                                <th className="text-left py-1.5 pr-2 text-red-400 font-semibold">Cách cũ ❌</th>
+                                                <th className="text-left py-1.5 text-teal-400 font-semibold">Observer ✅</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-slate-300">
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold">Callback</td><td className="py-1.5 pr-2">60-120 lần/giây</td><td className="py-1.5">Chỉ khi thay đổi (2 lần)</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold">Thread</td><td className="py-1.5 pr-2">Main thread (block UI)</td><td className="py-1.5">Off main thread</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold">Layout</td><td className="py-1.5 pr-2">Forced reflow mỗi frame</td><td className="py-1.5">Browser tự handle</td></tr>
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold">Re-renders</td><td className="py-1.5 pr-2">60-120/giây với useState</td><td className="py-1.5">2 lần (vào + ra)</td></tr>
+                                            <tr><td className="py-1.5 pr-2 font-bold">Code</td><td className="py-1.5 pr-2">throttle + getBoundingClientRect + logic</td><td className="py-1.5">5 dòng observer.observe()</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="observers.js">{`// ═══ 1. IntersectionObserver — Lazy load + Infinite scroll ═══
+
+// ❌ Cách cũ: scroll event + getBoundingClientRect (RẤT TỆ!)
+window.addEventListener('scroll', () => {
+  const rect = img.getBoundingClientRect() // forced reflow MỖI FRAME!
+  if (rect.top < window.innerHeight) {
+    img.src = img.dataset.src // load image
+  }
+}) // 💀 60-120 calls/giây, block main thread
+
+// ✅ Observer: browser tự báo khi element vào viewport
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target
+      img.src = img.dataset.src
+      observer.unobserve(img) // load xong → ngừng observe
+    }
+  })
+}, {
+  rootMargin: '200px', // preload trước 200px
+  threshold: 0.1       // 10% visible → fire
+})
+
+document.querySelectorAll('img[data-src]').forEach(img => {
+  observer.observe(img) // set & forget! 🎉
+})
+
+// ═══ 2. Infinite Scroll ═══
+const sentinel = document.getElementById('load-more')
+
+const scrollObserver = new IntersectionObserver(async ([entry]) => {
+  if (entry.isIntersecting) {
+    const data = await fetch('/api/posts?page=' + nextPage)
+    appendPosts(data)
+    nextPage++
+  }
+})
+scrollObserver.observe(sentinel)
+// User scroll gần cuối → sentinel vào viewport → load thêm
+
+// ═══ 3. ResizeObserver — Responsive component ═══
+
+// ❌ Cách cũ: window.resize chỉ detect CỬA SỔ thay đổi
+window.addEventListener('resize', () => {
+  const width = chart.offsetWidth // forced reflow
+  redrawChart(width)
+})
+
+// ✅ ResizeObserver: detect ELEMENT thay đổi (kể cả do content)
+const resizeObserver = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    const { width, height } = entry.contentRect
+    console.log('New size:', width, 'x', height)
+    redrawChart(width) // chỉ fire khi element thực sự thay đổi size
+  }
+})
+resizeObserver.observe(chartContainer)
+
+// ═══ 4. MutationObserver — Detect DOM changes ═══
+const mutationObserver = new MutationObserver((mutations) => {
+  mutations.forEach(mutation => {
+    if (mutation.type === 'childList') {
+      console.log('Nodes added:', mutation.addedNodes)
+      console.log('Nodes removed:', mutation.removedNodes)
+    }
+    if (mutation.type === 'attributes') {
+      console.log('Attr changed:', mutation.attributeName)
+    }
+  })
+})
+
+mutationObserver.observe(document.body, {
+  childList: true,   // thêm/xóa child nodes
+  attributes: true,  // attribute thay đổi
+  subtree: true,     // theo dõi cả descendants
+})`}</CodeBlock>
+
+                    <CodeBlock title="react-observers.tsx">{`// React + IntersectionObserver = Custom Hook
+
+// ✅ useInView — hook tái sử dụng
+function useInView(options?: IntersectionObserverInit) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [isInView, setIsInView] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsInView(entry.isIntersecting)
+      // setState CHỈ 2 lần (vào + ra) thay vì 120 lần/giây!
+    }, options)
+
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [options])
+
+  return { ref, isInView }
+}
+
+// Sử dụng:
+function LazySection() {
+  const { ref, isInView } = useInView({ threshold: 0.1 })
+  return (
+    <div ref={ref}>
+      {isInView ? <HeavyChart /> : <Skeleton />}
+    </div>
+  )
+}
+
+// ✅ Infinite scroll với IntersectionObserver
+function InfiniteList() {
+  const [items, setItems] = useState([])
+  const [page, setPage] = useState(1)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setPage(p => p + 1) // load thêm khi sentinel visible
+      }
+    })
+    if (sentinelRef.current) observer.observe(sentinelRef.current)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/items?page=' + page)
+      .then(r => r.json())
+      .then(data => setItems(prev => [...prev, ...data]))
+  }, [page])
+
+  return (
+    <>
+      {items.map(item => <Card key={item.id} {...item} />)}
+      <div ref={sentinelRef} /> {/* invisible sentinel */}
+    </>
+  )
+}
+
+// ✅ ResizeObserver hook
+function useElementSize() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [size, setSize] = useState({ width: 0, height: 0 })
+
+  useEffect(() => {
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      setSize({ width, height })
+    })
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+
+  return { ref, ...size }
+}
+
+// Sử dụng: responsive component không cần media queries!
+function ResponsiveGrid() {
+  const { ref, width } = useElementSize()
+  const columns = width > 800 ? 3 : width > 500 ? 2 : 1
+  return (
+    <div ref={ref} style={{
+      display: 'grid',
+      gridTemplateColumns: \`repeat(\${columns}, 1fr)\`
+    }}>
+      {children}
+    </div>
+  )
+}`}</CodeBlock>
+
+                    <Callout type="tip">
+                        {'Phỏng vấn hỏi Observer? Nhớ '}<Highlight>3 ý chính</Highlight>{':'}<br />
+                        {'1️⃣ '}<strong>Tại sao?</strong>{' Scroll event block main thread + forced reflow. Observer chạy off main thread, chỉ fire khi thay đổi.'}<br />
+                        {'2️⃣ '}<strong>3 Observers</strong>{': IntersectionObserver (viewport), ResizeObserver (size), MutationObserver (DOM changes)'}<br />
+                        {'3️⃣ '}<strong>React pattern</strong>{': custom hook (useInView, useElementSize) + cleanup observer.disconnect() trong useEffect return'}
+                    </Callout>
+                </TopicModal>
+
                 <TopicModal title="CSS Layout — Flexbox & Grid" emoji="📐" color="#38bdf8" summary="Layout từ scratch không framework — kỹ năng interview quan trọng">
                     <Paragraph>Coding interview frontend thường yêu cầu xây layout <Highlight>từ scratch không TailwindCSS</Highlight>. Phải thành thạo cả Flexbox lẫn Grid.</Paragraph>
 
