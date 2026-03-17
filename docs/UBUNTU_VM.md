@@ -49,7 +49,8 @@ journalctl --user -u shop-nextjs -f
 | **postgres** | postgres:16 | internal | DB cho n8n |
 | **redis** | redis:alpine | internal | Queue cho n8n |
 | **openclaw-gateway** | openclaw:local | `:18789-18790` | OpenClaw AI |
-| **cli-proxy-api** | cli-proxy-api | `:8317, :8085` | CLI Proxy (Gemini) |
+
+> ℹ️ **CLI Proxy** đã chuyển sang Oracle VPS (17/03/2026). Xem [ORACLE_VPS.md](./ORACLE_VPS.md).
 
 ## System Services
 
@@ -65,13 +66,11 @@ journalctl --user -u shop-nextjs -f
 | ❌ Mất | ✅ Vẫn chạy |
 |--------|-------------|
 | n8n (`n8n.thetaphoa.store`) | Shop app (`shop.thetaphoa.store` — Vercel) |
-| CLI Proxy (`cli-proxy.thetaphoa.store`) | Cloudflare R2 / Workers |
-| OpenClaw (`openclaw.thetaphoa.store`) | Oracle VPS (`161.118.197.104`) |
-| WS Bridge (Veo3 gen video) | |
-| ESXi access (`server.thetaphoa.store`) | |
-| NAS access (`nas.thetaphoa.store`) | |
-| Dynu domains (`*.khuong.theworkpc.com`) | |
+| OpenClaw (`openclaw.thetaphoa.store`) | CLI Proxy (`cli-proxy.khuong.theworkpc.com` — VPS) |
+| WS Bridge (Veo3 gen video) | Cloudflare R2 / Workers |
+| ESXi access (`server.thetaphoa.store`) | Oracle VPS (`161.118.197.104`) |
+| NAS access (`nas.thetaphoa.store`) | AdGuard, Uptime Kuma, Home Assistant (VPS) |
 
 ---
 
-*Cập nhật: 15/03/2026*
+*Cập nhật: 17/03/2026*
