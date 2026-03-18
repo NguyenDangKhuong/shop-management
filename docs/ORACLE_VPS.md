@@ -64,6 +64,7 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | ↳ Config | `~/openclaw_data/openclaw.json` | | | Model: `cli-proxy/gemini-3.1-pro-preview` |
 | ↳ Switch model | `cd ~/openclaw_data && sudo ./switch-model.sh` | | | Danh sách model từ CLI Proxy API |
 | **n8n** | 5678 | ✅ always | Docker Compose | Automation platform (n8n + worker + MCP + postgres + redis) |
+| **Speedtest Tracker** | 3007 | ✅ unless-stopped | Docker | Network speed test history & charts |
 | **stress-ng** | — | ✅ enabled | systemd | Anti-reclaim CPU/RAM |
 | **vocab-push.timer** | — | ✅ enabled | systemd timer | Vocab reminder mỗi giờ |
 
