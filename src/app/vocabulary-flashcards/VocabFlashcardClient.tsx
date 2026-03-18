@@ -5,22 +5,17 @@
  * VOCABULARY FLASHCARDS — Học từ vựng kiểu Tinder
  * ========================================================================
  *
- * Tính năng:
- * 1. Swipe phải (→) = Đã thuộc  ✅
- * 2. Swipe trái (←) = Chưa thuộc ❌ → quay lại stack
- * 3. Click thẻ = Lật xem nghĩa
- * 4. Hiệu ứng rotation khi kéo (giống Tinder)
- * 5. Progress bar: đã thuộc / tổng
- *
- * Flow:
- *   Load page → GET /api/vocabulary → render stack flashcards
- *   Kéo phải → known (remove from stack)
- *   Kéo trái → unknown (move to bottom of stack)
- *   Click → flip card (xem nghĩa)
+ * Uses shared components from FlashcardRenderer for swipe/drag UX
+ * and useProgressSync for cross-device persistence.
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import {
+    useSwipeDrag, useFlashcardKeys, useProgressSync,
+    FlashcardProgressBar, SwipeIndicators, CardStackBg,
+    FlashcardControls,
+} from '@/components/flashcards/FlashcardRenderer'
 
 type Lang = 'vi' | 'en'
 
@@ -40,14 +35,10 @@ export default function VocabFlashcardClient() {
     const [isFlipped, setIsFlipped] = useState(false)
     const [loading, setLoading] = useState(true)
 
-    // ── Drag state ──
-    const [dragX, setDragX] = useState(0)
-    const [dragY, setDragY] = useState(0)
-    const [isDragging, setIsDragging] = useState(false)
-    const startRef = useRef({ x: 0, y: 0 })
-    const cardRef = useRef<HTMLDivElement>(null)
-
     const langFlag: Record<Lang, string> = { vi: '🇻🇳', en: '🇬🇧' }
+
+    // Progress sync
+    const vocabProgress = useProgressSync('vocab')
 
     // ── Fetch vocabulary ──
     useEffect(() => {
@@ -68,90 +59,47 @@ export default function VocabFlashcardClient() {
         fetchVocab()
     }, [])
 
+    // ── Load saved progress ──
+    useEffect(() => {
+        if (vocabProgress.initialKnown && allItems.length > 0) {
+            const knownSet = new Set(vocabProgress.initialKnown)
+            setKnownIds(knownSet)
+            // Remove already-known items from stack
+            setStack(allItems.filter(item => !knownSet.has(item._id)))
+        }
+    }, [vocabProgress.initialKnown, allItems])
+
     const currentCard = stack[0]
     const progress = knownIds.size
     const total = allItems.length
 
     // ── Swipe handlers ──
     const handleSwipeRight = useCallback(() => {
-        // Đã thuộc → loại khỏi stack
         if (!currentCard) return
         setKnownIds(prev => new Set(prev).add(currentCard._id))
+        vocabProgress.saveProgress(currentCard._id, true)
         setStack(prev => prev.slice(1))
         setIsFlipped(false)
-        setDragX(0)
-        setDragY(0)
-    }, [currentCard])
+    }, [currentCard, vocabProgress])
 
     const handleSwipeLeft = useCallback(() => {
-        // Chưa thuộc → đưa xuống cuối stack để ôn lại
         if (!currentCard) return
         setStack(prev => [...prev.slice(1), prev[0]])
         setIsFlipped(false)
-        setDragX(0)
-        setDragY(0)
     }, [currentCard])
 
-    // ── Mouse/Touch drag ──
-    const handleDragStart = (clientX: number, clientY: number) => {
-        setIsDragging(true)
-        startRef.current = { x: clientX, y: clientY }
-    }
+    // ── Swipe/drag ──
+    const { cardStyle, dragHandlers, rightOpacity, leftOpacity, isDragging, dragX, dragY } = useSwipeDrag({
+        onSwipeRight: handleSwipeRight,
+        onSwipeLeft: handleSwipeLeft,
+    })
 
-    const handleDragMove = (clientX: number, clientY: number) => {
-        if (!isDragging) return
-        const dx = clientX - startRef.current.x
-        const dy = clientY - startRef.current.y
-        setDragX(dx)
-        setDragY(dy)
-    }
-
-    const handleDragEnd = () => {
-        setIsDragging(false)
-        const threshold = 120  // px cần kéo để trigger swipe
-        if (dragX > threshold) {
-            handleSwipeRight()
-        } else if (dragX < -threshold) {
-            handleSwipeLeft()
-        } else {
-            // Snap back khi kéo không đủ xa
-            setDragX(0)
-            setDragY(0)
-        }
-    }
-
-    // Mouse events
-    const onMouseDown = (e: React.MouseEvent) => handleDragStart(e.clientX, e.clientY)
-    const onMouseMove = (e: React.MouseEvent) => handleDragMove(e.clientX, e.clientY)
-    const onMouseUp = () => handleDragEnd()
-
-    // Touch events
-    const onTouchStart = (e: React.TouchEvent) => handleDragStart(e.touches[0].clientX, e.touches[0].clientY)
-    const onTouchMove = (e: React.TouchEvent) => handleDragMove(e.touches[0].clientX, e.touches[0].clientY)
-    const onTouchEnd = () => handleDragEnd()
-
-    // ── Card style — Tinder rotation effect ──
-    const rotation = dragX * 0.1  // Xoay nhẹ theo hướng kéo
-    const cardStyle = {
-        transform: `translate(${dragX}px, ${dragY * 0.3}px) rotate(${rotation}deg)`,
-        transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        cursor: isDragging ? 'grabbing' : 'grab',
-    }
-
-    // ── Swipe indicator opacity (green/red glow khi kéo) ──
-    const rightOpacity = Math.min(Math.max(dragX / 120, 0), 1)
-    const leftOpacity = Math.min(Math.max(-dragX / 120, 0), 1)
-
-    // ── Keyboard support ──
-    useEffect(() => {
-        const handleKey = (e: KeyboardEvent) => {
-            if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setIsFlipped(f => !f) }
-            if (e.key === 'ArrowRight' || e.key === 'l') handleSwipeRight()
-            if (e.key === 'ArrowLeft' || e.key === 'h') handleSwipeLeft()
-        }
-        window.addEventListener('keydown', handleKey)
-        return () => window.removeEventListener('keydown', handleKey)
-    }, [handleSwipeRight, handleSwipeLeft])
+    // Keyboard shortcuts
+    useFlashcardKeys({
+        onFlip: () => setIsFlipped(f => !f),
+        onSwipeRight: handleSwipeRight,
+        onSwipeLeft: handleSwipeLeft,
+    })
 
     // ── Reset ──
     const resetAll = () => {
@@ -207,9 +155,7 @@ export default function VocabFlashcardClient() {
             {/* Header */}
             <div className="w-full max-w-lg mb-6">
                 <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-3">
-                        <Link href="/translate" className="text-slate-500 hover:text-white transition-colors text-sm">← Translate</Link>
-                    </div>
+                    <Link href="/translate" className="text-slate-500 hover:text-white transition-colors text-sm">← Translate</Link>
                 </div>
                 <h1 className="text-2xl font-bold text-white flex items-center gap-2">
                     🔖 Vocabulary Flashcards
@@ -218,61 +164,22 @@ export default function VocabFlashcardClient() {
             </div>
 
             {/* Progress */}
-            <div className="w-full max-w-lg mb-8">
-                <div className="flex justify-between text-xs text-slate-500 mb-1">
-                    <span>🧠 Đã thuộc: {progress}/{total}</span>
-                    <span>Còn lại: {stack.length}</span>
-                </div>
-                <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
-                    <div
-                        className="h-full rounded-full transition-all duration-500"
-                        style={{
-                            width: `${(progress / total) * 100}%`,
-                            background: 'linear-gradient(90deg, #4ade80, #22d3ee, #818cf8)',
-                        }}
-                    />
-                </div>
+            <div className="w-full max-w-lg">
+                <FlashcardProgressBar known={progress} total={total} label={`Còn lại: ${stack.length}`} />
             </div>
 
             {/* Card Stack */}
             <div className="relative w-full max-w-lg" style={{ height: '340px' }}>
-                {/* Background cards (stack effect) */}
-                {stack.length > 2 && (
-                    <div className="absolute inset-0 rounded-2xl bg-slate-900/40 border border-white/5"
-                        style={{ transform: 'scale(0.92) translateY(16px)' }} />
-                )}
-                {stack.length > 1 && (
-                    <div className="absolute inset-0 rounded-2xl bg-slate-900/60 border border-white/5"
-                        style={{ transform: 'scale(0.96) translateY(8px)' }} />
-                )}
+                <CardStackBg count={stack.length} />
 
                 {/* Active card — draggable */}
                 <div
-                    ref={cardRef}
                     className="absolute inset-0 select-none"
-                    style={cardStyle}
-                    onMouseDown={onMouseDown}
-                    onMouseMove={isDragging ? onMouseMove : undefined}
-                    onMouseUp={onMouseUp}
-                    onMouseLeave={isDragging ? onMouseUp : undefined}
-                    onTouchStart={onTouchStart}
-                    onTouchMove={onTouchMove}
-                    onTouchEnd={onTouchEnd}
+                    style={{ ...cardStyle, perspective: '1000px' }}
+                    {...dragHandlers}
                     onClick={() => { if (!isDragging || (Math.abs(dragX) < 5 && Math.abs(dragY) < 5)) setIsFlipped(f => !f) }}
                 >
-                    {/* Swipe indicators — green/red glow */}
-                    <div className="absolute inset-0 rounded-2xl pointer-events-none z-10 transition-opacity"
-                        style={{ boxShadow: `inset 0 0 60px rgba(74, 222, 128, ${rightOpacity * 0.5})`, opacity: rightOpacity }}>
-                        <div className="absolute top-6 left-6 text-green-400 font-bold text-xl" style={{ opacity: rightOpacity }}>
-                            ✅ THUỘC
-                        </div>
-                    </div>
-                    <div className="absolute inset-0 rounded-2xl pointer-events-none z-10 transition-opacity"
-                        style={{ boxShadow: `inset 0 0 60px rgba(239, 68, 68, ${leftOpacity * 0.5})`, opacity: leftOpacity }}>
-                        <div className="absolute top-6 right-6 text-red-400 font-bold text-xl" style={{ opacity: leftOpacity }}>
-                            ❌ ÔN LẠI
-                        </div>
-                    </div>
+                    <SwipeIndicators rightOpacity={rightOpacity} leftOpacity={leftOpacity} />
 
                     {/* Card container — flip */}
                     <div className="relative w-full h-full" style={{ perspective: '1000px' }}>
@@ -339,33 +246,12 @@ export default function VocabFlashcardClient() {
             </div>
 
             {/* Action buttons */}
-            <div className="flex items-center justify-center gap-4 mt-8">
-                <button
-                    onClick={handleSwipeLeft}
-                    className="w-16 h-16 rounded-full flex items-center justify-center text-2xl transition-all hover:scale-110 active:scale-95"
-                    style={{ background: 'rgba(239, 68, 68, 0.15)', border: '2px solid rgba(239, 68, 68, 0.4)' }}
-                    title="Chưa thuộc (←)"
-                >
-                    ❌
-                </button>
-
-                <button
-                    onClick={() => setIsFlipped(f => !f)}
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-lg transition-all hover:scale-110 active:scale-95"
-                    style={{ background: 'rgba(56, 189, 248, 0.15)', border: '2px solid rgba(56, 189, 248, 0.4)' }}
-                    title="Lật thẻ (Space)"
-                >
-                    🔄
-                </button>
-
-                <button
-                    onClick={handleSwipeRight}
-                    className="w-16 h-16 rounded-full flex items-center justify-center text-2xl transition-all hover:scale-110 active:scale-95"
-                    style={{ background: 'rgba(74, 222, 128, 0.15)', border: '2px solid rgba(74, 222, 128, 0.4)' }}
-                    title="Đã thuộc (→)"
-                >
-                    ✅
-                </button>
+            <div className="mt-8">
+                <FlashcardControls
+                    onLeft={handleSwipeLeft}
+                    onRight={handleSwipeRight}
+                    onFlip={() => setIsFlipped(f => !f)}
+                />
             </div>
 
             {/* Keyboard hints */}
