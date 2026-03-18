@@ -50,7 +50,8 @@ const DashboardHeader = ({ collapsed, setCollapsed }: any) => {
         position: 'sticky',
         top: 0,
         zIndex: 1000,
-        height: '64px',
+        height: 'calc(64px + env(safe-area-inset-top, 0px))',
+        paddingTop: 'env(safe-area-inset-top, 0px)',
         lineHeight: 'normal',
         display: 'flex',
         alignItems: 'center'
