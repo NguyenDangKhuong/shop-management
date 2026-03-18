@@ -352,6 +352,17 @@ export default function FlashcardApp() {
         onSwipeLeft: handleSwipeLeft,
     })
 
+    // ── Navigation ──
+    const goNext = useCallback(() => {
+        setFlipped(false)
+        setIndex(i => (i + 1) % currentCards.length)
+    }, [currentCards.length, setFlipped, setIndex])
+
+    const goPrev = useCallback(() => {
+        setFlipped(false)
+        setIndex(i => (i - 1 + currentCards.length) % currentCards.length)
+    }, [currentCards.length, setFlipped, setIndex])
+
     const shuffle = useCallback(() => {
         if (tab === 'algorithm') {
             setAllAlgoCards(prev => [...prev].sort(() => Math.random() - 0.5))
@@ -375,6 +386,14 @@ export default function FlashcardApp() {
         })
     }, [currentCard, setKnown, progressSync])
 
+    const resetKnown = useCallback(() => {
+        setKnown(new Set())
+        // Also reset on server for each known card
+        if (progressSync.isLoggedIn) {
+            knownCards.forEach(id => progressSync.saveProgress(id, false))
+        }
+    }, [setKnown, knownCards, progressSync])
+
     const toggleTopic = (topic: Topic) => {
         setSelectedTopics(prev => {
             const next = new Set(prev)
@@ -383,6 +402,8 @@ export default function FlashcardApp() {
             return next
         })
     }
+
+    const isCurrentKnown = currentCard ? knownCards.has(currentCard.cardId) : false
 
     // Keyboard shortcuts
     useFlashcardKeys({
@@ -674,20 +695,65 @@ export default function FlashcardApp() {
                                 </div>
                             </div>
 
+                            {/* Navigation — prev/next */}
+                            <div className="flex items-center justify-center gap-3 mb-3">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); goPrev() }}
+                                    className="px-4 py-2 rounded-xl text-sm font-medium transition-all hover:scale-105 active:scale-95"
+                                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}
+                                    title="Previous (←)"
+                                >◀ Trước</button>
+
+                                <span className="text-xs text-[var(--text-muted)] font-mono min-w-[60px] text-center">
+                                    {currentIndex + 1} / {total}
+                                </span>
+
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); goNext() }}
+                                    className="px-4 py-2 rounded-xl text-sm font-medium transition-all hover:scale-105 active:scale-95"
+                                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}
+                                    title="Next (→)"
+                                >Sau ▶</button>
+                            </div>
+
                             {/* Controls — Tinder style */}
                             <FlashcardControls
                                 onLeft={handleSwipeLeft}
                                 onRight={handleSwipeRight}
                                 onFlip={() => setFlipped(f => !f)}
                                 extraButtons={
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); shuffle() }}
-                                        className="w-12 h-12 rounded-full flex items-center justify-center text-lg transition-all hover:scale-110 active:scale-95"
-                                        style={{ background: 'rgba(251, 191, 36, 0.15)', border: '2px solid rgba(251, 191, 36, 0.4)' }}
-                                        title="Trộn thẻ (S)"
-                                    >🎲</button>
+                                    <>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); shuffle() }}
+                                            className="w-12 h-12 rounded-full flex items-center justify-center text-lg transition-all hover:scale-110 active:scale-95"
+                                            style={{ background: 'rgba(251, 191, 36, 0.15)', border: '2px solid rgba(251, 191, 36, 0.4)' }}
+                                            title="Trộn thẻ (S)"
+                                        >🎲</button>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); toggleKnown() }}
+                                            className="w-12 h-12 rounded-full flex items-center justify-center text-lg transition-all hover:scale-110 active:scale-95"
+                                            style={{
+                                                background: isCurrentKnown ? 'rgba(74, 222, 128, 0.25)' : 'rgba(148, 163, 184, 0.15)',
+                                                border: isCurrentKnown ? '2px solid rgba(74, 222, 128, 0.6)' : '2px solid rgba(148, 163, 184, 0.4)',
+                                            }}
+                                            title="Toggle đã thuộc (K)"
+                                        >{isCurrentKnown ? '🧠' : '💭'}</button>
+                                    </>
                                 }
                             />
+
+                            {/* Reset known */}
+                            {knownCards.size > 0 && (
+                                <div className="mt-4 text-center">
+                                    <button
+                                        onClick={resetKnown}
+                                        className="px-4 py-2 rounded-xl text-xs font-medium transition-all hover:scale-105 active:scale-95"
+                                        style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#ef4444' }}
+                                    >
+                                        🗑️ Reset tiến độ ({knownCards.size} đã thuộc)
+                                    </button>
+                                </div>
+                            )}
                         </>
                     )}
 
