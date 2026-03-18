@@ -59,11 +59,13 @@ export default function SiteHeader({
 
             {/* Sticky Header */}
             <header
-                className={`w-full sticky top-0 z-50 border-b transition-[padding,background-color,border-color,box-shadow] duration-300 px-4 md:px-8 backdrop-blur-xl ${scrolled ? 'py-2' : 'py-4 md:py-6'}`}
+                className={`w-full sticky top-0 z-50 border-b transition-[padding,background-color,border-color,box-shadow] duration-300 px-4 md:px-8 backdrop-blur-xl`}
                 style={{
                     backgroundColor: scrolled ? 'var(--bg-header-scrolled)' : 'var(--bg-header)',
                     borderColor: scrolled ? 'var(--border-primary)' : 'transparent',
                     boxShadow: scrolled ? 'var(--shadow-sm)' : 'none',
+                    paddingTop: `max(env(safe-area-inset-top), ${scrolled ? '8px' : '16px'})`,
+                    paddingBottom: scrolled ? '8px' : '16px',
                 }}
             >
                 <div className={`${maxWidth} mx-auto transition-all duration-300`}>

@@ -29,11 +29,12 @@ const TABS: TabItem[] = [
     { icon: '🏠', label: 'Home', href: '/' },
     { icon: '📝', label: 'Blog', href: '/blogs' },
     { icon: '📖', label: 'Translate', href: '/translate' },
-    { icon: '🃏', label: 'Flashcards', href: '/vocabulary-flashcards' },
+    { icon: '🛍️', label: 'Shopee Links', href: '/shopee-links' },
 ]
 
 const MORE_ITEMS = [
     { icon: '🔐', label: 'Đăng nhập', href: '/login' },
+    { icon: '🃏', label: 'Flashcards', href: '/vocabulary-flashcards' },
     { icon: '💻', label: 'LeetCode', href: '/leetcode' },
     { icon: '🧩', label: 'Algorithm', href: '/flashcards' },
     { icon: '📄', label: 'CV', href: '/cv' },
