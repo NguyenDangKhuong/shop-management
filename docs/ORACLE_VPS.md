@@ -52,6 +52,7 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | **Docker** 28.2.2 | — | ✅ enabled | systemd | Container runtime |
 | **Nginx** 1.24.0 | 80, 443 | ✅ enabled | systemd | Reverse proxy (12 domains) |
 | **AdGuard Home** | 53, 3001 | ✅ unless-stopped | Docker | DNS ad blocker |
+| **Homepage** | 3004 | ✅ unless-stopped | Docker | Homelab dashboard UI |
 | **Home Assistant** | 8123 | ✅ unless-stopped | Docker | Smart home |
 | **Uptime Kuma** | 3002 | ✅ unless-stopped | Docker (kuma-net) | Website/service monitoring |
 | **Zalo Bot Relay** | 3003 | ✅ unless-stopped | Docker (kuma-net) | Webhook relay → Zalo notification |
