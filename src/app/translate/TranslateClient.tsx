@@ -57,6 +57,9 @@ export default function TranslateClient() {
     const [to, setTo] = useState<Lang>('en')
     const [input, setInput] = useState('')
     const [output, setOutput] = useState('')
+    const [wordType, setWordType] = useState<string | null>(null)
+    const [example, setExample] = useState<string | null>(null)
+    const [exampleTranslation, setExampleTranslation] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
     const [copied, setCopied] = useState(false)
     const [charCount, setCharCount] = useState(0)
@@ -178,6 +181,9 @@ export default function TranslateClient() {
             return
         }
         setLoading(true)
+        setWordType(null)
+        setExample(null)
+        setExampleTranslation(null)
         try {
             const res = await fetch('/api/translate', {
                 method: 'POST',
@@ -187,6 +193,9 @@ export default function TranslateClient() {
             const data = await res.json()
             if (data.translated) {
                 setOutput(data.translated)
+                if (data.wordType) setWordType(data.wordType)
+                if (data.example) setExample(data.example)
+                if (data.exampleTranslation) setExampleTranslation(data.exampleTranslation)
             } else {
                 setOutput('⚠️ Translation failed. Please try again.')
             }
@@ -278,6 +287,9 @@ export default function TranslateClient() {
         setTo(from)
         setInput(output)
         setOutput(input)
+        setWordType(null)
+        setExample(null)
+        setExampleTranslation(null)
     }
 
     // ─── Copy output ──────────────────────────────────────────────────
@@ -292,6 +304,9 @@ export default function TranslateClient() {
     const clearInput = () => {
         setInput('')
         setOutput('')
+        setWordType(null)
+        setExample(null)
+        setExampleTranslation(null)
         inputRef.current?.focus()
     }
 
@@ -406,6 +421,34 @@ export default function TranslateClient() {
                         </div>
                     </div>
                 </div>
+
+                {/* ── Word Type + Example (below output) ── */}
+                {wordType && !loading && (
+                    <div className="mt-3 space-y-2 animate-in fade-in duration-300">
+                        <div className="flex items-center gap-2">
+                            <span className={`px-2.5 py-1 text-xs font-medium rounded-full border ${
+                                wordType === 'noun' ? 'bg-blue-600/15 border-blue-500/30 text-blue-400' :
+                                wordType === 'verb' ? 'bg-emerald-600/15 border-emerald-500/30 text-emerald-400' :
+                                wordType === 'adjective' ? 'bg-amber-600/15 border-amber-500/30 text-amber-400' :
+                                wordType === 'adverb' ? 'bg-purple-600/15 border-purple-500/30 text-cyan-400' :
+                                wordType === 'phrase' ? 'bg-cyan-600/15 border-cyan-500/30 text-cyan-400' :
+                                wordType === 'idiom' ? 'bg-rose-600/15 border-rose-500/30 text-rose-400' :
+                                'bg-slate-600/15 border-slate-500/30 text-slate-400'
+                            }`}>
+                                {wordType}
+                            </span>
+                        </div>
+                        {example && (
+                            <div className="px-3 py-2.5 rounded-lg bg-slate-800/50 border border-white/5">
+                                <div className="text-xs text-slate-500 mb-1">Example</div>
+                                <div className="text-sm text-slate-300 italic">&ldquo;{example}&rdquo;</div>
+                                {exampleTranslation && (
+                                    <div className="text-sm text-slate-500 mt-1">&rarr; {exampleTranslation}</div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* Translate button + Hint */}

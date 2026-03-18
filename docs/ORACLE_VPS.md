@@ -53,12 +53,16 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | **Nginx** 1.24.0 | 80, 443 | ✅ enabled | systemd | Reverse proxy (12 domains) |
 | **AdGuard Home** | 53, 3001 | ✅ unless-stopped | Docker | DNS ad blocker |
 | **Homepage** | 3004 | ✅ unless-stopped | Docker | Homelab dashboard UI |
+| **IT-Tools** | 3005 | ✅ unless-stopped | Docker | 100+ dev utilities (JSON, Base64, Hash...) |
+| **Code Server** | 3006 | ✅ unless-stopped | Docker | VS Code in browser |
 | **Home Assistant** | 8123 | ✅ unless-stopped | Docker | Smart home |
 | **Uptime Kuma** | 3002 | ✅ unless-stopped | Docker (kuma-net) | Website/service monitoring |
 | **Zalo Bot Relay** | 3003 | ✅ unless-stopped | Docker (kuma-net) | Webhook relay → Zalo notification |
 | **Portainer** | 9443 | ✅ unless-stopped | Docker | Docker web management UI |
 | **CLI Proxy API** | 8317 | ✅ unless-stopped | Docker | AI proxy (Gemini, OpenRouter, Codex...) |
 | **OpenClaw Gateway** | 18789 | ✅ unless-stopped | Docker | AI assistant (Telegram @heyyolo_bot, Zalo) |
+| ↳ Config | `~/openclaw_data/openclaw.json` | | | Model: `cli-proxy/gemini-3.1-pro-preview` |
+| ↳ Switch model | `cd ~/openclaw_data && sudo ./switch-model.sh` | | | Danh sách model từ CLI Proxy API |
 | **n8n** | 5678 | ✅ always | Docker Compose | Automation platform (n8n + worker + MCP + postgres + redis) |
 | **stress-ng** | — | ✅ enabled | systemd | Anti-reclaim CPU/RAM |
 | **vocab-push.timer** | — | ✅ enabled | systemd timer | Vocab reminder mỗi giờ |
