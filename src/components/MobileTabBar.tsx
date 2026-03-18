@@ -39,8 +39,7 @@ const MORE_ITEMS = [
     { icon: '🧩', label: 'Algorithm', href: '/flashcards' },
     { icon: '📄', label: 'CV', href: '/cv' },
     { icon: '🚀', label: 'Projects', href: '/projects' },
-    { icon: '🔒', label: 'Privacy', href: '/privacy' },
-    { icon: '📋', label: 'Terms', href: '/terms' },
+    { icon: '📱', label: 'TikTok Accounts', href: '/tiktok-accounts' },
 ]
 
 export default function MobileTabBar() {
