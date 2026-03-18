@@ -12,6 +12,10 @@ jest.mock('next/image', () => ({
     }
 }))
 
+jest.mock('@/hooks/useStandalone', () => ({
+    useStandalone: () => ({ isStandalone: false, isReady: true })
+}))
+
 describe('LandingPage Component', () => {
     it('renders hero section with name "Khuong"', () => {
         render(<LandingPage />)
