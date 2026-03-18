@@ -1363,48 +1363,61 @@ list.appendChild(fragment) // 1 reflow only!`}</CodeBlock>
                     <Callout type="tip">Interview: {'"Build a todo list without React"'} — phải dùng event delegation + DocumentFragment. Biết giải thích <Highlight>tại sao React dùng Synthetic Events</Highlight> → điểm cộng lớn.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Web APIs — Observer Pattern" emoji="👁️" color="#06b6d4" summary="IntersectionObserver, MutationObserver, ResizeObserver — performance-friendly APIs">
-                    <Paragraph>Modern Web APIs dùng <Highlight>Observer pattern</Highlight> thay vì polling — quan trọng cho performance.</Paragraph>
+                <TopicModal title="Web APIs — Observer Pattern" emoji="👁️" color="#06b6d4" summary="IntersectionObserver, MutationObserver, ResizeObserver — API hiệu năng cao thay thế event cũ">
+                    <Paragraph>Modern Web APIs dùng <Highlight>Observer pattern</Highlight> thay vì polling/event cũ — quan trọng cho performance vì chạy ở <Highlight>browser level</Highlight> (off main thread).</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
                             <div className="text-cyan-400 font-bold text-sm">📐 IntersectionObserver</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                Detect khi element visible trong viewport (không cần scroll event!).<br />
-                                • <strong>Lazy loading</strong> images: load khi scroll đến<br />
-                                • <strong>Infinite scroll</strong>: load more khi sentinel element visible<br />
-                                • <strong>Analytics</strong>: track impressions (ad, product card)<br />
-                                • <strong>Animation</strong>: trigger animation khi scroll into view
+                                Phát hiện khi element xuất hiện/biến mất trong viewport (không cần scroll event!).<br />
+                                • <strong>Lazy loading</strong> ảnh: chỉ load khi scroll đến gần<br />
+                                • <strong>Infinite scroll</strong>: load thêm data khi sentinel element visible<br />
+                                • <strong>Analytics</strong>: track impressions (quảng cáo, product card)<br />
+                                • <strong>Animation</strong>: trigger animation khi scroll vào vùng nhìn thấy
                             </div>
                         </div>
                         <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
                             <div className="text-purple-400 font-bold text-sm">🔬 MutationObserver</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                Watch for DOM changes (attributes, children, text content).<br />
-                                • Detect DOM changes từ third-party scripts<br />
-                                • Auto-process dynamically added elements<br />
-                                • Build custom element behaviors
+                                Theo dõi thay đổi DOM (attributes, children, text content).<br />
+                                • Phát hiện DOM bị thay đổi bởi third-party scripts (Analytics, AB test)<br />
+                                • Tự xử lý elements được thêm động (chat widget, notification)<br />
+                                • Xây dựng custom element behaviors (auto-format input, syntax highlight)
                             </div>
                         </div>
                         <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                             <div className="text-green-400 font-bold text-sm">📏 ResizeObserver</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                Detect element size changes (không cần window resize event!).<br />
-                                • Responsive components based on <strong>element size</strong> (not viewport)<br />
-                                • Container queries polyfill<br />
-                                • Auto-resize textarea, chart, canvas
+                                Phát hiện khi kích thước element thay đổi (không cần window resize event!).<br />
+                                • Responsive component theo <strong>kích thước element</strong> (không phải viewport)<br />
+                                • Tự điều chỉnh layout khi sidebar mở/đóng<br />
+                                • Auto-resize textarea, chart, canvas khi container thay đổi
                             </div>
                         </div>
                     </div>
-                    <CodeBlock title="observers.ts">{`// IntersectionObserver — Lazy loading + Infinite scroll
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 my-3">
+                        <div className="text-red-400 font-bold text-sm">⚡ Tại sao KHÔNG dùng scroll event + getBoundingClientRect?</div>
+                        <div className="text-slate-300 text-sm mt-2 space-y-1">
+                            <div>❌ <strong>scroll event</strong> fire <strong>hàng trăm lần/giây</strong> khi user scroll → callback chạy liên tục trên main thread</div>
+                            <div>❌ <strong>getBoundingClientRect()</strong> gọi mỗi lần scroll → browser phải <strong>tính toán layout (reflow)</strong> → chặn main thread</div>
+                            <div>❌ Kết hợp cả 2 = <strong>scroll jank</strong>: mỗi frame browser phải: fire event → chạy JS callback → tính layout → paint</div>
+                            <div className="pt-2 border-t border-white/5">
+                                ✅ <strong>IntersectionObserver</strong> chạy ở <strong>browser native level</strong> — browser tự tính toán asynchronously, KHÔNG block main thread, chỉ gọi callback khi element thật sự vào/ra viewport.
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="intersection-observer.ts">{`// ═══ IntersectionObserver — Lazy loading + Infinite scroll ═══
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       const img = entry.target as HTMLImageElement
-      img.src = img.dataset.src!  // load real image
-      observer.unobserve(img)     // stop observing
+      img.src = img.dataset.src!  // load ảnh thật
+      observer.unobserve(img)     // dừng theo dõi
     }
   })
-}, { threshold: 0.1, rootMargin: '200px' }) // preload 200px before visible
+}, { threshold: 0.1, rootMargin: '200px' }) // preload 200px trước khi visible
 
 document.querySelectorAll('img[data-src]').forEach(img => observer.observe(img))
 
@@ -1420,7 +1433,103 @@ function useIntersectionObserver(ref, options) {
   }, [ref, options])
   return isVisible
 }`}</CodeBlock>
-                    <Callout type="tip">Interview: {'"Build infinite scroll"'} hoặc {'"Build lazy loading images"'} — dùng IntersectionObserver, <Highlight>không dùng scroll event + getBoundingClientRect</Highlight> (performance kém).</Callout>
+
+                    <CodeBlock title="mutation-observer.ts">{`// ═══ MutationObserver — Theo dõi DOM thay đổi ═══
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach(mutation => {
+    // Phát hiện node mới được thêm vào DOM
+    mutation.addedNodes.forEach(node => {
+      if (node instanceof HTMLElement && node.matches('.ad-banner')) {
+        node.remove() // Xóa quảng cáo inject bởi third-party!
+      }
+    })
+
+    // Phát hiện attribute thay đổi
+    if (mutation.type === 'attributes') {
+      console.log(\`\${mutation.attributeName} changed!\`)
+    }
+  })
+})
+
+// Bắt đầu theo dõi
+observer.observe(document.body, {
+  childList: true,   // theo dõi thêm/xóa child nodes
+  subtree: true,     // theo dõi toàn bộ descendants
+  attributes: true,  // theo dõi attributes thay đổi
+})
+
+// Dừng khi không cần nữa
+observer.disconnect()`}</CodeBlock>
+
+                    <CodeBlock title="resize-observer.ts">{`// ═══ ResizeObserver — Theo dõi kích thước element ═══
+const observer = new ResizeObserver((entries) => {
+  entries.forEach(entry => {
+    const { width, height } = entry.contentRect
+
+    // Responsive component KHÔNG cần media query
+    if (width < 400) {
+      entry.target.classList.add('compact')
+    } else {
+      entry.target.classList.remove('compact')
+    }
+
+    // Auto-resize chart/canvas khi container thay đổi
+    console.log(\`Element resized: \${width}x\${height}\`)
+  })
+})
+
+// Theo dõi sidebar container → chart tự resize
+observer.observe(document.querySelector('.chart-container')!)
+
+// React hook: useResizeObserver
+function useResizeObserver(ref) {
+  const [size, setSize] = useState({ width: 0, height: 0 })
+  useEffect(() => {
+    const observer = new ResizeObserver(([entry]) => {
+      setSize({
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      })
+    })
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [ref])
+  return size
+}`}</CodeBlock>
+
+                    <CodeBlock title="so-sanh-performance.ts">{`// ═══ ❌ CÁCH CŨ: scroll event + getBoundingClientRect ═══
+// Vấn đề: scroll fire ~100 lần/giây, mỗi lần gọi
+// getBoundingClientRect → bắt browser tính layout (reflow)
+window.addEventListener('scroll', () => {
+  // 🐌 Chạy 100 lần/giây trên MAIN THREAD!
+  const rect = element.getBoundingClientRect()
+  // ⚠️ getBoundingClientRect() gây FORCED REFLOW
+  // → browser phải tính lại layout ĐỒNG BỘ
+  if (rect.top < window.innerHeight) {
+    loadImage(element) // lazy load
+  }
+})
+
+// ═══ ✅ CÁCH MỚI: IntersectionObserver ═══
+// Browser tự tính toán ASYNCHRONOUSLY, off main thread
+const observer = new IntersectionObserver(([entry]) => {
+  // 🚀 Chỉ gọi 1 LẦN khi element vào/ra viewport
+  if (entry.isIntersecting) loadImage(entry.target)
+})
+observer.observe(element)
+
+// ═══ TẠI SAO KÉM? ═══
+// scroll + getBoundingClientRect:
+// Frame 1: scroll → JS callback → reflow → paint
+// Frame 2: scroll → JS callback → reflow → paint
+// Frame 3: scroll → JS callback → reflow → paint
+// → Main thread bận liên tục → UI jank, drop frames!
+//
+// IntersectionObserver:
+// Frame 1-100: browser tự track (off main thread)
+// Frame 101: "Element visible!" → callback 1 lần
+// → Main thread rảnh → smooth 60fps!`}</CodeBlock>
+                    <Callout type="tip">Interview: {'"Build infinite scroll"'} hoặc {'"Build lazy loading images"'} — dùng IntersectionObserver, <Highlight>không dùng scroll event + getBoundingClientRect</Highlight>. Scroll event fire hàng trăm lần/giây + getBoundingClientRect gây forced reflow = jank. Observer chạy ở browser level, async, off main thread.</Callout>
                 </TopicModal>
 
                 <TopicModal title="Generators & Iterators" emoji="🔁" color="#a78bfa" summary="function*, yield, Symbol.iterator — lazy evaluation và custom iteration">

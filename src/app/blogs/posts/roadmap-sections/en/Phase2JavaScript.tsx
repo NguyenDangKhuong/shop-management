@@ -1366,15 +1366,15 @@ list.appendChild(fragment) // 1 reflow only!`}</CodeBlock>
                     <Callout type="tip">Interview: {'"Build a todo list without React"'} — must use event delegation + DocumentFragment. Being able to explain <Highlight>why React uses Synthetic Events</Highlight> → big bonus points.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Web APIs — Observer Pattern" emoji="👁️" color="#06b6d4" summary="IntersectionObserver, MutationObserver, ResizeObserver — performance-friendly APIs">
-                    <Paragraph>Modern Web APIs use <Highlight>Observer pattern</Highlight> instead of polling — crucial for performance.</Paragraph>
+                <TopicModal title="Web APIs — Observer Pattern" emoji="👁️" color="#06b6d4" summary="IntersectionObserver, MutationObserver, ResizeObserver — high-performance APIs replacing legacy events">
+                    <Paragraph>Modern Web APIs use <Highlight>Observer pattern</Highlight> instead of legacy polling/events — crucial for performance as they run at <Highlight>browser level</Highlight> (off main thread).</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
                             <div className="text-cyan-400 font-bold text-sm">📐 IntersectionObserver</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                Detect when an element is visible in the viewport (no scroll event needed!).<br />
-                                • <strong>Lazy loading</strong> images: load when scrolled into view<br />
-                                • <strong>Infinite scroll</strong>: load more when sentinel element is visible<br />
+                                Detect when an element enters/leaves the viewport (no scroll event needed!).<br />
+                                • <strong>Lazy loading</strong> images: only load when scrolled near<br />
+                                • <strong>Infinite scroll</strong>: load more data when sentinel element is visible<br />
                                 • <strong>Analytics</strong>: track impressions (ads, product cards)<br />
                                 • <strong>Animation</strong>: trigger animation on scroll into view
                             </div>
@@ -1383,9 +1383,9 @@ list.appendChild(fragment) // 1 reflow only!`}</CodeBlock>
                             <div className="text-purple-400 font-bold text-sm">🔬 MutationObserver</div>
                             <div className="text-slate-300 text-sm mt-1">
                                 Watch for DOM changes (attributes, children, text content).<br />
-                                • Detect DOM changes from third-party scripts<br />
-                                • Auto-process dynamically added elements<br />
-                                • Build custom element behaviors
+                                • Detect DOM changes from third-party scripts (Analytics, AB testing)<br />
+                                • Auto-process dynamically added elements (chat widgets, notifications)<br />
+                                • Build custom element behaviors (auto-format input, syntax highlight)
                             </div>
                         </div>
                         <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
@@ -1393,12 +1393,25 @@ list.appendChild(fragment) // 1 reflow only!`}</CodeBlock>
                             <div className="text-slate-300 text-sm mt-1">
                                 Detect element size changes (no window resize event needed!).<br />
                                 • Responsive components based on <strong>element size</strong> (not viewport)<br />
-                                • Container queries polyfill<br />
-                                • Auto-resize textarea, chart, canvas
+                                • Auto-adjust layout when sidebar opens/closes<br />
+                                • Auto-resize textarea, chart, canvas when container changes
                             </div>
                         </div>
                     </div>
-                    <CodeBlock title="observers.ts">{`// IntersectionObserver — Lazy loading + Infinite scroll
+
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 my-3">
+                        <div className="text-red-400 font-bold text-sm">⚡ Why NOT use scroll event + getBoundingClientRect?</div>
+                        <div className="text-slate-300 text-sm mt-2 space-y-1">
+                            <div>❌ <strong>scroll event</strong> fires <strong>hundreds of times/second</strong> while scrolling → callback runs continuously on main thread</div>
+                            <div>❌ <strong>getBoundingClientRect()</strong> called each scroll → forces browser to <strong>calculate layout (reflow)</strong> → blocks main thread</div>
+                            <div>❌ Combined = <strong>scroll jank</strong>: each frame the browser must: fire event → run JS callback → compute layout → paint</div>
+                            <div className="pt-2 border-t border-white/5">
+                                ✅ <strong>IntersectionObserver</strong> runs at <strong>browser native level</strong> — browser calculates asynchronously, does NOT block main thread, only fires callback when element truly enters/exits viewport.
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="intersection-observer.ts">{`// ═══ IntersectionObserver — Lazy loading + Infinite scroll ═══
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -1423,7 +1436,103 @@ function useIntersectionObserver(ref, options) {
   }, [ref, options])
   return isVisible
 }`}</CodeBlock>
-                    <Callout type="tip">Interview: {'"Build infinite scroll"'} or {'"Build lazy loading images"'} — use IntersectionObserver, <Highlight>not scroll event + getBoundingClientRect</Highlight> (poor performance).</Callout>
+
+                    <CodeBlock title="mutation-observer.ts">{`// ═══ MutationObserver — Watch for DOM changes ═══
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach(mutation => {
+    // Detect newly added nodes
+    mutation.addedNodes.forEach(node => {
+      if (node instanceof HTMLElement && node.matches('.ad-banner')) {
+        node.remove() // Remove ads injected by third-party!
+      }
+    })
+
+    // Detect attribute changes
+    if (mutation.type === 'attributes') {
+      console.log(\`\${mutation.attributeName} changed!\`)
+    }
+  })
+})
+
+// Start observing
+observer.observe(document.body, {
+  childList: true,   // watch for added/removed child nodes
+  subtree: true,     // watch all descendants
+  attributes: true,  // watch attribute changes
+})
+
+// Stop when no longer needed
+observer.disconnect()`}</CodeBlock>
+
+                    <CodeBlock title="resize-observer.ts">{`// ═══ ResizeObserver — Watch element size changes ═══
+const observer = new ResizeObserver((entries) => {
+  entries.forEach(entry => {
+    const { width, height } = entry.contentRect
+
+    // Responsive component WITHOUT media queries
+    if (width < 400) {
+      entry.target.classList.add('compact')
+    } else {
+      entry.target.classList.remove('compact')
+    }
+
+    // Auto-resize chart/canvas when container changes
+    console.log(\`Element resized: \${width}x\${height}\`)
+  })
+})
+
+// Watch sidebar container → chart auto-resizes
+observer.observe(document.querySelector('.chart-container')!)
+
+// React hook: useResizeObserver
+function useResizeObserver(ref) {
+  const [size, setSize] = useState({ width: 0, height: 0 })
+  useEffect(() => {
+    const observer = new ResizeObserver(([entry]) => {
+      setSize({
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      })
+    })
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [ref])
+  return size
+}`}</CodeBlock>
+
+                    <CodeBlock title="performance-comparison.ts">{`// ═══ ❌ OLD WAY: scroll event + getBoundingClientRect ═══
+// Problem: scroll fires ~100 times/sec, each time calling
+// getBoundingClientRect → forces browser layout calculation (reflow)
+window.addEventListener('scroll', () => {
+  // 🐌 Runs 100 times/sec on MAIN THREAD!
+  const rect = element.getBoundingClientRect()
+  // ⚠️ getBoundingClientRect() causes FORCED REFLOW
+  // → browser must recalculate layout SYNCHRONOUSLY
+  if (rect.top < window.innerHeight) {
+    loadImage(element) // lazy load
+  }
+})
+
+// ═══ ✅ NEW WAY: IntersectionObserver ═══
+// Browser calculates ASYNCHRONOUSLY, off main thread
+const observer = new IntersectionObserver(([entry]) => {
+  // 🚀 Called ONCE when element enters/exits viewport
+  if (entry.isIntersecting) loadImage(entry.target)
+})
+observer.observe(element)
+
+// ═══ WHY IS IT SLOW? ═══
+// scroll + getBoundingClientRect:
+// Frame 1: scroll → JS callback → reflow → paint
+// Frame 2: scroll → JS callback → reflow → paint
+// Frame 3: scroll → JS callback → reflow → paint
+// → Main thread busy non-stop → UI jank, dropped frames!
+//
+// IntersectionObserver:
+// Frame 1-100: browser tracks internally (off main thread)
+// Frame 101: "Element visible!" → callback fires once
+// → Main thread free → smooth 60fps!`}</CodeBlock>
+                    <Callout type="tip">Interview: {'"Build infinite scroll"'} or {'"Build lazy loading images"'} — use IntersectionObserver, <Highlight>not scroll event + getBoundingClientRect</Highlight>. Scroll event fires hundreds of times/sec + getBoundingClientRect causes forced reflow = jank. Observer runs at browser level, async, off main thread.</Callout>
                 </TopicModal>
 
                 <TopicModal title="Generators & Iterators" emoji="🔁" color="#a78bfa" summary="function*, yield, Symbol.iterator — lazy evaluation and custom iteration">
