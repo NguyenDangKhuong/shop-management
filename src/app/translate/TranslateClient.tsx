@@ -36,6 +36,9 @@ interface VocabItem {
     translated: string
     from: Lang
     to: Lang
+    wordType?: string
+    example?: string
+    exampleTranslation?: string
     createdAt: string
 }
 
@@ -71,6 +74,7 @@ export default function TranslateClient() {
     const [saving, setSaving] = useState(false)         // Tránh spam nút bookmark
     const [savedFeedback, setSavedFeedback] = useState(false)  // Hiệu ứng "Saved!"
     const [deletingId, setDeletingId] = useState<string | null>(null) // ID đang xóa
+    const [selectedVocab, setSelectedVocab] = useState<VocabItem | null>(null) // Modal
 
     // ─── Push notification state ──────────────────────────────────────
     const [pushEnabled, setPushEnabled] = useState(false)
@@ -247,7 +251,12 @@ export default function TranslateClient() {
             const res = await fetch('/api/vocabulary', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ original: input, translated: output, from, to }),
+                body: JSON.stringify({
+                    original: input, translated: output, from, to,
+                    ...(wordType && { wordType }),
+                    ...(example && { example }),
+                    ...(exampleTranslation && { exampleTranslation }),
+                }),
             })
             const data = await res.json()
             if (data.success) {
@@ -491,13 +500,19 @@ export default function TranslateClient() {
                             return (
                             <div
                                 key={item._id}
-                                className={`group grid grid-cols-[1fr_auto_1fr_auto] items-center gap-3 px-4 py-3 rounded-xl bg-slate-900/60 border border-white/5 hover:border-white/10 transition-colors ${deletingId === item._id ? 'opacity-50' : ''
+                                onClick={() => setSelectedVocab(item)}
+                                className={`group grid grid-cols-[1fr_auto_1fr_auto] items-center gap-3 px-4 py-3 rounded-xl bg-slate-900/60 border border-white/5 hover:border-cyan-500/30 transition-colors cursor-pointer ${deletingId === item._id ? 'opacity-50' : ''
                                     }`}
                             >
                                 {/* English text */}
                                 <div className="min-w-0">
                                     <span className="text-xs text-slate-500 mr-1">🇬🇧</span>
                                     <span className="text-sm text-slate-300 break-words">{enText}</span>
+                                    {item.wordType && (
+                                        <span className="ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                            {item.wordType}
+                                        </span>
+                                    )}
                                 </div>
 
                                 {/* Arrow */}
@@ -511,7 +526,7 @@ export default function TranslateClient() {
 
                                 {/* Delete button */}
                                 <button
-                                    onClick={() => deleteVocabulary(item._id)}
+                                    onClick={(e) => { e.stopPropagation(); deleteVocabulary(item._id) }}
                                     disabled={deletingId === item._id}
                                     className="text-xs text-slate-600 hover:text-red-400 transition-all px-1 py-0.5 rounded shrink-0 md:opacity-0 md:group-hover:opacity-100"
                                     title="Delete"
@@ -583,6 +598,69 @@ export default function TranslateClient() {
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/5 rounded-full blur-[100px]" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/5 rounded-full blur-[100px]" />
             </div>
+
+            {/* ───────── Vocabulary Detail Modal ───────── */}
+            {selectedVocab && (() => {
+                const item = selectedVocab
+                const isReversed = item.from === 'vi' && item.to === 'en'
+                const enText = isReversed ? item.translated : item.original
+                const viText = isReversed ? item.original : item.translated
+                return (
+                    <div
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                        onClick={() => setSelectedVocab(null)}
+                    >
+                        <div
+                            className="w-full max-w-md rounded-2xl bg-slate-900 border border-white/10 shadow-2xl overflow-hidden"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            {/* Header */}
+                            <div className="px-6 pt-5 pb-3 border-b border-white/5">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-2xl">📚</span>
+                                        <h3 className="text-lg font-semibold text-white">{enText}</h3>
+                                        {item.wordType && (
+                                            <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/25 font-medium">
+                                                {item.wordType}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <button
+                                        onClick={() => setSelectedVocab(null)}
+                                        className="text-slate-500 hover:text-white transition-colors text-lg"
+                                    >✕</button>
+                                </div>
+                            </div>
+
+                            {/* Body */}
+                            <div className="px-6 py-5 space-y-4">
+                                {/* Translation */}
+                                <div>
+                                    <div className="text-xs text-slate-500 mb-1 uppercase tracking-wider">Nghĩa</div>
+                                    <div className="text-base text-white">🇻🇳 {viText}</div>
+                                </div>
+
+                                {/* Example */}
+                                {item.example && (
+                                    <div className="p-3 rounded-xl bg-slate-800/50 border border-white/5">
+                                        <div className="text-xs text-slate-500 mb-2 uppercase tracking-wider">📝 Ví dụ</div>
+                                        <div className="text-sm text-slate-300 italic">&ldquo;{item.example}&rdquo;</div>
+                                        {item.exampleTranslation && (
+                                            <div className="text-sm text-slate-500 mt-1">&rarr; {item.exampleTranslation}</div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Date */}
+                                <div className="text-xs text-slate-600">
+                                    Lưu ngày {new Date(item.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            })()}
         </div>
     )
 }

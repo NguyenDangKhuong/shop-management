@@ -23,10 +23,13 @@
 import mongoose, { Document, Schema } from 'mongoose'
 
 export interface IVocabulary extends Document {
-    original: string      // Văn bản gốc
-    translated: string    // Bản dịch
-    from: 'vi' | 'en'     // Ngôn ngữ gốc
-    to: 'vi' | 'en'       // Ngôn ngữ đích
+    original: string
+    translated: string
+    from: 'vi' | 'en'
+    to: 'vi' | 'en'
+    wordType?: string            // noun, verb, adjective, phrase, idiom...
+    example?: string             // Example sentence in source language
+    exampleTranslation?: string  // Translated example sentence
     createdAt?: Date
     updatedAt?: Date
 }
@@ -41,6 +44,11 @@ const VocabularySchema = new Schema({
     // Ngôn ngữ: chỉ chấp nhận 'vi' hoặc 'en'
     from: { type: String, required: true, enum: ['vi', 'en'] },
     to: { type: String, required: true, enum: ['vi', 'en'] },
+
+    // Rich word data (optional — from translate API)
+    wordType: { type: String, trim: true },
+    example: { type: String, trim: true },
+    exampleTranslation: { type: String, trim: true },
 }, {
     timestamps: true,             // Tự thêm createdAt + updatedAt
     collection: 'vocabularies'    // Tên collection trong MongoDB

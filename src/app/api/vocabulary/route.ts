@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
     try {
-        const { original, translated, from, to } = await req.json()
+        const { original, translated, from, to, wordType, example, exampleTranslation } = await req.json()
 
         // Validate: cần đủ 4 trường
         if (!original?.trim() || !translated?.trim() || !from || !to) {
@@ -84,6 +84,9 @@ export async function POST(req: NextRequest) {
             translated: translated.trim(),
             from,
             to,
+            ...(wordType && { wordType: wordType.trim() }),
+            ...(example && { example: example.trim() }),
+            ...(exampleTranslation && { exampleTranslation: exampleTranslation.trim() }),
         })
 
         return NextResponse.json({ success: true, item: doc }, { status: 201 })

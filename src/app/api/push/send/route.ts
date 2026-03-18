@@ -86,16 +86,24 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: 'No vocabulary to send', sent: 0 })
         }
 
-        const vocab = vocabResult[0] as { _id: mongoose.Types.ObjectId; original: string; translated: string; from: string; to: string }
+        const vocab = vocabResult[0] as { _id: mongoose.Types.ObjectId; original: string; translated: string; from: string; to: string; wordType?: string; example?: string; exampleTranslation?: string }
 
         // Chuẩn bị payload — normalize sang EN → VI
         const isEnToVi = vocab.from === 'en'
         const word = isEnToVi ? vocab.original : vocab.translated
         const meaning = isEnToVi ? vocab.translated : vocab.original
 
+        // Build rich body: meaning + wordType + example
+        let body = meaning
+        if (vocab.wordType) body = `(${vocab.wordType}) ${body}`
+        if (vocab.example) {
+            const exTrans = vocab.exampleTranslation ? ` → ${vocab.exampleTranslation}` : ''
+            body += `\n📝 "${vocab.example}"${exTrans}`
+        }
+
         const payload = JSON.stringify({
             title: `📖 ${word}`,
-            body: meaning,
+            body,
             url: '/translate',
             tag: 'vocab-reminder',
         })
