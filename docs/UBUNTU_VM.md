@@ -41,15 +41,9 @@ journalctl --user -u shop-nextjs -f
 
 ## Docker Containers
 
-| Container | Image | Port | Vai trò |
-|-----------|-------|------|---------|
-| **n8n** | n8n-with-ffmpeg | `:5678` | Automation chính |
-| **n8n-worker** | n8n-with-ffmpeg | — | Worker xử lý jobs |
-| **n8n-mcp** | n8n-n8n-mcp | `:3100` | MCP server |
-| **postgres** | postgres:16 | internal | DB cho n8n |
-| **redis** | redis:alpine | internal | Queue cho n8n |
+Không còn container nào chạy trên máy này.
 
-> ℹ️ **CLI Proxy** và **OpenClaw** đã chuyển sang Oracle VPS (17/03/2026). Xem [ORACLE_VPS.md](./ORACLE_VPS.md).
+> ℹ️ **CLI Proxy**, **OpenClaw** và **n8n** đã chuyển sang Oracle VPS (18/03/2026). Xem [ORACLE_VPS.md](./ORACLE_VPS.md).
 
 ## System Services
 
@@ -64,12 +58,13 @@ journalctl --user -u shop-nextjs -f
 
 | ❌ Mất | ✅ Vẫn chạy |
 |--------|-------------|
-| n8n (`n8n.thetaphoa.store`) | Shop app (`shop.thetaphoa.store` — Vercel) |
-| WS Bridge (Veo3 gen video) | CLI Proxy (`cli-proxy.khuong.theworkpc.com` — VPS) |
-| ESXi access (`server.thetaphoa.store`) | OpenClaw (`openclaw.khuong.theworkpc.com` — VPS) |
-| NAS access (`nas.thetaphoa.store`) | Cloudflare R2 / Workers |
+| WS Bridge (Veo3 gen video) | Shop app (`shop.thetaphoa.store` — Vercel) |
+| ESXi access (`server.thetaphoa.store`) | n8n (`n8n.khuong.theworkpc.com` — VPS) |
+| NAS access (`nas.thetaphoa.store`) | CLI Proxy (`cli-proxy.khuong.theworkpc.com` — VPS) |
+| | OpenClaw (`openclaw.khuong.theworkpc.com` — VPS) |
+| | Cloudflare R2 / Workers |
 | | Oracle VPS (`161.118.197.104`) |
 
 ---
 
-*Cập nhật: 17/03/2026*
+*Cập nhật: 18/03/2026*

@@ -59,6 +59,7 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | **Portainer** | 9443 | ✅ unless-stopped | Docker | Docker web management UI |
 | **CLI Proxy API** | 8317 | ✅ unless-stopped | Docker | AI proxy (Gemini, OpenRouter, Codex...) |
 | **OpenClaw Gateway** | 18789 | ✅ unless-stopped | Docker | AI assistant (Telegram @heyyolo_bot, Zalo) |
+| **n8n** | 5678 | ✅ always | Docker Compose | Automation platform (n8n + worker + MCP + postgres + redis) |
 | **stress-ng** | — | ✅ enabled | systemd | Anti-reclaim CPU/RAM |
 | **vocab-push.timer** | — | ✅ enabled | systemd timer | Vocab reminder mỗi giờ |
 
