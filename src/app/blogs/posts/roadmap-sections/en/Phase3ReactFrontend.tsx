@@ -2947,27 +2947,37 @@ function ProductList() {
                 <TopicModal title="Tailwind CSS" emoji="🌊" color="#38bdf8" summary="Utility-first CSS framework — popular at startups and product companies">
                     <Paragraph><Highlight>Tailwind</Highlight> = #1 choice for startups and consumer products.</Paragraph>
                     <div className="my-3 space-y-2">
-                        <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
-                            <div className="text-cyan-400 font-bold text-sm">📋 Why is Tailwind popular?</div>
+                        <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                            <div className="text-emerald-400 font-bold text-sm">✅ Pros</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                • <strong>Utility-first</strong>: write CSS in HTML, no need to name classes<br />
-                                • <strong>Design system</strong>: spacing, colors, breakpoints consistency<br />
-                                • <strong>Purge CSS</strong>: only ships used CSS → tiny bundle<br />
-                                • <strong>DX</strong>: IntelliSense plugin, instant prototyping<br />
-                                • <strong>Responsive</strong>: <InlineCode>md:flex lg:grid</InlineCode> — prefix-based
+                                • <strong>Dev speed</strong>: No context switching (HTML/CSS), incredibly fast UI prototyping<br />
+                                • <strong>Consistency</strong>: Constrained by predefined design tokens (spacing, colors) → uniform UI<br />
+                                • <strong>Performance</strong>: Compile-time purge removes unused classes → tiny CSS file<br />
+                                • <strong>Naming</strong>: Avoids the nightmare of naming classes like BEM
                             </div>
                         </div>
-                        <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                            <div className="text-yellow-400 font-bold text-sm">⚠️ Interview Questions</div>
+                        <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20">
+                            <div className="text-rose-400 font-bold text-sm">⚠️ Trade-offs & Cons</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                • Tailwind vs CSS Modules? → Trade-off: speed vs separation<br />
-                                • Customize theme? → tailwind.config.js extend<br />
-                                • Dynamic classes? → clsx/cn, don&apos;t use string interpolation<br />
-                                • Tailwind v4 — what&apos;s new? → CSS-first config, no JS config file
+                                • <strong>HTML Verbosity</strong>: Long and bloated JSX code (mitigated by componentization)<br />
+                                • <strong>Learning curve</strong>: Requires learning the utility classes and mapping ecosystem initially<br />
+                                • <strong>Coupling</strong>: Tight coupling of styling with the rendering component (violates separation of concerns compared to CSS Modules)
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">🎯 Why choose Tailwind?</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>#1 Ecosystem</strong>: Unmatched integration with excellent headless UI libraries (shadcn/ui, Radix, HeadlessUI).<br />
+                                • <strong>CSS Liberation</strong>: Enables developers (even backend-focused devs) to build beautiful, proportional UIs without immense CSS expertise.<br />
+                                • <strong>Startups/Outsourcing</strong>: Ideal for rapid shipping and easy code handoffs without the overhead of maintaining complex custom CSS architectures.
                             </div>
                         </div>
                     </div>
-                    <Callout type="tip">If using Tailwind + React → must know <Highlight>clsx or cn (class-variance-authority)</Highlight> for conditional classes. This is an essential pattern.</Callout>
+                    <Callout type="tip">
+                        Interviews often ask: &quot;Tailwind vs CSS Modules?&quot; → Answer: <Highlight>Trade-off between Speed and Separation</Highlight>.
+                        Tailwind is fast to write but leads to messy HTML; CSS Modules keep HTML clean but require constant file switching.
+                        Don&apos;t forget to mention <Highlight>clsx / tailwind-merge (or cn)</Highlight> when handling conditional classes in Tailwind!
+                    </Callout>
                 </TopicModal>
 
                 <TopicModal title="React Hook Form + Zod" emoji="📋" color="#ec4899" summary="Form management + schema validation — most popular combo today">

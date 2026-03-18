@@ -2970,27 +2970,37 @@ function ProductList() {
                 <TopicModal title="Tailwind CSS" emoji="🌊" color="#38bdf8" summary="Utility-first CSS framework — phổ biến ở startups và products VN">
                     <Paragraph><Highlight>Tailwind</Highlight> = lựa chọn #1 cho startups và consumer products ở VN.</Paragraph>
                     <div className="my-3 space-y-2">
-                        <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
-                            <div className="text-cyan-400 font-bold text-sm">📋 Tại sao Tailwind phổ biến?</div>
+                        <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                            <div className="text-emerald-400 font-bold text-sm">✅ Điểm mạnh (Pros)</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                • <strong>Utility-first</strong>: viết CSS trong HTML, không cần đặt tên class<br />
-                                • <strong>Design system</strong>: spacing, colors, breakpoints consistency<br />
-                                • <strong>Purge CSS</strong>: chỉ ship CSS đã dùng → tiny bundle<br />
-                                • <strong>DX</strong>: IntelliSense plugin, instant prototyping<br />
-                                • <strong>Responsive</strong>: <InlineCode>md:flex lg:grid</InlineCode> — prefix-based
+                                • <strong>Dev speed</strong>: Không context switch (HTML/CSS), dựng UI cực nhanh<br />
+                                • <strong>Consistency</strong>: Ràng buộc bởi design tokens (spacing, colors) → UI đồng nhất<br />
+                                • <strong>Performance</strong>: Compile-time purge loại bỏ class thừa → file CSS siêu nhỏ<br />
+                                • <strong>Naming</strong>: Không phải đau đầu nghĩ tên class như BEM
                             </div>
                         </div>
-                        <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                            <div className="text-yellow-400 font-bold text-sm">⚠️ Câu hỏi phỏng vấn</div>
+                        <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20">
+                            <div className="text-rose-400 font-bold text-sm">⚠️ Trade-offs & Điểm yếu (Cons)</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                • Tailwind vs CSS Modules? → Trade-off: speed vs separation<br />
-                                • Customize theme? → tailwind.config.js extend<br />
-                                • Dynamic classes? → clsx/cn, không dùng string interpolation<br />
-                                • Tailwind v4 có gì mới? → CSS-first config, no JS config file
+                                • <strong>HTML Verbose</strong>: Code JSX dài thòng, lộn xộn (khắc phục bằng componentization)<br />
+                                • <strong>Learning curve</strong>: Tốn thời gian đầu học thuộc utility classes và mapping của Tailwind<br />
+                                • <strong>Coupling</strong>: Gắn chặt styling vào rendering component (không clean separation of concerns như CSS Modules)
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">🎯 Tại sao lại chọn Tailwind?</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • <strong>Ecosystem số 1</strong>: Đi kèm với vô số headless UI xuất sắc (shadcn/ui, Radix, HeadlessUI).<br />
+                                • Giải thoát dev khỏi CSS: Giúp các developer (kể cả backend dev) không quá rành CSS vẫn dựng được layout đẹp, chuẩn tỉ lệ.<br />
+                                • <strong>Startup/Outsource</strong>: Cần ship product nhanh, bàn giao code dễ hiểu, không cần maintain custom CSS architecture phức tạp.
                             </div>
                         </div>
                     </div>
-                    <Callout type="tip">Nếu dùng Tailwind + React → phải biết <Highlight>clsx hoặc cn (class-variance-authority)</Highlight> để conditional classes. Đây là pattern thiết yếu.</Callout>
+                    <Callout type="tip">
+                        Interview hay hỏi: &quot;Tailwind vs CSS Modules?&quot; → Trả lời: <Highlight>Trade-off giữa Speed và Separation</Highlight>.
+                        Tailwind code nhanh nhưng HTML xấu, CSS Modules HTML clean nhưng phải nhảy file liên tục.
+                        Đừng quên nhắc đến <Highlight>clsx / tailwind-merge (hoặc cn)</Highlight> khi làm việc với conditional classes trong Tailwind!
+                    </Callout>
                 </TopicModal>
 
                 <TopicModal title="React Hook Form + Zod" emoji="📋" color="#ec4899" summary="Form management + schema validation — combo phổ biến nhất hiện nay">
