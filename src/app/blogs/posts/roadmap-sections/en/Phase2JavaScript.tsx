@@ -1590,7 +1590,66 @@ class Range {
   }
 }
 for (const n of new Range(1, 5)) console.log(n) // 1, 2, 3, 4, 5`}</CodeBlock>
-                    <Callout type="tip">Interview: understanding generators helps answer {'"How does async/await work under the hood?"'} — async function = generator + Promise auto-runner.</Callout>
+
+                    <Heading3>🔗 async/await = Generator + Promise (auto-runner)</Heading3>
+                    <Paragraph><InlineCode>async/await</InlineCode> is <Highlight>syntactic sugar</Highlight> over generators. The JS engine wraps your code in a generator + writes the auto-runner for you.</Paragraph>
+
+                    <CodeBlock title="async-await-vs-generator.ts">{`// ═══ 1. WRITTEN WITH async/await (modern way) ═══
+async function fetchUser() {
+  const res = await fetch('/api/user')  // ⏸️ pause here
+  const user = await res.json()         // ⏸️ pause here
+  return user
+}
+
+// ═══ 2. EQUIVALENT with Generator ═══
+function* fetchUserGen() {
+  const res = yield fetch('/api/user')  // yield = await
+  const user = yield res.json()         // yield = await
+  return user
+}
+
+// ═══ 3. NEED an "auto-runner" to execute the generator ═══
+function run(generatorFn) {
+  const gen = generatorFn()
+
+  function step(value) {
+    const result = gen.next(value)      // run to next yield
+    if (result.done) return result.value // done!
+
+    // result.value is a Promise → wait for resolve → call step again
+    return Promise.resolve(result.value)
+      .then(resolved => step(resolved)) // pass result back into yield
+  }
+
+  return step()
+}
+
+run(fetchUserGen).then(user => console.log(user))
+
+// ═══ SUMMARY ═══
+// async function  →  function*
+// await promise   →  yield promise
+// JS engine       →  auto-runner (written above manually)
+//
+// When hitting await:
+// 1. yield promise out
+// 2. JS engine waits for promise to resolve
+// 3. .next(result) passes value back in
+// 4. Code resumes from where await was`}</CodeBlock>
+
+                    <div className="my-3 overflow-x-auto">
+                        <table className="w-full text-sm border-collapse">
+                            <thead><tr className="border-b border-white/10"><th className="text-left p-2 text-slate-400">&#160;</th><th className="text-left p-2 text-purple-400">Generator</th><th className="text-left p-2 text-cyan-400">async/await</th></tr></thead>
+                            <tbody className="text-slate-300">
+                                <tr className="border-b border-white/5"><td className="p-2 font-medium">Pause</td><td className="p-2"><InlineCode>yield</InlineCode></td><td className="p-2"><InlineCode>await</InlineCode></td></tr>
+                                <tr className="border-b border-white/5"><td className="p-2 font-medium">Resume</td><td className="p-2"><InlineCode>.next(value)</InlineCode></td><td className="p-2">JS engine auto-calls</td></tr>
+                                <tr className="border-b border-white/5"><td className="p-2 font-medium">Returns</td><td className="p-2">Iterator</td><td className="p-2">Promise</td></tr>
+                                <tr><td className="p-2 font-medium">Auto-run</td><td className="p-2">❌ Must write manually</td><td className="p-2">✅ JS engine handles it</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <Callout type="tip">Interview: {'"How does async/await work under the hood?"'} → <Highlight>async/await = generator + Promise auto-runner</Highlight>. When hitting <InlineCode>await</InlineCode>, the engine <InlineCode>yield</InlineCode>s the promise out, waits for it to resolve, then <InlineCode>.next(result)</InlineCode> passes the value back in. Being able to explain this = senior level answer. 🎯</Callout>
                 </TopicModal>
 
                 <TopicModal title="Error Handling Patterns" emoji="🚨" color="#ef4444" summary="try/catch, custom errors, error boundaries, global handlers — production-ready error handling">

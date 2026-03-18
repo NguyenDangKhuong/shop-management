@@ -1589,7 +1589,66 @@ class Range {
   }
 }
 for (const n of new Range(1, 5)) console.log(n) // 1, 2, 3, 4, 5`}</CodeBlock>
-                    <Callout type="tip">Interview: hiểu generators giúp trả lời {'"How does async/await work under the hood?"'} — async function = generator + Promise auto-runner.</Callout>
+
+                    <Heading3>🔗 async/await = Generator + Promise (auto-runner)</Heading3>
+                    <Paragraph>Bản chất <InlineCode>async/await</InlineCode> là <Highlight>syntactic sugar</Highlight> của generator. JS engine tự bọc code vào generator + viết auto-runner cho bạn.</Paragraph>
+
+                    <CodeBlock title="async-await-vs-generator.ts">{`// ═══ 1. VIẾT BẰNG async/await (cách hiện đại) ═══
+async function fetchUser() {
+  const res = await fetch('/api/user')  // ⏸️ pause tại đây
+  const user = await res.json()         // ⏸️ pause tại đây
+  return user
+}
+
+// ═══ 2. TƯƠNG ĐƯƠNG viết bằng Generator ═══
+function* fetchUserGen() {
+  const res = yield fetch('/api/user')  // yield = await
+  const user = yield res.json()         // yield = await
+  return user
+}
+
+// ═══ 3. CẦN "auto-runner" để chạy generator ═══
+function run(generatorFn) {
+  const gen = generatorFn()
+
+  function step(value) {
+    const result = gen.next(value)      // chạy đến yield tiếp
+    if (result.done) return result.value // xong!
+
+    // result.value là Promise → đợi resolve → gọi step tiếp
+    return Promise.resolve(result.value)
+      .then(resolved => step(resolved)) // truyền kết quả vào yield
+  }
+
+  return step()
+}
+
+run(fetchUserGen).then(user => console.log(user))
+
+// ═══ TÓM LẠI ═══
+// async function  →  function*
+// await promise   →  yield promise
+// JS engine       →  auto-runner (tự viết ở trên)
+//
+// Khi gặp await:
+// 1. yield promise ra ngoài
+// 2. JS engine đợi promise resolve
+// 3. .next(result) truyền giá trị vào lại
+// 4. Code tiếp tục chạy từ chỗ await`}</CodeBlock>
+
+                    <div className="my-3 overflow-x-auto">
+                        <table className="w-full text-sm border-collapse">
+                            <thead><tr className="border-b border-white/10"><th className="text-left p-2 text-slate-400">&#160;</th><th className="text-left p-2 text-purple-400">Generator</th><th className="text-left p-2 text-cyan-400">async/await</th></tr></thead>
+                            <tbody className="text-slate-300">
+                                <tr className="border-b border-white/5"><td className="p-2 font-medium">Pause</td><td className="p-2"><InlineCode>yield</InlineCode></td><td className="p-2"><InlineCode>await</InlineCode></td></tr>
+                                <tr className="border-b border-white/5"><td className="p-2 font-medium">Resume</td><td className="p-2"><InlineCode>.next(value)</InlineCode></td><td className="p-2">JS engine tự gọi</td></tr>
+                                <tr className="border-b border-white/5"><td className="p-2 font-medium">Trả về</td><td className="p-2">Iterator</td><td className="p-2">Promise</td></tr>
+                                <tr><td className="p-2 font-medium">Auto-run</td><td className="p-2">❌ Phải viết thủ công</td><td className="p-2">✅ JS engine lo</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <Callout type="tip">Interview: {'"How does async/await work under the hood?"'} → <Highlight>async/await = generator + Promise auto-runner</Highlight>. Khi gặp <InlineCode>await</InlineCode>, engine <InlineCode>yield</InlineCode> promise ra ngoài, đợi resolve, rồi <InlineCode>.next(result)</InlineCode> truyền giá trị vào lại. Trả lời được = senior level answer. 🎯</Callout>
                 </TopicModal>
 
                 <TopicModal title="Error Handling Patterns" emoji="🚨" color="#ef4444" summary="try/catch, custom errors, error boundaries, global handlers — production-ready error handling">
