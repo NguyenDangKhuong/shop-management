@@ -127,7 +127,7 @@ describe('formatTweetText', () => {
 
 // ─── LazyVideo ──────────────────────────────────────────────────────────
 describe('LazyVideo', () => {
-    it('renders with poster overlay but no source initially', () => {
+    it('renders with poster image and play button initially', () => {
         const { container } = render(
             <LazyVideo src="/video.mp4" poster="/poster.jpg" isGif={false} />
         )
@@ -135,9 +135,12 @@ describe('LazyVideo', () => {
         const video = container.querySelector('video')!
         expect(video).toBeInTheDocument()
         expect(video.getAttribute('preload')).toBe('none')
-        expect(video.getAttribute('poster')).toBe('/poster.jpg')
-        // Poster overlay only appears after video source loads (hasLoaded && !isReady)
-        // On initial render, hasLoaded is false so no overlay img
+        // Poster is rendered as a separate img, not on video element
+        const posterImg = container.querySelector('img[src="/poster.jpg"]')!
+        expect(posterImg).toBeInTheDocument()
+        // Play button overlay should be visible
+        expect(container.querySelector('svg')).toBeInTheDocument()
+        // No source loaded yet
         expect(container.querySelector('source')).toBeNull()
     })
 

@@ -146,6 +146,8 @@ export function LazyVideo({ src, poster, isGif }: { src: string; poster: string;
     const videoRef = useRef<HTMLVideoElement>(null)
     const [isVisible, setIsVisible] = useState(false)
     const [hasLoaded, setHasLoaded] = useState(false)
+    const [isPlaying, setIsPlaying] = useState(false)
+    const [isReady, setIsReady] = useState(false)
 
     useEffect(() => {
         const el = containerRef.current
@@ -173,31 +175,66 @@ export function LazyVideo({ src, poster, isGif }: { src: string; poster: string;
         }
     }, [isVisible])
 
-    const [isReady, setIsReady] = useState(false)
+    // Auto-play GIFs when ready + visible
+    useEffect(() => {
+        if (isGif && isReady && isVisible && videoRef.current) {
+            videoRef.current.play().catch(() => {})
+            setIsPlaying(true)
+        }
+    }, [isGif, isReady, isVisible])
+
+    const handlePlay = () => {
+        if (!videoRef.current) return
+        setIsPlaying(true)
+        videoRef.current.play().catch(() => {})
+    }
 
     return (
-        <div ref={containerRef} className="relative rounded-2xl overflow-hidden">
+        <div ref={containerRef} className="relative rounded-2xl overflow-hidden bg-black">
+            {/* Video element — hidden behind poster until playing */}
             <video
                 ref={videoRef}
-                controls
+                controls={isPlaying}
                 playsInline
                 preload="none"
-                poster={poster}
-                className="w-full max-h-[500px]"
+                className={`w-full max-h-[500px] ${isPlaying && isReady ? '' : 'invisible absolute inset-0'}`}
+                style={!isPlaying || !isReady ? { position: 'absolute', width: '100%', height: '100%' } : undefined}
                 loop={isGif}
                 muted={isGif}
                 onCanPlay={() => setIsReady(true)}
+                onPause={() => { if (!isGif) setIsPlaying(false) }}
+                onEnded={() => { if (!isGif) setIsPlaying(false) }}
             >
                 {hasLoaded && <source src={src} type="video/mp4" />}
             </video>
-            {/* Poster overlay — only shows during load→play transition to prevent jank */}
-            {hasLoaded && !isReady && (
-                <img
-                    src={poster}
-                    alt=""
-                    className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-300"
-                />
+
+            {/* Poster + play button — shown until video is playing & ready */}
+            {(!isPlaying || !isReady) && (
+                <div className="relative cursor-pointer" onClick={handlePlay}>
+                    <img
+                        src={poster}
+                        alt=""
+                        className="w-full max-h-[500px] object-cover"
+                    />
+                    {/* Play button overlay */}
+                    {!isGif && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors">
+                            <div className="w-14 h-14 flex items-center justify-center rounded-full bg-black/60 backdrop-blur-sm border border-white/20 transition-transform hover:scale-110">
+                                <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white ml-1">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
+                            </div>
+                        </div>
+                    )}
+                    {/* Loading spinner when clicked but not ready */}
+                    {isPlaying && !isReady && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        </div>
+                    )}
+                </div>
             )}
+
             {isGif && (
                 <span className="absolute bottom-2 left-2 px-1.5 py-0.5 bg-black/70 text-white text-[10px] rounded font-semibold">GIF</span>
             )}

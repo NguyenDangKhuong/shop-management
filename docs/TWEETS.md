@@ -89,10 +89,21 @@ Xóa username theo MongoDB ID.
 | `NEXT_PUBLIC_VIDEO_PROXY_URL` | Cloudflare video proxy URL |
 | `NEXT_PUBLIC_PINNED_USERNAME` | Pinned username tab in tweets feed |
 
+## Video Player (LazyVideo)
+
+Component `LazyVideo` trong `GraphQLTweets.tsx` xử lý video/GIF:
+
+- **Poster + Play button** — Hiện thumbnail với nút ▶️, bấm mới load video
+- **Lazy source loading** — `<source>` chỉ inject khi scroll vào viewport (IntersectionObserver 200px)
+- **No layout shift** — Poster `<img>` chiếm đúng kích thước, video ẩn bên dưới cho đến khi ready
+- **Loading spinner** — Hiện khi bấm play nhưng video chưa buffer xong
+- **Auto-pause** — Pause khi scroll ra khỏi viewport
+- **GIF support** — Auto-play, loop, muted, badge "GIF"
+
 ## Tech Stack
 
 - **Twitter GraphQL API** via server proxy (UserTweets, Likes, Home)
 - **DOMPurify** cho XSS sanitization trong tweet rendering
 - **MongoDB** cho usernames + Twitter credentials
-- **IntersectionObserver** cho infinite scroll
+- **IntersectionObserver** cho infinite scroll + lazy video loading
 - **Next.js API Routes** cho proxy + CRUD
