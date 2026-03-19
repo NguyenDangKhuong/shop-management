@@ -170,6 +170,7 @@ export default function LeetCodePlayground() {
     const [results, setResults] = useState<TestResult[]>([])
     const [isRunning, setIsRunning] = useState(false)
     const [showHint, setShowHint] = useState(false)
+    const [showSolution, setShowSolution] = useState(false)
     const [filterCat, setFilterCat] = useState<Category | 'All'>('All')
     const [solvedIds, setSolvedIds] = useState<number[]>([])
     const [consoleOutput, setConsoleOutput] = useState<string[]>([])
@@ -192,6 +193,7 @@ export default function LeetCodePlayground() {
         setCode(saved[problem.id] || problem.starterCode)
         setResults([])
         setShowHint(false)
+        setShowSolution(false)
         setConsoleOutput([])
     }, [])
 
@@ -345,22 +347,39 @@ export default function LeetCodePlayground() {
                                 ))}
                             </div>
 
-                            {/* Hint */}
-                            {selectedProblem.hint && (
-                                <div>
-                                    <button
-                                        onClick={() => setShowHint(!showHint)}
-                                        className="text-xs text-yellow-400/80 hover:text-yellow-400 transition flex items-center gap-1"
-                                    >
-                                        💡 {showHint ? 'Hide Hint' : 'Show Hint'}
-                                    </button>
-                                    {showHint && (
-                                        <div className="mt-2 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-xs text-yellow-300/90">
-                                            {selectedProblem.hint}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                            {/* Hint + Solution */}
+                            <div className="space-y-2">
+                                {selectedProblem.hint && (
+                                    <div>
+                                        <button
+                                            onClick={() => setShowHint(!showHint)}
+                                            className="text-xs text-yellow-400/80 hover:text-yellow-400 transition flex items-center gap-1"
+                                        >
+                                            💡 {showHint ? 'Hide Hint' : 'Show Hint'}
+                                        </button>
+                                        {showHint && (
+                                            <div className="mt-2 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-xs text-yellow-300/90">
+                                                {selectedProblem.hint}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                                {selectedProblem.solution && (
+                                    <div>
+                                        <button
+                                            onClick={() => setShowSolution(!showSolution)}
+                                            className="text-xs text-emerald-400/80 hover:text-emerald-400 transition flex items-center gap-1"
+                                        >
+                                            📝 {showSolution ? 'Hide Solution' : 'Show Solution'}
+                                        </button>
+                                        {showSolution && (
+                                            <pre className="mt-2 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-200/90 font-mono overflow-x-auto whitespace-pre">
+                                                {selectedProblem.solution}
+                                            </pre>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {/* Code Editor + Output */}
