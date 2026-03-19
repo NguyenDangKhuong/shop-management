@@ -43,6 +43,7 @@ describe('DashboardSider', () => {
             'Thanh toán',
             'Sản phẩm',
             'Danh mục',
+            'Clarity Plan',
             'Thống kê'
         ]
 
@@ -61,7 +62,8 @@ describe('DashboardSider', () => {
         expect(links[7]).toHaveTextContent('Thanh toán')
         expect(links[8]).toHaveTextContent('Sản phẩm')
         expect(links[9]).toHaveTextContent('Danh mục')
-        expect(links[10]).toHaveTextContent('Thống kê')
+        expect(links[10]).toHaveTextContent('Clarity Plan')
+        expect(links[11]).toHaveTextContent('Thống kê')
     })
 
     it('should have correct navigation links', () => {
@@ -76,6 +78,7 @@ describe('DashboardSider', () => {
         expect(screen.getByText('Thanh toán').closest('a')).toHaveAttribute('href', '/carts')
         expect(screen.getByText('Sản phẩm').closest('a')).toHaveAttribute('href', '/products')
         expect(screen.getByText('Danh mục').closest('a')).toHaveAttribute('href', '/categories')
+        expect(screen.getByText('Clarity Plan').closest('a')).toHaveAttribute('href', '/clarity')
         expect(screen.getByText('Thống kê').closest('a')).toHaveAttribute('href', '/orders')
     })
 
@@ -105,6 +108,7 @@ describe('DashboardSider', () => {
         expect(container.querySelector('.anticon-shopping-cart')).toBeInTheDocument() // ShoppingCartOutlined
         expect(container.querySelector('.anticon-table')).toBeInTheDocument() // TableOutlined
         expect(container.querySelector('.anticon-book')).toBeInTheDocument() // BookOutlined
+        expect(container.querySelector('.anticon-aim')).toBeInTheDocument() // AimOutlined
         expect(container.querySelector('.anticon-bar-chart')).toBeInTheDocument() // BarChartOutlined
     })
 

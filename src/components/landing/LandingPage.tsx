@@ -538,6 +538,13 @@ export default function LandingPage() {
                                 🌐 Translate
                             </Link>
                             <Link
+                                href="/clarity"
+                                className="text-[var(--text-secondary)] hover:text-[#a78bfa] transition-colors"
+                                title="Monthly Planning & Reflection"
+                            >
+                                🎯 Clarity
+                            </Link>
+                            <Link
                                 href="/privacy"
                                 className="text-[var(--text-secondary)] hover:text-[#38bdf8] transition-colors underline"
                             >

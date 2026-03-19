@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import {
+  AimOutlined,
   BarChartOutlined,
   BookOutlined,
   FacebookOutlined,
@@ -132,6 +133,11 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
             key: '/categories',
             icon: <BookOutlined />,
             label: <Link href='/categories'>Danh mục</Link>
+          },
+          {
+            key: '/clarity',
+            icon: <AimOutlined />,
+            label: <Link href='/clarity'>Clarity Plan</Link>
           },
           {
             key: '/orders',
