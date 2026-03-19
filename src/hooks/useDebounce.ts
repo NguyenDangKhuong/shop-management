@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 
 // Hook
-// T is a generic type for value parameter, our case this will be string
-const useDebounce = (value: string, delay: number): string => {
+export function useDebounce<T>(value: T, delay: number): T {
   // State and setters for debounced value
-  const [debouncedValue, setDebouncedValue] = useState<string>(value)
+  const [debouncedValue, setDebouncedValue] = useState<T>(value)
   useEffect(
     () => {
       // Update debounced value after delay

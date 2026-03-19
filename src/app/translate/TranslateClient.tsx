@@ -25,7 +25,8 @@
  *   - loading: đang dịch
  */
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
+import useDebounce from '@/hooks/useDebounce'
 import Link from 'next/link'
 
 type Lang = 'vi' | 'en'
@@ -66,12 +67,11 @@ export default function TranslateClient() {
     const [loading, setLoading] = useState(false)
     const [copied, setCopied] = useState(false)
     const [charCount, setCharCount] = useState(0)
-    const debounceRef = useRef<NodeJS.Timeout | null>(null)
+    const [saving, setSaving] = useState(false)
     const inputRef = useRef<HTMLTextAreaElement>(null)
 
     // ─── Vocabulary state ─────────────────────────────────────────────
     const [savedItems, setSavedItems] = useState<VocabItem[]>([])
-    const [saving, setSaving] = useState(false)         // Tránh spam nút bookmark
     const [savedFeedback, setSavedFeedback] = useState(false)  // Hiệu ứng "Saved!"
     const [deletingId, setDeletingId] = useState<string | null>(null) // ID đang xóa
     const [selectedVocab, setSelectedVocab] = useState<VocabItem | null>(null) // Modal
@@ -210,21 +210,21 @@ export default function TranslateClient() {
         }
     }, [])
 
-    // Debounce: chờ user ngưng gõ 500ms rồi mới dịch
+    const debouncedInput = useDebounce(input, 500)
+
+    // Cập nhật số ký tự ngay lập tức khi user gõ
     useEffect(() => {
         setCharCount(input.length)
-        if (debounceRef.current) clearTimeout(debounceRef.current)
-        if (!input.trim()) {
+    }, [input])
+
+    // Gọi API dịch khi debouncedInput, from, hoặc to thay đổi
+    useEffect(() => {
+        if (!debouncedInput.trim()) {
             setOutput('')
             return
         }
-        debounceRef.current = setTimeout(() => {
-            translate(input, from, to)
-        }, 500)
-        return () => {
-            if (debounceRef.current) clearTimeout(debounceRef.current)
-        }
-    }, [input, from, to, translate])
+        translate(debouncedInput, from, to)
+    }, [debouncedInput, from, to, translate])
 
     // ─── Fetch saved vocabulary on mount ──────────────────────────────
     const fetchVocabulary = useCallback(async () => {
