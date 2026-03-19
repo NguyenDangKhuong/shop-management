@@ -22,6 +22,7 @@ const categoryEmoji: Record<Category, string> = {
     'Dynamic Programming': '📊',
     'Backtracking': '🔙',
     'Stack': '📚',
+    'Custom Hooks': '⚛️',
 }
 
 interface TestResult {
@@ -100,13 +101,31 @@ function executeCode(code: string, testCases: Problem['testCases']): Promise<Tes
         const script = `
             <script>
                 try {
+                    // --- React Hooks Mock ---
+                    let _state = [];
+                    let _idx = 0;
+                    const useState = (init) => {
+                       const i = _idx++;
+                       if (_state[i] === undefined) _state[i] = typeof init === 'function' ? init() : init;
+                       const setState = (val) => { _state[i] = typeof val === 'function' ? val(_state[i]) : val; };
+                       return [_state[i], setState];
+                    };
+                    const useEffect = (cb, deps) => { /* Mock: does not trigger cb to avoid infinite loops in simple eval */ };
+                    const useRef = (init) => ({ current: init });
+                    const useCallback = (cb) => cb;
+                    const useMemo = (cb) => cb();
+                    const __resetHooks = () => { _state = []; _idx = 0; };
+                    const renderHook = (renderFn) => { __resetHooks(); return renderFn(); };
+                    // ------------------------
+
                     ${code}
                     
                     const testCases = ${JSON.stringify(testCases)};
                     const results = testCases.map(tc => {
                         try {
+                            if (typeof __resetHooks !== 'undefined') __resetHooks();
                             const args = new Function('return [' + tc.input + ']')();
-                            const result = ${fnName}(...args);
+                            const result = typeof testHook === 'function' ? testHook(...args) : ${fnName}(...args);
                             const actual = JSON.stringify(result);
                             const expected = tc.expected;
                             return {
@@ -207,7 +226,7 @@ export default function LeetCodePlayground() {
         ? problems
         : problems.filter(p => p.category === filterCat)
 
-    const allCategories: Category[] = ['Two Pointers', 'Sliding Window', 'BFS / DFS', 'Binary Search', 'Dynamic Programming', 'Backtracking', 'Stack']
+    const allCategories: Category[] = ['Two Pointers', 'Sliding Window', 'BFS / DFS', 'Binary Search', 'Dynamic Programming', 'Backtracking', 'Stack', 'Custom Hooks']
 
     const passedCount = results.filter(r => r.passed).length
     const totalCount = results.length

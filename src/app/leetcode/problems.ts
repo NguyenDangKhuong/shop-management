@@ -8,6 +8,7 @@ export type Category =
     | 'Dynamic Programming'
     | 'Backtracking'
     | 'Stack'
+    | 'Custom Hooks'
 
 export interface TestCase {
     input: string
@@ -1186,5 +1187,65 @@ export const problems: Problem[] = [
             { input: "[2,4]", expected: "4" },
         ],
         hint: "Monotonic increasing stack. Khi pop bar, width = i - stack.top - 1. Area = height * width.",
+    },
+    {
+        id: 71,
+        title: 'useDebounce',
+        difficulty: 'Medium',
+        category: 'Custom Hooks',
+        description: {
+            vi: "Viết custom hook useDebounce nhận vào value và delay. Trả về debounced value sau khoảng thời gian delay khi value ngừng thay đổi.",
+            en: "Write a custom hook useDebounce taking value and delay. Return debounced value after delay when value stops changing.",
+        },
+        starterCode: "function useDebounce(value, delay) {\n  // Your code here\n  \n}\n\n// --- Test Wrapper ---\nfunction testHook() {\n  const str = useDebounce.toString();\n  if (!str.includes('useEffect') || !str.includes('setTimeout') || !str.includes('clearTimeout')) throw new Error('Must use useEffect, setTimeout, and clearTimeout');\n  // Return 1 to pass fake test\n  return 1;\n}",
+        testCases: [
+            { input: "", expected: "1" },
+        ],
+        hint: "Dùng useState lưu debouncedValue. Khi value đổi, useEffect đặt setTimeout set lại state và return clearTimeout.",
+    },
+    {
+        id: 72,
+        title: 'useThrottle',
+        difficulty: 'Medium',
+        category: 'Custom Hooks',
+        description: {
+            vi: "Viết custom hook useThrottle nhận vào value và limit. Trả về throttled value sao cho chỉ cập nhật nhiều nhất một lần trong khoảng thời gian limit.",
+            en: "Write a custom hook useThrottle taking value and limit. Return throttled value that updates at most once per limit ms.",
+        },
+        starterCode: "function useThrottle(value, limit) {\n  // Your code here\n  \n}\n\n// --- Test Wrapper ---\nfunction testHook() {\n  const str = useThrottle.toString();\n  if (!str.includes('useEffect') || !str.includes('setTimeout')) throw new Error('Must implement throttle logic with setTimeout/Date');\n  return 1;\n}",
+        testCases: [
+            { input: "", expected: "1" },
+        ],
+        hint: "Dùng useState lưu throttledValue và useRef lưu thời gian lastRan. Dùng setTimeout tính toán delay còn lại.",
+    },
+    {
+        id: 73,
+        title: 'useCount',
+        difficulty: 'Easy',
+        category: 'Custom Hooks',
+        description: {
+            vi: "Viết custom hook useCount (hay useCounter) nhận vào initialValue. Trả về object chứa { count, increment, decrement }.",
+            en: "Write a custom hook useCount taking initialValue. Return an object containing { count, increment, decrement }.",
+        },
+        starterCode: "function useCount(initialValue = 0) {\n  // Your code here\n  \n}\n\n// --- Test Wrapper ---\nfunction testHook() {\n  // renderHook is injected by the playground mock\n  const { count, increment, decrement } = renderHook(() => useCount(10));\n  if (count !== 10 || typeof increment !== 'function' || typeof decrement !== 'function') throw new Error('Return shape incorrect');\n  return 1;\n}",
+        testCases: [
+            { input: "", expected: "1" },
+        ],
+        hint: "Dùng useState cho count. Khai báo 2 hàm increment, decrement và return cả 3 trong một object.",
+    },
+    {
+        id: 74,
+        title: 'useOnClickOutside',
+        difficulty: 'Medium',
+        category: 'Custom Hooks',
+        description: {
+            vi: "Viết custom hook useOnClickOutside nhận vào ref (của element) và một handler function. Nó sẽ gọi handler nếu click chuột bên ngoài element đó.",
+            en: "Write a custom hook useOnClickOutside taking a ref and a handler. It should call the handler when clicking outside the ref's element.",
+        },
+        starterCode: "function useOnClickOutside(ref, handler) {\n  // Your code here\n  \n}\n\n// --- Test Wrapper ---\nfunction testHook() {\n  const str = useOnClickOutside.toString();\n  if (!str.includes('useEffect') || !str.includes('addEventListener') || !str.includes('removeEventListener')) throw new Error('Must use event listeners');\n  return 1;\n}",
+        testCases: [
+            { input: "", expected: "1" },
+        ],
+        hint: "useEffect gắn mousedown/touchstart event vào document. Check !ref.current.contains(event.target) thì gọi handler(event).",
     },
 ]
