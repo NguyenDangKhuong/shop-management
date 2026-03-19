@@ -1363,6 +1363,7 @@ function FilterBar() {
                                             </tr>
                                         </thead>
                                         <tbody className="text-slate-300">
+                                            <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-gray-400">iFrame</td><td className="py-1.5 pr-2">Native Browser</td><td className="py-1.5 pr-2">Không (Isolate 100%)</td><td className="py-1.5">Legacy app embed, 3rd-party</td></tr>
                                             <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-blue-400">Module Federation</td><td className="py-1.5 pr-2">Build + Runtime</td><td className="py-1.5 pr-2">Có (shared React)</td><td className="py-1.5">Enterprise dashboard</td></tr>
                                             <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-green-400">Import Maps</td><td className="py-1.5 pr-2">Runtime (ESM)</td><td className="py-1.5 pr-2">Via import map</td><td className="py-1.5">Progressive migration</td></tr>
                                             <tr className="border-b border-white/5"><td className="py-1.5 pr-2 font-bold text-yellow-400">Single-SPA</td><td className="py-1.5 pr-2">Runtime orchestrator</td><td className="py-1.5 pr-2">Tùy chọn</td><td className="py-1.5">Multi-framework (React+Vue)</td></tr>
@@ -1406,6 +1407,15 @@ function FilterBar() {
                                 • Proxy/reverse proxy route: <InlineCode>/blog</InlineCode> → App A, <InlineCode>/shop</InlineCode> → App B<br />
                                 • Mỗi app build + deploy <strong>độc lập</strong>, SSR/SSG riêng<br />
                                 • Đơn giản nhất cho team đã dùng Next.js
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-gray-500/10 border border-gray-500/20">
+                            <div className="text-gray-400 font-bold text-sm">🪟 iFrame (Cách MFE cổ điển nhất)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                • Tách biệt hoàn toàn 100% (CSS, JS, Security) — không bao giờ bị conflict<br />
+                                • Phù hợp nhất để nhúng app legacy hoặc cổng thanh toán của bên thứ 3<br />
+                                • <strong>Giao tiếp siêu khó:</strong> Phải dùng <InlineCode>postMessage</InlineCode> để gửi data qua lại<br />
+                                • <strong>Điểm trừ:</strong> Tốn RAM (tải lại toàn bộ React/Vue 2 lần), SEO kém, và các component như Modal/Popup không thể tràn lấn ra ngoài viền iframe được.
                             </div>
                         </div>
                         <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
