@@ -6,14 +6,14 @@
  * ========================================================================
  *
  * Tính năng:
- * 1. Auto-translate: Gõ xong 800ms → tự dịch (debounce)
+ * 1. Auto-translate: Gõ xong 1s → tự dịch (debounce)
  * 2. Swap: Đổi chiều ngôn ngữ (VI→EN thành EN→VI)
  * 3. Bookmark: Bấm 🔖 → lưu từ vựng vào MongoDB
  * 4. Saved list: Hiển thị danh sách từ đã lưu bên dưới
  * 5. Delete: Xóa từ vựng đã lưu
  *
  * Flow:
- *   Gõ text → debounce 800ms → POST /api/translate → hiện kết quả
+ *   Gõ text → debounce 1s → POST /api/translate → hiện kết quả
  *   Bấm 🔖 → POST /api/vocabulary → thêm vào savedItems
  *   Load page → GET /api/vocabulary → hiện danh sách
  *
@@ -210,7 +210,7 @@ export default function TranslateClient() {
         }
     }, [])
 
-    const debouncedInput = useDebounce(input, 500)
+    const debouncedInput = useDebounce(input, 1000)
 
     // Cập nhật số ký tự ngay lập tức khi user gõ
     useEffect(() => {
