@@ -568,6 +568,191 @@ function useDebounce<T>(value: T, delay: number): T {
                     </Callout>
                 </TopicModal>
 
+                <TopicModal title="Essential Custom Hooks" emoji="⚛️" color="#38bdf8" summary="Các custom hooks thông dụng: useDebounce, useThrottle, useCount, useOnClickOutside">
+                    <Paragraph>Trong thực tế và phỏng vấn, bạn thường xuyên cần tự viết các Custom Hooks để tái sử dụng logic. Dưới đây là 4 hooks phổ biến nhất và cách sử dụng.</Paragraph>
+
+                    <div className="my-4 space-y-4">
+                        {/* useDebounce */}
+                        <div className="p-4 rounded-xl bg-[#252526] border border-[#3c3c3c]">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="text-xl">⏱️</span>
+                                <h4 className="text-[#38bdf8] font-bold text-lg">1. useDebounce</h4>
+                            </div>
+                            <div className="text-sm text-slate-300 mb-3">
+                                Trì hoãn việc cập nhật giá trị cho đến khi ngừng thay đổi sau một khoảng thời gian. Rất hữu ích cho ô tìm kiếm (search input) để tránh gọi API liên tục.
+                            </div>
+                            <CodeBlock title="useDebounce.ts">{`import { useState, useEffect } from 'react';
+
+export function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    // Đặt timeout cập nhật value
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    // Cleanup function: huỷ timeout cũ nếu value đổi trước khi hết delay
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+// 📖 Cách sử dụng:
+function SearchComponent() {
+  const [search, setSearch] = useState('');
+  // Chỉ gọi API khi user ngưng gõ 500ms
+  const debouncedSearch = useDebounce(search, 500);
+
+  useEffect(() => {
+    if (debouncedSearch) {
+      console.log('Fetching data for:', debouncedSearch);
+    }
+  }, [debouncedSearch]);
+
+  return <input value={search} onChange={e => setSearch(e.target.value)} />;
+}`}</CodeBlock>
+                        </div>
+
+                        {/* useThrottle */}
+                        <div className="p-4 rounded-xl bg-[#252526] border border-[#3c3c3c]">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="text-xl">🚦</span>
+                                <h4 className="text-[#38bdf8] font-bold text-lg">2. useThrottle</h4>
+                            </div>
+                            <div className="text-sm text-slate-300 mb-3">
+                                Giới hạn số lần cập nhật giá trị, đảm bảo chỉ cập nhật nhiều nhất một lần trong một khoảng thời gian nhất định (limit). Thích hợp cho track scroll, resize window.
+                            </div>
+                            <CodeBlock title="useThrottle.ts">{`import { useState, useEffect, useRef } from 'react';
+
+export function useThrottle<T>(value: T, limit: number): T {
+  const [throttledValue, setThrottledValue] = useState<T>(value);
+  const lastRan = useRef(Date.now());
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (Date.now() - lastRan.current >= limit) {
+        setThrottledValue(value);
+        lastRan.current = Date.now();
+      }
+    }, limit - (Date.now() - lastRan.current));
+
+    return () => clearTimeout(handler);
+  }, [value, limit]);
+
+  return throttledValue;
+}
+
+// 📖 Cách sử dụng:
+function ScrollTracker() {
+  const [scrollY, setScrollY] = useState(0);
+  // Chỉ update giao diện tối đa 1 lần mỗi 200ms
+  const throttledScroll = useThrottle(scrollY, 200);
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return <div>Throttled Scroll Position: {throttledScroll}</div>;
+}`}</CodeBlock>
+                        </div>
+
+                        {/* useCount */}
+                        <div className="p-4 rounded-xl bg-[#252526] border border-[#3c3c3c]">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="text-xl">🔢</span>
+                                <h4 className="text-[#38bdf8] font-bold text-lg">3. useCount</h4>
+                            </div>
+                            <div className="text-sm text-slate-300 mb-3">
+                                Hook quản lý state đơn giản (counter), tích hợp sẵn các hàm helper. Thường xuất hiện làm ví dụ cơ bản trong các bài viết Custom Hook.
+                            </div>
+                            <CodeBlock title="useCount.ts">{`import { useState } from 'react';
+
+export function useCount(initialValue = 0) {
+  const [count, setCount] = useState(initialValue);
+
+  const increment = () => setCount((c) => c + 1);
+  const decrement = () => setCount((c) => c - 1);
+  const reset = () => setCount(initialValue);
+  const set = (value: number) => setCount(value);
+
+  return { count, increment, decrement, reset, set };
+}
+
+// 📖 Cách sử dụng:
+function CounterComponent() {
+  const { count, increment, decrement, reset } = useCount(10);
+
+  return (
+    <div className="flex gap-2">
+      <button onClick={decrement}>-</button>
+      <span>{count}</span>
+      <button onClick={increment}>+</button>
+      <button onClick={reset}>Reset</button>
+    </div>
+  );
+}`}</CodeBlock>
+                        </div>
+
+                        {/* useOnClickOutside */}
+                        <div className="p-4 rounded-xl bg-[#252526] border border-[#3c3c3c]">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="text-xl">🖱️</span>
+                                <h4 className="text-[#38bdf8] font-bold text-lg">4. useOnClickOutside</h4>
+                            </div>
+                            <div className="text-sm text-slate-300 mb-3">
+                                Giúp phát hiện khi người dùng click ra bên ngoài một component được chỉ định. Đây là hook cực kỳ quan trọng khi làm Dropdown, Modal, Popover.
+                            </div>
+                            <CodeBlock title="useOnClickOutside.ts">{`import { useEffect } from 'react';
+
+export function useOnClickOutside<T extends HTMLElement = HTMLElement>(
+  ref: React.RefObject<T>,
+  handler: (event: MouseEvent | TouchEvent) => void
+) {
+  useEffect(() => {
+    const listener = (event: MouseEvent | TouchEvent) => {
+      // Bỏ qua nếu click vào bên trong ref (component mục tiêu)
+      if (!ref.current || ref.current.contains(event.target as Node)) {
+        return;
+      }
+      handler(event);
+    };
+
+    document.addEventListener('mousedown', listener);
+    document.addEventListener('touchstart', listener);
+    return () => {
+      document.removeEventListener('mousedown', listener);
+      document.removeEventListener('touchstart', listener);
+    };
+  }, [ref, handler]); // Chỉ re-run nếu ref hoặc handler thay đổi
+}
+
+// 📖 Cách sử dụng:
+function Dropdown() {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Gọi handler (đóng menu) nếu user click ra ngoài <div ref={ref}>
+  useOnClickOutside(ref, () => setIsOpen(false));
+
+  return (
+    <div ref={ref} className="relative inline-block">
+      <button onClick={() => setIsOpen(!isOpen)}>Toggle Menu</button>
+      {isOpen && (
+        <div className="absolute top-full left-0 bg-[#252526] border p-4 shadow-lg w-48">
+          Dropdown Content
+        </div>
+      )}
+    </div>
+  );
+}`}</CodeBlock>
+                        </div>
+                    </div>
+                </TopicModal>
+
                 <TopicModal title="Performance Optimization" emoji="⚡" color="#61DAFB" summary="React.memo, useMemo, useCallback, code splitting, virtualization">
                     <Paragraph>React re-render toàn bộ subtree khi state thay đổi. Đây là các kỹ thuật <Highlight>ngăn re-render không cần thiết</Highlight> và tối ưu performance:</Paragraph>
 

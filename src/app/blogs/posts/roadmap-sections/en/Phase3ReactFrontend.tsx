@@ -564,6 +564,191 @@ function useDebounce<T>(value: T, delay: number): T {
                     </Callout>
                 </TopicModal>
 
+                <TopicModal title="Essential Custom Hooks" emoji="⚛️" color="#38bdf8" summary="Must-know custom hooks: useDebounce, useThrottle, useCount, useOnClickOutside">
+                    <Paragraph>In real-world projects and interviews, you'll frequently need to write your own Custom Hooks to reuse logic. Here are 4 of the most popular required hooks and how to use them.</Paragraph>
+
+                    <div className="my-4 space-y-4">
+                        {/* useDebounce */}
+                        <div className="p-4 rounded-xl bg-[#252526] border border-[#3c3c3c]">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="text-xl">⏱️</span>
+                                <h4 className="text-[#38bdf8] font-bold text-lg">1. useDebounce</h4>
+                            </div>
+                            <div className="text-sm text-slate-300 mb-3">
+                                Delays updating a value until it has stopped changing for a specified time. Extremely useful for search inputs to avoid triggering excessive API calls.
+                            </div>
+                            <CodeBlock title="useDebounce.ts">{`import { useState, useEffect } from 'react';
+
+export function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    // Set timeout to update value
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    // Cleanup function: cancel timeout if value changes before delay
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+// 📖 Usage:
+function SearchComponent() {
+  const [search, setSearch] = useState('');
+  // Only call API when user stops typing for 500ms
+  const debouncedSearch = useDebounce(search, 500);
+
+  useEffect(() => {
+    if (debouncedSearch) {
+      console.log('Fetching data for:', debouncedSearch);
+    }
+  }, [debouncedSearch]);
+
+  return <input value={search} onChange={e => setSearch(e.target.value)} />;
+}`}</CodeBlock>
+                        </div>
+
+                        {/* useThrottle */}
+                        <div className="p-4 rounded-xl bg-[#252526] border border-[#3c3c3c]">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="text-xl">🚦</span>
+                                <h4 className="text-[#38bdf8] font-bold text-lg">2. useThrottle</h4>
+                            </div>
+                            <div className="text-sm text-slate-300 mb-3">
+                                Limits the number of times a value can update, ensuring it updates at most once within a given time frame. Great for window resize or scroll events.
+                            </div>
+                            <CodeBlock title="useThrottle.ts">{`import { useState, useEffect, useRef } from 'react';
+
+export function useThrottle<T>(value: T, limit: number): T {
+  const [throttledValue, setThrottledValue] = useState<T>(value);
+  const lastRan = useRef(Date.now());
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (Date.now() - lastRan.current >= limit) {
+        setThrottledValue(value);
+        lastRan.current = Date.now();
+      }
+    }, limit - (Date.now() - lastRan.current));
+
+    return () => clearTimeout(handler);
+  }, [value, limit]);
+
+  return throttledValue;
+}
+
+// 📖 Usage:
+function ScrollTracker() {
+  const [scrollY, setScrollY] = useState(0);
+  // Only update UI max once every 200ms
+  const throttledScroll = useThrottle(scrollY, 200);
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return <div>Throttled Scroll Position: {throttledScroll}</div>;
+}`}</CodeBlock>
+                        </div>
+
+                        {/* useCount */}
+                        <div className="p-4 rounded-xl bg-[#252526] border border-[#3c3c3c]">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="text-xl">🔢</span>
+                                <h4 className="text-[#38bdf8] font-bold text-lg">3. useCount</h4>
+                            </div>
+                            <div className="text-sm text-slate-300 mb-3">
+                                A simple state management hook for a counter, bundled with helper functions. Often used as a basic example in Custom Hook tutorials.
+                            </div>
+                            <CodeBlock title="useCount.ts">{`import { useState } from 'react';
+
+export function useCount(initialValue = 0) {
+  const [count, setCount] = useState(initialValue);
+
+  const increment = () => setCount((c) => c + 1);
+  const decrement = () => setCount((c) => c - 1);
+  const reset = () => setCount(initialValue);
+  const set = (value: number) => setCount(value);
+
+  return { count, increment, decrement, reset, set };
+}
+
+// 📖 Usage:
+function CounterComponent() {
+  const { count, increment, decrement, reset } = useCount(10);
+
+  return (
+    <div className="flex gap-2">
+      <button onClick={decrement}>-</button>
+      <span>{count}</span>
+      <button onClick={increment}>+</button>
+      <button onClick={reset}>Reset</button>
+    </div>
+  );
+}`}</CodeBlock>
+                        </div>
+
+                        {/* useOnClickOutside */}
+                        <div className="p-4 rounded-xl bg-[#252526] border border-[#3c3c3c]">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="text-xl">🖱️</span>
+                                <h4 className="text-[#38bdf8] font-bold text-lg">4. useOnClickOutside</h4>
+                            </div>
+                            <div className="text-sm text-slate-300 mb-3">
+                                Detects when a user clicks outside a specified component. This is critical for implementing Dropdowns, Modals, and Popovers.
+                            </div>
+                            <CodeBlock title="useOnClickOutside.ts">{`import { useEffect } from 'react';
+
+export function useOnClickOutside<T extends HTMLElement = HTMLElement>(
+  ref: React.RefObject<T>,
+  handler: (event: MouseEvent | TouchEvent) => void
+) {
+  useEffect(() => {
+    const listener = (event: MouseEvent | TouchEvent) => {
+      // Ignore if clicking inside the ref target
+      if (!ref.current || ref.current.contains(event.target as Node)) {
+        return;
+      }
+      handler(event);
+    };
+
+    document.addEventListener('mousedown', listener);
+    document.addEventListener('touchstart', listener);
+    return () => {
+      document.removeEventListener('mousedown', listener);
+      document.removeEventListener('touchstart', listener);
+    };
+  }, [ref, handler]); // Only re-run if ref or handler changes
+}
+
+// 📖 Usage:
+function Dropdown() {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Call handler (close menu) if user clicks outside <div ref={ref}>
+  useOnClickOutside(ref, () => setIsOpen(false));
+
+  return (
+    <div ref={ref} className="relative inline-block">
+      <button onClick={() => setIsOpen(!isOpen)}>Toggle Menu</button>
+      {isOpen && (
+        <div className="absolute top-full left-0 bg-[#252526] border p-4 shadow-lg w-48">
+          Dropdown Content
+        </div>
+      )}
+    </div>
+  );
+}`}</CodeBlock>
+                        </div>
+                    </div>
+                </TopicModal>
+
                 <TopicModal title="Performance Optimization" emoji="⚡" color="#61DAFB" summary="React.memo, useMemo, useCallback, code splitting, virtualization">
                     <Paragraph>React re-renders the entire subtree when state changes. Here are techniques to <Highlight>prevent unnecessary re-renders</Highlight> and optimize performance:</Paragraph>
 
