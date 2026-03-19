@@ -14,6 +14,14 @@ interface TopicModalProps {
 export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, children }: TopicModalProps) {
     const [open, setOpen] = useState(false)
     const { isDarkMode } = useThemeMode()
+    const [isLearned, setIsLearned] = useState(false)
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+        const saved = localStorage.getItem(`roadmap-learned-${title}`)
+        if (saved === 'true') setIsLearned(true)
+    }, [title])
 
     const close = useCallback(() => setOpen(false), [])
 
@@ -28,24 +36,58 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
         }
     }, [open, close])
 
+    const toggleLearned = (e?: React.MouseEvent) => {
+        if (e) e.stopPropagation()
+        const newState = !isLearned
+        setIsLearned(newState)
+        localStorage.setItem(`roadmap-learned-${title}`, String(newState))
+    }
+
     return (
         <>
             {/* Clickable Card */}
-            <button
-                onClick={() => setOpen(true)}
-                className="w-full text-left group flex items-start gap-3 p-3.5 rounded-xl bg-[var(--bg-tag)] border border-[var(--border-primary)]   transition-all duration-200 cursor-pointer"
-                style={{ boxShadow: open ? `0 0 20px ${color}20` : undefined }}
-            >
-                <span className="text-lg mt-0.5 shrink-0">{emoji}</span>
-                <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[color] transition flex items-center gap-2" style={{ color: open ? color : undefined }}>
-                        {title}
-                        <span className="text-xs text-[var(--text-muted)]  transition">← click</span>
+            <div className="relative group">
+                <button
+                    onClick={() => setOpen(true)}
+                    className={`w-full text-left flex items-start gap-3 p-3.5 pl-4 pr-12 rounded-xl border transition-all duration-200 cursor-pointer ${
+                        isLearned 
+                            ? 'bg-emerald-500/5 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.05)]' 
+                            : 'bg-[var(--bg-tag)] border-[var(--border-primary)]'
+                    }`}
+                    style={{ 
+                        boxShadow: open ? `0 0 20px ${color}20` : undefined,
+                        borderColor: isLearned ? undefined : (open ? color : undefined)
+                    }}
+                >
+                    <span className="text-lg mt-0.5 shrink-0 opacity-90">{emoji}</span>
+                    <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold transition flex items-center gap-2" style={{ color: isLearned ? '#34d399' : (open ? color : 'var(--text-primary)') }}>
+                            {title}
+                        </div>
+                        <div className={`text-xs mt-1 line-clamp-1 ${isLearned ? 'text-emerald-600/70 dark:text-emerald-400/60' : 'text-[var(--text-muted)]'}`}>
+                            {summary}
+                        </div>
                     </div>
-                    <div className="text-xs text-[var(--text-muted)] mt-0.5 line-clamp-1">{summary}</div>
-                </div>
-                <span className="text-[var(--text-dimmed)]  transition text-sm mt-1 shrink-0">→</span>
-            </button>
+                </button>
+                
+                {/* Checkmark Button */}
+                {mounted && (
+                    <button 
+                        onClick={toggleLearned}
+                        className={`absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all ${
+                            isLearned 
+                                ? 'text-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20 scale-110' 
+                                : 'text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10 opacity-0 group-hover:opacity-100 scale-90 hover:scale-100'
+                        }`}
+                        title={isLearned ? "Đã thuộc (Bấm để xoá)" : "Đánh dấu đã thuộc"}
+                        aria-label="Mark as learned"
+                    >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={isLearned ? 3 : 2} d="M5 13l4 4L19 7" />
+                        </svg>
+                    </button>
+                )}
+            </div>
 
             {/* Modal Overlay */}
             {open && (
@@ -54,38 +96,56 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
                     onClick={close}
                 >
                     {/* Backdrop */}
-                    <div className={`absolute inset-0 backdrop-blur-sm ${isDarkMode ? 'bg-black/70' : 'bg-black/50'}`} />
+                    <div className={`absolute inset-0 backdrop-blur-sm transition-opacity ${isDarkMode ? 'bg-black/70' : 'bg-black/50'}`} />
 
                     {/* Modal Content */}
                     <div
-                        className={`relative w-full max-w-2xl max-h-[85vh] rounded-2xl overflow-hidden border shadow-2xl ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}
+                        className={`relative w-full max-w-2xl max-h-[85vh] rounded-2xl overflow-hidden border shadow-2xl flex flex-col ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}
                         style={{ boxShadow: `0 0 60px ${color}15` }}
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Header */}
                         <div
-                            className={`sticky top-0 z-10 px-6 py-4 border-b flex items-center justify-between ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}
+                            className={`px-6 py-4 border-b flex items-center justify-between shrink-0 ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}
                             style={{ background: isDarkMode ? 'linear-gradient(135deg, #0f172a, #1e293b)' : 'linear-gradient(135deg, #f8fafc, #e2e8f0)' }}
                         >
                             <div className="flex items-center gap-3">
-                                <span className="text-xl">{emoji}</span>
-                                <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{title}</h3>
+                                <span className="text-2xl drop-shadow-sm">{emoji}</span>
+                                <h3 className={`text-lg font-bold tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{title}</h3>
                             </div>
-                            <button
-                                onClick={close}
-                                className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${isDarkMode ? 'bg-slate-700/50 hover:bg-slate-600/50 text-slate-400 hover:text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-900'}`}
-                            >
-                                ✕
-                            </button>
+                            <div className="flex items-center gap-2">
+                                {/* Mark as learned button inside modal */}
+                                <button
+                                    onClick={(e) => toggleLearned(e)}
+                                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                                        isLearned 
+                                            ? 'bg-emerald-500/20 text-emerald-500 hover:bg-emerald-500/30' 
+                                            : isDarkMode 
+                                                ? 'bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 hover:text-white' 
+                                                : 'bg-white text-slate-600 hover:bg-slate-50 shadow-sm border border-slate-200'
+                                    }`}
+                                >
+                                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={isLearned ? 3 : 2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    {isLearned ? 'Đã thuộc' : 'Đánh dấu đã thuộc'}
+                                </button>
+                                <button
+                                    onClick={close}
+                                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isDarkMode ? 'bg-slate-800/50 hover:bg-slate-700/50 text-slate-400 hover:text-white border border-white/5' : 'bg-white hover:bg-gray-100 text-gray-500 hover:text-gray-900 shadow-sm border border-gray-200'}`}
+                                >
+                                    ✕
+                                </button>
+                            </div>
                         </div>
 
                         {/* Gradient bar */}
-                        <div className="h-0.5 w-full" style={{ background: `linear-gradient(to right, ${color}, transparent)` }} />
+                        <div className="h-0.5 w-full shrink-0" style={{ background: `linear-gradient(to right, ${color}, transparent)` }} />
 
                         {/* Scrollable Body */}
                         <div
-                            className="overflow-y-auto p-6 space-y-4"
-                            style={{ maxHeight: 'calc(85vh - 73px)', background: isDarkMode ? '#0c1222' : '#ffffff' }}
+                            className="overflow-y-auto p-6 space-y-4 grow"
+                            style={{ background: isDarkMode ? '#0c1222' : '#ffffff' }}
                         >
                             {children}
                         </div>
