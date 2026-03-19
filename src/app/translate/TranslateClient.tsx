@@ -210,7 +210,7 @@ export default function TranslateClient() {
         }
     }, [])
 
-    // Debounce: chờ user ngưng gõ 800ms rồi mới dịch
+    // Debounce: chờ user ngưng gõ 500ms rồi mới dịch
     useEffect(() => {
         setCharCount(input.length)
         if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -220,7 +220,7 @@ export default function TranslateClient() {
         }
         debounceRef.current = setTimeout(() => {
             translate(input, from, to)
-        }, 2000)
+        }, 500)
         return () => {
             if (debounceRef.current) clearTimeout(debounceRef.current)
         }
@@ -262,9 +262,9 @@ export default function TranslateClient() {
             if (data.success) {
                 // Thêm item mới vào đầu danh sách (không cần fetch lại)
                 setSavedItems(prev => [data.item, ...prev])
-                // Hiệu ứng "Saved!" 1.5 giây
+                // Hiệu ứng "Saved!" 0.5 giây
                 setSavedFeedback(true)
-                setTimeout(() => setSavedFeedback(false), 1500)
+                setTimeout(() => setSavedFeedback(false), 500)
             }
         } catch {
             console.error('Failed to save vocabulary')
@@ -435,15 +435,14 @@ export default function TranslateClient() {
                 {wordType && !loading && (
                     <div className="mt-3 space-y-2 animate-in fade-in duration-300">
                         <div className="flex items-center gap-2">
-                            <span className={`px-2.5 py-1 text-xs font-medium rounded-full border ${
-                                wordType === 'noun' ? 'bg-blue-600/15 border-blue-500/30 text-blue-400' :
+                            <span className={`px-2.5 py-1 text-xs font-medium rounded-full border ${wordType === 'noun' ? 'bg-blue-600/15 border-blue-500/30 text-blue-400' :
                                 wordType === 'verb' ? 'bg-emerald-600/15 border-emerald-500/30 text-emerald-400' :
-                                wordType === 'adjective' ? 'bg-amber-600/15 border-amber-500/30 text-amber-400' :
-                                wordType === 'adverb' ? 'bg-purple-600/15 border-purple-500/30 text-cyan-400' :
-                                wordType === 'phrase' ? 'bg-cyan-600/15 border-cyan-500/30 text-cyan-400' :
-                                wordType === 'idiom' ? 'bg-rose-600/15 border-rose-500/30 text-rose-400' :
-                                'bg-slate-600/15 border-slate-500/30 text-slate-400'
-                            }`}>
+                                    wordType === 'adjective' ? 'bg-amber-600/15 border-amber-500/30 text-amber-400' :
+                                        wordType === 'adverb' ? 'bg-purple-600/15 border-purple-500/30 text-cyan-400' :
+                                            wordType === 'phrase' ? 'bg-cyan-600/15 border-cyan-500/30 text-cyan-400' :
+                                                wordType === 'idiom' ? 'bg-rose-600/15 border-rose-500/30 text-rose-400' :
+                                                    'bg-slate-600/15 border-slate-500/30 text-slate-400'
+                                }`}>
                                 {wordType}
                             </span>
                         </div>
@@ -469,7 +468,7 @@ export default function TranslateClient() {
                 >
                     {loading ? 'Translating...' : '🌐 Translate'}
                 </button>
-                <span className="text-xs text-slate-600">or auto after 2s</span>
+                <span className="text-xs text-slate-600">or auto after 0.5s</span>
             </div>
 
             {/* ───────── Saved Vocabulary List ───────── */}
@@ -498,42 +497,42 @@ export default function TranslateClient() {
                             const enText = isReversed ? item.translated : item.original
                             const viText = isReversed ? item.original : item.translated
                             return (
-                            <div
-                                key={item._id}
-                                onClick={() => setSelectedVocab(item)}
-                                className={`group grid grid-cols-[1fr_auto_1fr_auto] items-center gap-3 px-4 py-3 rounded-xl bg-slate-900/60 border border-white/5 hover:border-cyan-500/30 transition-colors cursor-pointer ${deletingId === item._id ? 'opacity-50' : ''
-                                    }`}
-                            >
-                                {/* English text */}
-                                <div className="min-w-0">
-                                    <span className="text-xs text-slate-500 mr-1">🇬🇧</span>
-                                    <span className="text-sm text-slate-300 break-words">{enText}</span>
-                                    {item.wordType && (
-                                        <span className="ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                                            {item.wordType}
-                                        </span>
-                                    )}
-                                </div>
-
-                                {/* Arrow */}
-                                <span className="text-slate-600 text-xs shrink-0">→</span>
-
-                                {/* Vietnamese text */}
-                                <div className="min-w-0">
-                                    <span className="text-xs text-slate-500 mr-1">🇻🇳</span>
-                                    <span className="text-sm text-white break-words">{viText}</span>
-                                </div>
-
-                                {/* Delete button */}
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); deleteVocabulary(item._id) }}
-                                    disabled={deletingId === item._id}
-                                    className="text-xs text-slate-600 hover:text-red-400 transition-all px-1 py-0.5 rounded shrink-0 md:opacity-0 md:group-hover:opacity-100"
-                                    title="Delete"
+                                <div
+                                    key={item._id}
+                                    onClick={() => setSelectedVocab(item)}
+                                    className={`group grid grid-cols-[1fr_auto_1fr_auto] items-center gap-3 px-4 py-3 rounded-xl bg-slate-900/60 border border-white/5 hover:border-cyan-500/30 transition-colors cursor-pointer ${deletingId === item._id ? 'opacity-50' : ''
+                                        }`}
                                 >
-                                    ✕
-                                </button>
-                            </div>
+                                    {/* English text */}
+                                    <div className="min-w-0">
+                                        <span className="text-xs text-slate-500 mr-1">🇬🇧</span>
+                                        <span className="text-sm text-slate-300 break-words">{enText}</span>
+                                        {item.wordType && (
+                                            <span className="ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                                {item.wordType}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Arrow */}
+                                    <span className="text-slate-600 text-xs shrink-0">→</span>
+
+                                    {/* Vietnamese text */}
+                                    <div className="min-w-0">
+                                        <span className="text-xs text-slate-500 mr-1">🇻🇳</span>
+                                        <span className="text-sm text-white break-words">{viText}</span>
+                                    </div>
+
+                                    {/* Delete button */}
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); deleteVocabulary(item._id) }}
+                                        disabled={deletingId === item._id}
+                                        className="text-xs text-slate-600 hover:text-red-400 transition-all px-1 py-0.5 rounded shrink-0 md:opacity-0 md:group-hover:opacity-100"
+                                        title="Delete"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
                             )
                         })}
                     </div>
@@ -574,11 +573,10 @@ export default function TranslateClient() {
                                     <button
                                         onClick={togglePush}
                                         disabled={pushLoading}
-                                        className={`px-4 py-1.5 text-xs font-medium rounded-lg transition-all ${
-                                            pushEnabled
-                                                ? 'bg-green-600/15 border border-green-500/30 text-green-400 hover:bg-red-600/15 hover:border-red-500/30 hover:text-red-400'
-                                                : 'bg-blue-600/15 border border-blue-500/30 text-blue-400 hover:bg-blue-600/25'
-                                        } disabled:opacity-50`}
+                                        className={`px-4 py-1.5 text-xs font-medium rounded-lg transition-all ${pushEnabled
+                                            ? 'bg-green-600/15 border border-green-500/30 text-green-400 hover:bg-red-600/15 hover:border-red-500/30 hover:text-red-400'
+                                            : 'bg-blue-600/15 border border-blue-500/30 text-blue-400 hover:bg-blue-600/25'
+                                            } disabled:opacity-50`}
                                     >
                                         {pushLoading ? '...' : pushEnabled ? '✓ Đang bật' : 'Bật nhắc'}
                                     </button>
