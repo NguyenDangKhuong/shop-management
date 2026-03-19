@@ -143,20 +143,21 @@ export default function LandingPage() {
             <link rel="preconnect" href="https://images.unsplash.com" />
             <link rel="dns-prefetch" href="https://images.unsplash.com" />
 
-            <div className="font-sans min-h-screen flex flex-col items-center p-4 md:p-8 relative transition-colors duration-300" style={{ backgroundColor: 'var(--bg-page)', color: 'var(--text-primary)' }}>
+            <div className="font-sans min-h-screen flex flex-col items-center relative transition-colors duration-300" style={{ backgroundColor: 'var(--bg-page)', color: 'var(--text-primary)' }}>
                 <SiteHeader
                     maxWidth="max-w-6xl"
+                    noPadding
                     rightSlot={
                         <>
                             <LanguageSwitcher lang={language} onToggle={() => setLanguage(language === 'en' ? 'vi' : 'en')} />
                             {!isStandalone && (
                                 <Link
                                     href={loginUrl}
-                                    className="group relative px-6 py-2 rounded-full bg-[var(--bg-tag)] border border-[var(--border-primary)] overflow-hidden transition-all hover:border-[#38bdf8]/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]"
+                                    className="group relative px-3 py-2 md:px-6 rounded-full bg-[var(--bg-tag)] border border-[var(--border-primary)] overflow-hidden transition-all hover:border-[#38bdf8]/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]"
                                 >
                                     <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                                     <span className="relative font-medium text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] flex items-center gap-2">
-                                        {t('landing.login')}
+                                        <span className="hidden md:inline">{t('landing.login')}</span>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
@@ -178,7 +179,7 @@ export default function LandingPage() {
                     }
                 />
 
-                <main className="max-w-6xl w-full mx-auto relative z-10">
+                <main className="max-w-6xl w-full mx-auto relative z-10 px-4 md:px-8 mt-4 md:mt-8">
                     {/* ═══ TOP BENTO GRID ═══ */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Left Column - Hero & About */}
@@ -510,7 +511,7 @@ export default function LandingPage() {
                 </main>
 
                 {/* Footer with Terms and Privacy Policy */}
-                <footer className="w-full max-w-6xl mx-auto mt-12 pt-8 pb-6 border-t border-[var(--border-primary)] z-20">
+                <footer className="w-full max-w-6xl mx-auto mt-12 pt-8 pb-6 border-t border-[var(--border-primary)] z-20 px-4 md:px-8">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
                         <p className="text-[var(--text-secondary)]">
                             {t('landing.footer')}
