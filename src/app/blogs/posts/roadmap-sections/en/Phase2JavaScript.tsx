@@ -1999,6 +1999,19 @@ Function.prototype.myApply = function(context, args = []) {
                 </TopicModal>
 
                 <TopicModal title="Promise & Promise.all" emoji="💻" color="#fbbf24" summary="Implement Promise from scratch — the most classic interview question">
+                    <Heading3>Memory Trick: Ordering Pizza 🍕</Heading3>
+                    <Paragraph>
+                        <strong>Promise</strong> is like calling to order a pizza. The shop says "It'll be there in 15 mins" (returns a Promise). Right now, your stomach is in a <strong>Pending</strong> state (waiting). If the hot pizza arrives successfully → <strong>Fulfilled</strong> (resolve). If the delivery guy crashes or the shop is closed → <strong>Rejected</strong>.
+                    </Paragraph>
+                    <div className="my-3 space-y-2 text-sm">
+                        <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                            <strong className="text-yellow-400">Promise.all (Strict Party):</strong> You ask 3 friends to buy: Pizza, Fried Chicken, and Boba. You wait until ALL 3 items arrive before eating. If the friend buying Boba gets a flat tire (1 fails) 👉 Party is cancelled, everyone starves! (Promise.all fails immediately).
+                        </div>
+                        <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                            <strong className="text-blue-400">Promise.allSettled (Chill Party):</strong> Still waiting for 3 friends. One brings food happily, another comes back empty-handed and angry... No problem, wait for everyone to report back, then just eat whatever made it!
+                        </div>
+                    </div>
+
                     <Heading3>How to Use</Heading3>
                     <CodeBlock title="Promise basics">{`// Create a Promise
 const promise = new Promise((resolve, reject) => {
@@ -2168,6 +2181,16 @@ window.addEventListener('scroll', throttle(handleScroll, 100));`}</CodeBlock>
                 </TopicModal>
 
                 <TopicModal title="Deep clone / Deep equal" emoji="💻" color="#fbbf24" summary="Compare and copy nested objects — shallow vs deep distinction">
+                    <Heading3>Analogy: House Key vs. Building a New House 🏠</Heading3>
+                    <div className="my-3 space-y-2 text-sm">
+                        <div className="p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+                            <strong className="text-orange-400">Shallow Copy (Copying the Key):</strong> You cut an extra house key for your roommate. You both have 2 keys but share THE EXACT SAME HOUSE (Share reference at deeper levels). If your roommate accidentally smashes the TV, you&apos;ll come home to a broken TV too!
+                        </div>
+                        <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                            <strong className="text-emerald-400">Deep Copy (Cloning the Mansion):</strong> You hire a contractor to build an EXACT CLONE of your mansion, down to the furniture and the TV, on a completely different plot of land. If your roommate burns down the cloned house, your real house remains 100% intact!
+                        </div>
+                    </div>
+
                     <Heading3>How to Use</Heading3>
                     <CodeBlock title="3 built-in cloning methods in JS">{`const obj = { a: { b: 1 }, c: [2, 3] }
 
@@ -2219,6 +2242,17 @@ console.log(obj.a.b) // 1 — NOT affected! ✅
                 </TopicModal>
 
                 <TopicModal title="Event Emitter (pub/sub)" emoji="💻" color="#fbbf24" summary="Core pattern of Node.js, React, and every event system">
+                    <Heading3>Memory Trick: YouTube Subscription 📺</Heading3>
+                    <Paragraph>
+                        This core design pattern is exactly like subscribing to a YouTube channel. You (the listener - Subscriber) click the Subscribe button (<InlineCode>on()</InlineCode>) for your favorite channels (events - Publisher).
+                    </Paragraph>
+                    <ul className="list-disc pl-5 my-3 space-y-1 text-sm text-slate-300">
+                        <li><strong className="text-pink-400">on(&apos;new_video&apos;, watchVideo)</strong>: Subscribe to a channel. Whenever the channel uploads a new video, the platform rings your bell by running your <InlineCode>watchVideo</InlineCode> function.</li>
+                        <li><strong className="text-blue-400">emit(&apos;new_video&apos;, link)</strong>: The YouTuber just posted! The system checks the subscriber list and broadcasts the notification to EVERY SINGLE SUBSCRIBER (loops over listener array and executes).</li>
+                        <li><strong className="text-gray-400">off(&apos;new_video&apos;, watchVideo)</strong>: Got bored → Unsubscribe! Remove your name from the notification list to stop being bothered.</li>
+                        <li><strong className="text-yellow-400">once(...)</strong>: Registering for a GiveAway. You receive the prize once, and then you automatically Unsubscribe from the channel immediately!</li>
+                    </ul>
+
                     <CodeBlock title="EventEmitter">{`class EventEmitter {
     constructor() {
         this.events = {};
@@ -2259,6 +2293,14 @@ bus.emit('message', 'Hello!'); // "Hello!"`}</CodeBlock>
                 </TopicModal>
 
                 <TopicModal title="Curry function" emoji="💻" color="#fbbf24" summary="Transform f(a,b,c) into f(a)(b)(c) — functional programming pattern">
+                    <Heading3>Memory Trick: Automated Boba Machine 🧋</Heading3>
+                    <Paragraph>
+                        A normal function is like a traditional boba shop: You have to declare all 3 ingredients at once <InlineCode>makeBoba(tea, sugar, ice)</InlineCode> before the cashier starts making your drink.
+                    </Paragraph>
+                    <Paragraph>
+                        <strong>Curry</strong> is like a smart, 3-station automated machine. Station 1 takes the <InlineCode>tea</InlineCode> and spits out a cup waiting for station 2. You go buy some snacks, come back to station 2, put in <InlineCode>sugar</InlineCode>, and the machine spits out the cup waiting for station 3. You go to station 3 and put in <InlineCode>ice</InlineCode>. The machine sees it <strong>HAS ALL INGREDIENTS (<InlineCode>args.length &gt;= fn.length</InlineCode>)</strong>, so it fires up and finishes your boba! Extremely flexible when you want to save configurations (partial application).
+                    </Paragraph>
+
                     <CodeBlock title="curry">{`function curry(fn) {
     return function curried(...args) {
         if (args.length >= fn.length) {
@@ -2288,6 +2330,11 @@ errorNow('Database down!');`}</CodeBlock>
                 </TopicModal>
 
                 <TopicModal title="Flatten array / object" emoji="💻" color="#fbbf24" summary="Flatten nested arrays/objects — commonly asked at Google, Meta">
+                    <Heading3>Memory Trick: Unboxing Russian Nesting Dolls (Matryoshka) 🪆</Heading3>
+                    <Paragraph>
+                        Array Flat is like being gifted a 10-layer Russian nesting doll, or those prank boxes hiding an engagement ring deep inside. <strong>Flatten</strong> means taking a hammer, smashing all the bulky, unnecessary outer boxes (nested arrays), picking up only the valuable core parts (items) inside, and tossing them all into a single, large basket (1D array).
+                    </Paragraph>
+
                     <Heading3>How to Use</Heading3>
                     <CodeBlock title="Built-in Flatten in JS">{`// Array.flat() — built-in since ES2019
 [1, [2, [3, [4]]]].flat()       // [1, 2, [3, [4]]]  — default depth=1

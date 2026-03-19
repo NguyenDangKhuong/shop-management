@@ -2027,6 +2027,19 @@ Function.prototype.myApply = function(context, args = []) {
                 </TopicModal>
 
                 <TopicModal title="Promise & Promise.all" emoji="💻" color="#fbbf24" summary="Implement Promise từ scratch — câu hỏi kinh điển nhất">
+                    <Heading3>Mẹo nhớ: Đặt bánh Pizza 🍕</Heading3>
+                    <Paragraph>
+                        <strong>Promise</strong> giống như bạn gọi điện đặt Pizza. Tiệm báo "Dạ 15 phút nữa có" (trả về 1 Promise). Lúc này bụng bạn ở trạng thái <strong>Pending</strong> (chờ đợi). Nếu bánh giao tới nóng hổi thơm phức → <strong>Fulfilled</strong> (resolve). Nếu shipper tông xe rớt bánh hoặc tiệm đóng cửa → <strong>Rejected</strong>.
+                    </Paragraph>
+                    <div className="my-3 space-y-2 text-sm">
+                        <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                            <strong className="text-yellow-400">Promise.all (Mở tiệc khắt khe):</strong> Nhờ 3 đứa bạn đi mua: Pizza, Gà Rán, Trà Sữa. Đợi ĐỦ CẢ 3 món đem về mới ăn. Lỡ thằng mua Trà Sữa bị xì lốp (fail 1 cái) 👉 Dẹp tiệc luôn, nhịn đói tập thể! (Promise.all fail hoàn toàn tức thì).
+                        </div>
+                        <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                            <strong className="text-blue-400">Promise.allSettled (Tiệc du di):</strong> Vẫn chờ 3 đứa đi mua. Có đứa mang đồ về vui vẻ, có đứa về mặt nhăn nhó báo huỷ... Không sao, đợi 3 đứa quay về báo cáo tình hình đủ mặt là trải bạt, có gì ăn nấy!
+                        </div>
+                    </div>
+
                     <Heading3>Cách dùng</Heading3>
                     <CodeBlock title="Promise cơ bản">{`// Tạo Promise
 const promise = new Promise((resolve, reject) => {
@@ -2196,6 +2209,16 @@ window.addEventListener('scroll', throttle(handleScroll, 100));`}</CodeBlock>
                 </TopicModal>
 
                 <TopicModal title="Deep clone / Deep equal" emoji="💻" color="#fbbf24" summary="So sánh và copy object lồng nhau — phân biệt shallow vs deep">
+                    <Heading3>So sánh: Chìa khoá nhà vs Xây nhà mới 🏠</Heading3>
+                    <div className="my-3 space-y-2 text-sm">
+                        <div className="p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+                            <strong className="text-orange-400">Shallow Copy (Photo chìa khoá):</strong> Bạn ra tiệm cắt thêm 1 cái chìa khoá nhà đưa cho bạn cùng phòng. Hai người nắm 2 chìa nhưng chung CÙNG MỘT CĂN NHÀ (Share reference cấp sâu). Nếu thằng bạn lỡ làm hỏng TV, bạn về nhà cũng thấy cái TV nát bươm!
+                        </div>
+                        <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                            <strong className="text-emerald-400">Deep Copy (Xây biệt thự clone):</strong> Bạn thuê thầu xây một căn biệt thự Y CHANG bản gốc, từ TV tủ lạnh nội thất y chang ở một mảnh đất xa sôi. Thằng bạn có đốt cái nhà clone thì nhà thật của bạn vẫn nguyên vẹn 100%!
+                        </div>
+                    </div>
+
                     <Heading3>Cách dùng</Heading3>
                     <CodeBlock title="3 cách clone có sẵn trong JS">{`const obj = { a: { b: 1 }, c: [2, 3] }
 
@@ -2247,6 +2270,17 @@ console.log(obj.a.b) // 1 — KHÔNG bị ảnh hưởng! ✅
                 </TopicModal>
 
                 <TopicModal title="Event Emitter (pub/sub)" emoji="💻" color="#fbbf24" summary="Pattern cốt lõi của Node.js, React, và mọi event system">
+                    <Heading3>Mẹo nhớ: Đăng ký kênh YouTube 📺</Heading3>
+                    <Paragraph>
+                        Pattern này là nguyên lý thiết kế kinh điển, giống hệt việc Subscribe kênh YouTube. Bạn (listener - Subscriber) bấm nút Theo dõi (<InlineCode>on()</InlineCode>) các kênh yêu thích (events - Publisher). 
+                    </Paragraph>
+                    <ul className="list-disc pl-5 my-3 space-y-1 text-sm text-slate-300">
+                        <li><strong className="text-pink-400">on(&apos;video_moi&apos;, xemVideo)</strong>: Ký giấy theo dõi một kênh. Khi kênh upload video mới, nền tảng sẽ gọi hàm <InlineCode>xemVideo</InlineCode> của bạn để réo chuông.</li>
+                        <li><strong className="text-blue-400">emit(&apos;video_moi&apos;, link)</strong>: YouTuber vừa đăng clip! Hệ thống vạch danh sách những ai đã đăng ký, rải thông báo đến tận mặt TẤT CẢ bọn họ (loop qua array listeners và execute).</li>
+                        <li><strong className="text-gray-400">off(&apos;video_moi&apos;, xemVideo)</strong>: Coi chán, tuột luýt → Unsubscribe! Rút tên khỏi danh sách báo động để khỏi bị làm phiền.</li>
+                        <li><strong className="text-yellow-400">once(...)</strong>: Đăng ký nhận GiveAway. Trúng quà xong 1 phát là tự động Auto Block / Unsubscribe channel ngay và luôn!</li>
+                    </ul>
+
                     <CodeBlock title="EventEmitter">{`class EventEmitter {
     constructor() {
         this.events = {};
@@ -2287,6 +2321,14 @@ bus.emit('message', 'Hello!'); // "Hello!"`}</CodeBlock>
                 </TopicModal>
 
                 <TopicModal title="Curry function" emoji="💻" color="#fbbf24" summary="Transform f(a,b,c) thành f(a)(b)(c) — functional programming pattern">
+                    <Heading3>Mẹo nhớ: Dây chuyền pha trà sữa tự động 🧋</Heading3>
+                    <Paragraph>
+                        Hàm bình thường giống như tiệm trà sữa pha tay truyền thống: Khách đến phải khai báo đủ 3 nguyên liệu cùng 1 lúc <InlineCode>phaTraSua(tra, duong, da)</InlineCode> thì cô bán hàng mới bắt đầu làm ly nước.
+                    </Paragraph>
+                    <Paragraph>
+                        <strong>Curry</strong> giống như máy pha tự động thông minh 3 trạm. Trạm 1 nhận loại <InlineCode>tra</InlineCode> xong, nhả ra chiếc ly chờ trạm 2. Bạn đi mua bánh, quay lại trạm 2 bỏ <InlineCode>duong</InlineCode> vào, máy nhả ra ly chờ trạm 3. Sang trạm 3 cho <InlineCode>da</InlineCode> vào, máy thấy <strong>ĐÃ ĐỦ NGUYÊN LIỆU (<InlineCode>args.length &gt;= fn.length</InlineCode>)</strong> thì MÁY CHẠY CÁI BÙM, pha xong ly trà sữa! Rất linh hoạt khi bạn muốn lưu cấu hình (partial application).
+                    </Paragraph>
+
                     <CodeBlock title="curry">{`function curry(fn) {
     return function curried(...args) {
         if (args.length >= fn.length) {
@@ -2316,6 +2358,11 @@ errorNow('Database down!');`}</CodeBlock>
                 </TopicModal>
 
                 <TopicModal title="Flatten array / object" emoji="💻" color="#fbbf24" summary="Làm phẳng array/object lồng nhau — câu hỏi hay gặp ở Google, Meta">
+                    <Heading3>Mẹo nhớ: Đập hộp búp bê Nga (Matryoshka) 🪆</Heading3>
+                    <Paragraph>
+                        Array Flat giống như bạn được tặng một con búp bê Nga lồng nhau 10 lớp, hay mấy hộp quà troll giấu cái nhẫn sâu tận hộp thứ n. <strong>Flatten</strong> nghĩa là bạn cầm cây búa đập vỡ nát hết tất cả các vỏ hộp rườm rà cồng kềnh đó (nested arrays), chỉ nhặt đúng cái phần ruột giá trị (item) bên trong cùng, gom hết vào một cái rổ lớn duy nhất (mảng 1 chiều).
+                    </Paragraph>
+
                     <Heading3>Cách dùng</Heading3>
                     <CodeBlock title="Flatten có sẵn trong JS">{`// Array.flat() — built-in từ ES2019
 [1, [2, [3, [4]]]].flat()       // [1, 2, [3, [4]]]  — mặc định depth=1
