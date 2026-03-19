@@ -214,33 +214,41 @@ for (var i = 0; i < 5; i++) {
 
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-pink-500/10 border border-pink-500/20">
-                            <div className="text-pink-400 font-bold text-sm">{'🏠 Ví dụ: "Nhà của tôi"'}</div>
-                            <div className="text-slate-300 text-sm mt-1 font-mono">
-                                {'👨 Khuong nói "nhà của tôi" → nhà Khuong'}<br />
-                                {'👩 Lan nói "nhà của tôi" → nhà Lan'}<br />
-                                {'📞 Khuong nhờ Lan nói "nhà của tôi" → nhà LAN (không phải Khuong!)'}<br /><br />
-                                <strong>{'this = chữ "tôi" — thay đổi tùy ai đang gọi function'}</strong>
+                            <div className="text-pink-400 font-bold text-sm">{'1️⃣ Default (Gọi hàm trơn) = Nói giữa trời'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Tự nhiên có tiếng "tôi đói" vang lên vô định → Trình duyệt gán "tôi" cho Ông Trời (window). '}
+                                <em>(Strict Mode thì ông trời cũng bó tay → undefined)</em>
                             </div>
                         </div>
 
-                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                            <div className="text-red-400 font-bold text-sm">{'🔴 Regular Function = Viết trên giấy ✍️'}</div>
+                        <div className="p-3 rounded-lg bg-sky-500/10 border border-sky-500/20">
+                            <div className="text-sky-400 font-bold text-sm">{'2️⃣ Implicit (Dấu chấm) = Có chủ xớn xác'}</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                {'Bạn viết câu "nhà của tôi" lên giấy → đưa cho người khác đọc → "tôi" = người đọc, không phải bạn!'}<br />
-                                {'→ '}<strong>this thay đổi</strong>{' tùy AI đang gọi function'}
+                                <InlineCode>khuong.sayHi()</InlineCode> {'→ Khương đứng ra nói chữ "tôi" → this = khuong.'}
                             </div>
                         </div>
 
-                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                            <div className="text-green-400 font-bold text-sm">{'🟢 Arrow Function = Ghi âm giọng nói 🎙️'}</div>
+                        <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                            <div className="text-emerald-400 font-bold text-sm">{'3️⃣ Explicit (call/apply/bind) = Bắt ép người khác nói'}</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                {'Bạn ghi âm câu "nhà của tôi" → dù ai bấm play, giọng vẫn là của bạn'}<br />
-                                {'→ '}<strong>this cố định</strong>{' = nơi arrow function được TẠO RA'}
+                                <InlineCode>sayHi.call(sếp)</InlineCode> {'→ Chĩa súng bắt sếp nói chữ "tôi" → this = sếp.'} 
+                            </div>
+                        </div>
+                        
+                        <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                            <div className="text-amber-400 font-bold text-sm">{'4️⃣ New (Dùng từ khoá new) = Đẻ ra đứa bé mới'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                <InlineCode>new User()</InlineCode> {'→ Đẻ ra 1 object mới. Tiếng khóc chào đời nhận diện "tôi" chính là cơ thể nó → this = instance mới tạo.'} 
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 mt-2">
+                            <div className="text-red-400 font-bold text-sm">{'🚫 Arrow Function = Mất dây thanh quản'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Arrow function KHÔNG có chữ "tôi" riêng. Nó sẽ mượn luôn chữ "tôi" của cái hàm (hoặc scope) bọc ngoài nó! Vô cùng hữu ích cho callbacks.'}
                             </div>
                         </div>
                     </div>
-
-                    <Paragraph><Highlight>Arrow function</Highlight> KHÔNG có this riêng — nó kế thừa this từ scope cha (lexical this). Đây là lý do arrow function phù hợp cho callbacks.</Paragraph>
                     <CodeBlock title="this-theo-tung-rule.js">{`// 1️⃣ Default binding — this = window (browser) / undefined (strict mode)
 function showThis() {
     console.log(this);
@@ -291,6 +299,33 @@ const team = {
 team.show();
 // "Khuong thuộc team Frontend"
 // "Lan thuộc team Frontend"`}</CodeBlock>
+
+                    <Heading3>Câu chuyện Mượn Xe (call / apply / bind)</Heading3>
+                    <Paragraph>Để dễ nhớ, hãy tưởng tượng hàm <InlineCode>drive()</InlineCode> là <strong>hành động lái xe</strong>. Bạn đang đứng vỉa hè (không có xe - thiếu <InlineCode>this</InlineCode>), trong khi thằng bạn lại <strong>có xe (<InlineCode>this</InlineCode>)</strong>. Bạn mượn xe nó đi phượt:</Paragraph>
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                            <div className="text-orange-400 font-bold text-sm">🚗 call = Chạy NGAY lập tức (C = Comma / Phẩy)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                Mượn xe <strong>bấm ga chạy luôn</strong>. Đồ đạc mang theo bạn ném rời rạc từng món vô xe cách nhau bằng <strong>dấu phẩy</strong>.<br />
+                                👉 <InlineCode>drive.call(xe_của_bạn, 'chìa_khoá', 'bản_đồ')</InlineCode>
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">🎒 apply = Chạy NGAY lập tức (A = Array / Mảng balo)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                Y chang call (mượn chạy luôn). Khác cái là đồ đạc bạn gom hết gọn gàng vào 1 <strong>cái balo (Array)</strong> rồi quăng rụp vô cốp xe cho lẹ.<br />
+                                👉 <InlineCode>drive.apply(xe_của_bạn, ['chìa_khoá', 'bản_đồ'])</InlineCode>
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-teal-500/10 border border-teal-500/20">
+                            <div className="text-teal-400 font-bold text-sm">📝 bind = Làm giấy uỷ quyền sang tên (B = Bind / Trói buộc)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                Làm thủ tục uỷ quyền mượn xe. <strong>CHƯA ĐƯỢC CHẠY NGAY!</strong> Nó chỉ trả về 1 tờ giấy uỷ quyền (function MỚI đóng cứng <InlineCode>this</InlineCode>). Bạn đút túi, chừng nào thích mới lôi ra xài.<br />
+                                👉 <InlineCode>const myDrive = drive.bind(xe_của_bạn, 'chìa_khoá')</InlineCode> (chưa chạy nha!)<br />
+                                👉 <InlineCode>myDrive('bản_đồ')</InlineCode> (lúc này mới gọi báo là xe chạy nè)
+                            </div>
+                        </div>
+                    </div>
 
                     <CodeBlock title="call-bind-apply.js">{`// 🎯 call, bind, apply — 3 cách "ép" this cho function
 //
@@ -2126,6 +2161,24 @@ window.addEventListener('scroll',
 // Ví dụ: search input — chỉ gọi API sau khi user ngừng gõ 300ms
 const search = debounce((query) => fetch(\`/api?q=\${query}\`), 300);
 input.addEventListener('input', (e) => search(e.target.value));`}</CodeBlock>
+                    <div className="my-4 border-t border-white/10 pt-4">
+                        <Paragraph>
+                            Ngược lại, hãy tưởng tượng <strong>Throttle như việc nhỏ thuốc nhỏ mắt 💧</strong>: 
+                            <em>Bác sĩ dặn "mỗi 4 tiếng nhỏ đúng 1 lần". Dù bạn có bấm chai thuốc liên tục 100 lần trong 4 tiếng đó, nước mắt cũng chỉ chảy ra đúng 1 giọt đầu tiên, sau đó chai thuốc bị "khoá". Đợi đúng 4 tiếng sau, chai thuốc mới mở khoá cho giọt tiếp theo.</em>
+                        </Paragraph>
+
+                        <div className="my-3 space-y-2">
+                            <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                                <strong className="text-[#fbbf24]">Bước 1: Tự ghi nhớ thời điểm cuối (Closure)</strong><br/>
+                                Dùng biến <InlineCode>lastTime</InlineCode> để nhớ "lần cúp cầu dao" gần nhất là khi nào. Ban đầu gán = 0 để lần test đầu tiên chắc chắn chạy ngay.
+                            </div>
+                            <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                                <strong className="text-[#fbbf24]">Bước 2: So sánh thời gian</strong><br/>
+                                Mỗi lần user thao tác, lấy hệ thống <InlineCode>Date.now()</InlineCode> trừ đi <InlineCode>lastTime</InlineCode>. Nếu khoảng cách đã lớn hơn <InlineCode>interval</InlineCode> (đã qua đủ chu kỳ), thì cho phép gọi hàm gốc, và lập tức cập nhật <InlineCode>lastTime</InlineCode> bằng giờ hiện tại để dội lại phong toả tập 2!
+                            </div>
+                        </div>
+                    </div>
+
                     <CodeBlock title="throttle — chạy tối đa 1 lần / interval">{`function throttle(fn, interval) {
     let lastTime = 0;
     return function(...args) {

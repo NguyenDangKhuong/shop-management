@@ -215,28 +215,38 @@ for (var i = 0; i < 5; i++) {
 
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-pink-500/10 border border-pink-500/20">
-                            <div className="text-pink-400 font-bold text-sm">{'🏠 Example: "My house"'}</div>
-                            <div className="text-slate-300 text-sm mt-1 font-mono">
-                                {'👨 Khuong says "my house" → Khuong\'s house'}<br />
-                                {'👩 Lan says "my house" → Lan\'s house'}<br />
-                                {'📞 Khuong asks Lan to say "my house" → LAN\'s house (not Khuong\'s!)'}<br /><br />
-                                <strong>{'this = the word "me" — changes based on who\'s calling the function'}</strong>
+                            <div className="text-pink-400 font-bold text-sm">{'1️⃣ Default Binding = Speaking into the void'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'A voice suddenly says "I am hungry" with no one around → The browser assigns "I" to the Global Object (window). '}
+                                <em>(In Strict Mode, it\'s undefined)</em>
                             </div>
                         </div>
 
-                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                            <div className="text-red-400 font-bold text-sm">{'🔴 Regular Function = Writing on paper ✍️'}</div>
+                        <div className="p-3 rounded-lg bg-sky-500/10 border border-sky-500/20">
+                            <div className="text-sky-400 font-bold text-sm">{'2️⃣ Implicit Binding (dot notation) = The direct speaker'}</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                {'You write "my house" on paper → give it to someone else to read → "me" = the reader, not you!'}<br />
-                                {'→ '}<strong>this changes</strong>{' depending on WHO is calling the function'}
+                                <InlineCode>khuong.sayHi()</InlineCode> {'→ Khuong is the one saying "I" → this = khuong.'}
                             </div>
                         </div>
 
-                        <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                            <div className="text-green-400 font-bold text-sm">{'🟢 Arrow Function = Voice recording 🎙️'}</div>
+                        <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                            <div className="text-emerald-400 font-bold text-sm">{'3️⃣ Explicit Binding (call/apply/bind) = Forcing someone to speak'}</div>
                             <div className="text-slate-300 text-sm mt-1">
-                                {'You record "my house" with your voice → whoever presses play, the voice is still yours'}<br />
-                                {'→ '}<strong>this is fixed</strong>{' = where the arrow function was CREATED'}
+                                <InlineCode>sayHi.call(boss)</InlineCode> {'→ Forcing the boss to say "I" → this = boss.'} 
+                            </div>
+                        </div>
+                        
+                        <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                            <div className="text-amber-400 font-bold text-sm">{'4️⃣ New Binding = Birth of a new instance'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                <InlineCode>new User()</InlineCode> {'→ Creates a new object. Its first cry recognizes "I am this baby" → this = newly created instance.'} 
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 mt-2">
+                            <div className="text-red-400 font-bold text-sm">{'🚫 Arrow Function = Lost its voice'}</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                {'Arrow functions DO NOT have their own "I". They borrow the "I" from the surrounding function or scope! Very useful for callbacks.'}
                             </div>
                         </div>
                     </div>
@@ -292,6 +302,33 @@ const team = {
 team.show();
 // "Khuong belongs to team Frontend"
 // "Lan belongs to team Frontend"`}</CodeBlock>
+
+                    <Heading3>The "Borrowing a Car" Analogy (call / apply / bind)</Heading3>
+                    <Paragraph>To easily remember, imagine the function <InlineCode>drive()</InlineCode> as <strong>the act of driving</strong>. You are standing on the sidewalk (no car — missing <InlineCode>this</InlineCode>), while your friend <strong>has a car (<InlineCode>this</InlineCode>)</strong>. You want to borrow their car for a road trip:</Paragraph>
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                            <div className="text-orange-400 font-bold text-sm">🚗 call = Drive IMMEDIATELY (C = Comma)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                You borrow the car and <strong>hit the gas immediately</strong>. The items you brought (arguments) are tossed into the car one by one, separated by a <strong>comma</strong>.<br />
+                                👉 <InlineCode>drive.call(your_friend_car, 'key', 'map')</InlineCode>
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm">🎒 apply = Drive IMMEDIATELY (A = Array)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                Exactly like call (drive immediately), but your items are neatly packed into a <strong>backpack (Array)</strong> and thrown into the trunk all at once.<br />
+                                👉 <InlineCode>drive.apply(your_friend_car, ['key', 'map'])</InlineCode>
+                            </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-teal-500/10 border border-teal-500/20">
+                            <div className="text-teal-400 font-bold text-sm">📝 bind = Transfer of authorization (B = Bind)</div>
+                            <div className="text-slate-300 text-sm mt-1">
+                                You sign a paper of authorization. <strong>YOU DON'T DRIVE YET!</strong> It just returns a paper (a NEW function with <InlineCode>this</InlineCode> locked in). You put it in your pocket and use it later when you want to.<br />
+                                👉 <InlineCode>const myDrive = drive.bind(your_friend_car, 'key')</InlineCode> (not driving yet!)<br />
+                                👉 <InlineCode>myDrive('map')</InlineCode> (now you drive)
+                            </div>
+                        </div>
+                    </div>
 
                     <CodeBlock title="call-bind-apply.js">{`// 🎯 call, bind, apply — 3 ways to "force" this for a function
 //
@@ -2096,6 +2133,24 @@ window.addEventListener('scroll',
 // Example: search input — only call API after user stops typing for 300ms
 const search = debounce((query) => fetch(\`/api?q=\${query}\`), 300);
 input.addEventListener('input', (e) => search(e.target.value));`}</CodeBlock>
+                    <div className="my-4 border-t border-white/10 pt-4">
+                        <Paragraph>
+                            Conversely, imagine <strong>Throttle as using eye drops 💧</strong>: 
+                            <em>The doctor tells you to "use exactly 1 drop every 4 hours." Even if you squeeze the bottle 100 times continuously within those 4 hours, only the first drop will come out, and then the bottle "locks" itself. Wait exactly 4 hours, and the bottle unlocks for the next drop.</em>
+                        </Paragraph>
+
+                        <div className="my-3 space-y-2">
+                            <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                                <strong className="text-[#fbbf24]">Step 1: Remember the last time (Closure)</strong><br/>
+                                Use the <InlineCode>lastTime</InlineCode> variable to remember when the function was last executed. Initialize it to 0 so the first call runs immediately.
+                            </div>
+                            <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                                <strong className="text-[#fbbf24]">Step 2: Check time elapsed</strong><br/>
+                                Every time the user acts, subtract <InlineCode>lastTime</InlineCode> from <InlineCode>Date.now()</InlineCode>. If the elapsed time is greater than the <InlineCode>interval</InlineCode> (4 hours have passed), allow the original function to run, and immediately update <InlineCode>lastTime</InlineCode> to the current time to start a new lockdown!
+                            </div>
+                        </div>
+                    </div>
+
                     <CodeBlock title="throttle — execute at most once per interval">{`function throttle(fn, interval) {
     let lastTime = 0;
     return function(...args) {
