@@ -2091,12 +2091,35 @@ window.addEventListener('scroll',
 // Debounce = Thang máy 🛗  → chờ hết người vào mới đóng cửa
 // Throttle = Nhịp tim  💓  → đều đặn, không nhanh hơn tần suất đã set`}</CodeBlock>
 
-                    <Heading3>Cách build từ scratch</Heading3>
+                    <Heading3>Cách build từ scratch (Giải thích chi tiết)</Heading3>
+                    
+                    <Paragraph>
+                        Để dễ hiểu, hãy tưởng tượng <strong>Debounce như cửa thang máy 🛗</strong>: 
+                        <em>Sau khi có người bước vào, cửa đợi 3 giây để đóng. Nếu đang đợi 2 giây mà có người khác chạy vào, thang máy huỷ lệnh đóng cũ và bắt đầu đếm lại 3 giây. Thang máy CHỈ đi lên khi không còn ai bước vào trong suốt 3 giây liên tục.</em>
+                    </Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                            <strong className="text-[#fbbf24]">Bước 1: Bộ đếm giờ (Closure)</strong><br/>
+                            Hàm <InlineCode>debounce</InlineCode> trả về một hàm con. Biến <InlineCode>timer</InlineCode> nằm ở hàm cha sẽ sống bám theo hàm con (Closure). Nhờ vậy, qua nhiều lần gọi, hàm con vẫn dùng chung cái "đồng hồ" đó.
+                        </div>
+                        <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                            <strong className="text-[#fbbf24]">Bước 2: Huỷ lịch cũ, đặt lịch mới</strong><br/>
+                            Khi user thao tác, thấy <InlineCode>timer</InlineCode> cũ đang chạy thì đập đi (<InlineCode>clearTimeout</InlineCode>) sắm cái mới (<InlineCode>setTimeout</InlineCode>). Chỉ khi đủ thời gian không ai phá, hàm gốc mới được gọi.
+                        </div>
+                    </div>
+
                     <CodeBlock title="debounce — chờ user ngừng, mới chạy">{`function debounce(fn, delay) {
-    let timer;
-    return function(...args) {
-        clearTimeout(timer);
-        timer = setTimeout(() => fn.apply(this, args), delay);
+    let timer = null; // 1. Khởi tạo bộ đếm giờ (Closure)
+    
+    return function(...args) { // Gom mọi biến user truyền vào
+        // 2. Thấy lịch cũ đang chạy? Huỷ lập tức!
+        if (timer) clearTimeout(timer);
+        
+        // 3. Dựng lại lịch mới
+        timer = setTimeout(() => {
+            fn.apply(this, args); // 4. Đủ chu kỳ (không ai phá), chạy hàm gốc!
+        }, delay);
     };
 }
 

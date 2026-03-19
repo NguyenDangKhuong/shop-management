@@ -2061,12 +2061,35 @@ window.addEventListener('scroll',
 // Debounce = Elevator 🛗  → waits for everyone to get in before closing
 // Throttle = Heartbeat 💓  → steady rhythm, never faster than set rate`}</CodeBlock>
 
-                    <Heading3>Build from Scratch</Heading3>
+                    <Heading3>Build from Scratch (Detailed Explanation)</Heading3>
+
+                    <Paragraph>
+                        To understand it easily, imagine <strong>Debounce as an elevator door 🛗</strong>: 
+                        <em>After someone steps in, the door waits 3 seconds before closing. If someone else runs in at the 2nd second, the elevator cancels the old closing command and starts a brand new 3-second countdown. The elevator ONLY travels when no one has entered for 3 continuous seconds.</em>
+                    </Paragraph>
+
+                    <div className="my-3 space-y-2">
+                        <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                            <strong className="text-[#fbbf24]">Step 1: The Timer (Closure)</strong><br/>
+                            The <InlineCode>debounce</InlineCode> function returns a child function. The <InlineCode>timer</InlineCode> variable in the parent scope lives on alongside the child function (Closure). Thanks to this, across multiple typing events, the child function still interacts with the exact same "timer".
+                        </div>
+                        <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                            <strong className="text-[#fbbf24]">Step 2: Clear old timer, set new timer</strong><br/>
+                            When the user types, if the old <InlineCode>timer</InlineCode> is still running, we destroy it (<InlineCode>clearTimeout</InlineCode>) and start a new one (<InlineCode>setTimeout</InlineCode>). Only when enough time has passed without interruption will the original function execute.
+                        </div>
+                    </div>
+
                     <CodeBlock title="debounce — wait for user to stop, then execute">{`function debounce(fn, delay) {
-    let timer;
-    return function(...args) {
-        clearTimeout(timer);
-        timer = setTimeout(() => fn.apply(this, args), delay);
+    let timer = null; // 1. Initialize timer (Closure)
+    
+    return function(...args) { // Gather all arguments passed by user
+        // 2. Clear old timer if it's still running
+        if (timer) clearTimeout(timer);
+        
+        // 3. Set a new timer
+        timer = setTimeout(() => {
+            fn.apply(this, args); // 4. Execute original function after delay
+        }, delay);
     };
 }
 
