@@ -19,7 +19,7 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest) {
     try {
-        const { subscription, frequency } = await req.json()
+        const { subscription, frequency, dndFrom, dndTo } = await req.json()
 
         if (!subscription?.endpoint || !subscription?.keys) {
             return NextResponse.json({ error: 'Invalid subscription' }, { status: 400 })
@@ -30,6 +30,10 @@ export async function POST(req: NextRequest) {
 
         await connectDB()
 
+        // Validate DND hours (0-23 or null)
+        const validDndFrom = (typeof dndFrom === 'number' && dndFrom >= 0 && dndFrom <= 23) ? dndFrom : null
+        const validDndTo = (typeof dndTo === 'number' && dndTo >= 0 && dndTo <= 23) ? dndTo : null
+
         // Upsert: update nếu endpoint đã tồn tại, tạo mới nếu chưa
         await PushSubscriptionModel.findOneAndUpdate(
             { endpoint: subscription.endpoint },
@@ -37,6 +41,8 @@ export async function POST(req: NextRequest) {
                 endpoint: subscription.endpoint,
                 keys: subscription.keys,
                 frequency: freq,
+                dndFrom: validDndFrom,
+                dndTo: validDndTo,
                 active: true,
             },
             { upsert: true, new: true }

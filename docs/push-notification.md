@@ -1,6 +1,6 @@
 # Push Notification — Nhắc ôn từ vựng
 
-Last updated: 2026-03-17
+Last updated: 2026-03-19
 
 ## Overview
 
@@ -38,11 +38,11 @@ Push notification nhắc ôn từ vựng — giống TFlat. User bật trên tra
 
 | File | Mô tả |
 |------|--------|
-| `src/models/PushSubscription.ts` | MongoDB model (endpoint, keys, frequency, lastPushedAt) |
+| `src/models/PushSubscription.ts` | MongoDB model (endpoint, keys, frequency, dndFrom/dndTo, lastPushedAt) |
 | `src/app/api/push/subscribe/route.ts` | POST/DELETE — đăng ký/hủy push subscription |
 | `src/app/api/push/send/route.ts` | POST — cron gọi → random 1 từ → gửi push |
 | `public/sw.js` | Service Worker — push + notificationclick handlers |
-| `src/app/translate/TranslateClient.tsx` | UI toggle + frequency selector |
+| `src/app/translate/TranslateClient.tsx` | UI toggle + frequency selector + DND time picker |
 
 ## Environment Variables
 
@@ -85,8 +85,19 @@ Files:
 2. Thấy "🔔 Nhắc ôn từ vựng" → chọn tần suất → bấm "Bật nhắc"
 3. Browser hỏi permission → Allow
 4. Subscription lưu vào MongoDB
-5. Mỗi giờ VPS trigger → API filter subscriptions → random 1 từ → gửi push
-6. User nhận notification → click → mở `/translate`
+5. (Optional) Bật 🌙 **Không làm phiền** → chọn giờ from/to (VD: 22:00 → 07:00)
+6. Mỗi giờ VPS trigger → API filter subscriptions (frequency + DND) → random 1 từ → gửi push
+7. User nhận notification → click → mở `/translate`
+
+## Do Not Disturb (DND)
+
+User có thể set quiet hours để không nhận notification vào ban đêm.
+
+- **dndFrom**: Giờ bắt đầu im lặng (0-23, VD: 22 = 10pm)
+- **dndTo**: Giờ kết thúc im lặng (0-23, VD: 7 = 7am)
+- Hỗ trợ **qua đêm**: dndFrom=22, dndTo=7 → quiet từ 22h tối đến 7h sáng
+- Timezone: **UTC+7** (Vietnam)
+- Khi DND tắt (null): nhận notification 24/7
 
 ## iOS Support
 

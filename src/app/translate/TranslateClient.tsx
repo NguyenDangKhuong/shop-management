@@ -81,6 +81,8 @@ export default function TranslateClient() {
     const [pushFrequency, setPushFrequency] = useState(4)
     const [pushLoading, setPushLoading] = useState(false)
     const [pushSupported, setPushSupported] = useState(false)
+    const [dndFrom, setDndFrom] = useState<number | null>(null)
+    const [dndTo, setDndTo] = useState<number | null>(null)
 
     const langLabel: Record<Lang, string> = { vi: '🇻🇳 Tiếng Việt', en: '🇬🇧 English' }
 
@@ -94,9 +96,12 @@ export default function TranslateClient() {
                 const sub = await reg.pushManager.getSubscription()
                 if (sub) {
                     setPushEnabled(true)
-                    // Lấy frequency từ localStorage
                     const savedFreq = localStorage.getItem('push-frequency')
                     if (savedFreq) setPushFrequency(parseInt(savedFreq))
+                    const savedDndFrom = localStorage.getItem('push-dnd-from')
+                    const savedDndTo = localStorage.getItem('push-dnd-to')
+                    if (savedDndFrom !== null) setDndFrom(parseInt(savedDndFrom))
+                    if (savedDndTo !== null) setDndTo(parseInt(savedDndTo))
                 }
             })
         }
@@ -143,11 +148,13 @@ export default function TranslateClient() {
                 await fetch('/api/push/subscribe', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ subscription: sub.toJSON(), frequency: pushFrequency }),
+                    body: JSON.stringify({ subscription: sub.toJSON(), frequency: pushFrequency, dndFrom, dndTo }),
                 })
 
                 setPushEnabled(true)
                 localStorage.setItem('push-frequency', String(pushFrequency))
+                if (dndFrom !== null) localStorage.setItem('push-dnd-from', String(dndFrom))
+                if (dndTo !== null) localStorage.setItem('push-dnd-to', String(dndTo))
             }
         } catch (err) {
             console.error('Push toggle error:', err)
@@ -169,11 +176,37 @@ export default function TranslateClient() {
                     await fetch('/api/push/subscribe', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ subscription: sub.toJSON(), frequency: freq }),
+                        body: JSON.stringify({ subscription: sub.toJSON(), frequency: freq, dndFrom, dndTo }),
                     })
                 }
             } catch (err) {
                 console.error('Update frequency error:', err)
+            }
+        }
+    }
+
+    // Update DND hours on server
+    const updateDnd = async (from: number | null, to: number | null) => {
+        setDndFrom(from)
+        setDndTo(to)
+        if (from !== null) localStorage.setItem('push-dnd-from', String(from))
+        else localStorage.removeItem('push-dnd-from')
+        if (to !== null) localStorage.setItem('push-dnd-to', String(to))
+        else localStorage.removeItem('push-dnd-to')
+
+        if (pushEnabled) {
+            try {
+                const reg = await navigator.serviceWorker.ready
+                const sub = await reg.pushManager.getSubscription()
+                if (sub) {
+                    await fetch('/api/push/subscribe', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ subscription: sub.toJSON(), frequency: pushFrequency, dndFrom: from, dndTo: to }),
+                    })
+                }
+            } catch (err) {
+                console.error('Update DND error:', err)
             }
         }
     }
@@ -542,7 +575,7 @@ export default function TranslateClient() {
             {/* ───────── Push Notification Reminder ───────── */}
             {savedItems.length > 0 && (
                 <div className="w-full max-w-5xl mt-8">
-                    <div className="px-5 py-4 rounded-xl bg-slate-900/60 border border-white/5">
+                    <div className="px-5 py-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-3">
                         <div className="flex items-center justify-between flex-wrap gap-3">
                             <div className="flex items-center gap-3">
                                 <span className="text-xl">🔔</span>
@@ -587,6 +620,45 @@ export default function TranslateClient() {
                                 </div>
                             )}
                         </div>
+
+                        {/* Do Not Disturb */}
+                        {pushSupported && pushEnabled && (
+                            <div className="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-white/5">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm">🌙</span>
+                                    <span className="text-xs text-slate-400">Không làm phiền</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <select
+                                        value={dndFrom ?? ''}
+                                        onChange={(e) => {
+                                            const val = e.target.value === '' ? null : Number(e.target.value)
+                                            updateDnd(val, val !== null ? (dndTo ?? 7) : null)
+                                        }}
+                                        className="px-2 py-1 text-xs rounded-lg bg-slate-800 border border-white/10 text-slate-300 focus:outline-none focus:border-blue-500/50"
+                                    >
+                                        <option value="">Tắt</option>
+                                        {Array.from({ length: 24 }, (_, i) => (
+                                            <option key={i} value={i}>{String(i).padStart(2, '0')}:00</option>
+                                        ))}
+                                    </select>
+                                    {dndFrom !== null && (
+                                        <>
+                                            <span className="text-xs text-slate-500">→</span>
+                                            <select
+                                                value={dndTo ?? 7}
+                                                onChange={(e) => updateDnd(dndFrom, Number(e.target.value))}
+                                                className="px-2 py-1 text-xs rounded-lg bg-slate-800 border border-white/10 text-slate-300 focus:outline-none focus:border-blue-500/50"
+                                            >
+                                                {Array.from({ length: 24 }, (_, i) => (
+                                                    <option key={i} value={i}>{String(i).padStart(2, '0')}:00</option>
+                                                ))}
+                                            </select>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

@@ -52,14 +52,29 @@ export async function POST(req: NextRequest) {
             return hoursSinceLastPush >= sub.frequency
         })
 
-        if (dueSubscriptions.length === 0) {
+        // Filter: bỏ qua subscriptions đang trong giờ Do Not Disturb
+        const currentHour = new Date(now.getTime() + 7 * 60 * 60 * 1000).getUTCHours() // UTC+7
+        const activeSubs = dueSubscriptions.filter((sub) => {
+            if (sub.dndFrom == null || sub.dndTo == null) return true // DND tắt
+            // VD: dndFrom=22, dndTo=7 → quiet từ 22h-7h (qua đêm)
+            // VD: dndFrom=13, dndTo=14 → quiet từ 13h-14h (cùng ngày)
+            if (sub.dndFrom <= sub.dndTo) {
+                // Cùng ngày: 13-14 → skip nếu 13 <= hour < 14
+                return currentHour < sub.dndFrom || currentHour >= sub.dndTo
+            } else {
+                // Qua đêm: 22-7 → skip nếu hour >= 22 HOẶC hour < 7
+                return currentHour < sub.dndFrom && currentHour >= sub.dndTo
+            }
+        })
+
+        if (activeSubs.length === 0) {
             return NextResponse.json({ message: 'No subscriptions due', sent: 0 })
         }
 
         // Random 1 từ vựng — avoid repeats
         // Collect all recently sent vocab IDs across due subscriptions
         const recentIds = [...new Set(
-            dueSubscriptions.flatMap((sub) =>
+            activeSubs.flatMap((sub) =>
                 (sub.lastSentVocabIds || []).map((id: string) => new mongoose.Types.ObjectId(id))
             )
         )]
@@ -77,7 +92,7 @@ export async function POST(req: NextRequest) {
             vocabResult = await VocabularyModel.aggregate([{ $sample: { size: 1 } }])
             // Reset lastSentVocabIds for all due subscriptions
             await PushSubscriptionModel.updateMany(
-                { endpoint: { $in: dueSubscriptions.map((s) => s.endpoint) } },
+                { endpoint: { $in: activeSubs.map((s) => s.endpoint) } },
                 { lastSentVocabIds: [] }
             )
         }
@@ -114,7 +129,7 @@ export async function POST(req: NextRequest) {
         const failedEndpoints: string[] = []
         const MAX_HISTORY = 20 // Track last 20 words
 
-        for (const sub of dueSubscriptions) {
+        for (const sub of activeSubs) {
             try {
                 await webpush.sendNotification(
                     { endpoint: sub.endpoint, keys: sub.keys as { p256dh: string; auth: string } },
