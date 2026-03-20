@@ -178,7 +178,7 @@ export default function LandingPage() {
                     }
                 />
 
-                <main className="max-w-6xl w-full mx-auto relative z-10 px-4 md:px-8 mt-4 md:mt-8">
+                <main className="max-w-6xl w-full mx-auto relative z-10 mt-4 md:mt-8">
                     {/* ═══ TOP BENTO GRID ═══ */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Left Column - Hero & About */}
