@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 const CLI_PROXY_URL = process.env.CLI_PROXY_URL || ''
 const CLI_PROXY_KEY = process.env.CLI_PROXY_API_KEY || ''
-const MODEL = 'gemini-2.5-flash'
+const MODEL = 'gemini-3.1-flash-lite-preview'
 
 export async function POST(req: NextRequest) {
     try {
