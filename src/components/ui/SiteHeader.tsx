@@ -17,8 +17,6 @@ interface SiteHeaderProps {
     rightSlot?: React.ReactNode
     /** Show reading progress bar at the top */
     showProgress?: boolean
-    /** Skip internal horizontal padding (when parent already provides it) */
-    noPadding?: boolean
 }
 
 /**
@@ -29,7 +27,6 @@ export default function SiteHeader({
     maxWidth = 'max-w-4xl',
     rightSlot,
     showProgress = false,
-    noPadding = false,
 }: SiteHeaderProps) {
     const [scrolled, setScrolled] = useState(false)
     const progressRef = useRef<HTMLDivElement>(null)
@@ -62,7 +59,7 @@ export default function SiteHeader({
 
             {/* Sticky Header */}
             <header
-                className={`w-full sticky top-0 z-50 border-b transition-[padding,background-color,border-color,box-shadow] duration-300 ${noPadding ? '' : 'px-4 md:px-8'} backdrop-blur-xl`}
+                className={`w-full sticky top-0 z-50 border-b transition-[padding,background-color,border-color,box-shadow] duration-300 backdrop-blur-xl`}
                 style={{
                     backgroundColor: scrolled ? 'var(--bg-header-scrolled)' : 'var(--bg-header)',
                     borderColor: scrolled ? 'var(--border-primary)' : 'transparent',
@@ -71,7 +68,7 @@ export default function SiteHeader({
                     paddingBottom: scrolled ? '8px' : '16px',
                 }}
             >
-                <div className={`${maxWidth} mx-auto transition-all duration-300`}>
+                <div className={`${maxWidth} mx-auto px-4 md:px-8 transition-all duration-300`}>
                     {/* Mobile */}
                     <div className="flex md:hidden items-center w-full">
                         <div className="flex-1 flex justify-start">

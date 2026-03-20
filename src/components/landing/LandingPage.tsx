@@ -143,10 +143,9 @@ export default function LandingPage() {
             <link rel="preconnect" href="https://images.unsplash.com" />
             <link rel="dns-prefetch" href="https://images.unsplash.com" />
 
-            <div className="font-sans min-h-screen flex flex-col items-center relative transition-colors duration-300" style={{ backgroundColor: 'var(--bg-page)', color: 'var(--text-primary)' }}>
+            <div className="font-sans min-h-screen flex flex-col items-center pt-0 relative transition-colors duration-300" style={{ backgroundColor: 'var(--bg-page)', color: 'var(--text-primary)' }}>
                 <SiteHeader
                     maxWidth="max-w-6xl"
-                    noPadding
                     rightSlot={
                         <>
                             <LanguageSwitcher lang={language} onToggle={() => setLanguage(language === 'en' ? 'vi' : 'en')} />
@@ -510,51 +509,58 @@ export default function LandingPage() {
                     </section>
                 </main>
 
-                {/* Footer with Terms and Privacy Policy */}
-                <footer className="w-full max-w-6xl mx-auto mt-12 pt-8 pb-6 border-t border-[var(--border-primary)] z-20 px-4 md:px-8">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
-                        <p className="text-[var(--text-secondary)]">
-                            {t('landing.footer')}
+                {/* Footer */}
+                <footer className="w-full max-w-6xl mx-auto mt-16 z-20 px-4 md:px-8">
+                    {/* Tool Links Grid */}
+                    <div className="border-t border-[var(--border-primary)] pt-8 pb-6">
+                        <p className="text-xs font-medium uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>
+                            {language === 'vi' ? 'Công cụ' : 'Tools'}
                         </p>
-                        <div className="flex items-center gap-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                             <Link
                                 href="/flashcards"
-                                className="text-[var(--text-secondary)] hover:text-[#fbbf24] transition-colors"
-                                title="Algorithm Flashcards"
+                                className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-[var(--border-primary)] hover:border-[#fbbf24]/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(251,191,36,0.08)] no-underline"
+                                style={{ backgroundColor: 'var(--bg-card)' }}
                             >
-                                🃏 Flashcards
+                                <span className="text-lg group-hover:scale-110 transition-transform duration-300">🃏</span>
+                                <span className="text-sm font-medium text-[var(--text-secondary)] group-hover:text-[#fbbf24] transition-colors">Flashcards</span>
                             </Link>
                             <Link
                                 href="/leetcode"
-                                className="text-[var(--text-secondary)] hover:text-[#ffa116] transition-colors"
-                                title="LeetCode Practice"
+                                className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-[var(--border-primary)] hover:border-[#ffa116]/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,161,22,0.08)] no-underline"
+                                style={{ backgroundColor: 'var(--bg-card)' }}
                             >
-                                🧩 LeetCode
+                                <span className="text-lg group-hover:scale-110 transition-transform duration-300">🧩</span>
+                                <span className="text-sm font-medium text-[var(--text-secondary)] group-hover:text-[#ffa116] transition-colors">LeetCode</span>
                             </Link>
                             <Link
                                 href="/translate"
-                                className="text-[var(--text-secondary)] hover:text-[#60a5fa] transition-colors"
-                                title="Vietnamese ↔ English Translator"
+                                className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-[var(--border-primary)] hover:border-[#60a5fa]/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(96,165,250,0.08)] no-underline"
+                                style={{ backgroundColor: 'var(--bg-card)' }}
                             >
-                                🌐 Translate
+                                <span className="text-lg group-hover:scale-110 transition-transform duration-300">🌐</span>
+                                <span className="text-sm font-medium text-[var(--text-secondary)] group-hover:text-[#60a5fa] transition-colors">Translate</span>
                             </Link>
                             <Link
                                 href="/clarity"
-                                className="text-[var(--text-secondary)] hover:text-[#a78bfa] transition-colors"
-                                title="Monthly Planning & Reflection"
+                                className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-[var(--border-primary)] hover:border-[#a78bfa]/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(167,139,250,0.08)] no-underline"
+                                style={{ backgroundColor: 'var(--bg-card)' }}
                             >
-                                🎯 Clarity
+                                <span className="text-lg group-hover:scale-110 transition-transform duration-300">🎯</span>
+                                <span className="text-sm font-medium text-[var(--text-secondary)] group-hover:text-[#a78bfa] transition-colors">Clarity</span>
                             </Link>
-                            <Link
-                                href="/privacy"
-                                className="text-[var(--text-secondary)] hover:text-[#38bdf8] transition-colors underline"
-                            >
+                        </div>
+                    </div>
+
+                    {/* Bottom Bar — Copyright + Legal */}
+                    <div className="border-t border-[var(--border-primary)] py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs" style={{ color: 'var(--text-muted)' }}>
+                        <p>{t('landing.footer')}</p>
+                        <div className="flex items-center gap-4">
+                            <Link href="/privacy" className="hover:text-[var(--text-secondary)] transition-colors no-underline" style={{ color: 'var(--text-muted)' }}>
                                 {t('landing.privacy')}
                             </Link>
-                            <Link
-                                href="/terms"
-                                className="text-[var(--text-secondary)] hover:text-[#38bdf8] transition-colors underline"
-                            >
+                            <span style={{ color: 'var(--border-primary)' }}>·</span>
+                            <Link href="/terms" className="hover:text-[var(--text-secondary)] transition-colors no-underline" style={{ color: 'var(--text-muted)' }}>
                                 {t('landing.terms')}
                             </Link>
                         </div>
