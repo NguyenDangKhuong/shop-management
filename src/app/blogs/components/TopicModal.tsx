@@ -2,6 +2,7 @@
 
 import { useThemeMode } from '@/contexts/ThemeContext'
 import { useCallback, useEffect, useState } from 'react'
+import { useRoadmapProgress } from './RoadmapProgressProvider'
 
 interface TopicModalProps {
     title: string
@@ -14,14 +15,14 @@ interface TopicModalProps {
 export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, children }: TopicModalProps) {
     const [open, setOpen] = useState(false)
     const { isDarkMode } = useThemeMode()
-    const [isLearned, setIsLearned] = useState(false)
+    const { learnedTopics, toggleLearned: contextToggle, isLoading } = useRoadmapProgress()
     const [mounted, setMounted] = useState(false)
+
+    const isLearned = learnedTopics.has(title)
 
     useEffect(() => {
         setMounted(true)
-        const saved = localStorage.getItem(`roadmap-learned-${title}`)
-        if (saved === 'true') setIsLearned(true)
-    }, [title])
+    }, [])
 
     const close = useCallback(() => setOpen(false), [])
 
@@ -38,9 +39,7 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
 
     const toggleLearned = (e?: React.MouseEvent) => {
         if (e) e.stopPropagation()
-        const newState = !isLearned
-        setIsLearned(newState)
-        localStorage.setItem(`roadmap-learned-${title}`, String(newState))
+        contextToggle(title)
     }
 
     return (
@@ -71,7 +70,7 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
                 </button>
                 
                 {/* Checkmark Button */}
-                {mounted && (
+                {mounted && !isLoading && (
                     <button 
                         onClick={toggleLearned}
                         className={`absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all ${

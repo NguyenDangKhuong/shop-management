@@ -2,6 +2,7 @@ import { BlogPost } from '../types'
 import { Heading2, Paragraph, Highlight, Callout } from '../components/BlogComponents'
 import dynamic from 'next/dynamic'
 import { LoadingFallback } from './roadmap-sections/LoadingFallback'
+import { RoadmapProgressProvider } from '../components/RoadmapProgressProvider'
 
 // Lazy-loaded Phase sections — each loads its own JS chunk on demand
 const Phase1 = dynamic(() => import('./roadmap-sections/Phase1CSFoundation'), { loading: () => <LoadingFallback /> })
@@ -20,7 +21,7 @@ const Phase5En = dynamic(() => import('./roadmap-sections/en/Phase5SystemDesign'
 const Phase6En = dynamic(() => import('./roadmap-sections/en/Phase6MockInterview'), { loading: () => <LoadingFallback /> })
 
 const viContent = (
-    <>
+    <RoadmapProgressProvider>
         <Paragraph>
             Muốn vào <Highlight>Google, Meta, Amazon, Apple, Microsoft</Highlight> (FAANG) hay các big tech khác
             ở vị trí <Highlight>Frontend Engineer</Highlight>? Bài viết này là lộ trình chi tiết từ A-Z —
@@ -140,11 +141,11 @@ const viContent = (
             Nhớ: <Highlight>Consistency &gt; Intensity</Highlight>. Mỗi ngày 2-3 giờ đều đặn tốt hơn
             cày 10 giờ cuối tuần rồi nghỉ cả tuần. Hãy biến việc học thành thói quen hàng ngày!
         </Callout>
-    </>
+    </RoadmapProgressProvider>
 )
 
 const enContent = (
-    <>
+    <RoadmapProgressProvider>
         <Paragraph>
             Want to get into <Highlight>Google, Meta, Amazon, Apple, Microsoft</Highlight> (FAANG) or other big tech companies
             as a <Highlight>Frontend Engineer</Highlight>? This article is a detailed A-Z roadmap —
@@ -264,7 +265,7 @@ const enContent = (
             Remember: <Highlight>Consistency &gt; Intensity</Highlight>. Studying 2-3 hours daily consistently is better than
             cramming 10 hours on weekends then taking a week off. Make learning a daily habit!
         </Callout>
-    </>
+    </RoadmapProgressProvider>
 )
 
 const frontendInterviewRoadmap: BlogPost = {
