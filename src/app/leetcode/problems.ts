@@ -2051,4 +2051,63 @@ function queueTest(ops, args) {
   }, [ref, handler]);
 }`,
     },
+    {
+        id: 75,
+        title: '2627. Debounce',
+        difficulty: 'Medium',
+        category: 'Custom Hooks',
+        description: {
+            vi: `Viết hàm debounce nhận vào fn và delay (ms).
+Trả về một hàm mới sao cho:
+- Mỗi lần gọi, reset timer delay
+- fn chỉ được gọi sau khi ngừng gọi đủ delay ms
+- Trả về kết quả của fn (hoặc undefined nếu chưa gọi)
+
+Ví dụ: debounce(fn, 100) — gọi liên tục 5 lần, fn chỉ chạy 1 lần sau 100ms kể từ lần gọi cuối.`,
+            en: `Write a debounce function that takes fn and delay (ms).
+Return a new function such that:
+- Each call resets the delay timer
+- fn is only called after delay ms of inactivity
+- Returns the result of fn (or undefined if not yet called)
+
+Example: debounce(fn, 100) — calling 5 times rapidly, fn only runs once 100ms after the last call.`,
+        },
+        starterCode: `function debounce(fn, delay) {
+  // Your code here
+
+}
+
+// --- Test Wrapper ---
+function testHook() {
+  const str = debounce.toString();
+  if (!str.includes('setTimeout') || !str.includes('clearTimeout'))
+    throw new Error('Must use setTimeout and clearTimeout');
+
+  let callCount = 0;
+  const fn = (...args) => { callCount++; return args.reduce((a, b) => a + b, 0); };
+  const debounced = debounce(fn, 100);
+
+  // Simulate: call 3 times, only last should matter
+  debounced(1, 2);
+  debounced(3, 4);
+  debounced(5, 6);
+
+  // Before timeout: fn should NOT have been called
+  if (callCount !== 0)
+    throw new Error('fn called before delay elapsed');
+
+  return 1;
+}`,
+        testCases: [
+            { input: "", expected: "1" },
+        ],
+        hint: "Dùng closure lưu timer (let timer). Mỗi lần gọi: clearTimeout(timer) rồi timer = setTimeout(() => fn(...args), delay).",
+        solution: `function debounce(fn, delay) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}`,
+    },
 ]
