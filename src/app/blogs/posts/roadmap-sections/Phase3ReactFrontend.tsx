@@ -3304,6 +3304,193 @@ function UpdateUser() {
                 </TopicModal>
             </div>
 
+            <Heading3>3.5 Authentication (click để xem chi tiết)</Heading3>
+            <div className="my-4 space-y-2">
+                <TopicModal title="Authentication — Từ Cookie đến OAuth2" emoji="🔐" color="#f59e0b" summary="Hành trình tiến hóa xác thực web: Cookie → Session → JWT → OAuth2 — pros/cons và khi nào dùng gì">
+                    <Paragraph>Authentication là một trong những chủ đề <Highlight>được hỏi nhiều nhất</Highlight> trong phỏng vấn frontend. Hiểu sâu cách xác thực tiến hóa qua từng thời kỳ giúp bạn trả lời tự tin và chọn đúng giải pháp cho dự án.</Paragraph>
+
+                    <Callout type="info">🏰 <strong>Ẩn dụ: Authentication như bảo vệ toà nhà</strong><br /><br />
+                        <strong>Thời kỳ 1 (Cookie):</strong> Bảo vệ đưa bạn 1 thẻ giấy ghi &quot;Anh A, phòng 301&quot; — mỗi lần vào nhấc thẻ lên cho bảo vệ xem.<br />
+                        <strong>Thời kỳ 2 (Session):</strong> Bảo vệ ghi tên bạn vào sổ, đưa bạn 1 số thứ tự — mỗi lần vào chỉ cần đưa số, bảo vệ tra sổ.<br />
+                        <strong>Thời kỳ 3 (JWT):</strong> Bạn có 1 thẻ &quot;thông minh&quot; chứa mọi thông tin + chữ ký số — bảo vệ chỉ cần verify chữ ký, không cần tra sổ.<br />
+                        <strong>Thời kỳ 4 (OAuth2):</strong> Bạn dùng CCCD (Google/Facebook) — bảo vệ gọi lên công an xác nhận, bạn không cần đăng ký riêng.
+                    </Callout>
+
+                    <div className="my-4 space-y-3">
+                        {/* Era 1: Cookie */}
+                        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                            <div className="text-amber-400 font-bold text-sm mb-2">🍪 Thời kỳ 1: Cookie-based Auth (1994+)</div>
+                            <div className="text-slate-300 text-sm">
+                                <strong>Cách hoạt động:</strong> Server set <InlineCode>Set-Cookie</InlineCode> header → browser tự gửi cookie mỗi request.<br /><br />
+                                <strong>✅ Pros:</strong><br />
+                                • Browser tự gửi — không cần code JS gì cả<br />
+                                • Có thể set <InlineCode>HttpOnly</InlineCode> (JS không đọc được → chống XSS)<br />
+                                • <InlineCode>Secure</InlineCode> flag → chỉ gửi qua HTTPS<br />
+                                • <InlineCode>SameSite</InlineCode> → chống CSRF<br /><br />
+                                <strong>❌ Cons:</strong><br />
+                                • Giới hạn 4KB / domain<br />
+                                • Gửi mọi request (kể cả ảnh, CSS) → overhead<br />
+                                • <strong>Không cross-domain</strong> (third-party cookies bị block dần)<br />
+                                • CSRF attack nếu không có SameSite
+                            </div>
+                        </div>
+
+                        {/* Era 2: Session */}
+                        <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm mb-2">📋 Thời kỳ 2: Session-based Auth</div>
+                            <div className="text-slate-300 text-sm">
+                                <strong>Cách hoạt động:</strong> Server tạo session ID, lưu data vào bộ nhớ/DB. Client chỉ giữ session ID trong cookie.<br /><br />
+                                <strong>✅ Pros:</strong><br />
+                                • Server kiểm soát hoàn toàn — revoke ngay lập tức<br />
+                                • Data nhạy cảm ở server, client chỉ có ID<br />
+                                • Dễ hiểu, dễ implement<br /><br />
+                                <strong>❌ Cons:</strong><br />
+                                • <strong>Stateful</strong> — server phải lưu session → tốn RAM<br />
+                                • Scale khó: nhiều server → cần shared session store (Redis)<br />
+                                • Sticky sessions hoặc centralized store = single point of failure<br />
+                                • Không phù hợp microservices, mobile apps
+                            </div>
+                        </div>
+
+                        {/* Era 3: JWT */}
+                        <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm mb-2">🎫 Thời kỳ 3: JWT (JSON Web Token)</div>
+                            <div className="text-slate-300 text-sm">
+                                <strong>Cách hoạt động:</strong> Server tạo token chứa payload + chữ ký. Client lưu token, gửi qua <InlineCode>Authorization: Bearer {'{token}'}</InlineCode>.<br /><br />
+                                <strong>Cấu trúc:</strong> <InlineCode>header.payload.signature</InlineCode> (Base64 encoded, KHÔNG encrypt)<br /><br />
+                                <strong>✅ Pros:</strong><br />
+                                • <strong>Stateless</strong> — server không cần lưu gì, chỉ verify signature<br />
+                                • Scale dễ: bất kỳ server nào cũng verify được (shared secret/public key)<br />
+                                • Cross-domain, cross-platform (web, mobile, API)<br />
+                                • Chứa được claims (role, permissions) → giảm DB queries<br /><br />
+                                <strong>❌ Cons:</strong><br />
+                                • <strong>Không revoke được</strong> cho đến khi hết hạn (trừ khi dùng blacklist → lại stateful)<br />
+                                • Payload không encrypt (ai cũng decode được) → đừng chứa data nhạy cảm<br />
+                                • Token size lớn hơn session ID (gửi mỗi request)<br />
+                                • Lưu ở đâu? localStorage (XSS risk) vs cookie (CSRF risk)
+                            </div>
+
+                            <div className="mt-3 p-3 rounded-lg bg-slate-800/60 border border-white/5">
+                                <div className="text-green-300 font-bold text-xs mb-2">🔄 Access Token + Refresh Token Pattern</div>
+                                <div className="text-slate-300 text-sm">
+                                    • <strong>Access Token</strong>: ngắn hạn (15m), gửi mỗi request<br />
+                                    • <strong>Refresh Token</strong>: dài hạn (7d), lưu HttpOnly cookie, chỉ dùng khi access token hết hạn<br />
+                                    • Access hết hạn → gọi <InlineCode>/refresh</InlineCode> → nhận access mới → không cần login lại<br />
+                                    • Refresh bị steal → revoke server-side (blacklist)<br />
+                                    • <strong>Best practice:</strong> Access Token trong memory (JS variable), Refresh Token trong HttpOnly cookie
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Era 4: OAuth2 / OIDC */}
+                        <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                            <div className="text-indigo-400 font-bold text-sm mb-2">🌐 Thời kỳ 4: OAuth2 / OpenID Connect</div>
+                            <div className="text-slate-300 text-sm">
+                                <strong>OAuth2:</strong> Authorization framework — cho phép app truy cập tài nguyên user mà <strong>không cần biết mật khẩu</strong>.<br />
+                                <strong>OIDC:</strong> Layer trên OAuth2, thêm <strong>identity</strong> (ai bạn là).<br /><br />
+                                <strong>Flow phổ biến — Authorization Code + PKCE:</strong><br />
+                                1. User click &quot;Login with Google&quot;<br />
+                                2. Redirect → Google login page<br />
+                                3. User đồng ý → Google redirect về app với <InlineCode>code</InlineCode><br />
+                                4. App đổi code → <InlineCode>access_token</InlineCode> + <InlineCode>id_token</InlineCode><br />
+                                5. Dùng token gọi API<br /><br />
+                                <strong>✅ Pros:</strong><br />
+                                • User không cần tạo tài khoản mới<br />
+                                • App không lưu mật khẩu user → giảm rủi ro<br />
+                                • Social login (Google, GitHub, Facebook)<br />
+                                • SSO (Single Sign-On) cho enterprise<br /><br />
+                                <strong>❌ Cons:</strong><br />
+                                • Phức tạp: nhiều flows (Code, Implicit, Client Credentials)<br />
+                                • Phụ thuộc provider bên ngoài<br />
+                                • Token management vẫn cần JWT knowledge
+                            </div>
+                        </div>
+
+                        {/* Comparison Table */}
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm border-collapse">
+                                <thead><tr className="border-b border-white/10">
+                                    <th className="text-left p-3 text-slate-400 font-medium">Tiêu chí</th>
+                                    <th className="text-left p-3 text-amber-400 font-medium">🍪 Cookie</th>
+                                    <th className="text-left p-3 text-blue-400 font-medium">📋 Session</th>
+                                    <th className="text-left p-3 text-green-400 font-medium">🎫 JWT</th>
+                                    <th className="text-left p-3 text-indigo-400 font-medium">🌐 OAuth2</th>
+                                </tr></thead>
+                                <tbody className="text-slate-300">
+                                    <tr className="border-b border-white/5"><td className="p-3 text-slate-400">State</td><td className="p-3">Stateless</td><td className="p-3">Stateful</td><td className="p-3">Stateless</td><td className="p-3">Hybrid</td></tr>
+                                    <tr className="border-b border-white/5"><td className="p-3 text-slate-400">Scale</td><td className="p-3">Tốt</td><td className="p-3">Khó</td><td className="p-3">Rất tốt</td><td className="p-3">Tốt</td></tr>
+                                    <tr className="border-b border-white/5"><td className="p-3 text-slate-400">Revoke</td><td className="p-3">Xoá cookie</td><td className="p-3">Xoá session</td><td className="p-3">Chờ hết hạn</td><td className="p-3">Revoke token</td></tr>
+                                    <tr className="border-b border-white/5"><td className="p-3 text-slate-400">Cross-domain</td><td className="p-3">❌</td><td className="p-3">❌</td><td className="p-3">✅</td><td className="p-3">✅</td></tr>
+                                    <tr className="border-b border-white/5"><td className="p-3 text-slate-400">Mobile</td><td className="p-3">Khó</td><td className="p-3">Khó</td><td className="p-3">✅</td><td className="p-3">✅</td></tr>
+                                    <tr><td className="p-3 text-slate-400">Dùng khi</td><td className="p-3">Web truyền thống</td><td className="p-3">Monolith, SSR</td><td className="p-3">SPA, API, Microservices</td><td className="p-3">Social login, SSO</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Modern Best Practice */}
+                        <div className="p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                            <div className="text-cyan-400 font-bold text-sm mb-2">🏆 Best Practice 2025 — Kết hợp</div>
+                            <div className="text-slate-300 text-sm">
+                                Thực tế không dùng chỉ 1 phương pháp mà <strong>kết hợp</strong>:<br /><br />
+                                • <strong>NextAuth / Auth.js:</strong> OAuth2 login (Google) → server tạo JWT → lưu trong HttpOnly cookie<br />
+                                • <strong>Access Token:</strong> trong memory (JS) — ngắn hạn, gửi qua header<br />
+                                • <strong>Refresh Token:</strong> trong HttpOnly Secure cookie — dài hạn, server-side rotation<br />
+                                • <strong>CSRF:</strong> SameSite=Lax + CSRF token cho mutation requests<br />
+                                • <strong>XSS:</strong> CSP header + HttpOnly cookies + input sanitization
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="auth-patterns.ts">{`// 1. Cookie-based (truyền thống)
+// Server set cookie — browser gửi tự động mỗi request
+res.setHeader('Set-Cookie', [
+  'token=abc123; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=3600'
+])
+
+// 2. Session-based (server lưu state)
+// Login → tạo session
+app.post('/login', (req, res) => {
+  const user = authenticate(req.body)
+  req.session.userId = user.id  // lưu vào Redis/Memory
+  res.json({ success: true })   // session ID tự gửi qua cookie
+})
+
+// 3. JWT (stateless)
+// Login → tạo token
+const token = jwt.sign(
+  { userId: 123, role: 'admin' },  // payload (ai cũng decode được!)
+  process.env.JWT_SECRET,           // secret key
+  { expiresIn: '15m' }             // ngắn hạn
+)
+// Client gửi:  Authorization: Bearer <token>
+// Server verify: jwt.verify(token, secret) → payload
+
+// 4. OAuth2 + NextAuth (modern)
+// /api/auth/[...nextauth].ts
+import NextAuth from 'next-auth'
+import GoogleProvider from 'next-auth/providers/google'
+export default NextAuth({
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    })
+  ],
+  // JWT strategy — token lưu trong HttpOnly cookie
+  session: { strategy: 'jwt' },
+})`}</CodeBlock>
+
+                    <Callout type="tip">
+                        {'Phỏng vấn hỏi Authentication? Nhớ '}<Highlight>cấu trúc trả lời</Highlight>:<br />
+                        {'1️⃣ '}<strong>Giải thích evolution</strong>{': Cookie → Session → JWT → OAuth2 (mỗi cái giải quyết vấn đề gì)'}<br />
+                        {'2️⃣ '}<strong>So sánh</strong>{': stateless vs stateful, khi nào dùng gì'}<br />
+                        {'3️⃣ '}<strong>Security</strong>{': XSS, CSRF, token storage (HttpOnly cookie vs localStorage)'}<br />
+                        {'4️⃣ '}<strong>Thực tế</strong>{': NextAuth, Access + Refresh Token pattern'}<br />
+                        {'Nói được cả 4 → interviewer đánh giá senior! 🎯'}
+                    </Callout>
+                </TopicModal>
+            </div>
+
 
         </>
     )

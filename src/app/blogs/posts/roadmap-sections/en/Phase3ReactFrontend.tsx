@@ -3281,6 +3281,193 @@ function UpdateUser() {
                 </TopicModal>
             </div>
 
+            <Heading3>3.5 Authentication (click for details)</Heading3>
+            <div className="my-4 space-y-2">
+                <TopicModal title="Authentication — From Cookies to OAuth2" emoji="🔐" color="#f59e0b" summary="The evolution of web authentication: Cookie → Session → JWT → OAuth2 — pros/cons and when to use each">
+                    <Paragraph>Authentication is one of the <Highlight>most frequently asked</Highlight> topics in frontend interviews. Understanding how auth evolved through each era helps you answer confidently and choose the right solution for your project.</Paragraph>
+
+                    <Callout type="info">🏰 <strong>Analogy: Authentication as Building Security</strong><br /><br />
+                        <strong>Era 1 (Cookie):</strong> Security gives you a paper badge saying &quot;Mr. A, Room 301&quot; — every time you enter, show the badge.<br />
+                        <strong>Era 2 (Session):</strong> Security writes your name in a logbook, gives you a number — flash the number each time, they look it up.<br />
+                        <strong>Era 3 (JWT):</strong> You get a &quot;smart card&quot; with all your info + digital signature — security just verifies the signature, no logbook needed.<br />
+                        <strong>Era 4 (OAuth2):</strong> You use your government ID (Google/Facebook) — security calls the authority to verify, no separate registration needed.
+                    </Callout>
+
+                    <div className="my-4 space-y-3">
+                        {/* Era 1: Cookie */}
+                        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                            <div className="text-amber-400 font-bold text-sm mb-2">🍪 Era 1: Cookie-based Auth (1994+)</div>
+                            <div className="text-slate-300 text-sm">
+                                <strong>How it works:</strong> Server sets <InlineCode>Set-Cookie</InlineCode> header → browser automatically sends cookie with every request.<br /><br />
+                                <strong>✅ Pros:</strong><br />
+                                • Browser sends automatically — no JS code needed<br />
+                                • Can set <InlineCode>HttpOnly</InlineCode> (JS can&apos;t read → prevents XSS)<br />
+                                • <InlineCode>Secure</InlineCode> flag → only sent over HTTPS<br />
+                                • <InlineCode>SameSite</InlineCode> → prevents CSRF<br /><br />
+                                <strong>❌ Cons:</strong><br />
+                                • Limited to 4KB per domain<br />
+                                • Sent with every request (even images, CSS) → overhead<br />
+                                • <strong>No cross-domain</strong> (third-party cookies being phased out)<br />
+                                • CSRF attack risk without SameSite
+                            </div>
+                        </div>
+
+                        {/* Era 2: Session */}
+                        <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                            <div className="text-blue-400 font-bold text-sm mb-2">📋 Era 2: Session-based Auth</div>
+                            <div className="text-slate-300 text-sm">
+                                <strong>How it works:</strong> Server creates a session ID, stores data in memory/DB. Client only holds the session ID in a cookie.<br /><br />
+                                <strong>✅ Pros:</strong><br />
+                                • Server has full control — can revoke instantly<br />
+                                • Sensitive data stays on server, client only has ID<br />
+                                • Simple to understand and implement<br /><br />
+                                <strong>❌ Cons:</strong><br />
+                                • <strong>Stateful</strong> — server must store sessions → uses RAM<br />
+                                • Hard to scale: multiple servers → need shared session store (Redis)<br />
+                                • Sticky sessions or centralized store = single point of failure<br />
+                                • Not ideal for microservices or mobile apps
+                            </div>
+                        </div>
+
+                        {/* Era 3: JWT */}
+                        <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+                            <div className="text-green-400 font-bold text-sm mb-2">🎫 Era 3: JWT (JSON Web Token)</div>
+                            <div className="text-slate-300 text-sm">
+                                <strong>How it works:</strong> Server creates a token with payload + signature. Client stores token, sends via <InlineCode>Authorization: Bearer {'{token}'}</InlineCode>.<br /><br />
+                                <strong>Structure:</strong> <InlineCode>header.payload.signature</InlineCode> (Base64 encoded, NOT encrypted)<br /><br />
+                                <strong>✅ Pros:</strong><br />
+                                • <strong>Stateless</strong> — server stores nothing, just verifies signature<br />
+                                • Easy to scale: any server can verify (shared secret/public key)<br />
+                                • Cross-domain, cross-platform (web, mobile, API)<br />
+                                • Can contain claims (role, permissions) → fewer DB queries<br /><br />
+                                <strong>❌ Cons:</strong><br />
+                                • <strong>Can&apos;t revoke</strong> until expiry (unless using blacklist → becomes stateful again)<br />
+                                • Payload isn&apos;t encrypted (anyone can decode it) → don&apos;t store sensitive data<br />
+                                • Token size larger than session ID (sent with every request)<br />
+                                • Where to store? localStorage (XSS risk) vs cookie (CSRF risk)
+                            </div>
+
+                            <div className="mt-3 p-3 rounded-lg bg-slate-800/60 border border-white/5">
+                                <div className="text-green-300 font-bold text-xs mb-2">🔄 Access Token + Refresh Token Pattern</div>
+                                <div className="text-slate-300 text-sm">
+                                    • <strong>Access Token</strong>: short-lived (15m), sent with every request<br />
+                                    • <strong>Refresh Token</strong>: long-lived (7d), stored in HttpOnly cookie, only used when access token expires<br />
+                                    • Access expires → call <InlineCode>/refresh</InlineCode> → get new access → no re-login needed<br />
+                                    • Refresh stolen → revoke server-side (blacklist)<br />
+                                    • <strong>Best practice:</strong> Access Token in memory (JS variable), Refresh Token in HttpOnly cookie
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Era 4: OAuth2 / OIDC */}
+                        <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                            <div className="text-indigo-400 font-bold text-sm mb-2">🌐 Era 4: OAuth2 / OpenID Connect</div>
+                            <div className="text-slate-300 text-sm">
+                                <strong>OAuth2:</strong> Authorization framework — lets apps access user resources <strong>without knowing the password</strong>.<br />
+                                <strong>OIDC:</strong> Layer on top of OAuth2, adds <strong>identity</strong> (who you are).<br /><br />
+                                <strong>Most common flow — Authorization Code + PKCE:</strong><br />
+                                1. User clicks &quot;Login with Google&quot;<br />
+                                2. Redirect → Google login page<br />
+                                3. User consents → Google redirects back with <InlineCode>code</InlineCode><br />
+                                4. App exchanges code → <InlineCode>access_token</InlineCode> + <InlineCode>id_token</InlineCode><br />
+                                5. Use token to call APIs<br /><br />
+                                <strong>✅ Pros:</strong><br />
+                                • User doesn&apos;t need to create a new account<br />
+                                • App doesn&apos;t store user passwords → reduced risk<br />
+                                • Social login (Google, GitHub, Facebook)<br />
+                                • SSO (Single Sign-On) for enterprise<br /><br />
+                                <strong>❌ Cons:</strong><br />
+                                • Complex: many flows (Code, Implicit, Client Credentials)<br />
+                                • Depends on external providers<br />
+                                • Token management still requires JWT knowledge
+                            </div>
+                        </div>
+
+                        {/* Comparison Table */}
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm border-collapse">
+                                <thead><tr className="border-b border-white/10">
+                                    <th className="text-left p-3 text-slate-400 font-medium">Criteria</th>
+                                    <th className="text-left p-3 text-amber-400 font-medium">🍪 Cookie</th>
+                                    <th className="text-left p-3 text-blue-400 font-medium">📋 Session</th>
+                                    <th className="text-left p-3 text-green-400 font-medium">🎫 JWT</th>
+                                    <th className="text-left p-3 text-indigo-400 font-medium">🌐 OAuth2</th>
+                                </tr></thead>
+                                <tbody className="text-slate-300">
+                                    <tr className="border-b border-white/5"><td className="p-3 text-slate-400">State</td><td className="p-3">Stateless</td><td className="p-3">Stateful</td><td className="p-3">Stateless</td><td className="p-3">Hybrid</td></tr>
+                                    <tr className="border-b border-white/5"><td className="p-3 text-slate-400">Scale</td><td className="p-3">Good</td><td className="p-3">Hard</td><td className="p-3">Excellent</td><td className="p-3">Good</td></tr>
+                                    <tr className="border-b border-white/5"><td className="p-3 text-slate-400">Revoke</td><td className="p-3">Delete cookie</td><td className="p-3">Delete session</td><td className="p-3">Wait for expiry</td><td className="p-3">Revoke token</td></tr>
+                                    <tr className="border-b border-white/5"><td className="p-3 text-slate-400">Cross-domain</td><td className="p-3">❌</td><td className="p-3">❌</td><td className="p-3">✅</td><td className="p-3">✅</td></tr>
+                                    <tr className="border-b border-white/5"><td className="p-3 text-slate-400">Mobile</td><td className="p-3">Hard</td><td className="p-3">Hard</td><td className="p-3">✅</td><td className="p-3">✅</td></tr>
+                                    <tr><td className="p-3 text-slate-400">Best for</td><td className="p-3">Traditional web</td><td className="p-3">Monolith, SSR</td><td className="p-3">SPA, API, Microservices</td><td className="p-3">Social login, SSO</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Modern Best Practice */}
+                        <div className="p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                            <div className="text-cyan-400 font-bold text-sm mb-2">🏆 Best Practice 2025 — Combine Approaches</div>
+                            <div className="text-slate-300 text-sm">
+                                In practice, you don&apos;t use just one method — you <strong>combine them</strong>:<br /><br />
+                                • <strong>NextAuth / Auth.js:</strong> OAuth2 login (Google) → server creates JWT → stores in HttpOnly cookie<br />
+                                • <strong>Access Token:</strong> in memory (JS) — short-lived, sent via header<br />
+                                • <strong>Refresh Token:</strong> in HttpOnly Secure cookie — long-lived, server-side rotation<br />
+                                • <strong>CSRF:</strong> SameSite=Lax + CSRF token for mutation requests<br />
+                                • <strong>XSS:</strong> CSP header + HttpOnly cookies + input sanitization
+                            </div>
+                        </div>
+                    </div>
+
+                    <CodeBlock title="auth-patterns.ts">{`// 1. Cookie-based (traditional)
+// Server sets cookie — browser sends automatically every request
+res.setHeader('Set-Cookie', [
+  'token=abc123; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=3600'
+])
+
+// 2. Session-based (server stores state)
+// Login → create session
+app.post('/login', (req, res) => {
+  const user = authenticate(req.body)
+  req.session.userId = user.id  // stored in Redis/Memory
+  res.json({ success: true })   // session ID sent automatically via cookie
+})
+
+// 3. JWT (stateless)
+// Login → create token
+const token = jwt.sign(
+  { userId: 123, role: 'admin' },  // payload (anyone can decode!)
+  process.env.JWT_SECRET,           // secret key
+  { expiresIn: '15m' }             // short-lived
+)
+// Client sends:  Authorization: Bearer <token>
+// Server verifies: jwt.verify(token, secret) → payload
+
+// 4. OAuth2 + NextAuth (modern)
+// /api/auth/[...nextauth].ts
+import NextAuth from 'next-auth'
+import GoogleProvider from 'next-auth/providers/google'
+export default NextAuth({
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    })
+  ],
+  // JWT strategy — token stored in HttpOnly cookie
+  session: { strategy: 'jwt' },
+})`}</CodeBlock>
+
+                    <Callout type="tip">
+                        {'Interview asks about Authentication? Remember this '}<Highlight>answer structure</Highlight>:<br />
+                        {'1️⃣ '}<strong>Explain the evolution</strong>{': Cookie → Session → JWT → OAuth2 (what problem each solves)'}<br />
+                        {'2️⃣ '}<strong>Compare</strong>{': stateless vs stateful, when to use which'}<br />
+                        {'3️⃣ '}<strong>Security</strong>{': XSS, CSRF, token storage (HttpOnly cookie vs localStorage)'}<br />
+                        {'4️⃣ '}<strong>Real-world</strong>{': NextAuth, Access + Refresh Token pattern'}<br />
+                        {'Cover all 4 → interviewer rates you senior! 🎯'}
+                    </Callout>
+                </TopicModal>
+            </div>
+
             {/* ===== PHASE 4 ===== */}
         </>
     )
