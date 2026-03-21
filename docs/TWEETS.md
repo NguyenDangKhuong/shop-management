@@ -5,15 +5,25 @@ Trang hiển thị Twitter/X timelines của các username đã lưu.
 ## Tính năng
 
 - **Feed tabs** — For You, Following, @pinned (from env), ❤️ Liked
+- **URL-based routing** — Mỗi tab là route riêng (`/tweets/for-you`, `/tweets/following`, etc.)
+- **User timeline** — Click username → `/tweets/user/[username]` (dynamic route)
 - **Liked tweets** — Hiển thị tweets mà user pinned đã like (GraphQL Likes API)
-- **Thêm username** — Nhập username X (vd: `vercel`, `@reactjs`) → bấm "Thêm" hoặc Enter
+- **Thêm username** — Nhập username X (vd: `vercel`, `@reactjs`) → bấm "Browse" hoặc Enter
 - **Lưu vào DB** — Usernames được lưu trong MongoDB (`twitterusers` collection)
-- **Hiển thị feed** — Tất cả users' timelines hiển thị xếp dọc
 - **Infinite scroll** — Tự load thêm tweets khi cuộn xuống cuối
-- **Repost navigation** — Click username trên "xxx reposted" → chuyển sang timeline user đó
-- **Filter** — Click tag để xem 1 user, click "Tất cả" để xem toàn bộ
-- **Xóa** — Nút ✕ trên tag + popup confirm trước khi xóa
+- **Back button** — Nút "Back to feed" khi xem user timeline (dùng browser history)
 - **Public** — Không cần đăng nhập, ai cũng xem được
+
+## Routes
+
+| URL | Content |
+|-----|---------|
+| `/tweets` | Redirect → `/tweets/for-you` |
+| `/tweets/for-you` | Home feed — For You |
+| `/tweets/following` | Home feed — Following |
+| `/tweets/pinned` | Pinned user timeline |
+| `/tweets/likes` | Pinned user liked tweets |
+| `/tweets/user/[username]` | Dynamic user timeline |
 
 ## Domain routing
 
@@ -27,34 +37,44 @@ Cả hai cấu hình trong `.env.local` và Vercel Dashboard.
 ## Cấu trúc files
 
 ```
-src/
-├── app/
-│   ├── tweets/
-│   │   ├── page.tsx              # Server component, layout + metadata
-│   │   ├── TweetsFeed.tsx        # Client component, feed tabs + mode management
-│   │   ├── TweetSearch.tsx       # Client component, CRUD UI
-│   │   ├── GraphQLTweets.tsx     # GraphQL tweets + infinite scroll
-│   │   ├── BackToTop.tsx         # Scroll to top button
-│   │   └── __tests__/
-│   └── api/
-│       ├── tweets/
-│       │   ├── route.ts          # Proxy Twitter syndication
-│       │   ├── graphql/
-│       │   │   ├── route.ts      # GraphQL UserTweets proxy
-│       │   │   ├── likes/
-│       │   │   │   └── route.ts  # GraphQL Likes timeline proxy
-│       │   │   └── tweetParser.ts # Tweet response parser
-│       │   ├── home/
-│       │   │   └── route.ts      # Home timeline (For You / Following)
-│       │   ├── like/
-│       │   │   └── route.ts      # Like/Unlike mutation
-│       │   └── repost/
-│       │       └── route.ts      # Repost/Unrepost mutation
-│       └── twitter-users/
-│           └── route.ts          # CRUD API (GET/POST/DELETE)
-└── models/
-    ├── TwitterUser.ts            # Mongoose model
-    └── TwitterToken.ts           # Twitter auth credentials
+src/app/tweets/
+├── layout.tsx              # Metadata
+├── TweetsShell.tsx         # Client component, shared layout (header + tabs + search + back button)
+├── page.tsx                # Redirect → /tweets/for-you
+├── HomeFeed.tsx            # Home feed component (For You / Following)
+├── GraphQLTweets.tsx       # GraphQL tweets + infinite scroll + LazyVideo + MediaGrid
+├── TweetSearch.tsx         # Embed tweet search + cookie management
+├── BackToTop.tsx           # Scroll to top button
+├── TweetsFeed.tsx          # [Legacy] Old single-page feed (kept for test compatibility)
+├── for-you/page.tsx        # For You sub-page
+├── following/page.tsx      # Following sub-page
+├── pinned/page.tsx         # Pinned user sub-page
+├── likes/page.tsx          # Likes sub-page
+├── user/[username]/page.tsx # Dynamic user timeline
+└── __tests__/
+    ├── HomeFeedComponent.test.tsx  # HomeFeed tests
+    ├── TweetsShell.test.tsx        # TweetsShell tests (tabs, search, nav)
+    ├── SubPages.test.tsx           # Sub-page routing tests
+    ├── HomeFeed.test.tsx           # Legacy TweetsFeed tests
+    ├── GraphQLTweets.test.tsx      # GraphQL component tests
+    ├── TweetSearch.test.tsx        # TweetSearch tests
+    └── graphqlRoute.test.ts        # API route tests
+
+src/app/api/tweets/
+├── route.ts                # Proxy Twitter syndication (embed)
+├── graphql/
+│   ├── route.ts            # GraphQL UserTweets proxy
+│   ├── likes/route.ts      # GraphQL Likes timeline proxy
+│   └── tweetParser.ts      # Tweet response parser
+├── home/route.ts           # Home timeline (For You / Following)
+├── video/route.ts          # Video proxy (Vercel fallback)
+├── like/route.ts           # Like/Unlike mutation
+├── repost/route.ts         # Repost/Unrepost mutation
+└── follow/route.ts         # Follow mutation
+
+src/app/api/twitter-users/route.ts   # CRUD API (GET/POST/DELETE)
+src/models/TwitterUser.ts            # Mongoose model
+src/models/TwitterToken.ts           # Twitter auth credentials
 ```
 
 ## API Routes
@@ -93,17 +113,35 @@ Xóa username theo MongoDB ID.
 
 Component `LazyVideo` trong `GraphQLTweets.tsx` xử lý video/GIF:
 
-- **Poster + Play button** — Hiện thumbnail với nút ▶️, bấm mới load video
+- **`preload="metadata"`** — Browser tự tải first frame làm thumbnail (không dùng custom poster overlay)
+- **Loading skeleton** — Animated placeholder (play icon + pulse) hiện cho đến khi metadata loaded
 - **Lazy source loading** — `<source>` chỉ inject khi scroll vào viewport (IntersectionObserver 200px)
-- **No layout shift** — Poster `<img>` chiếm đúng kích thước, video ẩn bên dưới cho đến khi ready
-- **Loading spinner** — Hiện khi bấm play nhưng video chưa buffer xong
 - **Auto-pause** — Pause khi scroll ra khỏi viewport
 - **GIF support** — Auto-play, loop, muted, badge "GIF"
+- **Standard controls** — Dùng native browser video controls
+
+### Video Proxy Optimization
+
+| Feature | Cloudflare Worker | Vercel Fallback |
+|---------|------------------|-----------------|
+| Range requests | ✅ (seeking support) | ✅ |
+| Cache-Control | ✅ 24h edge cache | ✅ 1h |
+| Accept-Ranges | ✅ bytes | ✅ bytes |
+| Content-Range | ✅ forwarded | ✅ forwarded |
+
+Chi tiết Worker proxy: xem `docs/CLOUDFLARE-VIDEO-PROXY.md`.
+
+### Potential future optimizations
+
+- **CDN/R2 cache** — Cache video trên Cloudflare R2 (free 10GB) để giảm latency
+- **Lower bitrate selection** — Chọn 720p thay highest quality khi parse tweet
+- **HLS streaming** — Adaptive bitrate (cần server transcode, phức tạp)
 
 ## Tech Stack
 
+- **Next.js App Router** — URL-based routing cho sub-pages
 - **Twitter GraphQL API** via server proxy (UserTweets, Likes, Home)
 - **DOMPurify** cho XSS sanitization trong tweet rendering
 - **MongoDB** cho usernames + Twitter credentials
 - **IntersectionObserver** cho infinite scroll + lazy video loading
-- **Next.js API Routes** cho proxy + CRUD
+- **Cloudflare Worker** cho video proxy (free tier)

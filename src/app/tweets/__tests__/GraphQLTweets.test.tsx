@@ -127,18 +127,17 @@ describe('formatTweetText', () => {
 
 // ─── LazyVideo ──────────────────────────────────────────────────────────
 describe('LazyVideo', () => {
-    it('renders with poster image and play button initially', () => {
+    it('renders with skeleton and video element initially', () => {
         const { container } = render(
             <LazyVideo src="/video.mp4" poster="/poster.jpg" isGif={false} />
         )
 
         const video = container.querySelector('video')!
         expect(video).toBeInTheDocument()
-        expect(video.getAttribute('preload')).toBe('none')
-        // Poster is rendered as a separate img, not on video element
-        const posterImg = container.querySelector('img[src="/poster.jpg"]')!
-        expect(posterImg).toBeInTheDocument()
-        // Play button overlay should be visible
+        expect(video.getAttribute('preload')).toBe('metadata')
+        expect(video.getAttribute('poster')).toBe('/poster.jpg')
+        // Skeleton placeholder with play icon shown before metadata loaded
+        expect(container.querySelector('.animate-pulse')).toBeInTheDocument()
         expect(container.querySelector('svg')).toBeInTheDocument()
         // No source loaded yet
         expect(container.querySelector('source')).toBeNull()
@@ -244,7 +243,7 @@ describe('MediaGrid', () => {
 
         const video = container.querySelector('video')!
         expect(video).toBeInTheDocument()
-        expect(video.getAttribute('preload')).toBe('none')
+        expect(video.getAttribute('preload')).toBe('metadata')
     })
 
     it('uses video proxy URL when provided', () => {
