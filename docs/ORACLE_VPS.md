@@ -65,6 +65,7 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | ↳ Switch model | `cd ~/openclaw_data && sudo ./switch-model.sh` | | | Danh sách model từ CLI Proxy API |
 | **n8n** | 5678 | ✅ always | Docker Compose | Automation platform (n8n + worker + MCP + postgres + redis) |
 | **Speedtest Tracker** | 3007 | ✅ unless-stopped | Docker | Network speed test history & charts |
+| **Webtop** | 3010 | ✅ unless-stopped | Docker | Ubuntu XFCE desktop in browser |
 | **stress-ng** | — | ✅ enabled | systemd | Anti-reclaim CPU/RAM |
 | **vocab-push.timer** | — | ✅ enabled | systemd timer | Vocab reminder mỗi giờ |
 
@@ -557,19 +558,34 @@ VPS accesses local LAN (192.168.1.0/24) through Ubuntu VM subnet router.
 
 | Machine | Tailscale IP | Role |
 |---------|-------------|------|
-| **heyyolo-free-vps** | 100.118.218.99 | `--accept-routes --ssh` |
+| **heyyolo-free-vps** | 100.118.218.99 | `--advertise-exit-node --accept-routes --ssh` |
 | **khuong-ubuntu-esxi** | 100.108.169.39 | `--advertise-routes=192.168.1.0/24` |
 | **macbook-pro-may-cty** | 100.90.20.107 | Client |
 | **khuongnas** | 100.116.76.83 | NAS |
 | **iphone-13-pro-max** | 100.65.129.97 | Mobile |
 
 ```bash
-# VPS: accept subnet routes
-sudo tailscale up --accept-routes --ssh
+# VPS: accept subnet routes + advertise exit node
+sudo tailscale up --advertise-exit-node --accept-routes --ssh
 
 # Ubuntu VM: advertise LAN
 sudo tailscale up --advertise-routes=192.168.1.0/24 --accept-routes
 ```
+
+### Exit Node (VPN)
+
+VPS hoạt động như exit node — toàn bộ traffic internet của client đi qua VPS Singapore.
+
+```
+📱 iPhone → Tailscale VPN → VPS Singapore (161.118.197.104) → Internet
+```
+
+**Bật/tắt từ client:**
+- **iPhone:** Tailscale app → Exit Node → `heyyolo-free-vps`
+- **MacBook:** Tailscale menu bar → Exit Node → `heyyolo-free-vps`
+- **CLI:** `tailscale up --exit-node=heyyolo-free-vps` (tắt: `--exit-node=`)
+
+**Lưu ý:** Exit node không tăng tốc internet. Dùng khi cần bảo mật WiFi công cộng hoặc đổi IP sang Singapore.
 
 ## Budget Alert
 
@@ -588,6 +604,7 @@ Oracle Console → Billing → Budgets → `free-tier-alert`
 | https://openclaw.khuong.theworkpc.com | openclaw (local via Tailscale) |
 | https://nas.khuong.theworkpc.com | NAS Synology (local via subnet) |
 | https://ha.khuong.theworkpc.com | Home Assistant (smart home) |
+| https://ui.khuong.theworkpc.com | Webtop (Ubuntu desktop in browser) |
 | http://161.118.197.104 | VPS direct |
 | http://100.118.218.99 | VPS via Tailscale |
 
@@ -644,6 +661,7 @@ Oracle Console → Billing → Budgets → `free-tier-alert`
 | `openclaw.khuong.theworkpc.com` | OpenClaw | VPS → Tailscale → 100.108.169.39:18789 |
 | `nas.khuong.theworkpc.com` | NAS Synology | VPS → subnet → 192.168.1.200:5001 |
 | `ha.khuong.theworkpc.com` | Home Assistant | VPS → localhost:8123 |
+| `ui.khuong.theworkpc.com` | Webtop (web desktop) | VPS → localhost:3010 |
 | `thetaphoa.vercel.app` | Vercel (default) | Direct |
 
 ### 🔵 Cloudflare Tunnel (cần `thetaphoa.store`)
