@@ -184,3 +184,9 @@
     background: var(--text-muted);
   }
 }
+
+/* ─── Clarity Streak Animation ─── */
+@keyframes streakPulse {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.15); filter: brightness(1.3); }
+}

@@ -74,6 +74,18 @@ export default function ClarityClient() {
     const [selectedDay, setSelectedDay] = useState(() => new Date().getDate())
     const [activeWeek, setActiveWeek] = useState(1)
     const saveRef = useRef(false)
+    const [streak, setStreak] = useState<{ currentStreak: number; todayDone: boolean }>({ currentStreak: 0, todayDone: false })
+
+    // ─── Fetch streak ─────────────────────────────────────────────────
+    const fetchStreak = useCallback(async () => {
+        try {
+            const res = await fetch('/api/clarity/streak')
+            const data = await res.json()
+            if (data.currentStreak !== undefined) setStreak(data)
+        } catch { /* silent */ }
+    }, [])
+
+    useEffect(() => { fetchStreak() }, [fetchStreak])
 
     // ─── Fetch plan ───────────────────────────────────────────────────
     const fetchPlan = useCallback(async (m: string) => {
@@ -110,6 +122,7 @@ export default function ClarityClient() {
                     body: JSON.stringify(data),
                 })
                 setSaveStatus('saved')
+                fetchStreak() // re-calculate streak after save
                 setTimeout(() => setSaveStatus('idle'), 1500)
             } catch {
                 console.error('Failed to save plan')
@@ -117,7 +130,7 @@ export default function ClarityClient() {
             }
         }
         savePlan()
-    }, [debouncedPlan])
+    }, [debouncedPlan, fetchStreak])
 
     // ─── Update helpers ───────────────────────────────────────────────
     const updatePlan = (updates: Partial<MonthPlan>) => {
@@ -266,9 +279,30 @@ export default function ClarityClient() {
                         <span className="text-3xl">📋</span>
                         <h1 className="text-3xl md:text-4xl font-bold text-white">Clarity</h1>
                     </div>
-                    <div className="flex items-center gap-2 text-xs">
-                        {saveStatus === 'saving' && <span className="text-blue-400 flex items-center gap-1"><span className="inline-block w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />Saving...</span>}
-                        {saveStatus === 'saved' && <span className="text-green-400">✓ Saved</span>}
+                    <div className="flex items-center gap-3">
+                        {/* 🔥 Streak Widget */}
+                        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${streak.currentStreak > 0
+                            ? 'bg-orange-500/15 border border-orange-500/30'
+                            : 'bg-slate-800/60 border border-white/5'}`}
+                            title={streak.currentStreak > 0 ? `${streak.currentStreak} ngày liên tiếp!` : 'Chưa có streak'}
+                        >
+                            <span className={`text-lg transition-all ${streak.currentStreak > 0
+                                ? 'animate-[streakPulse_2s_ease-in-out_infinite] drop-shadow-[0_0_8px_rgba(249,115,22,0.6)]'
+                                : 'grayscale opacity-40'}`}>
+                                🔥
+                            </span>
+                            <span className={`text-sm font-bold tabular-nums ${streak.currentStreak > 0 ? 'text-orange-400' : 'text-slate-500'}`}>
+                                {streak.currentStreak}
+                            </span>
+                            {!streak.todayDone && streak.currentStreak > 0 && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" title="Hôm nay chưa hoàn thành!" />
+                            )}
+                        </div>
+                        {/* Save status */}
+                        <div className="text-xs">
+                            {saveStatus === 'saving' && <span className="text-blue-400 flex items-center gap-1"><span className="inline-block w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />Saving...</span>}
+                            {saveStatus === 'saved' && <span className="text-green-400">✓ Saved</span>}
+                        </div>
                     </div>
                 </div>
 

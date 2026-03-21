@@ -147,7 +147,7 @@ describe('ClarityClient', () => {
 
         // Should trigger a new fetch
         await waitFor(() => {
-            expect(mockFetch).toHaveBeenCalledTimes(2) // initial + prev month
+            expect(mockFetch).toHaveBeenCalledTimes(3) // streak + initial plan + prev month plan
         })
     })
 
