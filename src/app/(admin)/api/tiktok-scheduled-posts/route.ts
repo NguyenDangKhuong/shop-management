@@ -14,6 +14,14 @@ const r2Client = new Client({
     pathStyle: true,
 })
 
+/** Convert DD/MM/YYYY + HH:mm → Unix timestamp in seconds (VN timezone UTC+7) */
+function calcUnixTime(scheduledDate: string, scheduledTime: string): number {
+    const [day, month, year] = scheduledDate.split('/')
+    const [hour, minute] = scheduledTime.split(':')
+    const utcMs = Date.UTC(+year, +month - 1, +day, +hour - 7, +minute)
+    return Math.floor(utcMs / 1000)
+}
+
 // GET all scheduled posts (optionally filter by accountId)
 export async function GET(request: NextRequest) {
     try {
@@ -80,6 +88,9 @@ export async function POST(request: NextRequest) {
             body.scheduledDate = body.scheduledDate || `${dd}/${mm}/${yyyy}`
             body.scheduledTime = body.scheduledTime || `${hh}:${min}`
             body.scheduledUnixTime = body.scheduledUnixTime || newUnix
+        } else if (body.scheduledDate && body.scheduledTime && !body.scheduledUnixTime) {
+            // User provided date/time manually → auto-calculate unix time
+            body.scheduledUnixTime = calcUnixTime(body.scheduledDate, body.scheduledTime)
         }
 
         const post = await TikTokScheduledPostModel.create(body)
@@ -95,6 +106,12 @@ export async function PUT(request: NextRequest) {
         await connectDb()
         const body = await request.json()
         const { id, ...data } = body
+
+        // Auto-calculate scheduledUnixTime when date/time changes
+        if (data.scheduledDate && data.scheduledTime) {
+            data.scheduledUnixTime = calcUnixTime(data.scheduledDate, data.scheduledTime)
+        }
+
         const post = await TikTokScheduledPostModel.findByIdAndUpdate(id, data, { new: true })
         return NextResponse.json({ success: true, data: post })
     } catch (error: any) {
