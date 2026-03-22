@@ -81,7 +81,28 @@ export async function middleware(request: NextRequest) {
     return NextResponse.rewrite(new URL('/not-found', request.url))
   }
 
-  // 3. Private paths (admin) → check auth
+  // 3. Admin API routes → check session OR API key
+  //    n8n và automation gọi bằng x-api-key header
+  //    Browser admin dùng session auth
+  const ADMIN_API_PATHS = ['/api/product', '/api/products', '/api/categories', '/api/category',
+    '/api/orders', '/api/order', '/api/facebook-posts', '/api/tiktok', '/api/tiktok-accounts',
+    '/api/tiktok-music', '/api/tiktok-products', '/api/tiktok-scheduled-posts',
+    '/api/prompts', '/api/autoflows', '/api/r2-video', '/api/veo3-media', '/api/check-connection']
+  if (ADMIN_API_PATHS.some(p => pathname.startsWith(p))) {
+    const apiKey = request.headers.get('x-api-key')
+    const validApiKey = process.env.ADMIN_API_KEY
+
+    // Option 1: Valid API key → allow (n8n, automation)
+    if (validApiKey && apiKey === validApiKey) {
+      return NextResponse.next()
+    }
+
+    // Option 2: Valid session → allow (browser admin)
+    // auth() returns redirect response if no session, or next() if authenticated
+    return (auth as any)(request)
+  }
+
+  // 4. Private pages (admin dashboard) → check session auth
   //    Chưa login → redirect /login (không flicker, không leak data)
   if (PRIVATE_PATHS.some(p => pathname.startsWith(p))) {
     return (auth as any)(request)
