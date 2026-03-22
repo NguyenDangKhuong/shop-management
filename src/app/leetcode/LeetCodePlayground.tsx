@@ -23,6 +23,8 @@ const categoryEmoji: Record<Category, string> = {
     'Backtracking': '🔙',
     'Stack': '📚',
     'Custom Hooks': '⚛️',
+    'JS Array Methods': '🔧',
+    'JS Implement': '🏗️',
 }
 
 interface TestResult {
@@ -228,7 +230,7 @@ export default function LeetCodePlayground() {
         ? problems
         : problems.filter(p => p.category === filterCat)
 
-    const allCategories: Category[] = ['Two Pointers', 'Sliding Window', 'BFS / DFS', 'Binary Search', 'Dynamic Programming', 'Backtracking', 'Stack', 'Custom Hooks']
+    const allCategories: Category[] = ['Two Pointers', 'Sliding Window', 'BFS / DFS', 'Binary Search', 'Dynamic Programming', 'Backtracking', 'Stack', 'Custom Hooks', 'JS Array Methods', 'JS Implement']
 
     const passedCount = results.filter(r => r.passed).length
     const totalCount = results.length

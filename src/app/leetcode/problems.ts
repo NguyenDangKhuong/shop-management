@@ -9,6 +9,8 @@ export type Category =
     | 'Backtracking'
     | 'Stack'
     | 'Custom Hooks'
+    | 'JS Array Methods'
+    | 'JS Implement'
 
 export interface TestCase {
     input: string
@@ -2108,6 +2110,543 @@ function testHook() {
     clearTimeout(timer);
     timer = setTimeout(() => fn.apply(this, args), delay);
   };
+}`,
+    },
+
+    // ============================================
+    // JS Array Methods — Practical Challenges
+    // ============================================
+    {
+        id: 76,
+        title: 'Word Frequency Counter',
+        difficulty: 'Easy',
+        category: 'JS Array Methods',
+        description: {
+            vi: `Cho một chuỗi \`sentence\`, đếm số lần xuất hiện của mỗi từ.
+Trả về object { word: count }.
+Gợi ý: \`split\`, \`reduce\``,
+            en: `Given a string \`sentence\`, count occurrences of each word.
+Return object { word: count }.
+Hint: use \`split\`, \`reduce\``,
+        },
+        starterCode: "function wordFrequency(sentence) {\n  // Your code here\n}",
+        testCases: [
+            { input: "\"hello world hello\"", expected: "{\"hello\":2,\"world\":1}" },
+            { input: "\"a b c a b a\"", expected: "{\"a\":3,\"b\":2,\"c\":1}" },
+            { input: "\"one\"", expected: "{\"one\":1}" },
+        ],
+        hint: "sentence.split(' ').reduce((acc, word) => { acc[word] = (acc[word] || 0) + 1; return acc }, {})",
+        solution: `function wordFrequency(sentence) {
+  return sentence.split(' ').reduce((acc, word) => {
+    acc[word] = (acc[word] || 0) + 1;
+    return acc;
+  }, {});
+}`,
+    },
+    {
+        id: 77,
+        title: 'Flatten & Unique',
+        difficulty: 'Easy',
+        category: 'JS Array Methods',
+        description: {
+            vi: `Cho mảng nested \`arr\`, flatten rồi loại bỏ duplicates, sắp xếp tăng dần.
+Gợi ý: \`flat\`, \`Set\`, \`sort\``,
+            en: `Given nested array \`arr\`, flatten, remove duplicates, sort ascending.
+Hint: use \`flat\`, \`Set\`, \`sort\``,
+        },
+        starterCode: "function flattenUnique(arr) {\n  // Your code here\n}",
+        testCases: [
+            { input: "[[1,2],[3,2],[1,4]]", expected: "[1,2,3,4]" },
+            { input: "[[5,5],[3],[1,3,5]]", expected: "[1,3,5]" },
+            { input: "[[1]]", expected: "[1]" },
+        ],
+        hint: "[...new Set(arr.flat())].sort((a, b) => a - b)",
+        solution: `function flattenUnique(arr) {
+  return [...new Set(arr.flat())].sort((a, b) => a - b);
+}`,
+    },
+    {
+        id: 78,
+        title: 'Group Products by Category',
+        difficulty: 'Easy',
+        category: 'JS Array Methods',
+        description: {
+            vi: `Cho mảng objects \`products\` có { name, category, price }.
+Nhóm theo category, trả về { category: [names] }.
+Gợi ý: \`reduce\``,
+            en: `Given array of objects \`products\` with { name, category, price }.
+Group by category, return { category: [names] }.
+Hint: use \`reduce\``,
+        },
+        starterCode: `function groupByCategory(products) {
+  // Your code here
+}`,
+        testCases: [
+            { input: "[{\"name\":\"Apple\",\"category\":\"Fruit\",\"price\":1},{\"name\":\"Carrot\",\"category\":\"Veggie\",\"price\":2},{\"name\":\"Banana\",\"category\":\"Fruit\",\"price\":1}]", expected: "{\"Fruit\":[\"Apple\",\"Banana\"],\"Veggie\":[\"Carrot\"]}" },
+            { input: "[{\"name\":\"A\",\"category\":\"X\",\"price\":1}]", expected: "{\"X\":[\"A\"]}" },
+        ],
+        hint: "reduce với acc[item.category] = [...(acc[item.category] || []), item.name]",
+        solution: `function groupByCategory(products) {
+  return products.reduce((acc, p) => {
+    acc[p.category] = [...(acc[p.category] || []), p.name];
+    return acc;
+  }, {});
+}`,
+    },
+    {
+        id: 79,
+        title: 'Transform & Filter Pipeline',
+        difficulty: 'Easy',
+        category: 'JS Array Methods',
+        description: {
+            vi: `Cho mảng số \`nums\`:
+1. Nhân đôi mỗi số (map)
+2. Lọc chỉ giữ số chẵn (filter)
+3. Tính tổng (reduce)
+Gợi ý: chain \`map\` → \`filter\` → \`reduce\``,
+            en: `Given array \`nums\`:
+1. Double each number (map)
+2. Keep only even numbers (filter)
+3. Sum all (reduce)
+Hint: chain \`map\` → \`filter\` → \`reduce\``,
+        },
+        starterCode: "function pipeline(nums) {\n  // Your code here\n}",
+        testCases: [
+            { input: "[1,2,3,4,5]", expected: "30" },
+            { input: "[1,3,5]", expected: "18" },
+            { input: "[2]", expected: "4" },
+        ],
+        hint: "nums.map(n => n * 2).filter(n => n % 2 === 0).reduce((a, b) => a + b, 0) — vì nhân 2 nên tất cả đều chẵn!",
+        solution: `function pipeline(nums) {
+  return nums.map(n => n * 2).filter(n => n % 2 === 0).reduce((a, b) => a + b, 0);
+}`,
+    },
+    {
+        id: 80,
+        title: 'Object Key/Value Swap',
+        difficulty: 'Easy',
+        category: 'JS Array Methods',
+        description: {
+            vi: `Cho object \`obj\`, đảo key ↔ value.
+Gợi ý: \`Object.entries\`, \`reduce\` hoặc \`Object.fromEntries\``,
+            en: `Given object \`obj\`, swap keys and values.
+Hint: use \`Object.entries\`, \`reduce\` or \`Object.fromEntries\``,
+        },
+        starterCode: "function swapKeyValue(obj) {\n  // Your code here\n}",
+        testCases: [
+            { input: "{\"a\":\"1\",\"b\":\"2\",\"c\":\"3\"}", expected: "{\"1\":\"a\",\"2\":\"b\",\"3\":\"c\"}" },
+            { input: "{\"x\":\"y\"}", expected: "{\"y\":\"x\"}" },
+        ],
+        hint: "Object.fromEntries(Object.entries(obj).map(([k, v]) => [v, k]))",
+        solution: `function swapKeyValue(obj) {
+  return Object.fromEntries(Object.entries(obj).map(([k, v]) => [v, k]));
+}`,
+    },
+    {
+        id: 81,
+        title: 'Capitalize Words',
+        difficulty: 'Easy',
+        category: 'JS Array Methods',
+        description: {
+            vi: `Cho chuỗi \`str\`, viết hoa chữ cái đầu mỗi từ.
+Gợi ý: \`split\`, \`map\`, \`join\`, \`slice\` hoặc \`charAt\``,
+            en: `Given string \`str\`, capitalize first letter of each word.
+Hint: use \`split\`, \`map\`, \`join\`, \`slice\` or \`charAt\``,
+        },
+        starterCode: "function capitalizeWords(str) {\n  // Your code here\n}",
+        testCases: [
+            { input: "\"hello world\"", expected: "\"Hello World\"" },
+            { input: "\"the quick brown fox\"", expected: "\"The Quick Brown Fox\"" },
+            { input: "\"a\"", expected: "\"A\"" },
+        ],
+        hint: "str.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')",
+        solution: `function capitalizeWords(str) {
+  return str.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}`,
+    },
+    {
+        id: 82,
+        title: 'Intersection of Arrays',
+        difficulty: 'Medium',
+        category: 'JS Array Methods',
+        description: {
+            vi: `Cho 2 mảng \`a\` và \`b\`, tìm phần tử chung (unique, sorted).
+Gợi ý: \`filter\`, \`Set\`, \`sort\``,
+            en: `Given arrays \`a\` and \`b\`, find common elements (unique, sorted).
+Hint: use \`filter\`, \`Set\`, \`sort\``,
+        },
+        starterCode: "function intersection(a, b) {\n  // Your code here\n}",
+        testCases: [
+            { input: "[1,2,2,3], [2,3,4]", expected: "[2,3]" },
+            { input: "[1,1,1], [1]", expected: "[1]" },
+            { input: "[1,2], [3,4]", expected: "[]" },
+        ],
+        hint: "const setB = new Set(b); return [...new Set(a.filter(x => setB.has(x)))].sort((a,b) => a-b)",
+        solution: `function intersection(a, b) {
+  const setB = new Set(b);
+  return [...new Set(a.filter(x => setB.has(x)))].sort((a, b) => a - b);
+}`,
+    },
+    {
+        id: 83,
+        title: 'Deep Pick',
+        difficulty: 'Medium',
+        category: 'JS Array Methods',
+        description: {
+            vi: `Cho object \`obj\` và mảng \`keys\`, chỉ giữ lại các key được chọn.
+Gợi ý: \`Object.fromEntries\`, \`Object.entries\`, \`filter\`, \`includes\``,
+            en: `Given object \`obj\` and array \`keys\`, keep only selected keys.
+Hint: use \`Object.fromEntries\`, \`Object.entries\`, \`filter\`, \`includes\``,
+        },
+        starterCode: "function pick(obj, keys) {\n  // Your code here\n}",
+        testCases: [
+            { input: "{\"a\":1,\"b\":2,\"c\":3}, [\"a\",\"c\"]", expected: "{\"a\":1,\"c\":3}" },
+            { input: "{\"x\":10,\"y\":20}, [\"y\"]", expected: "{\"y\":20}" },
+            { input: "{\"a\":1}, [\"b\"]", expected: "{}" },
+        ],
+        hint: "Object.fromEntries(Object.entries(obj).filter(([k]) => keys.includes(k)))",
+        solution: `function pick(obj, keys) {
+  return Object.fromEntries(Object.entries(obj).filter(([k]) => keys.includes(k)));
+}`,
+    },
+    {
+        id: 84,
+        title: 'FlatMap: Extract Tags',
+        difficulty: 'Medium',
+        category: 'JS Array Methods',
+        description: {
+            vi: `Cho mảng \`posts\` có { title, tags: string[] }.
+Trả về mảng unique tags, sorted.
+Gợi ý: \`flatMap\`, \`Set\`, \`sort\``,
+            en: `Given array \`posts\` with { title, tags: string[] }.
+Return unique tags array, sorted.
+Hint: use \`flatMap\`, \`Set\`, \`sort\``,
+        },
+        starterCode: "function extractTags(posts) {\n  // Your code here\n}",
+        testCases: [
+            { input: "[{\"title\":\"A\",\"tags\":[\"js\",\"react\"]},{\"title\":\"B\",\"tags\":[\"react\",\"node\"]}]", expected: "[\"js\",\"node\",\"react\"]" },
+            { input: "[{\"title\":\"X\",\"tags\":[\"a\",\"b\"]},{\"title\":\"Y\",\"tags\":[\"a\"]}]", expected: "[\"a\",\"b\"]" },
+        ],
+        hint: "[...new Set(posts.flatMap(p => p.tags))].sort()",
+        solution: `function extractTags(posts) {
+  return [...new Set(posts.flatMap(p => p.tags))].sort();
+}`,
+    },
+    {
+        id: 85,
+        title: 'Chain: Top N Expensive',
+        difficulty: 'Medium',
+        category: 'JS Array Methods',
+        description: {
+            vi: `Cho mảng \`items\` có { name, price } và số \`n\`.
+Trả về tên n sản phẩm đắt nhất (sorted by price desc).
+Gợi ý: \`sort\`, \`slice\`, \`map\``,
+            en: `Given array \`items\` with { name, price } and number \`n\`.
+Return names of top n most expensive items (sorted by price desc).
+Hint: use \`sort\`, \`slice\`, \`map\``,
+        },
+        starterCode: "function topExpensive(items, n) {\n  // Your code here\n}",
+        testCases: [
+            { input: "[{\"name\":\"A\",\"price\":10},{\"name\":\"B\",\"price\":30},{\"name\":\"C\",\"price\":20}], 2", expected: "[\"B\",\"C\"]" },
+            { input: "[{\"name\":\"X\",\"price\":5},{\"name\":\"Y\",\"price\":15}], 1", expected: "[\"Y\"]" },
+        ],
+        hint: "[...items].sort((a, b) => b.price - a.price).slice(0, n).map(i => i.name)",
+        solution: `function topExpensive(items, n) {
+  return [...items].sort((a, b) => b.price - a.price).slice(0, n).map(i => i.name);
+}`,
+    },
+
+    // ============================================
+    // JS Implement — Re-implement Built-in Methods
+    // ============================================
+    {
+        id: 86,
+        title: 'Implement Array.map',
+        difficulty: 'Easy',
+        category: 'JS Implement',
+        description: {
+            vi: `Viết hàm \`myMap(arr, callback)\` hoạt động giống \`Array.prototype.map\`.
+callback nhận 3 tham số: (element, index, array).
+KHÔNG dùng .map()`,
+            en: `Write \`myMap(arr, callback)\` that works like \`Array.prototype.map\`.
+callback receives 3 args: (element, index, array).
+Do NOT use .map()`,
+        },
+        starterCode: "function myMap(arr, callback) {\n  // Your code here — no .map() allowed!\n}",
+        testCases: [
+            { input: "[1,2,3], (x) => x * 2", expected: "[2,4,6]" },
+            { input: "[\"a\",\"b\"], (x, i) => x + i", expected: "[\"a0\",\"b1\"]" },
+            { input: "[], (x) => x", expected: "[]" },
+        ],
+        hint: "Dùng for loop, push callback(arr[i], i, arr) vào result array.",
+        solution: `function myMap(arr, callback) {
+  const result = [];
+  for (let i = 0; i < arr.length; i++) {
+    result.push(callback(arr[i], i, arr));
+  }
+  return result;
+}`,
+    },
+    {
+        id: 87,
+        title: 'Implement Array.filter',
+        difficulty: 'Easy',
+        category: 'JS Implement',
+        description: {
+            vi: `Viết hàm \`myFilter(arr, callback)\` hoạt động giống \`Array.prototype.filter\`.
+callback trả về truthy → giữ, falsy → bỏ.
+KHÔNG dùng .filter()`,
+            en: `Write \`myFilter(arr, callback)\` that works like \`Array.prototype.filter\`.
+callback returns truthy → keep, falsy → skip.
+Do NOT use .filter()`,
+        },
+        starterCode: "function myFilter(arr, callback) {\n  // Your code here — no .filter() allowed!\n}",
+        testCases: [
+            { input: "[1,2,3,4,5], (x) => x % 2 === 0", expected: "[2,4]" },
+            { input: "[10,20,30], (x) => x > 15", expected: "[20,30]" },
+            { input: "[1,2,3], (x) => false", expected: "[]" },
+        ],
+        hint: "Dùng for loop, if (callback(arr[i], i, arr)) thì push vào result.",
+        solution: `function myFilter(arr, callback) {
+  const result = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (callback(arr[i], i, arr)) result.push(arr[i]);
+  }
+  return result;
+}`,
+    },
+    {
+        id: 88,
+        title: 'Implement Array.reduce',
+        difficulty: 'Medium',
+        category: 'JS Implement',
+        description: {
+            vi: `Viết hàm \`myReduce(arr, callback, initialValue)\` hoạt động giống \`Array.prototype.reduce\`.
+callback nhận: (accumulator, currentValue, index, array).
+Nếu không có initialValue, dùng arr[0] và bắt đầu từ index 1.
+KHÔNG dùng .reduce()`,
+            en: `Write \`myReduce(arr, callback, initialValue)\` that works like \`Array.prototype.reduce\`.
+callback receives: (accumulator, currentValue, index, array).
+If no initialValue, use arr[0] and start from index 1.
+Do NOT use .reduce()`,
+        },
+        starterCode: "function myReduce(arr, callback, initialValue) {\n  // Your code here — no .reduce() allowed!\n}",
+        testCases: [
+            { input: "[1,2,3,4], (acc, cur) => acc + cur, 0", expected: "10" },
+            { input: "[1,2,3], (acc, cur) => acc * cur, 1", expected: "6" },
+            { input: "[5,3,1], (acc, cur) => acc - cur", expected: "1" },
+        ],
+        hint: "Kiểm tra initialValue undefined → acc = arr[0], startIdx = 1. Ngược lại acc = initialValue, startIdx = 0.",
+        solution: `function myReduce(arr, callback, initialValue) {
+  let acc = initialValue !== undefined ? initialValue : arr[0];
+  const startIdx = initialValue !== undefined ? 0 : 1;
+  for (let i = startIdx; i < arr.length; i++) {
+    acc = callback(acc, arr[i], i, arr);
+  }
+  return acc;
+}`,
+    },
+    {
+        id: 89,
+        title: 'Implement Array.find',
+        difficulty: 'Easy',
+        category: 'JS Implement',
+        description: {
+            vi: `Viết hàm \`myFind(arr, callback)\` hoạt động giống \`Array.prototype.find\`.
+Trả về phần tử đầu tiên mà callback trả truthy, hoặc undefined.
+KHÔNG dùng .find()`,
+            en: `Write \`myFind(arr, callback)\` that works like \`Array.prototype.find\`.
+Return first element where callback returns truthy, or undefined.
+Do NOT use .find()`,
+        },
+        starterCode: "function myFind(arr, callback) {\n  // Your code here — no .find() allowed!\n}",
+        testCases: [
+            { input: "[1,2,3,4], (x) => x > 2", expected: "3" },
+            { input: "[10,20,30], (x) => x === 20", expected: "20" },
+            { input: "[1,2,3], (x) => x > 10", expected: "undefined" },
+        ],
+        hint: "For loop, khi callback(arr[i]) truthy → return arr[i] ngay. Không tìm thấy → return undefined.",
+        solution: `function myFind(arr, callback) {
+  for (let i = 0; i < arr.length; i++) {
+    if (callback(arr[i], i, arr)) return arr[i];
+  }
+  return undefined;
+}`,
+    },
+    {
+        id: 90,
+        title: 'Implement Array.flat',
+        difficulty: 'Medium',
+        category: 'JS Implement',
+        description: {
+            vi: `Viết hàm \`myFlat(arr, depth)\` hoạt động giống \`Array.prototype.flat\`.
+depth mặc định = 1. Nếu depth = Infinity thì flatten hoàn toàn.
+KHÔNG dùng .flat()`,
+            en: `Write \`myFlat(arr, depth)\` that works like \`Array.prototype.flat\`.
+depth defaults to 1. If depth = Infinity, flatten completely.
+Do NOT use .flat()`,
+        },
+        starterCode: "function myFlat(arr, depth = 1) {\n  // Your code here — no .flat() allowed!\n}",
+        testCases: [
+            { input: "[[1,2],[3,[4,5]]], 1", expected: "[1,2,3,[4,5]]" },
+            { input: "[[1,[2,[3]]]], Infinity", expected: "[1,2,3]" },
+            { input: "[1,[2],3], 1", expected: "[1,2,3]" },
+        ],
+        hint: "Recursive: duyệt từng item, nếu Array.isArray(item) && depth > 0 → concat myFlat(item, depth - 1), ngược lại push item.",
+        solution: `function myFlat(arr, depth = 1) {
+  const result = [];
+  for (const item of arr) {
+    if (Array.isArray(item) && depth > 0) {
+      result.push(...myFlat(item, depth - 1));
+    } else {
+      result.push(item);
+    }
+  }
+  return result;
+}`,
+    },
+    {
+        id: 91,
+        title: 'Implement Function.bind',
+        difficulty: 'Medium',
+        category: 'JS Implement',
+        description: {
+            vi: `Viết hàm \`myBind(fn, context, ...args)\` hoạt động giống \`Function.prototype.bind\`.
+Trả về hàm mới với \`this\` = context, partial arguments.
+KHÔNG dùng .bind()`,
+            en: `Write \`myBind(fn, context, ...args)\` that works like \`Function.prototype.bind\`.
+Return new function with \`this\` = context, partial arguments.
+Do NOT use .bind()`,
+        },
+        starterCode: `function myBind(fn, context, ...boundArgs) {
+  // Your code here — no .bind() allowed!
+}
+
+// --- Test Wrapper ---
+function testHook() {
+  const obj = { x: 42 };
+  function getX(prefix) { return prefix + this.x; }
+  const bound = myBind(getX, obj, "val:");
+  if (bound() !== "val:42") throw new Error("Expected 'val:42', got " + bound());
+
+  function add(a, b) { return a + b; }
+  const add5 = myBind(add, null, 5);
+  if (add5(3) !== 8) throw new Error("Expected 8, got " + add5(3));
+
+  return 1;
+}`,
+        testCases: [
+            { input: "", expected: "1" },
+        ],
+        hint: "Return function(...callArgs) { return fn.apply(context, [...boundArgs, ...callArgs]) }",
+        solution: `function myBind(fn, context, ...boundArgs) {
+  return function(...callArgs) {
+    return fn.apply(context, [...boundArgs, ...callArgs]);
+  };
+}`,
+    },
+    {
+        id: 92,
+        title: 'Implement Promise.all',
+        difficulty: 'Medium',
+        category: 'JS Implement',
+        description: {
+            vi: `Viết hàm \`myPromiseAll(promises)\` hoạt động giống \`Promise.all\`.
+- Nhận mảng promises, trả về 1 promise
+- Resolve khi TẤT CẢ resolve (giữ đúng thứ tự)
+- Reject ngay khi 1 promise reject
+KHÔNG dùng Promise.all()`,
+            en: `Write \`myPromiseAll(promises)\` that works like \`Promise.all\`.
+- Takes array of promises, returns single promise
+- Resolves when ALL resolve (maintaining order)
+- Rejects immediately when any promise rejects
+Do NOT use Promise.all()`,
+        },
+        starterCode: `function myPromiseAll(promises) {
+  // Your code here — no Promise.all() allowed!
+}
+
+// --- Test Wrapper ---
+function testHook() {
+  const str = myPromiseAll.toString();
+  if (str.includes('Promise.all')) throw new Error('Cannot use Promise.all');
+  if (!str.includes('new Promise')) throw new Error('Must return a new Promise');
+  return 1;
+}`,
+        testCases: [
+            { input: "", expected: "1" },
+        ],
+        hint: "return new Promise((resolve, reject) => { results array, counter. Mỗi promise.then → results[i] = val, counter++. Khi counter === length → resolve(results). .catch → reject.",
+        solution: `function myPromiseAll(promises) {
+  return new Promise((resolve, reject) => {
+    if (promises.length === 0) return resolve([]);
+    const results = new Array(promises.length);
+    let count = 0;
+    promises.forEach((p, i) => {
+      Promise.resolve(p).then(val => {
+        results[i] = val;
+        count++;
+        if (count === promises.length) resolve(results);
+      }).catch(reject);
+    });
+  });
+}`,
+    },
+    {
+        id: 93,
+        title: 'Implement Array.every & Array.some',
+        difficulty: 'Easy',
+        category: 'JS Implement',
+        description: {
+            vi: `Viết 2 hàm:
+- \`myEvery(arr, cb)\`: trả true nếu TẤT CẢ phần tử pass callback
+- \`mySome(arr, cb)\`: trả true nếu ÍT NHẤT 1 phần tử pass callback
+KHÔNG dùng .every() hoặc .some()
+
+Test sẽ gọi testHook() để kiểm tra cả 2 hàm.`,
+            en: `Write 2 functions:
+- \`myEvery(arr, cb)\`: returns true if ALL elements pass callback
+- \`mySome(arr, cb)\`: returns true if AT LEAST 1 element passes callback
+Do NOT use .every() or .some()
+
+Test will call testHook() to verify both functions.`,
+        },
+        starterCode: `function myEvery(arr, cb) {
+  // Your code here
+}
+
+function mySome(arr, cb) {
+  // Your code here
+}
+
+// --- Test Wrapper ---
+function testHook() {
+  if (myEvery([2,4,6], x => x % 2 === 0) !== true) throw new Error("myEvery failed: all even");
+  if (myEvery([2,3,6], x => x % 2 === 0) !== false) throw new Error("myEvery failed: not all even");
+  if (myEvery([], x => false) !== true) throw new Error("myEvery failed: empty array");
+
+  if (mySome([1,3,5], x => x % 2 === 0) !== false) throw new Error("mySome failed: no even");
+  if (mySome([1,2,3], x => x % 2 === 0) !== true) throw new Error("mySome failed: has even");
+  if (mySome([], x => true) !== false) throw new Error("mySome failed: empty array");
+
+  return 1;
+}`,
+        testCases: [
+            { input: "", expected: "1" },
+        ],
+        hint: "myEvery: loop, nếu !cb(item) → return false ngay. Hết loop → return true. mySome: ngược lại, nếu cb(item) → return true. Hết → false.",
+        solution: `function myEvery(arr, cb) {
+  for (let i = 0; i < arr.length; i++) {
+    if (!cb(arr[i], i, arr)) return false;
+  }
+  return true;
+}
+
+function mySome(arr, cb) {
+  for (let i = 0; i < arr.length; i++) {
+    if (cb(arr[i], i, arr)) return true;
+  }
+  return false;
 }`,
     },
 ]

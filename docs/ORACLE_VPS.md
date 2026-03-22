@@ -71,6 +71,66 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 
 > Tất cả service tự start lại sau VPS reboot.
 
+## Homepage Dashboard
+
+**URL:** https://khuong.theworkpc.com (port 3004)
+**Config trên VPS:** `~/homepage/config/` (NOT `~/homepage/`)
+**Local backup:** `backup-vps/homepage/`
+
+> ⚠️ **QUAN TRỌNG:** Config trên VPS có thể khác với local backup. Luôn **pull từ VPS trước** khi sửa để tránh override mất services!
+
+### Deploy config lên VPS
+
+```bash
+# 1. LUÔN pull config hiện tại từ VPS trước khi sửa
+scp ubuntu@heyyolo-free-vps:~/homepage/config/services.yaml ~/Downloads/Src/backup-vps/homepage/services.yaml
+
+# 2. Sửa file local
+
+# 3. Deploy lên VPS (đúng path ~/homepage/config/)
+scp ~/Downloads/Src/backup-vps/homepage/services.yaml ubuntu@heyyolo-free-vps:~/homepage/config/services.yaml
+
+# 4. Restart container
+ssh ubuntu@heyyolo-free-vps "docker restart homepage"
+```
+
+### Config files
+
+| File | Mô tả |
+|------|--------|
+| `services.yaml` | Danh sách services (cards trên dashboard) |
+| `settings.yaml` | Theme, background, layout |
+| `widgets.yaml` | Search bar, datetime, system resources |
+| `bookmarks.yaml` | Quick links (GitHub, Reddit, YouTube) |
+| `docker.yaml` | Docker socket config |
+
+### Quản lý
+
+```bash
+# Logs
+ssh ubuntu@heyyolo-free-vps "docker logs homepage --tail 20"
+
+# Restart
+ssh ubuntu@heyyolo-free-vps "docker restart homepage"
+
+# Backup toàn bộ config
+scp -r ubuntu@heyyolo-free-vps:~/homepage/config/ ~/Downloads/Src/backup-vps/homepage/
+```
+
+### Service Widgets
+
+Không phải service nào cũng có widget. Chỉ các service có API mới hiển thị data trên card:
+
+| Service | Widget type | URL | Auth |
+|---------|------------|-----|------|
+| AdGuard Home | `adguard` | `http://127.0.0.1:3001` | username/password |
+| Uptime Kuma | `uptimekuma` | `http://127.0.0.1:3002` | slug: `default` |
+| Portainer | `portainer` | `https://127.0.0.1:9443` | API key |
+| Speedtest Tracker | `speedtest` | `http://127.0.0.1:3007` | Không cần |
+| Home Assistant | `homeassistant` | `http://127.0.0.1:8123` | Long-Lived Access Token |
+
+**Không có widget:** IT-Tools, Code Server, Webtop, CLI Proxy, OpenClaw, N8N, Zalo Bot
+
 ## AdGuard Home
 
 **URL:** https://adguard.khuong.theworkpc.com
