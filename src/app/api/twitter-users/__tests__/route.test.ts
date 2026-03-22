@@ -6,9 +6,17 @@ import { NextRequest } from 'next/server'
 
 // Mock connectDb
 jest.mock('@/utils/connectDb', () => jest.fn().mockResolvedValue(undefined))
+jest.mock('@/lib/cache', () => ({
+    withCache: jest.fn((_key: string, _ttl: number, fn: () => Promise<unknown>) => fn()),
+    invalidateCache: jest.fn().mockResolvedValue(undefined),
+}))
+jest.mock('@/lib/redis', () => ({
+    getRedis: jest.fn(() => ({ keys: jest.fn().mockResolvedValue([]), del: jest.fn().mockResolvedValue(undefined) })),
+}))
 
 // Mock TwitterUser model
-const mockSort = jest.fn()
+const mockLean = jest.fn()
+const mockSort = jest.fn().mockReturnValue({ lean: mockLean })
 const mockFindOne = jest.fn()
 const mockCreate = jest.fn()
 const mockFindByIdAndDelete = jest.fn()
@@ -26,6 +34,7 @@ jest.mock('@/models/TwitterUser', () => ({
 describe('Twitter Users API', () => {
     beforeEach(() => {
         jest.clearAllMocks()
+        mockSort.mockReturnValue({ lean: mockLean })
     })
 
     describe('GET', () => {
@@ -34,7 +43,7 @@ describe('Twitter Users API', () => {
                 { _id: '1', username: 'vercel' },
                 { _id: '2', username: 'reactjs' },
             ]
-            mockSort.mockResolvedValue(mockUsers)
+            mockLean.mockResolvedValue(mockUsers)
 
             const response = await GET()
             const data = await response.json()
@@ -44,7 +53,7 @@ describe('Twitter Users API', () => {
         })
 
         it('returns 500 on error', async () => {
-            mockSort.mockRejectedValue(new Error('DB error'))
+            mockLean.mockRejectedValue(new Error('DB error'))
 
             const response = await GET()
             const data = await response.json()

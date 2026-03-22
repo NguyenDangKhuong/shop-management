@@ -22,8 +22,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/utils/connectDb'
 import VocabularyModel from '@/models/Vocabulary'
+import { withCache } from '@/lib/cache'
+import { getRedis } from '@/lib/redis'
 
 export const dynamic = 'force-dynamic'
+
+async function invalidateVocabCache() {
+    try {
+        const redis = getRedis()
+        const keys = await redis.keys('vocabulary:*')
+        if (keys.length > 0) await redis.del(...keys)
+    } catch { /* fail-open */ }
+}
 
 /**
  * GET /api/vocabulary
@@ -34,23 +44,23 @@ export const dynamic = 'force-dynamic'
  */
 export async function GET(req: NextRequest) {
     try {
-        await connectDB()
-
         const limit = parseInt(req.nextUrl.searchParams.get('limit') || '50')
         const skip = parseInt(req.nextUrl.searchParams.get('skip') || '0')
+        const cacheKey = `vocabulary:l${limit}:s${skip}`
 
-        // Lấy từ vựng mới nhất trước, giới hạn 50 mỗi lần
-        const items = await VocabularyModel
-            .find()
-            .sort({ createdAt: -1 })        // Mới nhất trước
-            .skip(skip)
-            .limit(Math.min(limit, 100))     // Tối đa 100 để tránh quá tải
-            .lean()                          // Trả plain object (nhanh hơn)
+        const data = await withCache(cacheKey, 120, async () => {
+            await connectDB()
+            const items = await VocabularyModel
+                .find()
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(Math.min(limit, 100))
+                .lean()
+            const total = await VocabularyModel.countDocuments()
+            return { items, total }
+        })
 
-        // Đếm tổng số để frontend biết còn bao nhiêu
-        const total = await VocabularyModel.countDocuments()
-
-        return NextResponse.json({ items, total })
+        return NextResponse.json(data)
     } catch (err) {
         console.error('Vocabulary GET error:', err)
         return NextResponse.json({ error: 'Failed to fetch vocabulary' }, { status: 500 })
@@ -88,7 +98,7 @@ export async function POST(req: NextRequest) {
             ...(example && { example: example.trim() }),
             ...(exampleTranslation && { exampleTranslation: exampleTranslation.trim() }),
         })
-
+        await invalidateVocabCache()
         return NextResponse.json({ success: true, item: doc }, { status: 201 })
     } catch (err) {
         console.error('Vocabulary POST error:', err)
@@ -116,6 +126,7 @@ export async function DELETE(req: NextRequest) {
             return NextResponse.json({ error: 'Not found' }, { status: 404 })
         }
 
+        await invalidateVocabCache()
         return NextResponse.json({ success: true })
     } catch (err) {
         console.error('Vocabulary DELETE error:', err)

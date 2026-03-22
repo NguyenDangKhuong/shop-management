@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
         // Stream the response body directly
         const responseHeaders: Record<string, string> = {
             'Content-Type': res.headers.get('Content-Type') || 'video/mp4',
-            'Cache-Control': 'public, max-age=3600',
+            'Cache-Control': 'public, max-age=21600, s-maxage=21600, immutable',
             'Accept-Ranges': 'bytes',
         }
 

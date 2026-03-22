@@ -6,8 +6,8 @@ import connectDb from '@/utils/connectDb'
 export async function GET() {
     try {
         await connectDb()
-        const accounts = await TikTokAccountModel.find().sort({ createdAt: -1 }).lean()
-        return NextResponse.json({ success: true, data: accounts })
+        const data = await TikTokAccountModel.find().sort({ createdAt: -1 }).lean()
+        return NextResponse.json({ success: true, data })
     } catch (error: any) {
         return NextResponse.json({ success: false, error: error.message }, { status: 500 })
     }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/../auth'
 import connectDB from '@/utils/connectDb'
 import RoadmapProgressModel, { type IRoadmapProgress } from '@/models/RoadmapProgress'
+import { withCache, invalidateCache } from '@/lib/cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,12 +17,13 @@ export async function GET() {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        await connectDB()
-        const progress = await RoadmapProgressModel.findOne({ userId: session.user.id }).lean<IRoadmapProgress>()
-
-        return NextResponse.json({
-            learnedTopics: progress?.learnedTopics || [],
+        const data = await withCache(`roadmap:${session.user.id}`, 300, async () => {
+            await connectDB()
+            const progress = await RoadmapProgressModel.findOne({ userId: session.user!.id }).lean<IRoadmapProgress>()
+            return { learnedTopics: progress?.learnedTopics || [] }
         })
+
+        return NextResponse.json(data)
     } catch (err) {
         console.error('Roadmap progress GET error:', err)
         return NextResponse.json({ error: 'Failed to fetch progress' }, { status: 500 })
@@ -62,6 +64,7 @@ export async function PUT(req: NextRequest) {
             )
         }
 
+        await invalidateCache(`roadmap:${session.user.id}`)
         return NextResponse.json({ success: true })
     } catch (err) {
         console.error('Roadmap progress PUT error:', err)

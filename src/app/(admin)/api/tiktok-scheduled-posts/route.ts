@@ -28,12 +28,10 @@ export async function GET(request: NextRequest) {
         await connectDb()
         const { searchParams } = new URL(request.url)
         const accountId = searchParams.get('accountId')
-
         const query = accountId ? { accountId } : {}
         const posts = await TikTokScheduledPostModel.find(query)
             .sort({ scheduledDate: 1, scheduledTime: 1 })
             .lean()
-
         return NextResponse.json({ success: true, data: posts })
     } catch (error: any) {
         return NextResponse.json({ success: false, error: error.message }, { status: 500 })

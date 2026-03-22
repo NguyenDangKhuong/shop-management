@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import CategoryModel, { Category } from '@/models/Category'
 import connectDb from '@/utils/connectDb'
 import { errorResponse } from '@/utils/apiResponse'
+import { invalidateCache } from '@/lib/cache'
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -34,6 +35,7 @@ export const POST = async (req: NextRequest) => {
     const category: Category = await new CategoryModel({
       ...body
     }).save()
+    await invalidateCache('admin:categories')
     return NextResponse.json(
       {
         category,
@@ -67,6 +69,7 @@ export const PUT = async (req: NextRequest) => {
       )
     }
     await CategoryModel.findByIdAndUpdate(_id, { ...body }, { new: true, runValidators: true })
+    await invalidateCache('admin:categories')
     return NextResponse.json(
       {
         message: `Danh mục đã được cập nhật!`,
@@ -101,6 +104,7 @@ export const DELETE = async (req: NextRequest) => {
     await CategoryModel.findOneAndDelete({
       _id
     }).lean()
+    await invalidateCache('admin:categories')
     return NextResponse.json(
       {
         message: `Danh mục đã được xóa`,

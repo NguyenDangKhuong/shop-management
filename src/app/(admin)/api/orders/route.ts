@@ -5,29 +5,36 @@ import { endOfDay, endOfMonth, startOfDay, startOfMonth, subHours } from 'date-f
 import OrderModel from '@/models/Order'
 import connectDb from '@/utils/connectDb'
 import { errorResponse } from '@/utils/apiResponse'
+import { withCache } from '@/lib/cache'
 
 export const dynamic = 'force-dynamic'
 
 export const GET = async (req: NextRequest) => {
   try {
-    await connectDb()
     const searchParams = req.nextUrl.searchParams
     const date = searchParams.get('date')
     const isMonth = Boolean(searchParams.get('isMonth')) ?? false
-    const orders = isMonth
-      ? await OrderModel.find({
-          createdAt: {
-            $gte: startOfMonth(new Date(String(date))),
-            $lte: endOfMonth(new Date(String(date)))
-          }
-        }).lean()
-      : await OrderModel.find({
-          createdAt: {
-            $gte: startOfDay(subHours(new Date(String(date)), 7)),
-            $lte: endOfDay(subHours(new Date(String(date)), 7))
-          }
-        }).lean()
-    return NextResponse.json({ orders, success: true }, { status: 200 })
+    const cacheKey = `admin:orders:${date}:${isMonth}`
+
+    const data = await withCache(cacheKey, 60, async () => {
+      await connectDb()
+      const orders = isMonth
+        ? await OrderModel.find({
+            createdAt: {
+              $gte: startOfMonth(new Date(String(date))),
+              $lte: endOfMonth(new Date(String(date)))
+            }
+          }).lean()
+        : await OrderModel.find({
+            createdAt: {
+              $gte: startOfDay(subHours(new Date(String(date)), 7)),
+              $lte: endOfDay(subHours(new Date(String(date)), 7))
+            }
+          }).lean()
+      return { orders }
+    })
+
+    return NextResponse.json({ ...data, success: true }, { status: 200 })
   } catch (err) {
     console.error(err)
     return errorResponse(err)

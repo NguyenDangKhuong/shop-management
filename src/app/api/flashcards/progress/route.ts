@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/../auth'
 import connectDB from '@/utils/connectDb'
 import FlashcardProgressModel, { type IFlashcardProgress } from '@/models/FlashcardProgress'
+import { withCache, invalidateCache } from '@/lib/cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,14 +17,17 @@ export async function GET() {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        await connectDB()
-        const progress = await FlashcardProgressModel.findOne({ userId: session.user.id }).lean<IFlashcardProgress>()
-
-        return NextResponse.json({
-            algoKnown: progress?.algoKnown || [],
-            interviewKnown: progress?.interviewKnown || [],
-            vocabKnown: progress?.vocabKnown || [],
+        const data = await withCache(`flashcard-progress:${session.user.id}`, 300, async () => {
+            await connectDB()
+            const progress = await FlashcardProgressModel.findOne({ userId: session.user!.id }).lean<IFlashcardProgress>()
+            return {
+                algoKnown: progress?.algoKnown || [],
+                interviewKnown: progress?.interviewKnown || [],
+                vocabKnown: progress?.vocabKnown || [],
+            }
         })
+
+        return NextResponse.json(data)
     } catch (err) {
         console.error('Progress GET error:', err)
         return NextResponse.json({ error: 'Failed to fetch progress' }, { status: 500 })
@@ -33,7 +37,6 @@ export async function GET() {
 /**
  * PUT /api/flashcards/progress
  * Toggle a card as known/unknown
- * Body: { category: 'algo'|'interview'|'vocab', cardId: string, known: boolean }
  */
 export async function PUT(req: NextRequest) {
     try {
@@ -61,14 +64,12 @@ export async function PUT(req: NextRequest) {
         await connectDB()
 
         if (known) {
-            // Add to known
             await FlashcardProgressModel.findOneAndUpdate(
                 { userId: session.user.id },
                 { $addToSet: { [field]: cardId } },
                 { upsert: true, new: true }
             )
         } else {
-            // Remove from known
             await FlashcardProgressModel.findOneAndUpdate(
                 { userId: session.user.id },
                 { $pull: { [field]: cardId } },
@@ -76,6 +77,7 @@ export async function PUT(req: NextRequest) {
             )
         }
 
+        await invalidateCache(`flashcard-progress:${session.user.id}`)
         return NextResponse.json({ success: true })
     } catch (err) {
         console.error('Progress PUT error:', err)

@@ -1,13 +1,16 @@
 import TwitterUserModel from '@/models/TwitterUser'
 import connectDB from '@/utils/connectDb'
 import { NextRequest, NextResponse } from 'next/server'
+import { withCache, invalidateCache } from '@/lib/cache'
 
 // GET - Fetch all saved Twitter usernames
 export async function GET() {
     try {
-        await connectDB()
-        const users = await TwitterUserModel.find().sort({ createdAt: -1 })
-        return NextResponse.json({ success: true, data: users })
+        const data = await withCache('twitter-users', 300, async () => {
+            await connectDB()
+            return await TwitterUserModel.find().sort({ createdAt: -1 }).lean()
+        })
+        return NextResponse.json({ success: true, data })
     } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Unknown error'
         return NextResponse.json({ success: false, error: message }, { status: 500 })
@@ -29,13 +32,13 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: false, error: 'Invalid username' }, { status: 400 })
         }
 
-        // Check duplicate
         const existing = await TwitterUserModel.findOne({ username: clean })
         if (existing) {
             return NextResponse.json({ success: false, error: 'Username đã tồn tại' }, { status: 409 })
         }
 
         const newUser = await TwitterUserModel.create({ username: clean })
+        await invalidateCache('twitter-users')
         return NextResponse.json({ success: true, data: newUser })
     } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Unknown error'
@@ -58,6 +61,7 @@ export async function DELETE(request: NextRequest) {
             return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 })
         }
 
+        await invalidateCache('twitter-users')
         return NextResponse.json({ success: true, message: 'Deleted' })
     } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Unknown error'

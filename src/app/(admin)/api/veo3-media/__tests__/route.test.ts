@@ -9,6 +9,13 @@
 
 // Mock connectDB
 jest.mock('@/utils/connectDb', () => jest.fn().mockResolvedValue(undefined))
+jest.mock('@/lib/cache', () => ({
+    withCache: jest.fn((_key: string, _ttl: number, fn: () => Promise<unknown>) => fn()),
+    invalidateCache: jest.fn().mockResolvedValue(undefined),
+}))
+jest.mock('@/lib/redis', () => ({
+    getRedis: jest.fn(() => ({ keys: jest.fn().mockResolvedValue([]), del: jest.fn().mockResolvedValue(undefined) })),
+}))
 
 // Mock deleteCloudinaryImage
 jest.mock('@/actions/cloudinary', () => ({
