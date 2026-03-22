@@ -166,21 +166,25 @@ export function useFlashcardKeys(opts: {
     onFlip: () => void
     onSwipeRight: () => void
     onSwipeLeft: () => void
+    onNext?: () => void
+    onPrev?: () => void
     onShuffle?: () => void
     onToggleKnown?: () => void
 }) {
-    const { onFlip, onSwipeRight, onSwipeLeft, onShuffle, onToggleKnown } = opts
+    const { onFlip, onSwipeRight, onSwipeLeft, onNext, onPrev, onShuffle, onToggleKnown } = opts
     useEffect(() => {
         const handleKey = (e: KeyboardEvent) => {
             if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); onFlip() }
-            if (e.key === 'ArrowRight' || e.key === 'l') onSwipeRight()
-            if (e.key === 'ArrowLeft' || e.key === 'h') onSwipeLeft()
+            if (e.key === 'ArrowRight') { onNext ? onNext() : onSwipeRight() }
+            if (e.key === 'ArrowLeft') { onPrev ? onPrev() : onSwipeLeft() }
+            if (e.key === 'l') onSwipeRight()
+            if (e.key === 'h') onSwipeLeft()
             if (e.key === 'k' && onToggleKnown) onToggleKnown()
             if (e.key === 's' && onShuffle) onShuffle()
         }
         window.addEventListener('keydown', handleKey)
         return () => window.removeEventListener('keydown', handleKey)
-    }, [onFlip, onSwipeRight, onSwipeLeft, onShuffle, onToggleKnown])
+    }, [onFlip, onSwipeRight, onSwipeLeft, onNext, onPrev, onShuffle, onToggleKnown])
 }
 
 // ── Keyboard hints ──
@@ -190,9 +194,11 @@ export function KeyboardHints({ showShuffle = false }: { showShuffle?: boolean }
             <p className="text-xs text-[var(--text-muted)]">
                 ⌨️ <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">Space</kbd> Lật
                 {' · '}
-                <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">←</kbd> Skip
+                <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">←→</kbd> Chuyển thẻ
                 {' · '}
-                <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">→</kbd> Thuộc
+                <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">H</kbd> Skip
+                {' · '}
+                <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">L</kbd> Thuộc
                 {showShuffle && (
                     <>
                         {' · '}

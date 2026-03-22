@@ -410,6 +410,8 @@ export default function FlashcardApp() {
         onFlip: () => setFlipped(f => !f),
         onSwipeRight: handleSwipeRight,
         onSwipeLeft: handleSwipeLeft,
+        onNext: goNext,
+        onPrev: goPrev,
         onShuffle: shuffle,
         onToggleKnown: toggleKnown,
     })
