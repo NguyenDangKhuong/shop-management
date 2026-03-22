@@ -5,6 +5,13 @@ import { DELETE, GET, PUT } from '@/app/api/clarity/route'
 import { NextRequest } from 'next/server'
 
 jest.mock('@/utils/connectDb', () => jest.fn().mockResolvedValue(undefined))
+jest.mock('@/lib/rateLimit', () => ({
+    checkRateLimit: jest.fn().mockResolvedValue(null),
+}))
+jest.mock('@/lib/cache', () => ({
+    withCache: jest.fn((_key: string, _ttl: number, fn: () => Promise<unknown>) => fn()),
+    invalidateCache: jest.fn().mockResolvedValue(undefined),
+}))
 
 const mockFindOne = jest.fn()
 const mockCreate = jest.fn()

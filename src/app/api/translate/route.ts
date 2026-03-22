@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit } from '@/lib/rateLimit'
 
 export const dynamic = 'force-dynamic'
 
@@ -7,6 +8,9 @@ const CLI_PROXY_KEY = process.env.CLI_PROXY_API_KEY || ''
 const MODEL = 'gemini-3.1-flash-lite-preview'
 
 export async function POST(req: NextRequest) {
+    const limited = await checkRateLimit(req, 'translate', { limit: 10, window: '30 s' })
+    if (limited) return limited
+
     try {
         const { text, from, to } = await req.json()
 

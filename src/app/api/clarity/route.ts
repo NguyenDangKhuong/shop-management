@@ -12,6 +12,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/utils/connectDb'
 import MonthPlanModel from '@/models/MonthPlan'
+import { checkRateLimit } from '@/lib/rateLimit'
+import { withCache, invalidateCache } from '@/lib/cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -55,17 +57,15 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ error: 'Invalid month format (YYYY-MM)' }, { status: 400 })
         }
 
-        await connectDB()
+        const plan = await withCache(`clarity:${month}`, 60, async () => {
+            await connectDB()
+            const existing = await MonthPlanModel.findOne({ month }).lean()
+            if (existing) return existing
+            const created = await MonthPlanModel.create(createDefaultPlan(month))
+            return created.toObject()
+        })
 
-        const existing = await MonthPlanModel.findOne({ month }).lean()
-
-        if (existing) {
-            return NextResponse.json({ plan: existing })
-        }
-
-        // Tạo plan mới cho tháng này
-        const created = await MonthPlanModel.create(createDefaultPlan(month))
-        return NextResponse.json({ plan: created.toObject() })
+        return NextResponse.json({ plan })
     } catch (err) {
         console.error('Clarity GET error:', err)
         return NextResponse.json({ error: 'Failed to fetch plan' }, { status: 500 })
@@ -78,6 +78,9 @@ export async function GET(req: NextRequest) {
  * Body: full plan object với month field
  */
 export async function PUT(req: NextRequest) {
+    const limited = await checkRateLimit(req, 'clarity', { limit: 20, window: '1 m' })
+    if (limited) return limited
+
     try {
         const data = await req.json()
 
@@ -99,6 +102,7 @@ export async function PUT(req: NextRequest) {
             { new: true, upsert: true, lean: true }
         )
 
+        await invalidateCache(`clarity:${data.month}`, `streak:${new Date().toISOString().slice(0, 10)}`)
         return NextResponse.json({ success: true, plan })
     } catch (err) {
         console.error('Clarity PUT error:', err)
@@ -120,6 +124,7 @@ export async function DELETE(req: NextRequest) {
         await connectDB()
 
         await MonthPlanModel.findOneAndDelete({ month })
+        await invalidateCache(`clarity:${month}`)
         return NextResponse.json({ success: true })
     } catch (err) {
         console.error('Clarity DELETE error:', err)

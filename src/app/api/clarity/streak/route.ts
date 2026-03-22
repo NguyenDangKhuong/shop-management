@@ -7,6 +7,7 @@
 import { NextResponse } from 'next/server'
 import connectDB from '@/utils/connectDb'
 import MonthPlanModel from '@/models/MonthPlan'
+import { withCache } from '@/lib/cache'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,14 +18,10 @@ interface MonthPlanDoc {
 }
 
 function isDayActive(plan: MonthPlanDoc, dayIndex: number, dateStr: string): boolean {
-    // Check habits: any habit has this day ticked?
     const habitActive = plan.habits.some(h => h.days[dayIndex] === true)
     if (habitActive) return true
-
-    // Check daily tasks: any task done on this date?
     const entry = plan.dailyTasks.find(d => d.date === dateStr)
     if (entry && entry.tasks.some(t => t.done)) return true
-
     return false
 }
 
@@ -38,65 +35,67 @@ function formatDate(year: number, month: number, day: number): string {
 
 export async function GET() {
     try {
-        await connectDB()
+        const today = new Date().toISOString().slice(0, 10)
 
-        const now = new Date()
-        const todayYear = now.getFullYear()
-        const todayMonth = now.getMonth() + 1
-        const todayDay = now.getDate()
+        const result = await withCache(`streak:${today}`, 300, async () => {
+            await connectDB()
 
-        // Cache of fetched month plans
-        const planCache = new Map<string, MonthPlanDoc | null>()
+            const now = new Date()
+            const todayYear = now.getFullYear()
+            const todayMonth = now.getMonth() + 1
+            const todayDay = now.getDate()
 
-        async function getMonthPlan(monthKey: string): Promise<MonthPlanDoc | null> {
-            if (planCache.has(monthKey)) return planCache.get(monthKey)!
-            const doc = await MonthPlanModel.findOne({ month: monthKey })
-                .select('month habits dailyTasks')
-                .lean<MonthPlanDoc>()
-            planCache.set(monthKey, doc || null)
-            return doc || null
-        }
+            const planCache = new Map<string, MonthPlanDoc | null>()
 
-        let streak = 0
-        let year = todayYear
-        let month = todayMonth
-        let day = todayDay
-        let todayDone = false
+            async function getMonthPlan(monthKey: string): Promise<MonthPlanDoc | null> {
+                if (planCache.has(monthKey)) return planCache.get(monthKey)!
+                const doc = await MonthPlanModel.findOne({ month: monthKey })
+                    .select('month habits dailyTasks')
+                    .lean<MonthPlanDoc>()
+                planCache.set(monthKey, doc || null)
+                return doc || null
+            }
 
-        // Walk backwards day by day, max 365 days
-        for (let i = 0; i < 365; i++) {
-            const monthKey = formatMonth(year, month)
-            const dateStr = formatDate(year, month, day)
-            const dayIndex = day - 1
+            let streak = 0
+            let year = todayYear
+            let month = todayMonth
+            let day = todayDay
+            let todayDone = false
 
-            const plan = await getMonthPlan(monthKey)
+            for (let i = 0; i < 365; i++) {
+                const monthKey = formatMonth(year, month)
+                const dateStr = formatDate(year, month, day)
+                const dayIndex = day - 1
 
-            if (plan && isDayActive(plan, dayIndex, dateStr)) {
-                streak++
-                if (i === 0) todayDone = true
-            } else {
-                // If today is not active, still check yesterday (streak starts from last active day)
-                if (i === 0) {
-                    // Today not done yet — don't break, check yesterday
+                const plan = await getMonthPlan(monthKey)
+
+                if (plan && isDayActive(plan, dayIndex, dateStr)) {
+                    streak++
+                    if (i === 0) todayDone = true
                 } else {
-                    break
+                    if (i === 0) {
+                        // Today not done yet — check yesterday
+                    } else {
+                        break
+                    }
+                }
+
+                day--
+                if (day < 1) {
+                    month--
+                    if (month < 1) {
+                        month = 12
+                        year--
+                    }
+                    const daysInPrevMonth = new Date(year, month, 0).getDate()
+                    day = daysInPrevMonth
                 }
             }
 
-            // Move to previous day
-            day--
-            if (day < 1) {
-                month--
-                if (month < 1) {
-                    month = 12
-                    year--
-                }
-                const daysInPrevMonth = new Date(year, month, 0).getDate()
-                day = daysInPrevMonth
-            }
-        }
+            return { currentStreak: streak, todayDone }
+        })
 
-        return NextResponse.json({ currentStreak: streak, todayDone })
+        return NextResponse.json(result)
     } catch (err) {
         console.error('Streak API error:', err)
         return NextResponse.json({ error: 'Failed to calculate streak' }, { status: 500 })
