@@ -126,13 +126,17 @@ Uses `$addToSet` / `$pull` for atomic MongoDB operations.
 
 | Nút | Phím tắt | Chức năng |
 |---|---|---|
-| ❌ | ← hoặc H | Skip (qua card tiếp) |
-| ✅ | → hoặc L | Đã thuộc + qua card tiếp |
+| ◀ Trước / Sau ▶ | ←→ | Chuyển thẻ (không đánh dấu) |
+| ❌ | H | Skip (qua card tiếp, không đánh dấu thuộc) |
+| ✅ | L | Đã thuộc + qua card tiếp |
 | 🔄 | Space/Enter | Lật thẻ |
 | 🎲 | S | Trộn thứ tự |
 | 🧠/💭 | K | Toggle đã thuộc (không skip) |
-| ◀ Trước / Sau ▶ | — | Prev/Next navigation |
 | 🗑️ Reset | — | Xóa tất cả progress |
+
+> **Lưu ý:** Arrow keys chỉ chuyển thẻ, KHÔNG đánh dấu thuộc. Dùng H/L để swipe skip/thuộc.
+
+Last updated: 2025-03-22
 
 ## Data Seeding
 
