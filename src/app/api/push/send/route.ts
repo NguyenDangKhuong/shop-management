@@ -108,12 +108,17 @@ export async function POST(req: NextRequest) {
         const word = isEnToVi ? vocab.original : vocab.translated
         const meaning = isEnToVi ? vocab.translated : vocab.original
 
-        // Build rich body: meaning + wordType + example
+        // Build rich body: meaning + wordType + example (English first)
         let body = meaning
         if (vocab.wordType) body = `(${vocab.wordType}) ${body}`
         if (vocab.example) {
-            const exTrans = vocab.exampleTranslation ? ` → ${vocab.exampleTranslation}` : ''
-            body += `\n📝 "${vocab.example}"${exTrans}`
+            // Always show English example first
+            const enExample = isEnToVi ? vocab.example : vocab.exampleTranslation
+            const viExample = isEnToVi ? vocab.exampleTranslation : vocab.example
+            if (enExample) {
+                body += `\n📝 "${enExample}"`
+                if (viExample) body += ` → ${viExample}`
+            }
         }
 
         const payload = JSON.stringify({
