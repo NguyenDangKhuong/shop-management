@@ -2,6 +2,7 @@
 
 import { useThemeMode } from '@/contexts/ThemeContext'
 import { useCallback, useEffect, useState } from 'react'
+import { useLang } from './LangContext'
 import { useRoadmapProgress } from './RoadmapProgressProvider'
 
 interface TopicModalProps {
@@ -16,7 +17,8 @@ interface TopicModalProps {
 export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, concept, children }: TopicModalProps) {
     const [open, setOpen] = useState(false)
     const { isDarkMode } = useThemeMode()
-    const { learnedTopics, toggleLearned: contextToggle, isLoading } = useRoadmapProgress()
+    const { learnedTopics, toggleLearned: contextToggle, isLoading, isLoggedIn } = useRoadmapProgress()
+    const { t } = useLang()
     const [mounted, setMounted] = useState(false)
 
     const isLearned = learnedTopics.has(title)
@@ -40,6 +42,7 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
 
     const toggleLearned = (e?: React.MouseEvent) => {
         if (e) e.stopPropagation()
+        if (!isLoggedIn) return
         contextToggle(title)
     }
 
@@ -70,8 +73,8 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
                     </div>
                 </button>
                 
-                {/* Checkmark Button */}
-                {mounted && !isLoading && (
+                {/* Checkmark Button — only show for logged-in users */}
+                {mounted && !isLoading && isLoggedIn && (
                     <button 
                         onClick={toggleLearned}
                         className={`absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all ${
@@ -79,7 +82,9 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
                                 ? 'text-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20 scale-110' 
                                 : 'text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10 opacity-0 group-hover:opacity-100 scale-90 hover:scale-100'
                         }`}
-                        title={isLearned ? "Đã thuộc (Bấm để xoá)" : "Đánh dấu đã thuộc"}
+                        title={isLearned 
+                            ? t({ vi: 'Đã thuộc (Bấm để xoá)', en: 'Learned (Click to unmark)' }) 
+                            : t({ vi: 'Đánh dấu đã thuộc', en: 'Mark as learned' })}
                         aria-label="Mark as learned"
                     >
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -114,7 +119,8 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
                                 <h3 className={`text-lg font-bold tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{title}</h3>
                             </div>
                             <div className="flex items-center gap-2">
-                                {/* Mark as learned button inside modal */}
+                                {/* Mark as learned button inside modal — only for logged-in users */}
+                                {isLoggedIn && (
                                 <button
                                     onClick={(e) => toggleLearned(e)}
                                     className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
@@ -128,8 +134,11 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
                                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={isLearned ? 3 : 2} d="M5 13l4 4L19 7" />
                                     </svg>
-                                    {isLearned ? 'Đã thuộc' : 'Đánh dấu đã thuộc'}
+                                    {isLearned 
+                                        ? t({ vi: 'Đã thuộc', en: 'Learned' }) 
+                                        : t({ vi: 'Đánh dấu đã thuộc', en: 'Mark as learned' })}
                                 </button>
+                                )}
                                 <button
                                     onClick={close}
                                     className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isDarkMode ? 'bg-slate-800/50 hover:bg-slate-700/50 text-slate-400 hover:text-white border border-white/5' : 'bg-white hover:bg-gray-100 text-gray-500 hover:text-gray-900 shadow-sm border border-gray-200'}`}

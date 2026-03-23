@@ -47,79 +47,55 @@ shop-management/
 ├── 📁 src/
 │   ├── 📁 app/                    # Next.js App Router
 │   │   ├── 📁 (admin)/            # Admin routes (protected)
-│   │   │   ├── 📁 api/            # API Routes (12 endpoints)
-│   │   │   ├── 📁 products/       # Quản lý sản phẩm
-│   │   │   ├── 📁 orders/         # Quản lý đơn hàng
-│   │   │   ├── 📁 categories/     # Quản lý danh mục
-│   │   │   ├── 📁 carts/          # Quản lý giỏ hàng
-│   │   │   ├── 📁 facebook-posts/ # Facebook integration
-│   │   │   ├── 📁 shopee-links/   # Shopee integration
-│   │   │   ├── 📁 tiktok-accounts/# TikTok integration
-│   │   │   └── 📁 veo3-tokens/    # Veo3 token management
+│   │   │   ├── products/          # Quản lý sản phẩm
+│   │   │   ├── orders/            # Quản lý đơn hàng
+│   │   │   ├── categories/        # Quản lý danh mục
+│   │   │   ├── carts/             # Quản lý giỏ hàng
+│   │   │   ├── facebook-posts/    # Facebook integration
+│   │   │   ├── shopee-links/      # Shopee integration
+│   │   │   ├── tiktok-accounts/   # TikTok integration
+│   │   │   ├── tiktok-music/      # TikTok music library
+│   │   │   └── veo3-tokens/       # Veo3 token management
+│   │   ├── 📁 api/                # API Routes (14 endpoints)
+│   │   │   ├── auth/              # NextAuth API
+│   │   │   ├── clarity/           # Clarity life planner API
+│   │   │   ├── flashcards/        # Algorithm flashcards API
+│   │   │   ├── roadmap/           # Interview roadmap API
+│   │   │   ├── translate/         # Translation API
+│   │   │   ├── tweets/            # Twitter/X feed API
+│   │   │   ├── vocabulary/        # Vocabulary push API
+│   │   │   ├── veo3-tokens/       # Veo3 token API
+│   │   │   └── ...                # shopee-links, gen-video, push
+│   │   ├── 📁 blogs/              # Blog engine (bilingual VI/EN)
+│   │   │   └── posts/roadmap-sections/  # Frontend interview roadmap
+│   │   ├── 📁 tweets/             # Twitter/X feed pages
+│   │   ├── 📁 flashcards/         # Algorithm pattern flashcards
+│   │   ├── 📁 clarity/            # Life planning dashboard
+│   │   ├── 📁 leetcode/           # LeetCode practice page
+│   │   ├── 📁 translate/          # Translation tool
+│   │   ├── 📁 vocabulary-flashcards/ # Vocabulary learning
 │   │   ├── 📁 cv/                 # CV page (PDF viewer)
 │   │   ├── 📁 projects/           # Projects portfolio page
 │   │   ├── 📁 login/              # Đăng nhập
-│   │   ├── 📁 register/           # Đăng ký
-│   │   ├── 📁 privacy/            # Chính sách bảo mật
-│   │   └── 📁 terms/              # Điều khoản sử dụng
+│   │   └── 📁 register/           # Đăng ký
 │   │
 │   ├── 📁 components/             # React Components
-│   │   ├── 📁 shop/               # Dashboard components
-│   │   │   ├── 📁 products/       # Product CRUD UI
-│   │   │   ├── 📁 orders/         # Order management UI
-│   │   │   ├── 📁 categories/     # Category UI
-│   │   │   ├── 📁 carts/          # Cart UI
-│   │   │   ├── 📁 tiktok-accounts/ # TikTok components
-│   │   │   │   ├── AutoFlowModal.tsx
-│   │   │   │   ├── PromptModal.tsx
-│   │   │   │   ├── PromptSection.tsx     # [NEW] Prompt list + CRUD
-│   │   │   │   ├── Veo3MediaSection.tsx  # [NEW] Media management
-│   │   │   │   └── TikTokScheduledPostModal.tsx
-│   │   │   ├── 📁 login/          # Login form
-│   │   │   └── 📁 register/       # Register form
-│   │   ├── 📁 ui/                 # Reusable UI components
+│   │   ├── 📁 shop/               # Admin dashboard components
 │   │   ├── 📁 landing/            # Landing page components
+│   │   ├── 📁 ui/                 # Reusable UI components
 │   │   └── 📁 providers/          # Context providers
 │   │
-│   ├── 📁 models/                 # Mongoose Models (13 models)
-│   │   ├── Product.ts             # Sản phẩm
-│   │   ├── Order.ts               # Đơn hàng
-│   │   ├── Category.ts            # Danh mục
-│   │   ├── Customer.ts            # Khách hàng
-│   │   ├── Cart.ts                # Giỏ hàng
-│   │   ├── User.ts                # Người dùng
-│   │   └── ...                    # Các model khác
-│   │
-│   ├── 📁 actions/                # Server Actions
-│   │   ├── auth.ts                # Authentication actions
-│   │   ├── cloudinary.ts          # Image upload actions
-│   │   ├── orders.tsx             # Order actions
-│   │   └── index.ts               # CRUD actions
-│   │
+│   ├── 📁 models/                 # Mongoose Models (15+ models)
+│   ├── 📁 actions/                # Server Actions (auth, cloudinary, CRUD)
 │   ├── 📁 utils/                  # Utility functions
-│   │   ├── api.ts                 # HTTP client (get, post, put, remove)
-│   │   ├── connectDb.ts           # MongoDB connection
-│   │   ├── cloudinaryConfig.ts    # Cloudinary config
-│   │   ├── minioUpload.ts         # MinIO upload
-│   │   └── ...                    # Các utility khác
-│   │
 │   ├── 📁 hooks/                  # Custom React Hooks
 │   ├── 📁 types/                  # TypeScript type definitions
-│   └── 📁 lib/                    # Library configurations
+│   └── 📁 lib/                    # Library configurations (Redis cache)
 │
-├── 📁 public/                     # Static assets (23 files)
-├── 📁 test/                       # Additional test files
-├── 📁 scripts/                    # Build & setup scripts
+├── 📁 docs/                       # Project documentation (26 files)
+├── 📁 public/                     # Static assets
 ├── 📁 .github/workflows/          # GitHub Actions CI/CD
-├── 📁 .githooks/                  # Git hooks (pre-push)
-│
-├── 📄 auth.config.ts              # NextAuth configuration
-├── 📄 auth.ts                     # Auth handlers
-├── 📄 next.config.js              # Next.js configuration
-├── 📄 jest.config.ts              # Jest configuration
-├── 📄 tailwind.config.js          # Tailwind configuration
-├── 📄 Dockerfile                  # Docker configuration (commented)
-└── 📄 package.json                # Dependencies & scripts
+└── 📁 .githooks/                  # Git hooks (pre-push)
 ```
 
 ---
@@ -159,10 +135,46 @@ shop-management/
 - Facebook Posts management
 - Shopee Links
 - TikTok Accounts & Scheduled Posts
+- TikTok Music library
 
 ### 7. 🔍 QR Code Scanner
 - Quét mã vạch sản phẩm (html5-qrcode)
 - Tạo barcode (react-barcode)
+
+### 8. 📝 Blog Engine (Bilingual)
+- Blog system với VI/EN switching
+- **Frontend Interview Roadmap** — 6 phases, 96 topics với concept summaries
+- Algorithm Patterns blog với code examples
+- Callout components, TopicModal với interview-ready concepts
+- SEO optimized (sitemap, RSS feed, meta tags)
+
+### 9. 🐦 Twitter/X Feed
+- Xem tweets qua GraphQL API (cookies-based auth)
+- Tabs: For You, Following, Pinned, Likes
+- User profile pages
+- Media display (images, videos)
+- Collapse/expand để tiết kiệm bandwidth
+
+### 10. 🧠 Algorithm Flashcards
+- 7 core patterns: Hash Map, Two Pointers, Sliding Window, Stack, BFS/DFS, Binary Search, DP
+- Spaced repetition system
+- Code examples với syntax highlighting
+
+### 11. 🎯 Clarity (Life Planner)
+- Goals, Habits, Weekly review, Tasks, Reflection tabs
+- LocalStorage-based (no server needed)
+- Beautiful dark mode UI
+
+### 12. 🌐 Translation & Vocabulary
+- Translation tool (Google Translate API)
+- Vocabulary flashcards với push notifications
+- Systemd timer trên VPS gửi reminder mỗi giờ
+
+### 13. 🎬 Veo3 Video Generation
+- Token management cho Google Veo3
+- Prompt templates cho product videos
+- AutoFlow: tự động tạo video từ product → prompt → Veo3
+- Bridge architecture (browser ↔ VPS)
 
 ---
 
@@ -217,19 +229,10 @@ shop-management/
 ## 🧪 Testing
 
 ### Test Coverage
-- **Total Tests:** 26
-- **Pass Rate:** ~88% (23/26)
+- **Total Test Suites:** 48
+- **Total Tests:** 591 (587 passed, 4 skipped)
 - **Framework:** Jest + React Testing Library
-
-### Test Files
-```
-src/components/shop/login/__tests__/LoginForm.test.tsx          # 9 tests
-src/components/shop/register/__tests__/RegisterForm.test.tsx    # 10 tests
-src/utils/__tests__/validateRegisterInput.test.ts              # 7 tests
-src/components/shop/tiktok-accounts/__tests__/AutoFlowModal.test.tsx    # 34 tests
-src/components/shop/tiktok-accounts/__tests__/PromptSection.test.tsx    # 8 tests
-src/components/shop/tiktok-accounts/__tests__/Veo3MediaSection.test.tsx # 9 tests
-```
+- **Pre-push hook:** Runs lint + tests + build before every push
 
 ### Commands
 ```bash
@@ -393,16 +396,38 @@ Sử dụng `react-device-detect` để tối ưu trải nghiệm trên từng t
 | Route | Mô tả |
 |-------|-------|
 | `/` | Landing page - Portfolio cá nhân |
+| `/blogs` | Blog listing (bilingual VI/EN) |
+| `/blogs/[slug]` | Blog post detail |
 | `/cv` | CV page - Hiển thị PDF CV full-screen |
-| `/projects` | Projects page - Danh sách projects với screenshots demo |
-| `/products` | Public products listing |
+| `/projects` | Projects page - Danh sách projects |
+| `/tweets` | Twitter/X feed (For You, Following, Pinned, Likes) |
+| `/flashcards` | Algorithm pattern flashcards |
+| `/clarity` | Life planning dashboard |
+| `/leetcode` | LeetCode practice page |
+| `/translate` | Translation tool |
+| `/vocabulary-flashcards` | Vocabulary learning flashcards |
 | `/login` | Đăng nhập |
 | `/register` | Đăng ký |
-| `/privacy` | Chính sách bảo mật |
-| `/terms` | Điều khoản sử dụng |
-| `/forgot-password` | Quên mật khẩu |
-| `/reset-password` | Đặt lại mật khẩu |
 
 ---
 
-*Tài liệu cập nhật: 19/02/2026*
+## 🏗️ Infrastructure
+
+| Service | Provider | Purpose |
+|---------|----------|---------|
+| **Hosting** | Vercel | Next.js deployment, custom domain `shop.thetaphoa.store` |
+| **Database** | MongoDB Atlas (free tier) | Primary database |
+| **Cache** | Redis (Upstash) | API response caching |
+| **Images** | Cloudinary | Image upload & optimization |
+| **Videos** | MinIO (self-hosted on VPS) | Video storage for Veo3 |
+| **VPS** | Oracle Cloud (free tier) | ARM64, 4 CPU, 24GB RAM — runs 15+ Docker containers |
+| **DNS** | Cloudflare + Dynu DDNS | Domain routing |
+| **Tunnel** | Cloudflare Tunnel (`esxi-tunnel` + `vps-tunnel`) | Expose home/VPS services |
+| **VPN** | Tailscale | Private network, SSH access |
+| **CI/CD** | GitHub Actions + Pre-push hooks | Lint → Test → Build |
+
+Chi tiết: [ORACLE_VPS.md](./ORACLE_VPS.md)
+
+---
+
+*Tài liệu cập nhật: 23/03/2026*
