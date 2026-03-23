@@ -183,6 +183,83 @@ Thứ tự ưu tiên:
                 <Callout type="warning">Câu hỏi phỏng vấn kinh điển: &quot;setTimeout(fn, 0) có chạy ngay không?&quot; — <strong>Không!</strong> fn được đưa vào macrotask queue, phải chờ call stack trống + microtasks xong mới chạy.</Callout>
                 <Callout type="tip">📚 Tài liệu: <strong>Operating Systems: Three Easy Pieces</strong> — sách miễn phí, cực chất. Xem thêm video <strong>&quot;What the heck is the event loop anyway?&quot;</strong> by Philip Roberts (JSConf).</Callout>
             </TopicModal>
+
+            <TopicModal title="Node.js Runtime & V8 Engine" emoji="🚀" color="#ef4444" summary="Node.js chạy ở đâu? V8 là gì? Tại sao cùng JS mà browser và server khác nhau?" concept="V8 là JavaScript engine do Google viết bằng C++, biên dịch JS thành machine code. Node.js = V8 + system APIs (fs, http, process). Chrome = V8 + browser APIs (DOM, window, fetch). Cùng engine nhưng APIs khác nhau — nên document.getElementById() chỉ có trong browser, fs.readFile() chỉ có trong Node.js.">
+                <Paragraph>Trước 2009, JavaScript <Highlight>chỉ chạy trong browser</Highlight>. Ryan Dahl tạo Node.js bằng cách lấy <strong>V8 engine</strong> ra khỏi Chrome và thêm các system APIs — cho phép JS chạy trên server.</Paragraph>
+
+                <Heading3>V8 Engine — bộ máy chạy JavaScript</Heading3>
+                <CodeBlock title="V8 compilation pipeline">{`JavaScript source code (text)
+       │
+       ▼
+┌──────────────────┐
+│   Parser         │  ← Parse thành AST (Abstract Syntax Tree)
+└──────┬───────────┘
+       ▼
+┌──────────────────┐
+│   Ignition       │  ← Interpreter: chạy nhanh bằng bytecode
+│   (Interpreter)  │     (không cần compile hết trước)
+└──────┬───────────┘
+       │  hot function (gọi nhiều lần)
+       ▼
+┌──────────────────┐
+│   TurboFan       │  ← JIT Compiler: tối ưu thành machine code
+│   (Compiler)     │     (nhanh gấp 10-100x bytecode)
+└──────┬───────────┘
+       ▼
+   Machine code (CPU hiểu trực tiếp)`}</CodeBlock>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">Chrome = V8 + Browser APIs</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            V8 chạy JS code, browser cung cấp thêm:<br />
+                            • <InlineCode>document</InlineCode>, <InlineCode>window</InlineCode>, <InlineCode>navigator</InlineCode> — DOM và browser APIs<br />
+                            • <InlineCode>fetch</InlineCode>, <InlineCode>localStorage</InlineCode>, <InlineCode>WebSocket</InlineCode> — Web APIs<br />
+                            • <InlineCode>setTimeout</InlineCode>, <InlineCode>requestAnimationFrame</InlineCode> — do browser cung cấp (không phải V8!)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">Node.js = V8 + System APIs</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            V8 chạy JS code, Node.js cung cấp thêm:<br />
+                            • <InlineCode>fs</InlineCode> — đọc/ghi file<br />
+                            • <InlineCode>http</InlineCode> — tạo web server<br />
+                            • <InlineCode>path</InlineCode>, <InlineCode>os</InlineCode>, <InlineCode>process</InlineCode> — system utilities<br />
+                            • <InlineCode>child_process</InlineCode> — chạy lệnh terminal từ JS
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">Các JS Engine khác</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>SpiderMonkey</strong> (Firefox) — engine đầu tiên, do Brendan Eich viết<br />
+                            • <strong>JavaScriptCore</strong> (Safari/WebKit) — còn gọi là Nitro<br />
+                            • <strong>Chakra</strong> (Edge cũ) — Microsoft, giờ Edge chuyển sang V8<br />
+                            • <strong>Hermes</strong> (React Native) — tối ưu cho mobile, compile trước thành bytecode
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="Cùng V8, nhưng APIs khác nhau">{`// ✅ Chạy được ở CẢ Chrome và Node.js (JS thuần — do V8 xử lý)
+const arr = [3, 1, 2].sort()        // Array methods
+const p = new Promise(r => r(42))    // Promises
+const user = { name: 'An', age: 25 } // Objects
+console.log('Hello')                 // console (cả hai đều có)
+
+// ❌ CHỈ chạy trong Browser (Browser APIs)
+document.getElementById('app')       // DOM
+window.innerWidth                    // Window
+localStorage.setItem('key', 'val')   // Web Storage
+navigator.geolocation                // Geolocation API
+
+// ❌ CHỈ chạy trong Node.js (System APIs)
+const fs = require('fs')             // File system
+const http = require('http')         // HTTP server
+process.env.NODE_ENV                 // Environment
+__dirname                            // Current directory`}</CodeBlock>
+
+                <Callout type="warning">Câu hỏi phỏng vấn: &quot;JavaScript chạy ở đâu?&quot; — Ở bất kỳ đâu có JS engine! Browser (V8/SpiderMonkey), server (Node.js/Deno/Bun), mobile (Hermes/JSC). Khác nhau ở <strong>APIs</strong>, không phải ngôn ngữ.</Callout>
+                <Callout type="tip">💡 <strong>JIT (Just-In-Time) Compilation</strong> là lý do JS nhanh: V8 interpret trước để chạy ngay, sau đó <strong>tối ưu hot functions</strong> thành native machine code khi phát hiện pattern lặp — nhanh gần bằng C++ trong nhiều trường hợp.</Callout>
+            </TopicModal>
         </div>
 
         <Heading3>1.2 Networking cơ bản (click để xem chi tiết)</Heading3>

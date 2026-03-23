@@ -183,6 +183,83 @@ Priority order:
                 <Callout type="warning">Classic interview question: &quot;Does setTimeout(fn, 0) run immediately?&quot; — <strong>No!</strong> fn is placed in the macrotask queue and waits for the call stack to be empty + all microtasks to finish.</Callout>
                 <Callout type="tip">📚 Resource: <strong>Operating Systems: Three Easy Pieces</strong> — free book, excellent quality. Also watch <strong>&quot;What the heck is the event loop anyway?&quot;</strong> by Philip Roberts (JSConf).</Callout>
             </TopicModal>
+
+            <TopicModal title="Node.js Runtime & V8 Engine" emoji="🚀" color="#ef4444" summary="Where does Node.js run? What is V8? Why is JS different in browser vs server?" concept="V8 is a JavaScript engine built by Google in C++ that compiles JS to machine code. Node.js = V8 + system APIs (fs, http, process). Chrome = V8 + browser APIs (DOM, window, fetch). Same engine, different APIs — that's why document.getElementById() only works in browser and fs.readFile() only works in Node.js.">
+                <Paragraph>Before 2009, JavaScript <Highlight>only ran in browsers</Highlight>. Ryan Dahl created Node.js by extracting the <strong>V8 engine</strong> from Chrome and adding system APIs — allowing JS to run on servers.</Paragraph>
+
+                <Heading3>V8 Engine — the JavaScript execution machine</Heading3>
+                <CodeBlock title="V8 compilation pipeline">{`JavaScript source code (text)
+       │
+       ▼
+┌──────────────────┐
+│   Parser         │  ← Parse into AST (Abstract Syntax Tree)
+└──────┬───────────┘
+       ▼
+┌──────────────────┐
+│   Ignition       │  ← Interpreter: runs fast via bytecode
+│   (Interpreter)  │     (no need to compile everything first)
+└──────┬───────────┘
+       │  hot function (called many times)
+       ▼
+┌──────────────────┐
+│   TurboFan       │  ← JIT Compiler: optimizes to machine code
+│   (Compiler)     │     (10-100x faster than bytecode)
+└──────┬───────────┘
+       ▼
+   Machine code (CPU understands directly)`}</CodeBlock>
+
+                <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="text-blue-400 font-bold text-sm">Chrome = V8 + Browser APIs</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            V8 runs JS code, the browser provides additional APIs:<br />
+                            • <InlineCode>document</InlineCode>, <InlineCode>window</InlineCode>, <InlineCode>navigator</InlineCode> — DOM and browser APIs<br />
+                            • <InlineCode>fetch</InlineCode>, <InlineCode>localStorage</InlineCode>, <InlineCode>WebSocket</InlineCode> — Web APIs<br />
+                            • <InlineCode>setTimeout</InlineCode>, <InlineCode>requestAnimationFrame</InlineCode> — provided by browser (not V8!)
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">Node.js = V8 + System APIs</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            V8 runs JS code, Node.js provides additional APIs:<br />
+                            • <InlineCode>fs</InlineCode> — read/write files<br />
+                            • <InlineCode>http</InlineCode> — create web servers<br />
+                            • <InlineCode>path</InlineCode>, <InlineCode>os</InlineCode>, <InlineCode>process</InlineCode> — system utilities<br />
+                            • <InlineCode>child_process</InlineCode> — run terminal commands from JS
+                        </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                        <div className="text-yellow-400 font-bold text-sm">Other JS Engines</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>SpiderMonkey</strong> (Firefox) — the first JS engine, written by Brendan Eich<br />
+                            • <strong>JavaScriptCore</strong> (Safari/WebKit) — also called Nitro<br />
+                            • <strong>Chakra</strong> (old Edge) — Microsoft, Edge now uses V8<br />
+                            • <strong>Hermes</strong> (React Native) — optimized for mobile, pre-compiles to bytecode
+                        </div>
+                    </div>
+                </div>
+
+                <CodeBlock title="Same V8, different APIs">{`// ✅ Works in BOTH Chrome and Node.js (pure JS — handled by V8)
+const arr = [3, 1, 2].sort()        // Array methods
+const p = new Promise(r => r(42))    // Promises
+const user = { name: 'An', age: 25 } // Objects
+console.log('Hello')                 // console (both have it)
+
+// ❌ ONLY works in Browser (Browser APIs)
+document.getElementById('app')       // DOM
+window.innerWidth                    // Window
+localStorage.setItem('key', 'val')   // Web Storage
+navigator.geolocation                // Geolocation API
+
+// ❌ ONLY works in Node.js (System APIs)
+const fs = require('fs')             // File system
+const http = require('http')         // HTTP server
+process.env.NODE_ENV                 // Environment
+__dirname                            // Current directory`}</CodeBlock>
+
+                <Callout type="warning">Interview question: &quot;Where does JavaScript run?&quot; — Anywhere there&apos;s a JS engine! Browser (V8/SpiderMonkey), server (Node.js/Deno/Bun), mobile (Hermes/JSC). The difference is in the <strong>APIs</strong>, not the language itself.</Callout>
+                <Callout type="tip">💡 <strong>JIT (Just-In-Time) Compilation</strong> is why JS is fast: V8 interprets first for instant execution, then <strong>optimizes hot functions</strong> into native machine code when it detects repeated patterns — nearly as fast as C++ in many cases.</Callout>
+            </TopicModal>
         </div>
 
         <Heading3>1.2 Networking Basics (click for details)</Heading3>
