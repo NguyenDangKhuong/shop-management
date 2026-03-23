@@ -51,8 +51,9 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | **Tailscale** | — | ✅ enabled | systemd | SSH without key, private network |
 | **Docker** 28.2.2 | — | ✅ enabled | systemd | Container runtime |
 | **Nginx** 1.24.0 | 80, 443 | ✅ enabled | systemd | Reverse proxy (12 domains) |
+| **Cloudflared** | — | ✅ enabled | systemd | Cloudflare Tunnel (vps-tunnel) |
 | **AdGuard Home** | 53, 3001 | ✅ unless-stopped | Docker | DNS ad blocker |
-| **Homepage** | 3004 | ✅ unless-stopped | Docker | Homelab dashboard UI |
+| **Homepage** | 3008 | ✅ unless-stopped | Docker | Homelab dashboard UI |
 | **IT-Tools** | 3005 | ✅ unless-stopped | Docker | 100+ dev utilities (JSON, Base64, Hash...) |
 | **Code Server** | 3006 | ✅ unless-stopped | Docker | VS Code in browser |
 | **Home Assistant** | 8123 | ✅ unless-stopped | Docker | Smart home |
@@ -73,11 +74,50 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 
 ## Homepage Dashboard
 
-**URL:** https://khuong.theworkpc.com (port 3004)
+**URL:** https://home.thetaphoa.store (Cloudflare Tunnel) | http://100.118.218.99:3008 (Tailscale)
 **Config trên VPS:** `~/homepage/config/` (NOT `~/homepage/`)
 **Local backup:** `backup-vps/homepage/`
 
 > ⚠️ **QUAN TRỌNG:** Config trên VPS có thể khác với local backup. Luôn **pull từ VPS trước** khi sửa để tránh override mất services!
+
+### Container Run Command
+
+```bash
+sudo docker run -d \
+  --name homepage \
+  --restart unless-stopped \
+  -e 'HOMEPAGE_ALLOWED_HOSTS=home.khuong.theworkpc.com,100.118.218.99:3008,home.thetaphoa.store' \
+  -e 'NODE_TLS_REJECT_UNAUTHORIZED=0' \
+  -e 'PORT=3008' \
+  -e 'HOSTNAME=::' \
+  -v /home/ubuntu/homepage/config:/app/config \
+  -v /home/ubuntu/homepage/config/images:/app/public/images \
+  -v /var/run/docker.sock:/var/run/docker.sock:ro \
+  --network host \
+  ghcr.io/gethomepage/homepage:latest
+```
+
+> ⚠️ **Thêm domain mới:** Phải thêm vào `HOMEPAGE_ALLOWED_HOSTS` env var rồi recreate container.
+> ⚠️ **Background image:** Lưu tại `~/homepage/config/images/bg.jpg` (local file, mount vào `/app/public/images`). Không dùng URL Unsplash vì bị block ở một số mạng.
+
+### Đổi background image
+
+```bash
+# 1. Download ảnh mới về VPS
+ssh ubuntu@heyyolo-free-vps "curl -L -o ~/homepage/config/images/bg.jpg '<IMAGE_URL>'"
+
+# 2. Sửa settings.yaml (nếu cần đổi tên file)
+ssh ubuntu@heyyolo-free-vps "nano ~/homepage/config/settings.yaml"
+# background:
+#   image: /images/bg.jpg    ← path tương đối từ /app/public/
+
+# 3. Homepage auto-reload config, chỉ cần refresh browser
+# Nếu không thấy thay đổi → restart container:
+ssh ubuntu@heyyolo-free-vps "docker restart homepage"
+```
+
+> 💡 **Lưu ý:** Phải mount `~/homepage/config/images` → `/app/public/images` trong docker run command (đã có sẵn).
+> Nếu dùng URL bên ngoài trong `settings.yaml`, sẽ bị block bởi firewall công ty.
 
 ### Deploy config lên VPS
 
@@ -665,6 +705,7 @@ Oracle Console → Billing → Budgets → `free-tier-alert`
 | https://nas.khuong.theworkpc.com | NAS Synology (local via subnet) |
 | https://ha.khuong.theworkpc.com | Home Assistant (smart home) |
 | https://ui.khuong.theworkpc.com | Webtop (Ubuntu desktop in browser) |
+| https://home.thetaphoa.store | Homepage Dashboard (CF Tunnel) |
 | http://161.118.197.104 | VPS direct |
 | http://100.118.218.99 | VPS via Tailscale |
 
@@ -726,6 +767,8 @@ Oracle Console → Billing → Budgets → `free-tier-alert`
 
 ### 🔵 Cloudflare Tunnel (cần `thetaphoa.store`)
 
+**esxi-tunnel** (từ ESXi/Home network):
+
 | Domain | Target | Có backup Dynu? |
 |--------|--------|-----------------|
 | `shop.thetaphoa.store` | Vercel (login hoạt động) | ⚠️ Có nhưng ko login đc |
@@ -734,6 +777,26 @@ Oracle Console → Billing → Budgets → `free-tier-alert`
 | `cli-proxy.thetaphoa.store` | 192.168.1.38:8317 | ✅ `cli-proxy.khuong.theworkpc.com` |
 | `openclaw.thetaphoa.store` | 192.168.1.38:18789 | ✅ `openclaw.khuong.theworkpc.com` |
 | `nas.thetaphoa.store` | 192.168.1.200:5001 | ✅ `nas.khuong.theworkpc.com` |
+
+**vps-tunnel** (từ Oracle VPS — ID: `df9f572c-7539-483f-b68b-d63124d61898`):
+
+| Domain | Target | Config |
+|--------|--------|---------|
+| `home.thetaphoa.store` | localhost:3008 (Homepage) | `/etc/cloudflared/config.yml` |
+
+Config: `/etc/cloudflared/config.yml` | Cert: `/etc/cloudflared/cert.pem` | Service: `cloudflared.service` (systemd)
+
+```bash
+# Thêm route mới vào vps-tunnel:
+# 1. Sửa /etc/cloudflared/config.yml (thêm hostname trước dòng http_status:404)
+# 2. cloudflared tunnel route dns vps-tunnel <subdomain>.thetaphoa.store
+# 3. sudo systemctl restart cloudflared
+
+# Quản lý:
+sudo systemctl status cloudflared          # Status
+sudo journalctl -u cloudflared -f          # Logs
+cloudflared tunnel info vps-tunnel         # Tunnel info
+```
 
 ## Khi `thetaphoa.store` hết hạn — Migration Plan
 
