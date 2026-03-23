@@ -633,6 +633,40 @@ request.onsuccess = (e) => {
 // const db = await openDB('myDB', 1)
 // await db.put('users', { id: 1, name: 'An' })`}</CodeBlock>
 
+                <Heading3>Where to store JWT? (common interview question)</Heading3>
+                <CodeBlock title="3 places to store JWT — security comparison">{`1. localStorage       → ❌ XSS risk (JS can read it → hacker injects script to steal token)
+2. Memory (JS var)    → ✅ Secure but lost on page refresh
+3. httpOnly Cookie    → ✅✅ Best practice (JS can't read it + auto-sent every request)`}</CodeBlock>
+
+                <CodeBlock title="JWT in httpOnly Cookie — real-world flow">{`// Login:
+Client: POST /api/auth/login { email, password }
+Server: Verify → create JWT → respond with cookie:
+  Set-Cookie: token=eyJ...; HttpOnly; Secure; SameSite=Strict
+  // ↑ browser saves it, JS CANNOT read it (document.cookie returns empty!)
+
+// Every subsequent request:
+Client: GET /api/orders
+Cookie: token=eyJ...   ← browser AUTOMATICALLY sends it, no extra code needed
+Server: Read cookie → verify JWT → OK, return orders
+
+// Compare with localStorage (must code manually):
+fetch('/api/orders', {
+  headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
+  // ↑ XSS attack can read localStorage → steal token!
+})`}</CodeBlock>
+
+                <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-red-400">localStorage</th><th className="text-left p-2 text-green-400">httpOnly Cookie</th><th className="text-left p-2 text-blue-400">Memory</th></tr></thead>
+                        <tbody className="text-[var(--text-secondary)]">
+                            <tr className="border-b border-gray-100"><td className="p-2">XSS attack</td><td className="p-2">❌ JS can read → steal</td><td className="p-2">✅ JS can&apos;t read</td><td className="p-2">✅ Hard to steal</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">CSRF attack</td><td className="p-2">✅ Not auto-sent</td><td className="p-2">❌ Auto-sent → need CSRF token</td><td className="p-2">✅ Not auto-sent</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Page refresh</td><td className="p-2">Persists</td><td className="p-2">Persists</td><td className="p-2">❌ Lost</td></tr>
+                            <tr><td className="p-2">Sent with request</td><td className="p-2">Must code: Authorization header</td><td className="p-2">Automatic (browser handles)</td><td className="p-2">Must code</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
                 <Callout type="tip">🎯 <strong>Storage selection rules:</strong><br />
                     • Auth tokens → <InlineCode>httpOnly cookie</InlineCode> (most secure)<br />
                     • Theme/language → <InlineCode>localStorage</InlineCode> (persistent, small)<br />

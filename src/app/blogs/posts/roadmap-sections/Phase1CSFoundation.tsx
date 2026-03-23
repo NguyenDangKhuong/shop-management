@@ -633,6 +633,40 @@ request.onsuccess = (e) => {
 // const db = await openDB('myDB', 1)
 // await db.put('users', { id: 1, name: 'An' })`}</CodeBlock>
 
+                <Heading3>JWT lưu ở đâu? (câu hỏi phỏng vấn phổ biến)</Heading3>
+                <CodeBlock title="3 chỗ lưu JWT — so sánh bảo mật">{`1. localStorage       → ❌ XSS risk (JS đọc được → hacker inject script lấy token)
+2. Memory (biến JS)   → ✅ An toàn nhưng mất khi refresh page
+3. httpOnly Cookie    → ✅✅ Best practice (JS không đọc được + tự gửi mỗi request)`}</CodeBlock>
+
+                <CodeBlock title="JWT trong httpOnly Cookie — flow thực tế">{`// Login:
+Client: POST /api/auth/login { email, password }
+Server: Verify → tạo JWT → trả về cookie:
+  Set-Cookie: token=eyJ...; HttpOnly; Secure; SameSite=Strict
+  // ↑ browser tự lưu, JS KHÔNG đọc được (document.cookie trả rỗng!)
+
+// Mỗi request sau đó:
+Client: GET /api/orders
+Cookie: token=eyJ...   ← browser TỰ ĐỘNG gửi kèm, không cần code thêm
+Server: Đọc cookie → verify JWT → OK, trả orders
+
+// So với localStorage (phải code thủ công):
+fetch('/api/orders', {
+  headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
+  // ↑ XSS attack có thể đọc localStorage → steal token!
+})`}</CodeBlock>
+
+                <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-red-400">localStorage</th><th className="text-left p-2 text-green-400">httpOnly Cookie</th><th className="text-left p-2 text-blue-400">Memory</th></tr></thead>
+                        <tbody className="text-[var(--text-secondary)]">
+                            <tr className="border-b border-gray-100"><td className="p-2">XSS attack</td><td className="p-2">❌ JS đọc được → steal</td><td className="p-2">✅ JS không đọc được</td><td className="p-2">✅ Khó steal</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">CSRF attack</td><td className="p-2">✅ Không gửi tự động</td><td className="p-2">❌ Gửi tự động → cần CSRF token</td><td className="p-2">✅ Không gửi tự động</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Refresh page</td><td className="p-2">Vẫn còn</td><td className="p-2">Vẫn còn</td><td className="p-2">❌ Mất</td></tr>
+                            <tr><td className="p-2">Gửi kèm request</td><td className="p-2">Phải code: Authorization header</td><td className="p-2">Tự động (browser lo)</td><td className="p-2">Phải code</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
                 <Callout type="tip">🎯 <strong>Quy tắc chọn storage:</strong><br />
                     • Auth tokens → <InlineCode>httpOnly cookie</InlineCode> (bảo mật nhất)<br />
                     • Theme/language → <InlineCode>localStorage</InlineCode> (persist, nhỏ)<br />
