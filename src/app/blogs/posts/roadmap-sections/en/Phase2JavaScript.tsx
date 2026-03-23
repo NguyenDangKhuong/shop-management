@@ -14,7 +14,7 @@ export default function Phase2JavaScript() {
 
             <Heading3>2.1 Core Concepts (MUST know — click for details)</Heading3>
             <div className="my-4 space-y-2">
-                <TopicModal title="Execution Context & Hoisting" emoji="⚙️" color="#fbbf24" summary="How the JS engine runs code — Creation Phase vs Execution Phase">
+                <TopicModal title="Execution Context & Hoisting" emoji="⚙️" color="#fbbf24" summary="How the JS engine runs code — Creation Phase vs Execution Phase" concept="When running JS, the engine creates an Execution Context with 2 phases: Creation Phase (hoist var=undefined, hoist function declarations entirely, let/const enter TDZ) and Execution Phase (run code line by line, assign values). var returns undefined (silent bug), let/const in TDZ throw ReferenceError (safer). Function declarations are fully hoisted, function expressions/arrows are not.">
                     <Paragraph>When you run JS, the engine creates an <Highlight>Execution Context</Highlight> with 2 phases:</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
@@ -112,7 +112,7 @@ function formatOutput(result) { /* ... */ }`}</CodeBlock>
                     <Callout type="tip">Interview: {`"Hoisting is useful for function declarations to organize code top-down. But for variables, always use let/const — TDZ catches bugs early. var hoisting creates silent bugs with undefined — that's bad behavior to avoid."`}</Callout>
                 </TopicModal>
 
-                <TopicModal title="Scope & Closure" emoji="🔒" color="#a78bfa" summary="Lexical scope, closure patterns, module pattern">
+                <TopicModal title="Scope & Closure" emoji="🔒" color="#a78bfa" summary="Lexical scope, closure patterns, module pattern" concept="Scope defines variable accessibility: Global (everywhere), Function (inside function), Block (let/const inside {}). JS uses Lexical Scope — scope is determined at write time, not runtime. Closure = a function that 'remembers' its scope even when called elsewhere — used for private state, factory functions, and is the foundation of React hooks.">
                     <Paragraph><Highlight>Scope</Highlight> = the range of variable access. JS uses <Highlight>Lexical Scope</Highlight> — scope is determined at write time, not runtime.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
@@ -210,7 +210,7 @@ for (var i = 0; i < 5; i++) {
 // → Same idea as let creating a new block scope`}</CodeBlock>
                 </TopicModal>
 
-                <TopicModal title="this keyword" emoji="👉" color="#f472b6" summary="this = the word 'me' in JS — changes based on who's calling (regular) or who wrote it (arrow)">
+                <TopicModal title="this keyword" emoji="👉" color="#f472b6" summary="this = the word 'me' in JS — changes based on who's calling (regular) or who wrote it (arrow)" concept="this depends on how a function is called: Default (standalone) = window/undefined, Implicit (obj.method) = object before the dot, Explicit (call/apply/bind) = force this to any object, new = newly created object. Arrow functions have NO own this — they inherit from the enclosing scope. Priority: new > explicit > implicit > default.">
                     <Paragraph><InlineCode>this</InlineCode> in JS is like the word <Highlight>&quot;me&quot;</Highlight> — it changes depending on <strong>who&apos;s speaking</strong>:</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -374,7 +374,7 @@ khuongIntro('Yo')    // "Yo, I am Khuong"
                     <Callout type="tip">Priority order: <strong>new &gt; explicit (call/apply/bind) &gt; implicit (obj.method) &gt; default (window)</strong>. Arrow functions bypass all these rules.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Prototype & Inheritance" emoji="🧬" color="#34d399" summary="Prototype = 'family inheritance' for objects — the chain works like asking your parents, then grandparents">
+                <TopicModal title="Prototype & Inheritance" emoji="🧬" color="#34d399" summary="Prototype = 'family inheritance' for objects — the chain works like asking your parents, then grandparents" concept="Every object has a hidden link (__proto__) pointing to its prototype. When accessing a property that doesn't exist, JS walks up the prototype chain until null. Own properties take priority over prototype. Put methods on prototype to share (1000 instances = 1 copy). ES6 Class is just syntactic sugar — underneath it's still prototype.">
                     <Paragraph><InlineCode>Prototype</InlineCode> in JS is like <Highlight>&quot;family inheritance&quot;</Highlight> — children inherit assets from parents, grandparents:</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -469,7 +469,7 @@ child.hasOwnProperty('inherited') // false — inherited from prototype`}</CodeB
                     <Callout type="warning">ES6 Class is just <Highlight>syntactic sugar</Highlight> — underneath it still uses prototypes. Understanding prototypes = understanding JS at a deep level.</Callout>
                 </TopicModal>
 
-                <TopicModal title="OOP in JavaScript" emoji="🏗️" color="#f59e0b" summary="4 pillars of OOP: Encapsulation, Inheritance, Polymorphism, Abstraction — JS uses Prototypal OOP, class is just sugar">
+                <TopicModal title="OOP in JavaScript" emoji="🏗️" color="#f59e0b" summary="4 pillars of OOP: Encapsulation, Inheritance, Polymorphism, Abstraction — JS uses Prototypal OOP, class is just sugar" concept="4 OOP pillars: Encapsulation (bundle data + methods, #private fields), Inheritance (extends), Polymorphism (same method, different behavior), Abstraction (hide complexity). JS uses Prototypal OOP — objects inherit directly from objects, no class blueprints like Java. ES6 class is sugar, typeof class is still 'function'.">
                     <Paragraph>JS uses <Highlight>Prototypal OOP</Highlight> — objects inherit directly from other objects, no class blueprint needed like Java/C#. ES6 Class is just syntactic sugar wrapping prototypes.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -535,7 +535,7 @@ typeof Person // "function" — class is NOT a new data type!`}</CodeBlock>
                     <Callout type="tip">Interview: {`"JS uses prototypal inheritance — objects inherit directly from objects. ES6 class is syntactic sugar, underneath it's still prototype chain. Unlike Java, there's no rigid 'blueprint' — everything is an object."`}</Callout>
                 </TopicModal>
 
-                <TopicModal title="Functional Programming" emoji="λ" color="#06b6d4" summary="Pure functions, immutability, higher-order functions, composition — the other paradigm JS excels at">
+                <TopicModal title="Functional Programming" emoji="λ" color="#06b6d4" summary="Pure functions, immutability, higher-order functions, composition — the other paradigm JS excels at" concept="FP core principles: Pure Functions (same input → same output, no side effects), Immutability (don't mutate, create new data), Higher-Order Functions (functions that accept/return functions), Composition (combine small functions into larger ones). React hooks are FP: useState is a closure, useEffect manages side effects, components are pure functions of props.">
                     <Paragraph>JS is <Highlight>multi-paradigm</Highlight> — supports both OOP and FP. Modern React heavily uses FP patterns (hooks, pure components, composition over inheritance).</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -595,7 +595,7 @@ transform(3)  // pipe: 3 → 4 → 16 → 32`}</CodeBlock>
                     <Callout type="tip">Interview: {`"React hooks are FP in action — useState is a closure, useEffect manages side effects separately, components are pure functions of props. FP makes React code predictable and testable."`}</Callout>
                 </TopicModal>
 
-                <TopicModal title="Callback" emoji="📞" color="#ef4444" summary="A function passed into another function — the foundation of async JS, event handling, and higher-order functions">
+                <TopicModal title="Callback" emoji="📞" color="#ef4444" summary="A function passed into another function — the foundation of async JS, event handling, and higher-order functions" concept="A callback is a function passed as an argument to another function and invoked when needed. Found everywhere: addEventListener, setTimeout, .map(), .then(). The main problem: callback hell (deep nesting) → that's why Promise was created → then async/await.">
                     <Paragraph><Highlight>Callback</Highlight> = a function passed as an argument to another function, to be called back when needed. This is the foundation of everything async in JS.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -649,7 +649,7 @@ const shipping = await getShipping(detail)
                     <Callout type="warning">Callback hell is why Promises were created → then async/await was created. Understanding callbacks = understanding <Highlight>why</Highlight> we need Promise/async-await.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Event Loop" emoji="🔄" color="#60a5fa" summary="Call Stack, Microtask Queue, Macrotask Queue">
+                <TopicModal title="Event Loop" emoji="🔄" color="#60a5fa" summary="Call Stack, Microtask Queue, Macrotask Queue" concept="JS is single-threaded but handles async via the Event Loop. Priority order: 1) Call Stack (synchronous code), 2) Microtask Queue (Promise.then, queueMicrotask), 3) Macrotask Queue (setTimeout, setInterval, I/O). Always remember: Sync → Microtask → Macrotask. This is the #1 JS interview question.">
                     <Paragraph>JS is <Highlight>single-threaded</Highlight> but handles async thanks to the <Highlight>Event Loop</Highlight>. Understanding the Event Loop = understanding why async code runs in a &quot;strange&quot; order.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -667,7 +667,7 @@ console.log('4'); // Call Stack
                     <a href="/blogs/event-loop" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="Async/Await & Promises" emoji="⚡" color="#fbbf24" summary="What is a Promise, 3 states, Promise.all/race/allSettled, async/await, error handling">
+                <TopicModal title="Async/Await & Promises" emoji="⚡" color="#fbbf24" summary="What is a Promise, 3 states, Promise.all/race/allSettled, async/await, error handling" concept="A Promise represents the future result of an async operation, with 3 states: Pending → Fulfilled/Rejected. async/await is syntactic sugar that makes async code look synchronous. Note: sequential await is slow — use Promise.all for independent requests to run them in parallel. Handle errors with try/catch or .catch().">
                     <Paragraph><Highlight>Promise</Highlight> is an object representing the eventual result (success or failure) of an asynchronous operation (like API calls, file reads). It solves the <Highlight>&quot;callback hell&quot;</Highlight> problem by providing <InlineCode>.then()</InlineCode> and <InlineCode>.catch()</InlineCode> syntax for cleaner, more maintainable code.</Paragraph>
 
                     <Heading3>3 States of a Promise</Heading3>
@@ -891,7 +891,7 @@ const result = await Promise.race([
                     <a href="/blogs/callback-promise-async-await" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="ES6+ Features" emoji="✨" color="#38bdf8" summary="destructuring, spread, modules, optional chaining, nullish coalescing">
+                <TopicModal title="ES6+ Features" emoji="✨" color="#38bdf8" summary="destructuring, spread, modules, optional chaining, nullish coalescing" concept="ES6+ introduced: destructuring (unpack objects/arrays), spread/rest (...), template literals, arrow functions, modules (import/export), Map/Set, Symbol, optional chaining (?.), nullish coalescing (??), Promise, class, and many more modern features that make code shorter and safer.">
                     <Paragraph>Features you <Highlight>must master</Highlight> — interviewers expect you to write modern JS.</Paragraph>
                     <div className="my-3 space-y-2">
                         {[
@@ -911,7 +911,7 @@ const result = await Promise.race([
                     <a href="/blogs/ecmascript-features" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="Regular Expressions (Regex)" emoji="🔍" color="#ec4899" summary={'Regex = "Find WHAT, HOW MANY, WHERE" — the most powerful text processing tool in any language'}>
+                <TopicModal title="Regular Expressions (Regex)" emoji="🔍" color="#ec4899" summary={'Regex = "Find WHAT, HOW MANY, WHERE" — the most powerful text processing tool in any language'} concept="Regex is pattern matching with 3 parts: Find WHAT (\\d digits, \\w word chars, . any), HOW MANY (* 0+, + 1+, {n,m} n to m times), WHERE (^ start, $ end, \\b word boundary). Used for validation (email, phone), extracting data, search-replace. Flags: g (global), i (case-insensitive), m (multiline).">
                     <Paragraph>Regex looks scary but you only need to remember <Highlight>3 questions</Highlight>: Find <strong>WHAT</strong>? <strong>How many</strong>? <strong>Where</strong>?</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -1022,7 +1022,7 @@ for (const m of str.matchAll(regex)) {
                     <Callout type="tip">Interview: {`"Regex works by answering 3 questions: find WHAT (\\d, \\w, [abc]), HOW MANY (*, +, {n}), WHERE (^, $, \\b). Read left to right like a sentence."`}</Callout>
                 </TopicModal>
 
-                <TopicModal title="Dynamic Import + Suspense" emoji="📦" color="#8b5cf6" summary="Code splitting — split bundle into small chunks, load on demand, reduce page load time">
+                <TopicModal title="Dynamic Import + Suspense" emoji="📦" color="#8b5cf6" summary="Code splitting — split bundle into small chunks, load on demand, reduce page load time" concept="Dynamic import() lets you load modules on demand instead of all upfront — reducing bundle size and speeding up pages. React.lazy() + Suspense make code splitting easy: lazy load components and show a fallback (loading) while waiting. Combine with route-based splitting so each page only loads the code it needs.">
                     <Paragraph><Highlight>Dynamic Import</Highlight> lets you load code <strong>when needed</strong> instead of loading everything upfront — smaller bundle, faster page render.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -1086,7 +1086,7 @@ const Chart = dynamic(() => import('./HeavyChart'), {
                     <Callout type="tip">Interview: {`"Dynamic import = code splitting. Split bundle into chunks, load on demand. React.lazy + Suspense handles loading UI. Next.js dynamic() adds ssr: false for client-only components."`}</Callout>
                 </TopicModal>
 
-                <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== only checks value (auto-converts type), === checks both type AND value — always use ===">
+                <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== only checks value (auto-converts type), === checks both type AND value — always use ===" concept="Type Coercion is JS auto-converting types during comparison/operations. == allows coercion (1 == '1' is true), === does not (1 === '1' is false). Falsy values: false, 0, '', null, undefined, NaN. Always use === and Object.is() to avoid bugs from implicit coercion.">
                     <Paragraph><InlineCode>==</InlineCode> and <InlineCode>===</InlineCode> differ by <Highlight>one single step</Highlight>: whether types are auto-converted or not.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -1182,7 +1182,7 @@ if (x === null || x === undefined) { /* longer */ }
                     <Callout type="tip">Interview: {`"== only compares values — it auto-converts types before comparing, leading to unexpected bugs. === compares both type AND value — different type means false immediately. Always use === except for x == null to check both null and undefined."`}</Callout>
                 </TopicModal>
 
-                <TopicModal title="for vs while — When to Use?" emoji="🔄" color="#10b981" summary="for = known iteration count, while = loop until condition is false — crucial pattern in DSA">
+                <TopicModal title="for vs while — When to Use?" emoji="🔄" color="#10b981" summary="for = known iteration count, while = loop until condition is false — crucial pattern in DSA" concept="for is for known iteration counts (traversing arrays, ranges). while is for looping until a condition is false (unknown count). for...of iterates values (arrays, strings), for...in iterates keys (objects). DSA patterns: two pointers use while, sliding window uses for + while, nested loops use for.">
                     <Paragraph><InlineCode>for</InlineCode> when you <Highlight>know in advance</Highlight> how many times to iterate. <InlineCode>while</InlineCode> when you <Highlight>don&#39;t know</Highlight> when to stop.</Paragraph>
 
                     <Heading3>for — When You Know the Iteration Count</Heading3>
@@ -1253,7 +1253,7 @@ for (let i = 0; i < arr.length; i++) {               // for: traverse array
                     <Callout type="tip"><strong>Summary:</strong> <InlineCode>for</InlineCode> = &quot;iterate through N elements&quot;, <InlineCode>while</InlineCode> = &quot;loop until condition is false&quot;. When combining both (Sliding Window, Monotonic Stack), <InlineCode>for</InlineCode> manages the outer loop, <InlineCode>while</InlineCode> handles inner logic with unknown step count! 🎯</Callout>
                 </TopicModal>
 
-                <TopicModal title="JS Data Types" emoji="📦" color="#06b6d4" summary="7 primitives + 1 reference — typeof, truthy/falsy, pass by value vs reference">
+                <TopicModal title="JS Data Types" emoji="📦" color="#06b6d4" summary="7 primitives + 1 reference — typeof, truthy/falsy, pass by value vs reference" concept="7 primitives: string, number, boolean, null, undefined, symbol, bigint — immutable, passed by value. 1 reference: object (includes array, function, date...) — mutable, passed by reference. typeof null === 'object' is a historical bug. Truthy: everything except falsy (false, 0, '', null, undefined, NaN).">
                     <Paragraph>JavaScript has <Highlight>7 primitive types</Highlight> and <Highlight>1 reference type</Highlight>.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -1298,7 +1298,7 @@ let obj4 = Object.assign({}, obj1)`}</CodeBlock>
                     <a href="/blogs/data-types-structures" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 See detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="Strict Mode" emoji="🔒" color="#ef4444" summary={`"use strict" — stricter execution mode that catches errors early and makes code safer`}>
+                <TopicModal title="Strict Mode" emoji="🔒" color="#ef4444" summary={`"use strict" — stricter execution mode that catches errors early and makes code safer`} concept="'use strict' enables strict mode: prohibits undeclared variables, prohibits deleting variables, this in standalone functions = undefined (instead of window), prohibits duplicate params, prohibits octal literals, prohibits with. ES modules and classes are automatically strict. Always use strict mode to catch bugs early.">
                     <Paragraph><InlineCode>{`"use strict"`}</InlineCode> enables a stricter execution mode, introduced in <Highlight>ES5</Highlight>. It catches errors early and prevents dangerous behaviors that normal JS silently allows.</Paragraph>
                     <CodeBlock title="How to enable">{`"use strict"; // Top of file → applies to entire file
 
@@ -1337,7 +1337,7 @@ obj.name = "X"; // ❌ TypeError — read-only`}</CodeBlock>
                     <Callout type="tip">In modern React/Next.js projects, code already runs in <Highlight>strict mode by default</Highlight> because of ES Modules. But understanding strict mode is still crucial for interviews!</Callout>
                 </TopicModal>
 
-                <TopicModal title="DOM Manipulation & Event Delegation" emoji="🌐" color="#f97316" summary="querySelector, event bubbling/capturing, delegation — foundation for understanding React">
+                <TopicModal title="DOM Manipulation & Event Delegation" emoji="🌐" color="#f97316" summary="querySelector, event bubbling/capturing, delegation — foundation for understanding React" concept="The DOM is a tree of HTML objects that JS manipulates. Event bubbling: events propagate from child to parent; capturing: from parent to child. Event Delegation: attach 1 listener on parent instead of many on children — saves memory and works with dynamic elements. React uses synthetic events and implicit delegation on root.">
                     <Paragraph>Understanding <Highlight>native DOM APIs</Highlight> helps you understand how React works under the hood — commonly asked at all levels.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
@@ -1403,7 +1403,7 @@ list.appendChild(fragment) // 1 reflow only!`}</CodeBlock>
                     <Callout type="tip">Interview: {'"Build a todo list without React"'} — must use event delegation + DocumentFragment. Being able to explain <Highlight>why React uses Synthetic Events</Highlight> → big bonus points.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Web APIs — Observer Pattern" emoji="👁️" color="#06b6d4" summary="IntersectionObserver, MutationObserver, ResizeObserver — high-performance APIs replacing legacy events">
+                <TopicModal title="Web APIs — Observer Pattern" emoji="👁️" color="#06b6d4" summary="IntersectionObserver, MutationObserver, ResizeObserver — high-performance APIs replacing legacy events" concept="Observer APIs let the browser notify you of changes instead of constant polling. IntersectionObserver: detects elements entering/leaving viewport (lazy load, infinite scroll). MutationObserver: watches for DOM changes. ResizeObserver: watches for element size changes. More efficient than scroll/resize events because the browser optimizes them internally.">
                     <Paragraph>Modern Web APIs use <Highlight>Observer pattern</Highlight> instead of legacy polling/events — crucial for performance as they run at <Highlight>browser level</Highlight> (off main thread).</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
@@ -1572,7 +1572,7 @@ observer.observe(element)
                     <Callout type="tip">Interview: {'"Build infinite scroll"'} or {'"Build lazy loading images"'} — use IntersectionObserver, <Highlight>not scroll event + getBoundingClientRect</Highlight>. Scroll event fires hundreds of times/sec + getBoundingClientRect causes forced reflow = jank. Observer runs at browser level, async, off main thread.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Generators & Iterators" emoji="🔁" color="#a78bfa" summary="function*, yield, Symbol.iterator — lazy evaluation and custom iteration">
+                <TopicModal title="Generators & Iterators" emoji="🔁" color="#a78bfa" summary="function*, yield, Symbol.iterator — lazy evaluation and custom iteration" concept="Generators (function*) create pausable functions via yield, resumed with next(). Used for lazy evaluation (processing large data in chunks), infinite sequences, and custom iteration. Iterator protocol uses Symbol.iterator and next() returning {value, done}. for...of uses iterators implicitly. Async generators combine with for await...of for streaming data.">
                     <Paragraph><Highlight>Generators</Highlight> = functions that can pause/resume. Rarely used directly but foundational to async/await and Redux-Saga.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
@@ -1689,7 +1689,7 @@ run(fetchUserGen).then(user => console.log(user))
                     <Callout type="tip">Interview: {'"How does async/await work under the hood?"'} → <Highlight>async/await = generator + Promise auto-runner</Highlight>. When hitting <InlineCode>await</InlineCode>, the engine <InlineCode>yield</InlineCode>s the promise out, waits for it to resolve, then <InlineCode>.next(result)</InlineCode> passes the value back in. Being able to explain this = senior level answer. 🎯</Callout>
                 </TopicModal>
 
-                <TopicModal title="Error Handling Patterns" emoji="🚨" color="#ef4444" summary="try/catch, custom errors, error boundaries, global handlers — production-ready error handling">
+                <TopicModal title="Error Handling Patterns" emoji="🚨" color="#ef4444" summary="try/catch, custom errors, error boundaries, global handlers — production-ready error handling" concept="try/catch handles synchronous errors, combined with async/await for async errors. Custom Error classes (extends Error) enable error categorization. React Error Boundaries catch render errors. Global handlers: window.onerror + unhandledrejection catch leaked errors. Production pattern: errors have error code + message + context, logged to monitoring, show user-friendly message.">
                     <Paragraph>Production code <Highlight>must handle errors gracefully</Highlight> — crash = lost users. Interviews often ask about error handling patterns.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
@@ -1752,7 +1752,7 @@ window.addEventListener('unhandledrejection', (e) => {
                     <Callout type="tip">Interview: mentioning <Highlight>Result type pattern</Highlight> (Go/Rust style) instead of try/catch everywhere → shows engineering maturity. Knowing Error Boundary limitations → senior level.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Web Workers & Service Workers" emoji="⚙️" color="#10b981" summary="Multi-threading in the browser, offline capability, background sync">
+                <TopicModal title="Web Workers & Service Workers" emoji="⚙️" color="#10b981" summary="Multi-threading in the browser, offline capability, background sync" concept="Web Workers run JS code in a separate thread, not blocking UI — used for heavy computation (CSV parsing, image processing). Communication via postMessage. Service Workers sit between browser and network, enabling offline mode (cache-first strategy), push notifications, and background sync. They're the foundation of PWAs.">
                     <Paragraph>Browser runs JS on the <Highlight>main thread</Highlight> — heavy computation blocks UI. Web Workers solve this.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
@@ -1811,7 +1811,7 @@ controller.abort() // cancel the request`}</CodeBlock>
                     <Callout type="tip">Interview: {'"The page is janky when sorting a large list"'} → <Highlight>Web Worker</Highlight> for sorting. {'"Cancel previous search request when user keeps typing"'} → AbortController.</Callout>
                 </TopicModal>
 
-                <TopicModal title="WeakMap, WeakRef & FinalizationRegistry" emoji="🧹" color="#8b5cf6" summary="Memory management, garbage collection awareness — senior-level interview topic">
+                <TopicModal title="WeakMap, WeakRef & FinalizationRegistry" emoji="🧹" color="#8b5cf6" summary="Memory management, garbage collection awareness — senior-level interview topic" concept="WeakMap holds keys via weak references — when the key loses all references, GC auto-cleans it. Used for private data and object-keyed caching. WeakRef creates a weak reference to an object (deref() may return undefined). FinalizationRegistry runs a callback when an object is garbage collected. Helps manage memory and prevent leaks in large applications.">
                     <Paragraph><Highlight>WeakMap/WeakRef</Highlight> allow referencing objects without preventing garbage collection — important for memory management.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
@@ -1861,7 +1861,7 @@ function getMetadata(el: HTMLElement) {
             <Heading3>2.2 Implement from Scratch (click for sample code)</Heading3>
             <a href="/blogs/js-common-functions" target="_blank" rel="noopener noreferrer" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 See JS Common Functions collection →</a>
             <div className="my-4 space-y-2">
-                <TopicModal title="Array.map / filter / reduce" emoji="💻" color="#fbbf24" summary="Re-implement the 3 most popular Array higher-order functions">
+                <TopicModal title="Array.map / filter / reduce" emoji="💻" color="#fbbf24" summary="Re-implement the 3 most popular Array higher-order functions" concept="map creates a new array by transforming each element (doesn't modify original). filter creates a new array with only elements that pass a condition. reduce combines all elements into a single value (sum, max, grouping...). All three take callbacks and return new results without mutating the original array — FP foundation in JS.">
                     <Heading3>📖 How to Use</Heading3>
                     <CodeBlock title="map / filter / reduce — real-world usage">{`// map: transform each element → new array of same length
 const prices = [100, 200, 300]
@@ -1948,7 +1948,7 @@ pipeline.reduce((price, fn) => fn(price), 100)
                     <Callout type="info">reduce = &quot;many → one&quot;: Array of numbers → 1 sum, array of strings → 1 counting object, array of arrays → 1 flat array, array of functions → 1 result. If you need to transform an array into one thing → use reduce!</Callout>
                 </TopicModal>
 
-                <TopicModal title="Function.bind / call / apply" emoji="💻" color="#fbbf24" summary="Re-implement the 3 methods that change this context">
+                <TopicModal title="Function.bind / call / apply" emoji="💻" color="#fbbf24" summary="Re-implement the 3 methods that change this context" concept="call invokes a function immediately with a specified this, args passed individually. apply is like call but args are passed as an array. bind returns a NEW function with this permanently locked (not called immediately). Used for borrowing methods from other objects or ensuring this isn't lost in callbacks. Implementing from scratch is a classic interview question.">
                     <Heading3>How to Use</Heading3>
                     <CodeBlock title="bind / call / apply — 3 ways to change this">{`const user = { name: 'An' }
 function greet(greeting, punctuation) {
@@ -1998,7 +1998,7 @@ Function.prototype.myApply = function(context, args = []) {
                     <Callout type="warning">Trick: use <InlineCode>Symbol()</InlineCode> as a temporary key on the object to avoid overwriting existing properties.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Promise & Promise.all" emoji="💻" color="#fbbf24" summary="Implement Promise from scratch — the most classic interview question">
+                <TopicModal title="Promise & Promise.all" emoji="💻" color="#fbbf24" summary="Implement Promise from scratch — the most classic interview question" concept="Promise is a state machine: pending → fulfilled (resolve) or rejected (reject). then/catch register callbacks for future results. Promise.all runs in parallel, fails if any promise rejects. Promise.allSettled waits for all to finish (including failures). Promise.race returns the result of the first promise to complete.">
                     <Heading3>Memory Trick: Ordering Pizza 🍕</Heading3>
                     <Paragraph>
                         <strong>Promise</strong> is like calling to order a pizza. The shop says "It'll be there in 15 mins" (returns a Promise). Right now, your stomach is in a <strong>Pending</strong> state (waiting). If the hot pizza arrives successfully → <strong>Fulfilled</strong> (resolve). If the delivery guy crashes or the shop is closed → <strong>Rejected</strong>.
@@ -2090,7 +2090,7 @@ const results = await Promise.allSettled([p1, p2, p3])
 };`}</CodeBlock>
                 </TopicModal>
 
-                <TopicModal title="Debounce & Throttle" emoji="💻" color="#fbbf24" summary="2 techniques to control function call frequency — very common in interviews">
+                <TopicModal title="Debounce & Throttle" emoji="💻" color="#fbbf24" summary="2 techniques to control function call frequency — very common in interviews" concept="Debounce: only calls the function AFTER the user stops acting for a set time (search input, resize). Throttle: limits function calls to at most once per time interval (scroll, mousemove). Debounce = 'wait until user finishes, then act', Throttle = 'act steadily every X seconds'.">
                     <Heading3>How to Use</Heading3>
                     <CodeBlock title="When to use Debounce vs Throttle">{`// DEBOUNCE — wait for user to STOP, then execute
 // Use for: search input, window resize, auto-save
@@ -2180,7 +2180,7 @@ window.addEventListener('scroll', throttle(handleScroll, 100));`}</CodeBlock>
                     <Callout type="tip"><strong>Debounce</strong> = search typing, window resize. <strong>Throttle</strong> = scroll, mousemove. Remember both return a <strong>new function</strong>.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Deep clone / Deep equal" emoji="💻" color="#fbbf24" summary="Compare and copy nested objects — shallow vs deep distinction">
+                <TopicModal title="Deep clone / Deep equal" emoji="💻" color="#fbbf24" summary="Compare and copy nested objects — shallow vs deep distinction" concept="Shallow copy (spread, Object.assign) only copies level 1 — nested objects still share references. Deep clone (structuredClone, JSON.parse/stringify, recursion) copies the entire tree. Deep equal recursively compares each property. Note: JSON method doesn't support Date, Function, undefined, circular refs — use structuredClone (native) or recursion.">
                     <Heading3>Analogy: House Key vs. Building a New House 🏠</Heading3>
                     <div className="my-3 space-y-2 text-sm">
                         <div className="p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg">
@@ -2241,7 +2241,7 @@ console.log(obj.a.b) // 1 — NOT affected! ✅
                     <Callout type="warning">Important edge case: <Highlight>circular reference</Highlight> — use WeakMap to track cloned objects. Many candidates forget this!</Callout>
                 </TopicModal>
 
-                <TopicModal title="Event Emitter (pub/sub)" emoji="💻" color="#fbbf24" summary="Core pattern of Node.js, React, and every event system">
+                <TopicModal title="Event Emitter (pub/sub)" emoji="💻" color="#fbbf24" summary="Core pattern of Node.js, React, and every event system" concept="Event Emitter is a pub/sub pattern: on() registers listeners for events, emit() triggers events activating all listeners, off() unregisters listeners. Foundation of Node.js EventEmitter, DOM events, and many state management libraries. Helps decouple components — publishers don't need to know who subscribers are.">
                     <Heading3>Memory Trick: YouTube Subscription 📺</Heading3>
                     <Paragraph>
                         This core design pattern is exactly like subscribing to a YouTube channel. You (the listener - Subscriber) click the Subscribe button (<InlineCode>on()</InlineCode>) for your favorite channels (events - Publisher).
@@ -2292,7 +2292,7 @@ bus.on('message', (text) => console.log(text));
 bus.emit('message', 'Hello!'); // "Hello!"`}</CodeBlock>
                 </TopicModal>
 
-                <TopicModal title="Curry function" emoji="💻" color="#fbbf24" summary="Transform f(a,b,c) into f(a)(b)(c) — functional programming pattern">
+                <TopicModal title="Curry function" emoji="💻" color="#fbbf24" summary="Transform f(a,b,c) into f(a)(b)(c) — functional programming pattern" concept="Currying transforms a multi-argument function into a chain of single-argument functions: f(a,b,c) → f(a)(b)(c). Each call returns a new function that 'closes over' the passed argument (closure). Used for partial application (creating specialized functions from general ones), composition, and is a common FP pattern.">
                     <Heading3>Memory Trick: Automated Boba Machine 🧋</Heading3>
                     <Paragraph>
                         A normal function is like a traditional boba shop: You have to declare all 3 ingredients at once <InlineCode>makeBoba(tea, sugar, ice)</InlineCode> before the cashier starts making your drink.
@@ -2329,7 +2329,7 @@ errorNow('Database down!');`}</CodeBlock>
                     <Callout type="tip">Key: compare <InlineCode>args.length</InlineCode> with <InlineCode>fn.length</InlineCode> (number of params function needs). Enough → call it, not enough → return new function.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Flatten array / object" emoji="💻" color="#fbbf24" summary="Flatten nested arrays/objects — commonly asked at Google, Meta">
+                <TopicModal title="Flatten array / object" emoji="💻" color="#fbbf24" summary="Flatten nested arrays/objects — commonly asked at Google, Meta" concept="Flatten array: turn [1,[2,[3]]] into [1,2,3] using recursion or Array.flat(Infinity). Flatten object: turn {a:{b:1}} into {'a.b':1} using recursion + key concatenation. Unflatten: reverse the process, splitting keys by dots and building nested objects. Tests recursion skills and data structure manipulation.">
                     <Heading3>Memory Trick: Unboxing Russian Nesting Dolls (Matryoshka) 🪆</Heading3>
                     <Paragraph>
                         Array Flat is like being gifted a 10-layer Russian nesting doll, or those prank boxes hiding an engagement ring deep inside. <strong>Flatten</strong> means taking a hammer, smashing all the bulky, unnecessary outer boxes (nested arrays), picking up only the valuable core parts (items) inside, and tossing them all into a single, large basket (1D array).
@@ -2417,7 +2417,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
             </Paragraph>
 
             <div className="my-4 space-y-2">
-                <TopicModal title="JS Fundamentals — 15 Classic Questions" emoji="⚡" color="#fbbf24" summary="var/let/const, hoisting, truthy/falsy, == vs === — every interview asks these">
+                <TopicModal title="JS Fundamentals — 15 Classic Questions" emoji="⚡" color="#fbbf24" summary="var/let/const, hoisting, truthy/falsy, == vs === — every interview asks these" concept="15 must-know JS fundamentals: var/let/const (scope + hoisting), == vs === (type coercion), truthy/falsy (6 falsy values), this (4 rules), closure (function remembers its scope), event loop (sync → microtask → macrotask), prototype chain, and pass by value vs reference.">
                     <div className="my-3 space-y-3">
                         {[
                             ['Q: How are var, let, const different?', 'var: function-scoped, hoisted (undefined), can re-declare.\nlet: block-scoped, hoisted (TDZ), can re-assign.\nconst: block-scoped, hoisted (TDZ), cannot re-assign (but object/array contents are still mutable!).'],
@@ -2445,7 +2445,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                     <Callout type="tip">Tip: For theory questions → answer <Highlight>concisely + with an example</Highlight>. {'"var is function-scoped, e.g. console.log(x) // undefined due to hoisting"'} is better than just {'"var is function scoped"'}.</Callout>
                 </TopicModal>
 
-                <TopicModal title="HTML/CSS — 10 Common Questions" emoji="🎨" color="#38bdf8" summary="box model, position, flexbox, responsive — CSS is where many developers are weakest">
+                <TopicModal title="HTML/CSS — 10 Common Questions" emoji="🎨" color="#38bdf8" summary="box model, position, flexbox, responsive — CSS is where many developers are weakest" concept="Box model: content + padding + border + margin. Display: block/inline/flex/grid. Position: static/relative/absolute/fixed/sticky. Flexbox: 1-dimensional (row/column), Grid: 2-dimensional (rows + columns). Responsive: media queries + fluid units (rem, %, vw/vh). Specificity: inline > #id > .class > element.">
                     <div className="my-3 space-y-3">
                         {[
                             ['Q: What is the box model?', 'Every element has 4 layers: Content → Padding → Border → Margin.\nbox-sizing: content-box (default): width = content only.\nbox-sizing: border-box: width = content + padding + border.\n→ Always use border-box (*, *::before, *::after { box-sizing: border-box; }).'],
@@ -2468,7 +2468,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                     <Callout type="tip">CSS is commonly tested in interviews: <Highlight>centering, box model, position, flexbox/grid</Highlight>. Many companies give live CSS coding tests — you must know these by heart.</Callout>
                 </TopicModal>
 
-                <TopicModal title="React — 12 Interview Questions" emoji="⚛️" color="#61DAFB" summary="lifecycle, hooks, key, controlled/uncontrolled — must answer within 30 seconds">
+                <TopicModal title="React — 12 Interview Questions" emoji="⚛️" color="#61DAFB" summary="lifecycle, hooks, key, controlled/uncontrolled — must answer within 30 seconds" concept="Virtual DOM compares old/new trees then patches the real DOM. Hooks (useState, useEffect, useMemo, useCallback) replace class lifecycle methods. Key helps React identify elements in lists. Controlled components: React manages input state. useEffect runs after render, cleanup runs before next execution.">
                     <div className="my-3 space-y-3">
                         {[
                             ['Q: React lifecycle methods?', 'Mounting: constructor → render → componentDidMount (≈ useEffect(fn, [])).\nUpdating: render → componentDidUpdate (≈ useEffect(fn, [deps])).\nUnmounting: componentWillUnmount (≈ useEffect cleanup return).\n→ Hooks have replaced lifecycle methods. But you must know the mapping.'],
@@ -2497,7 +2497,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
 
             <Heading3>2.5 CORS, Cookies &amp; JWT</Heading3>
             <div className="my-4 space-y-2">
-                <TopicModal title="CORS, Cookies & JWT" emoji="🔐" color="#f97316" summary="Authentication & Security — 3 related concepts often asked together in interviews">
+                <TopicModal title="CORS, Cookies & JWT" emoji="🔐" color="#f97316" summary="Authentication & Security — 3 related concepts often asked together in interviews" concept="CORS: browser blocks cross-origin requests, server must allow via Access-Control-Allow-Origin header. Cookies: auto-sent with every request, httpOnly prevents XSS, SameSite prevents CSRF. JWT: self-contained token (header.payload.signature), stateless but can't be revoked. Best practice: store JWT in httpOnly cookie + refresh token rotation.">
                     <Paragraph><Highlight>CORS</Highlight> = who can call the API. <Highlight>JWT</Highlight> = who you are. <Highlight>Cookie</Highlight> = how to transport JWT securely.</Paragraph>
 
                     <div className="my-3 space-y-2">

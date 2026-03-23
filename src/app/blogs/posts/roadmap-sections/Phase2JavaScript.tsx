@@ -14,7 +14,7 @@ export default function Phase2JavaScript() {
 
             <Heading3>2.1 Core concepts (PHẢI biết — click để xem chi tiết)</Heading3>
             <div className="my-4 space-y-2">
-                <TopicModal title="Execution Context & Hoisting" emoji="⚙️" color="#fbbf24" summary="Cách JS engine chạy code — Creation Phase vs Execution Phase">
+                <TopicModal title="Execution Context & Hoisting" emoji="⚙️" color="#fbbf24" summary="Cách JS engine chạy code — Creation Phase vs Execution Phase" concept="Khi chạy JS, engine tạo Execution Context với 2 pha: Creation Phase (hoist var=undefined, hoist function nguyên, let/const vào TDZ) và Execution Phase (chạy code từng dòng, gán giá trị). var hoà ra undefined (silent bug), let/const ở TDZ sẽ throw ReferenceError (an toàn hơn). Function declaration được hoist nguyên vẹn, function expression/arrow thì không.">
                     <Paragraph>Khi bạn chạy JS, engine tạo <Highlight>Execution Context</Highlight> gồm 2 phase:</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
@@ -112,7 +112,7 @@ function formatOutput(result) { /* ... */ }`}</CodeBlock>
                     <Callout type="tip">Interview: {`"Hoisting hữu ích với function declarations để organize code top-down. Nhưng với biến, nên dùng let/const vì TDZ giúp catch bug sớm. var hoisting tạo silent bugs với undefined — đó là bad behavior cần tránh."`}</Callout>
                 </TopicModal>
 
-                <TopicModal title="Scope & Closure" emoji="🔒" color="#a78bfa" summary="Lexical scope, closure patterns, module pattern">
+                <TopicModal title="Scope & Closure" emoji="🔒" color="#a78bfa" summary="Lexical scope, closure patterns, module pattern" concept="Scope là phạm vi truy cập biến: Global (khắp nơi), Function (trong function), Block (let/const trong {}). JS dùng Lexical Scope — scope xác định lúc viết code, không phải lúc chạy. Closure = function 'nhớ' scope lúc nó được tạo, kể cả khi chạy ở nơi khác — dùng cho private state, factory functions, và là nền tảng của React hooks.">
                     <Paragraph><Highlight>Scope</Highlight> = phạm vi truy cập biến. JS dùng <Highlight>Lexical Scope</Highlight> — scope được xác định lúc code được viết, không phải lúc chạy.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
@@ -209,7 +209,7 @@ for (var i = 0; i < 5; i++) {
 // → Giống cách let tạo block scope mới`}</CodeBlock>
                 </TopicModal>
 
-                <TopicModal title="this keyword" emoji="👉" color="#f472b6" summary="this = chữ 'tôi' trong JS — thay đổi tùy ai đang gọi (regular) hoặc ai đã viết (arrow)">
+                <TopicModal title="this keyword" emoji="👉" color="#f472b6" summary="this = chữ 'tôi' trong JS — thay đổi tùy ai đang gọi (regular) hoặc ai đã viết (arrow)" concept="this phụ thuộc vào cách gọi: Default (hàm trơn) = window/undefined, Implicit (obj.method) = object trước dấu chấm, Explicit (call/apply/bind) = ép this theo ý muốn, new = object mới tạo. Arrow function KHÔNG có this riêng — kế thừa từ scope bao ngoài. Ưu tiên: new > explicit > implicit > default.">
                     <Paragraph><InlineCode>this</InlineCode> trong JS giống chữ <Highlight>&quot;tôi&quot;</Highlight> — nó thay đổi tùy <strong>ai đang nói</strong>:</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -371,7 +371,7 @@ khuongIntro('Hey')   // "Hey, tôi là Khuong"
                     <Callout type="tip">Thứ tự ưu tiên: <strong>new &gt; explicit (call/apply/bind) &gt; implicit (obj.method) &gt; default (window)</strong>. Arrow function bỏ qua tất cả rules này.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Prototype & Inheritance" emoji="🧬" color="#34d399" summary="Prototype = 'gia tài' mà object con thừa kế từ object cha — chuỗi thừa kế giống dòng họ">
+                <TopicModal title="Prototype & Inheritance" emoji="🧬" color="#34d399" summary="Prototype = 'gia tài' mà object con thừa kế từ object cha — chuỗi thừa kế giống dòng họ" concept="Mỗi object có link ẩn (__proto__) trỏ đến prototype của nó. Khi truy cập property không tồn tại, JS đi lên prototype chain tìm cho đến null. Own property ưu tiên hơn prototype. Đặt method trên prototype để chia sẻ (1000 instances chỉ có 1 bản). ES6 Class chỉ là syntactic sugar — bên dưới vẫn là prototype.">
                     <Paragraph><InlineCode>Prototype</InlineCode> trong JS giống <Highlight>&quot;gia tài gia đình&quot;</Highlight> — con cháu được thừa kế tài sản từ cha mẹ, ông bà:</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -466,7 +466,7 @@ child.hasOwnProperty('inherited') // false — thừa kế từ prototype`}</Cod
                     <Callout type="warning">ES6 Class chỉ là <Highlight>syntactic sugar</Highlight> — bên dưới vẫn dùng prototype. Hiểu prototype = hiểu JS ở level sâu.</Callout>
                 </TopicModal>
 
-                <TopicModal title="OOP trong JavaScript" emoji="🏗️" color="#f59e0b" summary="4 trụ cột OOP: Encapsulation, Inheritance, Polymorphism, Abstraction — JS dùng Prototypal OOP, class chỉ là sugar">
+                <TopicModal title="OOP trong JavaScript" emoji="🏗️" color="#f59e0b" summary="4 trụ cột OOP: Encapsulation, Inheritance, Polymorphism, Abstraction — JS dùng Prototypal OOP, class chỉ là sugar" concept="4 trụ cột OOP: Encapsulation (đóng gói data + methods, #private), Inheritance (kế thừa extends), Polymorphism (cùng method khác hành vi), Abstraction (ẩn complexity). JS dùng Prototypal OOP — object kế thừa trực tiếp từ object, không cần class blueprint như Java. ES6 class chỉ là sugar, typeof class vẫn là 'function'.">
                     <Paragraph>JS dùng <Highlight>Prototypal OOP</Highlight> — object kế thừa trực tiếp từ object khác, không cần class blueprint như Java/C#. ES6 Class chỉ là syntactic sugar bọc prototype.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -532,7 +532,7 @@ typeof Person // "function" — class không phải kiểu dữ liệu mới!`}<
                     <Callout type="tip">Interview: {`"JS dùng prototypal inheritance — object kế thừa trực tiếp từ object. ES6 class là syntactic sugar, bên dưới vẫn là prototype chain. Khác Java ở chỗ không có 'blueprint' cứng — mọi thứ đều là object."`}</Callout>
                 </TopicModal>
 
-                <TopicModal title="Functional Programming" emoji="λ" color="#06b6d4" summary="Pure functions, immutability, higher-order functions, composition — paradigm mà React dùng rất nhiều">
+                <TopicModal title="Functional Programming" emoji="λ" color="#06b6d4" summary="Pure functions, immutability, higher-order functions, composition — paradigm mà React dùng rất nhiều" concept="FP gồm: Pure Functions (cùng input → cùng output, không side effects), Immutability (không mutate, tạo data mới), Higher-Order Functions (function nhận/trả function), Composition (ghép functions nhỏ thành lớn). React hooks chính là FP: useState là closure, useEffect quản lý side effects, components là pure functions of props.">
                     <Paragraph>JS là <Highlight>multi-paradigm</Highlight> — hỗ trợ cả OOP lẫn FP. React hiện đại dùng FP rất nhiều (hooks, pure components, composition over inheritance).</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -590,7 +590,7 @@ transform(3)  // pipe: 3 → 4 → 16 → 32`}</CodeBlock>
                     <Callout type="tip">Interview: {`"React hooks chính là FP — useState là closure, useEffect quản lý side effects riêng, components là pure functions of props. FP giúp code React dễ predict và test."`}</Callout>
                 </TopicModal>
 
-                <TopicModal title="Callback" emoji="📞" color="#ef4444" summary="Function truyền vào function khác — nền tảng của async JS, event handling, và higher-order functions">
+                <TopicModal title="Callback" emoji="📞" color="#ef4444" summary="Function truyền vào function khác — nền tảng của async JS, event handling, và higher-order functions" concept="Callback là function được truyền làm tham số cho function khác và được gọi lại khi cần. Có mặt khắp nơi: addEventListener, setTimeout, .map(), .then(). Vấn đề lớn: callback hell (lồng nhiều cấp) → đó là lý do Promise ra đời → rồi async/await ra đời.">
                     <Paragraph><Highlight>Callback</Highlight> = function được truyền làm tham số cho function khác, và được gọi lại (call back) khi cần. Đây là nền tảng của mọi thứ async trong JS.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -644,7 +644,7 @@ const shipping = await getShipping(detail)
                     <Callout type="warning">Callback hell là lý do Promise ra đời → rồi async/await ra đời. Hiểu callback = hiểu <Highlight>tại sao</Highlight> cần Promise/async-await.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Event Loop" emoji="🔄" color="#60a5fa" summary="Call Stack, Microtask Queue, Macrotask Queue">
+                <TopicModal title="Event Loop" emoji="🔄" color="#60a5fa" summary="Call Stack, Microtask Queue, Macrotask Queue" concept="JS là single-threaded nhưng vẫn xử lý async nhờ Event Loop. Thứ tự ưu tiên: 1) Call Stack (code đồng bộ), 2) Microtask Queue (Promise.then, queueMicrotask), 3) Macrotask Queue (setTimeout, setInterval, I/O). Luôn nhớ: Sync → Microtask → Macrotask. Đây là câu hỏi phỏng vấn #1 về JS.">
                     <Paragraph>JS là <Highlight>single-threaded</Highlight> nhưng vẫn xử lý async nhờ <Highlight>Event Loop</Highlight>. Hiểu Event Loop = hiểu tại sao code async chạy theo thứ tự &quot;lạ&quot;.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -662,7 +662,7 @@ console.log('4'); // Call Stack
                     <a href="/blogs/event-loop" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="Async/Await & Promises" emoji="⚡" color="#fbbf24" summary="Promise là gì, 3 trạng thái, Promise.all/race/allSettled, async/await, error handling">
+                <TopicModal title="Async/Await & Promises" emoji="⚡" color="#fbbf24" summary="Promise là gì, 3 trạng thái, Promise.all/race/allSettled, async/await, error handling" concept="Promise là đối tượng đại diện cho kết quả tương lai của tác vụ async, có 3 trạng thái: Pending → Fulfilled/Rejected. async/await là syntactic sugar giúp viết async như sync. Lưu ý: await tuần tự sẽ chậm — dùng Promise.all cho requests độc lập để chạy song song. Xử lý lỗi bằng try/catch hoặc .catch().">
                     <Paragraph><Highlight>Promise</Highlight> là một đối tượng đại diện cho kết quả (thành công hoặc thất bại) của một tác vụ bất đồng bộ (như gọi API, đọc file) trong tương lai. Nó giải quyết tình trạng <Highlight>&quot;callback hell&quot;</Highlight> bằng cách cung cấp cú pháp <InlineCode>.then()</InlineCode> và <InlineCode>.catch()</InlineCode> để quản lý code dễ đọc, dễ bảo trì hơn.</Paragraph>
 
                     <Heading3>3 Trạng thái của Promise</Heading3>
@@ -886,7 +886,7 @@ const result = await Promise.race([
                     <a href="/blogs/callback-promise-async-await" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="ES6+ Features" emoji="✨" color="#38bdf8" summary="destructuring, spread, modules, optional chaining, nullish coalescing">
+                <TopicModal title="ES6+ Features" emoji="✨" color="#38bdf8" summary="destructuring, spread, modules, optional chaining, nullish coalescing" concept="ES6+ mang đến: destructuring (phân rã object/array), spread/rest (...), template literals, arrow functions, modules (import/export), Map/Set, Symbol, optional chaining (?.), nullish coalescing (??), Promise, class, và nhiều features hiện đại khác giúp code ngắn gọn và an toàn hơn.">
                     <Paragraph>Những feature <Highlight>phải dùng thành thạo</Highlight> — interviewer expect bạn viết modern JS.</Paragraph>
                     <div className="my-3 space-y-2">
                         {[
@@ -906,7 +906,7 @@ const result = await Promise.race([
                     <a href="/blogs/ecmascript-features" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="Regular Expressions (Regex)" emoji="🔍" color="#ec4899" summary={'Regex = "Tìm GÌ, BAO NHIÊU, Ở ĐÂU" — công cụ xử lý text mạnh nhất trong mọi ngôn ngữ'}>
+                <TopicModal title="Regular Expressions (Regex)" emoji="🔍" color="#ec4899" summary={'Regex = "Tìm GÌ, BAO NHIÊU, Ở ĐÂU" — công cụ xử lý text mạnh nhất trong mọi ngôn ngữ'} concept="Regex là pattern matching với 3 phần: Tìm GÌ (\d số, \w chữ, . bất kỳ), BAO NHIÊU (* 0+, + 1+, {n,m} n đến m lần), Ở ĐÂU (^ đầu, $ cuối, \b ranh giới từ). Dùng cho validate (email, phone), extract data, search-replace. Flags: g (global), i (case-insensitive), m (multiline).">
                     <Paragraph>Regex trông đáng sợ nhưng thật ra chỉ cần nhớ <Highlight>3 câu hỏi</Highlight>: Tìm <strong>GÌ</strong>? <strong>Bao nhiêu</strong>? <strong>Ở đâu</strong>?</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -1017,7 +1017,7 @@ for (const m of str.matchAll(regex)) {
                     <Callout type="tip">Interview: {`"Regex hoạt động bằng 3 câu hỏi: tìm GÌ (\\d, \\w, [abc]), bao NHIÊU (*, +, {n}), ở ĐÂU (^, $, \\b). Đọc từ trái sang phải như đọc câu."`}</Callout>
                 </TopicModal>
 
-                <TopicModal title="Dynamic Import + Suspense" emoji="📦" color="#8b5cf6" summary="Code splitting — chia bundle thành chunks nhỏ, load theo nhu cầu, giảm thời gian tải trang">
+                <TopicModal title="Dynamic Import + Suspense" emoji="📦" color="#8b5cf6" summary="Code splitting — chia bundle thành chunks nhỏ, load theo nhu cầu, giảm thời gian tải trang" concept="Dynamic import() cho phép load module khi cần thay vì load hết lúc đầu — giảm bundle size và tăng tốc trang. React.lazy() + Suspense làm code splitting dễ dàng: lazy load components và show fallback (loading) trong khi chờ. Kết hợp với route-based splitting để mỗi page chỉ tải code cần thiết.">
                     <Paragraph><Highlight>Dynamic Import</Highlight> cho phép load code <strong>khi cần</strong> thay vì load hết lúc đầu — giảm bundle size, trang hiện nhanh hơn.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -1081,7 +1081,7 @@ const Chart = dynamic(() => import('./HeavyChart'), {
                     <Callout type="tip">Interview: {`"Dynamic import = code splitting. Chia bundle thành chunks, load theo nhu cầu. React.lazy + Suspense xử lý loading UI. Next.js dynamic() thêm ssr: false cho client-only components."`}</Callout>
                 </TopicModal>
 
-                <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== chỉ check giá trị (tự convert type), === check cả type VÀ giá trị — luôn dùng ===">
+                <TopicModal title="Type Coercion" emoji="🔀" color="#f97316" summary="== chỉ check giá trị (tự convert type), === check cả type VÀ giá trị — luôn dùng ===" concept="Type Coercion là JS tự động chuyển đổi type khi so sánh/tính toán. == cho phép coercion (1 == '1' là true), === không cho phép (1 === '1' là false). Falsy values: false, 0, '', null, undefined, NaN. Luôn dùng === và Object.is() để tránh bug do implicit coercion.">
                     <Paragraph><InlineCode>==</InlineCode> và <InlineCode>===</InlineCode> khác nhau ở <Highlight>một bước duy nhất</Highlight>: có tự chuyển đổi kiểu dữ liệu hay không.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -1177,7 +1177,7 @@ if (x === null || x === undefined) { /* dài hơn */ }
                     <Callout type="tip">Interview: {`"== chỉ so sánh giá trị — nó tự convert type trước khi so, dẫn đến bugs bất ngờ. === so sánh cả type VÀ giá trị — khác type là false ngay. Luôn dùng === trừ trường hợp x == null để check cả null lẫn undefined."`}</Callout>
                 </TopicModal>
 
-                <TopicModal title="for vs while — Khi nào dùng?" emoji="🔄" color="#10b981" summary="for = biết trước số lần lặp, while = lặp đến khi điều kiện sai — pattern quan trọng trong DSA">
+                <TopicModal title="for vs while — Khi nào dùng?" emoji="🔄" color="#10b981" summary="for = biết trước số lần lặp, while = lặp đến khi điều kiện sai — pattern quan trọng trong DSA" concept="for dùng khi biết trước số lần lặp (duyệt array, range). while dùng khi lặp đến khi điều kiện sai (không biết trước bao nhiêu lần). for...of duyệt giá trị (array, string), for...in duyệt key (object). DSA patterns: two pointers dùng while, sliding window dùng for + while, nested loops dùng for.">
                     <Paragraph><InlineCode>for</InlineCode> dùng khi <Highlight>biết trước</Highlight> số lần lặp. <InlineCode>while</InlineCode> dùng khi <Highlight>không biết trước</Highlight> khi nào dừng.</Paragraph>
 
                     <Heading3>for — Khi biết trước số lần lặp</Heading3>
@@ -1248,7 +1248,7 @@ for (let i = 0; i < arr.length; i++) {               // for: duyệt mảng
                     <Callout type="tip"><strong>Tóm lại:</strong> <InlineCode>for</InlineCode> = &quot;duyệt qua N phần tử&quot;, <InlineCode>while</InlineCode> = &quot;lặp cho đến khi điều kiện sai&quot;. Khi kết hợp cả hai (Sliding Window, Monotonic Stack), <InlineCode>for</InlineCode> quản lý vòng ngoài, <InlineCode>while</InlineCode> xử lý logic bên trong không biết trước số bước! 🎯</Callout>
                 </TopicModal>
 
-                <TopicModal title="Kiểu dữ liệu JS" emoji="📦" color="#06b6d4" summary="7 primitive + 1 reference — typeof, truthy/falsy, pass by value vs reference">
+                <TopicModal title="Kiểu dữ liệu JS" emoji="📦" color="#06b6d4" summary="7 primitive + 1 reference — typeof, truthy/falsy, pass by value vs reference" concept="7 primitive: string, number, boolean, null, undefined, symbol, bigint — immutable, pass by value. 1 reference: object (gồm array, function, date...) — mutable, pass by reference. typeof null === 'object' là bug lịch sử. Truthy: mọi thứ trừ falsy (false, 0, '', null, undefined, NaN).">
                     <Paragraph>JavaScript có <Highlight>7 kiểu nguyên thủy</Highlight> (primitive) và <Highlight>1 kiểu tham chiếu</Highlight> (reference).</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -1293,7 +1293,7 @@ let obj4 = Object.assign({}, obj1)`}</CodeBlock>
                     <a href="/blogs/data-types-structures" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="Strict Mode" emoji="🔒" color="#ef4444" summary={`"use strict" — chế độ nghiêm ngặt giúp bắt lỗi sớm, code an toàn hơn`}>
+                <TopicModal title="Strict Mode" emoji="🔒" color="#ef4444" summary={`"use strict" — chế độ nghiêm ngặt giúp bắt lỗi sớm, code an toàn hơn`} concept="'use strict' bật chế độ nghiêm ngặt: cấm dùng biến chưa khai báo, cấm delete biến, this trong function trơn = undefined (thay vì window), cấm duplicate params, cấm octal literals, cấm with. ES modules và class tự động strict. Luôn dùng strict mode để bắt bug sớm.">
                     <Paragraph><InlineCode>{`"use strict"`}</InlineCode> kích hoạt chế độ thực thi nghiêm ngặt hơn, được giới thiệu từ <Highlight>ES5</Highlight>. Giúp bắt lỗi sớm và ngăn chặn các hành vi nguy hiểm.</Paragraph>
                     <CodeBlock title="Cách kích hoạt">{`"use strict"; // Đầu file → áp dụng toàn bộ file
 
@@ -1332,7 +1332,7 @@ obj.name = "X"; // ❌ TypeError — read-only`}</CodeBlock>
                     <Callout type="tip">Trong dự án React/Next.js hiện đại, code đã chạy <Highlight>strict mode sẵn</Highlight> vì dùng ES Modules. Nhưng hiểu strict mode vẫn rất quan trọng cho phỏng vấn!</Callout>
                 </TopicModal>
 
-                <TopicModal title="DOM Manipulation & Event Delegation" emoji="🌐" color="#f97316" summary="querySelector, event bubbling/capturing, delegation — nền tảng để hiểu React">
+                <TopicModal title="DOM Manipulation & Event Delegation" emoji="🌐" color="#f97316" summary="querySelector, event bubbling/capturing, delegation — nền tảng để hiểu React" concept="DOM là cây đối tượng HTML mà JS thao tác. Event bubbling: event nổi từ con lên cha; capturing: từ cha xuống con. Event Delegation: gắn 1 listener trên cha thay vì nhiều listener trên mỗi con — tiết kiệm bộ nhớ và hoạt động với dynamic elements. React dùng synthetic events và delegation ngầm trên root.">
                     <Paragraph>Hiểu <Highlight>DOM API gốc</Highlight> giúp bạn hiểu React hoạt động thế nào bên dưới — câu hỏi phổ biến ở mọi level.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
@@ -1398,7 +1398,7 @@ list.appendChild(fragment) // 1 reflow only!`}</CodeBlock>
                     <Callout type="tip">Interview: {'"Build a todo list without React"'} — phải dùng event delegation + DocumentFragment. Biết giải thích <Highlight>tại sao React dùng Synthetic Events</Highlight> → điểm cộng lớn.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Web APIs — Observer Pattern" emoji="👁️" color="#06b6d4" summary="IntersectionObserver, MutationObserver, ResizeObserver — API hiệu năng cao thay thế event cũ">
+                <TopicModal title="Web APIs — Observer Pattern" emoji="👁️" color="#06b6d4" summary="IntersectionObserver, MutationObserver, ResizeObserver — API hiệu năng cao thay thế event cũ" concept="Observer APIs cho phép browser tự thông báo khi có thay đổi, thay vì phải liên tục check (polling). IntersectionObserver: phát hiện element vào/ra viewport (lazy load, infinite scroll). MutationObserver: theo dõi DOM thay đổi. ResizeObserver: theo dõi kích thước element thay đổi. Hiệu quả hơn scroll/resize events vì browser tối ưu sẵn.">
                     <Paragraph>Modern Web APIs dùng <Highlight>Observer pattern</Highlight> thay vì polling/event cũ — quan trọng cho performance vì chạy ở <Highlight>browser level</Highlight> (off main thread).</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
@@ -1567,7 +1567,7 @@ observer.observe(element)
                     <Callout type="tip">Interview: {'"Build infinite scroll"'} hoặc {'"Build lazy loading images"'} — dùng IntersectionObserver, <Highlight>không dùng scroll event + getBoundingClientRect</Highlight>. Scroll event fire hàng trăm lần/giây + getBoundingClientRect gây forced reflow = jank. Observer chạy ở browser level, async, off main thread.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Generators & Iterators" emoji="🔁" color="#a78bfa" summary="function*, yield, Symbol.iterator — lazy evaluation và custom iteration">
+                <TopicModal title="Generators & Iterators" emoji="🔁" color="#a78bfa" summary="function*, yield, Symbol.iterator — lazy evaluation và custom iteration" concept="Generator (function*) tạo function có thể tạm dừng (yield) và tiếp tục (next()). Dùng cho lazy evaluation (xử lý data lớn từng phần), infinite sequences, và custom iteration. Iterator là protocol với Symbol.iterator và next() trả {value, done}. for...of dùng iterator ngầm. async generator kết hợp với for await...of cho streaming data.">
                     <Paragraph><Highlight>Generators</Highlight> = function có thể pause/resume. Ít dùng trực tiếp nhưng nền tảng của async/await và Redux-Saga.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
@@ -1686,7 +1686,7 @@ run(fetchUserGen).then(user => console.log(user))
                     <Callout type="tip">Interview: {'"How does async/await work under the hood?"'} → <Highlight>async/await = generator + Promise auto-runner</Highlight>. Khi gặp <InlineCode>await</InlineCode>, engine <InlineCode>yield</InlineCode> promise ra ngoài, đợi resolve, rồi <InlineCode>.next(result)</InlineCode> truyền giá trị vào lại. Trả lời được = senior level answer. 🎯</Callout>
                 </TopicModal>
 
-                <TopicModal title="Error Handling Patterns" emoji="🚨" color="#ef4444" summary="try/catch, custom errors, error boundaries, global handlers — production-ready error handling">
+                <TopicModal title="Error Handling Patterns" emoji="🚨" color="#ef4444" summary="try/catch, custom errors, error boundaries, global handlers — production-ready error handling" concept="try/catch bắt lỗi đồng bộ, kết hợp async/await cho lỗi async. Custom Error classes (extends Error) giúp phân loại lỗi. React Error Boundary bắt lỗi render. Global handlers: window.onerror + unhandledrejection bắt lỗi leak. Pattern production: lỗi có error code + message + context, log ra monitoring, show user-friendly message.">
                     <Paragraph>Production code <Highlight>phải handle errors gracefully</Highlight> — crash = mất user. Interview hay hỏi các patterns xử lý lỗi.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
@@ -1757,7 +1757,7 @@ window.addEventListener('unhandledrejection', (e) => {
                     <Callout type="tip">Interview: nhắc đến <Highlight>Result type pattern</Highlight> (Go/Rust style) thay vì try/catch everywhere → shows engineering maturity. Biết Error Boundary limitations → senior level.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Web Workers & Service Workers" emoji="⚙️" color="#10b981" summary="Multi-threading trong browser, offline capability, background sync">
+                <TopicModal title="Web Workers & Service Workers" emoji="⚙️" color="#10b981" summary="Multi-threading trong browser, offline capability, background sync" concept="Web Workers chạy code JS trong thread riêng, không block UI — dùng cho heavy computation (parse CSV, image processing). Giao tiếp qua postMessage. Service Workers chạy giữa browser và network, enable offline (cache-first), push notifications, background sync. Là nền tảng của PWA.">
                     <Paragraph>Browser chạy JS trên <Highlight>main thread</Highlight> — heavy computation block UI. Web Workers giải quyết vấn đề này.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
@@ -1828,7 +1828,7 @@ requestAnimationFrame(animate) // 60fps!`}</CodeBlock>
                     <Callout type="tip">Interview: {'"The page is janky when sorting a large list"'} → <Highlight>Web Worker</Highlight> cho sort. {'"Cancel previous search request khi user type tiếp"'} → AbortController.</Callout>
                 </TopicModal>
 
-                <TopicModal title="WeakMap, WeakRef & FinalizationRegistry" emoji="🧹" color="#8b5cf6" summary="Memory management, garbage collection awareness — senior-level interview topic">
+                <TopicModal title="WeakMap, WeakRef & FinalizationRegistry" emoji="🧹" color="#8b5cf6" summary="Memory management, garbage collection awareness — senior-level interview topic" concept="WeakMap giữ key bằng weak reference — khi key không còn tham chiếu, GC tự dọn. Dùng cho private data, caching theo object. WeakRef tạo tham chiếu yếu đến object (deref() có thể trả undefined). FinalizationRegistry chạy callback khi object bị GC. Giúp quản lý memory và tránh memory leaks trong ứng dụng lớn.">
                     <Paragraph><Highlight>WeakMap/WeakRef</Highlight> cho phép reference object mà không ngăn garbage collection — quan trọng cho memory management.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
@@ -1889,7 +1889,7 @@ class Cache<T> {
             <Heading3>2.2 Implement từ scratch (click xem code mẫu)</Heading3>
             <a href="/blogs/js-common-functions" target="_blank" rel="noopener noreferrer" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem tổng hợp JS Common Functions →</a>
             <div className="my-4 space-y-2">
-                <TopicModal title="Array.map / filter / reduce" emoji="💻" color="#fbbf24" summary="Implement lại 3 higher-order functions phổ biến nhất của Array">
+                <TopicModal title="Array.map / filter / reduce" emoji="💻" color="#fbbf24" summary="Implement lại 3 higher-order functions phổ biến nhất của Array" concept="map tạo array mới bằng cách transform từng phần tử (không thay đổi gốc). filter tạo array mới chỉ gồm phần tử thỏa điều kiện. reduce gộp tất cả phần tử thành 1 giá trị duy nhất (tổng, max, group...). Cả 3 đều nhận callback và trả kết quả mới, không mutate array gốc — nền tảng của FP trong JS.">
                     <Heading3>📖 Cách dùng</Heading3>
                     <CodeBlock title="map / filter / reduce — cách dùng thực tế">{`// map: biến đổi từng phần tử → mảng mới cùng độ dài
 const prices = [100, 200, 300]
@@ -1976,7 +1976,7 @@ pipeline.reduce((price, fn) => fn(price), 100)
                     <Callout type="info">reduce = &quot;nhiều → một&quot;: Mảng số → 1 tổng, mảng string → 1 object đếm, mảng mảng → 1 mảng phẳng, mảng functions → 1 kết quả. Nếu cần biến mảng thành 1 thứ gì đó → dùng reduce!</Callout>
                 </TopicModal>
 
-                <TopicModal title="Function.bind / call / apply" emoji="💻" color="#fbbf24" summary="Implement lại 3 methods thay đổi this context">
+                <TopicModal title="Function.bind / call / apply" emoji="💻" color="#fbbf24" summary="Implement lại 3 methods thay đổi this context" concept="call gọi function ngay với this được chỉ định, args truyền rời. apply giống call nhưng args truyền bằng array. bind trả về function MỚI với this được khóa cứng (chưa gọi ngay). Dùng khi mượn method của object khác hoặc đảm bảo this không bị mất trong callback. Biết implement từ scratch là câu hỏi phỏng vấn kinh điển.">
                     <Heading3>Cách dùng</Heading3>
                     <CodeBlock title="bind / call / apply — 3 cách thay đổi this">{`const user = { name: 'An' }
 function greet(greeting, punctuation) {
@@ -2026,7 +2026,7 @@ Function.prototype.myApply = function(context, args = []) {
                     <Callout type="warning">Trick: dùng <InlineCode>Symbol()</InlineCode> làm key tạm trên object để tránh đè property có sẵn.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Promise & Promise.all" emoji="💻" color="#fbbf24" summary="Implement Promise từ scratch — câu hỏi kinh điển nhất">
+                <TopicModal title="Promise & Promise.all" emoji="💻" color="#fbbf24" summary="Implement Promise từ scratch — câu hỏi kinh điển nhất" concept="Promise là state machine: pending → fulfilled (resolve) hoặc rejected (reject). then/catch đăng ký callbacks cho kết quả tương lai. Promise.all chạy song song, fail nếu bất kỳ promise nào reject. Promise.allSettled chờ tất cả kết thúc (kể cả fail). Promise.race trả kết quả của promise đầu tiên hoàn thành.">
                     <Heading3>Mẹo nhớ: Đặt bánh Pizza 🍕</Heading3>
                     <Paragraph>
                         <strong>Promise</strong> giống như bạn gọi điện đặt Pizza. Tiệm báo "Dạ 15 phút nữa có" (trả về 1 Promise). Lúc này bụng bạn ở trạng thái <strong>Pending</strong> (chờ đợi). Nếu bánh giao tới nóng hổi thơm phức → <strong>Fulfilled</strong> (resolve). Nếu shipper tông xe rớt bánh hoặc tiệm đóng cửa → <strong>Rejected</strong>.
@@ -2118,7 +2118,7 @@ const results = await Promise.allSettled([p1, p2, p3])
 };`}</CodeBlock>
                 </TopicModal>
 
-                <TopicModal title="Debounce & Throttle" emoji="💻" color="#fbbf24" summary="2 kỹ thuật kiểm soát tần suất gọi function — interview hỏi rất nhiều">
+                <TopicModal title="Debounce & Throttle" emoji="💻" color="#fbbf24" summary="2 kỹ thuật kiểm soát tần suất gọi function — interview hỏi rất nhiều" concept="Debounce: chỉ gọi function SAU khi người dùng ngừng thao tác 1 khoảng thời gian (search input, resize). Throttle: giới hạn gọi function tối đa 1 lần mỗi khoảng thời gian (scroll, mousemove). Debounce = 'chờ người dùng xong rồi làm', Throttle = 'làm đều mỗi X giây'.">
                     <Heading3>Cách dùng</Heading3>
                     <CodeBlock title="Khi nào dùng Debounce vs Throttle">{`// DEBOUNCE — chờ user NGỪNG hành động, mới chạy
 // Ví dụ: search input, resize window, auto-save
@@ -2208,7 +2208,7 @@ window.addEventListener('scroll', throttle(handleScroll, 100));`}</CodeBlock>
                     <Callout type="tip"><strong>Debounce</strong> = gõ search, resize window. <strong>Throttle</strong> = scroll, mousemove. Nhớ cả 2 đều return <strong>function mới</strong>.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Deep clone / Deep equal" emoji="💻" color="#fbbf24" summary="So sánh và copy object lồng nhau — phân biệt shallow vs deep">
+                <TopicModal title="Deep clone / Deep equal" emoji="💻" color="#fbbf24" summary="So sánh và copy object lồng nhau — phân biệt shallow vs deep" concept="Shallow copy (spread, Object.assign) chỉ copy level 1 — nested objects vẫn share reference. Deep clone (structuredClone, JSON.parse/stringify, đệ quy) copy toàn bộ cây. Deep equal so sánh từng property đệ quy. Lưu ý: JSON method không hỗ trợ Date, Function, undefined, circular references — dùng structuredClone (native) hoặc đệ quy.">
                     <Heading3>So sánh: Chìa khoá nhà vs Xây nhà mới 🏠</Heading3>
                     <div className="my-3 space-y-2 text-sm">
                         <div className="p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg">
@@ -2269,7 +2269,7 @@ console.log(obj.a.b) // 1 — KHÔNG bị ảnh hưởng! ✅
                     <Callout type="warning">Edge case quan trọng: <Highlight>circular reference</Highlight> — dùng WeakMap để track objects đã clone. Nhiều candidate quên cái này!</Callout>
                 </TopicModal>
 
-                <TopicModal title="Event Emitter (pub/sub)" emoji="💻" color="#fbbf24" summary="Pattern cốt lõi của Node.js, React, và mọi event system">
+                <TopicModal title="Event Emitter (pub/sub)" emoji="💻" color="#fbbf24" summary="Pattern cốt lõi của Node.js, React, và mọi event system" concept="Event Emitter là pub/sub pattern: on() đăng ký listener cho event, emit() phát sự kiện kích hoạt tất cả listeners, off() hủy đăng ký. Là nền tảng của Node.js EventEmitter, DOM events, và nhiều state management libraries. Giúp decouple components — publisher không biết subscribers là ai.">
                     <Heading3>Mẹo nhớ: Đăng ký kênh YouTube 📺</Heading3>
                     <Paragraph>
                         Pattern này là nguyên lý thiết kế kinh điển, giống hệt việc Subscribe kênh YouTube. Bạn (listener - Subscriber) bấm nút Theo dõi (<InlineCode>on()</InlineCode>) các kênh yêu thích (events - Publisher). 
@@ -2320,7 +2320,7 @@ bus.on('message', (text) => console.log(text));
 bus.emit('message', 'Hello!'); // "Hello!"`}</CodeBlock>
                 </TopicModal>
 
-                <TopicModal title="Curry function" emoji="💻" color="#fbbf24" summary="Transform f(a,b,c) thành f(a)(b)(c) — functional programming pattern">
+                <TopicModal title="Curry function" emoji="💻" color="#fbbf24" summary="Transform f(a,b,c) thành f(a)(b)(c) — functional programming pattern" concept="Currying biến function nhiều tham số thành chuỗi functions 1 tham số: f(a,b,c) → f(a)(b)(c). Mỗi lần gọi trả về function mới 'đóng' tham số đã truyền (closure). Dùng cho partial application (tạo function chuyên biệt từ function tổng quát), composition, và là pattern phổ biến trong FP.">
                     <Heading3>Mẹo nhớ: Dây chuyền pha trà sữa tự động 🧋</Heading3>
                     <Paragraph>
                         Hàm bình thường giống như tiệm trà sữa pha tay truyền thống: Khách đến phải khai báo đủ 3 nguyên liệu cùng 1 lúc <InlineCode>phaTraSua(tra, duong, da)</InlineCode> thì cô bán hàng mới bắt đầu làm ly nước.
@@ -2357,7 +2357,7 @@ errorNow('Database down!');`}</CodeBlock>
                     <Callout type="tip">Key: so sánh <InlineCode>args.length</InlineCode> với <InlineCode>fn.length</InlineCode> (số params function cần). Đủ thì gọi, thiếu thì trả function mới.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Flatten array / object" emoji="💻" color="#fbbf24" summary="Làm phẳng array/object lồng nhau — câu hỏi hay gặp ở Google, Meta">
+                <TopicModal title="Flatten array / object" emoji="💻" color="#fbbf24" summary="Làm phẳng array/object lồng nhau — câu hỏi hay gặp ở Google, Meta" concept="Flatten array: biến [1,[2,[3]]] thành [1,2,3] bằng đệ quy hoặc Array.flat(Infinity). Flatten object: biến {a:{b:1}} thành {'a.b':1} bằng đệ quy + nối key. Unflatten: làm ngược lại, tách key theo dấu chấm và build object lồng. Câu hỏi test khả năng đệ quy và xử lý cấu trúc data.">
                     <Heading3>Mẹo nhớ: Đập hộp búp bê Nga (Matryoshka) 🪆</Heading3>
                     <Paragraph>
                         Array Flat giống như bạn được tặng một con búp bê Nga lồng nhau 10 lớp, hay mấy hộp quà troll giấu cái nhẫn sâu tận hộp thứ n. <strong>Flatten</strong> nghĩa là bạn cầm cây búa đập vỡ nát hết tất cả các vỏ hộp rườm rà cồng kềnh đó (nested arrays), chỉ nhặt đúng cái phần ruột giá trị (item) bên trong cùng, gom hết vào một cái rổ lớn duy nhất (mảng 1 chiều).
@@ -2445,7 +2445,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
             </Paragraph>
 
             <div className="my-4 space-y-2">
-                <TopicModal title="JS Cơ bản — 15 câu hỏi kinh điển" emoji="⚡" color="#fbbf24" summary="var/let/const, hoisting, truthy/falsy, == vs === — câu nào cũng gặp ở VN interview">
+                <TopicModal title="JS Cơ bản — 15 câu hỏi kinh điển" emoji="⚡" color="#fbbf24" summary="var/let/const, hoisting, truthy/falsy, == vs === — câu nào cũng gặp ở VN interview" concept="15 câu hỏi JS cơ bản nhất định gặp: var/let/const (scope + hoisting), == vs === (type coercion), truthy/falsy (6 falsy values), this (4 rules), closure (function nhớ scope), event loop (sync → microtask → macrotask), prototype chain, và pass by value vs reference.">
                     <div className="my-3 space-y-3">
                         {[
                             ['Q: var, let, const khác nhau thế nào?', 'var: function-scoped, hoisted (undefined), re-declare OK.\nlet: block-scoped, hoisted (TDZ), re-assign OK.\nconst: block-scoped, hoisted (TDZ), không re-assign (nhưng object/array bên trong vẫn mutable!).'],
@@ -2473,7 +2473,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                     <Callout type="tip">Mẹo: Gặp câu hỏi lý thuyết → trả lời <Highlight>ngắn gọn + ví dụ</Highlight>. {'"var là function-scoped, ví dụ console.log(x) // undefined vì hoisting"'} — tốt hơn chỉ nói {'"var là function scoped"'}.</Callout>
                 </TopicModal>
 
-                <TopicModal title="HTML/CSS — 10 câu hỏi hay gặp" emoji="🎨" color="#38bdf8" summary="box model, position, flexbox, responsive — CSS là phần nhiều dev VN yếu">
+                <TopicModal title="HTML/CSS — 10 câu hỏi hay gặp" emoji="🎨" color="#38bdf8" summary="box model, position, flexbox, responsive — CSS là phần nhiều dev VN yếu" concept="Box model: content + padding + border + margin. Display: block/inline/flex/grid. Position: static/relative/absolute/fixed/sticky. Flexbox: 1 chiều (row/column), Grid: 2 chiều (rows + columns). Responsive: media queries + fluid units (rem, %, vw/vh). Specificity: inline > #id > .class > element.">
                     <div className="my-3 space-y-3">
                         {[
                             ['Q: Box model là gì?', 'Mỗi element có 4 layers: Content → Padding → Border → Margin.\nbox-sizing: content-box (default): width = content only.\nbox-sizing: border-box: width = content + padding + border.\n→ Luôn dùng border-box (*, *::before, *::after { box-sizing: border-box; }).'],
@@ -2496,7 +2496,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                     <Callout type="tip">VN interview đặc biệt hay hỏi CSS: <Highlight>centering, box model, position, flexbox/grid</Highlight>. Nhiều công ty cho bài test code CSS trực tiếp — phải viết thuộc lòng.</Callout>
                 </TopicModal>
 
-                <TopicModal title="React — 12 câu hỏi phỏng vấn" emoji="⚛️" color="#61DAFB" summary="lifecycle, hooks, key, controlled/uncontrolled — phải trả lời được trong 30 giây">
+                <TopicModal title="React — 12 câu hỏi phỏng vấn" emoji="⚛️" color="#61DAFB" summary="lifecycle, hooks, key, controlled/uncontrolled — phải trả lời được trong 30 giây" concept="Virtual DOM so sánh cây cũ/mới rồi cập nhật DOM thật. Hooks (useState, useEffect, useMemo, useCallback) thay thế class lifecycle. Key giúp React nhận diện element trong list. Controlled component: React quản lý state input. useEffect chạy sau render, cleanup trước lần chạy tiếp.">
                     <div className="my-3 space-y-3">
                         {[
                             ['Q: React lifecycle methods?', 'Mounting: constructor → render → componentDidMount (≈ useEffect(fn, [])).\nUpdating: render → componentDidUpdate (≈ useEffect(fn, [deps])).\nUnmounting: componentWillUnmount (≈ useEffect cleanup return).\n→ Hooks đã thay thế lifecycle methods. Nhưng phải biết mapping.'],
@@ -2522,7 +2522,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                     <Callout type="tip">Công ty VN hỏi React nhiều nhất: <Highlight>hooks, lifecycle, key, controlled form, re-render optimization</Highlight>. Chuẩn bị kỹ 12 câu trên là cover 80% câu hỏi React ở VN.</Callout>
                 </TopicModal>
 
-                <TopicModal title="CORS, Cookies & JWT" emoji="🔐" color="#f97316" summary="Authentication & Security — 3 khái niệm liên quan mà hay hỏi cùng lúc">
+                <TopicModal title="CORS, Cookies & JWT" emoji="🔐" color="#f97316" summary="Authentication & Security — 3 khái niệm liên quan mà hay hỏi cùng lúc" concept="CORS: browser chặn cross-origin requests, server phải cho phép qua header Access-Control-Allow-Origin. Cookies: tự gửi kèm mỗi request, httpOnly chống XSS, SameSite chống CSRF. JWT: token tự chứa data (header.payload.signature), stateless nhưng không revoke được. Best practice: lưu JWT trong httpOnly cookie + refresh token rotation.">
                     <Paragraph><Highlight>CORS</Highlight> = ai được gọi API. <Highlight>JWT</Highlight> = bạn là ai. <Highlight>Cookie</Highlight> = cách truyền JWT an toàn.</Paragraph>
 
                     <div className="my-3 space-y-2">
