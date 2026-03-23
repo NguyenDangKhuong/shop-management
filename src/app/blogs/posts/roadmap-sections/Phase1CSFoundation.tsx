@@ -14,7 +14,7 @@ export default function Phase1CSFoundation() {
 
         <Heading3>1.1 Cách máy tính hoạt động (click để xem chi tiết)</Heading3>
         <div className="my-4 space-y-2">
-            <TopicModal title="CPU, RAM, Storage" emoji="🖥️" color="#ef4444" summary="Hiểu data flow cơ bản — dữ liệu đi từ đâu đến đâu khi bạn chạy code">
+            <TopicModal title="CPU, RAM, Storage" emoji="🖥️" color="#ef4444" summary="Hiểu data flow cơ bản — dữ liệu đi từ đâu đến đâu khi bạn chạy code" concept="CPU xử lý tính toán, RAM lưu tạm data đang dùng (mất khi tắt máy), Storage (SSD/HDD) lưu vĩnh viễn. Khi chạy code: Storage → RAM → CPU xử lý → kết quả quay về RAM → ghi lại Storage. RAM nhanh nhưng nhỏ, Storage chậm nhưng lớn — đó là lý do cần caching.">
                 <Paragraph>Khi bạn chạy <InlineCode>node app.js</InlineCode>, đây là những gì xảy ra:</Paragraph>
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -65,7 +65,7 @@ Network       →  ~40ms     (VN → Singapore)`}</CodeBlock>
                 <Callout type="tip">📚 Tài liệu: <strong>CS50 (Harvard)</strong> — Tuần 0-2. Free trên YouTube, có phụ đề tiếng Việt. Đọc thêm: <strong>"What every programmer should know about memory"</strong> by Ulrich Drepper.</Callout>
             </TopicModal>
 
-            <TopicModal title="Binary, ASCII, Unicode" emoji="🔢" color="#ef4444" summary="Cách máy tính biểu diễn chữ, số, emoji — mọi thứ đều là 0 và 1">
+            <TopicModal title="Binary, ASCII, Unicode" emoji="🔢" color="#ef4444" summary="Cách máy tính biểu diễn chữ, số, emoji — mọi thứ đều là 0 và 1" concept="Máy tính chỉ hiểu 0 và 1 (binary). ASCII dùng 7 bit mã hóa 128 ký tự tiếng Anh. Unicode (UTF-8/16/32) mở rộng để hỗ trợ mọi ngôn ngữ + emoji trên thế giới. UTF-8 phổ biến nhất vì backward-compatible với ASCII và tiết kiệm bộ nhớ (1-4 bytes/ký tự).">
                 <Paragraph>Máy tính chỉ hiểu <Highlight>0 và 1</Highlight> (bit). Mọi data — số, chữ, hình ảnh, video — đều được encode thành chuỗi binary.</Paragraph>
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
@@ -116,7 +116,7 @@ new TextEncoder().encode('Việt').length // 6 bytes (UTF-8)
                 <Callout type="warning">Câu hỏi phỏng vấn hay gặp: &quot;Tại sao <InlineCode>0.1 + 0.2 !== 0.3</InlineCode>?&quot; — Vì máy tính dùng IEEE 754 binary floating point, 0.1 không thể biểu diễn chính xác trong binary (giống 1/3 = 0.333... trong decimal).</Callout>
             </TopicModal>
 
-            <TopicModal title="Process vs Thread" emoji="⚙️" color="#ef4444" summary="Hiểu OS quản lý chương trình — tại sao Node.js single-threaded mà vẫn nhanh">
+            <TopicModal title="Process vs Thread" emoji="⚙️" color="#ef4444" summary="Hiểu OS quản lý chương trình — tại sao Node.js single-threaded mà vẫn nhanh" concept="Process là chương trình đang chạy với bộ nhớ riêng biệt; Thread là luồng thực thi nhỏ hơn bên trong process, chia sẻ chung bộ nhớ. Node.js dùng 1 thread chính + Event Loop để xử lý I/O không đồng bộ, delegate heavy tasks cho worker threads/OS — nên vẫn nhanh dù single-threaded.">
                 <Paragraph>Khi bạn mở Chrome + VS Code + Terminal, OS quản lý chúng bằng <Highlight>Process</Highlight> và <Highlight>Thread</Highlight>.</Paragraph>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
@@ -187,7 +187,7 @@ Thứ tự ưu tiên:
 
         <Heading3>1.2 Networking cơ bản (click để xem chi tiết)</Heading3>
         <div className="my-4 space-y-2">
-            <TopicModal title="HTTP/HTTPS" emoji="🌐" color="#ef4444" summary="Request/Response cycle, status codes, methods, headers — nền tảng của web">
+            <TopicModal title="HTTP/HTTPS" emoji="🌐" color="#ef4444" summary="Request/Response cycle, status codes, methods, headers — nền tảng của web" concept="HTTP là giao thức request-response giữa client và server. Mỗi request có method (GET/POST/PUT/DELETE), headers, body. Response có status code (2xx thành công, 3xx redirect, 4xx lỗi client, 5xx lỗi server). HTTPS = HTTP + TLS encryption — mã hóa data truyền tải, ngăn bị đọc trộm giữa đường.">
                 <Paragraph><Highlight>HTTP</Highlight> (HyperText Transfer Protocol) = giao thức client-server. Browser gửi <strong>Request</strong>, server trả <strong>Response</strong>. Mỗi request độc lập (stateless).</Paragraph>
 
                 <Heading3>Anatomy của 1 HTTP Request</Heading3>
@@ -243,7 +243,7 @@ X-RateLimit-Remaining: 99         ← Rate limiting
                 <Callout type="tip">Câu hỏi phỏng vấn: &quot;Khi gõ URL và Enter, chuyện gì xảy ra?&quot; — DNS → TCP handshake → TLS handshake → HTTP request → Server process → Response → Browser render. Nắm rõ từng bước!</Callout>
             </TopicModal>
 
-            <TopicModal title="DNS, TCP/IP, WebSocket" emoji="📡" color="#ef4444" summary="Cách browser tìm server và duy trì kết nối">
+            <TopicModal title="DNS, TCP/IP, WebSocket" emoji="📡" color="#ef4444" summary="Cách browser tìm server và duy trì kết nối" concept="DNS phân giải domain thành IP (như danh bạ điện thoại). TCP/IP đảm bảo data truyền đúng thứ tự, đầy đủ qua 3-way handshake (SYN → SYN-ACK → ACK). WebSocket nâng cấp HTTP thành kết nối 2 chiều liên tục — server có thể push data cho client mà không cần client request (dùng cho chat, real-time).">
                 <Paragraph>Khi bạn gõ <InlineCode>google.com</InlineCode>, đây là toàn bộ hành trình:</Paragraph>
 
                 <Callout type="info">🎬 <strong>Ví dụ thực tế:</strong> Bạn muốn gọi điện cho Khuong nhưng chỉ biết tên, không biết số. Đây là flow tương tự khi browser gõ URL!</Callout>
@@ -356,7 +356,7 @@ SSE:       Server → Client (1 chiều, server push liên tục)
                 <Callout type="tip">📚 Ví dụ thực tế: Next.js API Routes dùng HTTP. n8n webhooks dùng HTTP. TikTok live dùng WebSocket. Vercel serverless functions dùng HTTP/2.</Callout>
             </TopicModal>
 
-            <TopicModal title="REST vs GraphQL" emoji="🔌" color="#ef4444" summary="Hai mô hình API phổ biến — khi nào dùng cái nào">
+            <TopicModal title="REST vs GraphQL" emoji="🔌" color="#ef4444" summary="Hai mô hình API phổ biến — khi nào dùng cái nào" concept="REST dùng nhiều endpoints cố định (GET /users, POST /orders), đơn giản, có HTTP caching. GraphQL dùng 1 endpoint duy nhất, client tự chọn fields cần lấy — tránh over-fetching/under-fetching. REST tốt cho CRUD đơn giản và caching; GraphQL tốt cho UI phức tạp cần data từ nhiều nguồn trong 1 request.">
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                         <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">REST</th><th className="text-left p-2 text-purple-400">GraphQL</th></tr></thead>
@@ -400,7 +400,7 @@ query {
                 <Callout type="tip">Trong thực tế, hầu hết frontend projects dùng <strong>REST</strong>. GraphQL thường gặp ở công ty lớn (Meta, Shopify) hoặc app có UI phức tạp cần flexible data fetching.</Callout>
             </TopicModal>
 
-            <TopicModal title="CORS, Cookies, JWT" emoji="🔐" color="#ef4444" summary="Authentication flow — cách web apps xác thực người dùng">
+            <TopicModal title="CORS, Cookies, JWT" emoji="🔐" color="#ef4444" summary="Authentication flow — cách web apps xác thực người dùng" concept="CORS là cơ chế browser cho phép/chặn request cross-origin (domain A gọi API domain B). Cookie lưu session phía server, tự gửi kèm mỗi request — dễ dùng nhưng chỉ hoạt động same-origin. JWT là token tự chứa thông tin (header.payload.signature), stateless, phù hợp cho API authentication — nhưng không revoke được trước khi hết hạn.">
                 <Heading3>CORS (Cross-Origin Resource Sharing)</Heading3>
                 <Paragraph>Browser chặn request từ domain A sang domain B (<Highlight>Same-Origin Policy</Highlight>). Server phải cho phép bằng header <InlineCode>Access-Control-Allow-Origin</InlineCode>.</Paragraph>
                 <CodeBlock title="CORS Preflight flow">{`// 1. Browser gửi Preflight (OPTIONS) trước khi gửi request thực
@@ -452,7 +452,7 @@ SflKxwRJSM...    ← Signature (verify không bị sửa)
                 <Callout type="warning">Best practice: Lưu JWT trong <Highlight>httpOnly cookie</Highlight> (không XSS + tự gửi) + CSRF protection. Hoặc lưu trong memory (biến JS) + refresh token trong httpOnly cookie. <strong>Không bao giờ lưu access token trong localStorage!</strong></Callout>
             </TopicModal>
 
-            <TopicModal title="Browser Storage" emoji="💾" color="#ef4444" summary="localStorage, sessionStorage, cookies, IndexedDB — lưu data phía client">
+            <TopicModal title="Browser Storage" emoji="💾" color="#ef4444" summary="localStorage, sessionStorage, cookies, IndexedDB — lưu data phía client" concept="localStorage lưu vĩnh viễn (~5-10MB), sessionStorage mất khi đóng tab (~5MB), cookies gửi kèm mọi HTTP request (~4KB, có expiry). IndexedDB là database NoSQL trong browser cho data lớn (hàng trăm MB). Chọn: cookies cho auth, localStorage cho preferences, IndexedDB cho offline data/cache lớn.">
                 <Paragraph>Browser cung cấp nhiều cách lưu data phía client. Mỗi loại có <Highlight>use case riêng</Highlight> — chọn sai là bug hoặc security risk.</Paragraph>
 
                 <div className="my-3 overflow-x-auto">
@@ -527,7 +527,7 @@ request.onsuccess = (e) => {
 
         <Heading3>1.3 Git & Terminal (click để xem chi tiết)</Heading3>
         <div className="my-4 space-y-2">
-            <TopicModal title="Git nâng cao" emoji="🔧" color="#ef4444" summary="rebase, cherry-pick, bisect, stash — những lệnh phân biệt junior vs senior">
+            <TopicModal title="Git nâng cao" emoji="🔧" color="#ef4444" summary="rebase, cherry-pick, bisect, stash — những lệnh phân biệt junior vs senior" concept="Rebase viết lại lịch sử commit thành đường thẳng (sạch hơn merge). Cherry-pick chọn 1 commit cụ thể apply vào branch khác. Bisect dùng binary search tìm commit gây bug. Stash lưu tạm changes chưa commit. Rebase cho feature branches, merge cho shared branches — không rebase code đã push.">
                 <Paragraph>Ngoài <InlineCode>add/commit/push/pull</InlineCode>, đây là những lệnh <Highlight>phải biết</Highlight>:</Paragraph>
                 <CodeBlock title="Git commands nâng cao">{`# Rebase — rewrite history, clean commits
 git rebase -i HEAD~3     # Squash/edit 3 commits gần nhất
@@ -553,7 +553,7 @@ git reset --hard HEAD@{3} # Khôi phục về state cũ`}</CodeBlock>
                 <Callout type="tip">📚 <strong>learngitbranching.js.org</strong> — interactive game học Git branching, rất trực quan!</Callout>
             </TopicModal>
 
-            <TopicModal title="Linux/Terminal" emoji="💻" color="#ef4444" summary="Navigation, permissions, pipes — nền tảng cho DevOps và debugging">
+            <TopicModal title="Linux/Terminal" emoji="💻" color="#ef4444" summary="Navigation, permissions, pipes — nền tảng cho DevOps và debugging" concept="Linux dùng file system dạng cây (/ là root). Permissions gồm rwx cho owner/group/others (chmod 755). Pipe (|) chuyển output lệnh này thành input lệnh kia. Các lệnh quan trọng: grep (tìm text), find (tìm file), ps/top (xem process), tail -f (theo dõi log real-time), ssh (remote access).">
                 <CodeBlock title="Commands phải thuộc">{`# Navigation & Files
 ls -la          # List all files + permissions
 find . -name "*.tsx" -type f   # Tìm file

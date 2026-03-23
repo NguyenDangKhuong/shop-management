@@ -14,7 +14,7 @@ export default function Phase1CSFoundation() {
 
         <Heading3>1.1 How Computers Work (click for details)</Heading3>
         <div className="my-4 space-y-2">
-            <TopicModal title="CPU, RAM, Storage" emoji="🖥️" color="#ef4444" summary="Understand the basic data flow — where data goes when you run code">
+            <TopicModal title="CPU, RAM, Storage" emoji="🖥️" color="#ef4444" summary="Understand the basic data flow — where data goes when you run code" concept="CPU processes calculations, RAM stores data temporarily while in use (lost on power off), Storage (SSD/HDD) persists data permanently. When running code: Storage → RAM → CPU processes → results back to RAM → written to Storage. RAM is fast but small, Storage is slow but large — that's why we need caching.">
                 <Paragraph>When you run <InlineCode>node app.js</InlineCode>, here&apos;s what happens:</Paragraph>
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -65,7 +65,7 @@ Network       →  ~40ms     (US East → West)`}</CodeBlock>
                 <Callout type="tip">📚 Resource: <strong>CS50 (Harvard)</strong> — Weeks 0-2. Free on YouTube. Also read: <strong>&quot;What every programmer should know about memory&quot;</strong> by Ulrich Drepper.</Callout>
             </TopicModal>
 
-            <TopicModal title="Binary, ASCII, Unicode" emoji="🔢" color="#ef4444" summary="How computers represent text, numbers, emoji — everything is 0s and 1s">
+            <TopicModal title="Binary, ASCII, Unicode" emoji="🔢" color="#ef4444" summary="How computers represent text, numbers, emoji — everything is 0s and 1s" concept="Computers only understand 0s and 1s (binary). ASCII uses 7 bits to encode 128 English characters. Unicode (UTF-8/16/32) extends this to support every language + emoji worldwide. UTF-8 is most common because it's backward-compatible with ASCII and memory-efficient (1-4 bytes per character).">
                 <Paragraph>Computers only understand <Highlight>0 and 1</Highlight> (bits). All data — numbers, text, images, video — is encoded as binary strings.</Paragraph>
                 <div className="my-3 space-y-2">
                     <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
@@ -116,7 +116,7 @@ new TextEncoder().encode('café').length // 5 bytes (UTF-8)
                 <Callout type="warning">Common interview question: &quot;Why is <InlineCode>0.1 + 0.2 !== 0.3</InlineCode>?&quot; — Because computers use IEEE 754 binary floating point, and 0.1 can&apos;t be represented exactly in binary (like 1/3 = 0.333... in decimal).</Callout>
             </TopicModal>
 
-            <TopicModal title="Process vs Thread" emoji="⚙️" color="#ef4444" summary="How the OS manages programs — why Node.js is single-threaded yet fast">
+            <TopicModal title="Process vs Thread" emoji="⚙️" color="#ef4444" summary="How the OS manages programs — why Node.js is single-threaded yet fast" concept="A Process is a running program with its own isolated memory; a Thread is a lighter unit of execution within a process that shares memory. Node.js uses 1 main thread + Event Loop for non-blocking I/O, delegating heavy tasks to worker threads/OS — so it stays fast despite being single-threaded.">
                 <Paragraph>When you open Chrome + VS Code + Terminal, the OS manages them using <Highlight>Processes</Highlight> and <Highlight>Threads</Highlight>.</Paragraph>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
@@ -187,7 +187,7 @@ Priority order:
 
         <Heading3>1.2 Networking Basics (click for details)</Heading3>
         <div className="my-4 space-y-2">
-            <TopicModal title="HTTP/HTTPS" emoji="🌐" color="#ef4444" summary="Request/Response cycle, status codes, methods, headers — the foundation of the web">
+            <TopicModal title="HTTP/HTTPS" emoji="🌐" color="#ef4444" summary="Request/Response cycle, status codes, methods, headers — the foundation of the web" concept="HTTP is a request-response protocol between client and server. Each request has a method (GET/POST/PUT/DELETE), headers, and body. Responses have status codes (2xx success, 3xx redirect, 4xx client error, 5xx server error). HTTPS = HTTP + TLS encryption — encrypts data in transit, preventing eavesdropping.">
                 <Paragraph><Highlight>HTTP</Highlight> (HyperText Transfer Protocol) = client-server protocol. Browser sends a <strong>Request</strong>, server returns a <strong>Response</strong>. Each request is independent (stateless).</Paragraph>
 
                 <Heading3>Anatomy of an HTTP Request</Heading3>
@@ -243,7 +243,7 @@ X-RateLimit-Remaining: 99         ← Rate limiting
                 <Callout type="tip">Interview question: &quot;What happens when you type a URL and press Enter?&quot; — DNS → TCP handshake → TLS handshake → HTTP request → Server process → Response → Browser render. Know each step!</Callout>
             </TopicModal>
 
-            <TopicModal title="DNS, TCP/IP, WebSocket" emoji="📡" color="#ef4444" summary="How browsers find servers and maintain connections">
+            <TopicModal title="DNS, TCP/IP, WebSocket" emoji="📡" color="#ef4444" summary="How browsers find servers and maintain connections" concept="DNS resolves domain names to IP addresses (like a phone book). TCP/IP ensures data is transmitted in order and completely via 3-way handshake (SYN → SYN-ACK → ACK). WebSocket upgrades HTTP to a persistent bidirectional connection — server can push data to client without polling (used for chat, real-time features).">
                 <Paragraph>When you type <InlineCode>google.com</InlineCode>, here&apos;s the complete journey:</Paragraph>
 
                 <Callout type="info">🎬 <strong>Real-world analogy:</strong> You want to call Khuong but only know his name, not his number. This is the same flow as when a browser hits a URL!</Callout>
@@ -356,7 +356,7 @@ SSE:       Server → Client (one-way, server pushes continuously)
                 <Callout type="tip">📚 Real-world examples: Next.js API Routes use HTTP. n8n webhooks use HTTP. TikTok live uses WebSocket. Vercel serverless functions use HTTP/2.</Callout>
             </TopicModal>
 
-            <TopicModal title="REST vs GraphQL" emoji="🔌" color="#ef4444" summary="Two popular API models — when to use which">
+            <TopicModal title="REST vs GraphQL" emoji="🔌" color="#ef4444" summary="Two popular API models — when to use which" concept="REST uses multiple fixed endpoints (GET /users, POST /orders), is simple, and supports HTTP caching. GraphQL uses a single endpoint where clients specify exactly which fields they need — avoiding over-fetching/under-fetching. REST excels at simple CRUD with caching; GraphQL excels at complex UIs needing data from multiple sources in one request.">
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                         <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-blue-400">REST</th><th className="text-left p-2 text-purple-400">GraphQL</th></tr></thead>
@@ -400,7 +400,7 @@ query {
                 <Callout type="tip">In practice, most frontend projects use <strong>REST</strong>. GraphQL is common at large companies (Meta, Shopify) or apps with complex UI needing flexible data fetching.</Callout>
             </TopicModal>
 
-            <TopicModal title="CORS, Cookies, JWT" emoji="🔐" color="#ef4444" summary="Authentication flow — how web apps verify users">
+            <TopicModal title="CORS, Cookies, JWT" emoji="🔐" color="#ef4444" summary="Authentication flow — how web apps verify users" concept="CORS is a browser mechanism that allows/blocks cross-origin requests (domain A calling domain B's API). Cookies store server-side sessions and are sent automatically with every request — easy but same-origin only. JWT is a self-contained token (header.payload.signature), stateless, great for API auth — but cannot be revoked before expiration.">
                 <Heading3>CORS (Cross-Origin Resource Sharing)</Heading3>
                 <Paragraph>Browsers block requests from domain A to domain B (<Highlight>Same-Origin Policy</Highlight>). Servers must allow it via the <InlineCode>Access-Control-Allow-Origin</InlineCode> header.</Paragraph>
                 <CodeBlock title="CORS Preflight flow">{`// 1. Browser sends Preflight (OPTIONS) before the actual request
@@ -452,7 +452,7 @@ SflKxwRJSM...    ← Signature (verify not tampered)
                 <Callout type="warning">Best practice: Store JWT in <Highlight>httpOnly cookie</Highlight> (no XSS + auto-sent) + CSRF protection. Or store in memory (JS variable) + refresh token in httpOnly cookie. <strong>Never store access tokens in localStorage!</strong></Callout>
             </TopicModal>
 
-            <TopicModal title="Browser Storage" emoji="💾" color="#ef4444" summary="localStorage, sessionStorage, cookies, IndexedDB — client-side data storage">
+            <TopicModal title="Browser Storage" emoji="💾" color="#ef4444" summary="localStorage, sessionStorage, cookies, IndexedDB — client-side data storage" concept="localStorage persists permanently (~5-10MB), sessionStorage is cleared when tab closes (~5MB), cookies are sent with every HTTP request (~4KB, with expiry). IndexedDB is a NoSQL database in the browser for large data (hundreds of MBs). Use cookies for auth, localStorage for preferences, IndexedDB for offline data/large caches.">
                 <Paragraph>Browsers provide multiple ways to store data on the client side. Each has <Highlight>specific use cases</Highlight> — choosing wrong can lead to bugs or security risks.</Paragraph>
 
                 <div className="my-3 overflow-x-auto">
@@ -527,7 +527,7 @@ request.onsuccess = (e) => {
 
         <Heading3>1.3 Git & Terminal (click for details)</Heading3>
         <div className="my-4 space-y-2">
-            <TopicModal title="Advanced Git" emoji="🔧" color="#ef4444" summary="rebase, cherry-pick, bisect, stash — commands that distinguish junior from senior">
+            <TopicModal title="Advanced Git" emoji="🔧" color="#ef4444" summary="rebase, cherry-pick, bisect, stash — commands that distinguish junior from senior" concept="Rebase rewrites commit history into a straight line (cleaner than merge). Cherry-pick applies a specific commit to another branch. Bisect uses binary search to find the bug-causing commit. Stash temporarily saves uncommitted changes. Use rebase for feature branches, merge for shared branches — never rebase pushed code.">
                 <Paragraph>Beyond <InlineCode>add/commit/push/pull</InlineCode>, these are commands you <Highlight>must know</Highlight>:</Paragraph>
                 <CodeBlock title="Advanced Git commands">{`# Rebase — rewrite history, clean commits
 git rebase -i HEAD~3     # Squash/edit last 3 commits
@@ -553,7 +553,7 @@ git reset --hard HEAD@{3} # Restore to old state`}</CodeBlock>
                 <Callout type="tip">📚 <strong>learngitbranching.js.org</strong> — interactive game to learn Git branching, very visual!</Callout>
             </TopicModal>
 
-            <TopicModal title="Linux/Terminal" emoji="💻" color="#ef4444" summary="Navigation, permissions, pipes — foundation for DevOps and debugging">
+            <TopicModal title="Linux/Terminal" emoji="💻" color="#ef4444" summary="Navigation, permissions, pipes — foundation for DevOps and debugging" concept="Linux uses a tree-based file system (/ is root). Permissions are rwx for owner/group/others (chmod 755). Pipes (|) chain command output as input to the next. Key commands: grep (search text), find (search files), ps/top (view processes), tail -f (follow logs in real-time), ssh (remote access).">
                 <CodeBlock title="Essential commands">{`# Navigation & Files
 ls -la          # List all files + permissions
 find . -name "*.tsx" -type f   # Find files

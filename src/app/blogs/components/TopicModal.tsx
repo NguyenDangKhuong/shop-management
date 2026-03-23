@@ -9,10 +9,11 @@ interface TopicModalProps {
     emoji?: string
     color?: string
     summary: string
+    concept?: string
     children: React.ReactNode
 }
 
-export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, children }: TopicModalProps) {
+export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, concept, children }: TopicModalProps) {
     const [open, setOpen] = useState(false)
     const { isDarkMode } = useThemeMode()
     const { learnedTopics, toggleLearned: contextToggle, isLoading } = useRoadmapProgress()
@@ -146,6 +147,15 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
                             className="overflow-y-auto p-6 space-y-4 grow"
                             style={{ background: isDarkMode ? '#0c1222' : '#ffffff' }}
                         >
+                            {concept && (
+                                <div
+                                    className={`p-4 rounded-xl border text-sm leading-relaxed ${isDarkMode ? 'border-white/10 bg-white/[0.03]' : 'border-gray-200 bg-gray-50'}`}
+                                    style={{ borderLeftWidth: 3, borderLeftColor: color }}
+                                >
+                                    <div className={`text-[10px] uppercase tracking-widest font-bold mb-1.5 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>💡 Concept</div>
+                                    <div className={isDarkMode ? 'text-slate-200' : 'text-slate-700'}>{concept}</div>
+                                </div>
+                            )}
                             {children}
                         </div>
                     </div>
