@@ -66,6 +66,7 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | ↳ Switch model | `cd ~/openclaw_data && sudo ./switch-model.sh` | | | Danh sách model từ CLI Proxy API |
 | **n8n** | 5678 | ✅ always | Docker Compose | Automation platform (n8n + worker + MCP + postgres + redis) |
 | **Speedtest Tracker** | 3007 | ✅ unless-stopped | Docker | Network speed test history & charts |
+| **Trading Bot** | — | ✅ unless-stopped | Docker Compose | Binance Futures auto-trading (Telegram control) |
 | **Webtop** | 3010 | ✅ unless-stopped | Docker | Ubuntu XFCE desktop in browser |
 | **stress-ng** | — | ✅ enabled | systemd | Anti-reclaim CPU/RAM |
 | **CrowdSec** | — | ✅ enabled | systemd | Brute-force protection + community blocklist |
@@ -323,6 +324,69 @@ docker stop uptime-kuma && docker rm uptime-kuma
 - **2 Zalo Bot riêng biệt:** Bot cũ cho OpenClaw, bot mới cho Uptime Kuma
 - **Không ghi đè webhook:** Mỗi bot chỉ có 1 webhook URL, nếu set lại sẽ mất bot cũ
 - **Health check:** Nhắn bất kỳ tin nhắn nào cho bot Uptime Kuma → nhận report health check
+
+## Trading Bot (Binance Futures)
+
+**Repo:** [NguyenDangKhuong/bot-trade](https://github.com/NguyenDangKhuong/bot-trade) (private)
+**VPS Path:** `~/bot-trade`
+**Container:** `trading-bot`
+**Strategy:** RSI + EMA crossover | BTCUSDT | 3x leverage | 15m timeframe
+**Control:** Telegram Bot (inline keyboard + slash commands)
+**Mode:** 🧪 TESTNET
+
+### Deploy (git pull → rebuild)
+
+```bash
+# One-liner từ Mac
+ssh ubuntu@heyyolo-free-vps "cd ~/bot-trade && git pull && sudo docker compose up -d --build"
+
+# Hoặc SSH vào rồi chạy
+ssh ubuntu@heyyolo-free-vps
+cd ~/bot-trade
+git pull
+sudo docker compose up -d --build
+```
+
+### Quản lý
+
+```bash
+# Status
+sudo docker compose -f ~/bot-trade/docker-compose.yml ps
+
+# Logs
+sudo docker logs trading-bot -f --tail 50
+
+# Restart
+cd ~/bot-trade && sudo docker compose restart
+
+# Stop
+cd ~/bot-trade && sudo docker compose down
+
+# Sửa config
+nano ~/bot-trade/.env
+cd ~/bot-trade && sudo docker compose restart
+```
+
+### Git SSH Key (đã setup)
+
+VPS dùng SSH key để pull code từ GitHub (repo private):
+
+```bash
+# Key location
+~/.ssh/id_ed25519        # Private key
+~/.ssh/id_ed25519.pub    # Public key (đã add vào GitHub account)
+
+# Test connection
+ssh -T git@github.com
+# → "Hi NguyenDangKhuong! You've successfully authenticated..."
+
+# Nếu cần tạo lại key
+ssh-keygen -t ed25519 -C "heyyolo-free-vps" -f ~/.ssh/id_ed25519 -N ""
+cat ~/.ssh/id_ed25519.pub
+# → Copy output → GitHub Settings → SSH Keys → Add
+```
+
+> ⚠️ SSH key này dùng cho **tất cả private repos** trên GitHub account, không riêng bot-trade.
 
 ## Portainer
 
