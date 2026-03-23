@@ -9,7 +9,7 @@ export default function Phase3ReactFrontend() {
 
             <Heading3>3.1 React (click for details)</Heading3>
             <div className="my-4 space-y-2">
-                <TopicModal title="Virtual DOM &amp; Reconciliation" emoji="🌳" color="#61DAFB" summary="React compares old vs new tree, only updates what changed — like git diff for UI">
+                <TopicModal title="Virtual DOM &amp; Reconciliation" emoji="🌳" color="#61DAFB" summary="React compares old vs new tree, only updates what changed — like git diff for UI" concept="Virtual DOM is a lightweight copy of the real DOM (plain JS objects). When state changes, React creates a new VDOM, compares it with the old one (diffing/reconciliation), then only patches the changed parts onto the real DOM. Keys help React identify list elements. O(n) algorithm instead of O(n³) thanks to 2 assumptions: different type = recreate, stable keys = correct identification.">
                     <Paragraph>Imagine you have an <Highlight>old shopping list</Highlight> and a <Highlight>new one</Highlight>. The dumb way: tear up the whole list, rewrite from scratch. The smart way: compare → just cross out &quot;Milk&quot;, add &quot;Butter&quot; → keep the rest. <strong>Reconciliation = the smart way</strong> — like <Highlight>git diff</Highlight> for UI!</Paragraph>
 
                 <div className="my-3 space-y-2">
@@ -134,7 +134,7 @@ export default function Phase3ReactFrontend() {
                 </Callout>
                 </TopicModal>
 
-                <TopicModal title="Hooks deep dive" emoji="🪝" color="#61DAFB" summary="useState, useEffect, useRef, useMemo, useCallback — rules and pitfalls">
+                <TopicModal title="Hooks deep dive" emoji="🪝" color="#61DAFB" summary="useState, useEffect, useRef, useMemo, useCallback — rules and pitfalls" concept="useState stores state and triggers re-renders. useEffect runs side effects after render (fetch, subscriptions), cleanup before next run. useRef stores values WITHOUT triggering re-renders (DOM refs, previous values). useMemo caches expensive computations. useCallback caches function references. Rules: don't call in conditions/loops, only at top level of components.">
                     <Paragraph>Hooks are the <Highlight>foundation</Highlight> of modern React. Deep understanding of each hook + pitfalls = confident interview answers.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -421,7 +421,7 @@ function UserProfile({ userId }) {
                     <a href="/blogs/react-hooks-chi-tiet" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="Component Patterns" emoji="🧩" color="#61DAFB" summary="HOC, Render Props, Compound, Controlled/Uncontrolled — when to use which">
+                <TopicModal title="Component Patterns" emoji="🧩" color="#61DAFB" summary="HOC, Render Props, Compound, Controlled/Uncontrolled — when to use which" concept="HOC: function wrapping a component with extra logic (withAuth, withLoading). Render Props: pass a function as a prop to share logic. Compound: child components coordinate via context (Select/Option). Controlled: React manages value (input). Uncontrolled: DOM manages value (useRef). Modern approach: hooks have replaced HOC/Render Props in most cases.">
                     <Paragraph>Knowing component patterns helps you <Highlight>design flexible APIs</Highlight> and answer frontend system design questions.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -564,7 +564,7 @@ function useDebounce<T>(value: T, delay: number): T {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Essential Custom Hooks" emoji="⚛️" color="#38bdf8" summary="Must-know custom hooks: useDebounce, useThrottle, useCount, useOnClickOutside">
+                <TopicModal title="Essential Custom Hooks" emoji="⚛️" color="#38bdf8" summary="Must-know custom hooks: useDebounce, useThrottle, useCount, useOnClickOutside" concept="Custom hooks extract reusable logic from components. Rules: name starts with 'use', call hooks inside. Common: useDebounce (avoid rapid calls), useLocalStorage (sync state with storage), useOnClickOutside (close dropdowns/modals), usePrevious (store previous value), useMediaQuery (responsive logic).">
                     <Paragraph>In real-world projects and interviews, you'll frequently need to write your own Custom Hooks to reuse logic. Here are 4 of the most popular required hooks and how to use them.</Paragraph>
 
                     <div className="my-4 space-y-4">
@@ -749,7 +749,7 @@ function Dropdown() {
                     </div>
                 </TopicModal>
 
-                <TopicModal title="Performance Optimization" emoji="⚡" color="#61DAFB" summary="React.memo, useMemo, useCallback, code splitting, virtualization">
+                <TopicModal title="Performance Optimization" emoji="⚡" color="#61DAFB" summary="React.memo, useMemo, useCallback, code splitting, virtualization" concept="React.memo skips re-renders when props haven't changed. useMemo caches expensive computations. useCallback caches function references for child components. Code splitting (React.lazy + Suspense) reduces bundle size. Virtualization (react-window) only renders items in viewport. Always measure first with React DevTools Profiler before optimizing.">
                     <Paragraph>React re-renders the entire subtree when state changes. Here are techniques to <Highlight>prevent unnecessary re-renders</Highlight> and optimize performance:</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -842,7 +842,7 @@ function SearchBar() {
                     <a href="/blogs/react-performance" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="State Management — Redux, Zustand, Context" emoji="🗃️" color="#764ABC" summary="Comparing 3 popular state management approaches — very common interview question">
+                <TopicModal title="State Management — Redux, Zustand, Context" emoji="🗃️" color="#764ABC" summary="Comparing 3 popular state management approaches — very common interview question" concept="Context: simple, built-in, but re-renders all consumers when value changes — good for theme/auth. Redux: predictable state with actions/reducers/middleware, powerful DevTools — good for large apps. Zustand: lightweight like Redux but simpler API, no boilerplate, only re-renders components using changed slices.">
                     <Paragraph>Enterprise projects commonly use <Highlight>Redux</Highlight>, but you should also know alternatives.</Paragraph>
 
                     <Callout type="info">🏦 <strong>Analogy: Redux = A Bank</strong><br /><br />
@@ -919,7 +919,7 @@ function App() {
                     <Callout type="tip">Interview: 90% will ask Redux flow (action → reducer → store). Knowing <Highlight>why use Zustand over Redux</Highlight> (less boilerplate, auto-optimized re-renders) → senior answer.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Next.js — Rendering Strategies (App Router)" emoji="▲" color="#000000" summary="SSG, ISR, SSR, CSR, PPR — latest App Router patterns with real code examples">
+                <TopicModal title="Next.js — Rendering Strategies (App Router)" emoji="▲" color="#000000" summary="SSG, ISR, SSR, CSR, PPR — latest App Router patterns with real code examples" concept="SSG: build-time HTML (blogs, docs). SSR: request-time HTML (frequently changing data). ISR: SSG + revalidate after N seconds. CSR: fully client-rendered (dashboards). PPR: static shell + dynamic parts streaming. App Router defaults to Server Components (SSG), use 'use client' for interactivity. Choose based on: is data personalized? + need SEO? + updates frequently?">
                     <Paragraph>Next.js is the <Highlight>most popular React framework</Highlight>. Interviews frequently ask about rendering strategies. App Router (Next.js 13+) completely changed how rendering is configured — <Highlight>no more getStaticProps / getServerSideProps</Highlight>.</Paragraph>
 
                     <Callout type="info">🏪 <strong>Analogy: Rendering = Restaurant Service</strong><br /><br />
@@ -1091,7 +1091,7 @@ export default async function ProductPage({ params }) {
                     <Callout type="tip">Interview: {'"Explain SSR vs SSG vs ISR"'} is <Highlight>almost guaranteed</Highlight> if the JD mentions Next.js. Know both styles: Pages Router (getStaticProps) for legacy + App Router (export const) for new → senior answer. Bonus: mention <Highlight>PPR</Highlight> → shows you follow the latest Next.js updates!</Callout>
                 </TopicModal>
 
-                <TopicModal title="Server Components & Server Actions" emoji="🖥️" color="#0ea5e9" summary="RSC = zero JS bundle, Server Actions = RPC-style mutations — the new React/Next.js architecture">
+                <TopicModal title="Server Components & Server Actions" emoji="🖥️" color="#0ea5e9" summary="RSC = zero JS bundle, Server Actions = RPC-style mutations — the new React/Next.js architecture" concept="Server Components render on the server, sending pure HTML to the client — zero JS bundle, direct DB/API access. Client Components ('use client') run in the browser for interactivity (hooks, events). Server Actions ('use server') are functions that run on the server but can be called from the client (form submissions, mutations) — no need for separate API routes.">
                     <Paragraph><Highlight>React Server Components (RSC)</Highlight> change how we think about rendering. Instead of shipping JS for every component, RSC runs on the server and sends HTML. Only components needing interactivity ship JS.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -1229,7 +1229,7 @@ function CreateProductForm() {
                     <Callout type="tip">Interview: {`"RSC vs SSR?"`} → RSC renders on server but <Highlight>doesn&apos;t hydrate</Highlight> (0 JS). SSR renders HTML on server then <Highlight>hydrates the entire app</Highlight>. RSC is more efficient because it only ships JS for interactive parts.</Callout>
                 </TopicModal>
 
-                <TopicModal title="State Management in Next.js" emoji="🗃️" color="#8b5cf6" summary="Why Context/Redux is less needed in App Router — and when you still need them">
+                <TopicModal title="State Management in Next.js" emoji="🗃️" color="#8b5cf6" summary="Why Context/Redux is less needed in App Router — and when you still need them" concept="App Router reduces state management needs thanks to Server Components (server-side data fetch), URL state (searchParams), and React cache. Still need client state for: UI state (modals, forms), real-time data (WebSocket), complex client interactions. Use Zustand/Jotai for lightweight client state, Redux for complex enterprise apps.">
                     <Paragraph><Highlight>Next.js App Router changes how we think about state.</Highlight> Most global state that previously required Redux/Context is now handled by Server Components and URL params.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -1334,7 +1334,7 @@ function FilterBar() {
                     <Callout type="tip">Interview: {`"How do you manage state in Next.js App Router?"`} → <Highlight>Server Components fetch data directly, URL params replace filter state, only small UI state uses useState/useContext. For complex client state → Zustand because it&apos;s lighter than Redux.</Highlight></Callout>
                 </TopicModal>
 
-                <TopicModal title="Micro-Frontend (MFE)" emoji="🧩" color="#06b6d4" summary="Module Federation, Import Maps, Single-SPA, Multi-Zones — when to split / not split your frontend">
+                <TopicModal title="Micro-Frontend (MFE)" emoji="🧩" color="#06b6d4" summary="Module Federation, Import Maps, Single-SPA, Multi-Zones — when to split / not split your frontend" concept="MFE splits a large frontend into independent, separately deployable apps. Module Federation (Webpack 5): share code at runtime between apps. Import Maps: native browser module loading. When to use: multiple teams, need independent deploys, monolith too large. When NOT to: small team, simple app — MFE adds unnecessary complexity.">
                     <Paragraph>Micro-Frontend is an architecture that <Highlight>splits the frontend into independent apps</Highlight>, each owned by a team. Like microservices but for the frontend.</Paragraph>
 
                     <Callout type="info">🏬 <strong>Analogy: MFE = Shopping Mall</strong><br /><br />
@@ -1521,7 +1521,7 @@ module.exports = {
 
             <Heading3>3.2 HTML/CSS (click for details)</Heading3>
             <div className="my-4 space-y-2">
-                <TopicModal title="Semantic HTML & Accessibility" emoji="♿" color="#38bdf8" summary="Screen readers, ARIA, landmark roles — why accessibility matters in interviews">
+                <TopicModal title="Semantic HTML & Accessibility" emoji="♿" color="#38bdf8" summary="Screen readers, ARIA, landmark roles — why accessibility matters in interviews" concept="Semantic HTML (header, nav, main, article, aside, footer) helps screen readers understand page structure. ARIA attributes add accessibility information (aria-label, aria-hidden, role). Landmark roles enable quick navigation. Focus management, keyboard navigation, color contrast (4.5:1 ratio). Accessibility isn't just for disabled users — it improves SEO and UX for everyone.">
                     <Paragraph><Highlight>Semantic HTML</Highlight> = using the right tag for the right purpose. Google and Apple especially value accessibility.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -1616,7 +1616,7 @@ module.exports = {
                 </TopicModal>
 
 
-                <TopicModal title="DOM Manipulation & Event Delegation" emoji="🎯" color="#f97316" summary={'Bubbling, Capturing, Delegation — how events propagate through the DOM'}>
+                <TopicModal title="DOM Manipulation & Event Delegation" emoji="🎯" color="#f97316" summary={'Bubbling, Capturing, Delegation — how events propagate through the DOM'} concept="Events propagate through 3 phases: Capturing (root → target), Target (clicked element), Bubbling (target → root). Event Delegation: attach 1 listener on parent, use event.target to determine which child triggered it — saves memory and handles dynamic elements. stopPropagation() stops propagation, preventDefault() stops default behavior.">
                     <Paragraph>Frontend interviews <Highlight>frequently ask</Highlight> about event propagation. Understanding how events travel through the DOM = debugging any click/submit issue.</Paragraph>
 
                     <Callout type="info">{'🏢 '}<strong>Analogy: Event Propagation = Office Gossip</strong><br /><br />
@@ -1856,7 +1856,7 @@ function TaskList() {
                 </TopicModal>
 
 
-                <TopicModal title="Web APIs — Observer Pattern" emoji="🔭" color="#14b8a6" summary={'IntersectionObserver, ResizeObserver, MutationObserver — why not use scroll events?'}>
+                <TopicModal title="Web APIs — Observer Pattern" emoji="🔭" color="#14b8a6" summary={'IntersectionObserver, ResizeObserver, MutationObserver — why not use scroll events?'} concept="IntersectionObserver: detects elements entering/leaving viewport (lazy load images, infinite scroll, analytics tracking). ResizeObserver: watches for element size changes (responsive components). MutationObserver: watches for DOM changes (attributes, children, text). More efficient than scroll/resize events because they run async, off main thread, browser-optimized.">
                     <Paragraph>Browsers provide <Highlight>Observer APIs</Highlight> to monitor DOM changes — far more efficient than the old approach of scroll events + getBoundingClientRect.</Paragraph>
 
                     <Callout type="info">{'📦 '}<strong>Analogy: Observer = Delivery Notifications</strong><br /><br />
@@ -2112,7 +2112,7 @@ function ResponsiveGrid() {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="CSS Layout — Flexbox & Grid" emoji="📐" color="#38bdf8" summary="Layout from scratch without frameworks — an important interview skill">
+                <TopicModal title="CSS Layout — Flexbox & Grid" emoji="📐" color="#38bdf8" summary="Layout from scratch without frameworks — an important interview skill" concept="Flexbox: 1-dimensional layout (row or column), using justify-content (main axis) and align-items (cross axis). Grid: 2-dimensional layout (rows + columns simultaneously), using grid-template-columns/rows. Choose Flexbox for navbars, cards, centering. Choose Grid for page layouts, dashboards, galleries. Combine both: Grid for large layouts, Flexbox for components inside.">
                     <Paragraph>Frontend coding interviews often require building layouts <Highlight>from scratch without TailwindCSS</Highlight>. Must master both Flexbox and Grid.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -2214,7 +2214,7 @@ function ResponsiveGrid() {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Web Security — XSS, CSRF, CSP" emoji="🛡️" color="#38bdf8" summary="Common web security vulnerabilities — must know how to prevent them">
+                <TopicModal title="Web Security — XSS, CSRF, CSP" emoji="🛡️" color="#38bdf8" summary="Common web security vulnerabilities — must know how to prevent them" concept="XSS (Cross-Site Scripting): injecting malicious scripts into pages — prevent with input sanitization, CSP headers, React's auto JSX escaping. CSRF (Cross-Site Request Forgery): tricking users into sending fake requests — prevent with CSRF tokens, SameSite cookies. CSP (Content Security Policy): HTTP header restricting resource origins.">
                     <Paragraph>Frontend developers <Highlight>must understand security</Highlight> — especially at big tech, security questions are very common.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -2313,7 +2313,7 @@ headers: [{
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Core Web Vitals" emoji="📊" color="#38bdf8" summary="LCP, INP, CLS — how Google measures performance, how to optimize">
+                <TopicModal title="Core Web Vitals" emoji="📊" color="#38bdf8" summary="LCP, INP, CLS — how Google measures performance, how to optimize" concept="LCP (Largest Contentful Paint): time to render the largest element (<2.5s). INP (Interaction to Next Paint): interaction response time (<200ms). CLS (Cumulative Layout Shift): layout shift score (<0.1). Optimize: LCP = optimize images/fonts/critical CSS, INP = reduce JS blocking, CLS = set explicit sizes for images/ads. Google uses CWV for SEO ranking.">
                     <Paragraph>Core Web Vitals are metrics <Highlight>Google uses for SEO ranking</Highlight>. Frontend engineers must know how to optimize them.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -2415,7 +2415,7 @@ elements.forEach((el, i) => el.style.height = heights[i] + 10)  // all writes`}<
                     <a href="/blogs/core-web-vitals" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="CSS Specificity & Cascade" emoji="⚖️" color="#38bdf8" summary="Specificity calculation, cascade order, inheritance — why doesn't my CSS apply?">
+                <TopicModal title="CSS Specificity & Cascade" emoji="⚖️" color="#38bdf8" summary="Specificity calculation, cascade order, inheritance — why doesn't my CSS apply?" concept="Specificity determines which CSS rule wins: !important > inline style (1000) > #id (100) > .class/:pseudo (10) > element (1). Cascade: origin (user-agent < author < !important) → specificity → source order. Inheritance: some properties inherit from parent (color, font) but not all (margin, padding). Avoid !important — use sufficient specificity instead.">
                     <Paragraph><Highlight>Specificity</Highlight> determines which CSS rule {'"wins"'} when there&apos;s a conflict — very common interview question.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -2470,7 +2470,7 @@ div#app > ul.nav > li.item > a.link { }  /* (1,3,4) — too specific! */
                     <Callout type="tip">Interview quiz: <InlineCode>{'.a.b'}</InlineCode> vs <InlineCode>{'.a .b'}</InlineCode> — first is <Highlight>AND</Highlight> (same element), second is <Highlight>descendant</Highlight>. Being able to calculate specificity = senior CSS skill.</Callout>
                 </TopicModal>
 
-                <TopicModal title="CSS Animations & Transitions" emoji="✨" color="#38bdf8" summary="transition, keyframes, transform, will-change — micro-interactions for premium UI">
+                <TopicModal title="CSS Animations & Transitions" emoji="✨" color="#38bdf8" summary="transition, keyframes, transform, will-change — micro-interactions for premium UI" concept="Transition: animate CSS property changes (hover, active) — simple, one-directional. @keyframes: complex multi-step animations, looping, timing control. Only animate transform and opacity (GPU-accelerated, won't cause layout/paint). will-change hints the browser to optimize ahead. Use prefers-reduced-motion for accessibility.">
                     <Paragraph><Highlight>Animations</Highlight> make UI feel alive and professional — but you must understand performance implications.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -2528,7 +2528,7 @@ div#app > ul.nav > li.item > a.link { }  /* (1,3,4) — too specific! */
                     <Callout type="tip">Interview: always mention <Highlight>prefers-reduced-motion</Highlight> when discussing animations — shows accessibility awareness. Only animate <strong>transform + opacity</strong> for 60fps.</Callout>
                 </TopicModal>
 
-                <TopicModal title="CSS Variables & Modern CSS" emoji="🎨" color="#38bdf8" summary="Custom properties, container queries, :has(), nesting — CSS is getting more powerful">
+                <TopicModal title="CSS Variables & Modern CSS" emoji="🎨" color="#38bdf8" summary="Custom properties, container queries, :has(), nesting — CSS is getting more powerful" concept="CSS Variables (--var): declared on :root and reused with var() — dynamic, changeable via JS, supports theming. Container Queries: responsive based on container size instead of viewport. :has() selector: style parent based on child. CSS Nesting: write nested CSS like SCSS but native. Modern CSS is gradually replacing preprocessors.">
                     <Paragraph><Highlight>Modern CSS</Highlight> has many powerful features — reducing dependency on JS and preprocessors.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -2602,7 +2602,7 @@ input[type="checkbox"] { accent-color: var(--color-primary); }`}</CodeBlock>
                     <Callout type="tip">Interview: mentioning <Highlight>container queries</Highlight> and <Highlight>:has()</Highlight> → shows you follow CSS evolution. CSS Variables vs SASS variables: CSS vars are <strong>runtime dynamic</strong>, SASS is compile-time.</Callout>
                 </TopicModal>
 
-                <TopicModal title="CSS Architecture — BEM, Modules, CSS-in-JS" emoji="🏗️" color="#38bdf8" summary="Naming conventions, scoping strategies, when to use each approach">
+                <TopicModal title="CSS Architecture — BEM, Modules, CSS-in-JS" emoji="🏗️" color="#38bdf8" summary="Naming conventions, scoping strategies, when to use each approach" concept="BEM (.block__element--modifier): clear naming convention, no scoping. CSS Modules: auto-scoped per component (hashed class names), zero runtime. CSS-in-JS (styled-components, Emotion): styles in JS, easy dynamic styling — but has runtime cost. Tailwind: utility-first, fast — but long HTML. Default choice: CSS Modules, Tailwind for rapid prototyping.">
                     <Paragraph>Large projects need <Highlight>CSS architecture</Highlight> to avoid naming conflicts and maintain code easily.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -2782,7 +2782,7 @@ const sprinkles = createSprinkles(responsiveProps)
                 Doesn&apos;t need to be perfect — but must work, have clean code, and you should be able to explain your decisions.
             </Paragraph>
             <div className="my-4 space-y-2">
-                <TopicModal title="Searchable Dropdown / Autocomplete" emoji="🔍" color="#f59e0b" summary="Classic test — input + dropdown + filter + keyboard navigation">
+                <TopicModal title="Searchable Dropdown / Autocomplete" emoji="🔍" color="#f59e0b" summary="Classic test — input + dropdown + filter + keyboard navigation" concept="Includes: input field + dropdown list + filter logic + keyboard navigation (↑↓ Enter Esc) + debounce search + highlight matches + click outside to close. Edge cases: empty state, loading state, no results, async search. Accessibility: aria-expanded, aria-activedescendant, role=listbox. This is the most common frontend coding interview test.">
                     <Paragraph>This is the <Highlight>most common</Highlight> interview coding test. Must know how to build from scratch.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
@@ -2870,7 +2870,7 @@ const sprinkles = createSprinkles(responsiveProps)
                     <Callout type="tip">Tip: Always remember <Highlight>click outside to close</Highlight> and <Highlight>keyboard navigation</Highlight> — 2 things many candidates forget.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Modal / Dialog" emoji="📦" color="#8b5cf6" summary="Overlay, focus trap, escape close, portal — simple component but many edge cases">
+                <TopicModal title="Modal / Dialog" emoji="📦" color="#8b5cf6" summary="Overlay, focus trap, escape close, portal — simple component but many edge cases" concept="Modal requires: overlay (backdrop), focus trap (tab stays within modal), Escape to close, click outside to close, scroll lock (prevent body scroll), portal (render outside DOM tree). Use <dialog> element for native modal or React portal. Accessibility: role=dialog, aria-modal, aria-labelledby, return focus on close.">
                     <Paragraph>Modal seems simple but has <Highlight>many edge cases</Highlight> that interviewers love to test.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
@@ -2923,7 +2923,7 @@ const sprinkles = createSprinkles(responsiveProps)
                     <Callout type="tip">Edge cases: <Highlight>multiple modals stacked</Highlight> (z-index), <Highlight>animation on enter/exit</Highlight>, <Highlight>responsive sizing</Highlight>. Mentioning these → bonus points.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Pagination Component" emoji="📄" color="#06b6d4" summary="Client-side vs server-side, page numbers, ellipsis — common test for junior/mid">
+                <TopicModal title="Pagination Component" emoji="📄" color="#06b6d4" summary="Client-side vs server-side, page numbers, ellipsis — common test for junior/mid" concept="Client-side: load all data, slice by page (small datasets). Server-side: send page/limit to API, receive data per page (large datasets). UI: current page, total pages, prev/next, ellipsis (...) for many pages, page size selector. Edge cases: page 1 disables prev, last page disables next, URL sync (searchParams).">
                     <Paragraph>Pagination seems simple but you need to handle <Highlight>ellipsis logic</Highlight> + edge cases.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
@@ -2968,7 +2968,7 @@ function getPageNumbers(current, total, siblings = 1) {
                     <Callout type="tip">Server-side pagination: <Highlight>API returns total + page + limit</Highlight>. Client-side: slice array. Interviews usually ask you to build client-side pagination.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Form Validation" emoji="📝" color="#10b981" summary="Real-time validation, error messages, submit handling — the most practical test">
+                <TopicModal title="Form Validation" emoji="📝" color="#10b981" summary="Real-time validation, error messages, submit handling — the most practical test" concept="Two types of validation: client-side (UX, fast) and server-side (mandatory, secure). Patterns: validate on blur/change (real-time), validate on submit (batch). Error display: inline below field, red border highlight. Controlled forms (useState) vs uncontrolled (useRef/FormData). Use Zod/Yup for schema validation, React Hook Form for performance.">
                     <Paragraph>Form validation is the <Highlight>most practical</Highlight> coding test — every project needs it.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
@@ -3040,7 +3040,7 @@ const { values, errors, handleChange, handleBlur, handleSubmit } = useForm(
                     <Callout type="tip">Interview: build a custom <Highlight>useForm</Highlight> hook → shows you understand form state management. Mention that production uses React Hook Form + Zod → shows practical awareness.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Infinite Scroll / Lazy Load" emoji="♾️" color="#f43f5e" summary="IntersectionObserver + pagination API — mid/senior level test">
+                <TopicModal title="Infinite Scroll / Lazy Load" emoji="♾️" color="#f43f5e" summary="IntersectionObserver + pagination API — mid/senior level test" concept="Infinite Scroll: when users scroll near the bottom, automatically fetch the next page. Use IntersectionObserver to watch a sentinel element. Lazy Load images: only load images when they enter viewport (loading='lazy' or IntersectionObserver). Need: loading indicator, error handling, no-more-data state, debounce/throttle requests, virtualization for long lists.">
                     <Paragraph>Infinite scroll = <Highlight>IntersectionObserver + API pagination</Highlight>. Must handle loading, error, no more data.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20">
@@ -3114,7 +3114,7 @@ function ProductList() {
                 Knowing how to use them + explaining why you chose a library → big bonus points.
             </Paragraph>
             <div className="my-4 space-y-2">
-                <TopicModal title="Ant Design (antd)" emoji="🐜" color="#1890ff" summary="Most popular component library for enterprise — tables, forms, layouts">
+                <TopicModal title="Ant Design (antd)" emoji="🐜" color="#1890ff" summary="Most popular component library for enterprise — tables, forms, layouts" concept="Ant Design is a comprehensive React UI library with full components (Table, Form, Modal, DatePicker...). Strong for enterprise: complex tables (sort, filter, pagination built-in), forms (validation, dynamic fields), layouts. Theme customization via ConfigProvider. Note: large bundle size — use tree-shaking and lazy imports.">
                     <Paragraph><Highlight>Ant Design</Highlight> = #1 choice for admin dashboards and enterprise apps.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -3139,7 +3139,7 @@ function ProductList() {
                     <Callout type="tip">Interview: if JD mentions antd → <Highlight>must know the Table component</Highlight> (custom render, sorter, filter, editable cells) since 90% of antd projects are data-heavy admin panels.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Tailwind CSS" emoji="🌊" color="#38bdf8" summary="Utility-first CSS framework — popular at startups and product companies">
+                <TopicModal title="Tailwind CSS" emoji="🌊" color="#38bdf8" summary="Utility-first CSS framework — popular at startups and product companies" concept="Tailwind CSS is a utility-first framework — write styles directly in classes (flex, p-4, text-lg). Pros: fast, no naming, responsive built-in (sm:, md:, lg:), dark mode (dark:). Cons: long HTML, learning curve. v4: CSS-first config, no tailwind.config.js needed. Combine with @apply for reusable styles.">
                     <Paragraph><Highlight>Tailwind</Highlight> = #1 choice for startups and consumer products.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
@@ -3175,7 +3175,7 @@ function ProductList() {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="React Hook Form + Zod" emoji="📋" color="#ec4899" summary="Form management + schema validation — most popular combo today">
+                <TopicModal title="React Hook Form + Zod" emoji="📋" color="#ec4899" summary="Form management + schema validation — most popular combo today" concept="React Hook Form: manages forms with uncontrolled components (implicit useRef), fewer re-renders than Formik. Zod: TypeScript-first schema validation, parse + validate in one step. Combined via @hookform/resolvers/zod — define schema once, use for both client and server validation. API: register, handleSubmit, formState.errors.">
                     <Paragraph><Highlight>React Hook Form + Zod</Highlight> = best form combo today — performance + type-safety.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-pink-500/10 border border-pink-500/20">
@@ -3224,7 +3224,7 @@ function RegisterForm() {
                     <Callout type="tip">Interview: if asked about forms → mention <Highlight>React Hook Form + Zod</Highlight> (modern) instead of Formik (legacy). Explaining why RHF is faster (uncontrolled) → bonus.</Callout>
                 </TopicModal>
 
-                <TopicModal title="TanStack Query (React Query)" emoji="🔄" color="#ef4444" summary="Server state management — fetching, caching, sync — replaces useEffect fetch">
+                <TopicModal title="TanStack Query (React Query)" emoji="🔄" color="#ef4444" summary="Server state management — fetching, caching, sync — replaces useEffect fetch" concept="TanStack Query manages server state: auto caching, background refetch, stale-while-revalidate, retry on error, pagination/infinite query built-in. Replaces useEffect + useState fetch with useQuery (read) and useMutation (write). Separates server state (remote data) from client state (UI state) — significantly reduces Redux/Context needs.">
                     <Paragraph><Highlight>TanStack Query</Highlight> solves the data fetching problem that useEffect + useState handles very poorly.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
@@ -3283,7 +3283,7 @@ function UpdateUser() {
 
             <Heading3>3.5 Authentication (click for details)</Heading3>
             <div className="my-4 space-y-2">
-                <TopicModal title="Authentication — From Cookies to OAuth2" emoji="🔐" color="#f59e0b" summary="The evolution of web authentication: Cookie → Session → JWT → OAuth2 — pros/cons and when to use each">
+                <TopicModal title="Authentication — From Cookies to OAuth2" emoji="🔐" color="#f59e0b" summary="The evolution of web authentication: Cookie → Session → JWT → OAuth2 — pros/cons and when to use each" concept="Cookie-Session: server stores session, browser sends cookie — simple but hard to scale. JWT: self-contained token, stateless — easy to scale but can't be revoked. OAuth2: delegate authentication to third parties (Google, GitHub) via authorization code flow. Best practice: JWT in httpOnly cookie + refresh token rotation + CSRF protection.">
                     <Paragraph>Authentication is one of the <Highlight>most frequently asked</Highlight> topics in frontend interviews. Understanding how auth evolved through each era helps you answer confidently and choose the right solution for your project.</Paragraph>
 
                     <Callout type="info">🏰 <strong>Analogy: Authentication as Building Security</strong><br /><br />

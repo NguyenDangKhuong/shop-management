@@ -9,7 +9,7 @@ export default function Phase3ReactFrontend() {
 
             <Heading3>3.1 React (click để xem chi tiết)</Heading3>
             <div className="my-4 space-y-2">
-                <TopicModal title="Virtual DOM & Reconciliation" emoji="🌳" color="#61DAFB" summary="React so sánh cây cũ vs cây mới, chỉ update phần thay đổi — giống git diff cho UI">
+                <TopicModal title="Virtual DOM & Reconciliation" emoji="🌳" color="#61DAFB" summary="React so sánh cây cũ vs cây mới, chỉ update phần thay đổi — giống git diff cho UI" concept="Virtual DOM là bản sao nhẹ của DOM thật (plain JS objects). Khi state thay đổi, React tạo VDOM mới, so sánh với cũ (diffing/reconciliation) rồi chỉ cập nhật phần thay đổi lên DOM thật. Key giúp React nhận diện element trong list. Thuật toán O(n) thay vì O(n³) nhờ 2 giả định: khác type = tạo lại, key ổn định = nhận diện đúng.">
                     <Paragraph>Tưởng tượng bạn có <Highlight>danh sách đi chợ cũ</Highlight> và <Highlight>danh sách mới</Highlight>. Cách ngu: xé cả danh sách, viết lại. Cách khôn: so sánh → chỉ gạch &quot;Sữa&quot;, thêm &quot;Bơ&quot; → phần còn lại giữ nguyên. <strong>Reconciliation = cách khôn</strong> — giống <Highlight>git diff</Highlight> cho UI!</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -135,7 +135,7 @@ export default function Phase3ReactFrontend() {
 
                 </TopicModal>
 
-                <TopicModal title="Hooks deep dive" emoji="🪝" color="#61DAFB" summary="useState, useEffect, useRef, useMemo, useCallback — rules và pitfalls">
+                <TopicModal title="Hooks deep dive" emoji="🪝" color="#61DAFB" summary="useState, useEffect, useRef, useMemo, useCallback — rules và pitfalls" concept="useState lưu state và trigger re-render. useEffect chạy side effects sau render (fetch, subscriptions), cleanup trước lần chạy tiếp. useRef lưu giá trị KHOONG trigger re-render (DOM refs, previous values). useMemo cache giá trị tính toán nặng. useCallback cache function reference. Rules: không gọi trong điều kiện/vòng lặp, chỉ gọi ở top level của component.">
                     <Paragraph>Hooks là <Highlight>nền tảng</Highlight> của React hiện đại. Hiểu sâu từng hook + pitfalls = trả lời phỏng vấn tự tin.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -422,7 +422,7 @@ function UserProfile({ userId }) {
                     <a href="/blogs/react-hooks-chi-tiet" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="Component Patterns" emoji="🧩" color="#61DAFB" summary="HOC, Render Props, Compound, Controlled/Uncontrolled — khi nào dùng pattern nào">
+                <TopicModal title="Component Patterns" emoji="🧩" color="#61DAFB" summary="HOC, Render Props, Compound, Controlled/Uncontrolled — khi nào dùng pattern nào" concept="HOC: function bọc component thêm logic (withAuth, withLoading). Render Props: truyền function làm prop để chia sẻ logic. Compound: các components con phối hợp qua context (Select/Option). Controlled: React quản lý value (input). Uncontrolled: DOM quản lý value (useRef). Hiện đại: hooks đã thay thế HOC/Render Props trong hầu hết trường hợp.">
                     <Paragraph>Biết các component patterns giúp bạn <Highlight>thiết kế API linh hoạt</Highlight> và trả lời câu hỏi system design frontend.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -568,7 +568,7 @@ function useDebounce<T>(value: T, delay: number): T {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Essential Custom Hooks" emoji="⚛️" color="#38bdf8" summary="Các custom hooks thông dụng: useDebounce, useThrottle, useCount, useOnClickOutside">
+                <TopicModal title="Essential Custom Hooks" emoji="⚛️" color="#38bdf8" summary="Các custom hooks thông dụng: useDebounce, useThrottle, useCount, useOnClickOutside" concept="Custom hooks tách logic tái sử dụng ra khỏi component. Quy tắc: tên bắt đầu bằng 'use', gọi hooks bên trong. Phổ biến: useDebounce (tránh gọi liên tục), useLocalStorage (sync state với storage), useOnClickOutside (đóng dropdown/modal), usePrevious (lưu giá trị trước), useMediaQuery (responsive logic).">
                     <Paragraph>Trong thực tế và phỏng vấn, bạn thường xuyên cần tự viết các Custom Hooks để tái sử dụng logic. Dưới đây là 4 hooks phổ biến nhất và cách sử dụng.</Paragraph>
 
                     <div className="my-4 space-y-4">
@@ -753,7 +753,7 @@ function Dropdown() {
                     </div>
                 </TopicModal>
 
-                <TopicModal title="Performance Optimization" emoji="⚡" color="#61DAFB" summary="React.memo, useMemo, useCallback, code splitting, virtualization">
+                <TopicModal title="Performance Optimization" emoji="⚡" color="#61DAFB" summary="React.memo, useMemo, useCallback, code splitting, virtualization" concept="React.memo skip re-render khi props không đổi. useMemo cache giá trị tính toán nặng. useCallback cache function reference cho child components. Code splitting (React.lazy + Suspense) giảm bundle size. Virtualization (react-window) chỉ render items trong viewport. Luôn đo trước bằng React DevTools Profiler trước khi optimize.">
                     <Paragraph>React re-render toàn bộ subtree khi state thay đổi. Đây là các kỹ thuật <Highlight>ngăn re-render không cần thiết</Highlight> và tối ưu performance:</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -846,7 +846,7 @@ function SearchBar() {
                     <a href="/blogs/react-performance" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="State Management — Redux, Zustand, Context" emoji="🗃️" color="#764ABC" summary="So sánh 3 cách quản lý state phổ biến — câu hỏi cực kỳ phổ biến ở VN interview">
+                <TopicModal title="State Management — Redux, Zustand, Context" emoji="🗃️" color="#764ABC" summary="So sánh 3 cách quản lý state phổ biến — câu hỏi cực kỳ phổ biến ở VN interview" concept="Context: đơn giản, built-in, nhưng re-render tất cả consumers khi value thay đổi — tốt cho theme/auth. Redux: predictable state với actions/reducers/middleware, DevTools mạnh — tốt cho app lớn. Zustand: lightweight như Redux nhưng API đơn giản hơn, không boilerplate, chỉ re-render component dùng slice thay đổi.">
                     <Paragraph>Công ty VN <Highlight>rất hay hỏi Redux</Highlight> vì đa số dự án enterprise đều dùng. Nhưng cần biết cả alternatives.</Paragraph>
 
                     <Callout type="info">🏦 <strong>Ẩn dụ: Redux = Ngân hàng</strong><br /><br />
@@ -923,7 +923,7 @@ function App() {
                     <Callout type="tip">VN Interview: 90% sẽ hỏi Redux flow (action → reducer → store). Biết giải thích <Highlight>tại sao dùng Zustand thay Redux</Highlight> (less boilerplate, auto-optimized re-renders) → senior answer.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Next.js — Rendering Strategies (App Router)" emoji="▲" color="#000000" summary="SSG, ISR, SSR, CSR, PPR — kiểu App Router mới nhất, kèm ví dụ code thực tế">
+                <TopicModal title="Next.js — Rendering Strategies (App Router)" emoji="▲" color="#000000" summary="SSG, ISR, SSR, CSR, PPR — kiểu App Router mới nhất, kèm ví dụ code thực tế" concept="SSG: build-time HTML (blog, docs). SSR: request-time HTML (data thường thay đổi). ISR: SSG + revalidate sau N giây. CSR: render hoàn toàn trên client (dashboards). PPR: kết hợp static shell + dynamic parts streaming. App Router mặc định là Server Components (SSG), dùng 'use client' cho tương tác. Chọn strategy theo: data có personalized không? + cần SEO không? + cập nhật thường xuyên không?">
                     <Paragraph>Next.js là framework React <Highlight>phổ biến nhất ở VN</Highlight>. Phỏng vấn hay hỏi về rendering strategies. App Router (Next.js 13+) thay đổi hoàn toàn cách config rendering — <Highlight>không còn getStaticProps / getServerSideProps</Highlight>.</Paragraph>
 
                     <Callout type="info">🏪 <strong>Ẩn dụ: Rendering = Cách phục vụ quán ăn</strong><br /><br />
@@ -1095,7 +1095,7 @@ export default async function ProductPage({ params }) {
                     <Callout type="tip">VN Interview: {'"Giải thích SSR vs SSG vs ISR"'} = câu hỏi <Highlight>gần như chắc chắn</Highlight> gặp nếu JD có Next.js. Biết cả 2 kiểu: Pages Router (getStaticProps) cho legacy + App Router (export const) cho mới → senior answer. Bonus: biết <Highlight>PPR</Highlight> → shows bạn theo dõi Next.js mới nhất!</Callout>
                 </TopicModal>
 
-                <TopicModal title="Server Components & Server Actions" emoji="🖥️" color="#0ea5e9" summary="RSC = zero JS bundle, Server Actions = RPC-style mutations — kiến trúc mới của React/Next.js">
+                <TopicModal title="Server Components & Server Actions" emoji="🖥️" color="#0ea5e9" summary="RSC = zero JS bundle, Server Actions = RPC-style mutations — kiến trúc mới của React/Next.js" concept="Server Components render trên server, gửi HTML thuần cho client — 0 JS bundle, truy cập DB/API trực tiếp. Client Components ('use client') chạy trên browser cho interactivity (hooks, events). Server Actions ('use server') là functions chạy trên server được gọi từ client (form submissions, mutations) — không cần tạo API route riêng.">
                     <Paragraph><Highlight>React Server Components (RSC)</Highlight> thay đổi cách chúng ta nghĩ về rendering. Thay vì ship JS cho mọi component, RSC chạy trên server và gửi HTML. Chỉ component nào cần interactivity mới ship JS.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -1233,7 +1233,7 @@ function CreateProductForm() {
                     <Callout type="tip">Interview: {`"RSC vs SSR?"`} → RSC render trên server nhưng <Highlight>không hydrate</Highlight> (0 JS). SSR render HTML trên server rồi <Highlight>hydrate toàn bộ</Highlight>. RSC hiệu quả hơn vì chỉ ship JS cho interactive parts.</Callout>
                 </TopicModal>
 
-                <TopicModal title="State Management trong Next.js" emoji="🗃️" color="#8b5cf6" summary="Tại sao ít cần Context/Redux trong App Router — và khi nào vẫn cần">
+                <TopicModal title="State Management trong Next.js" emoji="🗃️" color="#8b5cf6" summary="Tại sao ít cần Context/Redux trong App Router — và khi nào vẫn cần" concept="App Router giảm nhu cầu state management nhờ Server Components (data fetch trên server), URL state (searchParams), và React cache. Vẫn cần client state cho: UI state (modals, forms), real-time data (WebSocket), complex client interactions. Dùng Zustand/Jotai cho client state nhẹ, Redux cho enterprise apps phức tạp.">
                     <Paragraph><Highlight>Next.js App Router thay đổi cách nghĩ về state.</Highlight> Phần lớn global state mà trước đây cần Redux/Context giờ được xử lý bởi Server Components và URL params.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -1338,7 +1338,7 @@ function FilterBar() {
                     <Callout type="tip">Interview: {`"Bạn quản lý state thế nào trong Next.js App Router?"`} → <Highlight>Server Components fetch data trực tiếp, URL params thay filter state, chỉ còn UI state nhỏ dùng useState/useContext. Nếu cần client state phức tạp → Zustand vì nhẹ hơn Redux.</Highlight></Callout>
                 </TopicModal>
 
-                <TopicModal title="Micro-Frontend (MFE)" emoji="🧩" color="#06b6d4" summary="Module Federation, Import Maps, Single-SPA, Multi-Zones — khi nào nên/không nên tách frontend">
+                <TopicModal title="Micro-Frontend (MFE)" emoji="🧩" color="#06b6d4" summary="Module Federation, Import Maps, Single-SPA, Multi-Zones — khi nào nên/không nên tách frontend" concept="MFE chia frontend lớn thành các app nhỏ độc lập, deploy riêng. Module Federation (Webpack 5): chia sẻ code runtime giữa apps. Import Maps: native browser module loading. Khi nên dùng: nhiều team, cần deploy độc lập, monolith quá lớn. Khi KHÔNG nên: team nhỏ, app đơn giản — MFE thêm complexity không cần thiết.">
                     <Paragraph>Micro-Frontend là kiến trúc <Highlight>chia frontend thành các app độc lập</Highlight>, mỗi team sở hữu 1 phần. Giống microservices nhưng cho frontend.</Paragraph>
 
                     <Callout type="info">🏬 <strong>Ẩn dụ: MFE = Trung tâm thương mại</strong><br /><br />
@@ -1525,7 +1525,7 @@ module.exports = {
 
             <Heading3>3.2 HTML/CSS (click để xem chi tiết)</Heading3>
             <div className="my-4 space-y-2">
-                <TopicModal title="Semantic HTML & Accessibility" emoji="♿" color="#38bdf8" summary="Screen readers, ARIA, landmark roles — tại sao accessibility quan trọng trong interview">
+                <TopicModal title="Semantic HTML & Accessibility" emoji="♿" color="#38bdf8" summary="Screen readers, ARIA, landmark roles — tại sao accessibility quan trọng trong interview" concept="Semantic HTML (header, nav, main, article, aside, footer) giúp screen readers hiểu cấu trúc trang. ARIA attributes bổ sung thông tin accessibility (aria-label, aria-hidden, role). Landmark roles giúp navigate nhanh. Focus management, keyboard navigation, color contrast (4.5:1 ratio). Accessibility không chỉ cho người khuyết tật — cải thiện SEO và UX cho tất cả.">
                     <Paragraph><Highlight>Semantic HTML</Highlight> = dùng đúng tag cho đúng mục đích. Google, Apple đặc biệt coi trọng accessibility.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -1619,7 +1619,7 @@ module.exports = {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="DOM Manipulation & Event Delegation" emoji="🎯" color="#f97316" summary={'Bubbling, Capturing, Delegation — hiểu event lan truyền thế nào trong DOM'}>
+                <TopicModal title="DOM Manipulation & Event Delegation" emoji="🎯" color="#f97316" summary={'Bubbling, Capturing, Delegation — hiểu event lan truyền thế nào trong DOM'} concept="Events lan truyền qua 3 pha: Capturing (từ root → target), Target (element click), Bubbling (target → root). Event Delegation: gắn 1 listener ở parent, dùng event.target xác định con nào trigger — tiết kiệm memory và handle dynamic elements. stopPropagation() ngừng lan truyền, preventDefault() ngừng hành vi mặc định.">
                     <Paragraph>Phỏng vấn frontend <Highlight>rất hay hỏi</Highlight> về event propagation. Hiểu cách event di chuyển trong DOM = debug được mọi vấn đề click/submit.</Paragraph>
 
                     <Callout type="info">{'🏢 '}<strong>Ẩn dụ: Event Propagation = Tin đồn trong công ty</strong><br /><br />
@@ -1859,7 +1859,7 @@ function TaskList() {
                 </TopicModal>
 
 
-                <TopicModal title="Web APIs — Observer Pattern" emoji="🔭" color="#14b8a6" summary={'IntersectionObserver, ResizeObserver, MutationObserver — tại sao không dùng scroll event cũ?'}>
+                <TopicModal title="Web APIs — Observer Pattern" emoji="🔭" color="#14b8a6" summary={'IntersectionObserver, ResizeObserver, MutationObserver — tại sao không dùng scroll event cũ?'} concept="IntersectionObserver: phát hiện element vào/ra viewport (lazy load images, infinite scroll, analytics tracking). ResizeObserver: theo dõi kích thước element thay đổi (responsive components). MutationObserver: theo dõi DOM thay đổi (attributes, children, text). Hiệu quả hơn scroll/resize events vì chạy async, off main thread, browser tối ưu sẵn.">
                     <Paragraph>Browser cung cấp <Highlight>Observer APIs</Highlight> để theo dõi DOM thay đổi — hiệu quả hơn nhiều so với cách cũ dùng scroll event + getBoundingClientRect.</Paragraph>
 
                     <Callout type="info">{'📦 '}<strong>Ẩn dụ: Observer = Thông báo giao hàng</strong><br /><br />
@@ -2115,7 +2115,7 @@ function ResponsiveGrid() {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="CSS Layout — Flexbox & Grid" emoji="📐" color="#38bdf8" summary="Layout từ scratch không framework — kỹ năng interview quan trọng">
+                <TopicModal title="CSS Layout — Flexbox & Grid" emoji="📐" color="#38bdf8" summary="Layout từ scratch không framework — kỹ năng interview quan trọng" concept="Flexbox: layout 1 chiều (row hoặc column), dùng justify-content (trục chính) và align-items (trục phụ). Grid: layout 2 chiều (rows + columns cùng lúc), dùng grid-template-columns/rows. Chọn Flexbox cho navbars, cards, centering. Chọn Grid cho page layouts, dashboards, galleries. Kết hợp cả hai: Grid cho layout lớn, Flexbox cho components bên trong.">
                     <Paragraph>Coding interview frontend thường yêu cầu xây layout <Highlight>từ scratch không TailwindCSS</Highlight>. Phải thành thạo cả Flexbox lẫn Grid.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -2217,7 +2217,7 @@ function ResponsiveGrid() {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Web Security — XSS, CSRF, CSP" emoji="🛡️" color="#38bdf8" summary="Các lỗ hổng bảo mật web phổ biến — phải biết cách phòng chống">
+                <TopicModal title="Web Security — XSS, CSRF, CSP" emoji="🛡️" color="#38bdf8" summary="Các lỗ hổng bảo mật web phổ biến — phải biết cách phòng chống" concept="XSS (Cross-Site Scripting): inject script độc vào trang — phòng bằng sanitize input, CSP headers, React tự escape JSX. CSRF (Cross-Site Request Forgery): trick user gửi request giả — phòng bằng CSRF token, SameSite cookies. CSP (Content Security Policy): HTTP header giới hạn nguồn tài nguyên được load.">
                     <Paragraph>Frontend developer <Highlight>phải hiểu security</Highlight> — đặc biệt ở big tech, câu hỏi security rất phổ biến.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -2316,7 +2316,7 @@ headers: [{
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Core Web Vitals" emoji="📊" color="#38bdf8" summary="LCP, INP, CLS — Google đo performance thế nào, cách tối ưu">
+                <TopicModal title="Core Web Vitals" emoji="📊" color="#38bdf8" summary="LCP, INP, CLS — Google đo performance thế nào, cách tối ưu" concept="LCP (Largest Contentful Paint): thời gian render phần tử lớn nhất (<2.5s). INP (Interaction to Next Paint): thời gian phản hồi tương tác (<200ms). CLS (Cumulative Layout Shift): độ giật layout (<0.1). Tối ưu: LCP = optimize images/fonts/critical CSS, INP = giảm JS blocking, CLS = đặt size cho images/ads. Google dùng CWV để xếp hạng SEO.">
                     <Paragraph>Core Web Vitals là metrics <Highlight>Google dùng để rank SEO</Highlight>. Frontend engineer phải biết optimize.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -2418,7 +2418,7 @@ elements.forEach((el, i) => el.style.height = heights[i] + 10)  // all writes`}<
                     <a href="/blogs/core-web-vitals" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="CSS Specificity & Cascade" emoji="⚖️" color="#38bdf8" summary="Specificity calculation, cascade order, inheritance — tại sao CSS không apply đúng?">
+                <TopicModal title="CSS Specificity & Cascade" emoji="⚖️" color="#38bdf8" summary="Specificity calculation, cascade order, inheritance — tại sao CSS không apply đúng?" concept="Specificity quyết định CSS rule nào thắng: !important > inline style (1000) > #id (100) > .class/:pseudo (10) > element (1). Cascade: origin (user-agent < author < !important) → specificity → source order. Inheritance: một số properties thừa kế từ parent (color, font) nhưng không phải tất cả (margin, padding). Tránh !important — dùng specificity đủ cao thay thế.">
                     <Paragraph><Highlight>Specificity</Highlight> quyết định rule CSS nào {'"thắng"'} khi có conflict — câu hỏi interview rất phổ biến.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -2473,7 +2473,7 @@ div#app > ul.nav > li.item > a.link { }  /* (1,3,4) — too specific! */
                     <Callout type="tip">Interview quiz: <InlineCode>{'.a.b'}</InlineCode> vs <InlineCode>{'.a .b'}</InlineCode> — cái đầu là <Highlight>AND</Highlight> (cùng element), cái sau là <Highlight>descendant</Highlight>. Biết tính specificity = senior CSS skill.</Callout>
                 </TopicModal>
 
-                <TopicModal title="CSS Animations & Transitions" emoji="✨" color="#38bdf8" summary="transition, keyframes, transform, will-change — micro-interactions cho UI premium">
+                <TopicModal title="CSS Animations & Transitions" emoji="✨" color="#38bdf8" summary="transition, keyframes, transform, will-change — micro-interactions cho UI premium" concept="Transition: animate thay đổi property CSS (hover, active) — đơn giản, 1 chiều. @keyframes: animation phức tạp nhiều bước, loop, điều khiển timing. Chỉ animate transform và opacity (GPU-accelerated, không gây layout/paint). will-change báo trước cho browser để optimize. Dùng prefers-reduced-motion cho accessibility.">
                     <Paragraph><Highlight>Animations</Highlight> làm UI sống động và professional — nhưng phải hiểu performance implications.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -2544,7 +2544,7 @@ div#app > ul.nav > li.item > a.link { }  /* (1,3,4) — too specific! */
                     <Callout type="tip">Interview: phải nhắc <Highlight>prefers-reduced-motion</Highlight> khi nói về animations — shows accessibility awareness. Chỉ animate <strong>transform + opacity</strong> cho 60fps.</Callout>
                 </TopicModal>
 
-                <TopicModal title="CSS Variables & Modern CSS" emoji="🎨" color="#38bdf8" summary="Custom properties, container queries, :has(), nesting — CSS đang ngày càng mạnh">
+                <TopicModal title="CSS Variables & Modern CSS" emoji="🎨" color="#38bdf8" summary="Custom properties, container queries, :has(), nesting — CSS đang ngày càng mạnh" concept="CSS Variables (--var): khai báo :root và dùng lại với var() — dynamic, có thể thay đổi bằng JS, hỗ trợ theming. Container Queries: responsive theo kích thước container thay vì viewport. :has() selector: style parent dựa trên child. CSS Nesting: viết CSS lồng như SCSS nhưng native. Modern CSS đang dần thay thế preprocessors.">
                     <Paragraph><Highlight>Modern CSS</Highlight> có nhiều feature mạnh mẽ — giảm phụ thuộc vào JS và preprocessors.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -2625,7 +2625,7 @@ input[type="checkbox"] { accent-color: var(--color-primary); }`}</CodeBlock>
                     <Callout type="tip">Interview: nhắc đến <Highlight>container queries</Highlight> và <Highlight>:has()</Highlight> → shows bạn follow CSS evolution. CSS Variables vs SASS variables: CSS vars là <strong>runtime dynamic</strong>, SASS compile-time.</Callout>
                 </TopicModal>
 
-                <TopicModal title="CSS Architecture — BEM, Modules, CSS-in-JS" emoji="🏗️" color="#38bdf8" summary="Naming conventions, scoping strategies, khi nào dùng approach nào">
+                <TopicModal title="CSS Architecture — BEM, Modules, CSS-in-JS" emoji="🏗️" color="#38bdf8" summary="Naming conventions, scoping strategies, khi nào dùng approach nào" concept="BEM (.block__element--modifier): naming convention rõ ràng, không scoping. CSS Modules: scope tự động theo component (hash class names), zero runtime. CSS-in-JS (styled-components, Emotion): style trong JS, dynamic styling dễ — nhưng có runtime cost. Tailwind: utility-first, nhanh — nhưng HTML dài. Chọn: CSS Modules cho mặc định, Tailwind cho prototype nhanh.">
                     <Paragraph>Dự án lớn cần <Highlight>CSS architecture</Highlight> để tránh naming conflicts và maintain code dễ dàng.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -2805,7 +2805,7 @@ const sprinkles = createSprinkles(responsiveProps)
                 Không cần perfect — nhưng phải chạy được, code sạch, và giải thích được decisions.
             </Paragraph>
             <div className="my-4 space-y-2">
-                <TopicModal title="Searchable Dropdown / Autocomplete" emoji="🔍" color="#f59e0b" summary="Bài test kinh điển — input + dropdown + filter + keyboard navigation">
+                <TopicModal title="Searchable Dropdown / Autocomplete" emoji="🔍" color="#f59e0b" summary="Bài test kinh điển — input + dropdown + filter + keyboard navigation" concept="Gồm: input field + dropdown list + filter logic + keyboard navigation (↑↓ Enter Esc) + debounce search + highlight matches + click outside đóng. Edge cases: empty state, loading state, no results, async search. Accessibility: aria-expanded, aria-activedescendant, role=listbox. Đây là bài test phổ biến nhất trong frontend coding interview.">
                     <Paragraph>Đây là bài test <Highlight>phổ biến nhất</Highlight> ở VN interview. Phải biết xây từ scratch.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
@@ -2893,7 +2893,7 @@ const sprinkles = createSprinkles(responsiveProps)
                     <Callout type="tip">Tip: Luôn nhớ <Highlight>click outside to close</Highlight> và <Highlight>keyboard navigation</Highlight> — 2 thứ mà nhiều ứng viên quên.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Modal / Dialog" emoji="📦" color="#8b5cf6" summary="Overlay, focus trap, escape close, portal — component cơ bản nhưng nhiều edge cases">
+                <TopicModal title="Modal / Dialog" emoji="📦" color="#8b5cf6" summary="Overlay, focus trap, escape close, portal — component cơ bản nhưng nhiều edge cases" concept="Modal cần: overlay (backdrop), focus trap (tab chỉ trong modal), Escape đóng, click outside đóng, scroll lock (body không scroll), portal (render ngoài DOM tree). Dùng <dialog> element cho native modal hoặc React portal. Accessibility: role=dialog, aria-modal, aria-labelledby, return focus khi đóng.">
                     <Paragraph>Modal tưởng đơn giản nhưng có <Highlight>nhiều edge cases</Highlight> mà interviewer hay test.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
@@ -2946,7 +2946,7 @@ const sprinkles = createSprinkles(responsiveProps)
                     <Callout type="tip">Edge cases: <Highlight>multiple modals stacked</Highlight> (z-index), <Highlight>animation on enter/exit</Highlight>, <Highlight>responsive sizing</Highlight>. Nhắc các edge cases này → bonus points.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Pagination Component" emoji="📄" color="#06b6d4" summary="Client-side vs server-side, page numbers, ellipsis — bài test phổ biến cho junior/mid">
+                <TopicModal title="Pagination Component" emoji="📄" color="#06b6d4" summary="Client-side vs server-side, page numbers, ellipsis — bài test phổ biến cho junior/mid" concept="Client-side: load hết data, slice theo page (nhỏ). Server-side: gửi page/limit cho API, nhận data từng trang (lớn). UI: current page, total pages, prev/next, ellipsis (...) khi nhiều trang, page size selector. Edge cases: page 1 disable prev, last page disable next, URL sync (searchParams).">
                     <Paragraph>Pagination tưởng đơn giản nhưng phải handle <Highlight>ellipsis logic</Highlight> + edge cases.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
@@ -2991,7 +2991,7 @@ function getPageNumbers(current, total, siblings = 1) {
                     <Callout type="tip">Server-side pagination: <Highlight>API trả về total + page + limit</Highlight>. Client-side: slice array. VN interview thường cho build client-side pagination.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Form Validation" emoji="📝" color="#10b981" summary="Real-time validation, error messages, submit handling — bài test thực tế nhất">
+                <TopicModal title="Form Validation" emoji="📝" color="#10b981" summary="Real-time validation, error messages, submit handling — bài test thực tế nhất" concept="Validation có 2 loại: client-side (UX, nhanh) và server-side (bắt buộc, an toàn). Patterns: validate on blur/change (real-time), validate on submit (batch). Hiển thị lỗi: inline dưới field, highlight border đỏ. Controlled forms (useState) vs uncontrolled (useRef/FormData). Dùng Zod/Yup cho schema validation, React Hook Form cho performance.">
                     <Paragraph>Form validation là bài test <Highlight>thực tế nhất</Highlight> — mọi dự án đều cần.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
@@ -3063,7 +3063,7 @@ const { values, errors, handleChange, handleBlur, handleSubmit } = useForm(
                     <Callout type="tip">Interview: build custom <Highlight>useForm</Highlight> hook → shows bạn hiểu form state management. Nhắc rằng production dùng React Hook Form + Zod → shows practical awareness.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Infinite Scroll / Lazy Load" emoji="♾️" color="#f43f5e" summary="IntersectionObserver + pagination API — bài test cho mid/senior">
+                <TopicModal title="Infinite Scroll / Lazy Load" emoji="♾️" color="#f43f5e" summary="IntersectionObserver + pagination API — bài test cho mid/senior" concept="Infinite Scroll: khi user scroll gần cuối, tự động fetch trang tiếp theo. Dùng IntersectionObserver theo dõi sentinel element. Lazy Load images: chỉ load ảnh khi vào viewport (loading='lazy' hoặc IntersectionObserver). Cần: loading indicator, error handling, no-more-data state, debounce/throttle requests, virtualization cho list dài.">
                     <Paragraph>Infinite scroll = <Highlight>IntersectionObserver + API pagination</Highlight>. Phải handle loading, error, no more data.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20">
@@ -3137,7 +3137,7 @@ function ProductList() {
                 Biết sử dụng + giải thích tại sao chọn library này → điểm cộng rất lớn.
             </Paragraph>
             <div className="my-4 space-y-2">
-                <TopicModal title="Ant Design (antd)" emoji="🐜" color="#1890ff" summary="Component library phổ biến nhất ở VN enterprise — tables, forms, layouts">
+                <TopicModal title="Ant Design (antd)" emoji="🐜" color="#1890ff" summary="Component library phổ biến nhất ở VN enterprise — tables, forms, layouts" concept="Ant Design là React UI library đầy đủ components (Table, Form, Modal, DatePicker...). Mạnh về enterprise: tables phức tạp (sort, filter, pagination built-in), forms (validation, dynamic fields), layouts. Theme customization qua ConfigProvider. Lưu ý: bundle size lớn — dùng tree-shaking và lazy import. Phổ biến ở công ty VN và công ty Trung Quốc.">
                     <Paragraph><Highlight>Ant Design</Highlight> = lựa chọn #1 cho admin dashboards và enterprise apps ở VN.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -3162,7 +3162,7 @@ function ProductList() {
                     <Callout type="tip">VN Interview: nếu JD có antd → <Highlight>phải biết Table component</Highlight> (custom render, sorter, filter, editable cells) vì 90% dự án antd là data-heavy admin.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Tailwind CSS" emoji="🌊" color="#38bdf8" summary="Utility-first CSS framework — phổ biến ở startups và products VN">
+                <TopicModal title="Tailwind CSS" emoji="🌊" color="#38bdf8" summary="Utility-first CSS framework — phổ biến ở startups và products VN" concept="Tailwind CSS là utility-first framework — viết style trực tiếp trong class (flex, p-4, text-lg). Ưu điểm: nhanh, không naming, responsive built-in (sm:, md:, lg:), dark mode (dark:). Nhược điểm: HTML dài, learning curve. v4: CSS-first config, không cần tailwind.config.js. Kết hợp với @apply cho reusable styles.">
                     <Paragraph><Highlight>Tailwind</Highlight> = lựa chọn #1 cho startups và consumer products ở VN.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
@@ -3198,7 +3198,7 @@ function ProductList() {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="React Hook Form + Zod" emoji="📋" color="#ec4899" summary="Form management + schema validation — combo phổ biến nhất hiện nay">
+                <TopicModal title="React Hook Form + Zod" emoji="📋" color="#ec4899" summary="Form management + schema validation — combo phổ biến nhất hiện nay" concept="React Hook Form: quản lý form bằng uncontrolled components (useRef ngầm), ít re-render hơn Formik. Zod: schema validation TypeScript-first, parse + validate cùng lúc. Kết hợp qua @hookform/resolvers/zod — định nghĩa schema 1 lần, dùng cho cả client validation và server validation. API: register, handleSubmit, formState.errors.">
                     <Paragraph><Highlight>React Hook Form + Zod</Highlight> = combo form tốt nhất hiện tại — performance + type-safety.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-pink-500/10 border border-pink-500/20">
@@ -3247,7 +3247,7 @@ function RegisterForm() {
                     <Callout type="tip">VN Interview: nếu hỏi form → nói <Highlight>React Hook Form + Zod</Highlight> (modern) thay vì Formik (legacy). Giải thích tại sao RHF nhanh hơn (uncontrolled) → bonus.</Callout>
                 </TopicModal>
 
-                <TopicModal title="TanStack Query (React Query)" emoji="🔄" color="#ef4444" summary="Server state management — fetching, caching, sync — thay thế useEffect fetch">
+                <TopicModal title="TanStack Query (React Query)" emoji="🔄" color="#ef4444" summary="Server state management — fetching, caching, sync — thay thế useEffect fetch" concept="TanStack Query quản lý server state: auto caching, background refetch, stale-while-revalidate, retry on error, pagination/infinite query built-in. Thay thế useEffect + useState fetch bằng useQuery (read) và useMutation (write). Tách biệt server state (remote data) và client state (UI state) — giảm Redux/Context đáng kể.">
                     <Paragraph><Highlight>TanStack Query</Highlight> giải quyết bài toán data fetching mà useEffect + useState làm rất tệ.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
@@ -3306,7 +3306,7 @@ function UpdateUser() {
 
             <Heading3>3.5 Authentication (click để xem chi tiết)</Heading3>
             <div className="my-4 space-y-2">
-                <TopicModal title="Authentication — Từ Cookie đến OAuth2" emoji="🔐" color="#f59e0b" summary="Hành trình tiến hóa xác thực web: Cookie → Session → JWT → OAuth2 — pros/cons và khi nào dùng gì">
+                <TopicModal title="Authentication — Từ Cookie đến OAuth2" emoji="🔐" color="#f59e0b" summary="Hành trình tiến hóa xác thực web: Cookie → Session → JWT → OAuth2 — pros/cons và khi nào dùng gì" concept="Cookie-Session: server lưu session, browser gửi cookie — đơn giản nhưng khó scale. JWT: token tự chứa info, stateless — scale dễ nhưng không revoke được. OAuth2: uỷ quyền đăng nhập cho bên thứ 3 (Google, GitHub) qua authorization code flow. Best practice: JWT trong httpOnly cookie + refresh token rotation + CSRF protection.">
                     <Paragraph>Authentication là một trong những chủ đề <Highlight>được hỏi nhiều nhất</Highlight> trong phỏng vấn frontend. Hiểu sâu cách xác thực tiến hóa qua từng thời kỳ giúp bạn trả lời tự tin và chọn đúng giải pháp cho dự án.</Paragraph>
 
                     <Callout type="info">🏰 <strong>Ẩn dụ: Authentication như bảo vệ toà nhà</strong><br /><br />
