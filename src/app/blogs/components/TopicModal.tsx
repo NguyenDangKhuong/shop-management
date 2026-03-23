@@ -42,7 +42,10 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
 
     const toggleLearned = (e?: React.MouseEvent) => {
         if (e) e.stopPropagation()
-        if (!isLoggedIn) return
+        if (!isLoggedIn) {
+            window.location.href = '/login'
+            return
+        }
         contextToggle(title)
     }
 
@@ -73,8 +76,8 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
                     </div>
                 </button>
                 
-                {/* Checkmark Button — only show for logged-in users */}
-                {mounted && !isLoading && isLoggedIn && (
+                {/* Checkmark Button */}
+                {mounted && !isLoading && (
                     <button 
                         onClick={toggleLearned}
                         className={`absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all ${
@@ -119,8 +122,7 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
                                 <h3 className={`text-lg font-bold tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{title}</h3>
                             </div>
                             <div className="flex items-center gap-2">
-                                {/* Mark as learned button inside modal — only for logged-in users */}
-                                {isLoggedIn && (
+                                {/* Mark as learned button inside modal */}
                                 <button
                                     onClick={(e) => toggleLearned(e)}
                                     className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
@@ -138,7 +140,6 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
                                         ? t({ vi: 'Đã thuộc', en: 'Learned' }) 
                                         : t({ vi: 'Đánh dấu đã thuộc', en: 'Mark as learned' })}
                                 </button>
-                                )}
                                 <button
                                     onClick={close}
                                     className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isDarkMode ? 'bg-slate-800/50 hover:bg-slate-700/50 text-slate-400 hover:text-white border border-white/5' : 'bg-white hover:bg-gray-100 text-gray-500 hover:text-gray-900 shadow-sm border border-gray-200'}`}
