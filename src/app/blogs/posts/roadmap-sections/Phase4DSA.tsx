@@ -16,7 +16,7 @@ export default function Phase4DSA() {
             <Heading3>4.1 Data Structures (click để xem chi tiết)</Heading3>
             <a href="/blogs/data-types-structures" target="_blank" rel="noopener noreferrer" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết Data Types &amp; Structures →</a>
             <div className="my-4 space-y-2">
-                <TopicModal title="Array / String" emoji="📦" color="#4ade80" summary="⭐ Bắt buộc — nền tảng của mọi bài DSA, two pointers, sliding window">
+                <TopicModal title="Array / String" emoji="📦" color="#4ade80" summary="⭐ Bắt buộc — nền tảng của mọi bài DSA, two pointers, sliding window" concept="Array lưu data liên tục trong bộ nhớ, truy cập O(1) theo index nhưng insert/delete O(n). String là immutable array of chars. Patterns chính: Two Pointers (sorted array), Sliding Window (subarray/substring), Prefix Sum (range queries), Kadane's (max subarray). Hầu hết bài DSA đều liên quan đến array/string.">
                     <Paragraph><Highlight>Array</Highlight> lưu phần tử liền kề trong bộ nhớ → truy cập O(1) bằng index. <Highlight>String</Highlight> trong JS là immutable — mỗi lần thay đổi tạo string mới.</Paragraph>
                     <div className="my-3 overflow-x-auto">
                         <table className="w-full text-sm border-collapse">
@@ -43,7 +43,7 @@ const isPalin = s => s === s.split('').reverse().join('')`}</CodeBlock>
                     <Callout type="tip">Interview: 80% bài LeetCode liên quan đến Array/String. Thành thạo <Highlight>Two Pointers</Highlight> và <Highlight>Sliding Window</Highlight> sẽ giải được phần lớn.</Callout>
                 </TopicModal>
 
-                <TopicModal title="HashMap / HashSet" emoji="🗂️" color="#4ade80" summary="⭐ Bắt buộc — frequency count, cache, lookup O(1)">
+                <TopicModal title="HashMap / HashSet" emoji="🗂️" color="#4ade80" summary="⭐ Bắt buộc — frequency count, cache, lookup O(1)" concept="HashMap lưu key-value pairs, lookup/insert/delete O(1) trung bình. HashSet chỉ lưu keys (kiểm tra tồn tại). Dùng cho: đếm tần suất, tìm duplicate, Two Sum pattern (complement lookup), grouping (anagrams). Trả giá space O(n) đổi lấy time O(1) — space-time tradeoff kinh điển.">
                     <Paragraph><Highlight>HashMap</Highlight> (Map) lưu key→value, <Highlight>HashSet</Highlight> (Set) chỉ lưu key unique. Cả hai cho phép thêm/xóa/tìm trong <Highlight>O(1)</Highlight> trung bình.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -69,7 +69,7 @@ for (let i = 0; i < nums.length; i++) {
                     <a href="/blogs/hash-map-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="Stack / Queue" emoji="📚" color="#4ade80" summary="⭐ Bắt buộc — valid parentheses, BFS, monotonic stack">
+                <TopicModal title="Stack / Queue" emoji="📚" color="#4ade80" summary="⭐ Bắt buộc — valid parentheses, BFS, monotonic stack" concept="Stack: LIFO (Last In First Out) — push/pop O(1). Dùng cho: valid parentheses, undo/redo, DFS, expression evaluation, monotonic stack (next greater element). Queue: FIFO (First In First Out) — enqueue/dequeue O(1). Dùng cho: BFS, task scheduling, sliding window maximum. Call Stack của JS chính là stack.">
                     <Paragraph><Highlight>Stack</Highlight> = LIFO (Last In First Out), <Highlight>Queue</Highlight> = FIFO (First In First Out). Hai cấu trúc đơn giản nhưng cực mạnh.</Paragraph>
                     <div className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
@@ -106,7 +106,7 @@ queue.shift()    // 1, queue = [2]
                     <a href="/blogs/stack-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="Linked List" emoji="🔗" color="#60a5fa" summary="⭐⭐ Quan trọng — reverse, cycle detect, merge sorted lists">
+                <TopicModal title="Linked List" emoji="🔗" color="#60a5fa" summary="⭐⭐ Quan trọng — reverse, cycle detect, merge sorted lists" concept="Linked List: mỗi node chứa data + pointer đến node tiếp. Insert/delete O(1) tại vị trí biết nhưng search O(n). Patterns: reverse (3 pointers: prev, curr, next), fast-slow pointers (cycle detection, find middle), merge two sorted lists. Singly vs Doubly (2 chiều). Ít dùng thực tế nhưng interview hỏi nhiều vì test pointer manipulation.">
                     <Paragraph>Mỗi node chứa <InlineCode>value</InlineCode> + <InlineCode>next</InlineCode> pointer. Không có random access (O(n)), nhưng insert/delete ở đầu là <Highlight>O(1)</Highlight>.</Paragraph>
                     <CodeBlock title="linked-list.js">{`class ListNode {
     constructor(val, next = null) {
@@ -139,7 +139,7 @@ function hasCycle(head) {
                     <Callout type="tip">Kỹ thuật: <Highlight>Dummy node</Highlight> (tránh edge case), <Highlight>Fast/Slow pointers</Highlight>, <Highlight>Reverse</Highlight> (3 biến prev/curr/next).</Callout>
                 </TopicModal>
 
-                <TopicModal title="Tree / Binary Tree" emoji="🌳" color="#60a5fa" summary="⭐⭐ Quan trọng — DFS, BFS, DOM tree, BST">
+                <TopicModal title="Tree / Binary Tree" emoji="🌳" color="#60a5fa" summary="⭐⭐ Quan trọng — DFS, BFS, DOM tree, BST" concept="Tree: cấu trúc phân cấp với root và children (DOM là tree!). Binary Tree: mỗi node tối đa 2 con. BST: left < root < right — search O(log n). Duyệt: DFS (Inorder=sorted, Preorder=copy, Postorder=delete) và BFS (level-by-level). Patterns: đệ quy (base case + recursive case), height/depth, LCA, validate BST.">
                     <Paragraph>Tree là đồ thị không chu trình. <Highlight>Binary Tree</Highlight> = mỗi node tối đa 2 con. <Highlight>BST</Highlight> = left &lt; root &lt; right.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
@@ -177,7 +177,7 @@ function levelOrder(root) {
                     <a href="/blogs/bfs-dfs-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài BFS/DFS chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="Graph" emoji="🕸️" color="#60a5fa" summary="⭐⭐ Quan trọng — BFS/DFS, cycle detection, topological sort">
+                <TopicModal title="Graph" emoji="🕸️" color="#60a5fa" summary="⭐⭐ Quan trọng — BFS/DFS, cycle detection, topological sort" concept="Graph gồm vertices (nodes) và edges (connections). Biểu diễn: adjacency list (phổ biến) hoặc adjacency matrix. DFS: đi sâu trước (stack/đệ quy). BFS: đi rộng trước (queue) — tìm shortest path. Directed vs Undirected. Cycle detection: DFS với visited states. Topological Sort: thứ tự phụ thuộc (task scheduling, build systems).">
                     <Paragraph>Graph = đỉnh + cạnh. Biểu diễn bằng <Highlight>adjacency list</Highlight> (phổ biến nhất).</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
@@ -211,7 +211,7 @@ function bfs(graph, start) {
                     <Callout type="warning">Graph có thể có <Highlight>cycle</Highlight> → luôn cần <InlineCode>visited</InlineCode> set. Quên = infinite loop!</Callout>
                 </TopicModal>
 
-                <TopicModal title="Heap / Trie" emoji="⛰️" color="#a78bfa" summary="⭐⭐⭐ Nâng cao — Top K elements, autocomplete, priority queue">
+                <TopicModal title="Heap / Trie" emoji="⛰️" color="#a78bfa" summary="⭐⭐⭐ Nâng cao — Top K elements, autocomplete, priority queue" concept="Heap (Priority Queue): luôn lấy min/max trong O(1), insert/extract O(log n). Dùng cho: Top K elements, merge K sorted lists, median finder. Min-heap: root nhỏ nhất, Max-heap: root lớn nhất. Trie (Prefix Tree): lưu từ theo từng ký tự, search prefix O(m). Dùng cho: autocomplete, spell check, word search.">
                     <Paragraph><Highlight>Heap</Highlight> = lấy min/max O(1), insert/delete O(log n). <Highlight>Trie</Highlight> = tìm kiếm theo prefix.</Paragraph>
                     <div className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/20 p-4">
@@ -262,7 +262,7 @@ class Trie {
 
             <Heading3>4.2 Patterns cần luyện (click xem bài LeetCode gợi ý)</Heading3>
             <div className="my-4 space-y-2">
-                <TopicModal title="Hash Map / Hash Set" emoji="🗂️" color="#4ade80" summary="~15 bài — pattern dùng nhiều nhất, gần như mọi interview đều có">
+                <TopicModal title="Hash Map / Hash Set" emoji="🗂️" color="#4ade80" summary="~15 bài — pattern dùng nhiều nhất, gần như mọi interview đều có" concept="Pattern: dùng hash map/set để biến O(n²) thành O(n). Bài kinh điển: Two Sum (lưu complement), Group Anagrams (sorted key), Valid Sudoku, Contains Duplicate, Longest Consecutive Sequence. Kỹ thuật: frequency map, complement lookup, seen set, counter comparison.">
                     <Paragraph>Dùng khi: cần <Highlight>lookup O(1)</Highlight>, đếm frequency, tìm pair/complement, loại bỏ duplicates, hoặc group theo key.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -339,7 +339,7 @@ const hasDup = arr => new Set(arr).size !== arr.length
                     <a href="/blogs/hash-map-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="Two Pointers" emoji="👉👈" color="#4ade80" summary="~15 bài — dùng 2 con trỏ di chuyển trên sorted array hoặc linked list">
+                <TopicModal title="Two Pointers" emoji="👉👈" color="#4ade80" summary="~15 bài — dùng 2 con trỏ di chuyển trên sorted array hoặc linked list" concept="Dùng 2 con trỏ di chuyển trên array/string: same direction (fast-slow, cùng chiều) hoặc opposite direction (hai đầu). Bài kinh điển: Two Sum II (sorted), 3Sum, Container With Most Water, Remove Duplicates, Valid Palindrome. Điều kiện: thường dùng trên sorted array hoặc khi cần so sánh cặp phần tử.">
                     <Paragraph>Dùng khi: array đã <Highlight>sorted</Highlight>, tìm pair/triplet thỏa điều kiện, hoặc loại bỏ duplicates.</Paragraph>
                     <CodeBlock title="two-pointers-patterns.js">{`// 1. Opposite ends — sorted array tìm pair
 let left = 0, right = arr.length - 1
@@ -377,7 +377,7 @@ while (l < r) {
                     <a href="/blogs/two-pointers-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="Sliding Window" emoji="🪟" color="#4ade80" summary="~10 bài — tìm substring/subarray tối ưu với fixed hoặc variable window">
+                <TopicModal title="Sliding Window" emoji="🪟" color="#4ade80" summary="~10 bài — tìm substring/subarray tối ưu với fixed hoặc variable window" concept="Di chuyển 'cửa sổ' trên array/string: mở rộng right, thu hẹp left khi vi phạm điều kiện. Fixed window: size cố định (max sum k elements). Variable window: co giãn theo điều kiện (longest substring without repeating). Bài kinh điển: Minimum Window Substring, Longest Substring Without Repeating Characters, Maximum Average Subarray.">
                     <Paragraph>Dùng khi: tìm <Highlight>contiguous subarray/substring</Highlight> thỏa điều kiện (max sum, min length, contains all chars).</Paragraph>
                     <CodeBlock title="sliding-window-patterns.js">{`// 1. Fixed window — max average subarray
 let sum = 0, maxSum = -Infinity
@@ -424,7 +424,7 @@ for (let l = 0, r = 0; r < nums.length; r++) {
                     <a href="/blogs/sliding-window-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="BFS / DFS" emoji="🌲" color="#4ade80" summary="~20 bài — duyệt đồ thị và cây, quan trọng nhất cho Frontend (DOM tree!)">
+                <TopicModal title="BFS / DFS" emoji="🌲" color="#4ade80" summary="~20 bài — duyệt đồ thị và cây, quan trọng nhất cho Frontend (DOM tree!)" concept="DFS (đệ quy/stack): đi sâu hết nhanh trước, quay lại — dùng cho path finding, connected components, tree traversal. BFS (queue): đi theo từng level — dùng cho shortest path, level-order traversal. Frontend: DOM traversal là DFS, React reconciliation là DFS. Bài: Number of Islands, Max Depth of Binary Tree, Level Order.">
                     <Paragraph>Frontend engineer <Highlight>phải giỏi BFS/DFS</Highlight> vì DOM là tree! Flatten DOM, find element, traverse components.</Paragraph>
                     <CodeBlock title="bfs-dfs-patterns.js">{`// 1. DFS trên tree (recursive) — hầu hết bài tree
 function dfs(root) {
@@ -473,7 +473,7 @@ function sink(grid, i, j) {
                     <a href="/blogs/bfs-dfs-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="Binary Search" emoji="🔍" color="#4ade80" summary="~10 bài — O(log n) search, không chỉ trên sorted array">
+                <TopicModal title="Binary Search" emoji="🔍" color="#4ade80" summary="~10 bài — O(log n) search, không chỉ trên sorted array" concept="Chia đôi không gian tìm kiếm mỗi bước → O(log n). Không chỉ trên sorted array — dùng được bất kỳ khi có monotonic condition (có thể loại nửa không gian). Template: left, right, while left <= right, mid = Math.floor((left+right)/2). Bài: Search in Rotated Array, Find Peak, Koko Eating Bananas.">
                     <Paragraph>Binary search không chỉ tìm element — còn dùng cho <Highlight>search space reduction</Highlight> trên bất kỳ monotonic function nào.</Paragraph>
                     <CodeBlock title="binary-search-patterns.js">{`// 1. Classic binary search
 let left = 0, right = arr.length - 1
@@ -519,7 +519,7 @@ function minEatingSpeed(piles, h) {
                     <a href="/blogs/binary-search-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="Dynamic Programming" emoji="📊" color="#4ade80" summary="~15 bài Easy-Medium — phần khó nhất nhưng có pattern rõ ràng">
+                <TopicModal title="Dynamic Programming" emoji="📊" color="#4ade80" summary="~15 bài Easy-Medium — phần khó nhất nhưng có pattern rõ ràng" concept="DP = chia bài toán thành sub-problems nhỏ hơn, lưu kết quả (memoization/tabulation) để không tính lại. 5 bước: định nghĩa state, viết recurrence relation, xác định base cases, xác định thứ tự tính, optimize space. Patterns: 1D (Fibonacci, climbing stairs), 2D (grid paths, knapsack), string (LCS, edit distance).">
                     <Paragraph>DP = chia bài toán thành <Highlight>subproblems</Highlight>, lưu kết quả tránh tính lại. Frontend ít gặp Hard DP.</Paragraph>
                     <CodeBlock title="dp-patterns.js">{`// 1. Climbing Stairs — 1D DP cơ bản
 function climbStairs(n) {
@@ -569,7 +569,7 @@ function lengthOfLIS(nums) {
                     <a href="/blogs/dynamic-programming-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Xem bài viết chi tiết →</a>
                 </TopicModal>
 
-                <TopicModal title="Backtracking" emoji="🔙" color="#4ade80" summary="~10 bài — generate all combinations, permutations, subsets">
+                <TopicModal title="Backtracking" emoji="🔙" color="#4ade80" summary="~10 bài — generate all combinations, permutations, subsets" concept="Backtracking = thử tất cả khả năng, quay lại khi không hợp lệ. Template: choose → explore → unchoose (backtrack). Bài kinh điển: Subsets, Permutations, Combinations, N-Queens, Word Search. Khác với DFS: backtracking có bước 'unchoose' (định hướng quyết định), DFS chỉ duyệt.">
                     <Paragraph>Pattern: thử từng option → nếu không hợp lệ thì <Highlight>quay lại (backtrack)</Highlight> → thử option tiếp.</Paragraph>
                     <CodeBlock title="backtracking-patterns.js">{`// 1. Subsets — template cơ bản
 function subsets(nums) {
@@ -628,7 +628,7 @@ function generateParenthesis(n) {
                     <Callout type="tip">Template: <InlineCode>backtrack(start, path)</InlineCode> → push → recurse → pop. 3 dạng: <Highlight>Subsets</Highlight> (start = i+1), <Highlight>Permutations</Highlight> (used set), <Highlight>Combinations</Highlight> (đếm đủ k).</Callout>
                 </TopicModal>
 
-                <TopicModal title="Stack-based" emoji="📚" color="#4ade80" summary="~10 bài — monotonic stack, valid parentheses, expression eval">
+                <TopicModal title="Stack-based" emoji="📚" color="#4ade80" summary="~10 bài — monotonic stack, valid parentheses, expression eval" concept="Monotonic Stack: giữ stack tăng/giảm dần — tìm next greater/smaller element trong O(n). Valid Parentheses: push open, pop when close matches. Expression evaluation: 2 stacks (operators + operands) hoặc postfix conversion. Bài: Daily Temperatures, Next Greater Element, Largest Rectangle in Histogram.">
                     <Paragraph>Stack = <Highlight>LIFO</Highlight>. Rất hữu ích cho: matching brackets, next greater element, expression parsing.</Paragraph>
                     <CodeBlock title="stack-patterns.js">{`// 1. Valid Parentheses
 function isValid(s) {

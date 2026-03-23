@@ -14,7 +14,7 @@ export default function Phase5SystemDesign() {
 
             <Heading3>5.1 Common Topics (click to see the design framework)</Heading3>
             <div className="my-4 space-y-2">
-                <TopicModal title="Design a News Feed" emoji="📰" color="#a855f7" summary="Infinite scroll, virtualization, caching, optimistic update — the most common exercise">
+                <TopicModal title="Design a News Feed" emoji="📰" color="#a855f7" summary="Infinite scroll, virtualization, caching, optimistic update — the most common exercise" concept="News Feed requires: infinite scroll (IntersectionObserver + pagination), virtualization (only render items in viewport), caching strategy (stale-while-revalidate), optimistic updates (show like/comment immediately before server confirms). Plus: real-time updates (WebSocket/polling), image lazy loading, skeleton loading, pull-to-refresh.">
                     <Paragraph>Design a News Feed like Facebook/Twitter — this is the <Highlight>most classic</Highlight> FE System Design problem.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -110,7 +110,7 @@ function handleLike(postId: string) {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Design Autocomplete / Typeahead" emoji="🔍" color="#a855f7" summary="Debounce, caching, keyboard navigation — optimizing UX for search">
+                <TopicModal title="Design Autocomplete / Typeahead" emoji="🔍" color="#a855f7" summary="Debounce, caching, keyboard navigation — optimizing UX for search" concept="Autocomplete needs: debounce input (300ms), client-side cache (Map/LRU), keyboard navigation (↑↓ Enter Esc), highlight matching text, recent searches. Architecture: client cache → API call → server cache. Optimize: prefetch popular queries, trie for client-side filtering, cancel previous requests (AbortController).">
                     <Paragraph>Google Search, GitHub Code Search — a feature that seems simple but is <Highlight>extremely complex</Highlight>.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -223,7 +223,7 @@ function HighlightMatch({ text, query }) {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Design a Chat Application" emoji="💬" color="#a855f7" summary="WebSocket, offline support, presence, message ordering — real-time system">
+                <TopicModal title="Design a Chat Application" emoji="💬" color="#a855f7" summary="WebSocket, offline support, presence, message ordering — real-time system" concept="Chat requires: WebSocket for real-time (fallback to long-polling), message queue for ordering, offline support (IndexedDB + sync when online), presence system (online/typing indicators), optimistic sending, read receipts, message pagination (load from newest). Scale: room-based architecture, horizontal WebSocket scaling.">
                     <Paragraph>Design Messenger/Slack — a <Highlight>real-time communication system</Highlight> with many frontend challenges.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -327,7 +327,7 @@ function sendMessage(convId: string, text: string) {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Design Google Docs (Collaborative Editor)" emoji="📝" color="#a855f7" summary="CRDT/OT, conflict resolution, cursor sync — the hardest problem">
+                <TopicModal title="Design Google Docs (Collaborative Editor)" emoji="📝" color="#a855f7" summary="CRDT/OT, conflict resolution, cursor sync — the hardest problem" concept="Collaborative editing must resolve conflicts when multiple users edit simultaneously. OT (Operational Transform): transforms operations based on server order. CRDT (Conflict-free Replicated Data Types): auto-merge without conflicts. Plus: cursor sync (broadcast positions), undo/redo (operation log), offline editing (queue operations), presence awareness.">
                     <Paragraph>This is a <Highlight>Hard level</Highlight> problem — many people get stuck because they don&apos;t understand CRDT/OT.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -430,7 +430,7 @@ interface CursorInfo {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Design a Design System" emoji="🎨" color="#a855f7" summary="Component library, design tokens, theming, versioning — real-world Sr. Frontend interview question">
+                <TopicModal title="Design a Design System" emoji="🎨" color="#a855f7" summary="Component library, design tokens, theming, versioning — real-world Sr. Frontend interview question" concept="Design System includes: Design Tokens (colors, spacing, typography as variables), Component Library (atoms → molecules → organisms), Theming (CSS variables + provider pattern), Documentation (Storybook), Versioning (semantic versioning), Accessibility (WCAG built-in). Goal: consistency across products, developer productivity.">
                     <Paragraph>Design a Design System like <Highlight>Material UI, Ant Design, Chakra UI</Highlight> — a very common question for Senior/Staff Frontend positions.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -532,7 +532,7 @@ const tokens = {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Kubernetes & Cloud Run — Deploy Frontend" emoji="☸️" color="#326CE5" summary="Container orchestration, serverless deploy, Dockerfile, scaling — deploying Next.js to production">
+                <TopicModal title="Kubernetes & Cloud Run — Deploy Frontend" emoji="☸️" color="#326CE5" summary="Container orchestration, serverless deploy, Dockerfile, scaling — deploying Next.js to production" concept="Docker: package app + dependencies into containers. Dockerfile: build image (multi-stage: build → production). Kubernetes: orchestrate multiple containers (pods, services, deployments, auto-scaling). Cloud Run: serverless containers, pay only when handling requests. CI/CD: GitHub Actions → build image → push registry → deploy. Frontend: static export (CDN) vs server-side (container).">
                     <Paragraph>Knowing how to deploy apps on <Highlight>Kubernetes (K8s)</Highlight> or <Highlight>Cloud Run</Highlight> is an important skill for Senior Frontend. You don&apos;t need to become a DevOps expert, but understanding containers + orchestration is essential.</Paragraph>
 
                     <Callout type="info">🚗 <strong>Analogy: Deploy = Fleet Management</strong><br /><br />
@@ -699,7 +699,7 @@ spec:
                     <Callout type="tip">Interview: Senior Frontend engineers should know how to deploy apps in containers. When asked {'"How do you scale a frontend?"'} → <Highlight>Cloud Run for serverless (simple) or K8s + HPA for enterprise (full control)</Highlight>. Bonus: mention multi-stage Docker builds reducing image size from 1GB to 150MB.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Functional vs Non-Functional Requirements" emoji="📋" color="#f59e0b" summary="The first step in System Design — distinguishing 'what it does' vs 'how well it does it'">
+                <TopicModal title="Functional vs Non-Functional Requirements" emoji="📋" color="#f59e0b" summary="The first step in System Design — distinguishing 'what it does' vs 'how well it does it'" concept="Functional Requirements: what the app does (features, user stories, API endpoints). Non-Functional Requirements: how well it does it (performance, scalability, availability, security, accessibility). In interviews: always list/ask about both before designing. Prioritize non-functional by context: e-commerce needs availability, banking needs consistency.">
                     <Paragraph>When starting any System Design problem, the first step is <Highlight>Clarify Requirements</Highlight>. You must clearly distinguish 2 types:</Paragraph>
 
                     <div className="my-3 space-y-2">

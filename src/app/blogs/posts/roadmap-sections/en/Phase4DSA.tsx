@@ -16,7 +16,7 @@ export default function Phase4DSA() {
             <Heading3>4.1 Data Structures (click for details)</Heading3>
             <a href="/blogs/data-types-structures" target="_blank" rel="noopener noreferrer" className="mb-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read Data Types &amp; Structures article →</a>
             <div className="my-4 space-y-2">
-                <TopicModal title="Array / String" emoji="📦" color="#4ade80" summary="⭐ Must know — foundation of all DSA problems, two pointers, sliding window">
+                <TopicModal title="Array / String" emoji="📦" color="#4ade80" summary="⭐ Must know — foundation of all DSA problems, two pointers, sliding window" concept="Array stores data contiguously in memory, O(1) access by index but O(n) insert/delete. String is an immutable array of chars. Key patterns: Two Pointers (sorted array), Sliding Window (subarray/substring), Prefix Sum (range queries), Kadane's (max subarray). Most DSA problems involve arrays/strings.">
                     <Paragraph><Highlight>Array</Highlight> stores elements contiguously in memory → O(1) access by index. <Highlight>String</Highlight> in JS is immutable — each change creates a new string.</Paragraph>
                     <div className="my-3 overflow-x-auto">
                         <table className="w-full text-sm border-collapse">
@@ -43,7 +43,7 @@ const isPalin = s => s === s.split('').reverse().join('')`}</CodeBlock>
                     <Callout type="tip">Interview: 80% of LeetCode problems involve Arrays/Strings. Master <Highlight>Two Pointers</Highlight> and <Highlight>Sliding Window</Highlight> to solve most of them.</Callout>
                 </TopicModal>
 
-                <TopicModal title="HashMap / HashSet" emoji="🗂️" color="#4ade80" summary="⭐ Must know — frequency count, cache, O(1) lookup">
+                <TopicModal title="HashMap / HashSet" emoji="🗂️" color="#4ade80" summary="⭐ Must know — frequency count, cache, O(1) lookup" concept="HashMap stores key-value pairs, O(1) average lookup/insert/delete. HashSet stores keys only (existence check). Use for: frequency counting, finding duplicates, Two Sum pattern (complement lookup), grouping (anagrams). Trade O(n) space for O(1) time — classic space-time tradeoff.">
                     <Paragraph><Highlight>HashMap</Highlight> (Map) stores key→value, <Highlight>HashSet</Highlight> (Set) stores unique keys only. Both allow add/remove/find in average <Highlight>O(1)</Highlight>.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -69,7 +69,7 @@ for (let i = 0; i < nums.length; i++) {
                     <a href="/blogs/hash-map-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="Stack / Queue" emoji="📚" color="#4ade80" summary="⭐ Must know — valid parentheses, BFS, monotonic stack">
+                <TopicModal title="Stack / Queue" emoji="📚" color="#4ade80" summary="⭐ Must know — valid parentheses, BFS, monotonic stack" concept="Stack: LIFO (Last In First Out) — push/pop O(1). Used for: valid parentheses, undo/redo, DFS, expression evaluation, monotonic stack (next greater element). Queue: FIFO (First In First Out) — enqueue/dequeue O(1). Used for: BFS, task scheduling, sliding window maximum. JS Call Stack is literally a stack.">
                     <Paragraph><Highlight>Stack</Highlight> = LIFO (Last In First Out), <Highlight>Queue</Highlight> = FIFO (First In First Out). Simple yet powerful.</Paragraph>
                     <div className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
@@ -106,7 +106,7 @@ queue.shift()    // 1, queue = [2]
                     <a href="/blogs/stack-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="Linked List" emoji="🔗" color="#60a5fa" summary="⭐⭐ Important — reverse, cycle detect, merge sorted lists">
+                <TopicModal title="Linked List" emoji="🔗" color="#60a5fa" summary="⭐⭐ Important — reverse, cycle detect, merge sorted lists" concept="Linked List: each node contains data + pointer to next node. Insert/delete O(1) at known position but search O(n). Patterns: reverse (3 pointers: prev, curr, next), fast-slow pointers (cycle detection, find middle), merge two sorted lists. Singly vs Doubly linked. Rarely used in practice but frequently asked because it tests pointer manipulation.">
                     <Paragraph>Each node contains <InlineCode>value</InlineCode> + <InlineCode>next</InlineCode> pointer. No random access (O(n)), but insert/delete at head is <Highlight>O(1)</Highlight>.</Paragraph>
                     <CodeBlock title="linked-list.js">{`class ListNode {
     constructor(val, next = null) {
@@ -139,7 +139,7 @@ function hasCycle(head) {
                     <Callout type="tip">Key techniques: <Highlight>Dummy node</Highlight> (avoid edge cases), <Highlight>Fast/Slow pointers</Highlight>, <Highlight>Reverse</Highlight> (3 vars: prev/curr/next).</Callout>
                 </TopicModal>
 
-                <TopicModal title="Tree / Binary Tree" emoji="🌳" color="#60a5fa" summary="⭐⭐ Important — DFS, BFS, DOM tree, BST">
+                <TopicModal title="Tree / Binary Tree" emoji="🌳" color="#60a5fa" summary="⭐⭐ Important — DFS, BFS, DOM tree, BST" concept="Tree: hierarchical structure with root and children (DOM is a tree!). Binary Tree: each node has at most 2 children. BST: left < root < right — search O(log n). Traversal: DFS (Inorder=sorted, Preorder=copy, Postorder=delete) and BFS (level-by-level). Patterns: recursion (base case + recursive case), height/depth, LCA, validate BST.">
                     <Paragraph>Tree = acyclic graph. <Highlight>Binary Tree</Highlight> = max 2 children per node. <Highlight>BST</Highlight> = left &lt; root &lt; right.</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
@@ -177,7 +177,7 @@ function levelOrder(root) {
                     <a href="/blogs/bfs-dfs-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read BFS/DFS article →</a>
                 </TopicModal>
 
-                <TopicModal title="Graph" emoji="🕸️" color="#60a5fa" summary="⭐⭐ Important — BFS/DFS, cycle detection, topological sort">
+                <TopicModal title="Graph" emoji="🕸️" color="#60a5fa" summary="⭐⭐ Important — BFS/DFS, cycle detection, topological sort" concept="Graph consists of vertices (nodes) and edges (connections). Representation: adjacency list (most common) or adjacency matrix. DFS: go deep first (stack/recursion). BFS: go wide first (queue) — finds shortest path. Directed vs Undirected. Cycle detection: DFS with visited states. Topological Sort: dependency ordering (task scheduling, build systems).">
                     <Paragraph>Graph = vertices + edges. Represented using <Highlight>adjacency list</Highlight> (most common).</Paragraph>
                     <div className="my-3 space-y-2">
                         <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
@@ -211,7 +211,7 @@ function bfs(graph, start) {
                     <Callout type="warning">Graphs can have <Highlight>cycles</Highlight> → always use a <InlineCode>visited</InlineCode> set. Forgetting = infinite loop!</Callout>
                 </TopicModal>
 
-                <TopicModal title="Heap / Trie" emoji="⛰️" color="#a78bfa" summary="⭐⭐⭐ Advanced — Top K elements, autocomplete, priority queue">
+                <TopicModal title="Heap / Trie" emoji="⛰️" color="#a78bfa" summary="⭐⭐⭐ Advanced — Top K elements, autocomplete, priority queue" concept="Heap (Priority Queue): always get min/max in O(1), insert/extract O(log n). Used for: Top K elements, merge K sorted lists, median finder. Min-heap: smallest at root, Max-heap: largest at root. Trie (Prefix Tree): stores words character by character, prefix search O(m). Used for: autocomplete, spell check, word search.">
                     <Paragraph><Highlight>Heap</Highlight> = get min/max O(1), insert/delete O(log n). <Highlight>Trie</Highlight> = prefix-based search.</Paragraph>
                     <div className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/20 p-4">
@@ -262,7 +262,7 @@ class Trie {
 
             <Heading3>4.2 Patterns to Practice (click for suggested LeetCode problems)</Heading3>
             <div className="my-4 space-y-2">
-                <TopicModal title="Hash Map / Hash Set" emoji="🗂️" color="#4ade80" summary="~15 problems — the most used pattern, almost every interview includes it">
+                <TopicModal title="Hash Map / Hash Set" emoji="🗂️" color="#4ade80" summary="~15 problems — the most used pattern, almost every interview includes it" concept="Pattern: use hash map/set to convert O(n²) to O(n). Classic problems: Two Sum (store complement), Group Anagrams (sorted key), Valid Sudoku, Contains Duplicate, Longest Consecutive Sequence. Techniques: frequency map, complement lookup, seen set, counter comparison.">
                     <Paragraph>Use when: you need <Highlight>O(1) lookup</Highlight>, frequency counting, finding pair/complement, removing duplicates, or grouping by key.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -339,7 +339,7 @@ for (const s of strs) {
                     <a href="/blogs/hash-map-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="Two Pointers" emoji="👉👈" color="#4ade80" summary="~15 problems — use 2 pointers moving on sorted array or linked list">
+                <TopicModal title="Two Pointers" emoji="👉👈" color="#4ade80" summary="~15 problems — use 2 pointers moving on sorted array or linked list" concept="Use 2 pointers moving on array/string: same direction (fast-slow) or opposite direction (from both ends). Classic problems: Two Sum II (sorted), 3Sum, Container With Most Water, Remove Duplicates, Valid Palindrome. Condition: usually applied on sorted arrays or when comparing pairs of elements.">
                     <Paragraph>Use when: array is <Highlight>sorted</Highlight>, finding pair/triplet meeting a condition, or removing duplicates.</Paragraph>
                     <CodeBlock title="two-pointers-patterns.js">{`// 1. Opposite ends — find pair in sorted array
 let left = 0, right = arr.length - 1
@@ -377,7 +377,7 @@ while (l < r) {
                     <a href="/blogs/two-pointers-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="Sliding Window" emoji="🪟" color="#4ade80" summary="~10 problems — find optimal substring/subarray with fixed or variable window">
+                <TopicModal title="Sliding Window" emoji="🪟" color="#4ade80" summary="~10 problems — find optimal substring/subarray with fixed or variable window" concept="Move a 'window' over array/string: expand right, shrink left when condition is violated. Fixed window: constant size (max sum of k elements). Variable window: expands/shrinks based on condition (longest substring without repeating). Classic: Minimum Window Substring, Longest Substring Without Repeating Characters, Maximum Average Subarray.">
                     <Paragraph>Use when: finding a <Highlight>contiguous subarray/substring</Highlight> meeting a condition (max sum, min length, contains all chars).</Paragraph>
                     <CodeBlock title="sliding-window-patterns.js">{`// 1. Fixed window — max average subarray
 let sum = 0, maxSum = -Infinity
@@ -424,7 +424,7 @@ for (let l = 0, r = 0; r < nums.length; r++) {
                     <a href="/blogs/sliding-window-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="BFS / DFS" emoji="🌲" color="#4ade80" summary="~20 problems — graph and tree traversal, most important for Frontend (DOM tree!)">
+                <TopicModal title="BFS / DFS" emoji="🌲" color="#4ade80" summary="~20 problems — graph and tree traversal, most important for Frontend (DOM tree!)" concept="DFS (recursion/stack): go deep first, backtrack — used for path finding, connected components, tree traversal. BFS (queue): go level by level — used for shortest path, level-order traversal. Frontend: DOM traversal is DFS, React reconciliation is DFS. Problems: Number of Islands, Max Depth of Binary Tree, Level Order.">
                     <Paragraph>Frontend engineers <Highlight>must be good at BFS/DFS</Highlight> because the DOM is a tree! Flatten DOM, find element, traverse components.</Paragraph>
                     <CodeBlock title="bfs-dfs-patterns.js">{`// 1. DFS on tree (recursive)
 function dfs(root) {
@@ -473,7 +473,7 @@ function sink(grid, i, j) {
                     <a href="/blogs/bfs-dfs-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="Binary Search" emoji="🔍" color="#4ade80" summary="~10 problems — O(log n) search, not just on sorted arrays">
+                <TopicModal title="Binary Search" emoji="🔍" color="#4ade80" summary="~10 problems — O(log n) search, not just on sorted arrays" concept="Halve the search space each step → O(log n). Not just for sorted arrays — works whenever there's a monotonic condition (can eliminate half the space). Template: left, right, while left <= right, mid = Math.floor((left+right)/2). Problems: Search in Rotated Array, Find Peak, Koko Eating Bananas.">
                     <Paragraph>Binary search isn&apos;t just finding an element — it&apos;s also used for <Highlight>search space reduction</Highlight> on any monotonic function.</Paragraph>
                     <CodeBlock title="binary-search-patterns.js">{`// 1. Classic binary search
 let left = 0, right = arr.length - 1
@@ -519,7 +519,7 @@ function minEatingSpeed(piles, h) {
                     <a href="/blogs/binary-search-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="Dynamic Programming" emoji="📊" color="#4ade80" summary="~15 Easy-Medium problems — hardest part but has clear patterns">
+                <TopicModal title="Dynamic Programming" emoji="📊" color="#4ade80" summary="~15 Easy-Medium problems — hardest part but has clear patterns" concept="DP = break problems into smaller sub-problems, store results (memoization/tabulation) to avoid recomputation. 5 steps: define state, write recurrence relation, identify base cases, determine computation order, optimize space. Patterns: 1D (Fibonacci, climbing stairs), 2D (grid paths, knapsack), string (LCS, edit distance).">
                     <Paragraph>DP = break a problem into <Highlight>subproblems</Highlight>, store results to avoid recalculation. Frontend rarely encounters Hard DP.</Paragraph>
                     <CodeBlock title="dp-patterns.js">{`// 1. Climbing Stairs — basic 1D DP
 function climbStairs(n) {
@@ -569,7 +569,7 @@ function lengthOfLIS(nums) {
                     <a href="/blogs/dynamic-programming-pattern" target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium hover:bg-green-500/20 transition-colors">📖 Read detailed article →</a>
                 </TopicModal>
 
-                <TopicModal title="Backtracking" emoji="🔙" color="#4ade80" summary="~10 problems — generate all combinations, permutations, subsets">
+                <TopicModal title="Backtracking" emoji="🔙" color="#4ade80" summary="~10 problems — generate all combinations, permutations, subsets" concept="Backtracking = try all possibilities, backtrack when invalid. Template: choose → explore → unchoose (backtrack). Classic problems: Subsets, Permutations, Combinations, N-Queens, Word Search. Unlike DFS: backtracking has an 'unchoose' step (decision-oriented), DFS just traverses.">
                     <Paragraph>Pattern: try each option → if invalid, <Highlight>go back (backtrack)</Highlight> → try the next option.</Paragraph>
                     <CodeBlock title="backtracking-patterns.js">{`// 1. Subsets — basic template
 function subsets(nums) {
@@ -628,7 +628,7 @@ function generateParenthesis(n) {
                     <Callout type="tip">Template: <InlineCode>backtrack(start, path)</InlineCode> → push → recurse → pop. 3 types: <Highlight>Subsets</Highlight> (start = i+1), <Highlight>Permutations</Highlight> (used set), <Highlight>Combinations</Highlight> (count to k).</Callout>
                 </TopicModal>
 
-                <TopicModal title="Stack-based" emoji="📚" color="#4ade80" summary="~10 problems — monotonic stack, valid parentheses, expression eval">
+                <TopicModal title="Stack-based" emoji="📚" color="#4ade80" summary="~10 problems — monotonic stack, valid parentheses, expression eval" concept="Monotonic Stack: maintains increasing/decreasing order — finds next greater/smaller element in O(n). Valid Parentheses: push open brackets, pop when closing bracket matches. Expression evaluation: 2 stacks (operators + operands) or postfix conversion. Problems: Daily Temperatures, Next Greater Element, Largest Rectangle in Histogram.">
                     <Paragraph>Stack = <Highlight>LIFO</Highlight>. Very useful for: matching brackets, next greater element, expression parsing.</Paragraph>
                     <CodeBlock title="stack-patterns.js">{`// 1. Valid Parentheses
 function isValid(s) {

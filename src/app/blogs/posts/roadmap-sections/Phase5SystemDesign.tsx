@@ -14,7 +14,7 @@ export default function Phase5SystemDesign() {
 
             <Heading3>5.1 Các topic thường gặp (click để xem framework thiết kế)</Heading3>
             <div className="my-4 space-y-2">
-                <TopicModal title="Design a News Feed" emoji="📰" color="#a855f7" summary="Infinite scroll, virtualization, caching, optimistic update — bài tập phổ biến nhất">
+                <TopicModal title="Design a News Feed" emoji="📰" color="#a855f7" summary="Infinite scroll, virtualization, caching, optimistic update — bài tập phổ biến nhất" concept="News Feed cần: infinite scroll (IntersectionObserver + pagination), virtualization (chỉ render items trong viewport), caching strategy (stale-while-revalidate), optimistic updates (like/comment hiển thị ngay trước khi server confirm). Thêm: real-time updates (WebSocket/polling), image lazy loading, skeleton loading, pull-to-refresh.">
                     <Paragraph>Thiết kế News Feed như Facebook/Twitter — đây là bài <Highlight>classic nhất</Highlight> trong FE System Design.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -110,7 +110,7 @@ function handleLike(postId: string) {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Design Autocomplete / Typeahead" emoji="🔍" color="#a855f7" summary="Debounce, caching, keyboard navigation — tối ưu UX cho search">
+                <TopicModal title="Design Autocomplete / Typeahead" emoji="🔍" color="#a855f7" summary="Debounce, caching, keyboard navigation — tối ưu UX cho search" concept="Autocomplete cần: debounce input (300ms), client-side cache (Map/LRU), keyboard navigation (↑↓ Enter Esc), highlight matching text, recent searches. Architecture: client cache → API call → server cache. Tối ưu: prefetch popular queries, trie cho client-side filtering, cancel previous requests (AbortController).">
                     <Paragraph>Google Search, GitHub Code Search — chức năng tưởng đơn giản nhưng <Highlight>cực kỳ complex</Highlight>.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -223,7 +223,7 @@ function HighlightMatch({ text, query }) {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Design a Chat Application" emoji="💬" color="#a855f7" summary="WebSocket, offline support, presence, message ordering — real-time system">
+                <TopicModal title="Design a Chat Application" emoji="💬" color="#a855f7" summary="WebSocket, offline support, presence, message ordering — real-time system" concept="Chat cần: WebSocket cho real-time (fallback long-polling), message queue đảm bảo thứ tự, offline support (IndexedDB + sync khi online), presence system (online/typing indicators), optimistic sending, read receipts, message pagination (đọc từ mới nhất). Scale: room-based architecture, horizontal WebSocket scaling.">
                     <Paragraph>Design Messenger/Slack — <Highlight>real-time communication system</Highlight> với nhiều thử thách frontend.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -327,7 +327,7 @@ function sendMessage(convId: string, text: string) {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Design Google Docs (Collaborative Editor)" emoji="📝" color="#a855f7" summary="CRDT/OT, conflict resolution, cursor sync — bài khó nhất">
+                <TopicModal title="Design Google Docs (Collaborative Editor)" emoji="📝" color="#a855f7" summary="CRDT/OT, conflict resolution, cursor sync — bài khó nhất" concept="Collaborative editing cần giải quyết conflict khi nhiều người edit cùng lúc. OT (Operational Transform): transform operations dựa trên server order. CRDT (Conflict-free Replicated Data Types): merge tự động không conflict. Thêm: cursor sync (broadcast positions), undo/redo (operation log), offline editing (queue operations), presence awareness.">
                     <Paragraph>Đây là bài <Highlight>level Hard</Highlight> — nhiều người chặn ở đây vì không hiểu CRDT/OT.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -430,7 +430,7 @@ interface CursorInfo {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Design a Design System" emoji="🎨" color="#a855f7" summary="Component library, design tokens, theming, versioning — bài phỏng vấn thực tế cho Sr. Frontend">
+                <TopicModal title="Design a Design System" emoji="🎨" color="#a855f7" summary="Component library, design tokens, theming, versioning — bài phỏng vấn thực tế cho Sr. Frontend" concept="Design System gồm: Design Tokens (colors, spacing, typography dưới dạng variables), Component Library (atoms → molecules → organisms), Theming (CSS variables + provider pattern), Documentation (Storybook), Versioning (semantic versioning), Accessibility (WCAG built-in). Mục tiêu: consistency across products, developer productivity.">
                     <Paragraph>Thiết kế Design System như <Highlight>Material UI, Ant Design, Chakra UI</Highlight> — câu hỏi rất phổ biến cho vị trí Senior/Staff Frontend.</Paragraph>
 
                     <div className="my-3 space-y-2">
@@ -532,7 +532,7 @@ const tokens = {
                     </Callout>
                 </TopicModal>
 
-                <TopicModal title="Kubernetes & Cloud Run — Deploy Frontend" emoji="☸️" color="#326CE5" summary="Container orchestration, serverless deploy, Dockerfile, scaling — deploy Next.js lên production">
+                <TopicModal title="Kubernetes & Cloud Run — Deploy Frontend" emoji="☸️" color="#326CE5" summary="Container orchestration, serverless deploy, Dockerfile, scaling — deploy Next.js lên production" concept="Docker: đóng gói app + dependencies vào container. Dockerfile: build image (multi-stage: build → production). Kubernetes: orchestrate nhiều containers (pods, services, deployments, auto-scaling). Cloud Run: serverless containers, chỉ trả khi có request. CI/CD: GitHub Actions → build image → push registry → deploy. Frontend: static export (CDN) vs server-side (container).">
                     <Paragraph>Biết deploy app lên <Highlight>Kubernetes (K8s)</Highlight> hoặc <Highlight>Cloud Run</Highlight> là kỹ năng quan trọng cho Senior Frontend. Không cần thành DevOps expert, nhưng phải hiểu container + orchestration.</Paragraph>
 
                     <Callout type="info">🚗 <strong>Ẩn dụ: Deploy = Quản lý đội xe</strong><br /><br />
@@ -699,7 +699,7 @@ spec:
                     <Callout type="tip">Interview: Senior Frontend nên biết deploy app lên container. Khi hỏi {'"Làm sao scale frontend?"'} → <Highlight>Cloud Run cho serverless (đơn giản) hoặc K8s + HPA cho enterprise (kiểm soát đầy đủ)</Highlight>. Bonus: nhắc multi-stage Docker build giảm image size từ 1GB xuống 150MB.</Callout>
                 </TopicModal>
 
-                <TopicModal title="Functional vs Non-Functional Requirements" emoji="📋" color="#f59e0b" summary="Bước đầu tiên trong System Design — phân biệt 'nó làm gì' vs 'nó tốt thế nào'">
+                <TopicModal title="Functional vs Non-Functional Requirements" emoji="📋" color="#f59e0b" summary="Bước đầu tiên trong System Design — phân biệt 'nó làm gì' vs 'nó tốt thế nào'" concept="Functional Requirements: app làm gì (features, user stories, API endpoints). Non-Functional Requirements: app tốt thế nào (performance, scalability, availability, security, accessibility). Trong interview: luôn hỏi/liệt kê cả hai trước khi thiết kế. Prioritize non-functional theo context: e-commerce cần availability, bank cần consistency.">
                     <Paragraph>Khi bắt đầu bất kỳ bài System Design nào, bước đầu tiên là <Highlight>Clarify Requirements</Highlight>. Bạn phải phân biệt rõ 2 loại:</Paragraph>
 
                     <div className="my-3 space-y-2">
