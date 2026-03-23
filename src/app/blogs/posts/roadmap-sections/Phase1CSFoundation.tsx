@@ -433,22 +433,23 @@ SSE:       Server → Client (1 chiều, server push liên tục)
                 <Callout type="tip">📚 Ví dụ thực tế: Next.js API Routes dùng HTTP. n8n webhooks dùng HTTP. TikTok live dùng WebSocket. Vercel serverless functions dùng HTTP/2.</Callout>
             </TopicModal>
 
-            <TopicModal title="REST vs GraphQL" emoji="🔌" color="#ef4444" summary="Hai mô hình API phổ biến — khi nào dùng cái nào" concept="REST dùng nhiều endpoints cố định (GET /users, POST /orders), đơn giản, có HTTP caching. GraphQL dùng 1 endpoint duy nhất, client tự chọn fields cần lấy — tránh over-fetching/under-fetching. REST tốt cho CRUD đơn giản và caching; GraphQL tốt cho UI phức tạp cần data từ nhiều nguồn trong 1 request.">
+            <TopicModal title="REST vs GraphQL vs gRPC" emoji="🔌" color="#ef4444" summary="3 mô hình API phổ biến — khi nào dùng cái nào" concept="REST dùng nhiều endpoints cố định, đơn giản, có HTTP caching. GraphQL dùng 1 endpoint, client tự chọn fields — tránh over/under-fetching. gRPC dùng Protocol Buffers (binary) qua HTTP/2, nhanh gấp 2-10x JSON — tối ưu cho microservices nội bộ và streaming.">
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">REST</th><th className="text-left p-2 text-purple-400">GraphQL</th></tr></thead>
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">REST</th><th className="text-left p-2 text-purple-400">GraphQL</th><th className="text-left p-2 text-green-400">gRPC</th></tr></thead>
                         <tbody className="text-[var(--text-secondary)]">
-                            <tr className="border-b border-gray-100"><td className="p-2">Kiểu</td><td className="p-2">Nhiều endpoints</td><td className="p-2">1 endpoint duy nhất</td></tr>
-                            <tr className="border-b border-gray-100"><td className="p-2">Data fetching</td><td className="p-2">Server quyết định trả gì</td><td className="p-2">Client chọn fields cần</td></tr>
-                            <tr className="border-b border-gray-100"><td className="p-2">Over-fetching</td><td className="p-2">Thường xảy ra</td><td className="p-2">Không bao giờ</td></tr>
-                            <tr className="border-b border-gray-100"><td className="p-2">Under-fetching</td><td className="p-2">Cần gọi nhiều endpoints</td><td className="p-2">1 query lấy hết</td></tr>
-                            <tr className="border-b border-gray-100"><td className="p-2">Caching</td><td className="p-2">HTTP caching đơn giản</td><td className="p-2">Phức tạp hơn (Apollo cache)</td></tr>
-                            <tr className="border-b border-gray-100"><td className="p-2">Error handling</td><td className="p-2">HTTP status codes</td><td className="p-2">Luôn 200, errors trong body</td></tr>
-                            <tr><td className="p-2">Dùng bởi</td><td className="p-2">Hầu hết APIs</td><td className="p-2">Facebook, GitHub, Shopify</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Protocol</td><td className="p-2">HTTP/1.1 (JSON)</td><td className="p-2">HTTP/1.1 (JSON)</td><td className="p-2">HTTP/2 (Protobuf binary)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Kiểu</td><td className="p-2">Nhiều endpoints</td><td className="p-2">1 endpoint duy nhất</td><td className="p-2">Service + Methods (.proto)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Data format</td><td className="p-2">JSON (text, dễ đọc)</td><td className="p-2">JSON (text, dễ đọc)</td><td className="p-2">Protobuf (binary, nhỏ ~10x)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Hiệu năng</td><td className="p-2">Tốt</td><td className="p-2">Tốt</td><td className="p-2">Rất nhanh (2-10x faster)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Streaming</td><td className="p-2">Không native</td><td className="p-2">Subscriptions</td><td className="p-2">4 loại (uni/bi-directional)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Type safety</td><td className="p-2">Không (cần OpenAPI)</td><td className="p-2">Schema tự mô tả</td><td className="p-2">.proto file (code-gen)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Browser support</td><td className="p-2">✅ Native</td><td className="p-2">✅ Native</td><td className="p-2">⚠️ Cần gRPC-Web proxy</td></tr>
+                            <tr><td className="p-2">Dùng bởi</td><td className="p-2">Hầu hết APIs</td><td className="p-2">Meta, GitHub, Shopify</td><td className="p-2">Google, Netflix, Uber</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <CodeBlock title="REST vs GraphQL example">{`// REST: Cần 3 requests để lấy data cho 1 trang profile
+                <CodeBlock title="REST vs GraphQL vs gRPC">{`// REST: Cần 3 requests để lấy data cho 1 trang profile
 GET /api/users/1           → { id: 1, name: "An", ... }
 GET /api/users/1/posts     → [{ title: "...", ... }]
 GET /api/users/1/followers → [{ name: "...", ... }]
@@ -463,9 +464,49 @@ query {
     followers { name }
   }
 }
-→ Chính xác data cần, không thừa!`}</CodeBlock>
+→ Chính xác data cần, không thừa!
+
+// gRPC: Gọi hàm remote như gọi local function
+const user = await client.GetUser({ id: "1" })
+// → Protobuf binary, nhanh gấp 2-10x JSON
+// → Type-safe: compiler báo lỗi nếu sai field`}</CodeBlock>
+
+                <Heading3>gRPC — Remote Procedure Call</Heading3>
+                <Paragraph>gRPC dùng <Highlight>Protocol Buffers</Highlight> (binary format) qua <Highlight>HTTP/2</Highlight>. Client gọi hàm server như gọi local function — type-safe, auto-generate code từ <InlineCode>.proto</InlineCode> file.</Paragraph>
+
+                <CodeBlock title="gRPC .proto file (API contract)">{`syntax = "proto3";
+
+service UserService {
+  rpc GetUser (GetUserReq) returns (UserRes);           // Unary: 1 req → 1 res
+  rpc ListUsers (ListReq) returns (stream UserRes);     // Server streaming
+  rpc UploadAvatar (stream Chunk) returns (UploadRes);  // Client streaming
+  rpc Chat (stream Msg) returns (stream Msg);           // Bidirectional
+}
+
+message GetUserReq { string id = 1; }
+message UserRes { string id = 1; string name = 2; int32 age = 3; }`}</CodeBlock>
+
+                <CodeBlock title="4 loại gRPC Communication">{`1. Unary:            Client ──req──→ Server ──res──→ Client
+                     Giống REST — phổ biến nhất
+
+2. Server Streaming: Client ──req──→ Server ══res══→ Client
+                     Live feed, progress updates, notifications
+
+3. Client Streaming: Client ══req══→ Server ──res──→ Client
+                     Upload file chunks, batch data
+
+4. Bidirectional:    Client ←══════→ Server
+                     Chat, real-time sync (giống WebSocket)`}</CodeBlock>
 
                 <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">Khi nào dùng gì?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>REST</strong>: Public API, CRUD đơn giản, browser client, prototype nhanh<br />
+                            • <strong>GraphQL</strong>: UI phức tạp cần flexible data, mobile app (giảm bandwidth), nhiều data sources<br />
+                            • <strong>gRPC</strong>: Microservices nội bộ (service ↔ service), cần hiệu năng cao, streaming, polyglot (Go ↔ Node ↔ Python)
+                        </div>
+                    </div>
                     <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <div className="text-red-400 font-bold text-sm">N+1 Problem (cả REST và GraphQL)</div>
                         <div className="text-slate-300 text-sm mt-1">
@@ -474,7 +515,7 @@ query {
                         </div>
                     </div>
                 </div>
-                <Callout type="tip">Trong thực tế, hầu hết frontend projects dùng <strong>REST</strong>. GraphQL thường gặp ở công ty lớn (Meta, Shopify) hoặc app có UI phức tạp cần flexible data fetching.</Callout>
+                <Callout type="tip">Hầu hết frontend projects dùng <strong>REST</strong>. GraphQL thường gặp ở công ty lớn. gRPC phổ biến trong <strong>backend microservices</strong> — ít khi frontend gọi trực tiếp (dùng API Gateway làm trung gian REST ↔ gRPC).</Callout>
             </TopicModal>
 
             <TopicModal title="CORS, Cookies, JWT" emoji="🔐" color="#ef4444" summary="Authentication flow — cách web apps xác thực người dùng" concept="CORS là cơ chế browser cho phép/chặn request cross-origin (domain A gọi API domain B). Cookie lưu session phía server, tự gửi kèm mỗi request — dễ dùng nhưng chỉ hoạt động same-origin. JWT là token tự chứa thông tin (header.payload.signature), stateless, phù hợp cho API authentication — nhưng không revoke được trước khi hết hạn.">

@@ -433,22 +433,23 @@ SSE:       Server → Client (one-way, server pushes continuously)
                 <Callout type="tip">📚 Real-world examples: Next.js API Routes use HTTP. n8n webhooks use HTTP. TikTok live uses WebSocket. Vercel serverless functions use HTTP/2.</Callout>
             </TopicModal>
 
-            <TopicModal title="REST vs GraphQL" emoji="🔌" color="#ef4444" summary="Two popular API models — when to use which" concept="REST uses multiple fixed endpoints (GET /users, POST /orders), is simple, and supports HTTP caching. GraphQL uses a single endpoint where clients specify exactly which fields they need — avoiding over-fetching/under-fetching. REST excels at simple CRUD with caching; GraphQL excels at complex UIs needing data from multiple sources in one request.">
+            <TopicModal title="REST vs GraphQL vs gRPC" emoji="🔌" color="#ef4444" summary="3 popular API paradigms — when to use which" concept="REST uses multiple fixed endpoints, is simple, and supports HTTP caching. GraphQL uses a single endpoint where clients pick fields — avoiding over/under-fetching. gRPC uses Protocol Buffers (binary) over HTTP/2, 2-10x faster than JSON — optimized for internal microservices and streaming.">
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-blue-400">REST</th><th className="text-left p-2 text-purple-400">GraphQL</th></tr></thead>
+                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-blue-400">REST</th><th className="text-left p-2 text-purple-400">GraphQL</th><th className="text-left p-2 text-green-400">gRPC</th></tr></thead>
                         <tbody className="text-[var(--text-secondary)]">
-                            <tr className="border-b border-gray-100"><td className="p-2">Type</td><td className="p-2">Multiple endpoints</td><td className="p-2">Single endpoint</td></tr>
-                            <tr className="border-b border-gray-100"><td className="p-2">Data fetching</td><td className="p-2">Server decides what to return</td><td className="p-2">Client picks needed fields</td></tr>
-                            <tr className="border-b border-gray-100"><td className="p-2">Over-fetching</td><td className="p-2">Common</td><td className="p-2">Never</td></tr>
-                            <tr className="border-b border-gray-100"><td className="p-2">Under-fetching</td><td className="p-2">Need multiple endpoints</td><td className="p-2">1 query gets everything</td></tr>
-                            <tr className="border-b border-gray-100"><td className="p-2">Caching</td><td className="p-2">Simple HTTP caching</td><td className="p-2">More complex (Apollo cache)</td></tr>
-                            <tr className="border-b border-gray-100"><td className="p-2">Error handling</td><td className="p-2">HTTP status codes</td><td className="p-2">Always 200, errors in body</td></tr>
-                            <tr><td className="p-2">Used by</td><td className="p-2">Most APIs</td><td className="p-2">Facebook, GitHub, Shopify</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Protocol</td><td className="p-2">HTTP/1.1 (JSON)</td><td className="p-2">HTTP/1.1 (JSON)</td><td className="p-2">HTTP/2 (Protobuf binary)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Type</td><td className="p-2">Multiple endpoints</td><td className="p-2">Single endpoint</td><td className="p-2">Service + Methods (.proto)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Data format</td><td className="p-2">JSON (text, readable)</td><td className="p-2">JSON (text, readable)</td><td className="p-2">Protobuf (binary, ~10x smaller)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Performance</td><td className="p-2">Good</td><td className="p-2">Good</td><td className="p-2">Very fast (2-10x faster)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Streaming</td><td className="p-2">Not native</td><td className="p-2">Subscriptions</td><td className="p-2">4 types (uni/bi-directional)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Type safety</td><td className="p-2">No (needs OpenAPI)</td><td className="p-2">Self-describing schema</td><td className="p-2">.proto file (code-gen)</td></tr>
+                            <tr className="border-b border-gray-100"><td className="p-2">Browser support</td><td className="p-2">✅ Native</td><td className="p-2">✅ Native</td><td className="p-2">⚠️ Needs gRPC-Web proxy</td></tr>
+                            <tr><td className="p-2">Used by</td><td className="p-2">Most APIs</td><td className="p-2">Meta, GitHub, Shopify</td><td className="p-2">Google, Netflix, Uber</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <CodeBlock title="REST vs GraphQL example">{`// REST: Need 3 requests to get data for a profile page
+                <CodeBlock title="REST vs GraphQL vs gRPC">{`// REST: Need 3 requests to get data for a profile page
 GET /api/users/1           → { id: 1, name: "An", ... }
 GET /api/users/1/posts     → [{ title: "...", ... }]
 GET /api/users/1/followers → [{ name: "...", ... }]
@@ -463,9 +464,49 @@ query {
     followers { name }
   }
 }
-→ Exactly the data needed, nothing extra!`}</CodeBlock>
+→ Exactly the data needed, nothing extra!
+
+// gRPC: Call remote functions like local ones
+const user = await client.GetUser({ id: "1" })
+// → Protobuf binary, 2-10x faster than JSON
+// → Type-safe: compiler errors on wrong fields`}</CodeBlock>
+
+                <Heading3>gRPC — Remote Procedure Call</Heading3>
+                <Paragraph>gRPC uses <Highlight>Protocol Buffers</Highlight> (binary format) over <Highlight>HTTP/2</Highlight>. Clients call server functions like local functions — type-safe, with auto-generated code from <InlineCode>.proto</InlineCode> files.</Paragraph>
+
+                <CodeBlock title="gRPC .proto file (API contract)">{`syntax = "proto3";
+
+service UserService {
+  rpc GetUser (GetUserReq) returns (UserRes);           // Unary: 1 req → 1 res
+  rpc ListUsers (ListReq) returns (stream UserRes);     // Server streaming
+  rpc UploadAvatar (stream Chunk) returns (UploadRes);  // Client streaming
+  rpc Chat (stream Msg) returns (stream Msg);           // Bidirectional
+}
+
+message GetUserReq { string id = 1; }
+message UserRes { string id = 1; string name = 2; int32 age = 3; }`}</CodeBlock>
+
+                <CodeBlock title="4 gRPC Communication Types">{`1. Unary:            Client ──req──→ Server ──res──→ Client
+                     Like REST — most common
+
+2. Server Streaming: Client ──req──→ Server ══res══→ Client
+                     Live feed, progress updates, notifications
+
+3. Client Streaming: Client ══req══→ Server ──res──→ Client
+                     Upload file chunks, batch data
+
+4. Bidirectional:    Client ←══════→ Server
+                     Chat, real-time sync (like WebSocket)`}</CodeBlock>
 
                 <div className="my-3 space-y-2">
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <div className="text-green-400 font-bold text-sm">When to use what?</div>
+                        <div className="text-slate-300 text-sm mt-1">
+                            • <strong>REST</strong>: Public APIs, simple CRUD, browser clients, quick prototypes<br />
+                            • <strong>GraphQL</strong>: Complex UIs needing flexible data, mobile apps (reduce bandwidth), multiple data sources<br />
+                            • <strong>gRPC</strong>: Internal microservices (service ↔ service), high performance needs, streaming, polyglot (Go ↔ Node ↔ Python)
+                        </div>
+                    </div>
                     <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <div className="text-red-400 font-bold text-sm">N+1 Problem (both REST and GraphQL)</div>
                         <div className="text-slate-300 text-sm mt-1">
@@ -474,7 +515,7 @@ query {
                         </div>
                     </div>
                 </div>
-                <Callout type="tip">In practice, most frontend projects use <strong>REST</strong>. GraphQL is common at large companies (Meta, Shopify) or apps with complex UI needing flexible data fetching.</Callout>
+                <Callout type="tip">Most frontend projects use <strong>REST</strong>. GraphQL is common at large companies. gRPC is popular in <strong>backend microservices</strong> — frontends rarely call gRPC directly (use an API Gateway as REST ↔ gRPC bridge).</Callout>
             </TopicModal>
 
             <TopicModal title="CORS, Cookies, JWT" emoji="🔐" color="#ef4444" summary="Authentication flow — how web apps verify users" concept="CORS is a browser mechanism that allows/blocks cross-origin requests (domain A calling domain B's API). Cookies store server-side sessions and are sent automatically with every request — easy but same-origin only. JWT is a self-contained token (header.payload.signature), stateless, great for API auth — but cannot be revoked before expiration.">
