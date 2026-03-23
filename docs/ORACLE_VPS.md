@@ -68,6 +68,7 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | **Speedtest Tracker** | 3007 | ✅ unless-stopped | Docker | Network speed test history & charts |
 | **Webtop** | 3010 | ✅ unless-stopped | Docker | Ubuntu XFCE desktop in browser |
 | **stress-ng** | — | ✅ enabled | systemd | Anti-reclaim CPU/RAM |
+| **CrowdSec** | — | ✅ enabled | systemd | Brute-force protection + community blocklist |
 | **vocab-push.timer** | — | ✅ enabled | systemd timer | Vocab reminder mỗi giờ |
 
 > Tất cả service tự start lại sau VPS reboot.
@@ -485,6 +486,90 @@ RestartSec=10
 [Install]
 WantedBy=multi-user.target
 ```
+
+## CrowdSec (Brute-force Protection)
+
+Collaborative IPS — detects attacks from logs + uses community blocklist (IPs banned globally → auto-blocked here).
+
+**Dashboard:** [app.crowdsec.net](https://app.crowdsec.net) (enrolled, real-time alerts + map)
+
+**Components:**
+- **crowdsec** (engine): Parses logs, detects attacks, creates alerts (~80MB RAM)
+- **crowdsec-firewall-bouncer** (bouncer): Reads decisions → blocks via iptables (~19MB RAM)
+
+**Collections enabled:** sshd, nginx, http-cve, base-http-scenarios, linux, whitelist-good-actors
+
+**Monitored logs:**
+- `/var/log/nginx/access.log` — Nginx access
+- `/var/log/nginx/error.log` — Nginx errors
+- `/var/log/auth.log` — SSH login attempts
+- `/var/log/syslog` — System logs
+
+```bash
+# Check status
+sudo systemctl status crowdsec
+sudo systemctl status crowdsec-firewall-bouncer
+
+# View recent alerts
+sudo cscli alerts list
+
+# View active bans
+sudo cscli decisions list
+
+# Manual ban/unban
+sudo cscli decisions add --ip 1.2.3.4 --reason "manual ban"
+sudo cscli decisions delete --ip 1.2.3.4
+
+# View collections
+sudo cscli collections list
+
+# Update hub (scenarios, parsers)
+sudo cscli hub update && sudo cscli hub upgrade
+
+# View metrics
+sudo cscli metrics
+
+# Console enrollment (already enrolled)
+sudo cscli console status
+
+# Restart after config changes
+sudo systemctl restart crowdsec
+sudo systemctl restart crowdsec-firewall-bouncer
+
+# Logs (troubleshooting)
+sudo journalctl -u crowdsec -f
+sudo journalctl -u crowdsec-firewall-bouncer -f
+```
+
+## Docker Log Rotation
+
+Config at `/etc/docker/daemon.json` — prevents container logs from growing unbounded:
+
+```json
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "50m",
+    "max-file": "3"
+  }
+}
+```
+
+Each container: max **50MB × 3 files = 150MB** log. Auto-rotates when full.
+
+```bash
+# Check log sizes
+sudo du -sh /var/lib/docker/containers/*/*-json.log | sort -rh | head -5
+
+# Truncate a specific container log (emergency)
+sudo truncate -s 0 /var/lib/docker/containers/<container_id>/<container_id>-json.log
+
+# Clean up unused images/volumes
+sudo docker image prune -f
+sudo docker system prune -f
+```
+
+> ⚠️ Log rotation only applies to **new containers**. Existing containers keep old settings until recreated.
 
 ## Firewall
 
