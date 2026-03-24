@@ -812,14 +812,38 @@ Auto-renew: `certbot.timer` runs 2x/day, renews 30 days before expiry.
               ╚═══════════════════════════════════╝
 ```
 
+### Template System (envsubst)
+
+Tất cả Nginx configs được sinh từ templates. Domain trung tâm nằm trong 1 file `.env`.
+
+```
+/etc/nginx/nginx-domains.env          ← BASE_DOMAIN=khuong.theworkpc.com
+/etc/nginx/templates/                 ← Template files
+  ├─ standard.conf.template           ← HTTP proxy (12 services)
+  ├─ https-proxy.conf.template        ← HTTPS proxy (portainer, server, nas)
+  ├─ webtop.conf.template             ← UI with auth + rate limit
+  └─ vercel-proxy.conf.template       ← Root domain → Vercel
+/etc/nginx/generate-configs.sh        ← Sinh tất cả configs từ templates
+```
+
+```bash
+# Sinh lại tất cả configs (sau khi đổi domain trong .env):
+sudo /etc/nginx/generate-configs.sh
+
+# Đổi domain:
+# 1. sudo nano /etc/nginx/nginx-domains.env → sửa BASE_DOMAIN
+# 2. Chạy certbot cho tất cả subdomains mới
+# 3. sudo /etc/nginx/generate-configs.sh
+```
+
 ### Config files
 
 ```bash
 # List all sites
 ls /etc/nginx/sites-enabled/
 
-# Edit a site
-sudo nano /etc/nginx/sites-available/khuong.theworkpc.com
+# Edit domain
+sudo nano /etc/nginx/nginx-domains.env
 
 # Test & reload
 sudo nginx -t && sudo systemctl reload nginx
@@ -828,27 +852,13 @@ sudo nginx -t && sudo systemctl reload nginx
 ### Add new subdomain service
 
 ```bash
-# 1. Create nginx config
-sudo tee /etc/nginx/sites-available/myapp.khuong.theworkpc.com > /dev/null << 'EOF'
-server {
-    listen 80;
-    server_name myapp.khuong.theworkpc.com;
-    location / {
-        proxy_pass http://localhost:PORT;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-EOF
-
-# 2. Enable & reload
-sudo ln -s /etc/nginx/sites-available/myapp.khuong.theworkpc.com /etc/nginx/sites-enabled/
-sudo nginx -t && sudo systemctl reload nginx
-
-# 3. Add SSL
-sudo certbot --nginx -d myapp.khuong.theworkpc.com --non-interactive --agree-tos --email nguyendangkhuong96@gmail.com --redirect
+# 1. Thêm vào generate-configs.sh:
+#    generate myapp 3099
+# 2. Chạy script:
+sudo /etc/nginx/generate-configs.sh
+# 3. Add SSL:
+source /etc/nginx/nginx-domains.env
+sudo certbot --nginx -d myapp.${BASE_DOMAIN} --non-interactive --agree-tos --email nguyendangkhuong96@gmail.com --redirect
 ```
 
 ## Tailscale Subnet Routing
