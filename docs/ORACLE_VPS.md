@@ -642,7 +642,7 @@ Oracle Cloud has **2 layers** of firewall:
 ### Layer 1: OCI Security List (Console)
 ```
 Networking → VCN → Subnet → Security List → Ingress Rules
-Ports opened: 80, 443, 3000
+Ports opened: 80, 443
 ```
 
 ### Layer 2: iptables (on VPS)
@@ -655,7 +655,57 @@ sudo iptables-save | sudo tee /etc/iptables/rules.v4
 sudo iptables -L -n --line-numbers
 ```
 
-Currently opened: 80, 443, 3000
+Currently opened: **22** (SSH, key-only), **80** (HTTP), **443** (HTTPS)
+
+> Port 3000 (AdGuard setup) đã đóng (2026-03-24). Truy cập AdGuard qua `adguard.khuong.theworkpc.com` hoặc Tailscale.
+
+## Security Hardening
+
+### SSH
+- `PasswordAuthentication no` — chỉ SSH key
+- `PermitRootLogin without-password` — root chỉ key
+- Port 22 mở nhưng CrowdSec chặn brute force
+
+### Nginx Rate Limiting
+```nginx
+# /etc/nginx/nginx.conf (http block)
+limit_req_zone $binary_remote_addr zone=general:10m rate=10r/s;  # Tất cả sites
+limit_req_zone $binary_remote_addr zone=login:10m rate=3r/s;     # Webtop login
+limit_req_status 429;
+
+# Áp dụng global:
+limit_req zone=general burst=20 nodelay;
+
+# Riêng Webtop (sites-enabled/default):
+limit_req zone=login burst=5 nodelay;
+```
+
+### Nginx Security Headers
+```nginx
+# /etc/nginx/nginx.conf (http block)
+add_header X-Content-Type-Options nosniff always;           # Chặn MIME sniffing
+add_header X-Frame-Options SAMEORIGIN always;               # Chặn clickjacking
+add_header X-XSS-Protection "1; mode=block" always;         # Chặn XSS
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+server_tokens off;                                           # Ẩn Nginx version
+```
+
+### Cloudflare Access (Zero Trust)
+`ui.thetaphoa.store` được bảo vệ bởi Cloudflare Access:
+- Auth: Email OTP (chỉ email authorized)
+- Session: 24h
+- Config: Zero Trust Dashboard → Access → Applications → "Webtop UI"
+
+### Tổng kết bảo vệ
+| Layer | Tool | Bảo vệ |
+|-------|------|--------|
+| Firewall | iptables + CrowdSec | Ban IP brute force, community blocklist |
+| SSH | Key-only auth | Không brute force password |
+| Web | Nginx rate limiting | 10r/s general, 3r/s login |
+| Web | Security headers | XSS, clickjacking, MIME sniffing |
+| Web | Cloudflare Access | OTP auth cho `*.thetaphoa.store` |
+| DNS | Tailscale MagicDNS | Internal access an toàn |
 
 ## Networking Setup
 
@@ -853,7 +903,8 @@ Oracle Console → Billing → Budgets → `free-tier-alert`
 | https://openclaw.khuong.theworkpc.com | openclaw (local via Tailscale) |
 | https://nas.khuong.theworkpc.com | NAS Synology (local via subnet) |
 | https://ha.khuong.theworkpc.com | Home Assistant (smart home) |
-| https://ui.khuong.theworkpc.com | Webtop (Ubuntu desktop in browser) |
+| https://ui.khuong.theworkpc.com | Webtop (Ubuntu desktop in browser) — Nginx basic auth |
+| https://ui.thetaphoa.store | Webtop (CF Tunnel + Zero Trust OTP) ⭐ |
 | https://home.thetaphoa.store | Homepage Dashboard (CF Tunnel) |
 | http://161.118.197.104 | VPS direct |
 | http://100.118.218.99 | VPS via Tailscale |
@@ -929,20 +980,24 @@ Oracle Console → Billing → Budgets → `free-tier-alert`
 
 **vps-tunnel** (từ Oracle VPS — ID: `df9f572c-7539-483f-b68b-d63124d61898`):
 
-| Domain | Target | Config |
-|--------|--------|---------|
-| `home.thetaphoa.store` | localhost:3008 (Homepage) | `/etc/cloudflared/config.yml` |
+| Domain | Target | Auth | Config |
+|--------|--------|------|--------|
+| `home.thetaphoa.store` | localhost:3008 (Homepage) | ❌ | Dashboard |
+| `ui.thetaphoa.store` | localhost:3010 (Webtop) | ✅ Cloudflare Access (Email OTP) | Dashboard |
 
-Config: `/etc/cloudflared/config.yml` | Cert: `/etc/cloudflared/cert.pem` | Service: `cloudflared.service` (systemd)
+> ⚠️ Tunnel này **managed bởi Dashboard** (remote management). Local config file bị override. Thêm/sửa route qua **Cloudflare Dashboard** → Zero Trust → Networks → Tunnels → vps-tunnel → Configure.
+
+Config file (backup, bị override): `/etc/cloudflared/config.yml` | Cert: `/etc/cloudflared/cert.pem` | Service: `cloudflared.service` (systemd)
 
 ```bash
 # Thêm route mới vào vps-tunnel:
-# 1. Sửa /etc/cloudflared/config.yml (thêm hostname trước dòng http_status:404)
-# 2. cloudflared tunnel route dns vps-tunnel <subdomain>.thetaphoa.store
-# 3. sudo systemctl restart cloudflared
+# 1. Cloudflare Dashboard → Zero Trust → Networks → Tunnels → vps-tunnel → Public Hostname → Add
+# 2. Nếu cần DNS record: cloudflared tunnel route dns vps-tunnel <subdomain>.thetaphoa.store
+# 3. Tunnel tự nhận config mới (không cần restart)
 
 # Quản lý:
 sudo systemctl status cloudflared          # Status
+sudo systemctl restart cloudflared         # Restart (nếu cần)
 sudo journalctl -u cloudflared -f          # Logs
 cloudflared tunnel info vps-tunnel         # Tunnel info
 ```
