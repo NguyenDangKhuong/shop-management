@@ -605,6 +605,29 @@ sudo journalctl -u crowdsec -f
 sudo journalctl -u crowdsec-firewall-bouncer -f
 ```
 
+### Whitelist (Trusted IPs)
+
+File: `/etc/crowdsec/parsers/s02-enrich/my-whitelists.yaml`
+
+```yaml
+name: my-whitelists
+description: "Whitelist trusted IPs"
+whitelist:
+  reason: "trusted network"
+  ip:
+    - "127.0.0.1"
+    - "100.118.218.99"    # VPS Tailscale IP
+    - "100.108.169.39"    # Ubuntu VM Tailscale IP
+  cidr:
+    - "100.64.0.0/10"    # Tailscale CGNAT range (tất cả thiết bị Tailscale)
+    - "192.168.1.0/24"   # Home LAN
+    - "113.162.0.0/16"   # VNPT (home ISP)
+    - "171.255.0.0/16"   # VNPT (home ISP alt range)
+```
+
+> ⚠️ **Nếu đổi ISP hoặc IP public thay đổi:** thêm dải IP mới vào `cidr` rồi `sudo systemctl restart crowdsec`.
+> Nếu bị ban nhầm: `sudo cscli decisions delete --ip <IP>` để unban ngay.
+
 ## Docker Log Rotation
 
 Config at `/etc/docker/daemon.json` — prevents container logs from growing unbounded:
@@ -669,16 +692,18 @@ Currently opened: **22** (SSH, key-only), **80** (HTTP), **443** (HTTPS)
 ### Nginx Rate Limiting
 ```nginx
 # /etc/nginx/nginx.conf (http block)
-limit_req_zone $binary_remote_addr zone=general:10m rate=10r/s;  # Tất cả sites
+limit_req_zone $binary_remote_addr zone=general:10m rate=50r/s;  # Tất cả sites
 limit_req_zone $binary_remote_addr zone=login:10m rate=3r/s;     # Webtop login
 limit_req_status 429;
 
 # Áp dụng global:
-limit_req zone=general burst=20 nodelay;
+limit_req zone=general burst=100 nodelay;
 
 # Riêng Webtop (sites-enabled/default):
 limit_req zone=login burst=5 nodelay;
 ```
+
+> ⚠️ **Tại sao 50r/s burst=100?** HA và n8n là SPA, load 50-60 JS files cùng lúc khi mở trang. Rate thấp hơn sẽ bị CrowdSec detect `nginx-req-limit-exceeded` → auto-ban IP.
 
 ### Nginx Security Headers
 ```nginx
@@ -702,7 +727,8 @@ server_tokens off;                                           # Ẩn Nginx versio
 |-------|------|--------|
 | Firewall | iptables + CrowdSec | Ban IP brute force, community blocklist |
 | SSH | Key-only auth | Không brute force password |
-| Web | Nginx rate limiting | 10r/s general, 3r/s login |
+| Web | Nginx rate limiting | 50r/s general, 3r/s login |
+| Web | CrowdSec whitelist | Tailscale + VNPT IP trusted |
 | Web | Security headers | XSS, clickjacking, MIME sniffing |
 | Web | Cloudflare Access | OTP auth cho `*.thetaphoa.store` |
 | DNS | Tailscale MagicDNS | Internal access an toàn |
