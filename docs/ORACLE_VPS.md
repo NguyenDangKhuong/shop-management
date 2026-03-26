@@ -62,6 +62,7 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | **Portainer** | 9443 | ✅ unless-stopped | Docker | Docker web management UI |
 | **CLI Proxy API** | 8317 | ✅ unless-stopped | Docker | AI proxy (Gemini, OpenRouter, Codex...) |
 | **OpenClaw Gateway** | 18789 | ✅ unless-stopped | Docker | AI assistant (Telegram @heyyolo_bot, Zalo) |
+| ↳ Auth | Nginx basic auth | | | Dùng chung `.htpasswd_webtop` với Webtop |
 | ↳ Config | `~/openclaw_data/openclaw.json` | | | Model: `cli-proxy/gemini-3.1-pro-preview` |
 | ↳ Switch model | `cd ~/openclaw_data && sudo ./switch-model.sh` | | | Danh sách model từ CLI Proxy API |
 | **n8n** | 5678 | ✅ always | Docker Compose | Automation platform (n8n + worker + MCP + postgres + redis) |
@@ -563,6 +564,8 @@ Collaborative IPS — detects attacks from logs + uses community blocklist (IPs 
 
 **Collections enabled:** sshd, nginx, http-cve, base-http-scenarios, linux, whitelist-good-actors
 
+> ⚠️ **Đã tắt scenario `nginx-req-limit-exceeded`** (2026-03-26) — tránh ban nhầm user khi SPA load nhiều JS. Rate limit Nginx vẫn hoạt động (trả 429), nhưng CrowdSec không auto-ban IP vì 429 nữa.
+
 **Monitored logs:**
 - `/var/log/nginx/access.log` — Nginx access
 - `/var/log/nginx/error.log` — Nginx errors
@@ -703,7 +706,7 @@ limit_req zone=general burst=100 nodelay;
 limit_req zone=login burst=5 nodelay;
 ```
 
-> ⚠️ **Tại sao 50r/s burst=100?** HA và n8n là SPA, load 50-60 JS files cùng lúc khi mở trang. Rate thấp hơn sẽ bị CrowdSec detect `nginx-req-limit-exceeded` → auto-ban IP.
+> ⚠️ **Tại sao 50r/s burst=100?** HA và n8n là SPA, load 50-60 JS files cùng lúc khi mở trang. Nếu vượt burst → trả 429 tạm thời nhưng không bị CrowdSec ban (scenario đã tắt).
 
 ### Nginx Security Headers
 ```nginx
@@ -729,6 +732,7 @@ server_tokens off;                                           # Ẩn Nginx versio
 | SSH | Key-only auth | Không brute force password |
 | Web | Nginx rate limiting | 50r/s general, 3r/s login |
 | Web | CrowdSec whitelist | Tailscale + VNPT IP trusted |
+| Web | Nginx basic auth | Webtop + OpenClaw (`.htpasswd_webtop`) |
 | Web | Security headers | XSS, clickjacking, MIME sniffing |
 | Web | Cloudflare Access | OTP auth cho `*.thetaphoa.store` |
 | DNS | Tailscale MagicDNS | Internal access an toàn |
