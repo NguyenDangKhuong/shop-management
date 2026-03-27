@@ -63,7 +63,7 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | **CLI Proxy API** | 8317 | ✅ unless-stopped | Docker | AI proxy (Gemini, OpenRouter, Codex...) |
 | **OpenClaw Gateway** | 18789 | ✅ unless-stopped | Docker | AI assistant (Telegram @heyyolo_bot, Zalo) |
 | ↳ Auth | Nginx basic auth | | | Dùng chung `.htpasswd_webtop` với Webtop |
-| ↳ Config | `~/openclaw_data/openclaw.json` | | | Model: `cli-proxy/gemini-3.1-pro-preview` |
+| ↳ Config | `~/openclaw_data/openclaw.json` | | | Model: `cli-proxy/gpt-5-codex-mini` |
 | ↳ Switch model | `cd ~/openclaw_data && sudo ./switch-model.sh` | | | Danh sách model từ CLI Proxy API |
 | **n8n** | 5678 | ✅ always | Docker Compose | Automation platform (n8n + worker + MCP + postgres + redis) |
 | **Speedtest Tracker** | 3007 | ✅ unless-stopped | Docker | Network speed test history & charts |
@@ -1057,3 +1057,93 @@ cloudflared tunnel info vps-tunnel         # Tunnel info
 1. Login shop qua `thetaphoa.vercel.app` thay vì `shop.thetaphoa.store`
 2. Tất cả local services đã có backup trên `*.khuong.theworkpc.com` → không cần làm gì thêm
 3. Hoặc mua domain mới ~$10/năm → setup lại CF Tunnel
+
+---
+
+## Troubleshooting — Known Issues & Fixes
+
+### OpenClaw: Zalo polling CPU spike (~97%)
+
+**Triệu chứng:** `openclaw-gateway` ngốn 97% CPU, logs spam:
+```
+Zalo polling error: SyntaxError: Unexpected token '<', "<html>..." is not valid JSON
+auto-restart attempt 1/10 in 5s
+```
+
+**Nguyên nhân:** Zalo session/token hết hạn → API trả HTML (trang login) thay vì JSON → polling retry loop.
+
+**Fix:** Zalo vẫn hoạt động reply message OK, chỉ polling monitor bị lỗi. Sau 10 retry (exponential backoff) sẽ dừng, CPU trở lại bình thường. Nếu cần tắt hẳn:
+```bash
+# Tắt Zalo channel
+sudo python3 -c '
+import json
+with open("/home/ubuntu/openclaw_data/openclaw.json") as f:
+    d = json.load(f)
+d["channels"]["zalo"]["enabled"] = False
+with open("/home/ubuntu/openclaw_data/openclaw.json", "w") as f:
+    json.dump(d, f, indent=2, ensure_ascii=False)
+'
+sudo docker restart openclaw-gateway
+```
+
+### OpenClaw: 403 Verify your account / API Key not found
+
+**Triệu chứng:** Bot nhận message nhưng trả lỗi `403 Verify your account to continue` hoặc `400 API Key not found`.
+
+**Nguyên nhân:** Gemini accounts trên CLI Proxy bị Google block/verify, hoặc model đã bị xóa khỏi CLI Proxy.
+
+**Fix:** Switch sang model khác còn hoạt động:
+```bash
+# 1. List models khả dụng
+curl -s -H 'Authorization: Bearer khuong' \
+  https://cli-proxy.khuong.theworkpc.com/v1/models | python3 -c '
+import json,sys
+[print(m["id"]) for m in json.load(sys.stdin).get("data",[])]
+'
+
+# 2. Test model trước khi switch
+curl -s -w '%{http_code}' -H 'Authorization: Bearer khuong' \
+  -H 'Content-Type: application/json' \
+  https://cli-proxy.khuong.theworkpc.com/v1/chat/completions \
+  -d '{"model":"MODEL_NAME","messages":[{"role":"user","content":"hi"}],"max_tokens":5}'
+
+# 3. Switch model trong OpenClaw config
+sudo python3 -c '
+import json
+with open("/home/ubuntu/openclaw_data/openclaw.json") as f:
+    d = json.load(f)
+d["agents"]["defaults"]["model"] = "cli-proxy/MODEL_NAME"
+with open("/home/ubuntu/openclaw_data/openclaw.json", "w") as f:
+    json.dump(d, f, indent=2, ensure_ascii=False)
+'
+sudo docker restart openclaw-gateway
+```
+
+**Lịch sử model đã dùng:**
+| Ngày | Model | Lý do đổi |
+|---|---|---|
+| 03/2026 | `gemini-3.1-pro-preview` | Model bị xóa khỏi CLI Proxy |
+| 27/03/2026 | `gpt-5-codex-mini` ✅ | Gemini bị 403 Verify, GPT-5 hoạt động OK |
+
+### OpenClaw: Cách check log
+
+```bash
+# Log gần nhất (tail 20 dòng)
+sudo docker logs openclaw-gateway --tail 20
+
+# Check lỗi Zalo HTML (polling error)
+sudo docker logs openclaw-gateway --tail 100 2>&1 | grep -i "html\|SyntaxError\|polling error"
+
+# Check lỗi AI model (403/400)
+sudo docker logs openclaw-gateway --tail 100 2>&1 | grep -i "403\|400\|api.key\|verify"
+
+# Check Zalo retry status
+sudo docker logs openclaw-gateway --tail 30 2>&1 | grep -i zalo
+
+# Check CPU + RAM
+docker stats --no-stream --format '{{.Name}} {{.CPUPerc}} {{.MemUsage}}' openclaw-gateway
+
+# ⚠️ KHÔNG dùng: sudo docker logs openclaw-gateway 2>&1 | grep "..."
+# ↑ Không có --tail sẽ đọc TOÀN BỘ log → bị treo nếu log quá lớn!
+```
+
