@@ -335,37 +335,53 @@ docker stop uptime-kuma && docker rm uptime-kuma
 **Control:** Telegram Bot (inline keyboard + slash commands)
 **Mode:** 🧪 TESTNET
 
-### Deploy (git pull → rebuild)
+### Deploy (Persistent Mode)
+
+Bot hiện tại chạy với **volume mount `src/` và đọc `.env` trực tiếp**, nên khi sửa code chỉ cần restart container, không cần rebuild image.
 
 ```bash
-# One-liner từ Mac
-ssh ubuntu@heyyolo-free-vps "cd ~/bot-trade && git pull && sudo docker compose up -d --build"
+# 1. Sửa code hoặc config .env trực tiếp trên VPS
+nano ~/bot-trade/src/bot.js
+nano ~/bot-trade/.env
 
-# Hoặc SSH vào rồi chạy
+# 2. Restart để nhận code/config mới
+ssh ubuntu@heyyolo-free-vps "docker restart trading-bot"
+
+# --- NẾU CẦN TẠO LẠI CONTAINER TỪ ĐẦU ---
 ssh ubuntu@heyyolo-free-vps
 cd ~/bot-trade
-git pull
-sudo docker compose up -d --build
+docker stop trading-bot && docker rm trading-bot
+docker run -d \
+  --name trading-bot \
+  --restart unless-stopped \
+  --env-file /home/ubuntu/bot-trade/.env \
+  -v /home/ubuntu/bot-trade/data:/app/data \
+  -v /home/ubuntu/bot-trade/src:/app/src \
+  bot-trade-trading-bot
 ```
+
+### ⚠️ Quan trọng: Binance Testnet API
+
+Có 2 hệ thống thử nghiệm khác nhau của Binance dễ gây nhầm lẫn:
+1. **Futures Testnet cũ (`testnet.binancefuture.com`)**: Bot hiện đang dùng hệ thống này. API Key bắt đầu bằng chữ HOA/thường ngẫu nhiên (VD: `fCIn...`).
+2. **Demo Trading mới (`demo.binance.com`)**: Giao diện giống hệt Binance thật. API Key tạo ở đây (VD: `QINFZ...`) **KHÔNG dùng được** cho `testnet.binancefuture.com`. Nó yêu cầu endpoint riêng `demo-fapi.binance.com`.
+
+> Nếu tạo API Key mới từ màn hình Demo Trading, bot sẽ báo lỗi `Invalid API-key, IP, or permissions for action` nếu không đổi `baseUrl`.
 
 ### Quản lý
 
 ```bash
 # Status
-sudo docker compose -f ~/bot-trade/docker-compose.yml ps
+docker ps --filter name=trading-bot
 
 # Logs
-sudo docker logs trading-bot -f --tail 50
+docker logs trading-bot -f --tail 50
 
 # Restart
-cd ~/bot-trade && sudo docker compose restart
+docker restart trading-bot
 
-# Stop
-cd ~/bot-trade && sudo docker compose down
-
-# Sửa config
-nano ~/bot-trade/.env
-cd ~/bot-trade && sudo docker compose restart
+# Stop / Xoá
+docker stop trading-bot && docker rm trading-bot
 ```
 
 ### Git SSH Key (đã setup)
