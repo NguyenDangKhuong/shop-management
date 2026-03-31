@@ -48,7 +48,7 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 
 | Service | Port | Auto-start | Mechanism | Purpose |
 |---------|------|-----------|-----------|---------|
-| **Tailscale** | — | ✅ enabled | systemd | SSH without key, private network |
+| **Tailscale** | — | ✅ enabled | systemd | SSH without key, private network (`tag:server`, Tailscale SSH enabled) |
 | **Docker** 28.2.2 | — | ✅ enabled | systemd | Container runtime |
 | **Nginx** 1.24.0 | 80, 443 | ✅ enabled | systemd | Reverse proxy (12 domains) |
 | **Cloudflared** | — | ✅ enabled | systemd | Cloudflare Tunnel (vps-tunnel) |
@@ -404,6 +404,35 @@ cat ~/.ssh/id_ed25519.pub
 ```
 
 > ⚠️ SSH key này dùng cho **tất cả private repos** trên GitHub account, không riêng bot-trade.
+
+### CI/CD (Auto Deploy)
+
+Push lên `main` → **GitHub Actions** tự deploy qua Tailscale SSH. Không cần SSH key riêng — dùng Tailscale identity.
+
+```
+Push (src/**) → GitHub Actions → Tailscale (tag:ci) → SSH VPS (tag:server) → git fetch + reset --hard → docker restart → Telegram ✅/❌
+```
+
+- **Workflow:** `.github/workflows/deploy.yml`
+- **Secrets:** `TS_OAUTH_CLIENT_ID`, `TS_OAUTH_SECRET`, `TELEGRAM_CHAT_ID`, `TELEGRAM_BOT_TOKEN`
+- **OAuth Client:** Scopes `devices:core` + `auth_keys` (Read+Write), Tag: `tag:ci`
+- **VPS tag:** `sudo tailscale up --advertise-tags=tag:server --ssh --accept-routes --advertise-exit-node`
+- **ACL:** `tag:ci` → `tag:server` (SSH accept), `autogroup:member` → `tag:server` (user SSH giữ nguyên)
+
+> 💡 Dùng `git reset --hard` thay `git pull` vì VPS volume mount `src/` có thể bị drift. GitHub là source of truth.
+
+### Tailscale SSH Tags
+
+VPS đã được tag `tag:server` để CI/CD hoạt động. ACL cần 3 SSH rules:
+
+```jsonc
+"tagOwners": { "tag:ci": ["autogroup:admin"], "tag:server": ["autogroup:admin"] },
+"ssh": [
+    { "action": "check", "src": ["autogroup:member"], "dst": ["autogroup:self"], "users": ["autogroup:nonroot", "root"] },
+    { "action": "accept", "src": ["autogroup:member"], "dst": ["tag:server"], "users": ["autogroup:nonroot", "root"] },
+    { "action": "accept", "src": ["tag:ci"], "dst": ["tag:server"], "users": ["ubuntu"] }
+]
+```
 
 ## Portainer
 
