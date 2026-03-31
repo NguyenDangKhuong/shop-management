@@ -28,6 +28,7 @@ import stackPattern from './stack-pattern'
 import twoPointersPattern from './two-pointers-pattern'
 import unitTestingGuide from './unit-testing-guide'
 import e2eTestingPlaywright from './e2e-testing-playwright'
+import reactFormsPatterns from './react-forms-patterns'
 
 // Thêm bài viết mới: import rồi thêm vào mảng bên dưới
 export const blogPosts: BlogPost[] = [
@@ -60,6 +61,7 @@ export const blogPosts: BlogPost[] = [
     accessibilityGuide,
     behavioralInterview,
     e2eTestingPlaywright,
+    reactFormsPatterns,
 ]
 
 
