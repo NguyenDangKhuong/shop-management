@@ -15,6 +15,21 @@ const unitTestingGuide: BlogPost = {
     tags: ['Testing', 'Jest', 'React', 'Best Practices'],
     emoji: '🧪',
     color: '#99425b',
+    sections: [
+        { id: 'setup', title: { vi: '⚙️ Setup & Config', en: '⚙️ Setup & Config' } },
+        { id: 'matchers', title: { vi: '📝 Matchers & Assertions', en: '📝 Matchers & Assertions' } },
+        { id: 'pure-functions', title: { vi: '🔧 Test Pure Functions', en: '🔧 Test Pure Functions' } },
+        { id: 'async', title: { vi: '⏳ Async Testing', en: '⏳ Async Testing' } },
+        { id: 'mocking', title: { vi: '🎭 Mocking', en: '🎭 Mocking' } },
+        { id: 'components', title: { vi: '⚛️ React Components', en: '⚛️ React Components' } },
+        { id: 'hooks', title: { vi: '🪝 Custom Hooks', en: '🪝 Custom Hooks' } },
+        { id: 'api-routes', title: { vi: '🌐 API Routes', en: '🌐 API Routes' } },
+        { id: 'test-organization', title: { vi: '📁 Test Organization', en: '📁 Test Organization' } },
+        { id: 'anti-patterns', title: { vi: '🚫 Anti-patterns', en: '🚫 Anti-patterns' } },
+        { id: 'senior-tips', title: { vi: '👨‍💻 Senior Tips', en: '👨‍💻 Senior Tips' } },
+        { id: 'coverage', title: { vi: '📊 Coverage & Best Practices', en: '📊 Coverage & Best Practices' } },
+        { id: 'cheatsheet', title: { vi: '📋 Cheat Sheet', en: '📋 Cheat Sheet' } },
+    ],
     content: {
         vi: (
             <>
@@ -686,6 +701,322 @@ describe('POST /api/products', () => {
     })
 })`}</CodeBlock>
 
+                {/* ===== TEST ORGANIZATION ===== */}
+                <Heading2>📁 Test Organization Pattern</Heading2>
+
+                <Paragraph>
+                    Cấu trúc test tốt giúp <Highlight>dễ tìm, dễ maintain</Highlight> — đặc biệt khi project scale lên hàng trăm files.
+                </Paragraph>
+
+                <CodeBlock title="test-organization.ts">{`// ═══ Folder Structure — 2 strategies ═══
+
+// Strategy 1: Co-location (khuyên dùng)
+// Test nằm cạnh source file
+src/
+├── utils/
+│   ├── formatPrice.ts
+│   ├── formatPrice.test.ts      // ✅ Dễ tìm, dễ maintain
+│   ├── slugify.ts
+│   └── slugify.test.ts
+├── components/
+│   ├── ProductCard.tsx
+│   └── ProductCard.test.tsx
+└── hooks/
+    ├── useCart.ts
+    └── useCart.test.ts
+
+// Strategy 2: __tests__ folder (khi test nhiều)
+src/
+├── utils/
+│   ├── formatPrice.ts
+│   └── __tests__/
+│       ├── formatPrice.test.ts
+│       └── slugify.test.ts
+└── components/
+    ├── ProductCard.tsx
+    └── __tests__/
+        └── ProductCard.test.tsx
+
+// ═══ Shared Test Utilities ═══
+
+// test-utils.tsx — Custom render với Providers
+import { render, RenderOptions } from '@testing-library/react'
+import { ThemeProvider } from '@/context/ThemeContext'
+import { CartProvider } from '@/context/CartContext'
+
+function AllProviders({ children }: { children: React.ReactNode }) {
+    return (
+        <ThemeProvider>
+            <CartProvider>
+                {children}
+            </CartProvider>
+        </ThemeProvider>
+    )
+}
+
+export function renderWithProviders(
+    ui: React.ReactElement,
+    options?: Omit<RenderOptions, 'wrapper'>
+) {
+    return render(ui, { wrapper: AllProviders, ...options })
+}
+
+// Dùng trong test:
+import { renderWithProviders } from '@/test-utils'
+test('renders with theme', () => {
+    renderWithProviders(<ProductCard />)
+})
+
+// ═══ Test Data Factory ═══
+
+// factories.ts — tạo test data nhất quán
+export function createProduct(overrides?: Partial<Product>): Product {
+    return {
+        id: 'prod-1',
+        name: 'Test Product',
+        price: 100,
+        category: 'electronics',
+        inStock: true,
+        ...overrides,
+    }
+}
+
+export function createUser(overrides?: Partial<User>): User {
+    return {
+        id: \`user-\${Date.now()}\`,
+        name: 'Test User',
+        email: 'test@example.com',
+        role: 'user',
+        ...overrides,
+    }
+}
+
+// Dùng trong test:
+test('shows out of stock badge', () => {
+    const product = createProduct({ inStock: false })
+    render(<ProductCard product={product} />)
+    expect(screen.getByText('Hết hàng')).toBeInTheDocument()
+})`}</CodeBlock>
+
+                {/* ===== ANTI-PATTERNS ===== */}
+                <Heading2>🚫 Anti-patterns — Những sai lầm cần tránh</Heading2>
+
+                <CodeBlock title="anti-patterns.ts">{`// ❌ #1: Test implementation details
+test('sets loading state', () => {
+    const { result } = renderHook(() => useFetch('/api'))
+    expect(result.current.loading).toBe(true)  // Internal state!
+})
+// ✅ Test what user sees
+test('shows spinner while loading', async () => {
+    render(<UserList />)
+    expect(screen.getByRole('progressbar')).toBeVisible()
+    await waitForElementToBeRemoved(() => screen.queryByRole('progressbar'))
+})
+
+// ❌ #2: Snapshot abuse — approve all mà không review
+test('renders', () => {
+    const { container } = render(<ComplexPage />)
+    expect(container).toMatchSnapshot()  // 500-line snapshot!
+})
+// ✅ Dùng inline snapshot hoặc targeted assertions
+test('renders header', () => {
+    render(<ComplexPage />)
+    expect(screen.getByRole('heading')).toHaveTextContent('Dashboard')
+})
+
+// ❌ #3: Shared mutable state giữa tests
+let cart: Cart
+beforeAll(() => { cart = new Cart() })  // shared!
+test('add item', () => { cart.add(item1) })
+test('has 1 item', () => { expect(cart.items).toHaveLength(1) })  // Depends on test above!
+// ✅ Mỗi test tự setup
+test('add item', () => {
+    const cart = new Cart()  // fresh!
+    cart.add(item1)
+    expect(cart.items).toHaveLength(1)
+})
+
+// ❌ #4: Over-mocking — mock everything
+jest.mock('@/utils/formatPrice')  // Tại sao mock pure function?
+jest.mock('@/utils/slugify')       // Không cần!
+// ✅ Chỉ mock external dependencies (API, DB, third-party)
+jest.mock('@/utils/api')  // ✅ API call cần mock
+// Pure functions → test trực tiếp, không mock
+
+// ❌ #5: Không clear mocks
+test('test A', async () => {
+    ;(fetchData as jest.Mock).mockResolvedValue({ data: 'A' })
+})
+test('test B', async () => {
+    // fetchData vẫn mock từ test A! → Unexpected behavior
+})
+// ✅ Clear mocks trong beforeEach
+beforeEach(() => jest.clearAllMocks())
+
+// ❌ #6: Bỏ qua act() warnings
+// Warning: An update was not wrapped in act(...)
+// → Có side-effect chưa được handle!
+// ✅ Dùng findBy* (auto-wrapped) hoặc wrap trong act()
+await screen.findByText('Loaded')  // ✅ auto-act
+
+// ❌ #7: Test third-party libraries
+test('Ant Design Button renders', () => {
+    render(<Button>Click</Button>)  // Test của Ant Design, không phải của bạn!
+})
+// ✅ Test YOUR component sử dụng Button
+test('submit button calls onSubmit', async () => {
+    const onSubmit = jest.fn()
+    render(<CheckoutForm onSubmit={onSubmit} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Submit' }))
+    expect(onSubmit).toHaveBeenCalled()
+})
+
+// ❌ #8: Quên await async assertions
+test('loads data', () => {
+    render(<UserList />)
+    screen.findByText('Alice')  // Missing await! Test passes without checking!
+})
+// ✅ Luôn await findBy* và async operations
+test('loads data', async () => {
+    render(<UserList />)
+    expect(await screen.findByText('Alice')).toBeInTheDocument()
+})`}</CodeBlock>
+
+                {/* ===== SENIOR TIPS ===== */}
+                <Heading2>👨‍💻 Senior-Level Tips</Heading2>
+
+                <CodeBlock title="senior-patterns.ts">{`// 1. ✅ jest.each — parameterized tests (DRY)
+test.each([
+    ['hello world', 'hello-world'],
+    ['Hello World!', 'hello-world'],
+    ['  spaces  ', 'spaces'],
+    ['', ''],
+])('slugify("%s") → "%s"', (input, expected) => {
+    expect(slugify(input)).toBe(expected)
+})
+
+// Object syntax (dễ đọc hơn)
+test.each([
+    { price: 1000000, expected: '1.000.000đ' },
+    { price: 0, expected: '0đ' },
+    { price: 99.5, expected: '99,5đ' },
+])('formatPrice($price) → $expected', ({ price, expected }) => {
+    expect(formatPrice(price)).toBe(expected)
+})
+
+// 2. ✅ MSW — Mock Service Worker (API mocking cấp network)
+import { setupServer } from 'msw/node'
+import { http, HttpResponse } from 'msw'
+
+const server = setupServer(
+    http.get('/api/products', () => {
+        return HttpResponse.json([
+            { id: 1, name: 'Product A', price: 100 },
+        ])
+    }),
+    http.post('/api/orders', async ({ request }) => {
+        const body = await request.json()
+        return HttpResponse.json({ orderId: 'order-123', ...body })
+    })
+)
+
+beforeAll(() => server.listen())
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
+
+test('shows products from API', async () => {
+    render(<ProductList />)
+    expect(await screen.findByText('Product A')).toBeInTheDocument()
+})
+
+// Override cho specific test
+test('shows error when API fails', async () => {
+    server.use(
+        http.get('/api/products', () => HttpResponse.error())
+    )
+    render(<ProductList />)
+    expect(await screen.findByText(/error/i)).toBeInTheDocument()
+})
+
+// 3. ✅ Accessibility testing với jest-axe
+import { axe, toHaveNoViolations } from 'jest-axe'
+expect.extend(toHaveNoViolations)
+
+test('form is accessible', async () => {
+    const { container } = render(<LoginForm />)
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
+})
+
+// 4. ✅ Custom matchers — domain-specific assertions
+expect.extend({
+    toBeValidPrice(received: string) {
+        const pass = /^\\d{1,3}(\\.\\d{3})*đ$/.test(received)
+        return {
+            pass,
+            message: () =>
+                \`Expected "\${received}" to be a valid VND price format\`,
+        }
+    },
+})
+expect(formatPrice(1000000)).toBeValidPrice()
+
+// 5. ✅ Performance — chạy test nhanh hơn
+// Chỉ chạy tests liên quan đến file thay đổi
+npx jest --onlyChanged
+npx jest --changedSince=main
+
+// Dừng ngay khi có test fail
+npx jest --bail
+
+// Chạy test nặng nhất riêng
+npx jest --testPathPattern="heavy" --maxWorkers=1
+
+// 6. ✅ CI/CD Integration
+// .github/workflows/test.yml
+name: Unit Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx jest --coverage --ci
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+
+// 7. ✅ Debugging tests
+// Chạy 1 test cụ thể
+npx jest -t "adds item to cart"
+
+// Debug mode (Node inspector)
+node --inspect-brk node_modules/.bin/jest --runInBand
+
+// Verbose output
+npx jest --verbose
+
+// 8. ✅ Test custom hooks with wrapper
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+    <CartProvider initialItems={[]}>
+        {children}
+    </CartProvider>
+)
+
+test('useCart adds item', () => {
+    const { result } = renderHook(() => useCart(), { wrapper })
+    act(() => result.current.addItem({ id: '1', name: 'T-shirt', price: 200 }))
+    expect(result.current.items).toHaveLength(1)
+    expect(result.current.total).toBe(200)
+})`}</CodeBlock>
+
                 {/* ===== COVERAGE & BEST PRACTICES ===== */}
                 <Heading2>📊 Coverage & Best Practices</Heading2>
 
@@ -1305,6 +1636,322 @@ describe('POST /api/products', () => {
         const response = await POST(request)
         expect(response.status).toBe(400)
     })
+})`}</CodeBlock>
+
+                {/* ===== TEST ORGANIZATION ===== */}
+                <Heading2>📁 Test Organization Pattern</Heading2>
+
+                <Paragraph>
+                    A good test structure makes tests <Highlight>easy to find and maintain</Highlight> — especially as projects scale to hundreds of files.
+                </Paragraph>
+
+                <CodeBlock title="test-organization.ts">{`// ═══ Folder Structure — 2 strategies ═══
+
+// Strategy 1: Co-location (recommended)
+// Tests live next to source files
+src/
+├── utils/
+│   ├── formatPrice.ts
+│   ├── formatPrice.test.ts      // ✅ Easy to find, easy to maintain
+│   ├── slugify.ts
+│   └── slugify.test.ts
+├── components/
+│   ├── ProductCard.tsx
+│   └── ProductCard.test.tsx
+└── hooks/
+    ├── useCart.ts
+    └── useCart.test.ts
+
+// Strategy 2: __tests__ folder (for more tests)
+src/
+├── utils/
+│   ├── formatPrice.ts
+│   └── __tests__/
+│       ├── formatPrice.test.ts
+│       └── slugify.test.ts
+└── components/
+    ├── ProductCard.tsx
+    └── __tests__/
+        └── ProductCard.test.tsx
+
+// ═══ Shared Test Utilities ═══
+
+// test-utils.tsx — Custom render with Providers
+import { render, RenderOptions } from '@testing-library/react'
+import { ThemeProvider } from '@/context/ThemeContext'
+import { CartProvider } from '@/context/CartContext'
+
+function AllProviders({ children }: { children: React.ReactNode }) {
+    return (
+        <ThemeProvider>
+            <CartProvider>
+                {children}
+            </CartProvider>
+        </ThemeProvider>
+    )
+}
+
+export function renderWithProviders(
+    ui: React.ReactElement,
+    options?: Omit<RenderOptions, 'wrapper'>
+) {
+    return render(ui, { wrapper: AllProviders, ...options })
+}
+
+// Usage in test:
+import { renderWithProviders } from '@/test-utils'
+test('renders with theme', () => {
+    renderWithProviders(<ProductCard />)
+})
+
+// ═══ Test Data Factory ═══
+
+// factories.ts — consistent test data
+export function createProduct(overrides?: Partial<Product>): Product {
+    return {
+        id: 'prod-1',
+        name: 'Test Product',
+        price: 100,
+        category: 'electronics',
+        inStock: true,
+        ...overrides,
+    }
+}
+
+export function createUser(overrides?: Partial<User>): User {
+    return {
+        id: \`user-\${Date.now()}\`,
+        name: 'Test User',
+        email: 'test@example.com',
+        role: 'user',
+        ...overrides,
+    }
+}
+
+// Usage in test:
+test('shows out of stock badge', () => {
+    const product = createProduct({ inStock: false })
+    render(<ProductCard product={product} />)
+    expect(screen.getByText('Out of stock')).toBeInTheDocument()
+})`}</CodeBlock>
+
+                {/* ===== ANTI-PATTERNS ===== */}
+                <Heading2>🚫 Anti-patterns — Common Mistakes to Avoid</Heading2>
+
+                <CodeBlock title="anti-patterns.ts">{`// ❌ #1: Testing implementation details
+test('sets loading state', () => {
+    const { result } = renderHook(() => useFetch('/api'))
+    expect(result.current.loading).toBe(true)  // Internal state!
+})
+// ✅ Test what user sees
+test('shows spinner while loading', async () => {
+    render(<UserList />)
+    expect(screen.getByRole('progressbar')).toBeVisible()
+    await waitForElementToBeRemoved(() => screen.queryByRole('progressbar'))
+})
+
+// ❌ #2: Snapshot abuse — approving all without review
+test('renders', () => {
+    const { container } = render(<ComplexPage />)
+    expect(container).toMatchSnapshot()  // 500-line snapshot!
+})
+// ✅ Use inline snapshot or targeted assertions
+test('renders header', () => {
+    render(<ComplexPage />)
+    expect(screen.getByRole('heading')).toHaveTextContent('Dashboard')
+})
+
+// ❌ #3: Shared mutable state between tests
+let cart: Cart
+beforeAll(() => { cart = new Cart() })  // shared!
+test('add item', () => { cart.add(item1) })
+test('has 1 item', () => { expect(cart.items).toHaveLength(1) })  // Depends on test above!
+// ✅ Each test creates its own state
+test('add item', () => {
+    const cart = new Cart()  // fresh!
+    cart.add(item1)
+    expect(cart.items).toHaveLength(1)
+})
+
+// ❌ #4: Over-mocking — mock everything syndrome
+jest.mock('@/utils/formatPrice')  // Why mock a pure function?
+jest.mock('@/utils/slugify')       // Not needed!
+// ✅ Only mock external dependencies (API, DB, third-party)
+jest.mock('@/utils/api')  // ✅ API calls need mocking
+// Pure functions → test directly, don't mock
+
+// ❌ #5: Not clearing mocks
+test('test A', async () => {
+    ;(fetchData as jest.Mock).mockResolvedValue({ data: 'A' })
+})
+test('test B', async () => {
+    // fetchData still mocked from test A! → Unexpected behavior
+})
+// ✅ Clear mocks in beforeEach
+beforeEach(() => jest.clearAllMocks())
+
+// ❌ #6: Ignoring act() warnings
+// Warning: An update was not wrapped in act(...)
+// → There's an unhandled side-effect!
+// ✅ Use findBy* (auto-wrapped) or wrap in act()
+await screen.findByText('Loaded')  // ✅ auto-act
+
+// ❌ #7: Testing third-party libraries
+test('Ant Design Button renders', () => {
+    render(<Button>Click</Button>)  // Ant Design's responsibility, not yours!
+})
+// ✅ Test YOUR component that uses Button
+test('submit button calls onSubmit', async () => {
+    const onSubmit = jest.fn()
+    render(<CheckoutForm onSubmit={onSubmit} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Submit' }))
+    expect(onSubmit).toHaveBeenCalled()
+})
+
+// ❌ #8: Forgetting to await async assertions
+test('loads data', () => {
+    render(<UserList />)
+    screen.findByText('Alice')  // Missing await! Test passes without checking!
+})
+// ✅ Always await findBy* and async operations
+test('loads data', async () => {
+    render(<UserList />)
+    expect(await screen.findByText('Alice')).toBeInTheDocument()
+})`}</CodeBlock>
+
+                {/* ===== SENIOR TIPS ===== */}
+                <Heading2>👨‍💻 Senior-Level Tips</Heading2>
+
+                <CodeBlock title="senior-patterns.ts">{`// 1. ✅ jest.each — parameterized tests (DRY)
+test.each([
+    ['hello world', 'hello-world'],
+    ['Hello World!', 'hello-world'],
+    ['  spaces  ', 'spaces'],
+    ['', ''],
+])('slugify("%s") → "%s"', (input, expected) => {
+    expect(slugify(input)).toBe(expected)
+})
+
+// Object syntax (more readable)
+test.each([
+    { price: 1000000, expected: '1.000.000đ' },
+    { price: 0, expected: '0đ' },
+    { price: 99.5, expected: '99,5đ' },
+])('formatPrice($price) → $expected', ({ price, expected }) => {
+    expect(formatPrice(price)).toBe(expected)
+})
+
+// 2. ✅ MSW — Mock Service Worker (network-level API mocking)
+import { setupServer } from 'msw/node'
+import { http, HttpResponse } from 'msw'
+
+const server = setupServer(
+    http.get('/api/products', () => {
+        return HttpResponse.json([
+            { id: 1, name: 'Product A', price: 100 },
+        ])
+    }),
+    http.post('/api/orders', async ({ request }) => {
+        const body = await request.json()
+        return HttpResponse.json({ orderId: 'order-123', ...body })
+    })
+)
+
+beforeAll(() => server.listen())
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
+
+test('shows products from API', async () => {
+    render(<ProductList />)
+    expect(await screen.findByText('Product A')).toBeInTheDocument()
+})
+
+// Override for specific test
+test('shows error when API fails', async () => {
+    server.use(
+        http.get('/api/products', () => HttpResponse.error())
+    )
+    render(<ProductList />)
+    expect(await screen.findByText(/error/i)).toBeInTheDocument()
+})
+
+// 3. ✅ Accessibility testing with jest-axe
+import { axe, toHaveNoViolations } from 'jest-axe'
+expect.extend(toHaveNoViolations)
+
+test('form is accessible', async () => {
+    const { container } = render(<LoginForm />)
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
+})
+
+// 4. ✅ Custom matchers — domain-specific assertions
+expect.extend({
+    toBeValidPrice(received: string) {
+        const pass = /^\\d{1,3}(\\.\\d{3})*đ$/.test(received)
+        return {
+            pass,
+            message: () =>
+                \`Expected "\${received}" to be a valid VND price format\`,
+        }
+    },
+})
+expect(formatPrice(1000000)).toBeValidPrice()
+
+// 5. ✅ Performance — run tests faster
+// Only run tests related to changed files
+npx jest --onlyChanged
+npx jest --changedSince=main
+
+// Stop on first failure
+npx jest --bail
+
+// Run heavy tests separately
+npx jest --testPathPattern="heavy" --maxWorkers=1
+
+// 6. ✅ CI/CD Integration
+// .github/workflows/test.yml
+name: Unit Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx jest --coverage --ci
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+
+// 7. ✅ Debugging tests
+// Run a specific test
+npx jest -t "adds item to cart"
+
+// Debug mode (Node inspector)
+node --inspect-brk node_modules/.bin/jest --runInBand
+
+// Verbose output
+npx jest --verbose
+
+// 8. ✅ Test custom hooks with wrapper
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+    <CartProvider initialItems={[]}>
+        {children}
+    </CartProvider>
+)
+
+test('useCart adds item', () => {
+    const { result } = renderHook(() => useCart(), { wrapper })
+    act(() => result.current.addItem({ id: '1', name: 'T-shirt', price: 200 }))
+    expect(result.current.items).toHaveLength(1)
+    expect(result.current.total).toBe(200)
 })`}</CodeBlock>
 
                 {/* ===== COVERAGE & BEST PRACTICES ===== */}
