@@ -27,6 +27,7 @@ import slidingWindowPattern from './sliding-window-pattern'
 import stackPattern from './stack-pattern'
 import twoPointersPattern from './two-pointers-pattern'
 import unitTestingGuide from './unit-testing-guide'
+import e2eTestingPlaywright from './e2e-testing-playwright'
 
 // Thêm bài viết mới: import rồi thêm vào mảng bên dưới
 export const blogPosts: BlogPost[] = [
@@ -58,6 +59,7 @@ export const blogPosts: BlogPost[] = [
     seoOptimization,
     accessibilityGuide,
     behavioralInterview,
+    e2eTestingPlaywright,
 ]
 
 
