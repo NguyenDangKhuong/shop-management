@@ -70,6 +70,7 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 | **Trading Bot** | — | ✅ unless-stopped | Docker Compose | Binance Futures auto-trading (Telegram control) |
 | **Webtop** | 3010 | ✅ unless-stopped | Docker | Ubuntu XFCE desktop in browser |
 | **stress-ng** | — | ✅ enabled | systemd | Anti-reclaim CPU/RAM |
+| **RustDesk Server** | 21115-21119 | ✅ unless-stopped | Docker Compose | Self-hosted RustDesk relay (hbbs + hbbr). Config: `~/rustdesk/` |
 | **CrowdSec** | — | ✅ enabled | systemd | Brute-force protection + community blocklist |
 | **vocab-push.timer** | — | ✅ enabled | systemd timer | Vocab reminder mỗi giờ |
 
