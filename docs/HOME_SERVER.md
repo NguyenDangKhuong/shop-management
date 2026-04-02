@@ -77,19 +77,6 @@ Config: `~/rustdesk/docker-compose.yml` trên VPS.
 > [!CAUTION]
 > Cổng LAN trên máy cắm vào **modem nhà mạng** sẽ nhận IP dải `10.53.x.x` — không cùng mạng với thiết bị khác và không có Internet. Phải cắm vào **router WiFi** hoặc dùng **WiFi** để có Internet.
 
-## APT Mirror
-
-Mirror mặc định `vn.archive.ubuntu.com` hay bị lỗi 404. Đã đổi sang `sg.archive.ubuntu.com` (Singapore, nhanh + ổn định hơn):
-
-```bash
-# File cấu hình
-/etc/apt/sources.list.d/ubuntu.sources
-
-# Đổi mirror (nếu cần)
-sudo sed -i 's/vn.archive.ubuntu.com/sg.archive.ubuntu.com/g' /etc/apt/sources.list.d/ubuntu.sources
-```
-
-`unattended-upgrades` đã bị **tắt** để tránh lock apt.
 
 ## Phần mềm đã cài
 
@@ -98,11 +85,16 @@ sudo sed -i 's/vn.archive.ubuntu.com/sg.archive.ubuntu.com/g' /etc/apt/sources.l
 - Tailscale
 - RustDesk 1.3.9
 
+## Hệ sinh thái IoT (Home Assistant)
+
+Máy tính này đóng vai trò là **HA Slave Node** trong mạng LAN, chuyên làm proxy để đồng bộ thiết bị cứng lên VPS trung tâm.
+Chi tiết xin vui lòng xem tại: 👉 [HOME_ASSISTANT.md](./HOME_ASSISTANT.md)
+
 ## TODO
 
-- [ ] Cài Google Chrome
+- [x] Cài Google Chrome
 - [ ] Cắm dây LAN vào đúng router WiFi để có mạng ổn định
-- [ ] Cài Docker (nếu cần chạy container)
+- [x] Cài Docker (nếu cần chạy container)
 
 ---
 

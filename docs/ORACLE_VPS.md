@@ -492,7 +492,7 @@ HA trên VPS **chỉ dùng được cloud integrations**. Thiết bị cần LAN
 | Xiaomi Home (camera controls, motion alerts) | Xiaomi camera live stream (RTSP) |
 | Automations chéo tất cả | Broadlink IR / HomeKit |
 
-**Giải pháp cho local devices:** Cài thêm HA trên `khuong-ubuntu-esxi` (cùng LAN) → dùng **Remote Home Assistant** integration liên kết 2 HA.
+**Giải pháp cho local devices:** Xem mô hình Master-Slave thiết lập kết nối giữa VPS và con **khuong-home-server** tại file 👉 [HOME_ASSISTANT.md](./HOME_ASSISTANT.md) (Dùng Remote Home Assistant).
 
 ### Xiaomi Devices (cho HA Local sau này)
 
