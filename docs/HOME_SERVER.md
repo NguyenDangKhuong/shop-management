@@ -53,6 +53,26 @@ ssh khuong@192.168.1.4
 > [!IMPORTANT]
 > RustDesk dùng Tailscale IP làm server, nên **cả 2 máy đều phải bật Tailscale** mới kết nối được.
 
+### Headless Mode (Không cắm màn hình)
+
+Máy này chạy không màn hình (headless). RustDesk cần X11 display để hoạt động, nên đã cài **virtual display driver**:
+
+- **Driver:** `xserver-xorg-video-dummy`
+- **Config:** `/etc/X11/xorg.conf.d/10-dummy.conf`
+- **Resolution:** 1920x1080 (có thể đổi trong config)
+
+```bash
+# Nếu RustDesk báo "no display" sau reboot, restart LightDM:
+sudo systemctl restart lightdm
+
+# Kiểm tra X11 có chạy không:
+sudo systemctl status lightdm
+```
+
+> [!NOTE]
+> Nếu sau này cắm monitor thật vào, có thể xóa file config dummy để dùng GPU thật:
+> `sudo rm /etc/X11/xorg.conf.d/10-dummy.conf && sudo systemctl restart lightdm`
+
 ### RustDesk Server (trên VPS)
 
 Server RustDesk self-hosted chạy trên Oracle VPS (`heyyolo-free-vps`):
