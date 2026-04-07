@@ -980,20 +980,42 @@ Oracle Console → Billing → Budgets → `free-tier-alert`
 
 ## Web Access
 
-| URL | Target |
-|-----|--------|
-| https://khuong.theworkpc.com | Vercel shop |
-| https://server.khuong.theworkpc.com | ESXi Web UI |
-| https://n8n.khuong.theworkpc.com | n8n (local via Tailscale) |
-| https://cli-proxy.khuong.theworkpc.com | cli-proxy (local via Tailscale) |
-| https://openclaw.khuong.theworkpc.com | openclaw (local via Tailscale) |
-| https://nas.khuong.theworkpc.com | NAS Synology (local via subnet) |
-| https://ha.khuong.theworkpc.com | Home Assistant (smart home) |
-| https://ui.khuong.theworkpc.com | Webtop (Ubuntu desktop in browser) — Nginx basic auth |
-| https://ui.thetaphoa.store | Webtop (CF Tunnel + Zero Trust OTP) ⭐ |
-| https://home.thetaphoa.store | Homepage Dashboard (CF Tunnel) |
-| http://161.118.197.104 | VPS direct |
-| http://100.118.218.99 | VPS via Tailscale |
+| URL | Target | Auth |
+|-----|--------|------|
+| https://khuong.theworkpc.com | Vercel shop | — |
+| https://server.khuong.theworkpc.com | ESXi Web UI | 🔒 Basic auth |
+| https://server.thetaphoa.store | ESXi Web UI | 🔒 CF Access (email OTP) |
+| https://n8n.khuong.theworkpc.com | n8n (local via Tailscale) | — |
+| https://cli-proxy.khuong.theworkpc.com | cli-proxy (local via Tailscale) | — |
+| https://openclaw.khuong.theworkpc.com | openclaw (local via Tailscale) | — |
+| https://nas.khuong.theworkpc.com | NAS Synology (local via subnet) | — |
+| https://ha.khuong.theworkpc.com | Home Assistant (smart home) | — |
+| https://ui.khuong.theworkpc.com | Webtop (Ubuntu desktop in browser) | 🔒 Basic auth |
+| https://ui.thetaphoa.store | Webtop (CF Tunnel + Zero Trust OTP) ⭐ | 🔒 CF Access |
+| https://home.thetaphoa.store | Homepage Dashboard (CF Tunnel) | — |
+| http://161.118.197.104 | VPS direct | — |
+| http://100.118.218.99 | VPS via Tailscale | — |
+
+## 🔒 ESXi Security (07/04/2026)
+
+**Host:** 192.168.1.100 | **Version:** ESXi 6.7.0 Update 2 | **Mainboard:** Huananzhi + Xeon
+
+| Biện pháp | Chi tiết | Trạng thái |
+|-----------|---------|------------|
+| **SLP (port 427) tắt** | Chống CVE-2023-29552 / ESXiArgs ransomware | ✅ Đã fix |
+| **Basic auth (Nginx)** | `server.khuong.theworkpc.com` — user: `khuong` | ✅ Đã setup |
+| **CF Access (email OTP)** | `server.thetaphoa.store` — Cloudflare Zero Trust | ✅ Đã setup |
+| **TLS ciphers** | TLSv1.2 only, Grade A | ✅ OK |
+| **HTTP headers** | HSTS, X-Frame-Options, CSP | ✅ OK |
+| **OpenSSH 7.9** | Không update được — ESXi 6.7 + Huananzhi mainboard | ⚠️ Chấp nhận |
+
+```bash
+# Nếu cần bật lại SLP (không khuyến nghị)
+ssh root@192.168.1.100
+/etc/init.d/slpd start
+esxcli network firewall ruleset set -r CIMSLP -e 1
+chkconfig slpd on
+```
 
 ## ⚠️ Known Limitations
 
