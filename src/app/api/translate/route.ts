@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 
 const CLI_PROXY_URL = process.env.CLI_PROXY_URL || ''
 const CLI_PROXY_KEY = process.env.CLI_PROXY_API_KEY || ''
-const MODEL = 'gpt-5-codex-mini'
+const MODEL = 'gh-gpt-4.1-mini'
 
 export async function POST(req: NextRequest) {
     const limited = await checkRateLimit(req, 'translate', { limit: 10, window: '30 s' })
