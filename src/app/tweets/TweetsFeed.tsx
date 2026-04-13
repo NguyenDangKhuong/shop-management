@@ -294,7 +294,7 @@ export function TweetsFeed() {
                                 }`}
                         >
                             <span className="mr-1.5">📌</span>
-                            @{PINNED_USERNAME}
+                            Pinned
                             {mode === 'pinned_user' && (
                                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-[#ff9900] rounded-full" />
                             )}

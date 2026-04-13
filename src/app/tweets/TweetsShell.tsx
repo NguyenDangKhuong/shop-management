@@ -16,7 +16,7 @@ const PINNED_USERNAME = process.env.NEXT_PUBLIC_PINNED_USERNAME || ''
 const TABS = [
     { href: '/tweets/for-you', label: 'For You', emoji: '✨' },
     { href: '/tweets/following', label: 'Following', emoji: '👥' },
-    { href: '/tweets/pinned', label: `@${PINNED_USERNAME}`, emoji: '📌' },
+    { href: '/tweets/pinned', label: 'Pinned', emoji: '📌' },
     { href: '/tweets/likes', label: 'Liked', emoji: '❤️' },
 ] as const
 
