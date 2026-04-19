@@ -7,7 +7,7 @@ Cấu trúc Smart Home được thiết kế theo mô hình **Master-Slave** (ho
 | Vai trò | Instance | Vị trí | IP / URL truy cập | Chức năng chính |
 |---------|----------|---------|-------------------|-----------------|
 | **Master** | `homeassistant` (VPS) | Oracle Cloud VPS | `home.khuong.theworkpc.com:8123` | Xử lý Automation nặng, Giao diện Dashboard chính, kết nối ra ngoài Internet, chạy SmartIR. |
-| **Slave (Proxy)** | `homeassistant` (Local) | `khuong-home-server` | `100.101.104.52:8123` (Tailscale) | Chỉ chạy ở `network_mode: host` để bắt các thiết bị IoT nội bộ mạng LAN (Broadlink, Tuya, Camera). |
+| **Slave (Proxy)** | `homeassistant` (Local) | Magicsee N5 Max (S905X3 TV Box) | `100.91.8.9:8123` (Tailscale) | Chỉ chạy ở `network_mode: host` để bắt các thiết bị IoT nội bộ mạng LAN (Broadlink, Tuya, Camera). *Đã migrate từ PC cũ sang Armbian*. |
 
 **Cơ chế đồng bộ (Sync Mechanism):**
 Sử dụng Custom Component **Remote Home Assistant** (cài qua HACS) để đẩy 100% entity từ *Slave* lên *Master* thông qua đường hầm Tailscale bảo mật mà không cần mở port ra ngoài.
@@ -19,7 +19,7 @@ Cấu hình cho cả 2 máy đều được thiết lập bằng Docker Volume M
 * **Trên VPS (Master):** `/home/ubuntu/homeassistant/config/configuration.yaml`
   *(Có thể sửa file này cực kỳ tiện lợi thông qua trình duyệt bằng **VS Code Server** tại `home.khuong.theworkpc.com:3006`)*
 
-* **Trên Home Server (Slave):** `/home/khuong/hoas/config/configuration.yaml`
+* **Trên Home Server (Slave):** `/opt/homeassistant` (trên Armbian của TV Box)
   *(File này cấu hình dạng container `network_mode: host` để bắt thiết bị local)*
 
 ## 3. Cách thêm thiết bị mới (Ví dụ Broadlink)
@@ -29,7 +29,7 @@ Cấu hình cho cả 2 máy đều được thiết lập bằng Docker Volume M
 ### 3.1 Thêm Hub Broadlink vào Local HA
 1. Tìm địa chỉ IP của cục Broadlink trong mạng LAN nhà (ví dụ `192.168.1.34`).
 2. Nếu quét App hoặc Ping không thấy do Client Isolation, hãy **đăng nhập vào Router cấu hình WiFi** và tìm IP trong *DHCP Client List* bằng địa chỉ MAC của Hub Broadlink (thường bắt đầu bằng OUI Hàng Châu: `24:59:E5:` hoặc `EC:0B:AE:`).
-3. Đăng nhập trang admin của Local HA qua Tailscale (`http://100.101.104.52:8123`).
+3. Đăng nhập trang admin của Local HA qua Tailscale (ví dụ `http://100.91.8.9:8123`).
 4. `Settings` -> `Devices & Services` -> Thêm Integration **Broadlink**.
 5. Nhập IP vừa tìm được để connect.
 
@@ -48,7 +48,7 @@ Do Boardlink chỉ cung cấp "nút bấm raw", không tạo ra cái tủ lạnh
    - Nhớ copy đủ cái Long-Lived Access Token.
 
 2. **Mất kết nối:**
-   - Mạng Wi-Fi của `khuong-home-server` thỉnh thoảng chập chờn. Nếu mất Wi-Fi, con Local HA sẽ ngủm mạng, VPS sẽ báo các thiết bị nội bộ thành *Unavailable*. (Reccommended: cắm thẳng cáp Ethernet vô đúng Router phát).
+   - Mạng Ethernet (LAN) trên con Armbian Box ổn định hơn Wi-Fi. Đảm bảo cắm cáp Ethernet vào thẳng Router phát để tránh việc con Local HA rớt mạng. Tắt GUI (Multi-user target) của màn hình TV nếu không cần thiết để tránh giật lag CPU do driver đồ hoạ Mali yếu kém trên Linux.
 
 ---
 *Cập nhật: 02/04/2026*
