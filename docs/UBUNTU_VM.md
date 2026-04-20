@@ -41,7 +41,9 @@ journalctl --user -u shop-nextjs -f
 
 ## Docker Containers
 
-Không còn container nào chạy trên máy này.
+| Container | Port | Mô tả |
+|-----------|------|-------|
+| `nginx-router-proxy-esxi` | `:8882` | Nginx Proxy truy cập Router ESXi (`192.168.1.1`) qua IP Tailscale. Tự động bọc Header để lấn lách CSRF lỗi `Invalid Parameter`. |
 
 > ℹ️ **CLI Proxy**, **OpenClaw** và **n8n** đã chuyển sang Oracle VPS (18/03/2026). Xem [ORACLE_VPS.md](./ORACLE_VPS.md).
 

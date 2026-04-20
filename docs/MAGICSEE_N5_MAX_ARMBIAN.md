@@ -185,10 +185,50 @@ Cấu hình tại `/opt/adguardhome/conf/AdGuardHome.yaml`:
 | OISD (Big) | `https://big.oisd.nl` |
 | HaGeZi Multi PRO | `https://raw.githubusercontent.com/hagezi/dns-blocklists/main/adblock/pro.txt` |
 
-### 8.5 Cấu hình Router
+### 8.5 Cấu hình Router & Chẩn đoán lỗi mạng
 Vào Router (`192.168.1.1`) → **Network** → **LAN** → đổi:
-- **Primary DNS:** `192.168.1.106`
+- **Primary DNS:** `192.168.1.106` (IP tĩnh của `eth0` bằng dây cắm LAN).
 - **Secondary DNS:** `1.1.1.1` (dự phòng)
+
+> [!WARNING]
+> **Lỗi chết card LAN (Cannot attach to PHY)**
+> TV Box chạy 24/7 có thể gặp hiện tượng treo luồng mạng `eth0` do chip PHY quá tải. Lúc này N5 Max sẽ tự nhảy sang dùng kết nối WiFi (`wlan0`) với IP DHCP khác (VD: `.108`).
+> Do Router vẫn đẩy truy vấn DNS vào `.106` cũ, mạng nhà sẽ bị đứt.
+> **Khắc phục tạm thời:** Chạy lệnh gán giả mạo IP vào card WiFi để hứng mạng: `sudo ip addr add 192.168.1.106/24 dev wlan0`. Lưu ý mất hiệu lực khi khởi động lại.
+> **Khắc phục triệt để:** Rút điện N5 Max để chip ngắt nguồn ("Cold Boot") hoàn toàn rồi hãy cắm lại. Không được dùng lệnh `sudo reboot` (phần cứng vẫn ngâm điện).
+
+### 8.6 Truy cập ngược vào Router (Bypass lỗi Invalid Parameter)
+Do Router mạng thường có cơ chế chặn đăng nhập từ xa nếu Header kết nối sai (lỗi `Invalid parameter`). Đồng thời để truy cập được từ mọi thiết bị (iPhone, Macbook) qua Tailscale mà không bị ràng buộc bởi Local Tunnel.
+
+Giải pháp là chạy một **Nginx Reverse Proxy** siêu nhẹ trực tiếp trên N5 Max, lắng nghe ở cổng `8881` và tự chèn Fake Header trước khi gửi vào Router.
+
+**Lệnh khởi tạo Container Nginx Proxy:**
+```bash
+# Tạo file config
+mkdir -p ~/router-proxy
+cat > ~/router-proxy/nginx.conf << 'EOF'
+events {}
+http {
+    server {
+        listen 8881;
+        location / {
+            proxy_pass http://192.168.1.1:80;
+            proxy_set_header Host 192.168.1.1;
+            proxy_set_header Origin 'http://192.168.1.1';
+            proxy_set_header Referer 'http://192.168.1.1/';
+        }
+    }
+}
+EOF
+
+# Chạy Docker (Tự động khởi động cùng máy)
+docker run -d --name nginx-router-proxy \
+  --network host \
+  --restart unless-stopped \
+  -v ~/router-proxy/nginx.conf:/etc/nginx/nginx.conf:ro \
+  nginx:alpine
+```
+*Truy cập bằng URL trên Homepage:* `http://100.91.8.9:8881` (Tương thích với mọi máy cài VPN).
 
 ## 9. Tích hợp máy lạnh Midea AC LAN
 
