@@ -23,12 +23,14 @@ import mongoose from 'mongoose'
 
 export const dynamic = 'force-dynamic'
 
-// Configure web-push with VAPID keys
-webpush.setVapidDetails(
-    'mailto:khuong@thetaphoa.com',
-    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-    process.env.VAPID_PRIVATE_KEY!
-)
+// Configure web-push with VAPID keys (only if keys exist, to prevent Next.js build crash)
+if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+    webpush.setVapidDetails(
+        'mailto:khuong@thetaphoa.com',
+        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+        process.env.VAPID_PRIVATE_KEY
+    )
+}
 
 export async function POST(req: NextRequest) {
     // Verify cron secret
