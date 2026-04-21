@@ -230,7 +230,36 @@ docker run -d --name nginx-router-proxy \
 ```
 *Truy cập bằng URL trên Homepage:* `http://100.91.8.9:8881` (Tương thích với mọi máy cài VPN).
 
-## 9. Tích hợp máy lạnh Midea AC LAN
+## 9. Sao Lưu Cấu Hình Home Assistant (Google Drive Backup)
+
+Hệ thống được thiết lập sao lưu tự động cấu hình lõi của Home Assistant (`/opt/homeassistant`) vào Google Drive cá nhân thông qua `rclone` và `cronjob`. Lịch sao lưu chạy vào lúc **3:30 Sáng** mỗi ngày.
+- Công cụ sử dụng: `rclone` (native binary).
+- Cấu hình lưu tối đa **3 bản** (tự động xóa bản cũ hơn 3 ngày bằng cờ `--min-age 3d`).
+- Đường dẫn script: `~/ha_backup.sh` (với nội dung dùng lệnh `sudo tar -czf` và `rclone`).
+
+> [!TIP]
+> **Cronjob Root:** Do thư mục `/opt/homeassistant` được quản lý bởi Home Assistant Docker dưới quyền root, Cronjob phải được đặt trong Root Crontab (`sudo crontab -e`):
+> `30 3 * * * /home/khuong/ha_backup.sh`
+
+### 9.1 Quy trình Cấp Cứu (Restore) từ file Backup
+Nếu USB/Thẻ nhớ hỏng hoặc cấu hình Home Assistant bị lỗi không thể khởi động, thực hiện đúng 4 bước sau để bung file nén giải cứu:
+
+1. **Tải file Backup:** Tải tệp sao lưu mới nhất định dạng `ha_backup_...tar.gz` từ thư mục Google Drive về Armbian (hoặc đẩy trực tiếp vào thẻ nhớ).
+2. **Dừng hệ thống:** Tạm ngưng Container Home Assistant để tránh xung đột ghi đè.
+   ```bash
+   docker stop homeassistant
+   ```
+3. **Xoá tàn dư và bung file nén:** Xoá thư mục cấu hình lỗi và giải nén thẳng file `tar.gz` đè vào ổ chứa `/opt/homeassistant`.
+   ```bash
+   sudo rm -rf /opt/homeassistant/*
+   sudo tar -xzf ten_file_backup_ban_tai_ve.tar.gz -C /opt
+   ```
+4. **Khởi động lại:** Bật lại bình thường, mọi cấu hình sẽ trở lại y hệt thời điểm sao lưu.
+   ```bash
+   docker start homeassistant
+   ```
+
+## 10. Tích hợp máy lạnh Midea AC LAN
 
 Máy lạnh Midea hỗ trợ điều khiển trực tiếp qua WiFi LAN mà **không cần Broadlink**. Sử dụng custom integration `midea_ac_lan` (cài qua HACS).
 
