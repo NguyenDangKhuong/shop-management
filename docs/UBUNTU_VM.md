@@ -45,6 +45,12 @@ journalctl --user -u shop-nextjs -f
 |-----------|------|-------|
 | `nginx-router-proxy-esxi` | `:8882` | Nginx Proxy truy cập Router ESXi (`192.168.1.1`) qua IP Tailscale. Tự động bọc Header để lấn lách CSRF lỗi `Invalid Parameter`. |
 
+### Cấu trúc Nginx Proxy cho Router ESXi (Fix lỗi Redirect HTTPS)
+Router `192.168.1.1` (VNPT / ESXi network) bắt buộc bảo mật bằng `https` và tự động redirect mọi yêu cầu `http`. Khi truy cập qua Tailscale VPN, điều này gây lỗi vì client bị đá về IP LAN ngoại tuyến.
+Cách cấu hình đúng trong tệp `~/router-proxy-esxi/nginx.conf`:
+- **Chỉ định Backend HTTPS**: `proxy_pass https://192.168.1.1;` (Ghi đè và bỏ qua lỗi SSL bằng `proxy_ssl_verify off;`).
+- **Rewrite Redirect**: Dùng `proxy_redirect https://192.168.1.1/ /;` để hứng các chuỗi Redirect nội bộ của Router và ép nó trả về cổng Tailscale (ví dụ `/cgi-bin/login.asp`).
+
 > ℹ️ **CLI Proxy**, **OpenClaw** và **n8n** đã chuyển sang Oracle VPS (18/03/2026). Xem [ORACLE_VPS.md](./ORACLE_VPS.md).
 
 ## System Services
