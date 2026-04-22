@@ -80,7 +80,7 @@ ssh -i ~/Downloads/ssh-key-2026-02-20.key ubuntu@161.118.197.104
 
 Vào ngày 21/04/2026, VPS được thiết lập cơ chế sao lưu độc lập thư mục cấu hình Home Assistant (`/home/ubuntu/homeassistant/config`) lên Google Drive (thư mục `Homelab_Backups/HomeAssistant_VPS`).
 - **Tool sử dụng:** Cài đặt `rclone` (native) thay vì cài qua HACS/Addon.
-- **Kịch bản tự động:** File script `~/ha_backup.sh` tích hợp nén thư mục, Tải lên Mây và xóa rác cũ. (Giữ tối đa 3 ngày nhờ cờ `--min-age 3d`).
+- **Kịch bản tự động:** File script `~/ha_backup.sh` tích hợp nén thư mục, Tải lên Mây và xóa rác cũ. (Chỉ giữ duy nhất 1 bản bằng cách xóa file cũ hơn 12 tiếng với cờ `--min-age 12h`).
 - **Cronjob User:**
   ```bash
   (crontab -l 2>/dev/null; echo "0 3 * * * /home/ubuntu/ha_backup.sh") | crontab -

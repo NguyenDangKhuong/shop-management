@@ -234,7 +234,7 @@ docker run -d --name nginx-router-proxy \
 
 Hệ thống được thiết lập sao lưu tự động cấu hình lõi của Home Assistant (`/opt/homeassistant`) vào Google Drive cá nhân thông qua `rclone` và `cronjob`. Lịch sao lưu chạy vào lúc **3:30 Sáng** mỗi ngày.
 - Công cụ sử dụng: `rclone` (native binary).
-- Cấu hình lưu tối đa **3 bản** (tự động xóa bản cũ hơn 3 ngày bằng cờ `--min-age 3d`).
+- Cấu hình lưu tối đa **1 bản** duy nhất (tự động xóa bản cũ hơn 12 tiếng bằng cờ `--min-age 12h`).
 - Đường dẫn script: `~/ha_backup.sh` (với nội dung dùng lệnh `sudo tar -czf` và `rclone`).
 
 > [!TIP]
