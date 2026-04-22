@@ -170,7 +170,7 @@ docker run -d \
 ```
 
 ### 8.2 Setup Wizard
-Truy cập `http://192.168.1.106:3000` để chạy wizard lần đầu. Sau khi setup xong, dashboard chạy trên `http://192.168.1.106:8082`.
+Truy cập `http://192.168.1.108:3000` để chạy wizard lần đầu. Sau khi setup xong, dashboard chạy trên `http://192.168.1.108:8082`.
 
 ### 8.3 Upstream DNS
 Cấu hình tại `/opt/adguardhome/conf/AdGuardHome.yaml`:
@@ -187,7 +187,7 @@ Cấu hình tại `/opt/adguardhome/conf/AdGuardHome.yaml`:
 
 ### 8.5 Cấu hình Router & Chẩn đoán lỗi mạng
 Vào Router (`192.168.1.1`) → **Network** → **LAN** → đổi:
-- **Primary DNS:** `192.168.1.106` (IP tĩnh của `eth0` bằng dây cắm LAN).
+- **Primary DNS:** `192.168.1.108` (IP tĩnh của `wlan0` bằng Wi-Fi).
 - **Secondary DNS:** `1.1.1.1` (dự phòng)
 
 > [!WARNING]
@@ -294,6 +294,31 @@ Có 2 phương pháp gom Nút để tạo Universal Remote:
 > [!WARNING]
 > **Giới hạn đồng bộ:** Remote và Mã Hồng ngoại học trên hệ thống nội bộ của N5 Max sẽ **không tự đồng bộ** qua máy chủ Home Assistant phụ ở Oracle VPS. Khuyến cáo sử dụng duy nhất N5 Max làm Master Hub trên thiết bị di động.
 
+### 11.3 Cấu hình Giao diện UI (Tránh lỗi tràn viền & Configuration error)
+Khi tạo các nút bấm cho Quạt/Tivi trên Home Assistant Dashboard, thẻ `horizontal-stack` mặc định sẽ bị tràn viền và không có lề (padding).
+Để tạo hàng nút ngang đẹp có viền, có 2 cách:
+
+1. **Dùng thẻ Grid (Khuyên dùng, không cần cài thêm plugin):**
+```yaml
+type: grid
+columns: 5
+square: true
+cards:
+  - type: button
+    # ... cấu hình nút tắt/bật
+```
+
+2. **Bọc trong thẻ Entities (Cần cài Plugin `lovelace-hui-element` trên HACS):**
+Mẹo cũ dùng `custom:hui-horizontal-stack-card` đã bị HA đời mới chặn gây ra lỗi **"Configuration error"**. Bắt buộc phải cài HACS plugin `lovelace-hui-element` và cấu hình như sau:
+```yaml
+type: entities
+entities:
+  - type: custom:hui-element
+    card_type: horizontal-stack
+    cards:
+      # ...
+```
+
 ### 9.3 Lưu ý
 - Khi máy lạnh **tắt nguồn**, module WiFi cũng ngủ → entity sẽ hiển thị **Unavailable** (bình thường).
 - Nếu router restart và không có Static DHCP, IP máy lạnh sẽ thay đổi → cần update lại trong `.storage/core.config_entries`.
@@ -315,7 +340,7 @@ Khi máy lạnh bị **Unavailable** dù đã bật và IP đúng, nguyên nhân
 
 | Thiết bị | MAC Address | IP cố định |
 |----------|-------------|------------|
-| N5 Max (Armbian) | `02:00:00:15:19:01` | `192.168.1.106` |
+| N5 Max (Armbian) | `40:aa:56:5b:67:25` (MAC Wi-Fi) | `192.168.1.108` |
 | AC1 (Midea) | `AC:72:DD:D5:15:A2` | `192.168.1.200` |
 | AC2 (Midea) | `24:59:E5:EA:C3:C4` | `192.168.1.201` |
 | Broadlink Hub | `EC:0B:AE:9E:7F:C5` | `192.168.1.202` |
@@ -467,5 +492,24 @@ climate:
 ```
 
 > [!TIP]
-> **Cách lấy Device Code (`1122`)**
-> Tra cứu mã lệnh tương ứng với hãng máy lạnh tại [Kho code SmartIR](https://github.com/smartHomeHub/SmartIR/blob/master/docs/CLIMATE.md). Nếu hãng không có sẵn, bạn có thể tự quét mã (Learn Command) từ remote gốc thông qua service `remote.learn_command` của HA.
+> **Cách lấy Device Code (`1101` / `1122`)**
+> Tra cứu mã lệnh tương ứng tại [Kho code SmartIR](https://github.com/smartHomeHub/SmartIR/blob/master/docs/CLIMATE.md). 
+> - **Daikin (form ARC452 có nút vàng/xanh):** Mã thông dụng nhất là `1101` (Nếu không được có thể thử `1122`, `1118`, `1102`).
+> - ⚠️ **TUYỆT ĐỐI KHÔNG** dùng tính năng `remote.learn_command` để học từng nút của máy lạnh. Remote máy lạnh sử dụng "mã khối" (mỗi lần bấm sẽ phát toàn bộ trạng thái Nhiệt độ + Quạt + Mode). Bạn bắt buộc phải dùng SmartIR.
+
+### 12.4 Troubleshooting: Đèn Broadlink không chớp hoặc bấm không ăn
+1. **Sai Tên Thiết Bị:** Kiểm tra thật kỹ `controller_data` phải trúng phóc tên cục Broadlink đặt cùng phòng với máy lạnh (Vd: `remote.meo_phong_khach`).
+2. **Lỗi "Trắng Trạng Thái" lần đầu:** Khi vừa thêm SmartIR, bấm mỗi nút Power sẽ không có tác dụng. Bạn PHẢI chọn tay đủ 3 thông số trên thẻ UI: **Chế độ (Cool) + Nhiệt độ (26°C) + Tốc độ quạt (Auto)**. Khi đủ 3 yếu tố này, SmartIR mới biết ghép mã lệnh nào trong file JSON để phát đi.
+
+### 12.5 Tích hợp Code Server Editor vào Giao diện Home Assistant
+Vì bản Docker Container không có Add-on Store để cài File Editor. Ta có thể nhúng trực tiếp VS Code Server (đang chạy port 8080) vào thanh bên trái của Home Assistant bằng tính năng `panel_iframe`.
+- **Khắc phục lỗi không lưu được file (EACCES Permission Denied):** Mặc định Docker HA chạy quyền root, nếu Code-Server lưu bị lỗi quyền, chạy lệnh sau ở Terminal để cấp quyền Đọc/Ghi: `sudo chmod -R a+rwX /opt/homeassistant`.
+- Thêm đoạn này vào file `/opt/homeassistant/configuration.yaml`:
+```yaml
+panel_iframe:
+  code_server:
+    title: "Code Editor"
+    icon: mdi:microsoft-visual-studio-code
+    url: "http://<IP_TAILSCALE>:8080" # Hoặc IP Local tuỳ hệ thống
+```
+Khởi động lại HA, bạn sẽ có một IDE lập trình cực xịn ngay bên trong ứng dụng!
