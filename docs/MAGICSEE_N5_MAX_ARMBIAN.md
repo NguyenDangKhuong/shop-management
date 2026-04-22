@@ -263,17 +263,36 @@ Nếu USB/Thẻ nhớ hỏng hoặc cấu hình Home Assistant bị lỗi không
 
 Máy lạnh Midea hỗ trợ điều khiển trực tiếp qua WiFi LAN mà **không cần Broadlink**. Sử dụng custom integration `midea_ac_lan` (cài qua HACS).
 
-### 9.1 Cài đặt
+### 10.1 Cài đặt
 1. Cài HACS trên N5 Max HA (nếu chưa có)
 2. HACS → Integrations → tìm **"Midea AC LAN"** → Install
 3. Restart HA → Settings → Add Integration → **Midea AC LAN**
 4. Đăng nhập tài khoản Midea/SmartHome app → chọn thiết bị trên LAN
 
-### 9.2 Các thiết bị đã cấu hình
+### 10.2 Các thiết bị đã cấu hình
 | Tên | Device ID | IP (Static DHCP) | Model |
 |-----|-----------|-------------------|-------|
 | AC1 (Living AC) | `151732605931401` | `192.168.1.200` | `00000Q12` |
 | AC2 (Living AC) | `151732606955214` | `192.168.1.201` | `00000Q1A` |
+
+## 11. Hệ Thống Hồng Ngoại Local (Tuya/Broadlink IR)
+
+Hệ thống điều khiển Hồng ngoại (Tivi, Quạt, Rèm) được quy hoạch sử dụng tính năng **Local IR Bypass Cloud**, đảm bảo thời gian phản hồi Instant (0.05s) và hoạt động 100% offline không phụ thuộc máy chủ China.
+
+### 11.1 Cơ chế học lệnh và lưu trữ
+1. Truy cập **Developer Tools -> Actions** trên UI.
+2. Gọi Script: `remote.learn_command`
+3. Cấp thông số tên Thiết bị (VD: `tivi_phong_khach`) và Nút Lệnh (VD: `power`).
+4. Thao tác lưu sẽ chèn trực tiếp chuỗi mã Base64 vào bộ nhớ sâu `.storage` của Home Assistant cục bộ (Tuyệt đối không đẩy lên Cloud).
+
+### 11.2 Cơ chế gọi lệnh (Gom Remote)
+Thay vì sử dụng các custom component phức tạp, các nút điều khiển được gọi nòng nọc lẻ bằng lệnh `remote.send_command`.
+Có 2 phương pháp gom Nút để tạo Universal Remote:
+- **Phương pháp Script (Kịch bản):** Tạo Script riêng cho từng Nút. Dùng khi muốn liên kết thành 1 Macro (Chuỗi hành động đa nhịp: Tắt đèn + Bật Tivi + Chờ 2s + Kéo rèm).
+- **Phương pháp Thẻ HACS (UI Dashboard):** Tải các thẻ Giao diện từ HACS (như `custom:tv-card`) và dán dòng kịch bản `remote.send_command` thẳng vào Code giao diện. Giải pháp này giúp có một chiếc Remote siêu thực trên màn hình điện thoại mà không làm tràn bộ nhớ Script của Máy chủ.
+
+> [!WARNING]
+> **Giới hạn đồng bộ:** Remote và Mã Hồng ngoại học trên hệ thống nội bộ của N5 Max sẽ **không tự đồng bộ** qua máy chủ Home Assistant phụ ở Oracle VPS. Khuyến cáo sử dụng duy nhất N5 Max làm Master Hub trên thiết bị di động.
 
 ### 9.3 Lưu ý
 - Khi máy lạnh **tắt nguồn**, module WiFi cũng ngủ → entity sẽ hiển thị **Unavailable** (bình thường).
