@@ -301,4 +301,152 @@ Khi máy lạnh bị **Unavailable** dù đã bật và IP đúng, nguyên nhân
 | AC2 (Midea) | `24:59:E5:EA:C3:C4` | `192.168.1.201` |
 | Broadlink Hub | `EC:0B:AE:9E:7F:C5` | `192.168.1.202` |
 
-*Last updated: 2026-04-19*
+*Last updated: 2026-04-20*
+
+## 11. Yolo — Voice Assistant bằng Xiaozhi ESP32
+
+Tích hợp [Xiaozhi (小智)](https://github.com/78/xiaozhi-esp32) với HA qua [ha-mcp-for-xiaozhi](https://github.com/c1pher-cn/ha-mcp-for-xiaozhi). Điều khiển thiết bị bằng giọng nói tiếng Việt.
+
+> **Cài trên HA VPS** (master) — nơi có entities (đèn, AC, Broadlink). N5 Max không cần làm gì.
+
+### Kiến trúc
+
+```
+ESP32 Xiaozhi → WiFi → Xiaozhi Cloud (ASR+LLM+TTS tiếng Việt)
+    ↓ MCP (WebSocket)
+ha-mcp-for-xiaozhi (HACS trên HA VPS)
+    ↓
+Home Assistant VPS → bật/tắt đèn, AC, quạt...
+```
+
+### 11.1 Mua board ESP32 Xiaozhi
+
+> ⚠️ **Phải có ESP32 trước** — cần đăng ký thiết bị trên xiaozhi.me mới có MCP endpoint.
+
+| Board | Giá | Link |
+|-------|-----|------|
+| Breadboard Mini | ~$7 / ~180k | [AliExpress](https://www.aliexpress.com/item/1005009448496585.html) |
+| Spotpear Ball | ~$12 / ~300k | [AliExpress](https://vi.aliexpress.com/item/1005008627679270.html) |
+| EchoEar | ~$15 / ~380k | [AliExpress](https://www.aliexpress.com/item/1005009834934442.html) |
+
+Board mua về đã có firmware Xiaozhi sẵn. Cắm USB nguồn → kết nối WiFi → đăng ký xiaozhi.me → bind thiết bị → lấy **MCP Endpoint URL**.
+
+### 11.2 Cài HACS trên HA VPS (nếu chưa có)
+
+```bash
+docker exec -it homeassistant bash -c "wget -O - https://get.hacs.xyz | bash -"
+docker restart homeassistant
+```
+
+Sau restart: **Settings** → **Devices & Services** → **Add Integration** → tìm **HACS** → đăng nhập GitHub.
+
+### 11.3 Cài ha-mcp-for-xiaozhi
+
+HACS → **Integrations** → tìm **"xiaozhi"** → cài **"MCP Server for Xiaozhi"** → restart HA.
+
+```bash
+docker restart homeassistant
+```
+
+### 11.4 Cấu hình Integration
+
+1. **Settings** → **Devices & Services** → **Add Integration** → tìm **"Mcp"**
+2. Chọn **"MCP Server for Xiaozhi"**
+3. Nhập **MCP endpoint URL** từ xiaozhi.me (sau khi bind ESP32)
+4. Chọn **Assist** (HA built-in API) trong danh sách MCP
+5. Submit → chờ 1 phút → vào xiaozhi.me kiểm tra trạng thái Connected
+
+### 11.5 Expose Entities
+
+**Settings** → **Voice Assistants** → **Expose** tab → bật entities cần điều khiển:
+
+| Entity | Mục đích |
+|--------|---------|
+| `climate.ac1_living_ac` | Máy lạnh 1 |
+| `climate.ac2_living_ac` | Máy lạnh 2 |
+| Các entity khác | Đèn, quạt... |
+
+### 11.6 Test (không cần ESP32)
+
+Trên **xiaozhi.me** dashboard → phần chat → gõ text lệnh:
+- `"Bật đèn phòng khách"` → xem HA có thực thi không
+- `"Tắt máy lạnh"` → kiểm tra entity trên HA
+
+### 11.7 Phần cứng ESP32 (mua sau)
+
+| Board | Giá | Link |
+|-------|-----|------|
+| Breadboard Mini | ~$7 / ~180k | [AliExpress](https://www.aliexpress.com/item/1005009448496585.html) |
+| Spotpear Ball | ~$12 / ~300k | [AliExpress](https://vi.aliexpress.com/item/1005008627679270.html) |
+| EchoEar | ~$15 / ~380k | [AliExpress](https://www.aliexpress.com/item/1005009834934442.html) |
+
+> Board mua về đã có firmware Xiaozhi sẵn. Cắm USB nguồn → kết nối WiFi → đăng nhập xiaozhi.me → dùng ngay.
+
+### 11.8 Troubleshooting
+
+```bash
+# Xem log
+docker exec -it homeassistant cat /config/home-assistant.log | grep ws_mcp_server
+```
+
+Debug logging trong `configuration.yaml`:
+```yaml
+logger:
+  default: info
+  logs:
+    custom_components.ws_mcp_server: debug
+```
+
+### 11.9 Mở rộng chức năng Xiaozhi (Đổi tên, Giá vàng, Bitcoin, Dạy học...)
+
+Bản chất mạch ESP32 Xiaozhi chỉ là **"Microphone thu âm + Loa phát tín hiệu"**. Toàn bộ "não bộ" thực sự nằm ở Cloud LLM và Home Assistant thông qua cầu nối MCP. Vì vậy, **không cần phải can thiệp hay code lại C++ phần cứng** để thêm logic mới:
+
+- **Đổi tính cách hoặc yêu cầu Dạy tiếng Anh:** Đăng nhập trang quản lý `xiaozhi.me`, thay đổi **System Prompt** (Lời nhắc hệ thống). Khai báo: *"Hãy đóng vai giáo viên tiếng Anh bản xứ. Chỉ giao tiếp bằng tiếng Anh, sửa lỗi và giải nghĩa khi người dùng nói sai..."*
+- **Check thông tin thời gian thực (Giá Vàng, Bitcoin, Crypto):**
+  1. Tạo integrations/sensors tương ứng trong mạng Home Assistant (vd: `sensor.bitcoin` qua Binance API, hoặc viết code web scraper để lấy `sensor.gia_vang_sjc`).
+  2. Expose (phơi bày) các sensor này ở mục **Voice Assistants** trong HA.
+  3. Cầu nối MCP sẽ tự động cấp dữ liệu. Khi bạn hỏi *"Giá Bitcoin bao nhiêu"*, LLM sẽ dò sensor trên HA và lấy đúng số để báo lại bằng giọng nói.
+- **Đổi tên / Từ khóa đánh thức (Wake-word):**
+  - **Tên hiển thị Wifi/Bluetooth:** Có thể clone source code ESP-IDF về đổi dễ dàng.
+  - **Từ khóa gọi dậy:** Mặc định bạn nên dùng các từ có sẵn (vd: "Hi ESP", "Alexa"). Nếu muốn tạo tên Việt (vd: *"Yolo ơi"*), việc thu âm train model AI chuẩn cực kỳ vất vả. Nhưng cộng đồng đã có một **"Trick lỏ"** rất hay: dùng mô hình ngôn ngữ tiếng Anh để nhận diện phát âm (Phonetics) tiếng Việt:
+    1. Nhờ AI (ChatGPT/Claude) tạo ngữ âm bằng Prompt: *"You play the role of a British person, speaking Vietnamese. You will have to pronounce Vietnamese words according to your English pronunciation... help me pronounce: '[Từ khóa của bạn]'"*. (Ví dụ "Chào đồng chí" -> "chow dong chee").
+    2. clone source code ESP-IDF Xiaozhi về, mở giao diện `menuconfig`.
+    3. Tìm phần **Wake Word Implementation Type** → chuyển sang model **Multinet model**.
+    4. Điền chuỗi ngữ âm tiếng Anh (đã test ở B1) vào phần **Custom Wake Word**.
+    5. Phần **Custom Wake Word Display** ghi chữ tiếng Việt không dấu.
+    6. Chỉnh **Custom Wake Word Threshold** (mặc định 20) để test độ nhạy.
+    7. **Bỏ chọn** hết tất cả các wakeword mặc định đang có sẵn.
+    8. Mục **English Speech Command Model** → chọn **general english recognition(mm7_en)**.
+    9. Lưu lại, Build & Flash! Khi bạn nói tiếng Việt, model tiếng Anh sẽ bắt đúng nhịp ngữ âm đó và tự bật!
+
+## 12. Điều khiển Máy Lạnh qua Broadlink & SmartIR
+
+Đối với các máy lạnh không có WiFi native, chúng ta sẽ sử dụng cục phát hồng ngoại **Broadlink RM Mini/Pro** kết hợp với integration **SmartIR**.
+
+### 12.1 Cài đặt SmartIR
+1. Truy cập **HACS** → **Integrations** → **Explore & Download Repositories**.
+2. Tìm **SmartIR** và cài đặt.
+3. Khởi động lại Home Assistant.
+
+### 12.2 Kết nối Broadlink vào Home Assistant
+1. Dùng app Broadlink trên điện thoại để kết nối cục phát vào WiFi nhà (chỉ kết nối mạng, không cần add thêm remote vào app).
+2. Gán IP tĩnh trên Router cho cục Broadlink (vd: `192.168.1.202`).
+3. Vào HA: **Settings** → **Devices & Services** → **Add Integration** → tìm **Broadlink** → Nhập IP.
+
+### 12.3 Cấu hình YAML
+Thêm cấu hình sau vào file `/config/configuration.yaml`:
+
+```yaml
+smartir:
+
+climate:
+  - platform: smartir
+    name: Living Room AC
+    unique_id: livingroom_ac
+    device_code: 1122  # Thay mã tương ứng với hãng máy lạnh
+    controller_data: remote.broadlink_hub_remote # Tên Entity của cục Broadlink tại bước 12.2
+```
+
+> [!TIP]
+> **Cách lấy Device Code (`1122`)**
+> Tra cứu mã lệnh tương ứng với hãng máy lạnh tại [Kho code SmartIR](https://github.com/smartHomeHub/SmartIR/blob/master/docs/CLIMATE.md). Nếu hãng không có sẵn, bạn có thể tự quét mã (Learn Command) từ remote gốc thông qua service `remote.learn_command` của HA.
