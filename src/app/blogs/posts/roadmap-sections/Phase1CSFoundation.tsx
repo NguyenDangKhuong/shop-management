@@ -120,8 +120,8 @@ new TextEncoder().encode('Việt').length // 6 bytes (UTF-8)
                 <Paragraph>Khi bạn mở Chrome + VS Code + Terminal, OS quản lý chúng bằng <Highlight>Process</Highlight> và <Highlight>Thread</Highlight>.</Paragraph>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">Process</th><th className="text-left p-2 text-green-400">Thread</th></tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
+                        <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">Process</th><th className="text-left p-2 text-green-400">Thread</th></tr></thead>
+                        <tbody className="text-text-secondary">
                             <tr className="border-b border-gray-100"><td className="p-2">Memory</td><td className="p-2">Riêng biệt (isolated)</td><td className="p-2">Chia sẻ heap với process</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Tạo mới</td><td className="p-2">Nặng (~MB)</td><td className="p-2">Nhẹ (~KB)</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Communication</td><td className="p-2">IPC (Inter-Process Communication)</td><td className="p-2">Shared memory (nhanh hơn)</td></tr>
@@ -361,8 +361,8 @@ SSE:       Server → Client (1 chiều, server push liên tục)
 
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tình huống</th><th className="text-left p-2 text-blue-400">Dùng</th><th className="text-left p-2 text-green-400">Ví dụ</th></tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
+                        <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Tình huống</th><th className="text-left p-2 text-blue-400">Dùng</th><th className="text-left p-2 text-green-400">Ví dụ</th></tr></thead>
+                        <tbody className="text-text-secondary">
                             <tr className="border-b border-gray-100"><td className="p-2">Lấy data bình thường</td><td className="p-2"><strong>HTTP (REST)</strong></td><td className="p-2">GET /api/products</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Chat real-time 2 chiều</td><td className="p-2"><strong>WebSocket</strong></td><td className="p-2">Messenger, Slack</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Live notifications</td><td className="p-2"><strong>SSE</strong></td><td className="p-2">GitHub deploy status</td></tr>
@@ -436,8 +436,8 @@ SSE:       Server → Client (1 chiều, server push liên tục)
             <TopicModal title="REST vs GraphQL vs gRPC" emoji="🔌" color="#ef4444" summary="3 mô hình API phổ biến — khi nào dùng cái nào" concept="REST dùng nhiều endpoints cố định, đơn giản, có HTTP caching. GraphQL dùng 1 endpoint, client tự chọn fields — tránh over/under-fetching. gRPC dùng Protocol Buffers (binary) qua HTTP/2, nhanh gấp 2-10x JSON — tối ưu cho microservices nội bộ và streaming.">
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">REST</th><th className="text-left p-2 text-purple-400">GraphQL</th><th className="text-left p-2 text-green-400">gRPC</th></tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
+                        <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">REST</th><th className="text-left p-2 text-purple-400">GraphQL</th><th className="text-left p-2 text-green-400">gRPC</th></tr></thead>
+                        <tbody className="text-text-secondary">
                             <tr className="border-b border-gray-100"><td className="p-2">Protocol</td><td className="p-2">HTTP/1.1 (JSON)</td><td className="p-2">HTTP/1.1 (JSON)</td><td className="p-2">HTTP/2 (Protobuf binary)</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Kiểu</td><td className="p-2">Nhiều endpoints</td><td className="p-2">1 endpoint duy nhất</td><td className="p-2">Service + Methods (.proto)</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Data format</td><td className="p-2">JSON (text, dễ đọc)</td><td className="p-2">JSON (text, dễ đọc)</td><td className="p-2">Protobuf (binary, nhỏ ~10x)</td></tr>
@@ -556,8 +556,8 @@ SflKxwRJSM...    ← Signature (verify không bị sửa)
                 <Heading3>Cookies vs JWT vs Session</Heading3>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">Cookie + Session</th><th className="text-left p-2 text-green-400">JWT</th></tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
+                        <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">Cookie + Session</th><th className="text-left p-2 text-green-400">JWT</th></tr></thead>
+                        <tbody className="text-text-secondary">
                             <tr className="border-b border-gray-100"><td className="p-2">Lưu ở</td><td className="p-2">Browser (tự gửi mỗi request)</td><td className="p-2">Client (localStorage/memory/cookie)</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Stateful/less</td><td className="p-2">Stateful — server lưu session</td><td className="p-2">Stateless — token chứa data</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">XSS risk</td><td className="p-2"><InlineCode>httpOnly</InlineCode> + <InlineCode>Secure</InlineCode> flag bảo vệ</td><td className="p-2">Nếu ở localStorage → XSS risk!</td></tr>
@@ -575,8 +575,8 @@ SflKxwRJSM...    ← Signature (verify không bị sửa)
 
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">localStorage</th><th className="text-left p-2 text-green-400">sessionStorage</th><th className="text-left p-2 text-yellow-400">Cookies</th><th className="text-left p-2 text-purple-400">IndexedDB</th></tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
+                        <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-blue-400">localStorage</th><th className="text-left p-2 text-green-400">sessionStorage</th><th className="text-left p-2 text-yellow-400">Cookies</th><th className="text-left p-2 text-purple-400">IndexedDB</th></tr></thead>
+                        <tbody className="text-text-secondary">
                             <tr className="border-b border-gray-100"><td className="p-2">Dung lượng</td><td className="p-2">~5-10 MB</td><td className="p-2">~5 MB</td><td className="p-2">~4 KB</td><td className="p-2">Hàng trăm MB+</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Hết hạn</td><td className="p-2">Không (persist)</td><td className="p-2">Đóng tab = mất</td><td className="p-2">Set expires/max-age</td><td className="p-2">Không (persist)</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Gửi lên server</td><td className="p-2">❌ Không</td><td className="p-2">❌ Không</td><td className="p-2">✅ Tự động mỗi request</td><td className="p-2">❌ Không</td></tr>
@@ -657,8 +657,8 @@ fetch('/api/orders', {
 
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-red-400">localStorage</th><th className="text-left p-2 text-green-400">httpOnly Cookie</th><th className="text-left p-2 text-blue-400">Memory</th></tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
+                        <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Tiêu chí</th><th className="text-left p-2 text-red-400">localStorage</th><th className="text-left p-2 text-green-400">httpOnly Cookie</th><th className="text-left p-2 text-blue-400">Memory</th></tr></thead>
+                        <tbody className="text-text-secondary">
                             <tr className="border-b border-gray-100"><td className="p-2">XSS attack</td><td className="p-2">❌ JS đọc được → steal</td><td className="p-2">✅ JS không đọc được</td><td className="p-2">✅ Khó steal</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">CSRF attack</td><td className="p-2">✅ Không gửi tự động</td><td className="p-2">❌ Gửi tự động → cần CSRF token</td><td className="p-2">✅ Không gửi tự động</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Refresh page</td><td className="p-2">Vẫn còn</td><td className="p-2">Vẫn còn</td><td className="p-2">❌ Mất</td></tr>

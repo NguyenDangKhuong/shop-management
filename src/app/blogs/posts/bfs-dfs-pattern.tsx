@@ -12,7 +12,7 @@ const viContent = (
         <div className="my-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                 <div className="text-blue-400 font-bold text-sm mb-2">🌊 BFS — Khi nào?</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Tìm đường đi <strong>ngắn nhất</strong></li>
                     <li>• Level order traversal</li>
                     <li>• Lan tỏa từ nguồn (rotten oranges)</li>
@@ -21,7 +21,7 @@ const viContent = (
             </div>
             <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                 <div className="text-green-400 font-bold text-sm mb-2">🌲 DFS — Khi nào?</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Duyệt <strong>tất cả</strong> đường đi</li>
                     <li>• Đếm connected components</li>
                     <li>• Backtracking (sudoku, n-queens)</li>
@@ -85,13 +85,13 @@ function dfsIterative(graph, start) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Dấu hiệu bài toán</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Dùng</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">LeetCode</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Dấu hiệu bài toán</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Dùng</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">LeetCode</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Đếm số đảo / vùng liên thông</td><td className="p-3">DFS</td><td className="p-3">Number of Islands (#200)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Duyệt cây theo từng tầng</td><td className="p-3">BFS</td><td className="p-3">Level Order Traversal (#102)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Tìm từ trong lưới ký tự</td><td className="p-3">DFS</td><td className="p-3">Word Search (#79)</td></tr>
@@ -110,20 +110,20 @@ function dfsIterative(graph, start) {
         </Paragraph>
 
         <Heading3>Giải pháp với DFS</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Duyệt lưới: gặp ô <InlineCode>&apos;1&apos;</InlineCode> → tìm thấy đảo mới → tăng count.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Dùng DFS &quot;nhấn chìm&quot; toàn bộ đảo: đánh dấu tất cả ô <InlineCode>&apos;1&apos;</InlineCode> liên thông thành <InlineCode>&apos;0&apos;</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>DFS đệ quy sang 4 hướng: trên, dưới, trái, phải.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Mỗi lần DFS kết thúc = xử lý xong 1 đảo.</span>
             </div>
@@ -187,20 +187,20 @@ function numIslands(grid) {
         </Paragraph>
 
         <Heading3>Giải pháp với BFS</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Dùng Queue, bắt đầu với node gốc.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Mỗi vòng lặp: xử lý <Highlight>tất cả node trong queue hiện tại</Highlight> (= 1 tầng).</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Với mỗi node: lấy giá trị, thêm con trái/phải vào queue.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Kết thúc khi queue rỗng → đã duyệt hết cây.</span>
             </div>
@@ -259,20 +259,20 @@ function levelOrder(root) {
         </Paragraph>
 
         <Heading3>Giải pháp với DFS Backtracking</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Duyệt lưới tìm ký tự đầu tiên khớp → bắt đầu DFS từ đó.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>DFS: đánh dấu ô hiện tại (tránh dùng lại), thử 4 hướng cho ký tự tiếp theo.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span><Highlight>Backtrack</Highlight>: sau khi DFS xong, bỏ đánh dấu ô (để đường đi khác có thể dùng).</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Nếu tìm hết ký tự trong word → return true.</span>
             </div>
@@ -514,7 +514,7 @@ const enContent = (
         <div className="my-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                 <div className="text-blue-400 font-bold text-sm mb-2">🌊 BFS — When?</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Find <strong>shortest path</strong></li>
                     <li>• Level order traversal</li>
                     <li>• Spread from source (rotten oranges)</li>
@@ -523,7 +523,7 @@ const enContent = (
             </div>
             <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                 <div className="text-green-400 font-bold text-sm mb-2">🌲 DFS — When?</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Explore <strong>all</strong> paths</li>
                     <li>• Count connected components</li>
                     <li>• Backtracking (sudoku, n-queens)</li>
@@ -587,13 +587,13 @@ function dfsIterative(graph, start) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Problem Signal</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Use</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">LeetCode</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Problem Signal</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Use</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">LeetCode</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Count islands / connected components</td><td className="p-3">DFS</td><td className="p-3">Number of Islands (#200)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Traverse tree level by level</td><td className="p-3">BFS</td><td className="p-3">Level Order Traversal (#102)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Find word in character grid</td><td className="p-3">DFS</td><td className="p-3">Word Search (#79)</td></tr>
@@ -611,16 +611,16 @@ function dfsIterative(graph, start) {
         </Paragraph>
 
         <Heading3>DFS Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Scan grid: found <InlineCode>&apos;1&apos;</InlineCode> → new island → increment count.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>DFS &quot;sinks&quot; entire island: mark all connected <InlineCode>&apos;1&apos;</InlineCode> as <InlineCode>&apos;0&apos;</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Recurse in 4 directions: up, down, left, right.</span>
             </div>
@@ -661,16 +661,16 @@ function numIslands(grid) {
         </Paragraph>
 
         <Heading3>BFS Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Queue starts with root node.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Each iteration processes <Highlight>all nodes in current queue</Highlight> (= one level).</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>For each node: record value, enqueue children.</span>
             </div>
@@ -715,16 +715,16 @@ function levelOrder(root) {
         </Paragraph>
 
         <Heading3>DFS Backtracking Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Find first matching character → start DFS.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Mark current cell, try 4 directions for next character.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span><Highlight>Backtrack</Highlight>: unmark cell after DFS (allow other paths).</span>
             </div>

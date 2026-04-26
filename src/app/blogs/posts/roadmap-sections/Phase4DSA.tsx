@@ -20,8 +20,8 @@ export default function Phase4DSA() {
                     <Paragraph><Highlight>Array</Highlight> lưu phần tử liền kề trong bộ nhớ → truy cập O(1) bằng index. <Highlight>String</Highlight> trong JS là immutable — mỗi lần thay đổi tạo string mới.</Paragraph>
                     <div className="my-3 overflow-x-auto">
                         <table className="w-full text-sm border-collapse">
-                            <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Thao tác</th><th className="text-left p-2 text-slate-400">Time</th><th className="text-left p-2 text-slate-400">Ghi chú</th></tr></thead>
-                            <tbody className="text-[var(--text-secondary)]">
+                            <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Thao tác</th><th className="text-left p-2 text-slate-400">Time</th><th className="text-left p-2 text-slate-400">Ghi chú</th></tr></thead>
+                            <tbody className="text-text-secondary">
                                 <tr className="border-b border-gray-100"><td className="p-2">Access [i]</td><td className="p-2 text-green-400">O(1)</td><td className="p-2">Random access</td></tr>
                                 <tr className="border-b border-gray-100"><td className="p-2">Push / Pop (cuối)</td><td className="p-2 text-green-400">O(1)</td><td className="p-2">Thêm/xóa cuối mảng</td></tr>
                                 <tr className="border-b border-gray-100"><td className="p-2">Shift / Unshift (đầu)</td><td className="p-2 text-red-400">O(n)</td><td className="p-2">Phải dịch toàn bộ</td></tr>
@@ -74,7 +74,7 @@ for (let i = 0; i < nums.length; i++) {
                     <div className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                             <div className="text-blue-400 font-bold text-sm mb-2">📚 Stack (LIFO)</div>
-                            <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                            <ul className="text-text-secondary text-xs space-y-1">
                                 <li>• push / pop: O(1)</li>
                                 <li>• Valid Parentheses</li>
                                 <li>• Undo / Redo</li>
@@ -83,7 +83,7 @@ for (let i = 0; i < nums.length; i++) {
                         </div>
                         <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                             <div className="text-green-400 font-bold text-sm mb-2">🚶 Queue (FIFO)</div>
-                            <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                            <ul className="text-text-secondary text-xs space-y-1">
                                 <li>• enqueue / dequeue: O(1)*</li>
                                 <li>• BFS traversal</li>
                                 <li>• Task scheduling</li>
@@ -216,7 +216,7 @@ function bfs(graph, start) {
                     <div className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/20 p-4">
                             <div className="text-yellow-400 font-bold text-sm mb-2">⛰️ Heap</div>
-                            <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                            <ul className="text-text-secondary text-xs space-y-1">
                                 <li>• Top K elements</li>
                                 <li>• Merge K sorted lists</li>
                                 <li>• Median of stream</li>
@@ -225,7 +225,7 @@ function bfs(graph, start) {
                         </div>
                         <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-4">
                             <div className="text-purple-400 font-bold text-sm mb-2">🔤 Trie</div>
-                            <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                            <ul className="text-text-secondary text-xs space-y-1">
                                 <li>• Autocomplete</li>
                                 <li>• Spell checker</li>
                                 <li>• Word search</li>
@@ -329,7 +329,7 @@ const hasDup = arr => new Set(arr).size !== arr.length
                             ['Easy', ['1. Two Sum', '217. Contains Duplicate', '242. Valid Anagram', '383. Ransom Note', '349. Intersection of Two Arrays']],
                             ['Medium', ['49. Group Anagrams', '347. Top K Frequent Elements', '128. Longest Consecutive Sequence', '560. Subarray Sum Equals K', '36. Valid Sudoku', '438. Find All Anagrams in a String']],
                         ].map(([level, problems]) => (
-                            <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={level as string} className="p-2.5 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : 'text-yellow-400'}`}>{level as string}</div>
                                 <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                             </div>
@@ -367,7 +367,7 @@ while (l < r) {
                             ['Easy', ['167. Two Sum II - Input Array Is Sorted', '26. Remove Duplicates from Sorted Array', '283. Move Zeroes', '344. Reverse String', '977. Squares of a Sorted Array']],
                             ['Medium', ['15. 3Sum', '11. Container With Most Water', '75. Sort Colors', '142. Linked List Cycle II', '238. Product of Array Except Self']],
                         ].map(([level, problems]) => (
-                            <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={level as string} className="p-2.5 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : 'text-yellow-400'}`}>{level as string}</div>
                                 <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                             </div>
@@ -414,7 +414,7 @@ for (let l = 0, r = 0; r < nums.length; r++) {
                             ['Medium', ['3. Longest Substring Without Repeating Characters', '424. Longest Repeating Character Replacement', '567. Permutation in String', '209. Minimum Size Subarray Sum', '438. Find All Anagrams in a String']],
                             ['Hard', ['76. Minimum Window Substring', '239. Sliding Window Maximum']],
                         ].map(([level, problems]) => (
-                            <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={level as string} className="p-2.5 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : level === 'Medium' ? 'text-yellow-400' : 'text-red-400'}`}>{level as string}</div>
                                 <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                             </div>
@@ -463,7 +463,7 @@ function sink(grid, i, j) {
                             ['Medium', ['102. Binary Tree Level Order Traversal', '200. Number of Islands', '133. Clone Graph', '207. Course Schedule', '547. Number of Provinces', '994. Rotting Oranges']],
                             ['Hard', ['124. Binary Tree Maximum Path Sum', '297. Serialize and Deserialize Binary Tree']],
                         ].map(([level, problems]) => (
-                            <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={level as string} className="p-2.5 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : level === 'Medium' ? 'text-yellow-400' : 'text-red-400'}`}>{level as string}</div>
                                 <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                             </div>
@@ -509,7 +509,7 @@ function minEatingSpeed(piles, h) {
                             ['Easy', ['704. Binary Search', '35. Search Insert Position', '278. First Bad Version']],
                             ['Medium', ['33. Search in Rotated Sorted Array', '153. Find Minimum in Rotated Sorted Array', '74. Search a 2D Matrix', '875. Koko Eating Bananas', '34. Find First and Last Position of Element in Sorted Array']],
                         ].map(([level, problems]) => (
-                            <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={level as string} className="p-2.5 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : 'text-yellow-400'}`}>{level as string}</div>
                                 <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                             </div>
@@ -559,7 +559,7 @@ function lengthOfLIS(nums) {
                             ['Easy', ['70. Climbing Stairs', '746. Min Cost Climbing Stairs', '338. Counting Bits', '121. Best Time to Buy and Sell Stock']],
                             ['Medium', ['198. House Robber', '322. Coin Change', '300. Longest Increasing Subsequence', '152. Maximum Product Subarray', '62. Unique Paths', '139. Word Break', '5. Longest Palindromic Substring']],
                         ].map(([level, problems]) => (
-                            <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={level as string} className="p-2.5 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : 'text-yellow-400'}`}>{level as string}</div>
                                 <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                             </div>
@@ -619,7 +619,7 @@ function generateParenthesis(n) {
                             ['Medium', ['78. Subsets', '46. Permutations', '39. Combination Sum', '77. Combinations', '22. Generate Parentheses', '79. Word Search', '17. Letter Combinations of a Phone Number']],
                             ['Hard', ['51. N-Queens', '37. Sudoku Solver']],
                         ].map(([level, problems]) => (
-                            <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={level as string} className="p-2.5 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className={`text-xs font-bold mb-1 ${level === 'Medium' ? 'text-yellow-400' : 'text-red-400'}`}>{level as string}</div>
                                 <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                             </div>
@@ -675,7 +675,7 @@ function decodeString(s) {
                             ['Medium', ['150. Evaluate Reverse Polish Notation', '739. Daily Temperatures', '394. Decode String', '735. Asteroid Collision', '853. Car Fleet']],
                             ['Hard', ['84. Largest Rectangle in Histogram']],
                         ].map(([level, problems]) => (
-                            <div key={level as string} className="p-2.5 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={level as string} className="p-2.5 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className={`text-xs font-bold mb-1 ${level === 'Easy' ? 'text-green-400' : level === 'Medium' ? 'text-yellow-400' : 'text-red-400'}`}>{level as string}</div>
                                 <div className="text-slate-300 text-xs space-y-0.5">{(problems as string[]).map(p => <div key={p}>• <a href={`https://leetcode.com/problems/${toLeetCodeSlug(p as string)}/`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{p as string}</a></div>)}</div>
                             </div>

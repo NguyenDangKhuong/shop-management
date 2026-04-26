@@ -17,7 +17,7 @@ export const enContent = (
         {/* ===== OVERVIEW ===== */}
         <Heading2>🗺️ Components Overview</Heading2>
 
-        <div className="my-6 p-4 rounded-xl bg-[var(--bg-tag)] border border-[var(--border-primary)]">
+        <div className="my-6 p-4 rounded-xl bg-bg-tag border border-border-primary">
             <div className="flex flex-col items-center gap-2 text-sm">
                 <div className="px-4 py-2 rounded-lg bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 w-fit font-semibold">🔍 Autocomplete / Search Bar</div>
                 <div className="text-slate-600">↓</div>
@@ -490,13 +490,13 @@ function SearchPage() {
             <TopicModal title="Google vs Facebook vs Twitter Autocomplete" emoji="🏢" color="#6366f1" summary="Different approaches for different use cases — each optimized differently">
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]">
+                        <thead><tr className="border-b border-border-primary">
                             <th className="text-left p-2 text-slate-400">Feature</th>
                             <th className="text-left p-2 text-slate-400">Google Search</th>
                             <th className="text-left p-2 text-slate-400">Facebook</th>
                             <th className="text-left p-2 text-slate-400">Twitter/X</th>
                         </tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
+                        <tbody className="text-text-secondary">
                             <tr className="border-b border-gray-800"><td className="p-2 font-bold">Data source</td><td className="p-2">Server (search queries)</td><td className="p-2">Local + Server (people, pages)</td><td className="p-2">Server (users, hashtags)</td></tr>
                             <tr className="border-b border-gray-800"><td className="p-2 font-bold">Debounce</td><td className="p-2">~100ms (very fast)</td><td className="p-2">~200ms</td><td className="p-2">~300ms</td></tr>
                             <tr className="border-b border-gray-800"><td className="p-2 font-bold">Result types</td><td className="p-2">Queries + instant answers</td><td className="p-2">People, Pages, Groups, Posts</td><td className="p-2">Users, Hashtags, Topics</td></tr>

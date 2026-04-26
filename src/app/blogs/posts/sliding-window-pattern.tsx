@@ -50,12 +50,12 @@ for (let right = 0; right < arr.length; right++) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Dấu hiệu bài toán</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Ví dụ LeetCode</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Dấu hiệu bài toán</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Ví dụ LeetCode</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Tìm substring dài nhất/ngắn nhất</td><td className="p-3">Longest Substring Without Repeating (#3)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Tìm subarray có tổng = k</td><td className="p-3">Minimum Size Subarray Sum (#209)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Tìm chuỗi con chứa tất cả ký tự</td><td className="p-3">Minimum Window Substring (#76)</td></tr>
@@ -69,7 +69,7 @@ for (let right = 0; right < arr.length; right++) {
         <div className="my-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                 <div className="text-blue-400 font-bold text-sm mb-2">📏 Fixed Size Window</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Kích thước cửa sổ cố định (k)</li>
                     <li>• Thêm phần tử mới, bỏ phần tử cũ</li>
                     <li>• VD: Tổng lớn nhất của k phần tử liên tiếp</li>
@@ -77,7 +77,7 @@ for (let right = 0; right < arr.length; right++) {
             </div>
             <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                 <div className="text-green-400 font-bold text-sm mb-2">🔄 Variable Size Window</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Kích thước thay đổi theo điều kiện</li>
                     <li>• Mở rộng right, thu hẹp left</li>
                     <li>• VD: Substring dài nhất không lặp ký tự</li>
@@ -95,20 +95,20 @@ for (let right = 0; right < arr.length; right++) {
         </Paragraph>
 
         <Heading3>Giải pháp với Sliding Window</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Dùng <InlineCode>Set</InlineCode> để lưu các ký tự trong cửa sổ hiện tại.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Mở rộng cửa sổ bằng cách di chuyển <InlineCode>right</InlineCode> sang phải.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Nếu ký tự tại <InlineCode>right</InlineCode> đã có trong Set → có trùng lặp → thu hẹp từ <InlineCode>left</InlineCode> cho đến khi hết trùng.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Cập nhật độ dài lớn nhất: <InlineCode>maxLen = max(maxLen, right - left + 1)</InlineCode>.</span>
             </div>
@@ -163,20 +163,20 @@ function lengthOfLongestSubstring(s) {
         </Paragraph>
 
         <Heading3>Giải pháp với Sliding Window + Hash Map</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Đếm tần suất ký tự của t vào <InlineCode>need</InlineCode> Map.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Mở rộng right: mỗi khi thêm ký tự, nếu ký tự đó cần thiết và đủ số lượng → tăng biến <InlineCode>formed</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Khi <InlineCode>formed === required</InlineCode> (đã có đủ tất cả ký tự) → thu hẹp left để tìm window nhỏ nhất.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Lưu vị trí và độ dài window nhỏ nhất.</span>
             </div>
@@ -245,16 +245,16 @@ function minWindow(s, t) {
         </Paragraph>
 
         <Heading3>Giải pháp với Fixed Window</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Tính tổng k phần tử đầu tiên làm window ban đầu.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Trượt window sang phải: <Highlight>thêm phần tử mới, bỏ phần tử cũ</Highlight>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Cập nhật tổng lớn nhất sau mỗi lần trượt.</span>
             </div>
@@ -613,12 +613,12 @@ for (let right = 0; right < arr.length; right++) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Problem Signal</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">LeetCode Example</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Problem Signal</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">LeetCode Example</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Find longest/shortest substring</td><td className="p-3">Longest Substring Without Repeating (#3)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Find subarray with sum = k</td><td className="p-3">Minimum Size Subarray Sum (#209)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Find substring containing all chars</td><td className="p-3">Minimum Window Substring (#76)</td></tr>
@@ -632,7 +632,7 @@ for (let right = 0; right < arr.length; right++) {
         <div className="my-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                 <div className="text-blue-400 font-bold text-sm mb-2">📏 Fixed Size Window</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Window size is constant (k)</li>
                     <li>• Add new element, remove old</li>
                     <li>• Ex: Max sum of k consecutive elements</li>
@@ -640,7 +640,7 @@ for (let right = 0; right < arr.length; right++) {
             </div>
             <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                 <div className="text-green-400 font-bold text-sm mb-2">🔄 Variable Size Window</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Size changes based on condition</li>
                     <li>• Expand right, shrink left</li>
                     <li>• Ex: Longest substring without repeats</li>
@@ -657,20 +657,20 @@ for (let right = 0; right < arr.length; right++) {
         </Paragraph>
 
         <Heading3>Sliding Window Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Use a <InlineCode>Set</InlineCode> to track characters in the current window.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Expand window by moving <InlineCode>right</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>If character at <InlineCode>right</InlineCode> already in Set → duplicate → shrink from <InlineCode>left</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Update max length: <InlineCode>maxLen = max(maxLen, right - left + 1)</InlineCode>.</span>
             </div>
@@ -712,16 +712,16 @@ function lengthOfLongestSubstring(s) {
         </Paragraph>
 
         <Heading3>Sliding Window + Hash Map Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Count character frequencies of t into <InlineCode>need</InlineCode> Map.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Expand right: track when all required characters are satisfied (<InlineCode>formed === required</InlineCode>).</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>When all satisfied → shrink left to find minimum window.</span>
             </div>
@@ -774,16 +774,16 @@ function minWindow(s, t) {
         </Paragraph>
 
         <Heading3>Fixed Window Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Calculate sum of first k elements as initial window.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Slide window right: <Highlight>add new element, remove old</Highlight>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Track maximum sum.</span>
             </div>

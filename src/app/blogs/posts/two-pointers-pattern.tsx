@@ -11,7 +11,7 @@ const viContent = (
         <div className="my-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                 <div className="text-blue-400 font-bold text-sm mb-2">↔️ Ngược hướng</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• left ở đầu, right ở cuối</li>
                     <li>• Tìm cặp số, palindrome</li>
                     <li>• Container With Most Water</li>
@@ -19,7 +19,7 @@ const viContent = (
             </div>
             <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                 <div className="text-green-400 font-bold text-sm mb-2">→→ Cùng hướng</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Fast & slow pointer</li>
                     <li>• Remove duplicates</li>
                     <li>• Linked list cycle</li>
@@ -27,7 +27,7 @@ const viContent = (
             </div>
             <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-4">
                 <div className="text-purple-400 font-bold text-sm mb-2">🔀 Merge hai mảng</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Hai con trỏ trên 2 mảng</li>
                     <li>• Merge Sort</li>
                     <li>• Merge Sorted Arrays</li>
@@ -77,12 +77,12 @@ result.push(...a.slice(i), ...b.slice(j))`}</CodeBlock>
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Dấu hiệu bài toán</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Ví dụ LeetCode</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Dấu hiệu bài toán</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Ví dụ LeetCode</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Mảng sorted + tìm cặp</td><td className="p-3">Two Sum II (#167)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">So sánh từ 2 đầu</td><td className="p-3">Valid Palindrome (#125)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Loại bỏ phần tử trùng</td><td className="p-3">Remove Duplicates (#26)</td></tr>
@@ -102,24 +102,24 @@ result.push(...a.slice(i), ...b.slice(j))`}</CodeBlock>
         </Paragraph>
 
         <Heading3>Giải pháp với Two Pointers</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Đặt con trỏ <InlineCode>left</InlineCode> ở đầu mảng và <InlineCode>right</InlineCode> ở cuối mảng.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Tính tổng: <InlineCode>sum = numbers[left] + numbers[right]</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Nếu <InlineCode>sum {'>'} target</InlineCode> → tổng quá lớn → giảm <InlineCode>right</InlineCode> (giảm giá trị lớn).</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Nếu <InlineCode>sum {'<'} target</InlineCode> → tổng quá nhỏ → tăng <InlineCode>left</InlineCode> (tăng giá trị nhỏ).</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">5.</span>
                 <span>Nếu <InlineCode>sum === target</InlineCode> → tìm thấy!</span>
             </div>
@@ -164,20 +164,20 @@ function twoSum(numbers, target) {
         </Paragraph>
 
         <Heading3>Giải pháp với Two Pointers</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Đặt <InlineCode>left</InlineCode> ở đầu chuỗi, <InlineCode>right</InlineCode> ở cuối chuỗi.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Bỏ qua các ký tự không phải chữ/số (dùng regex hoặc helper function).</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>So sánh ký tự tại <InlineCode>left</InlineCode> và <InlineCode>right</InlineCode> → khác nhau → không phải palindrome.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Giống nhau → tiếp tục: <InlineCode>left++</InlineCode>, <InlineCode>right--</InlineCode> cho đến khi gặp nhau.</span>
             </div>
@@ -225,20 +225,20 @@ function isPalindrome(s) {
         </Paragraph>
 
         <Heading3>Giải pháp với Two Pointers</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Đặt <InlineCode>left</InlineCode> ở đầu, <InlineCode>right</InlineCode> ở cuối → container rộng nhất.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Diện tích = <InlineCode>min(height[left], height[right]) × (right - left)</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Di chuyển con trỏ có chiều cao <Highlight>thấp hơn</Highlight> → hy vọng tìm cột cao hơn để tăng diện tích.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Lưu diện tích lớn nhất gặp được.</span>
             </div>
@@ -291,16 +291,16 @@ function maxArea(height) {
         </Paragraph>
 
         <Heading3>Giải pháp</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Sử dụng hai con trỏ <InlineCode>p1</InlineCode> và <InlineCode>p2</InlineCode> bắt đầu từ <Highlight>cuối</Highlight> phần tử hợp lệ của mỗi mảng.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>So sánh phần tử hiện tại của hai mảng, đưa phần tử <Highlight>lớn hơn</Highlight> vào cuối nums1.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Tiếp tục cho đến khi duyệt hết, sau đó sao chép các phần tử còn lại của nums2 (nếu có).</span>
             </div>
@@ -386,19 +386,19 @@ function removeDuplicates(nums) {
         <div className="my-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                 <div className="text-blue-400 font-bold text-sm mb-2">↔️ Opposite Direction (2 đầu → giữa)</div>
-                <pre className="text-xs font-mono text-[var(--text-secondary)] bg-[var(--bg-tag)] p-2 rounded-lg">{`[1, 3, 5, 7, 9]
+                <pre className="text-xs font-mono text-text-secondary bg-bg-tag p-2 rounded-lg">{`[1, 3, 5, 7, 9]
  ↑              ↑
 left          right
 → thu hẹp vào giữa`}</pre>
-                <p className="text-xs text-[var(--text-muted)] mt-2">Dùng khi: so sánh/kết hợp 2 đầu</p>
+                <p className="text-xs text-text-muted mt-2">Dùng khi: so sánh/kết hợp 2 đầu</p>
             </div>
             <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                 <div className="text-green-400 font-bold text-sm mb-2">→→ Same Direction (cùng chiều)</div>
-                <pre className="text-xs font-mono text-[var(--text-secondary)] bg-[var(--bg-tag)] p-2 rounded-lg">{`[1, 1, 2, 2, 3]
+                <pre className="text-xs font-mono text-text-secondary bg-bg-tag p-2 rounded-lg">{`[1, 1, 2, 2, 3]
  ↑  ↑
 slow fast
 → cùng chạy từ trái sang phải`}</pre>
-                <p className="text-xs text-[var(--text-muted)] mt-2">Dùng khi: phân vùng/lọc in-place</p>
+                <p className="text-xs text-text-muted mt-2">Dùng khi: phân vùng/lọc in-place</p>
             </div>
         </div>
 
@@ -416,13 +416,13 @@ slow fast
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Bài toán</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Hướng</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Lý do</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Bài toán</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Hướng</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Lý do</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Two Sum II</td><td className="p-3">← →</td><td className="p-3">So sánh tổng 2 đầu</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Valid Palindrome</td><td className="p-3">← →</td><td className="p-3">So sánh 2 đầu chuỗi</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Container With Water</td><td className="p-3">← →</td><td className="p-3">Max area từ 2 biên</td></tr>
@@ -687,13 +687,13 @@ function productExceptSelf(nums) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Biến thể</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Cách hoạt động</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Ví dụ</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Biến thể</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Cách hoạt động</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Ví dụ</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Opposite direction</td><td className="p-3">left → ← right</td><td className="p-3">Two Sum II, Palindrome</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Same direction (fast/slow)</td><td className="p-3">slow → fast →</td><td className="p-3">Remove Duplicates, Linked List Cycle</td></tr>
                     <tr><td className="p-3">Two arrays</td><td className="p-3">p1 trên arr1, p2 trên arr2</td><td className="p-3">Merge Sorted Array</td></tr>
@@ -713,7 +713,7 @@ const enContent = (
         <div className="my-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                 <div className="text-blue-400 font-bold text-sm mb-2">↔️ Opposite Direction</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• left at start, right at end</li>
                     <li>• Find pairs, palindrome</li>
                     <li>• Container With Most Water</li>
@@ -721,7 +721,7 @@ const enContent = (
             </div>
             <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                 <div className="text-green-400 font-bold text-sm mb-2">→→ Same Direction</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Fast & slow pointer</li>
                     <li>• Remove duplicates</li>
                     <li>• Linked list cycle</li>
@@ -729,7 +729,7 @@ const enContent = (
             </div>
             <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-4">
                 <div className="text-purple-400 font-bold text-sm mb-2">🔀 Merge Two Arrays</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Two pointers on 2 arrays</li>
                     <li>• Merge Sort</li>
                     <li>• Merge Sorted Arrays</li>
@@ -779,12 +779,12 @@ result.push(...a.slice(i), ...b.slice(j))`}</CodeBlock>
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Problem Signal</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">LeetCode Example</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Problem Signal</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">LeetCode Example</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Sorted array + find pair</td><td className="p-3">Two Sum II (#167)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Compare from both ends</td><td className="p-3">Valid Palindrome (#125)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Remove duplicates in-place</td><td className="p-3">Remove Duplicates (#26)</td></tr>
@@ -803,20 +803,20 @@ result.push(...a.slice(i), ...b.slice(j))`}</CodeBlock>
         </Paragraph>
 
         <Heading3>Two Pointers Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Place <InlineCode>left</InlineCode> at start, <InlineCode>right</InlineCode> at end.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>If <InlineCode>sum {'>'} target</InlineCode> → too large → decrease <InlineCode>right</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>If <InlineCode>sum {'<'} target</InlineCode> → too small → increase <InlineCode>left</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>If <InlineCode>sum === target</InlineCode> → found!</span>
             </div>
@@ -847,16 +847,16 @@ function twoSum(numbers, target) {
         </Paragraph>
 
         <Heading3>Two Pointers Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Place <InlineCode>left</InlineCode> at start, <InlineCode>right</InlineCode> at end.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Skip non-alphanumeric characters.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Compare characters at both pointers → different = not palindrome.</span>
             </div>
@@ -889,16 +889,16 @@ function isPalindrome(s) {
         </Paragraph>
 
         <Heading3>Two Pointers Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Start with widest container: <InlineCode>left=0, right=end</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Area = <InlineCode>min(height[left], height[right]) × (right - left)</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Move the <Highlight>shorter</Highlight> pointer → hope to find a taller pillar.</span>
             </div>
@@ -935,16 +935,16 @@ function maxArea(height) {
         </Paragraph>
 
         <Heading3>Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Use two pointers starting from the <Highlight>end</Highlight> of valid elements.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Compare and place the <Highlight>larger</Highlight> element at the end of nums1.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Copy remaining elements from nums2 if any.</span>
             </div>
@@ -1010,19 +1010,19 @@ function removeDuplicates(nums) {
         <div className="my-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                 <div className="text-blue-400 font-bold text-sm mb-2">↔️ Opposite Direction (ends → middle)</div>
-                <pre className="text-xs font-mono text-[var(--text-secondary)] bg-[var(--bg-tag)] p-2 rounded-lg">{`[1, 3, 5, 7, 9]
+                <pre className="text-xs font-mono text-text-secondary bg-bg-tag p-2 rounded-lg">{`[1, 3, 5, 7, 9]
  ↑              ↑
 left          right
 → shrink toward middle`}</pre>
-                <p className="text-xs text-[var(--text-muted)] mt-2">Use when: comparing/combining from both ends</p>
+                <p className="text-xs text-text-muted mt-2">Use when: comparing/combining from both ends</p>
             </div>
             <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                 <div className="text-green-400 font-bold text-sm mb-2">→→ Same Direction (both forward)</div>
-                <pre className="text-xs font-mono text-[var(--text-secondary)] bg-[var(--bg-tag)] p-2 rounded-lg">{`[1, 1, 2, 2, 3]
+                <pre className="text-xs font-mono text-text-secondary bg-bg-tag p-2 rounded-lg">{`[1, 1, 2, 2, 3]
  ↑  ↑
 slow fast
 → both move left to right`}</pre>
-                <p className="text-xs text-[var(--text-muted)] mt-2">Use when: partitioning/filtering in-place</p>
+                <p className="text-xs text-text-muted mt-2">Use when: partitioning/filtering in-place</p>
             </div>
         </div>
 
@@ -1040,13 +1040,13 @@ slow fast
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Problem</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Direction</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Reason</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Problem</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Direction</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Reason</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Two Sum II</td><td className="p-3">← →</td><td className="p-3">Compare sum from both ends</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Valid Palindrome</td><td className="p-3">← →</td><td className="p-3">Compare chars from both ends</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Container With Water</td><td className="p-3">← →</td><td className="p-3">Max area from boundaries</td></tr>
@@ -1237,13 +1237,13 @@ function productExceptSelf(nums) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Variant</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Movement</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Examples</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Variant</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Movement</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Examples</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Opposite direction</td><td className="p-3">left → ← right</td><td className="p-3">Two Sum II, Palindrome</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Same direction</td><td className="p-3">slow → fast →</td><td className="p-3">Remove Duplicates, Cycle Detection</td></tr>
                     <tr><td className="p-3">Two arrays</td><td className="p-3">p1 on arr1, p2 on arr2</td><td className="p-3">Merge Sorted Array</td></tr>

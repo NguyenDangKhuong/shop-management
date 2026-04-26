@@ -78,7 +78,7 @@ export default function SiteHeader({
                                 </div>
                                 <span
                                     className={`font-bold tracking-tight transition-all duration-300 ${scrolled ? 'text-base' : 'text-xl'}`}
-                                    style={{ color: 'var(--text-primary)' }}
+
                                 >
                                     Khuong<span className="text-[#38bdf8]">.Dev</span>
                                 </span>
@@ -97,7 +97,7 @@ export default function SiteHeader({
                             </div>
                             <span
                                 className={`font-bold tracking-tight transition-all duration-300 ${scrolled ? 'text-base' : 'text-xl'}`}
-                                style={{ color: 'var(--text-primary)' }}
+
                             >
                                 Khuong<span className="text-[#38bdf8]">.Dev</span>
                             </span>

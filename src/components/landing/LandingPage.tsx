@@ -143,7 +143,7 @@ export default function LandingPage() {
             <link rel="preconnect" href="https://images.unsplash.com" />
             <link rel="dns-prefetch" href="https://images.unsplash.com" />
 
-            <div className="font-sans min-h-screen flex flex-col items-center pt-0 relative transition-colors duration-300" style={{ backgroundColor: 'var(--bg-page)', color: 'var(--text-primary)' }}>
+            <div className="font-sans min-h-screen flex flex-col items-center pt-0 relative transition-colors duration-300 bg-bg-page text-text-primary">
                 <SiteHeader
                     maxWidth="max-w-6xl"
                     rightSlot={
@@ -152,10 +152,10 @@ export default function LandingPage() {
                             {!isStandalone && (
                                 <Link
                                     href={loginUrl}
-                                    className="group relative px-3 py-2 md:px-6 rounded-full bg-[var(--bg-tag)] border border-[var(--border-primary)] overflow-hidden transition-all hover:border-[#38bdf8]/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]"
+                                    className="group relative px-3 py-2 md:px-6 rounded-full bg-bg-tag border border-border-primary overflow-hidden transition-all hover:border-[#38bdf8]/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]"
                                 >
                                     <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                                    <span className="relative font-medium text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] flex items-center gap-2">
+                                    <span className="relative font-medium text-sm text-text-secondary group-hover:text-text-primary flex items-center gap-2">
                                         <span className="hidden md:inline">{t('landing.login')}</span>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -188,30 +188,30 @@ export default function LandingPage() {
                                 <div className="absolute -top-20 -left-20 w-64 h-64 bg-[#38bdf8]/20 rounded-full blur-3xl -z-10"></div>
 
                                 <div className="flex-1 space-y-4">
-                                    <span className="text-[var(--text-secondary)] font-medium">{t('landing.heroSection')}</span>
-                                    <h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] leading-tight">
+                                    <span className="text-text-secondary font-medium">{t('landing.heroSection')}</span>
+                                    <h1 className="text-4xl md:text-5xl font-bold text-text-primary leading-tight">
                                         {t('landing.heroGreeting')} <span className="text-[#c084fc]">{t('landing.heroName')}</span>.<br />
                                         {t('landing.heroSub')}
                                     </h1>
-                                    <p className="text-sm text-[var(--text-secondary)] italic leading-relaxed">
+                                    <p className="text-sm text-text-secondary italic leading-relaxed">
                                         {t('landing.purpose')}
                                     </p>
                                     <div className="pt-4 flex flex-wrap gap-3">
                                         <Link
                                             href="/projects"
-                                            className="inline-block px-6 py-3 rounded-full bg-[var(--bg-tag)] border border-[#38bdf8]/50 text-[var(--text-primary)] font-semibold transition hover:bg-[#38bdf8]/20 shadow-[0_0_15px_rgba(56,189,248,0.3)]"
+                                            className="inline-block px-6 py-3 rounded-full bg-bg-tag border border-[#38bdf8]/50 text-text-primary font-semibold transition hover:bg-[#38bdf8]/20 shadow-[0_0_15px_rgba(56,189,248,0.3)]"
                                         >
                                             🚀 {t('landing.viewProjects')}
                                         </Link>
                                         <Link
                                             href="/blogs"
-                                            className="inline-block px-6 py-3 rounded-full bg-[var(--bg-tag)] border border-[#c084fc]/50 text-[var(--text-primary)] font-semibold transition hover:bg-[#c084fc]/20 shadow-[0_0_15px_rgba(192,132,252,0.3)]"
+                                            className="inline-block px-6 py-3 rounded-full bg-bg-tag border border-[#c084fc]/50 text-text-primary font-semibold transition hover:bg-[#c084fc]/20 shadow-[0_0_15px_rgba(192,132,252,0.3)]"
                                         >
                                             📝 Blog
                                         </Link>
                                         <Link
                                             href="/cv"
-                                            className="inline-block px-6 py-3 rounded-full bg-[var(--bg-tag)] border border-[#10b981]/50 text-[var(--text-primary)] font-semibold transition hover:bg-[#10b981]/20 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                                            className="inline-block px-6 py-3 rounded-full bg-bg-tag border border-[#10b981]/50 text-text-primary font-semibold transition hover:bg-[#10b981]/20 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
                                         >
                                             📄 {t('landing.downloadCV')}
                                         </Link>
@@ -220,7 +220,7 @@ export default function LandingPage() {
                                 </div>
 
                                 <div className="relative shrink-0">
-                                    <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-[var(--border-primary)] shadow-[0_0_15px_rgba(192,132,252,0.3)]">
+                                    <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-border-primary shadow-[0_0_15px_rgba(192,132,252,0.3)]">
                                         <Image
                                             src="/image/home/avatar.jpg"
                                             alt="Khuong - Developer Portrait"
@@ -239,29 +239,29 @@ export default function LandingPage() {
                             <div className="glass-card flex-1 space-y-6 relative overflow-hidden">
                                 <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-[#c084fc]/10 rounded-full blur-3xl -z-10"></div>
 
-                                <h2 className="text-xl font-semibold text-[var(--text-primary)]">{t('landing.about')}</h2>
-                                <p className="text-[var(--text-secondary)] max-w-2xl leading-relaxed">
+                                <h2 className="text-xl font-semibold text-text-primary">{t('landing.about')}</h2>
+                                <p className="text-text-secondary max-w-2xl leading-relaxed">
                                     {t('landing.aboutText')}
                                 </p>
 
                                 <div className="pt-8 pb-4">
-                                    <div className="relative h-1 bg-[var(--bg-surface-dim)] rounded-full">
+                                    <div className="relative h-1 bg-bg-surface-dim rounded-full">
                                         <div className="absolute top-0 left-0 h-full w-[80%] bg-gradient-to-r from-[#38bdf8] to-[#c084fc] rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)]"></div>
 
                                         <div className="absolute -top-1 left-[0%] w-3 h-3 bg-[#10b981] rounded-full shadow-[0_0_15px_rgba(16,185,129,0.3)]"></div>
                                         <div className="absolute -top-1 left-[15%] w-3 h-3 bg-[#38bdf8] rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)]"></div>
                                         <div className="absolute -top-1 left-[50%] w-3 h-3 bg-[#38bdf8] rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)]"></div>
                                         <div className="absolute -top-1 left-[80%] w-3 h-3 bg-[#c084fc] rounded-full shadow-[0_0_15px_rgba(192,132,252,0.3)]"></div>
-                                        <div className="absolute -top-1 left-[100%] w-3 h-3 bg-[var(--bg-surface-dim)] rounded-full"></div>
+                                        <div className="absolute -top-1 left-[100%] w-3 h-3 bg-bg-surface-dim rounded-full"></div>
 
-                                        <div className="absolute top-4 left-0 text-xs text-[var(--text-muted)]">2014</div>
-                                        <div className="absolute top-4 left-[15%] text-xs text-[var(--text-muted)]">2018</div>
-                                        <div className="absolute top-4 left-[50%] text-xs text-[var(--text-muted)]">2022</div>
+                                        <div className="absolute top-4 left-0 text-xs text-text-muted">2014</div>
+                                        <div className="absolute top-4 left-[15%] text-xs text-text-muted">2018</div>
+                                        <div className="absolute top-4 left-[50%] text-xs text-text-muted">2022</div>
                                         <div className="absolute top-4 left-[80%] -translate-x-1/2 text-center text-xs text-[#c084fc] font-bold">
                                             {t('landing.present')}<br />
                                             {t('landing.skiller')}
                                         </div>
-                                        <div className="absolute top-4 right-0 text-xs text-[var(--text-muted)]">2030</div>
+                                        <div className="absolute top-4 right-0 text-xs text-text-muted">2030</div>
                                     </div>
                                 </div>
                             </div>
@@ -271,7 +271,7 @@ export default function LandingPage() {
                         <div className="flex flex-col gap-6">
                             {/* Tech Stack */}
                             <div className="glass-card space-y-4">
-                                <h2 className="text-xl font-semibold text-[var(--text-primary)]">{t('landing.techStack')}</h2>
+                                <h2 className="text-xl font-semibold text-text-primary">{t('landing.techStack')}</h2>
                                 <div className="flex flex-wrap gap-3">
                                     <TechIcon name="React" color="#61DAFB">
                                         <ReactIcon />
@@ -302,7 +302,7 @@ export default function LandingPage() {
 
                             {/* Featured Project */}
                             <div className="glass-card p-0 overflow-hidden group cursor-pointer">
-                                <div className="bg-[var(--bg-surface-dim)] h-40 w-full relative flex items-center justify-center overflow-hidden">
+                                <div className="bg-bg-surface-dim h-40 w-full relative flex items-center justify-center overflow-hidden">
                                     <Image
                                         src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&auto=format&fit=crop"
                                         alt="Project Mockup"
@@ -316,17 +316,17 @@ export default function LandingPage() {
                                 </div>
 
                                 <div className="p-6 space-y-3">
-                                    <h3 className="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[#38bdf8] transition">
+                                    <h3 className="text-lg font-semibold text-text-primary group-hover:text-[#38bdf8] transition">
                                         {t('landing.featuredProject')}
                                     </h3>
                                     <div className="flex flex-wrap gap-2">
-                                        <span className="px-2 py-1 text-xs rounded-full bg-[var(--bg-tag)] text-[var(--text-secondary)] border border-[var(--border-primary)]">
+                                        <span className="px-2 py-1 text-xs rounded-full bg-bg-tag text-text-secondary border border-border-primary">
                                             React
                                         </span>
-                                        <span className="px-2 py-1 text-xs rounded-full bg-[var(--bg-tag)] text-[var(--text-secondary)] border border-[var(--border-primary)]">
+                                        <span className="px-2 py-1 text-xs rounded-full bg-bg-tag text-text-secondary border border-border-primary">
                                             Next.js
                                         </span>
-                                        <span className="px-2 py-1 text-xs rounded-full bg-[var(--bg-tag)] text-[var(--text-secondary)] border border-[var(--border-primary)]">
+                                        <span className="px-2 py-1 text-xs rounded-full bg-bg-tag text-text-secondary border border-border-primary">
                                             TypeScript
                                         </span>
                                     </div>
@@ -334,7 +334,7 @@ export default function LandingPage() {
                                         <Link href="/products" className="text-[#38bdf8] hover:underline">
                                             {t('landing.liveDemo')}
                                         </Link>
-                                        <Link href={loginUrl} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline">
+                                        <Link href={loginUrl} className="text-text-secondary hover:text-text-primary hover:underline">
                                             {t('landing.adminPanel')}
                                         </Link>
                                     </div>
@@ -344,28 +344,28 @@ export default function LandingPage() {
                             {/* Contact & Performance Stats */}
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="glass-card space-y-3 flex flex-col justify-center">
-                                    <h2 className="text-base font-semibold text-[var(--text-primary)]">{t('landing.contact')}</h2>
+                                    <h2 className="text-base font-semibold text-text-primary">{t('landing.contact')}</h2>
                                     <a
                                         href="mailto:nguyendangkhuong96@gmail.com"
-                                        className="text-sm text-[var(--text-secondary)] flex items-center gap-2 hover:text-[#38bdf8] transition"
+                                        className="text-sm text-text-secondary flex items-center gap-2 hover:text-[#38bdf8] transition"
                                     >
                                         <EmailIcon />
                                     </a>
-                                    <div className="flex gap-3 text-[var(--text-secondary)] pt-1">
+                                    <div className="flex gap-3 text-text-secondary pt-1">
                                         <a href="https://linkedin.com/in/nguyendangkhuong" target="_blank" rel="noopener noreferrer" className="hover:text-[#0A66C2] transition">
                                             <LinkedInIcon />
                                         </a>
-                                        <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text-primary)] transition">
+                                        <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-text-primary transition">
                                             <TwitterIcon />
                                         </a>
-                                        <a href="https://github.com/NguyenDangKhuong" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text-primary)] transition">
+                                        <a href="https://github.com/NguyenDangKhuong" target="_blank" rel="noopener noreferrer" className="hover:text-text-primary transition">
                                             <GitHubIcon />
                                         </a>
                                     </div>
                                 </div>
 
                                 <div className="glass-card space-y-3 flex flex-col justify-center items-center">
-                                    <h2 className="text-sm font-semibold text-[var(--text-primary)] w-full text-left">{t('landing.performanceStats')}</h2>
+                                    <h2 className="text-sm font-semibold text-text-primary w-full text-left">{t('landing.performanceStats')}</h2>
                                     <div className="flex gap-2">
                                         <PerformanceBadge score="100" label="SEO" />
                                         <PerformanceBadge score="100" label="PERF" />
@@ -380,7 +380,7 @@ export default function LandingPage() {
 
                     {/* ═══ WORK EXPERIENCE ═══ */}
                     <section className="mt-12">
-                        <h2 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-8 flex items-center gap-3">
+                        <h2 className="text-2xl md:text-3xl font-bold text-text-primary mb-8 flex items-center gap-3">
                             💼 {t('landing.experience')}
                         </h2>
 
@@ -401,10 +401,10 @@ export default function LandingPage() {
                                             {/* Header */}
                                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-1">
                                                 <div>
-                                                    <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                                                    <h3 className="text-lg font-semibold text-text-primary">
                                                         {exp.role}
                                                     </h3>
-                                                    <p className="text-sm text-[var(--text-secondary)]">
+                                                    <p className="text-sm text-text-secondary">
                                                         {exp.company}
                                                         {exp.client && <span className="text-[#38bdf8]"> → {exp.client}</span>}
                                                         {' · '}{exp.location}
@@ -417,14 +417,14 @@ export default function LandingPage() {
                                                     >
                                                         {exp.period}
                                                     </span>
-                                                    <span className="text-xs text-[var(--text-muted)] bg-[var(--bg-tag)] px-2 py-1 rounded-full">
+                                                    <span className="text-xs text-text-muted bg-bg-tag px-2 py-1 rounded-full">
                                                         👥 {exp.teamSize}
                                                     </span>
                                                 </div>
                                             </div>
 
                                             {/* Bullets */}
-                                            <ul className="space-y-1.5 text-sm text-[var(--text-secondary)]">
+                                            <ul className="space-y-1.5 text-sm text-text-secondary">
                                                 {exp.highlights.map((h, j) => (
                                                     <li key={j} className="flex items-start gap-2">
                                                         <span className="text-[10px] mt-1.5 shrink-0" style={{ color: exp.color }}>▸</span>
@@ -454,20 +454,20 @@ export default function LandingPage() {
 
                     {/* ═══ EDUCATION ═══ */}
                     <section className="mt-12">
-                        <h2 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-8 flex items-center gap-3">
+                        <h2 className="text-2xl md:text-3xl font-bold text-text-primary mb-8 flex items-center gap-3">
                             🎓 {t('landing.education')}
                         </h2>
 
                         <div className="glass-card flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative overflow-hidden">
                             <div className="absolute -top-16 -right-16 w-48 h-48 bg-[#38bdf8]/10 rounded-full blur-3xl -z-10" />
                             <div className="space-y-1">
-                                <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                                <h3 className="text-lg font-semibold text-text-primary">
                                     Ho Chi Minh University of Science (HCMUS)
                                 </h3>
-                                <p className="text-sm text-[var(--text-secondary)]">
+                                <p className="text-sm text-text-secondary">
                                     Faculty of Information Technology
                                 </p>
-                                <p className="text-xs text-[var(--text-muted)]">
+                                <p className="text-xs text-text-muted">
                                     HCM, Vietnam
                                 </p>
                             </div>
@@ -479,7 +479,7 @@ export default function LandingPage() {
 
                     {/* ═══ SKILLS & EXPERTISE ═══ */}
                     <section className="mt-12">
-                        <h2 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-8 flex items-center gap-3">
+                        <h2 className="text-2xl md:text-3xl font-bold text-text-primary mb-8 flex items-center gap-3">
                             🛠️ {t('landing.skills')}
                         </h2>
 
@@ -496,7 +496,7 @@ export default function LandingPage() {
                                         {cat.skills.map((skill) => (
                                             <span
                                                 key={skill}
-                                                className="px-2.5 py-1 text-xs rounded-full border text-[var(--text-secondary)]"
+                                                className="px-2.5 py-1 text-xs rounded-full border text-text-secondary"
                                                 style={{ borderColor: `${cat.color}30`, backgroundColor: `${cat.color}10` }}
                                             >
                                                 {skill}
@@ -512,55 +512,55 @@ export default function LandingPage() {
                 {/* Footer */}
                 <footer className="w-full max-w-6xl mx-auto mt-16 z-20 px-4 md:px-8">
                     {/* Tool Links Grid */}
-                    <div className="border-t border-[var(--border-primary)] pt-8 pb-6">
-                        <p className="text-xs font-medium uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>
+                    <div className="border-t border-border-primary pt-8 pb-6">
+                        <p className="text-xs font-medium uppercase tracking-widest mb-4 text-text-muted">
                             {language === 'vi' ? 'Công cụ' : 'Tools'}
                         </p>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                             <Link
                                 href="/flashcards"
-                                className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-[var(--border-primary)] hover:border-[#fbbf24]/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(251,191,36,0.08)] no-underline"
-                                style={{ backgroundColor: 'var(--bg-card)' }}
+                                className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-border-primary hover:border-[#fbbf24]/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(251,191,36,0.08)] no-underline"
+
                             >
                                 <span className="text-lg group-hover:scale-110 transition-transform duration-300">🃏</span>
-                                <span className="text-sm font-medium text-[var(--text-secondary)] group-hover:text-[#fbbf24] transition-colors">Flashcards</span>
+                                <span className="text-sm font-medium text-text-secondary group-hover:text-[#fbbf24] transition-colors">Flashcards</span>
                             </Link>
                             <Link
                                 href="/leetcode"
-                                className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-[var(--border-primary)] hover:border-[#ffa116]/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,161,22,0.08)] no-underline"
-                                style={{ backgroundColor: 'var(--bg-card)' }}
+                                className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-border-primary hover:border-[#ffa116]/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,161,22,0.08)] no-underline"
+
                             >
                                 <span className="text-lg group-hover:scale-110 transition-transform duration-300">🧩</span>
-                                <span className="text-sm font-medium text-[var(--text-secondary)] group-hover:text-[#ffa116] transition-colors">LeetCode</span>
+                                <span className="text-sm font-medium text-text-secondary group-hover:text-[#ffa116] transition-colors">LeetCode</span>
                             </Link>
                             <Link
                                 href="/translate"
-                                className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-[var(--border-primary)] hover:border-[#60a5fa]/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(96,165,250,0.08)] no-underline"
-                                style={{ backgroundColor: 'var(--bg-card)' }}
+                                className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-border-primary hover:border-[#60a5fa]/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(96,165,250,0.08)] no-underline"
+
                             >
                                 <span className="text-lg group-hover:scale-110 transition-transform duration-300">🌐</span>
-                                <span className="text-sm font-medium text-[var(--text-secondary)] group-hover:text-[#60a5fa] transition-colors">Translate</span>
+                                <span className="text-sm font-medium text-text-secondary group-hover:text-[#60a5fa] transition-colors">Translate</span>
                             </Link>
                             <Link
                                 href="/clarity"
-                                className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-[var(--border-primary)] hover:border-[#a78bfa]/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(167,139,250,0.08)] no-underline"
-                                style={{ backgroundColor: 'var(--bg-card)' }}
+                                className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-border-primary hover:border-[#a78bfa]/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(167,139,250,0.08)] no-underline"
+
                             >
                                 <span className="text-lg group-hover:scale-110 transition-transform duration-300">🎯</span>
-                                <span className="text-sm font-medium text-[var(--text-secondary)] group-hover:text-[#a78bfa] transition-colors">Clarity</span>
+                                <span className="text-sm font-medium text-text-secondary group-hover:text-[#a78bfa] transition-colors">Clarity</span>
                             </Link>
                         </div>
                     </div>
 
                     {/* Bottom Bar — Copyright + Legal */}
-                    <div className="border-t border-[var(--border-primary)] py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs" style={{ color: 'var(--text-muted)' }}>
+                    <div className="border-t border-border-primary py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-text-muted">
                         <p>{t('landing.footer')}</p>
                         <div className="flex items-center gap-4">
-                            <Link href="/privacy" className="hover:text-[var(--text-secondary)] transition-colors no-underline" style={{ color: 'var(--text-muted)' }}>
+                            <Link href="/privacy" className="hover:text-text-secondary transition-colors no-underline text-text-muted">
                                 {t('landing.privacy')}
                             </Link>
-                            <span style={{ color: 'var(--border-primary)' }}>·</span>
-                            <Link href="/terms" className="hover:text-[var(--text-secondary)] transition-colors no-underline" style={{ color: 'var(--text-muted)' }}>
+                            <span className="text-border-primary">·</span>
+                            <Link href="/terms" className="hover:text-text-secondary transition-colors no-underline text-text-muted">
                                 {t('landing.terms')}
                             </Link>
                         </div>
@@ -569,8 +569,8 @@ export default function LandingPage() {
 
                 {/* Background Gradients - Optimized */}
                 <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
-                    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[var(--bg-glow-blue)] rounded-full blur-[100px]" />
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[var(--bg-glow-purple)] rounded-full blur-[100px]" />
+                    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-bg-glow-blue rounded-full blur-[100px]" />
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-bg-glow-purple rounded-full blur-[100px]" />
                 </div>
             </div>
         </>
@@ -582,7 +582,7 @@ export default function LandingPage() {
 function TechIcon({ children, name }: { children: React.ReactNode; name: string; color: string }) {
     return (
         <div
-            className="w-14 h-14 rounded-2xl bg-[var(--bg-tag)] border border-[var(--border-primary)] flex items-center justify-center p-2 hover:scale-110 transition-transform shadow-sm"
+            className="w-14 h-14 rounded-2xl bg-bg-tag border border-border-primary flex items-center justify-center p-2 hover:scale-110 transition-transform shadow-sm"
             title={name}
         >
             {children}
@@ -616,7 +616,7 @@ function ReactIcon() {
 
 function NextJsIcon() {
     return (
-        <svg className="w-full h-full text-[var(--text-primary)] fill-current" viewBox="0 0 128 128">
+        <svg className="w-full h-full text-text-primary fill-current" viewBox="0 0 128 128">
             <path d="M64 0C28.7 0 0 28.7 0 64s28.7 64 64 64 64-28.7 64-64S99.3 0 64 0zm23 100.6L49.7 47.9H41v37.8h8.6v-27l33.1 46.5h10.3V42.3H87v58.3zM64 118c-29.8 0-54-24.2-54-54S34.2 10 64 10s54 24.2 54 54-24.2 54-54 54z"></path>
         </svg>
     )

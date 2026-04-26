@@ -336,7 +336,7 @@ export default function TikTokAccountPage() {
     return (
         <div className="">
             {/* Account Header */}
-            <div className="bg-[var(--card-bg)] rounded-lg shadow-sm p-4 mb-4">
+            <div className="bg-card-bg rounded-lg shadow-sm p-4 mb-4">
                 <div className="flex items-center gap-4">
                     {/* Avatar */}
                     {account.avatar?.url ? (
@@ -382,7 +382,7 @@ export default function TikTokAccountPage() {
             </div>
 
             {/* Scheduled Posts */}
-            <div className="bg-[var(--card-bg)] rounded-lg shadow-sm p-4 mb-4">
+            <div className="bg-card-bg rounded-lg shadow-sm p-4 mb-4">
                 <div className="flex items-center justify-between mb-2">
                     <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">
                         Lịch đăng bài ({scheduledPosts.length})
@@ -567,7 +567,7 @@ export default function TikTokAccountPage() {
 
 
             {/* AutoFlow Section */}
-            <div className="bg-[var(--card-bg)] rounded-lg shadow-sm p-4 mb-4">
+            <div className="bg-card-bg rounded-lg shadow-sm p-4 mb-4">
                 <div className="flex items-center justify-between mb-3">
                     <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">
                         ⚡ AutoFlow ({autoflows.length})
@@ -818,7 +818,7 @@ export default function TikTokAccountPage() {
             </div>
 
             {/* Prompt Library Section */}
-            <div className="bg-[var(--card-bg)] rounded-lg shadow-sm p-4 mb-4">
+            <div className="bg-card-bg rounded-lg shadow-sm p-4 mb-4">
                 <div className="flex items-center justify-between cursor-pointer select-none" onClick={handleTogglePrompts}>
                     <h2 className="text-base font-semibold flex items-center gap-2">
                         {promptsCollapsed ? <RightOutlined className="text-xs text-gray-400" /> : <DownOutlined className="text-xs text-gray-400" />}
@@ -839,7 +839,7 @@ export default function TikTokAccountPage() {
             </div>
 
             {/* Veo3 Media Section */}
-            <div className="bg-[var(--card-bg)] rounded-lg shadow-sm p-4 mb-4">
+            <div className="bg-card-bg rounded-lg shadow-sm p-4 mb-4">
                 <div className="flex items-center justify-between cursor-pointer select-none" onClick={handleToggleVeo3Media}>
                     <h2 className="text-base font-semibold flex items-center gap-2">
                         {veo3MediaCollapsed ? <RightOutlined className="text-xs text-gray-400" /> : <DownOutlined className="text-xs text-gray-400" />}
@@ -859,7 +859,7 @@ export default function TikTokAccountPage() {
                 )}
             </div>
             {/* Content Area - Products */}
-            <div className="bg-[var(--card-bg)] rounded-lg shadow-sm p-4">
+            <div className="bg-card-bg rounded-lg shadow-sm p-4">
                 <div className="flex items-center justify-between cursor-pointer select-none" onClick={() => setProductsCollapsed(!productsCollapsed)}>
                     <h2 className="text-base font-semibold flex items-center gap-2">
                         {productsCollapsed ? <RightOutlined className="text-xs text-gray-400" /> : <DownOutlined className="text-xs text-gray-400" />}

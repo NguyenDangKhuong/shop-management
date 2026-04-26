@@ -95,7 +95,7 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
     return (
         <div
             className="font-sans min-h-screen flex flex-col items-center relative transition-colors duration-300"
-            style={{ backgroundColor: 'var(--bg-page)', color: 'var(--text-primary)' }}
+
         >
             <SiteHeader
                 maxWidth="max-w-4xl"
@@ -105,7 +105,7 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                         <Link
                             href="/"
                             className="text-sm transition flex items-center gap-1"
-                            style={{ color: 'var(--text-muted)' }}
+
                         >
                             ← Back
                         </Link>
@@ -135,7 +135,7 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                     <div className="relative">
                         <svg
                             className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                            style={{ color: 'var(--text-muted)' }}
+
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
@@ -157,13 +157,13 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                             onKeyDown={handleKeyDown}
                             placeholder={lang === 'vi' ? 'Tìm kiếm bài viết...' : 'Search posts...'}
                             className="w-full pl-10 pr-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#38bdf8]/50 focus:border-[#38bdf8] transition-all duration-200 text-sm"
-                            style={{ backgroundColor: 'var(--bg-input)', borderColor: 'var(--border-input)', color: 'var(--text-primary)' }}
+
                         />
                         {search && (
                             <button
                                 onClick={() => { setSearch(''); setIsOpen(false) }}
                                 className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full flex items-center justify-center transition text-xs cursor-pointer"
-                                style={{ backgroundColor: 'var(--bg-surface-dim)', color: 'var(--text-secondary)' }}
+
                             >
                                 ✕
                             </button>
@@ -174,7 +174,7 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                     {isOpen && search.trim() && (
                         <div
                             className="absolute top-full left-0 right-0 mt-2 rounded-xl border backdrop-blur-xl overflow-hidden max-h-80 overflow-y-auto z-50"
-                            style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)', boxShadow: 'var(--shadow-xl)' }}
+
                         >
                             {results.length > 0 ? (
                                 (() => {
@@ -188,21 +188,21 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                                                 <button
                                                     onClick={() => handleNavigate(result.post.slug)}
                                                     onMouseEnter={() => setActiveIndex(postNavIdx)}
-                                                    className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors duration-100 ${postNavIdx === activeIndex ? 'bg-[var(--bg-tag-active)]' : ''}`}
+                                                    className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors duration-100 ${postNavIdx === activeIndex ? 'bg-bg-tag-active' : ''}`}
                                                     style={rIdx > 0 ? { borderTop: '1px solid var(--border-dim)' } : undefined}
                                                 >
                                                     <span className="text-xl shrink-0">{result.post.emoji}</span>
                                                     <div className="min-w-0 flex-1">
-                                                        <div className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                                                        <div className="text-sm font-medium truncate text-text-primary">
                                                             {t(result.post.title)}
                                                         </div>
-                                                        <div className="text-xs flex items-center gap-2 mt-0.5" style={{ color: 'var(--text-muted)' }}>
+                                                        <div className="text-xs flex items-center gap-2 mt-0.5 text-text-muted">
                                                             <span>{result.post.date}</span>
                                                             <span>·</span>
                                                             <span>{result.post.tags.slice(0, 2).join(', ')}</span>
                                                         </div>
                                                     </div>
-                                                    <span className="text-xs shrink-0" style={{ color: 'var(--text-dimmed)' }}>↵</span>
+                                                    <span className="text-xs shrink-0 text-text-dimmed">↵</span>
                                                 </button>
                                                 {/* Section entries */}
                                                 {sectionItems.map((section) => {
@@ -212,11 +212,11 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                                                             key={section.id}
                                                             onClick={() => handleNavigate(result.post.slug, section.id)}
                                                             onMouseEnter={() => setActiveIndex(secNavIdx)}
-                                                            className={`w-full text-left pl-12 pr-4 py-2 flex items-center gap-2.5 transition-colors duration-100 ${secNavIdx === activeIndex ? 'bg-[var(--bg-tag-active)]' : ''}`}
+                                                            className={`w-full text-left pl-12 pr-4 py-2 flex items-center gap-2.5 transition-colors duration-100 ${secNavIdx === activeIndex ? 'bg-bg-tag-active' : ''}`}
                                                         >
                                                             <span className="text-xs text-[#38bdf8] dark:text-[#38bdf8] shrink-0">§</span>
-                                                            <span className="text-xs truncate" style={{ color: 'var(--text-secondary)' }}>{section.title}</span>
-                                                            <span className="text-xs shrink-0 ml-auto" style={{ color: 'var(--text-dimmed)' }}>↵</span>
+                                                            <span className="text-xs truncate text-text-secondary">{section.title}</span>
+                                                            <span className="text-xs shrink-0 ml-auto text-text-dimmed">↵</span>
                                                         </button>
                                                     )
                                                 })}
@@ -225,7 +225,7 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                                     })
                                 })()
                             ) : (
-                                <div className="px-4 py-6 text-center text-sm" style={{ color: 'var(--text-muted)' }}>
+                                <div className="px-4 py-6 text-center text-sm text-text-muted">
                                     {lang === 'vi' ? 'Không tìm thấy bài viết nào' : 'No posts found'}
                                 </div>
                             )}
@@ -252,12 +252,12 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                             <div className="p-6 space-y-4">
                                 <div className="flex items-center gap-3">
                                     <span className="text-2xl">{post.emoji}</span>
-                                    <h2 className="text-lg font-semibold group-hover:text-[#38bdf8] transition leading-tight" style={{ color: 'var(--text-primary)' }}>
+                                    <h2 className="text-lg font-semibold group-hover:text-[#38bdf8] transition leading-tight text-text-primary">
                                         {t(post.title)}
                                     </h2>
                                 </div>
 
-                                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                                <p className="text-sm leading-relaxed text-text-secondary">
                                     {t(post.description)}
                                 </p>
 
@@ -274,7 +274,7 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                                 </div>
 
                                 <div className="flex items-center justify-between pt-2">
-                                    <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{post.date}</span>
+                                    <span className="text-xs text-text-muted">{post.date}</span>
                                     <span
                                         className="text-sm font-medium group-hover:translate-x-1 transition-transform"
                                         style={{ color: post.color }}
@@ -291,15 +291,15 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                 {posts.length === 0 && (
                     <div className="w-full max-w-4xl mx-auto text-center py-20 z-10">
                         <span className="text-6xl mb-4 block">📚</span>
-                        <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>
+                        <p className="text-lg text-text-secondary">
                             {lang === 'vi' ? 'Chưa có bài viết nào. Quay lại sau nhé!' : 'No posts yet. Come back later!'}
                         </p>
                     </div>
                 )}
 
                 {/* Footer */}
-                <footer className="w-full max-w-4xl mx-auto mt-16 pt-8 pb-6 border-t z-20 text-center" style={{ borderColor: 'var(--border-primary)' }}>
-                    <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                <footer className="w-full max-w-4xl mx-auto mt-16 pt-8 pb-6 border-t z-20 text-center border-border-primary">
+                    <p className="text-sm text-text-muted">
                         Built with Next.js, TypeScript & MongoDB
                     </p>
                 </footer>
@@ -307,8 +307,8 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
 
             {/* Background Gradients */}
             <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full blur-[100px]" style={{ backgroundColor: 'var(--bg-glow-blue)' }} />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full blur-[100px]" style={{ backgroundColor: 'var(--bg-glow-purple)' }} />
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full blur-[100px] bg-bg-glow-blue" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full blur-[100px] bg-bg-glow-purple" />
             </div>
         </div>
     )

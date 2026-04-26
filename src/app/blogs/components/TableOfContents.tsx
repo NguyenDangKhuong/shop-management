@@ -81,10 +81,10 @@ export function TableOfContents() {
 
     const tocList = (
         <>
-            <div className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-3">
+            <div className="text-xs font-bold text-text-muted uppercase tracking-wider mb-3">
                 📑 Mục lục
             </div>
-            <ul className="space-y-0.5 border-l border-[var(--border-primary)]">
+            <ul className="space-y-0.5 border-l border-border-primary">
                 {items.map((item) => (
                     <li key={item.id}>
                         <button
@@ -94,7 +94,7 @@ export function TableOfContents() {
                                 ${item.level === 3 ? 'pl-5' : 'pl-3'}
                                 ${activeId === item.id
                                     ? 'border-[#38bdf8] text-[#38bdf8] font-medium'
-                                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-primary)]'
+                                    : 'border-transparent text-text-muted hover:text-text-secondary hover:border-border-primary'
                                 }
                             `}
                             title={item.text}
@@ -121,7 +121,7 @@ export function TableOfContents() {
             {/* Mobile — floating button + drawer */}
             <button
                 onClick={() => setMobileOpen(true)}
-                className="xl:hidden fixed bottom-20 left-4 z-50 w-10 h-10 rounded-full bg-[var(--bg-surface-dim)] border border-[var(--border-primary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 flex items-center justify-center shadow-lg"
+                className="xl:hidden fixed bottom-20 left-4 z-50 w-10 h-10 rounded-full bg-bg-surface-dim border border-border-primary text-text-secondary hover:text-text-primary transition-all duration-300 flex items-center justify-center shadow-lg"
                 aria-label="Open table of contents"
             >
                 📑
@@ -134,13 +134,13 @@ export function TableOfContents() {
                     <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
                     {/* Drawer */}
                     <nav
-                        className="absolute left-0 top-0 h-full w-72 bg-[var(--bg-page)] border-r border-[var(--border-primary)] p-6 pt-16 overflow-y-auto shadow-2xl"
+                        className="absolute left-0 top-0 h-full w-72 bg-bg-page border-r border-border-primary p-6 pt-16 overflow-y-auto shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                         aria-label="Table of contents"
                     >
                         <button
                             onClick={() => setMobileOpen(false)}
-                            className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition text-xl"
+                            className="absolute top-4 right-4 text-text-muted hover:text-text-primary transition text-xl"
                             aria-label="Close table of contents"
                         >
                             ✕

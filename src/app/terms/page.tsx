@@ -7,26 +7,26 @@ export const metadata: Metadata = {
 
 export default function TermsOfService() {
     return (
-        <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300" style={{ background: 'var(--bg-primary)' }}>
-            <div className="max-w-4xl mx-auto rounded-lg shadow-md p-8" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
-                <h1 className="text-3xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>Terms of Service</h1>
+        <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300 bg-bg-primary">
+            <div className="max-w-4xl mx-auto rounded-lg shadow-md p-8 bg-bg-secondary border border-border-primary">
+                <h1 className="text-3xl font-bold mb-6 text-text-primary">Terms of Service</h1>
 
-                <div className="text-sm mb-8" style={{ color: 'var(--text-secondary)' }}>
+                <div className="text-sm mb-8 text-text-secondary">
                     <p><strong>Last Updated:</strong> December 27, 2024</p>
                 </div>
 
                 <div className="prose max-w-none space-y-6">
                     <section>
-                        <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>1. Acceptance of Terms</h2>
-                        <p className="leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                        <h2 className="text-2xl font-semibold mb-4 text-text-primary">1. Acceptance of Terms</h2>
+                        <p className="leading-relaxed text-text-secondary">
                             By accessing and using Thetaphoa (&quot;the Service&quot;), you accept and agree to be bound by the terms and
                             provision of this agreement. If you do not agree to these Terms of Service, please do not use the Service.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>2. Description of Service</h2>
-                        <p className="leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                        <h2 className="text-2xl font-semibold mb-4 text-text-primary">2. Description of Service</h2>
+                        <p className="leading-relaxed text-text-secondary">
                             Thetaphoa is a shop management application that provides tools for managing products, categories,
                             orders, and inventory. The Service may include integration with third-party platforms including but
                             not limited to TikTok for content management and distribution purposes.
@@ -34,11 +34,11 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>3. User Accounts</h2>
-                        <p className="leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
+                        <h2 className="text-2xl font-semibold mb-4 text-text-primary">3. User Accounts</h2>
+                        <p className="leading-relaxed mb-3 text-text-secondary">
                             To access certain features of the Service, you may be required to create an account. You agree to:
                         </p>
-                        <ul className="list-disc pl-6 space-y-2" style={{ color: 'var(--text-secondary)' }}>
+                        <ul className="list-disc pl-6 space-y-2 text-text-secondary">
                             <li>Provide accurate, current, and complete information during registration</li>
                             <li>Maintain the security of your password and account</li>
                             <li>Notify us immediately of any unauthorized use of your account</li>
@@ -47,11 +47,11 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>4. TikTok Integration</h2>
-                        <p className="leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
+                        <h2 className="text-2xl font-semibold mb-4 text-text-primary">4. TikTok Integration</h2>
+                        <p className="leading-relaxed mb-3 text-text-secondary">
                             Our Service may integrate with TikTok&apos;s platform. When using TikTok integration features:
                         </p>
-                        <ul className="list-disc pl-6 space-y-2" style={{ color: 'var(--text-secondary)' }}>
+                        <ul className="list-disc pl-6 space-y-2 text-text-secondary">
                             <li>You must comply with TikTok&apos;s Terms of Service and Community Guidelines</li>
                             <li>You authorize us to access your TikTok account data as necessary for the Service</li>
                             <li>You understand that TikTok&apos;s terms and policies govern your use of their platform</li>
@@ -60,8 +60,8 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>5. User Content</h2>
-                        <p className="leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
+                        <h2 className="text-2xl font-semibold mb-4 text-text-primary">5. User Content</h2>
+                        <p className="leading-relaxed mb-3 text-text-secondary">
                             You retain all rights to any content you submit, post, or display on or through the Service.
                             By submitting content, you grant us a worldwide, non-exclusive, royalty-free license to use,
                             reproduce, and distribute such content in connection with the Service.
@@ -69,11 +69,11 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>6. Prohibited Conduct</h2>
-                        <p className="leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
+                        <h2 className="text-2xl font-semibold mb-4 text-text-primary">6. Prohibited Conduct</h2>
+                        <p className="leading-relaxed mb-3 text-text-secondary">
                             You agree not to:
                         </p>
-                        <ul className="list-disc pl-6 space-y-2" style={{ color: 'var(--text-secondary)' }}>
+                        <ul className="list-disc pl-6 space-y-2 text-text-secondary">
                             <li>Use the Service for any illegal purpose or in violation of any laws</li>
                             <li>Violate or infringe upon the rights of others</li>
                             <li>Transmit any harmful or malicious code</li>
@@ -84,8 +84,8 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>7. Intellectual Property</h2>
-                        <p className="leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                        <h2 className="text-2xl font-semibold mb-4 text-text-primary">7. Intellectual Property</h2>
+                        <p className="leading-relaxed text-text-secondary">
                             The Service and its original content, features, and functionality are owned by Thetaphoa and are
                             protected by international copyright, trademark, patent, trade secret, and other intellectual
                             property laws.
@@ -93,8 +93,8 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>8. Termination</h2>
-                        <p className="leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                        <h2 className="text-2xl font-semibold mb-4 text-text-primary">8. Termination</h2>
+                        <p className="leading-relaxed text-text-secondary">
                             We may terminate or suspend your account and access to the Service immediately, without prior
                             notice or liability, for any reason, including without limitation if you breach the Terms.
                             Upon termination, your right to use the Service will immediately cease.
@@ -102,8 +102,8 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>9. Disclaimer of Warranties</h2>
-                        <p className="leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                        <h2 className="text-2xl font-semibold mb-4 text-text-primary">9. Disclaimer of Warranties</h2>
+                        <p className="leading-relaxed text-text-secondary">
                             The Service is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis. We make no warranties, expressed
                             or implied, regarding the Service, including but not limited to implied warranties of merchantability,
                             fitness for a particular purpose, or non-infringement.
@@ -111,8 +111,8 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>10. Limitation of Liability</h2>
-                        <p className="leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                        <h2 className="text-2xl font-semibold mb-4 text-text-primary">10. Limitation of Liability</h2>
+                        <p className="leading-relaxed text-text-secondary">
                             In no event shall Thetaphoa, its directors, employees, or agents be liable for any indirect,
                             incidental, special, consequential, or punitive damages arising out of or relating to your use
                             of the Service.
@@ -120,8 +120,8 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>11. Changes to Terms</h2>
-                        <p className="leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                        <h2 className="text-2xl font-semibold mb-4 text-text-primary">11. Changes to Terms</h2>
+                        <p className="leading-relaxed text-text-secondary">
                             We reserve the right to modify or replace these Terms at any time. We will provide notice of
                             any changes by posting the new Terms on this page and updating the &quot;Last Updated&quot; date.
                             Your continued use of the Service after any changes constitutes acceptance of the new Terms.
@@ -129,19 +129,19 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>12. Contact Information</h2>
-                        <p className="leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                        <h2 className="text-2xl font-semibold mb-4 text-text-primary">12. Contact Information</h2>
+                        <p className="leading-relaxed text-text-secondary">
                             If you have any questions about these Terms, please contact us at:
                         </p>
-                        <div className="mt-3" style={{ color: 'var(--text-secondary)' }}>
+                        <div className="mt-3 text-text-secondary">
                             <p><strong>Email:</strong> nguyendangkhuong96@gmail.com</p>
                             <p><strong>Website:</strong> https://shop.thetaphoa.com</p>
                         </div>
                     </section>
                 </div>
 
-                <div className="mt-10 pt-6" style={{ borderTop: '1px solid var(--border-primary)' }}>
-                    <p className="text-center" style={{ color: 'var(--text-secondary)' }}>
+                <div className="mt-10 pt-6 border-t border-border-primary">
+                    <p className="text-center text-text-secondary">
                         © 2024 Thetaphoa. All rights reserved.
                     </p>
                 </div>

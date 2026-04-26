@@ -54,12 +54,12 @@ function binarySearchOnAnswer(lo, hi) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Dấu hiệu bài toán</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Ví dụ LeetCode</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Dấu hiệu bài toán</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Ví dụ LeetCode</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Mảng sorted + tìm phần tử</td><td className="p-3">Binary Search (#704)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Tìm giá trị min/max thỏa điều kiện</td><td className="p-3">Koko Eating Bananas (#875)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Mảng sorted bị xoay</td><td className="p-3">Search in Rotated Array (#33)</td></tr>
@@ -73,7 +73,7 @@ function binarySearchOnAnswer(lo, hi) {
         <div className="my-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                 <div className="text-blue-400 font-bold text-sm mb-2">🎯 Tìm giá trị cụ thể</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Tìm phần tử trong mảng sorted</li>
                     <li>• <InlineCode>left {'<='} right</InlineCode></li>
                     <li>• Return khi tìm thấy hoặc -1</li>
@@ -81,7 +81,7 @@ function binarySearchOnAnswer(lo, hi) {
             </div>
             <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                 <div className="text-green-400 font-bold text-sm mb-2">🔍 Tìm biên (Binary Search on Answer)</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Tìm giá trị min/max thỏa điều kiện</li>
                     <li>• <InlineCode>left {'<'} right</InlineCode></li>
                     <li>• Thu hẹp khoảng cho đến khi left=right</li>
@@ -99,22 +99,22 @@ function binarySearchOnAnswer(lo, hi) {
         </Paragraph>
 
         <Heading3>Giải pháp</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Đặt <InlineCode>left = 0</InlineCode>, <InlineCode>right = n-1</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Tính <InlineCode>mid = floor((left + right) / 2)</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span><InlineCode>nums[mid] === target</InlineCode> → tìm thấy!<br />
                     <InlineCode>nums[mid] {'<'} target</InlineCode> → target ở nửa phải → <InlineCode>left = mid + 1</InlineCode>.<br />
                     <InlineCode>nums[mid] {'>'} target</InlineCode> → target ở nửa trái → <InlineCode>right = mid - 1</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Lặp cho đến <InlineCode>left {'>'} right</InlineCode> → không tìm thấy.</span>
             </div>
@@ -163,20 +163,20 @@ function search(nums, target) {
         </Paragraph>
 
         <Heading3>Giải pháp với Binary Search on Answer</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Đáp án k nằm trong khoảng <InlineCode>[1, max(piles)]</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Binary search trên khoảng này: tính tổng giờ cần với tốc độ <InlineCode>mid</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Nếu tổng giờ {'<='} h → mid có thể là đáp án → thử giảm: <InlineCode>right = mid</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Nếu tổng giờ {'>'} h → mid quá nhỏ → <InlineCode>left = mid + 1</InlineCode>.</span>
             </div>
@@ -229,16 +229,16 @@ function minEatingSpeed(piles, h) {
         </Paragraph>
 
         <Heading3>Giải pháp</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Tính mid. Một trong hai nửa <Highlight>luôn sorted</Highlight>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Xác định nửa nào sorted (so sánh <InlineCode>nums[left]</InlineCode> với <InlineCode>nums[mid]</InlineCode>).</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Kiểm tra target có nằm trong nửa sorted không → thu hẹp khoảng tìm.</span>
             </div>
@@ -473,12 +473,12 @@ function binarySearchOnAnswer(lo, hi) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Problem Signal</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">LeetCode Example</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Problem Signal</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">LeetCode Example</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Sorted array + find element</td><td className="p-3">Binary Search (#704)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Find min/max satisfying condition</td><td className="p-3">Koko Eating Bananas (#875)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Rotated sorted array</td><td className="p-3">Search in Rotated Array (#33)</td></tr>
@@ -492,7 +492,7 @@ function binarySearchOnAnswer(lo, hi) {
         <div className="my-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                 <div className="text-blue-400 font-bold text-sm mb-2">🎯 Find Exact Value</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Find element in sorted array</li>
                     <li>• <InlineCode>left {'<='} right</InlineCode></li>
                     <li>• Return when found or -1</li>
@@ -500,7 +500,7 @@ function binarySearchOnAnswer(lo, hi) {
             </div>
             <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4">
                 <div className="text-green-400 font-bold text-sm mb-2">🔍 Find Boundary (BS on Answer)</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Find min/max satisfying condition</li>
                     <li>• <InlineCode>left {'<'} right</InlineCode></li>
                     <li>• Narrow range until left=right</li>
@@ -516,16 +516,16 @@ function binarySearchOnAnswer(lo, hi) {
         </Paragraph>
 
         <Heading3>Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Set <InlineCode>left = 0</InlineCode>, <InlineCode>right = n-1</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Calculate <InlineCode>mid</InlineCode>. Compare with target → narrow to left or right half.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Repeat until found or <InlineCode>left {'>'} right</InlineCode>.</span>
             </div>
@@ -558,20 +558,20 @@ function search(nums, target) {
         </Paragraph>
 
         <Heading3>Binary Search on Answer Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Answer k is in range <InlineCode>[1, max(piles)]</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Binary search: calculate total hours at speed <InlineCode>mid</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>If hours {'<='} h → mid works, try smaller: <InlineCode>right = mid</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>If hours {'>'} h → too slow: <InlineCode>left = mid + 1</InlineCode>.</span>
             </div>
@@ -607,16 +607,16 @@ function minEatingSpeed(piles, h) {
         </Paragraph>
 
         <Heading3>Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Calculate mid. One of the two halves is <Highlight>always sorted</Highlight>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Determine which half is sorted (compare <InlineCode>nums[left]</InlineCode> with <InlineCode>nums[mid]</InlineCode>).</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Check if target is in the sorted half → narrow search range.</span>
             </div>

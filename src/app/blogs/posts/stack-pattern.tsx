@@ -47,12 +47,12 @@ for (let i = 0; i < arr.length; i++) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Dấu hiệu bài toán</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Ví dụ LeetCode</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Dấu hiệu bài toán</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Ví dụ LeetCode</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Kiểm tra ngoặc hợp lệ</td><td className="p-3">Valid Parentheses (#20)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Tìm phần tử lớn/nhỏ hơn gần nhất</td><td className="p-3">Daily Temperatures (#739)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Stack hỗ trợ lấy min O(1)</td><td className="p-3">Min Stack (#155)</td></tr>
@@ -72,20 +72,20 @@ for (let i = 0; i < arr.length; i++) {
         </Paragraph>
 
         <Heading3>Giải pháp với Stack</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Duyệt từng ký tự: nếu là ngoặc mở <InlineCode>{'(, [, {'}</InlineCode> → <Highlight>push</Highlight> vào stack.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Nếu là ngoặc đóng → <Highlight>pop</Highlight> từ stack và kiểm tra: ngoặc pop ra có khớp với ngoặc đóng không?</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Không khớp hoặc stack rỗng khi cần pop → không hợp lệ.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Cuối cùng kiểm tra stack rỗng → hợp lệ. Stack còn dư → không hợp lệ.</span>
             </div>
@@ -139,20 +139,20 @@ function isValid(s) {
         </Paragraph>
 
         <Heading3>Giải pháp với Monotonic Stack</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Dùng stack lưu <Highlight>INDEX</Highlight> (không phải giá trị) của các ngày chưa tìm thấy ngày ấm hơn.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Duyệt từng ngày: nếu nhiệt độ hôm nay {'>'} nhiệt độ ở đỉnh stack → stack top đã tìm thấy ngày ấm hơn!</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Pop stack và ghi kết quả: <InlineCode>answer[top] = today - top</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>Push index hôm nay vào stack.</span>
             </div>
@@ -201,20 +201,20 @@ function dailyTemperatures(temperatures) {
         </Paragraph>
 
         <Heading3>Giải pháp: Stack kép</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Dùng 2 stack: <InlineCode>stack</InlineCode> chính và <InlineCode>minStack</InlineCode> lưu giá trị min tại mỗi thời điểm.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Khi <InlineCode>push(val)</InlineCode>: push vào stack, push <InlineCode>min(val, minStack.top)</InlineCode> vào minStack.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Khi <InlineCode>pop()</InlineCode>: pop cả 2 stack.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span><InlineCode>getMin()</InlineCode> chỉ cần xem đỉnh minStack → O(1).</span>
             </div>
@@ -270,7 +270,7 @@ class MinStack {
         <div className="my-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                 <div className="text-blue-400 font-bold text-sm mb-2">📈 Monotonic Increasing</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Stack tăng dần từ bottom</li>
                     <li>• Tìm <strong>Next Greater Element</strong></li>
                     <li>• Pop khi gặp phần tử lớn hơn đỉnh</li>
@@ -278,7 +278,7 @@ class MinStack {
             </div>
             <div className="rounded-xl bg-red-500/10 border border-red-500/20 p-4">
                 <div className="text-red-400 font-bold text-sm mb-2">📉 Monotonic Decreasing</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Stack giảm dần từ bottom</li>
                     <li>• Tìm <strong>Next Smaller Element</strong></li>
                     <li>• Pop khi gặp phần tử nhỏ hơn đỉnh</li>
@@ -566,12 +566,12 @@ for (let i = 0; i < arr.length; i++) {
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Problem Signal</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">LeetCode Example</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Problem Signal</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">LeetCode Example</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Check valid brackets</td><td className="p-3">Valid Parentheses (#20)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Find nearest greater/smaller</td><td className="p-3">Daily Temperatures (#739)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Stack supporting O(1) min</td><td className="p-3">Min Stack (#155)</td></tr>
@@ -590,20 +590,20 @@ for (let i = 0; i < arr.length; i++) {
         </Paragraph>
 
         <Heading3>Stack Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Open bracket → <Highlight>push</Highlight> to stack.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>Close bracket → <Highlight>pop</Highlight> and check: does it match?</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>No match or empty stack → invalid.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>End: stack empty → valid. Stack not empty → invalid.</span>
             </div>
@@ -642,16 +642,16 @@ function isValid(s) {
         </Paragraph>
 
         <Heading3>Monotonic Stack Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Stack stores <Highlight>INDICES</Highlight> (not values) of days without a warmer day yet.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>If today&apos;s temp {'>'} stack top&apos;s temp → top found its warmer day!</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>Pop and record: <InlineCode>answer[top] = today - top</InlineCode>.</span>
             </div>
@@ -693,16 +693,16 @@ function dailyTemperatures(temperatures) {
         </Paragraph>
 
         <Heading3>Dual Stack Solution</Heading3>
-        <div className="my-4 space-y-2 text-sm text-[var(--text-secondary)]">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+        <div className="my-4 space-y-2 text-sm text-text-secondary">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>Use 2 stacks: main <InlineCode>stack</InlineCode> and <InlineCode>minStack</InlineCode> tracking min at each point.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>On <InlineCode>push(val)</InlineCode>: push to both, minStack gets <InlineCode>min(val, current min)</InlineCode>.</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span><InlineCode>getMin()</InlineCode> → peek minStack top → O(1).</span>
             </div>
@@ -751,7 +751,7 @@ class MinStack {
         <div className="my-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
                 <div className="text-blue-400 font-bold text-sm mb-2">📈 Monotonic Increasing</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Increasing from bottom</li>
                     <li>• Find <strong>Next Greater Element</strong></li>
                     <li>• Pop when current {'>'} top</li>
@@ -759,7 +759,7 @@ class MinStack {
             </div>
             <div className="rounded-xl bg-red-500/10 border border-red-500/20 p-4">
                 <div className="text-red-400 font-bold text-sm mb-2">📉 Monotonic Decreasing</div>
-                <ul className="text-[var(--text-secondary)] text-xs space-y-1">
+                <ul className="text-text-secondary text-xs space-y-1">
                     <li>• Decreasing from bottom</li>
                     <li>• Find <strong>Next Smaller Element</strong></li>
                     <li>• Pop when current {'<'} top</li>

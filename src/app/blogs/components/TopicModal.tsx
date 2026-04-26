@@ -58,7 +58,7 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
                     className={`w-full text-left flex items-start gap-3 p-3.5 pl-4 pr-12 rounded-xl border transition-all duration-200 cursor-pointer ${
                         isLearned 
                             ? 'bg-emerald-500/5 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.05)]' 
-                            : 'bg-[var(--bg-tag)] border-[var(--border-primary)]'
+                            : 'bg-bg-tag border-border-primary'
                     }`}
                     style={{ 
                         boxShadow: open ? `0 0 20px ${color}20` : undefined,
@@ -70,7 +70,7 @@ export function TopicModal({ title, emoji = '📖', color = '#38bdf8', summary, 
                         <div className="text-sm font-semibold transition flex items-center gap-2" style={{ color: isLearned ? '#34d399' : (open ? color : 'var(--text-primary)') }}>
                             {title}
                         </div>
-                        <div className={`text-xs mt-1 line-clamp-1 ${isLearned ? 'text-emerald-600/70 dark:text-emerald-400/60' : 'text-[var(--text-muted)]'}`}>
+                        <div className={`text-xs mt-1 line-clamp-1 ${isLearned ? 'text-emerald-600/70 dark:text-emerald-400/60' : 'text-text-muted'}`}>
                             {summary}
                         </div>
                     </div>

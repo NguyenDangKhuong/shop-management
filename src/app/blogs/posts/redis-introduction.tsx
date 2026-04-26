@@ -36,26 +36,26 @@ const redisIntroduction: BlogPost = {
                     <div className="rounded-xl bg-red-500/10 border border-red-500/20 p-5">
                         <div className="text-3xl mb-2">⚡</div>
                         <div className="text-red-400 font-bold text-sm mb-1">In-Memory</div>
-                        <div className="text-[var(--text-primary)] text-sm">Dữ liệu lưu trong RAM</div>
-                        <div className="text-[var(--text-secondary)] text-xs mt-1">Tốc độ: ~100,000 ops/sec (single thread)</div>
+                        <div className="text-text-primary text-sm">Dữ liệu lưu trong RAM</div>
+                        <div className="text-text-secondary text-xs mt-1">Tốc độ: ~100,000 ops/sec (single thread)</div>
                     </div>
                     <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-5">
                         <div className="text-3xl mb-2">🔑</div>
                         <div className="text-blue-400 font-bold text-sm mb-1">Key-Value Store</div>
-                        <div className="text-[var(--text-primary)] text-sm">Mọi data đều lưu dạng key → value</div>
-                        <div className="text-[var(--text-secondary)] text-xs mt-1">Key: string, Value: nhiều kiểu data</div>
+                        <div className="text-text-primary text-sm">Mọi data đều lưu dạng key → value</div>
+                        <div className="text-text-secondary text-xs mt-1">Key: string, Value: nhiều kiểu data</div>
                     </div>
                     <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-5">
                         <div className="text-3xl mb-2">🔄</div>
                         <div className="text-green-400 font-bold text-sm mb-1">Single-Threaded</div>
-                        <div className="text-[var(--text-primary)] text-sm">1 thread xử lý commands</div>
-                        <div className="text-[var(--text-secondary)] text-xs mt-1">Không cần lock → atomic operations</div>
+                        <div className="text-text-primary text-sm">1 thread xử lý commands</div>
+                        <div className="text-text-secondary text-xs mt-1">Không cần lock → atomic operations</div>
                     </div>
                     <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-5">
                         <div className="text-3xl mb-2">💾</div>
                         <div className="text-purple-400 font-bold text-sm mb-1">Persistence (tuỳ chọn)</div>
-                        <div className="text-[var(--text-primary)] text-sm">RDB snapshots + AOF logs</div>
-                        <div className="text-[var(--text-secondary)] text-xs mt-1">Dữ liệu không mất khi restart</div>
+                        <div className="text-text-primary text-sm">RDB snapshots + AOF logs</div>
+                        <div className="text-text-secondary text-xs mt-1">Dữ liệu không mất khi restart</div>
                     </div>
                 </div>
 
@@ -70,13 +70,13 @@ const redisIntroduction: BlogPost = {
                 <div className="my-4 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                         <thead>
-                            <tr className="border-b border-[var(--border-primary)]">
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Type</th>
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Mô tả</th>
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Use Case</th>
+                            <tr className="border-b border-border-primary">
+                                <th className="text-left p-3 text-text-secondary font-medium">Type</th>
+                                <th className="text-left p-3 text-text-secondary font-medium">Mô tả</th>
+                                <th className="text-left p-3 text-text-secondary font-medium">Use Case</th>
                             </tr>
                         </thead>
-                        <tbody className="text-[var(--text-primary)]">
+                        <tbody className="text-text-primary">
                             <tr className="border-b border-gray-200">
                                 <td className="p-3 font-medium text-red-400">String</td>
                                 <td className="p-3">Giá trị đơn (text, number, JSON)</td>
@@ -194,14 +194,14 @@ async function updateUser(userId: string, data: any) {
                 <div className="my-4 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                         <thead>
-                            <tr className="border-b border-[var(--border-primary)]">
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Strategy</th>
+                            <tr className="border-b border-border-primary">
+                                <th className="text-left p-3 text-text-secondary font-medium">Strategy</th>
                                 <th className="text-left p-3 text-green-500 font-medium">Pros</th>
                                 <th className="text-left p-3 text-red-500 font-medium">Cons</th>
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Dùng khi</th>
+                                <th className="text-left p-3 text-text-secondary font-medium">Dùng khi</th>
                             </tr>
                         </thead>
-                        <tbody className="text-[var(--text-primary)]">
+                        <tbody className="text-text-primary">
                             <tr className="border-b border-gray-200">
                                 <td className="p-3 font-medium">Cache-Aside</td>
                                 <td className="p-3">Đơn giản, flexible</td>
@@ -236,42 +236,42 @@ async function updateUser(userId: string, data: any) {
                 <div className="my-4 space-y-3">
                     <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
                         <div className="text-red-400 font-bold text-sm mb-2">1. 🗄️ Caching (phổ biến nhất)</div>
-                        <div className="text-[var(--text-primary)] text-sm">
+                        <div className="text-text-primary text-sm">
                             Cache API responses, database queries, HTML fragments, computed results.<br />
                             <strong>Ví dụ:</strong> E-commerce product pages — cache product info + reviews, TTL 5 phút.
                         </div>
                     </div>
                     <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
                         <div className="text-blue-400 font-bold text-sm mb-2">2. 🔐 Session Store</div>
-                        <div className="text-[var(--text-primary)] text-sm">
+                        <div className="text-text-primary text-sm">
                             Lưu user sessions thay vì trong memory server. Shared across multiple servers.<br />
                             <strong>Ví dụ:</strong> <InlineCode>express-session</InlineCode> + <InlineCode>connect-redis</InlineCode> — session persist qua deploys.
                         </div>
                     </div>
                     <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
                         <div className="text-green-400 font-bold text-sm mb-2">3. 🏆 Leaderboard / Ranking</div>
-                        <div className="text-[var(--text-primary)] text-sm">
+                        <div className="text-text-primary text-sm">
                             Sorted Set: tự động sort by score, O(log N) insert/update, O(1) get rank.<br />
                             <strong>Ví dụ:</strong> Game leaderboard — <InlineCode>ZADD</InlineCode> score, <InlineCode>ZREVRANGE</InlineCode> top 100.
                         </div>
                     </div>
                     <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                         <div className="text-yellow-400 font-bold text-sm mb-2">4. 🚦 Rate Limiting</div>
-                        <div className="text-[var(--text-primary)] text-sm">
+                        <div className="text-text-primary text-sm">
                             Đếm requests per IP/user trong sliding window. Atomic INCR + EXPIRE.<br />
                             <strong>Ví dụ:</strong> API rate limit: 100 requests/phút per user.
                         </div>
                     </div>
                     <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
                         <div className="text-purple-400 font-bold text-sm mb-2">5. 📨 Message Queue / Pub-Sub</div>
-                        <div className="text-[var(--text-primary)] text-sm">
+                        <div className="text-text-primary text-sm">
                             List (LPUSH/BRPOP) cho simple queue. Pub/Sub cho real-time broadcast. Streams cho durable messaging.<br />
                             <strong>Ví dụ:</strong> Chat app — PUBLISH message tới channel, subscribers nhận real-time.
                         </div>
                     </div>
                     <div className="p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
                         <div className="text-cyan-400 font-bold text-sm mb-2">6. 🔒 Distributed Lock</div>
-                        <div className="text-[var(--text-primary)] text-sm">
+                        <div className="text-text-primary text-sm">
                             SET key NX EX — acquire lock atomically. Redlock algorithm cho multi-node.<br />
                             <strong>Ví dụ:</strong> Prevent double payment processing trong microservices.
                         </div>
@@ -370,7 +370,7 @@ export async function GET(req: Request, { params }) {
                 <div className="my-4 space-y-3">
                     <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
                         <div className="text-blue-400 font-bold text-sm mb-2">📸 RDB (Redis Database Backup)</div>
-                        <div className="text-[var(--text-primary)] text-sm">
+                        <div className="text-text-primary text-sm">
                             <strong>Snapshot</strong> toàn bộ data tại thời điểm → file <InlineCode>.rdb</InlineCode><br />
                             • Compact, tốt cho backup/disaster recovery<br />
                             • Có thể mất data giữa 2 snapshots (ví dụ: save mỗi 5 phút → mất tối đa 5 phút data)<br />
@@ -379,7 +379,7 @@ export async function GET(req: Request, { params }) {
                     </div>
                     <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
                         <div className="text-green-400 font-bold text-sm mb-2">📝 AOF (Append-Only File)</div>
-                        <div className="text-[var(--text-primary)] text-sm">
+                        <div className="text-text-primary text-sm">
                             <strong>Log mọi write command</strong> → replay khi restart<br />
                             • Durable hơn RDB (fsync every second hoặc every command)<br />
                             • File lớn hơn RDB, restore chậm hơn<br />
@@ -388,7 +388,7 @@ export async function GET(req: Request, { params }) {
                     </div>
                     <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
                         <div className="text-purple-400 font-bold text-sm mb-2">🔀 RDB + AOF (recommended)</div>
-                        <div className="text-[var(--text-primary)] text-sm">
+                        <div className="text-text-primary text-sm">
                             Dùng cả 2: AOF cho durability (mất tối đa 1 giây data), RDB cho fast backup/restore.<br />
                             Khi restart: Redis ưu tiên load AOF (đầy đủ hơn).
                         </div>
@@ -401,7 +401,7 @@ export async function GET(req: Request, { params }) {
                 <div className="my-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
                         <div className="text-green-400 font-bold text-sm mb-3">✅ Ưu điểm</div>
-                        <div className="text-[var(--text-primary)] text-sm space-y-2">
+                        <div className="text-text-primary text-sm space-y-2">
                             <div>⚡ <strong>Cực nhanh</strong> — sub-millisecond latency, ~100K ops/sec</div>
                             <div>📦 <strong>Rich data structures</strong> — String, Hash, List, Set, Sorted Set, Stream</div>
                             <div>🔄 <strong>Atomic operations</strong> — INCR, LPUSH... thread-safe mà không cần lock</div>
@@ -415,7 +415,7 @@ export async function GET(req: Request, { params }) {
                     </div>
                     <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
                         <div className="text-red-400 font-bold text-sm mb-3">❌ Nhược điểm</div>
-                        <div className="text-[var(--text-primary)] text-sm space-y-2">
+                        <div className="text-text-primary text-sm space-y-2">
                             <div>💰 <strong>RAM expensive</strong> — data phải fit trong RAM. 1TB data = cần 1TB+ RAM</div>
                             <div>🔍 <strong>Không có query language</strong> — không WHERE, JOIN, GROUP BY như SQL</div>
                             <div>📊 <strong>Không phù hợp cho complex queries</strong> — chỉ lookup by key</div>
@@ -434,7 +434,7 @@ export async function GET(req: Request, { params }) {
                 <div className="my-4 space-y-3">
                     <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
                         <div className="text-green-400 font-bold text-sm mb-2">✅ NÊN dùng Redis khi:</div>
-                        <div className="text-[var(--text-primary)] text-sm">
+                        <div className="text-text-primary text-sm">
                             • Cần <strong>cache layer</strong> giữa app và DB (giảm DB load 80-95%)<br />
                             • <strong>Session management</strong> cho multiple servers (horizontal scaling)<br />
                             • <strong>Real-time features</strong>: chat, notifications, live updates<br />
@@ -446,7 +446,7 @@ export async function GET(req: Request, { params }) {
                     </div>
                     <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
                         <div className="text-red-400 font-bold text-sm mb-2">❌ KHÔNG nên dùng Redis khi:</div>
-                        <div className="text-[var(--text-primary)] text-sm">
+                        <div className="text-text-primary text-sm">
                             • Data lớn hơn RAM available (dùng DB thường)<br />
                             • Cần <strong>complex queries</strong>: JOIN, aggregation, full-text search (dùng PostgreSQL, Elasticsearch)<br />
                             • Data cần <strong>strong consistency</strong> + ACID transactions (dùng relational DB)<br />
@@ -463,14 +463,14 @@ export async function GET(req: Request, { params }) {
                 <div className="my-4 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                         <thead>
-                            <tr className="border-b border-[var(--border-primary)]">
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Feature</th>
+                            <tr className="border-b border-border-primary">
+                                <th className="text-left p-3 text-text-secondary font-medium">Feature</th>
                                 <th className="text-left p-3 text-red-400 font-medium">Redis</th>
                                 <th className="text-left p-3 text-green-400 font-medium">Memcached</th>
                                 <th className="text-left p-3 text-blue-400 font-medium">PostgreSQL</th>
                             </tr>
                         </thead>
-                        <tbody className="text-[var(--text-primary)]">
+                        <tbody className="text-text-primary">
                             <tr className="border-b border-gray-200">
                                 <td className="p-3 font-medium">Data structures</td>
                                 <td className="p-3">Nhiều (String, Hash, List, Set...)</td>
@@ -563,26 +563,26 @@ MEMORY USAGE key                   # RAM usage của 1 key`}</CodeBlock>
                     <div className="rounded-xl bg-red-500/10 border border-red-500/20 p-5">
                         <div className="text-3xl mb-2">⚡</div>
                         <div className="text-red-400 font-bold text-sm mb-1">In-Memory</div>
-                        <div className="text-[var(--text-primary)] text-sm">Data stored in RAM</div>
-                        <div className="text-[var(--text-secondary)] text-xs mt-1">Speed: ~100,000 ops/sec (single thread)</div>
+                        <div className="text-text-primary text-sm">Data stored in RAM</div>
+                        <div className="text-text-secondary text-xs mt-1">Speed: ~100,000 ops/sec (single thread)</div>
                     </div>
                     <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-5">
                         <div className="text-3xl mb-2">🔑</div>
                         <div className="text-blue-400 font-bold text-sm mb-1">Key-Value Store</div>
-                        <div className="text-[var(--text-primary)] text-sm">All data stored as key → value</div>
-                        <div className="text-[var(--text-secondary)] text-xs mt-1">Key: string, Value: multiple types</div>
+                        <div className="text-text-primary text-sm">All data stored as key → value</div>
+                        <div className="text-text-secondary text-xs mt-1">Key: string, Value: multiple types</div>
                     </div>
                     <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-5">
                         <div className="text-3xl mb-2">🔄</div>
                         <div className="text-green-400 font-bold text-sm mb-1">Single-Threaded</div>
-                        <div className="text-[var(--text-primary)] text-sm">1 thread processes commands</div>
-                        <div className="text-[var(--text-secondary)] text-xs mt-1">No locks needed → atomic operations</div>
+                        <div className="text-text-primary text-sm">1 thread processes commands</div>
+                        <div className="text-text-secondary text-xs mt-1">No locks needed → atomic operations</div>
                     </div>
                     <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-5">
                         <div className="text-3xl mb-2">💾</div>
                         <div className="text-purple-400 font-bold text-sm mb-1">Persistence (optional)</div>
-                        <div className="text-[var(--text-primary)] text-sm">RDB snapshots + AOF logs</div>
-                        <div className="text-[var(--text-secondary)] text-xs mt-1">Data survives restarts</div>
+                        <div className="text-text-primary text-sm">RDB snapshots + AOF logs</div>
+                        <div className="text-text-secondary text-xs mt-1">Data survives restarts</div>
                     </div>
                 </div>
 
@@ -597,13 +597,13 @@ MEMORY USAGE key                   # RAM usage của 1 key`}</CodeBlock>
                 <div className="my-4 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                         <thead>
-                            <tr className="border-b border-[var(--border-primary)]">
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Type</th>
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Description</th>
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Use Case</th>
+                            <tr className="border-b border-border-primary">
+                                <th className="text-left p-3 text-text-secondary font-medium">Type</th>
+                                <th className="text-left p-3 text-text-secondary font-medium">Description</th>
+                                <th className="text-left p-3 text-text-secondary font-medium">Use Case</th>
                             </tr>
                         </thead>
-                        <tbody className="text-[var(--text-primary)]">
+                        <tbody className="text-text-primary">
                             <tr className="border-b border-gray-200">
                                 <td className="p-3 font-medium text-red-400">String</td>
                                 <td className="p-3">Single value (text, number, JSON)</td>
@@ -694,14 +694,14 @@ async function updateUser(userId: string, data: any) {
                 <div className="my-4 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                         <thead>
-                            <tr className="border-b border-[var(--border-primary)]">
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Strategy</th>
+                            <tr className="border-b border-border-primary">
+                                <th className="text-left p-3 text-text-secondary font-medium">Strategy</th>
                                 <th className="text-left p-3 text-green-500 font-medium">Pros</th>
                                 <th className="text-left p-3 text-red-500 font-medium">Cons</th>
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Best for</th>
+                                <th className="text-left p-3 text-text-secondary font-medium">Best for</th>
                             </tr>
                         </thead>
-                        <tbody className="text-[var(--text-primary)]">
+                        <tbody className="text-text-primary">
                             <tr className="border-b border-gray-200">
                                 <td className="p-3 font-medium">Cache-Aside</td>
                                 <td className="p-3">Simple, flexible</td>
@@ -736,7 +736,7 @@ async function updateUser(userId: string, data: any) {
                 <div className="my-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
                         <div className="text-green-400 font-bold text-sm mb-3">✅ Pros</div>
-                        <div className="text-[var(--text-primary)] text-sm space-y-2">
+                        <div className="text-text-primary text-sm space-y-2">
                             <div>⚡ <strong>Blazing fast</strong> — sub-millisecond latency</div>
                             <div>📦 <strong>Rich data structures</strong> — beyond simple key-value</div>
                             <div>🔄 <strong>Atomic operations</strong> — thread-safe without locks</div>
@@ -749,7 +749,7 @@ async function updateUser(userId: string, data: any) {
                     </div>
                     <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
                         <div className="text-red-400 font-bold text-sm mb-3">❌ Cons</div>
-                        <div className="text-[var(--text-primary)] text-sm space-y-2">
+                        <div className="text-text-primary text-sm space-y-2">
                             <div>💰 <strong>RAM expensive</strong> — data must fit in memory</div>
                             <div>🔍 <strong>No query language</strong> — no WHERE, JOIN, GROUP BY</div>
                             <div>📊 <strong>Not for complex queries</strong> — key-based lookup only</div>

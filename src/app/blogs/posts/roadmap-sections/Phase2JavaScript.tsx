@@ -832,8 +832,8 @@ async function loadPosts() {
                     <Heading3>Các phương thức quan trọng</Heading3>
                     <div className="my-3 overflow-x-auto">
                         <table className="w-full text-sm border-collapse">
-                            <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Method</th><th className="text-left p-2 text-slate-400">Hành vi</th><th className="text-left p-2 text-slate-400">Khi nào dùng</th></tr></thead>
-                            <tbody className="text-[var(--text-secondary)]">
+                            <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Method</th><th className="text-left p-2 text-slate-400">Hành vi</th><th className="text-left p-2 text-slate-400">Khi nào dùng</th></tr></thead>
+                            <tbody className="text-text-secondary">
                                 <tr className="border-b border-gray-100"><td className="p-2"><InlineCode>Promise.all</InlineCode></td><td className="p-2">Chạy song song, <strong>reject nếu 1 fail</strong></td><td className="p-2">Fetch nhiều API cùng lúc, tất cả đều bắt buộc</td></tr>
                                 <tr className="border-b border-gray-100"><td className="p-2"><InlineCode>Promise.allSettled</InlineCode></td><td className="p-2">Chạy song song, <strong>chờ tất cả xong</strong> (kể cả fail)</td><td className="p-2">Batch operations mà vẫn muốn biết kết quả từng cái</td></tr>
                                 <tr className="border-b border-gray-100"><td className="p-2"><InlineCode>Promise.race</InlineCode></td><td className="p-2">Trả về <strong>kết quả đầu tiên</strong> (fulfill hoặc reject)</td><td className="p-2">Timeout pattern, lấy response nhanh nhất</td></tr>
@@ -897,9 +897,9 @@ const result = await Promise.race([
                             ['Nullish Coalescing', 'value ?? defaultValue // chỉ null/undefined mới fallback'],
                             ['ES Modules', 'import/export — static analysis, tree shaking'],
                         ].map(([title, desc]) => (
-                            <div key={title} className="p-2 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={title} className="p-2 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className="text-blue-400 text-sm font-medium">{title}</div>
-                                <div className="text-[var(--text-secondary)] text-xs font-mono mt-0.5">{desc}</div>
+                                <div className="text-text-secondary text-xs font-mono mt-0.5">{desc}</div>
                             </div>
                         ))}
                     </div>
@@ -1305,8 +1305,8 @@ function myFunc() {
 // tự động chạy strict mode — không cần khai báo!`}</CodeBlock>
                     <div className="my-3 overflow-x-auto">
                         <table className="w-full text-sm border-collapse">
-                            <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Hành vi</th><th className="text-left p-2 text-red-400">Không strict</th><th className="text-left p-2 text-green-400">Strict mode</th></tr></thead>
-                            <tbody className="text-[var(--text-secondary)]">
+                            <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Hành vi</th><th className="text-left p-2 text-red-400">Không strict</th><th className="text-left p-2 text-green-400">Strict mode</th></tr></thead>
+                            <tbody className="text-text-secondary">
                                 <tr className="border-b border-gray-100"><td className="p-2">Biến chưa khai báo</td><td className="p-2">Tự tạo global 😱</td><td className="p-2">❌ ReferenceError</td></tr>
                                 <tr className="border-b border-gray-100"><td className="p-2">Gán vào read-only property</td><td className="p-2">Im lặng, bỏ qua</td><td className="p-2">❌ TypeError</td></tr>
                                 <tr className="border-b border-gray-100"><td className="p-2">Duplicate params</td><td className="p-2">Cho phép</td><td className="p-2">❌ SyntaxError</td></tr>
@@ -1942,7 +1942,7 @@ const result = products
 
                     <div className="my-4 overflow-x-auto">
                         <table className="w-full text-sm border-collapse">
-                            <thead><tr className="border-b border-[var(--border-primary)] text-left">
+                            <thead><tr className="border-b border-border-primary text-left">
                                 <th className="p-2 text-[#fbbf24] font-bold">ACIV</th><th className="p-2">Là gì</th><th className="p-2">Hình ảnh</th>
                             </tr></thead>
                             <tbody>
@@ -2147,11 +2147,11 @@ window.addEventListener('scroll',
                     </Paragraph>
 
                     <div className="my-3 space-y-2">
-                        <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                        <div className="p-3 rounded-lg bg-bg-tag border border-gray-200 text-sm">
                             <strong className="text-[#fbbf24]">Bước 1: Bộ đếm giờ (Closure)</strong><br/>
                             Hàm <InlineCode>debounce</InlineCode> trả về một hàm con. Biến <InlineCode>timer</InlineCode> nằm ở hàm cha sẽ sống bám theo hàm con (Closure). Nhờ vậy, qua nhiều lần gọi, hàm con vẫn dùng chung cái "đồng hồ" đó.
                         </div>
-                        <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                        <div className="p-3 rounded-lg bg-bg-tag border border-gray-200 text-sm">
                             <strong className="text-[#fbbf24]">Bước 2: Huỷ lịch cũ, đặt lịch mới</strong><br/>
                             Khi user thao tác, thấy <InlineCode>timer</InlineCode> cũ đang chạy thì đập đi (<InlineCode>clearTimeout</InlineCode>) sắm cái mới (<InlineCode>setTimeout</InlineCode>). Chỉ khi đủ thời gian không ai phá, hàm gốc mới được gọi.
                         </div>
@@ -2181,11 +2181,11 @@ input.addEventListener('input', (e) => search(e.target.value));`}</CodeBlock>
                         </Paragraph>
 
                         <div className="my-3 space-y-2">
-                            <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                            <div className="p-3 rounded-lg bg-bg-tag border border-gray-200 text-sm">
                                 <strong className="text-[#fbbf24]">Bước 1: Tự ghi nhớ thời điểm cuối (Closure)</strong><br/>
                                 Dùng biến <InlineCode>lastTime</InlineCode> để nhớ "lần cúp cầu dao" gần nhất là khi nào. Ban đầu gán = 0 để lần test đầu tiên chắc chắn chạy ngay.
                             </div>
-                            <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                            <div className="p-3 rounded-lg bg-bg-tag border border-gray-200 text-sm">
                                 <strong className="text-[#fbbf24]">Bước 2: So sánh thời gian</strong><br/>
                                 Mỗi lần user thao tác, lấy hệ thống <InlineCode>Date.now()</InlineCode> trừ đi <InlineCode>lastTime</InlineCode>. Nếu khoảng cách đã lớn hơn <InlineCode>interval</InlineCode> (đã qua đủ chu kỳ), thì cho phép gọi hàm gốc, và lập tức cập nhật <InlineCode>lastTime</InlineCode> bằng giờ hiện tại để dội lại phong toả tập 2!
                             </div>
@@ -2413,19 +2413,19 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
 
             <Heading3>2.3 Tài liệu</Heading3>
             <div className="my-4 space-y-2">
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                     <span className="text-yellow-400">📕</span>
                     <div className="text-slate-300 text-sm">
                         <strong>You Don&apos;t Know JS</strong> (Kyle Simpson) — đọc hết series này sẽ hiểu JS cực sâu
                     </div>
                 </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                     <span className="text-yellow-400">📗</span>
                     <div className="text-slate-300 text-sm">
                         <strong>javascript.info</strong> — tài liệu online tốt nhất, có ví dụ + bài tập
                     </div>
                 </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                     <span className="text-yellow-400">📘</span>
                     <div className="text-slate-300 text-sm">
                         <strong>GreatFrontEnd.com</strong> — platform luyện frontend interview, có mock interview
@@ -2464,7 +2464,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                             ['Q: Promise.all vs Promise.allSettled?', 'Promise.all: fail NGAY khi 1 promise reject (fast-fail).\nPromise.allSettled: đợi TẤT CẢ hoàn thành, trả về [{status, value/reason}].\n→ Dùng all khi cần tất cả thành công. Dùng allSettled khi cần biết kết quả từng cái.'],
                             ['Q: Destructuring là gì?', 'Destructuring: "rút" giá trị từ object/array vào biến.\nObject: const { name, age } = user;\nArray: const [first, ...rest] = arr;\nCó thể: rename, default value, nested destructuring.'],
                         ].map(([q, a]) => (
-                            <div key={q} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={q} className="p-3 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className="text-yellow-400 text-sm font-bold mb-2">{q}</div>
                                 <div className="text-slate-300 text-sm whitespace-pre-line">{a}</div>
                             </div>
@@ -2487,7 +2487,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                             ['Q: CSS selector priority?', '!important > inline style > #id > .class/:pseudo-class/[attr] > tag > *.\nKhi cùng specificity → rule sau win.\n→ Luôn giữ specificity thấp. Avoid !important. Dùng class thay vì id.'],
                             ['Q: Centering một element?', 'Flex: display: flex; justify-content: center; align-items: center;\nGrid: display: grid; place-items: center;\nAbsolute: position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\nMargin: margin: 0 auto (chỉ horizontal, cần width).'],
                         ].map(([q, a]) => (
-                            <div key={q} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={q} className="p-3 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className="text-blue-400 text-sm font-bold mb-2">{q}</div>
                                 <div className="text-slate-300 text-sm whitespace-pre-line">{a}</div>
                             </div>
@@ -2513,7 +2513,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                             ['Q: Custom hooks là gì? Cho ví dụ.', 'Custom hook = function bắt đầu bằng "use", dùng hooks bên trong.\nVí dụ: useDebounce, useLocalStorage, useWindowSize, useFetch.\nĐặc điểm: share logic, KHÔNG share state (mỗi component dùng hook có state riêng).\n→ Rule: logic dùng lại ≥ 2 lần → extract thành custom hook.'],
                             ['Q: One-way data binding là gì? Khác two-way thế nào?', 'One-way: data chỉ chảy 1 chiều State → UI. Muốn update state phải TỰ viết handler (onChange).\nTwo-way (Angular ngModel): State ↔ UI tự đồng bộ 2 chiều.\nReact chọn one-way vì dễ debug hơn — luôn biết AI và KHI NÀO đổi state.\nTrade-off: viết nhiều code hơn (onChange) nhưng predictable, ít bug "state đổi bí ẩn".'],
                         ].map(([q, a]) => (
-                            <div key={q} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={q} className="p-3 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className="text-cyan-400 text-sm font-bold mb-2">{q}</div>
                                 <div className="text-slate-300 text-sm whitespace-pre-line">{a}</div>
                             </div>

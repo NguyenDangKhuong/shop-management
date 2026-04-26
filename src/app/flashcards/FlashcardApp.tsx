@@ -77,8 +77,7 @@ function AnswerRenderer({ text }: { text: string }) {
             }
             i++ // skip closing ```
             elements.push(
-                <pre key={`code-${i}`} className="p-3 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed my-2"
-                    style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}>
+                <pre key={`code-${i}`} className="p-3 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed my-2 text-text-secondary bg-bg-tag border border-border-primary">
                     {codeLines.join('\n')}
                 </pre>
             )
@@ -113,7 +112,7 @@ function AnswerRenderer({ text }: { text: string }) {
                         {rows.slice(1).map((row, ri) => (
                             <tr key={ri}>
                                 {row.map((cell, ci) => (
-                                    <td key={ci} className="px-2 py-1.5 border-b" style={{ borderColor: 'var(--border-primary)', color: ci === 0 ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                                    <td key={ci} className="px-2 py-1.5 border-b border-border-primary" style={{ color: ci === 0 ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
                                         <InlineCode text={cell.trim()} />
                                     </td>
                                 ))}
@@ -135,8 +134,8 @@ function AnswerRenderer({ text }: { text: string }) {
             elements.push(
                 <ul key={`ul-${i}`} className="text-sm space-y-1 my-1 ml-1">
                     {items.map((item, ii) => (
-                        <li key={ii} className="flex gap-2" style={{ color: 'var(--text-secondary)' }}>
-                            <span className="text-[var(--text-muted)] select-none">•</span>
+                        <li key={ii} className="flex gap-2 text-text-secondary">
+                            <span className="text-text-muted select-none">•</span>
                             <span><InlineCode text={item} /></span>
                         </li>
                     ))}
@@ -154,7 +153,7 @@ function AnswerRenderer({ text }: { text: string }) {
 
         // Regular text line with inline code
         elements.push(
-            <p key={`p-${i}`} className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+            <p key={`p-${i}`} className="text-sm leading-relaxed text-text-secondary">
                 <InlineCode text={line} />
             </p>
         )
@@ -172,8 +171,8 @@ function InlineCode({ text }: { text: string }) {
             {parts.map((part, i) => {
                 if (part.startsWith('`') && part.endsWith('`')) {
                     return (
-                        <code key={i} className="px-1.5 py-0.5 rounded text-xs font-mono"
-                            style={{ background: 'var(--bg-tag)', color: '#e879f9', border: '1px solid var(--border-primary)' }}>
+                        <code key={i} className="px-1.5 py-0.5 rounded text-xs font-mono bg-bg-tag border border-border-primary"
+                            style={{ color: '#e879f9' }}>
                             {part.slice(1, -1)}
                         </code>
                     )
@@ -204,11 +203,10 @@ function StudyTips() {
                 {isOpen ? '▼' : '▶'} 🧠 Cách ghi nhớ cú pháp thuật toán
             </button>
             {isOpen && (
-                <div className="mt-3 p-5 rounded-xl text-sm leading-relaxed space-y-6"
-                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}>
+                <div className="mt-3 p-5 rounded-xl text-sm leading-relaxed space-y-6 bg-bg-card text-text-secondary border border-border-primary">
                     <div>
-                        <h3 className="font-bold text-[var(--text-primary)] mb-2">1. Nhớ Pattern, không nhớ code</h3>
-                        <pre className="p-3 rounded-lg text-xs font-mono leading-relaxed" style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)' }}>
+                        <h3 className="font-bold text-text-primary mb-2">1. Nhớ Pattern, không nhớ code</h3>
+                        <pre className="p-3 rounded-lg text-xs font-mono leading-relaxed bg-bg-tag border border-border-primary">
                             {`🗂️ HashMap:      "Duyệt 1 lần, check Map trước, lưu Map sau"
 👉 Two Pointers:  "2 con trỏ, thu hẹp từ 2 đầu"
 🪟 Sliding Window: "for mở rộng right, while thu hẹp left"
@@ -217,8 +215,8 @@ function StudyTips() {
                         </pre>
                     </div>
                     <div>
-                        <h3 className="font-bold text-[var(--text-primary)] mb-2">2. Quy tắc 3 lần viết tay</h3>
-                        <p className="text-[var(--text-muted)]">Lần 1: Đọc + hiểu + tự code lại → Lần 2: Ngày hôm sau, code lại <strong>không xem</strong> → Lần 3: 1 tuần sau. Sau 3 lần → <strong className="text-[var(--text-primary)]">muscle memory</strong> 💪</p>
+                        <h3 className="font-bold text-text-primary mb-2">2. Quy tắc 3 lần viết tay</h3>
+                        <p className="text-text-muted">Lần 1: Đọc + hiểu + tự code lại → Lần 2: Ngày hôm sau, code lại <strong>không xem</strong> → Lần 3: 1 tuần sau. Sau 3 lần → <strong className="text-text-primary">muscle memory</strong> 💪</p>
                     </div>
                 </div>
             )}
@@ -423,8 +421,8 @@ export default function FlashcardApp() {
     if (loading) {
         return (
             <div className="dark">
-                <div className="min-h-screen bg-[var(--bg-page)] flex items-center justify-center">
-                    <div className="text-[var(--text-muted)] animate-pulse">Loading flashcards...</div>
+                <div className="min-h-screen bg-bg-page flex items-center justify-center">
+                    <div className="text-text-muted animate-pulse">Loading flashcards...</div>
                 </div>
             </div>
         )
@@ -432,7 +430,7 @@ export default function FlashcardApp() {
 
     return (
         <div className="dark">
-            <div className="min-h-screen bg-[var(--bg-page)] text-[var(--text-primary)] p-4 sm:p-8">
+            <div className="min-h-screen bg-bg-page text-text-primary p-4 sm:p-8">
                 <div className="max-w-2xl mx-auto">
                     {/* Tab Bar */}
                     <div className="flex gap-2 mb-6">
@@ -522,7 +520,7 @@ export default function FlashcardApp() {
                                 {selectedTopics.size > 0 && (
                                     <button
                                         onClick={() => setSelectedTopics(new Set())}
-                                        className="px-2.5 py-1 rounded-lg text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
+                                        className="px-2.5 py-1 rounded-lg text-xs font-medium text-text-muted hover:text-text-secondary transition-colors"
                                     >
                                         ✕ Clear
                                     </button>
@@ -536,13 +534,12 @@ export default function FlashcardApp() {
 
                     {/* Empty state */}
                     {total === 0 && (
-                        <div className="text-center py-20 text-[var(--text-muted)]">
+                        <div className="text-center py-20 text-text-muted">
                             <p className="text-4xl mb-3">🔍</p>
                             <p className="text-sm">Không có câu hỏi nào phù hợp bộ lọc</p>
                             <button
                                 onClick={() => { setSelectedTopics(new Set()); setSelectedDifficulty('All') }}
-                                className="mt-3 px-4 py-2 rounded-lg text-xs font-medium"
-                                style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}
+                                className="mt-3 px-4 py-2 rounded-lg text-xs font-medium text-text-secondary bg-bg-tag border border-border-primary"
                             >
                                 Clear filters
                             </button>
@@ -568,18 +565,18 @@ export default function FlashcardApp() {
                                             tab === 'algorithm' ? (
                                                 <div>
                                                     <div className="mb-2">
-                                                        <span className="px-3 py-1 rounded-full text-xs font-medium bg-[var(--bg-tag)] border border-[var(--border-primary)] text-[var(--text-muted)]">
+                                                        <span className="px-3 py-1 rounded-full text-xs font-medium bg-bg-tag border border-border-primary text-text-muted">
                                                             🤔 Bài toán này dùng thuật toán gì?
                                                         </span>
                                                     </div>
                                                     <div className="mb-6 mt-6">
                                                         <p className="text-xl sm:text-2xl font-bold leading-snug">{(currentCard as AlgoCard).front.signal}</p>
                                                     </div>
-                                                    <div className="p-4 rounded-xl bg-[var(--bg-tag)] border border-[var(--border-primary)]">
-                                                        <p className="text-[var(--text-muted)] text-xs mb-1">Ví dụ:</p>
-                                                        <code className="text-sm text-[var(--text-secondary)] font-mono">{(currentCard as AlgoCard).front.question}</code>
+                                                    <div className="p-4 rounded-xl bg-bg-tag border border-border-primary">
+                                                        <p className="text-text-muted text-xs mb-1">Ví dụ:</p>
+                                                        <code className="text-sm text-text-secondary font-mono">{(currentCard as AlgoCard).front.question}</code>
                                                     </div>
-                                                    <p className="text-center text-[var(--text-muted)] text-xs mt-4 animate-pulse">
+                                                    <p className="text-center text-text-muted text-xs mt-4 animate-pulse">
                                                         👆 Click để xem đáp án
                                                     </p>
                                                 </div>
@@ -607,7 +604,7 @@ export default function FlashcardApp() {
                                                         </span>
                                                     </div>
                                                     <p className="text-lg sm:text-xl font-bold leading-relaxed mt-4">{(currentCard as InterviewCard).question}</p>
-                                                    <p className="text-center text-[var(--text-muted)] text-xs mt-4 animate-pulse">
+                                                    <p className="text-center text-text-muted text-xs mt-4 animate-pulse">
                                                         👆 Click để xem đáp án
                                                     </p>
                                                 </div>
@@ -630,27 +627,26 @@ export default function FlashcardApp() {
                                                         </span>
                                                     </div>
                                                     <div className="mb-3">
-                                                        <p className="text-[var(--text-muted)] text-xs uppercase tracking-wider mb-1">Cách tiếp cận</p>
+                                                        <p className="text-text-muted text-xs uppercase tracking-wider mb-1">Cách tiếp cận</p>
                                                         <p className="text-base font-semibold" style={{ color: (currentCard as AlgoCard).color }}>{(currentCard as AlgoCard).back.approach}</p>
                                                     </div>
                                                     <div className="mb-3">
-                                                        <p className="text-[var(--text-muted)] text-xs uppercase tracking-wider mb-1">Template Code</p>
-                                                        <pre className="p-3 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed"
-                                                            style={{ background: 'var(--bg-tag)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}>
+                                                        <p className="text-text-muted text-xs uppercase tracking-wider mb-1">Template Code</p>
+                                                        <pre className="p-3 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed text-text-secondary bg-bg-tag border border-border-primary">
                                                             {(currentCard as AlgoCard).back.template}
                                                         </pre>
                                                     </div>
                                                     <div className="flex gap-3 text-xs">
-                                                        <div className="flex-1 p-2 rounded-lg bg-[var(--bg-tag)] border border-[var(--border-primary)]">
-                                                            <span className="text-[var(--text-muted)]">⏱️ </span>
-                                                            <span className="text-[var(--text-secondary)]">{(currentCard as AlgoCard).back.complexity}</span>
+                                                        <div className="flex-1 p-2 rounded-lg bg-bg-tag border border-border-primary">
+                                                            <span className="text-text-muted">⏱️ </span>
+                                                            <span className="text-text-secondary">{(currentCard as AlgoCard).back.complexity}</span>
                                                         </div>
                                                     </div>
                                                     <div className="mt-3">
-                                                        <p className="text-[var(--text-muted)] text-xs uppercase tracking-wider mb-1">Bài LeetCode</p>
-                                                        <p className="text-xs text-[var(--text-secondary)]">{(currentCard as AlgoCard).back.example}</p>
+                                                        <p className="text-text-muted text-xs uppercase tracking-wider mb-1">Bài LeetCode</p>
+                                                        <p className="text-xs text-text-secondary">{(currentCard as AlgoCard).back.example}</p>
                                                     </div>
-                                                    <p className="text-center text-[var(--text-muted)] text-xs mt-3">
+                                                    <p className="text-center text-text-muted text-xs mt-3">
                                                         👆 Click để quay lại
                                                     </p>
                                                 </>
@@ -677,7 +673,7 @@ export default function FlashcardApp() {
                                                         </span>
                                                     </div>
                                                     <div className="mb-3">
-                                                        <p className="text-[var(--text-muted)] text-xs uppercase tracking-wider mb-2">
+                                                        <p className="text-text-muted text-xs uppercase tracking-wider mb-2">
                                                             {lang === 'vi' ? '💡 Câu trả lời' : '💡 Answer'}
                                                         </p>
                                                         <AnswerRenderer
@@ -687,7 +683,7 @@ export default function FlashcardApp() {
                                                             }
                                                         />
                                                     </div>
-                                                    <p className="text-center text-[var(--text-muted)] text-xs mt-3">
+                                                    <p className="text-center text-text-muted text-xs mt-3">
                                                         👆 Click để quay lại
                                                     </p>
                                                 </>
@@ -701,19 +697,17 @@ export default function FlashcardApp() {
                             <div className="flex items-center justify-center gap-3 mb-3">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); goPrev() }}
-                                    className="px-4 py-2 rounded-xl text-sm font-medium transition-all hover:scale-105 active:scale-95"
-                                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}
+                                    className="px-4 py-2 rounded-xl text-sm font-medium transition-all hover:scale-105 active:scale-95 bg-bg-card text-text-secondary border border-border-primary"
                                     title="Previous (←)"
                                 >◀ Trước</button>
 
-                                <span className="text-xs text-[var(--text-muted)] font-mono min-w-[60px] text-center">
+                                <span className="text-xs text-text-muted font-mono min-w-[60px] text-center">
                                     {currentIndex + 1} / {total}
                                 </span>
 
                                 <button
                                     onClick={(e) => { e.stopPropagation(); goNext() }}
-                                    className="px-4 py-2 rounded-xl text-sm font-medium transition-all hover:scale-105 active:scale-95"
-                                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}
+                                    className="px-4 py-2 rounded-xl text-sm font-medium transition-all hover:scale-105 active:scale-95 bg-bg-card text-text-secondary border border-border-primary"
                                     title="Next (→)"
                                 >Sau ▶</button>
                             </div>

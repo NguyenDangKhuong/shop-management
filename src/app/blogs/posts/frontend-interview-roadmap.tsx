@@ -36,7 +36,7 @@ const viContent = (
         {/* ===== OVERVIEW ===== */}
         <Heading2>🗺️ Tổng quan lộ trình</Heading2>
 
-        <div className="my-6 p-4 rounded-xl bg-[var(--bg-tag)] border border-[var(--border-primary)]">
+        <div className="my-6 p-4 rounded-xl bg-bg-tag border border-border-primary">
             <div className="flex flex-col items-center gap-2 text-sm">
                 <div className="px-4 py-2 rounded-lg bg-red-500/20 text-red-300 border border-red-500/30 w-fit font-semibold">Phase 1 — Nền tảng CS (4-6 tuần)</div>
                 <div className="text-slate-600">↓</div>
@@ -66,14 +66,14 @@ const viContent = (
         <div className="my-6 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Tháng</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Phase</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Focus</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Output</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Tháng</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Phase</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Focus</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Output</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100">
                         <td className="p-3 text-red-400 font-bold">1-2</td>
                         <td className="p-3">CS + JS Core</td>
@@ -111,29 +111,29 @@ const viContent = (
         <Heading2>📌 Tóm tắt</Heading2>
 
         <div className="my-6 space-y-3">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-red-400 mt-0.5">1.</span>
-                <span className="text-[var(--text-secondary)]"><Highlight>Nền tảng CS</Highlight> — đừng skip, đây là thứ phân biệt junior và senior</span>
+                <span className="text-text-secondary"><Highlight>Nền tảng CS</Highlight> — đừng skip, đây là thứ phân biệt junior và senior</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-yellow-400 mt-0.5">2.</span>
-                <span className="text-[var(--text-secondary)]"><Highlight>JS sâu</Highlight> — hiểu cơ chế, không chỉ syntax. Implement từ scratch</span>
+                <span className="text-text-secondary"><Highlight>JS sâu</Highlight> — hiểu cơ chế, không chỉ syntax. Implement từ scratch</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 mt-0.5">3.</span>
-                <span className="text-[var(--text-secondary)]"><Highlight>React + FE</Highlight> — build UI thuần, hiểu rendering, performance</span>
+                <span className="text-text-secondary"><Highlight>React + FE</Highlight> — build UI thuần, hiểu rendering, performance</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-green-400 mt-0.5">4.</span>
-                <span className="text-[var(--text-secondary)]"><Highlight>DSA</Highlight> — 150 bài LeetCode, focus patterns không phải số lượng</span>
+                <span className="text-text-secondary"><Highlight>DSA</Highlight> — 150 bài LeetCode, focus patterns không phải số lượng</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-purple-400 mt-0.5">5.</span>
-                <span className="text-[var(--text-secondary)]"><Highlight>System Design</Highlight> — thiết kế FE architecture, không chỉ vẽ diagram</span>
+                <span className="text-text-secondary"><Highlight>System Design</Highlight> — thiết kế FE architecture, không chỉ vẽ diagram</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-pink-400 mt-0.5">6.</span>
-                <span className="text-[var(--text-secondary)]"><Highlight>Mock + Behavioral</Highlight> — practice nói to, chuẩn bị câu chuyện STAR</span>
+                <span className="text-text-secondary"><Highlight>Mock + Behavioral</Highlight> — practice nói to, chuẩn bị câu chuyện STAR</span>
             </div>
         </div>
 
@@ -160,7 +160,7 @@ const enContent = (
         {/* ===== OVERVIEW ===== */}
         <Heading2>🗺️ Roadmap Overview</Heading2>
 
-        <div className="my-6 p-4 rounded-xl bg-[var(--bg-tag)] border border-[var(--border-primary)]">
+        <div className="my-6 p-4 rounded-xl bg-bg-tag border border-border-primary">
             <div className="flex flex-col items-center gap-2 text-sm">
                 <div className="px-4 py-2 rounded-lg bg-red-500/20 text-red-300 border border-red-500/30 w-fit font-semibold">Phase 1 — CS Fundamentals (4-6 weeks)</div>
                 <div className="text-slate-600">↓</div>
@@ -190,14 +190,14 @@ const enContent = (
         <div className="my-6 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Month</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Phase</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Focus</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Output</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Month</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Phase</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Focus</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Output</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100">
                         <td className="p-3 text-red-400 font-bold">1-2</td>
                         <td className="p-3">CS + JS Core</td>
@@ -235,29 +235,29 @@ const enContent = (
         <Heading2>📌 Summary</Heading2>
 
         <div className="my-6 space-y-3">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-red-400 mt-0.5">1.</span>
-                <span className="text-[var(--text-secondary)]"><Highlight>CS Fundamentals</Highlight> — don&apos;t skip, this is what separates juniors from seniors</span>
+                <span className="text-text-secondary"><Highlight>CS Fundamentals</Highlight> — don&apos;t skip, this is what separates juniors from seniors</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-yellow-400 mt-0.5">2.</span>
-                <span className="text-[var(--text-secondary)]"><Highlight>Deep JS</Highlight> — understand mechanisms, not just syntax. Implement from scratch</span>
+                <span className="text-text-secondary"><Highlight>Deep JS</Highlight> — understand mechanisms, not just syntax. Implement from scratch</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-blue-400 mt-0.5">3.</span>
-                <span className="text-[var(--text-secondary)]"><Highlight>React + FE</Highlight> — build pure UI, understand rendering, performance</span>
+                <span className="text-text-secondary"><Highlight>React + FE</Highlight> — build pure UI, understand rendering, performance</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-green-400 mt-0.5">4.</span>
-                <span className="text-[var(--text-secondary)]"><Highlight>DSA</Highlight> — 150 LeetCode problems, focus on patterns not quantity</span>
+                <span className="text-text-secondary"><Highlight>DSA</Highlight> — 150 LeetCode problems, focus on patterns not quantity</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-purple-400 mt-0.5">5.</span>
-                <span className="text-[var(--text-secondary)]"><Highlight>System Design</Highlight> — design FE architecture, not just draw diagrams</span>
+                <span className="text-text-secondary"><Highlight>System Design</Highlight> — design FE architecture, not just draw diagrams</span>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                 <span className="text-pink-400 mt-0.5">6.</span>
-                <span className="text-[var(--text-secondary)]"><Highlight>Mock + Behavioral</Highlight> — practice speaking out loud, prepare STAR stories</span>
+                <span className="text-text-secondary"><Highlight>Mock + Behavioral</Highlight> — practice speaking out loud, prepare STAR stories</span>
             </div>
         </div>
 

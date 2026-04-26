@@ -837,8 +837,8 @@ async function loadPosts() {
                     <Heading3>Key Methods</Heading3>
                     <div className="my-3 overflow-x-auto">
                         <table className="w-full text-sm border-collapse">
-                            <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Method</th><th className="text-left p-2 text-slate-400">Behavior</th><th className="text-left p-2 text-slate-400">When to use</th></tr></thead>
-                            <tbody className="text-[var(--text-secondary)]">
+                            <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Method</th><th className="text-left p-2 text-slate-400">Behavior</th><th className="text-left p-2 text-slate-400">When to use</th></tr></thead>
+                            <tbody className="text-text-secondary">
                                 <tr className="border-b border-gray-100"><td className="p-2"><InlineCode>Promise.all</InlineCode></td><td className="p-2">Run in parallel, <strong>rejects if any fails</strong></td><td className="p-2">Fetch multiple APIs, all are required</td></tr>
                                 <tr className="border-b border-gray-100"><td className="p-2"><InlineCode>Promise.allSettled</InlineCode></td><td className="p-2">Run in parallel, <strong>waits for all</strong> (even failures)</td><td className="p-2">Batch operations where you need each result</td></tr>
                                 <tr className="border-b border-gray-100"><td className="p-2"><InlineCode>Promise.race</InlineCode></td><td className="p-2">Returns <strong>first result</strong> (fulfilled or rejected)</td><td className="p-2">Timeout patterns, fastest response</td></tr>
@@ -902,9 +902,9 @@ const result = await Promise.race([
                             ['Nullish Coalescing', 'value ?? defaultValue // only null/undefined triggers fallback'],
                             ['ES Modules', 'import/export — static analysis, tree shaking'],
                         ].map(([title, desc]) => (
-                            <div key={title} className="p-2 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={title} className="p-2 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className="text-blue-400 text-sm font-medium">{title}</div>
-                                <div className="text-[var(--text-secondary)] text-xs font-mono mt-0.5">{desc}</div>
+                                <div className="text-text-secondary text-xs font-mono mt-0.5">{desc}</div>
                             </div>
                         ))}
                     </div>
@@ -1310,8 +1310,8 @@ function myFunc() {
 // automatically run in strict mode — no declaration needed!`}</CodeBlock>
                     <div className="my-3 overflow-x-auto">
                         <table className="w-full text-sm border-collapse">
-                            <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Behavior</th><th className="text-left p-2 text-red-400">Non-strict</th><th className="text-left p-2 text-green-400">Strict mode</th></tr></thead>
-                            <tbody className="text-[var(--text-secondary)]">
+                            <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Behavior</th><th className="text-left p-2 text-red-400">Non-strict</th><th className="text-left p-2 text-green-400">Strict mode</th></tr></thead>
+                            <tbody className="text-text-secondary">
                                 <tr className="border-b border-gray-100"><td className="p-2">Undeclared variable</td><td className="p-2">Creates global 😱</td><td className="p-2">❌ ReferenceError</td></tr>
                                 <tr className="border-b border-gray-100"><td className="p-2">Assign to read-only property</td><td className="p-2">Silent, ignored</td><td className="p-2">❌ TypeError</td></tr>
                                 <tr className="border-b border-gray-100"><td className="p-2">Duplicate params</td><td className="p-2">Allowed</td><td className="p-2">❌ SyntaxError</td></tr>
@@ -1914,7 +1914,7 @@ const result = products
 
                     <div className="my-4 overflow-x-auto">
                         <table className="w-full text-sm border-collapse">
-                            <thead><tr className="border-b border-[var(--border-primary)] text-left">
+                            <thead><tr className="border-b border-border-primary text-left">
                                 <th className="p-2 text-[#fbbf24] font-bold">ACIV</th><th className="p-2">What</th><th className="p-2">Visual</th>
                             </tr></thead>
                             <tbody>
@@ -2119,11 +2119,11 @@ window.addEventListener('scroll',
                     </Paragraph>
 
                     <div className="my-3 space-y-2">
-                        <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                        <div className="p-3 rounded-lg bg-bg-tag border border-gray-200 text-sm">
                             <strong className="text-[#fbbf24]">Step 1: The Timer (Closure)</strong><br/>
                             The <InlineCode>debounce</InlineCode> function returns a child function. The <InlineCode>timer</InlineCode> variable in the parent scope lives on alongside the child function (Closure). Thanks to this, across multiple typing events, the child function still interacts with the exact same "timer".
                         </div>
-                        <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                        <div className="p-3 rounded-lg bg-bg-tag border border-gray-200 text-sm">
                             <strong className="text-[#fbbf24]">Step 2: Clear old timer, set new timer</strong><br/>
                             When the user types, if the old <InlineCode>timer</InlineCode> is still running, we destroy it (<InlineCode>clearTimeout</InlineCode>) and start a new one (<InlineCode>setTimeout</InlineCode>). Only when enough time has passed without interruption will the original function execute.
                         </div>
@@ -2153,11 +2153,11 @@ input.addEventListener('input', (e) => search(e.target.value));`}</CodeBlock>
                         </Paragraph>
 
                         <div className="my-3 space-y-2">
-                            <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                            <div className="p-3 rounded-lg bg-bg-tag border border-gray-200 text-sm">
                                 <strong className="text-[#fbbf24]">Step 1: Remember the last time (Closure)</strong><br/>
                                 Use the <InlineCode>lastTime</InlineCode> variable to remember when the function was last executed. Initialize it to 0 so the first call runs immediately.
                             </div>
-                            <div className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200 text-sm">
+                            <div className="p-3 rounded-lg bg-bg-tag border border-gray-200 text-sm">
                                 <strong className="text-[#fbbf24]">Step 2: Check time elapsed</strong><br/>
                                 Every time the user acts, subtract <InlineCode>lastTime</InlineCode> from <InlineCode>Date.now()</InlineCode>. If the elapsed time is greater than the <InlineCode>interval</InlineCode> (4 hours have passed), allow the original function to run, and immediately update <InlineCode>lastTime</InlineCode> to the current time to start a new lockdown!
                             </div>
@@ -2385,19 +2385,19 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
 
             <Heading3>2.3 Resources</Heading3>
             <div className="my-4 space-y-2">
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                     <span className="text-yellow-400">📕</span>
                     <div className="text-slate-300 text-sm">
                         <strong>You Don&apos;t Know JS</strong> (Kyle Simpson) — read the entire series for extremely deep JS understanding
                     </div>
                 </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                     <span className="text-yellow-400">📗</span>
                     <div className="text-slate-300 text-sm">
                         <strong>javascript.info</strong> — best online resource with examples + exercises
                     </div>
                 </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                     <span className="text-yellow-400">📘</span>
                     <div className="text-slate-300 text-sm">
                         <strong>GreatFrontEnd.com</strong> — frontend interview platform with mock interviews
@@ -2436,7 +2436,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                             ['Q: Promise.all vs Promise.allSettled?', 'Promise.all: fails IMMEDIATELY when 1 promise rejects (fast-fail).\nPromise.allSettled: waits for ALL to complete, returns [{status, value/reason}].\n→ Use all when all must succeed. Use allSettled when you need each result.'],
                             ['Q: What is destructuring?', 'Destructuring: "extract" values from objects/arrays into variables.\nObject: const { name, age } = user;\nArray: const [first, ...rest] = arr;\nSupports: rename, default values, nested destructuring.'],
                         ].map(([q, a]) => (
-                            <div key={q} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={q} className="p-3 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className="text-yellow-400 text-sm font-bold mb-2">{q}</div>
                                 <div className="text-slate-300 text-sm whitespace-pre-line">{a}</div>
                             </div>
@@ -2459,7 +2459,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                             ['Q: CSS selector priority?', '!important > inline style > #id > .class/:pseudo-class/[attr] > tag > *.\nWhen same specificity → later rule wins.\n→ Keep specificity low. Avoid !important. Use classes instead of IDs.'],
                             ['Q: How to center an element?', 'Flex: display: flex; justify-content: center; align-items: center;\nGrid: display: grid; place-items: center;\nAbsolute: position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);\nMargin: margin: 0 auto (horizontal only, needs width).'],
                         ].map(([q, a]) => (
-                            <div key={q} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={q} className="p-3 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className="text-blue-400 text-sm font-bold mb-2">{q}</div>
                                 <div className="text-slate-300 text-sm whitespace-pre-line">{a}</div>
                             </div>
@@ -2485,7 +2485,7 @@ flattenObject({ a: { b: { c: 1 }, d: 2 } })
                             ['Q: What are custom hooks? Give an example.', 'Custom hook = function starting with "use", using hooks inside.\nExamples: useDebounce, useLocalStorage, useWindowSize, useFetch.\nKey feature: shares logic, NOT state (each component using the hook has its own state).\n→ Rule: logic reused ≥ 2 times → extract into a custom hook.'],
                             ['Q: What is one-way data binding? How is it different from two-way?', 'One-way: data flows in 1 direction only: State → UI. To update state you MUST write a handler (onChange).\nTwo-way (Angular ngModel): State ↔ UI sync automatically in both directions.\nReact chose one-way because it\'s easier to debug — you always know WHO and WHEN changed the state.\nTrade-off: more code (onChange handlers) but predictable, fewer "mystery state change" bugs.'],
                         ].map(([q, a]) => (
-                            <div key={q} className="p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                            <div key={q} className="p-3 rounded-lg bg-bg-tag border border-gray-200">
                                 <div className="text-cyan-400 text-sm font-bold mb-2">{q}</div>
                                 <div className="text-slate-300 text-sm whitespace-pre-line">{a}</div>
                             </div>

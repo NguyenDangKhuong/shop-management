@@ -489,13 +489,13 @@ const firstSuccess = await Promise.any([
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Mục đích</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Dùng</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Trả về</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Mục đích</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Dùng</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Trả về</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Biến đổi mỗi phần tử</td><td className="p-3 font-mono text-xs">map()</td><td className="p-3">Mảng mới (cùng length)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Lọc phần tử</td><td className="p-3 font-mono text-xs">filter()</td><td className="p-3">Mảng mới (≤ length)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Gom thành 1 giá trị</td><td className="p-3 font-mono text-xs">reduce()</td><td className="p-3">Bất kỳ kiểu nào</td></tr>
@@ -705,13 +705,13 @@ null ?? 'default'           // 'default'
         <div className="my-4 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
                 <thead>
-                    <tr className="border-b border-[var(--border-primary)]">
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Purpose</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Method</th>
-                        <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Returns</th>
+                    <tr className="border-b border-border-primary">
+                        <th className="text-left p-3 text-text-secondary font-medium">Purpose</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Method</th>
+                        <th className="text-left p-3 text-text-secondary font-medium">Returns</th>
                     </tr>
                 </thead>
-                <tbody className="text-[var(--text-secondary)]">
+                <tbody className="text-text-secondary">
                     <tr className="border-b border-gray-100"><td className="p-3">Transform each</td><td className="p-3 font-mono text-xs">map()</td><td className="p-3">New array (same length)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Filter</td><td className="p-3 font-mono text-xs">filter()</td><td className="p-3">New array (≤ length)</td></tr>
                     <tr className="border-b border-gray-100"><td className="p-3">Aggregate</td><td className="p-3 font-mono text-xs">reduce()</td><td className="p-3">Any type</td></tr>

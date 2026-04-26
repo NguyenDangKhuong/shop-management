@@ -24,14 +24,14 @@ function extractText(node: React.ReactNode): string {
 }
 
 export const CodeBlock = ({ children, title }: { children: string; title?: string }) => (
-    <div className="my-6 rounded-xl overflow-hidden border border-[var(--border-primary)]">
+    <div className="my-6 rounded-xl overflow-hidden border border-border-primary">
         {title && (
-            <div className="bg-[var(--bg-tag)] px-4 py-2 text-xs text-[var(--text-secondary)] border-b border-[var(--border-primary)] font-mono">
+            <div className="bg-bg-tag px-4 py-2 text-xs text-text-secondary border-b border-border-primary font-mono">
                 {title}
             </div>
         )}
-        <pre className="bg-[var(--bg-surface-dim)] p-4 overflow-x-auto text-sm leading-relaxed">
-            <code className="text-[var(--text-primary)] font-mono">{children}</code>
+        <pre className="bg-bg-surface-dim p-4 overflow-x-auto text-sm leading-relaxed">
+            <code className="text-text-primary font-mono">{children}</code>
         </pre>
     </div>
 )
@@ -39,7 +39,7 @@ export const CodeBlock = ({ children, title }: { children: string; title?: strin
 export const Heading2 = ({ children }: { children: React.ReactNode }) => {
     const id = textToSlug(children)
     return (
-        <h2 id={id} className="text-2xl font-bold text-[var(--text-primary)] mt-10 mb-4 flex items-center gap-2 scroll-mt-8">
+        <h2 id={id} className="text-2xl font-bold text-text-primary mt-10 mb-4 flex items-center gap-2 scroll-mt-8">
             {children}
         </h2>
     )
@@ -55,7 +55,7 @@ export const Heading3 = ({ children }: { children: React.ReactNode }) => {
 }
 
 export const Paragraph = ({ children }: { children: React.ReactNode }) => (
-    <p className="text-[var(--text-primary)] leading-relaxed mb-4">{children}</p>
+    <p className="text-text-primary leading-relaxed mb-4">{children}</p>
 )
 
 export const Highlight = ({ children }: { children: React.ReactNode }) => (
@@ -63,7 +63,7 @@ export const Highlight = ({ children }: { children: React.ReactNode }) => (
 )
 
 export const InlineCode = ({ children }: { children: React.ReactNode }) => (
-    <code className="bg-[var(--bg-tag)] text-[#fbbf24] px-1.5 py-0.5 rounded text-sm font-mono border border-[var(--border-primary)]">
+    <code className="bg-bg-tag text-[#fbbf24] px-1.5 py-0.5 rounded text-sm font-mono border border-border-primary">
         {children}
     </code>
 )
@@ -78,7 +78,7 @@ export const Callout = ({ type, children }: { type: 'tip' | 'warning' | 'info'; 
     return (
         <div className={`my-6 p-4 rounded-xl border ${styles[type]}`}>
             <span className="mr-2">{icons[type]}</span>
-            <span className="text-[var(--text-primary)]">{children}</span>
+            <span className="text-text-primary">{children}</span>
         </div>
     )
 }

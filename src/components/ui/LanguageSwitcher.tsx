@@ -22,7 +22,7 @@ export default function LanguageSwitcher({ lang, onToggle }: LanguageSwitcherPro
             <span className={`transition-opacity duration-200 ${lang === 'vi' ? 'opacity-100' : 'opacity-50'}`}>
                 🇻🇳
             </span>
-            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>/</span>
+            <span className="text-xs text-text-muted">/</span>
             <span className={`transition-opacity duration-200 ${lang === 'en' ? 'opacity-100' : 'opacity-50'}`}>
                 🇬🇧
             </span>

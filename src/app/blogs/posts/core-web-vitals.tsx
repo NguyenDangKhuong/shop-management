@@ -35,22 +35,22 @@ const coreWebVitals: BlogPost = {
                     <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-5">
                         <div className="text-3xl mb-2">🖼️</div>
                         <div className="text-green-400 font-bold text-sm mb-1">LCP</div>
-                        <div className="text-[var(--text-primary)] text-sm">Largest Contentful Paint</div>
-                        <div className="text-[var(--text-secondary)] text-xs mt-1">Tốc độ load nội dung chính</div>
+                        <div className="text-text-primary text-sm">Largest Contentful Paint</div>
+                        <div className="text-text-secondary text-xs mt-1">Tốc độ load nội dung chính</div>
                         <div className="mt-3 text-green-400 font-mono text-lg">≤ 2.5s</div>
                     </div>
                     <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-5">
                         <div className="text-3xl mb-2">👆</div>
                         <div className="text-blue-400 font-bold text-sm mb-1">INP</div>
-                        <div className="text-[var(--text-primary)] text-sm">Interaction to Next Paint</div>
-                        <div className="text-[var(--text-secondary)] text-xs mt-1">Phản hồi khi user tương tác</div>
+                        <div className="text-text-primary text-sm">Interaction to Next Paint</div>
+                        <div className="text-text-secondary text-xs mt-1">Phản hồi khi user tương tác</div>
                         <div className="mt-3 text-blue-400 font-mono text-lg">≤ 200ms</div>
                     </div>
                     <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-5">
                         <div className="text-3xl mb-2">📐</div>
                         <div className="text-purple-400 font-bold text-sm mb-1">CLS</div>
-                        <div className="text-[var(--text-primary)] text-sm">Cumulative Layout Shift</div>
-                        <div className="text-[var(--text-secondary)] text-xs mt-1">Độ ổn định bố cục trang</div>
+                        <div className="text-text-primary text-sm">Cumulative Layout Shift</div>
+                        <div className="text-text-secondary text-xs mt-1">Độ ổn định bố cục trang</div>
                         <div className="mt-3 text-purple-400 font-mono text-lg">≤ 0.1</div>
                     </div>
                 </div>
@@ -58,14 +58,14 @@ const coreWebVitals: BlogPost = {
                 <div className="my-6 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                         <thead>
-                            <tr className="border-b border-[var(--border-primary)]">
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Chỉ số</th>
+                            <tr className="border-b border-border-primary">
+                                <th className="text-left p-3 text-text-secondary font-medium">Chỉ số</th>
                                 <th className="text-left p-3 text-green-500 font-medium">Tốt</th>
                                 <th className="text-left p-3 text-yellow-500 font-medium">Cần cải thiện</th>
                                 <th className="text-left p-3 text-red-500 font-medium">Kém</th>
                             </tr>
                         </thead>
-                        <tbody className="text-[var(--text-primary)]">
+                        <tbody className="text-text-primary">
                             <tr className="border-b border-gray-200">
                                 <td className="p-3 font-medium">LCP</td>
                                 <td className="p-3">≤ 2.5s</td>
@@ -188,19 +188,19 @@ export function reportWebVitals(metric) {
                 <div className="my-4 space-y-2">
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Server response chậm (TTFB cao)</span>
+                        <span className="text-text-primary">Server response chậm (TTFB cao)</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">CSS/JS render-blocking (chặn paint)</span>
+                        <span className="text-text-primary">CSS/JS render-blocking (chặn paint)</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Ảnh hero quá lớn, không optimize</span>
+                        <span className="text-text-primary">Ảnh hero quá lớn, không optimize</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Client-side rendering (CSR) — phải đợi JS load xong</span>
+                        <span className="text-text-primary">Client-side rendering (CSR) — phải đợi JS load xong</span>
                     </div>
                 </div>
 
@@ -268,19 +268,19 @@ export const revalidate = 3600 // Cache 1 giờ
                 <div className="my-4 space-y-2">
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Long tasks (&gt;50ms) trên main thread</span>
+                        <span className="text-text-primary">Long tasks (&gt;50ms) trên main thread</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Re-render quá nhiều components khi click</span>
+                        <span className="text-text-primary">Re-render quá nhiều components khi click</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Third-party scripts nặng (analytics, ads, chat widgets)</span>
+                        <span className="text-text-primary">Third-party scripts nặng (analytics, ads, chat widgets)</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">DOM quá lớn (&gt;1,500 nodes)</span>
+                        <span className="text-text-primary">DOM quá lớn (&gt;1,500 nodes)</span>
                     </div>
                 </div>
 
@@ -375,19 +375,19 @@ useEffect(() => {
                 <div className="my-4 space-y-2">
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Ảnh/video không có width/height → load xong mới biết kích thước</span>
+                        <span className="text-text-primary">Ảnh/video không có width/height → load xong mới biết kích thước</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Font web load xong thay thế fallback font (FOUT)</span>
+                        <span className="text-text-primary">Font web load xong thay thế fallback font (FOUT)</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Dynamic content inject (ads, banners, popups)</span>
+                        <span className="text-text-primary">Dynamic content inject (ads, banners, popups)</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Skeleton/placeholder kích thước khác content thật</span>
+                        <span className="text-text-primary">Skeleton/placeholder kích thước khác content thật</span>
                     </div>
                 </div>
 
@@ -601,12 +601,12 @@ observer.observe({ type: 'longtask', buffered: true })
                 <div className="my-6 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                         <thead>
-                            <tr className="border-b border-[var(--border-primary)]">
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Chỉ số</th>
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Top 3 cách cải thiện</th>
+                            <tr className="border-b border-border-primary">
+                                <th className="text-left p-3 text-text-secondary font-medium">Chỉ số</th>
+                                <th className="text-left p-3 text-text-secondary font-medium">Top 3 cách cải thiện</th>
                             </tr>
                         </thead>
-                        <tbody className="text-[var(--text-primary)]">
+                        <tbody className="text-text-primary">
                             <tr className="border-b border-gray-200">
                                 <td className="p-3 font-medium text-green-500">LCP</td>
                                 <td className="p-3">1. Preload LCP image &nbsp;2. SSR/SSG &nbsp;3. CDN + optimize images</td>
@@ -656,22 +656,22 @@ observer.observe({ type: 'longtask', buffered: true })
                     <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-5">
                         <div className="text-3xl mb-2">🖼️</div>
                         <div className="text-green-400 font-bold text-sm mb-1">LCP</div>
-                        <div className="text-[var(--text-primary)] text-sm">Largest Contentful Paint</div>
-                        <div className="text-[var(--text-secondary)] text-xs mt-1">Loading speed of main content</div>
+                        <div className="text-text-primary text-sm">Largest Contentful Paint</div>
+                        <div className="text-text-secondary text-xs mt-1">Loading speed of main content</div>
                         <div className="mt-3 text-green-400 font-mono text-lg">≤ 2.5s</div>
                     </div>
                     <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-5">
                         <div className="text-3xl mb-2">👆</div>
                         <div className="text-blue-400 font-bold text-sm mb-1">INP</div>
-                        <div className="text-[var(--text-primary)] text-sm">Interaction to Next Paint</div>
-                        <div className="text-[var(--text-secondary)] text-xs mt-1">Response to user interaction</div>
+                        <div className="text-text-primary text-sm">Interaction to Next Paint</div>
+                        <div className="text-text-secondary text-xs mt-1">Response to user interaction</div>
                         <div className="mt-3 text-blue-400 font-mono text-lg">≤ 200ms</div>
                     </div>
                     <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-5">
                         <div className="text-3xl mb-2">📐</div>
                         <div className="text-purple-400 font-bold text-sm mb-1">CLS</div>
-                        <div className="text-[var(--text-primary)] text-sm">Cumulative Layout Shift</div>
-                        <div className="text-[var(--text-secondary)] text-xs mt-1">Page layout stability</div>
+                        <div className="text-text-primary text-sm">Cumulative Layout Shift</div>
+                        <div className="text-text-secondary text-xs mt-1">Page layout stability</div>
                         <div className="mt-3 text-purple-400 font-mono text-lg">≤ 0.1</div>
                     </div>
                 </div>
@@ -679,14 +679,14 @@ observer.observe({ type: 'longtask', buffered: true })
                 <div className="my-6 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                         <thead>
-                            <tr className="border-b border-[var(--border-primary)]">
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Metric</th>
+                            <tr className="border-b border-border-primary">
+                                <th className="text-left p-3 text-text-secondary font-medium">Metric</th>
                                 <th className="text-left p-3 text-green-500 font-medium">Good</th>
                                 <th className="text-left p-3 text-yellow-500 font-medium">Needs Improvement</th>
                                 <th className="text-left p-3 text-red-500 font-medium">Poor</th>
                             </tr>
                         </thead>
-                        <tbody className="text-[var(--text-primary)]">
+                        <tbody className="text-text-primary">
                             <tr className="border-b border-gray-200">
                                 <td className="p-3 font-medium">LCP</td>
                                 <td className="p-3">≤ 2.5s</td>
@@ -809,19 +809,19 @@ export function reportWebVitals(metric) {
                 <div className="my-4 space-y-2">
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Slow server response (high TTFB)</span>
+                        <span className="text-text-primary">Slow server response (high TTFB)</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Render-blocking CSS/JS</span>
+                        <span className="text-text-primary">Render-blocking CSS/JS</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Unoptimized hero images (too large)</span>
+                        <span className="text-text-primary">Unoptimized hero images (too large)</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Client-side rendering (CSR) — must wait for JS to load</span>
+                        <span className="text-text-primary">Client-side rendering (CSR) — must wait for JS to load</span>
                     </div>
                 </div>
 
@@ -889,19 +889,19 @@ export const revalidate = 3600 // Cache for 1 hour
                 <div className="my-4 space-y-2">
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Long tasks (&gt;50ms) on main thread</span>
+                        <span className="text-text-primary">Long tasks (&gt;50ms) on main thread</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Too many component re-renders on click</span>
+                        <span className="text-text-primary">Too many component re-renders on click</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Heavy third-party scripts (analytics, ads, chat widgets)</span>
+                        <span className="text-text-primary">Heavy third-party scripts (analytics, ads, chat widgets)</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">DOM too large (&gt;1,500 nodes)</span>
+                        <span className="text-text-primary">DOM too large (&gt;1,500 nodes)</span>
                     </div>
                 </div>
 
@@ -996,19 +996,19 @@ useEffect(() => {
                 <div className="my-4 space-y-2">
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Images/videos without width/height — size unknown until loaded</span>
+                        <span className="text-text-primary">Images/videos without width/height — size unknown until loaded</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Web fonts replacing fallback fonts (FOUT)</span>
+                        <span className="text-text-primary">Web fonts replacing fallback fonts (FOUT)</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Dynamic content injection (ads, banners, popups)</span>
+                        <span className="text-text-primary">Dynamic content injection (ads, banners, popups)</span>
                     </div>
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <span className="text-red-400 mt-0.5">❌</span>
-                        <span className="text-[var(--text-primary)]">Skeleton/placeholder with different dimensions than actual content</span>
+                        <span className="text-text-primary">Skeleton/placeholder with different dimensions than actual content</span>
                     </div>
                 </div>
 
@@ -1220,12 +1220,12 @@ observer.observe({ type: 'longtask', buffered: true })
                 <div className="my-6 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
                         <thead>
-                            <tr className="border-b border-[var(--border-primary)]">
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Metric</th>
-                                <th className="text-left p-3 text-[var(--text-secondary)] font-medium">Top 3 Improvements</th>
+                            <tr className="border-b border-border-primary">
+                                <th className="text-left p-3 text-text-secondary font-medium">Metric</th>
+                                <th className="text-left p-3 text-text-secondary font-medium">Top 3 Improvements</th>
                             </tr>
                         </thead>
-                        <tbody className="text-[var(--text-primary)]">
+                        <tbody className="text-text-primary">
                             <tr className="border-b border-gray-200">
                                 <td className="p-3 font-medium text-green-500">LCP</td>
                                 <td className="p-3">1. Preload LCP image &nbsp;2. SSR/SSG &nbsp;3. CDN + optimize images</td>

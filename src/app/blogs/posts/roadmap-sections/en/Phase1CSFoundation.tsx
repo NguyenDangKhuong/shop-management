@@ -120,8 +120,8 @@ new TextEncoder().encode('café').length // 5 bytes (UTF-8)
                 <Paragraph>When you open Chrome + VS Code + Terminal, the OS manages them using <Highlight>Processes</Highlight> and <Highlight>Threads</Highlight>.</Paragraph>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-blue-400">Process</th><th className="text-left p-2 text-green-400">Thread</th></tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
+                        <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-blue-400">Process</th><th className="text-left p-2 text-green-400">Thread</th></tr></thead>
+                        <tbody className="text-text-secondary">
                             <tr className="border-b border-gray-100"><td className="p-2">Memory</td><td className="p-2">Isolated</td><td className="p-2">Shares heap with process</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Creation</td><td className="p-2">Heavy (~MB)</td><td className="p-2">Light (~KB)</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Communication</td><td className="p-2">IPC (Inter-Process Communication)</td><td className="p-2">Shared memory (faster)</td></tr>
@@ -361,8 +361,8 @@ SSE:       Server → Client (one-way, server pushes continuously)
 
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Scenario</th><th className="text-left p-2 text-blue-400">Use</th><th className="text-left p-2 text-green-400">Example</th></tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
+                        <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Scenario</th><th className="text-left p-2 text-blue-400">Use</th><th className="text-left p-2 text-green-400">Example</th></tr></thead>
+                        <tbody className="text-text-secondary">
                             <tr className="border-b border-gray-100"><td className="p-2">Normal data fetching</td><td className="p-2"><strong>HTTP (REST)</strong></td><td className="p-2">GET /api/products</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Two-way real-time chat</td><td className="p-2"><strong>WebSocket</strong></td><td className="p-2">Messenger, Slack</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Live notifications</td><td className="p-2"><strong>SSE</strong></td><td className="p-2">GitHub deploy status</td></tr>
@@ -436,8 +436,8 @@ SSE:       Server → Client (one-way, server pushes continuously)
             <TopicModal title="REST vs GraphQL vs gRPC" emoji="🔌" color="#ef4444" summary="3 popular API paradigms — when to use which" concept="REST uses multiple fixed endpoints, is simple, and supports HTTP caching. GraphQL uses a single endpoint where clients pick fields — avoiding over/under-fetching. gRPC uses Protocol Buffers (binary) over HTTP/2, 2-10x faster than JSON — optimized for internal microservices and streaming.">
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-blue-400">REST</th><th className="text-left p-2 text-purple-400">GraphQL</th><th className="text-left p-2 text-green-400">gRPC</th></tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
+                        <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-blue-400">REST</th><th className="text-left p-2 text-purple-400">GraphQL</th><th className="text-left p-2 text-green-400">gRPC</th></tr></thead>
+                        <tbody className="text-text-secondary">
                             <tr className="border-b border-gray-100"><td className="p-2">Protocol</td><td className="p-2">HTTP/1.1 (JSON)</td><td className="p-2">HTTP/1.1 (JSON)</td><td className="p-2">HTTP/2 (Protobuf binary)</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Type</td><td className="p-2">Multiple endpoints</td><td className="p-2">Single endpoint</td><td className="p-2">Service + Methods (.proto)</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Data format</td><td className="p-2">JSON (text, readable)</td><td className="p-2">JSON (text, readable)</td><td className="p-2">Protobuf (binary, ~10x smaller)</td></tr>
@@ -556,8 +556,8 @@ SflKxwRJSM...    ← Signature (verify not tampered)
                 <Heading3>Cookies vs JWT vs Session</Heading3>
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-blue-400">Cookie + Session</th><th className="text-left p-2 text-green-400">JWT</th></tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
+                        <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-blue-400">Cookie + Session</th><th className="text-left p-2 text-green-400">JWT</th></tr></thead>
+                        <tbody className="text-text-secondary">
                             <tr className="border-b border-gray-100"><td className="p-2">Stored in</td><td className="p-2">Browser (auto-sent each request)</td><td className="p-2">Client (localStorage/memory/cookie)</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Stateful/less</td><td className="p-2">Stateful — server stores session</td><td className="p-2">Stateless — token contains data</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">XSS risk</td><td className="p-2"><InlineCode>httpOnly</InlineCode> + <InlineCode>Secure</InlineCode> flags protect</td><td className="p-2">If in localStorage → XSS risk!</td></tr>
@@ -575,8 +575,8 @@ SflKxwRJSM...    ← Signature (verify not tampered)
 
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-blue-400">localStorage</th><th className="text-left p-2 text-green-400">sessionStorage</th><th className="text-left p-2 text-yellow-400">Cookies</th><th className="text-left p-2 text-purple-400">IndexedDB</th></tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
+                        <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-blue-400">localStorage</th><th className="text-left p-2 text-green-400">sessionStorage</th><th className="text-left p-2 text-yellow-400">Cookies</th><th className="text-left p-2 text-purple-400">IndexedDB</th></tr></thead>
+                        <tbody className="text-text-secondary">
                             <tr className="border-b border-gray-100"><td className="p-2">Capacity</td><td className="p-2">~5-10 MB</td><td className="p-2">~5 MB</td><td className="p-2">~4 KB</td><td className="p-2">Hundreds of MB+</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Expiration</td><td className="p-2">Never (persists)</td><td className="p-2">Tab close = gone</td><td className="p-2">Set expires/max-age</td><td className="p-2">Never (persists)</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Sent to server</td><td className="p-2">❌ No</td><td className="p-2">❌ No</td><td className="p-2">✅ Auto on every request</td><td className="p-2">❌ No</td></tr>
@@ -657,8 +657,8 @@ fetch('/api/orders', {
 
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-red-400">localStorage</th><th className="text-left p-2 text-green-400">httpOnly Cookie</th><th className="text-left p-2 text-blue-400">Memory</th></tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
+                        <thead><tr className="border-b border-border-primary"><th className="text-left p-2 text-slate-400">Criteria</th><th className="text-left p-2 text-red-400">localStorage</th><th className="text-left p-2 text-green-400">httpOnly Cookie</th><th className="text-left p-2 text-blue-400">Memory</th></tr></thead>
+                        <tbody className="text-text-secondary">
                             <tr className="border-b border-gray-100"><td className="p-2">XSS attack</td><td className="p-2">❌ JS can read → steal</td><td className="p-2">✅ JS can&apos;t read</td><td className="p-2">✅ Hard to steal</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">CSRF attack</td><td className="p-2">✅ Not auto-sent</td><td className="p-2">❌ Auto-sent → need CSRF token</td><td className="p-2">✅ Not auto-sent</td></tr>
                             <tr className="border-b border-gray-100"><td className="p-2">Page refresh</td><td className="p-2">Persists</td><td className="p-2">Persists</td><td className="p-2">❌ Lost</td></tr>

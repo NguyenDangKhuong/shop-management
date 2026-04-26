@@ -3,6 +3,53 @@
 @custom-variant dark (&:is(.dark, .dark *));
 
 /* ═══════════════════════════════════════════════
+   Tailwind v4 Theme — Maps CSS vars to utilities
+   Usage: bg-bg-page, text-text-primary, etc.
+   ═══════════════════════════════════════════════ */
+@theme {
+  /* Background Colors */
+  --color-bg-page: var(--bg-page);
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-card: var(--bg-card);
+  --color-bg-card-hover: var(--bg-card-hover);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-surface-dim: var(--bg-surface-dim);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-input: var(--bg-input);
+  --color-bg-tag: var(--bg-tag);
+  --color-bg-tag-active: var(--bg-tag-active);
+  --color-bg-header: var(--bg-header);
+  --color-bg-header-scrolled: var(--bg-header-scrolled);
+  --color-bg-glow-blue: var(--bg-glow-blue);
+  --color-bg-glow-purple: var(--bg-glow-purple);
+
+  /* Text Colors */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-dimmed: var(--text-dimmed);
+  --color-text-link: var(--text-link);
+  --color-text-link-hover: var(--text-link-hover);
+
+  /* Border Colors */
+  --color-border-primary: var(--border-primary);
+  --color-border-dim: var(--border-dim);
+  --color-border-input: var(--border-input);
+
+  /* Accent */
+  --color-accent-primary: var(--accent-primary);
+
+  /* Shadows */
+  --shadow-theme-sm: var(--shadow-sm);
+  --shadow-theme-xl: var(--shadow-xl);
+
+  /* Misc */
+  --color-ring-bg: var(--ring-bg);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+}
+
+/* ═══════════════════════════════════════════════
    Theme Design Tokens — CSS Custom Properties
    Toggle by adding/removing .dark on <html>
    ═══════════════════════════════════════════════ */
@@ -57,6 +104,10 @@
 
   /* Misc */
   --ring-bg: #ffffff;
+
+  /* Aliases & Missing tokens */
+  --bg-primary: #f9fafb; /* alias of --bg-page */
+  --accent-primary: #38bdf8; /* sky-400 — tech accent */
 
   /* Legacy tokens (keep for glass-card) */
   --card-bg: #ffffff;
@@ -113,6 +164,10 @@
 
   /* Misc */
   --ring-bg: #0a0a0a;
+
+  /* Aliases & Missing tokens */
+  --bg-primary: #0a0a0a; /* alias of --bg-page */
+  --accent-primary: #38bdf8; /* sky-400 — tech accent */
 
   /* Legacy */
   --card-bg: #1f1f1f;

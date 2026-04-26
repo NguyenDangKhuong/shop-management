@@ -765,7 +765,7 @@ spec:
 
             <Heading3>5.2 Framework trả lời</Heading3>
 
-            <div className="my-6 p-4 rounded-xl bg-[var(--bg-tag)] border border-[var(--border-primary)]">
+            <div className="my-6 p-4 rounded-xl bg-bg-tag border border-border-primary">
                 <div className="text-center text-sm text-slate-400 mb-3 font-medium">📋 Frontend System Design Framework</div>
                 <div className="flex flex-col items-center gap-2 text-sm">
                     <div className="px-4 py-2 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/30 w-fit"><strong>1. Clarify</strong> — Hỏi requirements, scope, constraints</div>
@@ -782,15 +782,15 @@ spec:
 
             <Heading3>5.3 Tài liệu</Heading3>
             <div className="my-4 space-y-2">
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                     <span className="text-purple-400">📕</span>
                     <span className="text-slate-300 text-sm"><strong>GreatFrontEnd</strong> — phần System Design rất chất lượng</span>
                 </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                     <span className="text-purple-400">📗</span>
                     <span className="text-slate-300 text-sm"><strong>frontendmastery.com</strong> — bài viết deep-dive về FE architecture</span>
                 </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-tag)] border border-gray-200">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-bg-tag border border-gray-200">
                     <span className="text-purple-400">📘</span>
                     <span className="text-slate-300 text-sm"><strong>YouTube: &quot;Frontend System Design&quot;</strong> — kênh Chirag Goel, Evgeniy</span>
                 </div>

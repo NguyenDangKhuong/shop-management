@@ -74,12 +74,12 @@ export function FlashcardProgressBar({ known, total, current, label }: {
 }) {
     return (
         <div className="mb-6">
-            <div className="flex justify-between text-xs text-[var(--text-muted)] mb-1">
+            <div className="flex justify-between text-xs text-text-muted mb-1">
                 <span>🧠 Đã thuộc: {known}/{total}</span>
                 {current !== undefined && <span>{total > 0 ? current + 1 : 0} / {total}</span>}
                 {label && <span>{label}</span>}
             </div>
-            <div className="h-2 rounded-full bg-[var(--bg-tag)] overflow-hidden">
+            <div className="h-2 rounded-full bg-bg-tag overflow-hidden">
                 <div
                     className="h-full rounded-full transition-all duration-500"
                     style={{
@@ -117,12 +117,12 @@ export function CardStackBg({ count }: { count: number }) {
     return (
         <>
             {count > 2 && (
-                <div className="absolute inset-0 rounded-2xl"
-                    style={{ transform: 'scale(0.92) translateY(16px)', background: 'var(--bg-card)', border: '1px solid var(--border-primary)', opacity: 0.4 }} />
+                <div className="absolute inset-0 rounded-2xl bg-bg-card border border-border-primary"
+                    style={{ transform: 'scale(0.92) translateY(16px)', opacity: 0.4 }} />
             )}
             {count > 1 && (
-                <div className="absolute inset-0 rounded-2xl"
-                    style={{ transform: 'scale(0.96) translateY(8px)', background: 'var(--bg-card)', border: '1px solid var(--border-primary)', opacity: 0.6 }} />
+                <div className="absolute inset-0 rounded-2xl bg-bg-card border border-border-primary"
+                    style={{ transform: 'scale(0.96) translateY(8px)', opacity: 0.6 }} />
             )}
         </>
     )
@@ -191,18 +191,18 @@ export function useFlashcardKeys(opts: {
 export function KeyboardHints({ showShuffle = false }: { showShuffle?: boolean }) {
     return (
         <div className="mt-6 text-center">
-            <p className="text-xs text-[var(--text-muted)]">
-                ⌨️ <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">Space</kbd> Lật
+            <p className="text-xs text-text-muted">
+                ⌨️ <kbd className="px-1.5 py-0.5 rounded bg-bg-tag border border-border-primary font-mono text-[10px]">Space</kbd> Lật
                 {' · '}
-                <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">←→</kbd> Chuyển thẻ
+                <kbd className="px-1.5 py-0.5 rounded bg-bg-tag border border-border-primary font-mono text-[10px]">←→</kbd> Chuyển thẻ
                 {' · '}
-                <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">H</kbd> Skip
+                <kbd className="px-1.5 py-0.5 rounded bg-bg-tag border border-border-primary font-mono text-[10px]">H</kbd> Skip
                 {' · '}
-                <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">L</kbd> Thuộc
+                <kbd className="px-1.5 py-0.5 rounded bg-bg-tag border border-border-primary font-mono text-[10px]">L</kbd> Thuộc
                 {showShuffle && (
                     <>
                         {' · '}
-                        <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tag)] border border-[var(--border-primary)] font-mono text-[10px]">S</kbd> Trộn
+                        <kbd className="px-1.5 py-0.5 rounded bg-bg-tag border border-border-primary font-mono text-[10px]">S</kbd> Trộn
                     </>
                 )}
             </p>

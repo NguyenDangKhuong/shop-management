@@ -106,7 +106,7 @@ const SortableCard = ({ link, onEdit, onDelete, onCopy, loading }: SortableCardP
             <Card
                 loading={loading}
                 cover={
-                    <div style={{ width: '100%', height: '100px', overflow: 'hidden', backgroundColor: 'var(--bg-secondary)' }}>
+                    <div className="bg-bg-secondary" style={{ width: '100%', height: '100px', overflow: 'hidden' }}>
                         <Image
                             src={link.mediaFile?.url}
                             alt={link.name}
@@ -115,7 +115,7 @@ const SortableCard = ({ link, onEdit, onDelete, onCopy, loading }: SortableCardP
                             style={{ height: '100%', objectFit: 'cover', width: '100%', display: 'block' }}
                             preview={true}
                             placeholder={
-                                <div style={{ width: '100%', height: '100px', backgroundColor: 'var(--bg-secondary)' }} />
+                                <div className="bg-bg-secondary" style={{ width: '100%', height: '100px' }} />
                             }
                         />
                     </div>
@@ -154,7 +154,7 @@ const SortableCard = ({ link, onEdit, onDelete, onCopy, loading }: SortableCardP
                     title={
                         <div className="flex items-center gap-1">
                             <CopyOutlined
-                                className="text-[var(--text-secondary)] hover:text-blue-500 cursor-pointer text-xs"
+                                className="text-text-secondary hover:text-blue-500 cursor-pointer text-xs"
                                 onClick={() => onCopy(link.name, 'name')}
                                 title="Copy tên sản phẩm"
                             />
@@ -165,7 +165,7 @@ const SortableCard = ({ link, onEdit, onDelete, onCopy, loading }: SortableCardP
                         <div className="flex flex-col gap-1 mt-1">
                             <div className="flex items-center gap-1">
                                 <CopyOutlined
-                                    className="text-[var(--text-secondary)] hover:text-blue-500 cursor-pointer text-xs"
+                                    className="text-text-secondary hover:text-blue-500 cursor-pointer text-xs"
                                     onClick={() => onCopy(link.productUrl, 'link')}
                                     title="Copy link"
                                 />
@@ -179,7 +179,7 @@ const SortableCard = ({ link, onEdit, onDelete, onCopy, loading }: SortableCardP
                                 </a>
                             </div>
                             {link.description && (
-                                <div className="text-[var(--text-secondary)] bg-[var(--bg-secondary)] p-1 rounded">
+                                <div className="text-text-secondary bg-bg-secondary p-1 rounded">
                                     <span className="text-xs line-clamp-2">{link.description}</span>
                                 </div>
                             )}

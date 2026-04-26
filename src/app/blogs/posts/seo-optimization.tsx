@@ -371,12 +371,12 @@ const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
 
                 <div className="my-3 overflow-x-auto">
                     <table className="w-full text-sm border-collapse">
-                        <thead><tr className="border-b border-[var(--border-primary)]">
+                        <thead><tr className="border-b border-border-primary">
                             <th className="text-left p-2 text-slate-400">Chiến lược</th>
                             <th className="text-left p-2 text-slate-400">SEO Impact</th>
                             <th className="text-left p-2 text-slate-400">Khi nào dùng</th>
                         </tr></thead>
-                        <tbody className="text-[var(--text-secondary)]">
+                        <tbody className="text-text-secondary">
                             <tr className="border-b border-gray-800"><td className="p-2 font-bold">SSG (Static)</td><td className="p-2">⭐⭐⭐ Tốt nhất — HTML sẵn khi deploy</td><td className="p-2">Blog posts, docs, landing pages</td></tr>
                             <tr className="border-b border-gray-800"><td className="p-2 font-bold">ISR (Incremental)</td><td className="p-2">⭐⭐⭐ Rất tốt — static + revalidation</td><td className="p-2">E-commerce, content update thường xuyên</td></tr>
                             <tr className="border-b border-gray-800"><td className="p-2 font-bold">SSR (Server)</td><td className="p-2">⭐⭐ Tốt — HTML mỗi request</td><td className="p-2">Content cá nhân hóa, data real-time</td></tr>
