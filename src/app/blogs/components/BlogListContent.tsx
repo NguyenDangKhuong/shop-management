@@ -119,11 +119,11 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                 <div className="w-full max-w-4xl mx-auto mb-6 z-10">
                     <div className="flex items-center gap-3 mb-2">
                         <span className="text-3xl">📝</span>
-                        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+                        <h1 className="text-3xl md:text-4xl font-bold text-text-primary">
                             Blog
                         </h1>
                     </div>
-                    <p className="text-gray-500 dark:text-slate-400">
+                    <p className="text-text-secondary">
                         {lang === 'vi'
                             ? 'Chia sẻ kiến thức Frontend — JavaScript, React, TypeScript và nhiều hơn nữa.'
                             : 'Sharing Frontend knowledge — JavaScript, React, TypeScript and more.'}
