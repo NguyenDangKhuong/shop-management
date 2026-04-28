@@ -94,7 +94,7 @@ export const viewport = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang='en' suppressHydrationWarning>
-      <body className={`${inter.className} bg-bg-page text-text-primary transition-colors duration-300`} suppressHydrationWarning={true}>
+      <body className={`${inter.className} bg-[var(--space-bg)] text-text-primary transition-colors duration-300`} suppressHydrationWarning={true}>
         <NextAuthProvider>
           <LanguageProvider>
             <ThemeProvider>

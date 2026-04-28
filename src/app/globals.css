@@ -22,6 +22,12 @@
   --color-bg-header-scrolled: var(--bg-header-scrolled);
   --color-bg-glow-blue: var(--bg-glow-blue);
   --color-bg-glow-purple: var(--bg-glow-purple);
+  --color-space-bg: var(--space-bg);
+
+  /* Cyberpunk / Sci-Fi Neon Accents */
+  --color-neon-cyan: var(--neon-cyan);
+  --color-neon-purple: var(--neon-purple);
+  --color-neon-green: var(--neon-green);
 
   /* Text Colors */
   --color-text-primary: var(--text-primary);
@@ -77,6 +83,12 @@
   --bg-header-scrolled: rgba(255, 255, 255, 0.8);
   --bg-glow-blue: rgba(37, 99, 235, 0.06);
   --bg-glow-purple: rgba(124, 58, 237, 0.06);
+  --space-bg: #f8fafc; /* Light Sci-Fi background */
+
+  /* Light Sci-Fi Accents (Darker for contrast) */
+  --neon-cyan: #0284c7;
+  --neon-purple: #9333ea;
+  --neon-green: #16a34a;
 
   /* Text */
   --text-primary: #111827;
@@ -117,66 +129,139 @@
 }
 
 .dark {
-  /* Backgrounds */
-  --bg-page: #0a0a0a;
-  --bg-page-gradient-from: #0f172a;
-  /* slate-900 */
-  --bg-page-gradient-via: #0a0a0a;
-  --bg-page-gradient-to: #0a0a0a;
-  --bg-card: rgba(15, 23, 42, 0.4);
-  /* slate-900/40 */
-  --bg-card-hover: rgba(51, 65, 85, 0.4);
-  /* slate-700/40 */
-  --bg-surface: rgba(30, 41, 59, 0.4);
-  --bg-surface-dim: rgba(30, 41, 59, 0.5);
-  --bg-secondary: rgba(30, 41, 59, 0.6);
-  /* slate-800/60 */
-  --bg-input: rgba(30, 41, 59, 0.8);
-  --bg-tag: rgba(30, 41, 59, 0.5);
-  /* slate-800/50 */
-  --bg-tag-active: rgba(56, 189, 248, 0.15);
-  --bg-header: rgba(10, 10, 10, 0.5);
-  --bg-header-scrolled: rgba(10, 10, 10, 0.8);
-  --bg-glow-blue: rgba(37, 99, 235, 0.1);
-  --bg-glow-purple: rgba(124, 58, 237, 0.1);
+  /* Premium Cyberpunk Deep Space Background */
+  --bg-page: #030712;
+  --bg-page-gradient-from: #020617;
+  --bg-page-gradient-via: #030712;
+  --bg-page-gradient-to: #050b14;
+  --space-bg: #030712;
 
-  /* Text */
-  --text-primary: #e2e8f0;
-  /* slate-200 */
+  /* Cards - Deep Navy/Indigo Glass */
+  --bg-card: rgba(10, 15, 30, 0.6);
+  --bg-card-hover: rgba(15, 23, 42, 0.8);
+  --bg-surface: rgba(10, 15, 30, 0.7);
+  --bg-surface-dim: rgba(5, 10, 20, 0.5);
+  --bg-secondary: rgba(15, 23, 42, 0.6);
+  --bg-input: rgba(10, 15, 30, 0.8);
+  --bg-tag: rgba(30, 41, 59, 0.6);
+  --bg-tag-active: rgba(0, 240, 255, 0.15);
+  --bg-header: rgba(3, 7, 18, 0.7);
+  --bg-header-scrolled: rgba(3, 7, 18, 0.95);
+  --bg-glow-blue: rgba(0, 240, 255, 0.08);
+  --bg-glow-purple: rgba(176, 38, 255, 0.08);
+
+  /* Dark Cyberpunk Neon Accents */
+  --neon-cyan: #00f0ff;
+  --neon-purple: #b026ff;
+  --neon-green: #39ff14;
+  --accent-primary: #00f0ff;
+
+  /* Text - High Contrast */
+  --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
-  /* slate-400 */
   --text-muted: #64748b;
-  /* slate-500 */
   --text-dimmed: #475569;
-  /* slate-600 */
-  --text-link: #38bdf8;
+  --text-link: #00f0ff;
   --text-link-hover: #7dd3fc;
 
-  /* Borders */
-  --border-primary: rgba(255, 255, 255, 0.1);
-  --border-dim: rgba(255, 255, 255, 0.05);
-  --border-input: rgba(100, 116, 139, 0.6);
-  /* slate-600 */
+  /* Borders - Tinted Neon */
+  --border-primary: rgba(0, 240, 255, 0.15);
+  --border-dim: rgba(0, 240, 255, 0.05);
+  --border-input: rgba(0, 240, 255, 0.2);
 
   /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.8);
 
-  /* Misc */
-  --ring-bg: #0a0a0a;
-
-  /* Aliases & Missing tokens */
-  --bg-primary: #0a0a0a; /* alias of --bg-page */
-  --accent-primary: #38bdf8; /* sky-400 — tech accent */
-
-  /* Legacy */
-  --card-bg: #1f1f1f;
-  --card-border: #374151;
-  --glass-bg: rgba(30, 41, 59, 0.4);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  /* Legacy & CyberCard specific */
+  --ring-bg: #030712;
+  --card-bg: rgba(10, 15, 30, 0.6);
+  --card-border: rgba(0, 240, 255, 0.15);
+  --glass-bg: rgba(10, 15, 30, 0.65);
+  --glass-border: rgba(0, 240, 255, 0.15);
 }
 
 @layer components {
+  /* ═══ Cyberpunk Neon LED Card ═══ */
+  .cyber-card {
+    --cyber-accent: rgba(0, 240, 255, 0.5);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--cyber-accent) 8%, rgba(8, 12, 24, 0.97)) 0%,
+      rgba(5, 8, 18, 0.98) 35%,
+      rgba(3, 5, 14, 0.99) 100%
+    );
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-top-color: transparent;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 24px -4px rgba(0, 0, 0, 0.7);
+  }
+
+  /* ── Vivid Neon LED Strip (top edge) ── */
+  .cyber-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--cyber-accent) 60%, transparent) 15%,
+      var(--cyber-accent) 50%,
+      color-mix(in srgb, var(--cyber-accent) 60%, transparent) 85%,
+      transparent 100%
+    );
+    border-radius: 0 0 50% 50%;
+    filter: brightness(1.5);
+    transition: all 0.35s ease;
+  }
+
+  /* ── LED Bloom / Glow bleed behind the strip ── */
+  .cyber-card::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 15%;
+    width: 70%;
+    height: 24px;
+    background: radial-gradient(
+      ellipse at top center,
+      color-mix(in srgb, var(--cyber-accent) 35%, transparent) 0%,
+      color-mix(in srgb, var(--cyber-accent) 10%, transparent) 50%,
+      transparent 100%
+    );
+    pointer-events: none;
+    transition: all 0.35s ease;
+  }
+
+  /* ── Hover ── */
+  .cyber-card:hover.hover-cyber-glow {
+    box-shadow:
+      0 0 30px -5px color-mix(in srgb, var(--cyber-accent) 18%, transparent),
+      0 8px 32px -4px rgba(0, 0, 0, 0.8);
+    border-color: color-mix(in srgb, var(--cyber-accent) 15%, transparent);
+  }
+
+  .cyber-card:hover.hover-cyber-glow::before {
+    width: 90%;
+    left: 5%;
+    filter: brightness(2);
+    box-shadow: 0 0 12px var(--cyber-accent);
+  }
+
+  .cyber-card:hover.hover-cyber-glow::after {
+    height: 36px;
+    opacity: 1.2;
+  }
+
   .glass-card {
     background: var(--glass-bg);
     backdrop-filter: blur(24px);

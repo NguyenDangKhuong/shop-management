@@ -117,21 +117,25 @@ const projects = [
 
 export default function ProjectsPage() {
     return (
-        <div className="bg-[#0a0a0a] text-slate-200 font-sans min-h-screen flex flex-col items-center p-4 md:p-8 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-slate-900 via-[#0a0a0a] to-[#0a0a0a] relative">
+        <div className="font-sans min-h-screen flex flex-col items-center p-4 md:p-8 relative overflow-x-hidden">
+            {/* Grid + Glow */}
+            <div className="fixed inset-0 pointer-events-none z-[-1] opacity-20" style={{ backgroundImage: 'linear-gradient(var(--border-primary) 1px, transparent 1px), linear-gradient(90deg, var(--border-primary) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+            <div className="fixed top-[-15%] left-[-15%] w-[55%] h-[55%] rounded-full bg-[var(--neon-cyan)] opacity-[0.06] blur-[150px] pointer-events-none z-[-1]" />
+            <div className="fixed bottom-[-15%] right-[-15%] w-[60%] h-[60%] rounded-full bg-[var(--neon-purple)] opacity-[0.05] blur-[180px] pointer-events-none z-[-1]" />
             {/* Header */}
             <header className="w-full max-w-5xl mx-auto flex justify-between items-center mb-12 z-20">
                 <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#38bdf8] to-[#c084fc] flex items-center justify-center font-bold text-white shadow-lg">
-                        Y
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--neon-cyan)] to-[var(--neon-purple)] flex items-center justify-center font-bold text-white shadow-lg">
+                        K
                     </div>
-                    <span className="font-bold text-xl tracking-tight text-white">
-                        The<span className="text-[#38bdf8]">TapHoa</span>
+                    <span className="font-bold text-xl tracking-tight text-text-primary">
+                        Khuong<span className="text-[var(--neon-cyan)]">.Dev</span>
                     </span>
                 </Link>
 
                 <Link
                     href="/"
-                    className="text-sm text-slate-400 hover:text-white transition flex items-center gap-1"
+                    className="text-sm text-text-secondary hover:text-text-primary transition flex items-center gap-1"
                 >
                     ← Back
                 </Link>
@@ -139,86 +143,67 @@ export default function ProjectsPage() {
 
             {/* Title */}
             <div className="w-full max-w-5xl mx-auto mb-10 z-10">
-                <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">
                     Projects
                 </h1>
-                <p className="text-slate-400 max-w-2xl">
+                <p className="text-text-secondary max-w-2xl">
                     A unified ecosystem built from scratch — connecting shop management, social media content automation, and AI video generation into a single platform.
                 </p>
             </div>
 
             {/* Architecture Overview */}
             <div className="w-full max-w-5xl mx-auto mb-8 z-10">
-                <div className="rounded-2xl bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-emerald-500/10 border border-white/10 p-6">
-                    <div className="text-sm text-slate-400 mb-3 font-medium">🏗️ System Architecture</div>
-                    <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-slate-300">
-                        <span className="px-3 py-1.5 rounded-full bg-[#38bdf8]/15 border border-[#38bdf8]/30">🛍️ Shop</span>
-                        <span className="text-slate-500">→</span>
-                        <span className="px-3 py-1.5 rounded-full bg-[#f97316]/15 border border-[#f97316]/30">🔗 Shopee</span>
-                        <span className="text-slate-500">→</span>
-                        <span className="px-3 py-1.5 rounded-full bg-[#fbbf24]/15 border border-[#fbbf24]/30">⚡ AutoFlow</span>
-                        <span className="text-slate-500">→</span>
-                        <span className="px-3 py-1.5 rounded-full bg-[#10b981]/15 border border-[#10b981]/30">🎬 Veo3</span>
-                        <span className="text-slate-500">→</span>
-                        <span className="px-3 py-1.5 rounded-full bg-[#c084fc]/15 border border-[#c084fc]/30">🎵 TikTok</span>
-                        <span className="text-slate-500">/</span>
-                        <span className="px-3 py-1.5 rounded-full bg-[#3b82f6]/15 border border-[#3b82f6]/30">📱 Facebook</span>
+                <div className="cyber-card" style={{ '--cyber-accent': 'var(--neon-cyan)' } as React.CSSProperties}>
+                    <div className="relative z-10">
+                        <div className="text-sm text-text-secondary mb-3 font-medium">🏗️ System Architecture</div>
+                        <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-text-secondary">
+                            <span className="px-3 py-1.5 rounded-full border" style={{ backgroundColor: 'color-mix(in srgb, #38bdf8 15%, transparent)', borderColor: 'color-mix(in srgb, #38bdf8 30%, transparent)' }}>🛍️ Shop</span>
+                            <span className="text-text-muted">→</span>
+                            <span className="px-3 py-1.5 rounded-full border" style={{ backgroundColor: 'color-mix(in srgb, #f97316 15%, transparent)', borderColor: 'color-mix(in srgb, #f97316 30%, transparent)' }}>🔗 Shopee</span>
+                            <span className="text-text-muted">→</span>
+                            <span className="px-3 py-1.5 rounded-full border" style={{ backgroundColor: 'color-mix(in srgb, #fbbf24 15%, transparent)', borderColor: 'color-mix(in srgb, #fbbf24 30%, transparent)' }}>⚡ AutoFlow</span>
+                            <span className="text-text-muted">→</span>
+                            <span className="px-3 py-1.5 rounded-full border" style={{ backgroundColor: 'color-mix(in srgb, #10b981 15%, transparent)', borderColor: 'color-mix(in srgb, #10b981 30%, transparent)' }}>🎬 Veo3</span>
+                            <span className="text-text-muted">→</span>
+                            <span className="px-3 py-1.5 rounded-full border" style={{ backgroundColor: 'color-mix(in srgb, #c084fc 15%, transparent)', borderColor: 'color-mix(in srgb, #c084fc 30%, transparent)' }}>🎵 TikTok</span>
+                            <span className="text-text-muted">/</span>
+                            <span className="px-3 py-1.5 rounded-full border" style={{ backgroundColor: 'color-mix(in srgb, #3b82f6 15%, transparent)', borderColor: 'color-mix(in srgb, #3b82f6 30%, transparent)' }}>📱 Facebook</span>
+                        </div>
+                        <p className="text-xs text-text-muted text-center mt-3">Products → Affiliate Links → AI Prompts → Video Generation → Auto-publish to Social Media</p>
                     </div>
-                    <p className="text-xs text-slate-500 text-center mt-3">Products → Affiliate Links → AI Prompts → Video Generation → Auto-publish to Social Media</p>
                 </div>
             </div>
 
             {/* Skills */}
             <div className="w-full max-w-5xl mx-auto mb-8 z-10">
-                <h2 className="text-xl font-semibold text-white mb-4">🛠️ Tech Stack & Skills</h2>
+                <h2 className="text-xl font-semibold text-text-primary mb-4">🛠️ Tech Stack & Skills</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {[
-                        {
-                            category: 'Core',
-                            color: '#38bdf8',
-                            skills: ['TypeScript (strict mode)', 'JavaScript ES2024+', 'HTML5 / CSS3', 'Vanilla Extract (CSS-in-JS)']
-                        },
-                        {
-                            category: 'Frameworks & Libraries',
-                            color: '#c084fc',
-                            skills: ['React 19 (Compiler, Suspense)', 'Next.js 15 (App Router, SSR)', 'React Hook Form + Zod', 'Ant Design / Tailwind CSS']
-                        },
-                        {
-                            category: 'Testing & Quality',
-                            color: '#10b981',
-                            skills: ['Jest + Testing Library', 'Playwright (E2E)', 'Storybook / MSW', 'Lighthouse CI (98% A11Y)']
-                        },
-                        {
-                            category: 'DevOps & Infrastructure',
-                            color: '#f97316',
-                            skills: ['MongoDB / Mongoose', 'Cloudinary / Cloudflare R2', 'n8n Automation', 'NextAuth.js']
-                        },
-                        {
-                            category: 'Architecture',
-                            color: '#fbbf24',
-                            skills: ['Micro Frontend', 'Module Federation', 'Design Systems (70+ components)', 'REST API / GraphQL']
-                        },
-                        {
-                            category: 'Tools & Workflow',
-                            color: '#ec4899',
-                            skills: ['ESLint / Prettier (Oxc)', 'LaunchDarkly (Feature Flags)', 'Segment Analytics', 'Claude AI / Cursor / Copilot']
-                        },
+                        { category: 'Core', color: '#38bdf8', skills: ['TypeScript (strict mode)', 'JavaScript ES2024+', 'HTML5 / CSS3', 'Vanilla Extract (CSS-in-JS)'] },
+                        { category: 'Frameworks & Libraries', color: '#c084fc', skills: ['React 19 (Compiler, Suspense)', 'Next.js 15 (App Router, SSR)', 'React Hook Form + Zod', 'Ant Design / Tailwind CSS'] },
+                        { category: 'Testing & Quality', color: '#10b981', skills: ['Jest + Testing Library', 'Playwright (E2E)', 'Storybook / MSW', 'Lighthouse CI (98% A11Y)'] },
+                        { category: 'DevOps & Infrastructure', color: '#f97316', skills: ['MongoDB / Mongoose', 'Cloudinary / Cloudflare R2', 'n8n Automation', 'NextAuth.js'] },
+                        { category: 'Architecture', color: '#fbbf24', skills: ['Micro Frontend', 'Module Federation', 'Design Systems (70+ components)', 'REST API / GraphQL'] },
+                        { category: 'Tools & Workflow', color: '#ec4899', skills: ['ESLint / Prettier (Oxc)', 'LaunchDarkly (Feature Flags)', 'Segment Analytics', 'Claude AI / Cursor / Copilot'] },
                     ].map((group) => (
                         <div
                             key={group.category}
-                            className="rounded-xl bg-slate-800/40 border border-white/10 p-4 hover:border-white/20 transition"
+                            className="cyber-card"
+                            style={{ '--cyber-accent': group.color } as React.CSSProperties}
                         >
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: group.color }} />
-                                <span className="text-sm font-medium text-white">{group.category}</span>
-                            </div>
-                            <div className="space-y-1.5">
-                                {group.skills.map((skill) => (
-                                    <div key={skill} className="text-xs text-slate-400 flex items-center gap-2">
-                                        <span style={{ color: group.color }}>▸</span>
-                                        {skill}
-                                    </div>
-                                ))}
+                            <div className="relative z-10">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <div className="w-2 h-2 rounded-full shadow-[0_0_6px]" style={{ backgroundColor: group.color, boxShadow: `0 0 8px ${group.color}` }} />
+                                    <span className="text-sm font-medium text-text-primary">{group.category}</span>
+                                </div>
+                                <div className="space-y-1.5">
+                                    {group.skills.map((skill) => (
+                                        <div key={skill} className="text-xs text-text-secondary flex items-center gap-2">
+                                            <span style={{ color: group.color }}>▸</span>
+                                            {skill}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -230,12 +215,12 @@ export default function ProjectsPage() {
                 {projects.map((project) => (
                     <div
                         key={project.title}
-                        className="rounded-2xl bg-slate-800/40 border border-white/10 overflow-hidden hover:border-white/20 hover:bg-slate-800/60 transition-all duration-300 group cursor-default flex flex-col"
-                        style={{ boxShadow: `0 0 30px ${project.color}10` }}
+                        className="cyber-card hover-cyber-glow group cursor-default flex flex-col !overflow-hidden"
+                        style={{ '--cyber-accent': project.color } as React.CSSProperties}
                     >
                         {/* Screenshot */}
                         {project.image && (
-                            <div className="w-full h-48 relative overflow-hidden border-b border-white/10">
+                            <div className="w-[calc(100%+3rem)] -mx-6 -mt-6 h-48 relative overflow-hidden border-b border-border-dim mb-4">
                                 <Image
                                     src={project.image}
                                     alt={`${project.title} demo`}
@@ -243,14 +228,13 @@ export default function ProjectsPage() {
                                     className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
                                     sizes="(max-width: 768px) 100vw, 50vw"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
-                                {/* Highlight Badge */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#030712]/80 to-transparent" />
                                 {project.highlight && (
                                     <div
-                                        className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-medium backdrop-blur-sm border"
+                                        className="absolute top-3 right-3 px-2.5 py-1 rounded-md text-xs font-medium backdrop-blur-sm border"
                                         style={{
-                                            backgroundColor: `${project.color}20`,
-                                            borderColor: `${project.color}40`,
+                                            backgroundColor: `color-mix(in srgb, ${project.color} 20%, transparent)`,
+                                            borderColor: `color-mix(in srgb, ${project.color} 40%, transparent)`,
                                             color: project.color,
                                         }}
                                     >
@@ -261,34 +245,29 @@ export default function ProjectsPage() {
                         )}
 
                         {/* Content */}
-                        <div className="p-6 space-y-4 flex-1 flex flex-col">
+                        <div className="space-y-4 flex-1 flex flex-col relative z-10">
                             <div className="flex items-center gap-3">
                                 <span className="text-2xl">{project.emoji}</span>
                                 <div>
-                                    <h2 className="text-lg font-semibold text-white group-hover:text-[#38bdf8] transition">
+                                    <h2 className="text-lg font-semibold text-text-primary group-hover:text-[var(--neon-cyan)] transition">
                                         {project.title}
                                     </h2>
-                                    {/* Highlight for cards without image */}
                                     {!project.image && project.highlight && (
-                                        <span
-                                            className="text-xs font-medium mt-0.5 inline-block"
-                                            style={{ color: project.color }}
-                                        >
+                                        <span className="text-xs font-medium mt-0.5 inline-block" style={{ color: project.color }}>
                                             {project.highlight}
                                         </span>
                                     )}
                                 </div>
                             </div>
 
-                            <p className="text-sm text-slate-400 leading-relaxed">
+                            <p className="text-sm text-text-secondary leading-relaxed">
                                 {project.description}
                             </p>
 
-                            {/* Features */}
                             {project.features && (
                                 <div className="space-y-1.5 flex-1">
                                     {project.features.map((feature, i) => (
-                                        <div key={i} className="flex items-start gap-2 text-xs text-slate-400">
+                                        <div key={i} className="flex items-start gap-2 text-xs text-text-secondary">
                                             <span className="mt-0.5 flex-shrink-0" style={{ color: project.color }}>▸</span>
                                             <span className="leading-relaxed">{feature}</span>
                                         </div>
@@ -300,8 +279,8 @@ export default function ProjectsPage() {
                                 {project.tech.map((t) => (
                                     <span
                                         key={t}
-                                        className="px-2.5 py-1 text-xs rounded-full border border-white/10 text-slate-300"
-                                        style={{ backgroundColor: `${project.color}15` }}
+                                        className="px-2.5 py-1 text-xs rounded-md border text-text-secondary"
+                                        style={{ borderColor: `color-mix(in srgb, ${project.color} 30%, transparent)`, backgroundColor: `color-mix(in srgb, ${project.color} 10%, transparent)` }}
                                     >
                                         {t}
                                     </span>
@@ -325,17 +304,11 @@ export default function ProjectsPage() {
             </div>
 
             {/* Footer */}
-            <footer className="w-full max-w-5xl mx-auto mt-16 pt-8 pb-6 border-t border-slate-700/50 z-20 text-center">
-                <p className="text-sm text-slate-500">
+            <footer className="w-full max-w-5xl mx-auto mt-16 pt-8 pb-6 border-t border-border-primary z-20 text-center">
+                <p className="text-sm text-text-muted">
                     Built with Next.js 15, TypeScript, MongoDB & ❤️
                 </p>
             </footer>
-
-            {/* Background Gradients */}
-            <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[100px]" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[100px]" />
-            </div>
         </div>
     )
 }

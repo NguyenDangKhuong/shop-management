@@ -94,9 +94,13 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
 
     return (
         <div
-            className="font-sans min-h-screen flex flex-col items-center relative transition-colors duration-300"
-
+            className="font-sans min-h-screen flex flex-col items-center relative transition-colors duration-300 overflow-x-hidden"
         >
+            {/* Grid Pattern */}
+            <div className="fixed inset-0 pointer-events-none z-[-1] opacity-20" style={{ backgroundImage: 'linear-gradient(var(--border-primary) 1px, transparent 1px), linear-gradient(90deg, var(--border-primary) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+            {/* Ambient Glow */}
+            <div className="fixed top-[-15%] left-[-15%] w-[55%] h-[55%] rounded-full bg-[var(--neon-cyan)] opacity-[0.06] blur-[150px] pointer-events-none z-[-1]" />
+            <div className="fixed bottom-[-15%] right-[-15%] w-[60%] h-[60%] rounded-full bg-[var(--neon-purple)] opacity-[0.05] blur-[180px] pointer-events-none z-[-1]" />
             <SiteHeader
                 maxWidth="max-w-4xl"
                 rightSlot={
@@ -239,20 +243,14 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                         <Link
                             key={post.slug}
                             href={`/blogs/${post.slug}`}
-                            className="group rounded-2xl border overflow-hidden transition-all duration-300 no-underline"
-                            style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)', boxShadow: `0 0 30px ${post.color}10` }}
+                            className="group cyber-card hover-cyber-glow no-underline"
+                            style={{ '--cyber-accent': post.color } as React.CSSProperties}
                         >
-                            {/* Gradient Top Bar */}
-                            <div
-                                className="h-1.5 w-full"
-                                style={{ background: `linear-gradient(to right, ${post.color}, ${post.color}80)` }}
-                            />
-
                             {/* Content */}
-                            <div className="p-6 space-y-4">
+                            <div className="p-2 space-y-4 relative z-10">
                                 <div className="flex items-center gap-3">
                                     <span className="text-2xl">{post.emoji}</span>
-                                    <h2 className="text-lg font-semibold group-hover:text-[#38bdf8] transition leading-tight text-text-primary">
+                                    <h2 className="text-lg font-semibold group-hover:text-[var(--neon-cyan)] transition leading-tight text-text-primary">
                                         {t(post.title)}
                                     </h2>
                                 </div>
@@ -265,8 +263,8 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                                     {post.tags.map((tag) => (
                                         <span
                                             key={tag}
-                                            className="px-2.5 py-1 text-xs rounded-full border"
-                                            style={{ borderColor: 'var(--border-primary)', color: 'var(--text-secondary)', backgroundColor: `${post.color}15` }}
+                                            className="px-2.5 py-1 text-xs rounded-md border"
+                                            style={{ borderColor: `color-mix(in srgb, ${post.color} 30%, transparent)`, color: 'var(--text-secondary)', backgroundColor: `color-mix(in srgb, ${post.color} 10%, transparent)` }}
                                         >
                                             {tag}
                                         </span>
@@ -305,11 +303,7 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                 </footer>
             </div> {/* end content wrapper */}
 
-            {/* Background Gradients */}
-            <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full blur-[100px] bg-bg-glow-blue" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full blur-[100px] bg-bg-glow-purple" />
-            </div>
+
         </div>
     )
 }

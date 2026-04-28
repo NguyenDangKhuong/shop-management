@@ -36,7 +36,11 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
     }, [])
 
     return (
-        <div className="font-sans min-h-screen flex flex-col items-center relative transition-colors duration-300 bg-bg-page text-text-primary">
+        <div className="font-sans min-h-screen flex flex-col items-center relative transition-colors duration-300 overflow-x-hidden">
+            {/* Grid + Glow */}
+            <div className="fixed inset-0 pointer-events-none z-[-1] opacity-20" style={{ backgroundImage: 'linear-gradient(var(--border-primary) 1px, transparent 1px), linear-gradient(90deg, var(--border-primary) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+            <div className="fixed top-[-15%] left-[-15%] w-[55%] h-[55%] rounded-full bg-[var(--neon-cyan)] opacity-[0.06] blur-[150px] pointer-events-none z-[-1]" />
+            <div className="fixed bottom-[-15%] right-[-15%] w-[60%] h-[60%] rounded-full bg-[var(--neon-purple)] opacity-[0.05] blur-[180px] pointer-events-none z-[-1]" />
             <SiteHeader
                 maxWidth="max-w-3xl"
                 showProgress
@@ -91,11 +95,11 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
                             <span>{lang === 'vi' ? '☕ ~10 phút đọc' : '☕ ~10 min read'}</span>
                         </div>
 
-                        {/* Gradient Divider */}
-                        <div
-                            className="h-0.5 w-full mt-6 rounded-full opacity-50"
-                            style={{ background: `linear-gradient(to right, ${post.color}, transparent)` }}
-                        />
+                        {/* Neon LED Divider */}
+                        <div className="relative h-px w-full mt-6">
+                            <div className="absolute inset-0" style={{ background: `linear-gradient(to right, transparent, ${post.color}, transparent)`, opacity: 0.6 }} />
+                            <div className="absolute inset-0 blur-sm" style={{ background: `linear-gradient(to right, transparent, ${post.color}, transparent)`, opacity: 0.3 }} />
+                        </div>
                     </div>
 
                     {/* Article Content */}
@@ -119,15 +123,18 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
                                 <Link
                                     key={related.slug}
                                     href={`/blogs/${related.slug}`}
-                                    className="group rounded-xl bg-bg-card border border-border-primary p-5   transition-all duration-300 no-underline"
+                                    className="group cyber-card hover-cyber-glow no-underline"
+                                    style={{ '--cyber-accent': related.color } as React.CSSProperties}
                                 >
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span>{related.emoji}</span>
-                                        <span className="text-sm font-semibold text-text-primary group-hover:text-[#38bdf8] transition">
-                                            {t(related.title)}
-                                        </span>
+                                    <div className="relative z-10">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span>{related.emoji}</span>
+                                            <span className="text-sm font-semibold text-text-primary group-hover:text-[var(--neon-cyan)] transition">
+                                                {t(related.title)}
+                                            </span>
+                                        </div>
+                                        <p className="text-xs text-text-secondary line-clamp-2">{t(related.description)}</p>
                                     </div>
-                                    <p className="text-xs text-text-secondary line-clamp-2">{t(related.description)}</p>
                                 </Link>
                             ))}
                         </div>
@@ -153,11 +160,7 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
                 </svg>
             </button>
 
-            {/* Background Gradients */}
-            <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-bg-glow-blue rounded-full blur-[100px]" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-bg-glow-purple rounded-full blur-[100px]" />
-            </div>
+
         </div>
     )
 }
