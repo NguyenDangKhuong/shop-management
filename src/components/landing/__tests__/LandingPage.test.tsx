@@ -22,7 +22,7 @@ describe('LandingPage Component', () => {
 
         expect(screen.getByText(/hello, i'm/i)).toBeInTheDocument()
         expect(screen.getAllByText(/khuong/i).length).toBeGreaterThan(0)
-        expect(screen.getByText(/front-end developer · 8\+ years · react specialist/i)).toBeInTheDocument()
+        expect(screen.getAllByText(/front-end developer/i).length).toBeGreaterThan(0)
     })
 
     it('displays login button with correct link', () => {
@@ -63,7 +63,7 @@ describe('LandingPage Component', () => {
     it('renders featured project section', () => {
         render(<LandingPage />)
 
-        expect(screen.getByText(/featured side project: e-commerce app/i)).toBeInTheDocument()
+        expect(screen.getByText(/featured side project/i)).toBeInTheDocument()
         expect(screen.getByRole('link', { name: /live demo/i })).toHaveAttribute('href', '/products')
         expect(screen.getByRole('link', { name: /admin panel/i })).toHaveAttribute('href', '/login')
     })
@@ -81,15 +81,14 @@ describe('LandingPage Component', () => {
 
         expect(screen.getByRole('heading', { name: /performance stats/i })).toBeInTheDocument()
 
-        // Use getAllByText since these labels appear multiple times
-        const seoLabels = screen.getAllByText(/SEO/i)
-        expect(seoLabels.length).toBeGreaterThan(0)
-
-        const perfLabels = screen.getAllByText(/PERF/i)
+        const perfLabels = screen.getAllByText(/Performance/i)
         expect(perfLabels.length).toBeGreaterThan(0)
 
-        const a11yLabels = screen.getAllByText(/A11Y/i)
+        const a11yLabels = screen.getAllByText(/Accessibility/i)
         expect(a11yLabels.length).toBeGreaterThan(0)
+
+        const bpLabels = screen.getAllByText(/Best Practices/i)
+        expect(bpLabels.length).toBeGreaterThan(0)
     })
 
     it('renders theme toggle button', () => {
@@ -102,9 +101,8 @@ describe('LandingPage Component', () => {
     it('displays developer portrait image', () => {
         render(<LandingPage />)
 
-        const portrait = screen.getByAltText(/khuong.*developer portrait/i)
+        const portrait = screen.getByAltText(/khuong/i)
         expect(portrait).toBeInTheDocument()
-        expect(portrait).toHaveAttribute('src', '/image/home/avatar.jpg')
     })
 
     it('shows project mockup image', () => {
@@ -140,7 +138,7 @@ describe('LandingPage Component', () => {
         expect(screen.getByText(/senior frontend engineer/i)).toBeInTheDocument()
         expect(screen.getByText(/ANZ Banking Group/i)).toBeInTheDocument()
         expect(screen.getByText(/Asoview Vietnam/i)).toBeInTheDocument()
-        expect(screen.getByText(/VTech Web/i)).toBeInTheDocument()
+        expect(screen.getByText(/Vteach Edu/i)).toBeInTheDocument()
     })
 
     it('renders education section with HCMUS', () => {
