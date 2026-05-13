@@ -195,7 +195,7 @@ export default function LandingPage() {
                                         className="text-[var(--neon-purple)]"
                                         animate={{ scale: [1, 1.2, 1] }}
                                         transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-                                    >👤</motion.span> ABOUT ME
+                                    >👤</motion.span> {t('landing.about').toUpperCase()}
                                     <motion.span 
                                         className="flex-1 h-[1px] bg-gradient-to-r from-[var(--neon-purple)] to-transparent ml-3"
                                         initial={{ scaleX: 0 }}
@@ -249,7 +249,7 @@ export default function LandingPage() {
                                     <div className="absolute top-6 left-[25%] -translate-x-1/2 text-xs font-bold text-text-muted">2018</div>
                                     <div className="absolute top-6 left-[55%] -translate-x-1/2 text-xs font-bold text-text-muted">2022</div>
                                     <div className="absolute top-6 left-[80%] -translate-x-1/2 text-center text-xs font-bold text-[var(--neon-purple)]">
-                                        Present<br /><span className="text-[10px] text-[var(--neon-purple)]/70">Tech Lead</span>
+                                        {t('landing.present')}<br /><span className="text-[10px] text-[var(--neon-purple)]/70">{t('landing.skiller')}</span>
                                     </div>
                                     <div className="absolute top-6 left-[100%] -translate-x-1/2 text-xs font-bold text-text-muted">2030</div>
                                 </div>
@@ -270,7 +270,7 @@ export default function LandingPage() {
                                         className="text-[var(--neon-green)]"
                                         animate={{ rotate: [0, -10, 10, 0] }}
                                         transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-                                    >💼</motion.span> WORK EXPERIENCE
+                                    >💼</motion.span> {t('landing.experience').toUpperCase()}
                                     <motion.span 
                                         className="flex-1 h-[1px] bg-gradient-to-r from-[var(--neon-green)] to-transparent ml-3"
                                         initial={{ scaleX: 0 }}
@@ -326,7 +326,7 @@ export default function LandingPage() {
                                     viewport={{ once: false }}
                                     transition={{ duration: 0.4 }}
                                 >
-                                    <h2 className="text-sm font-bold text-text-primary uppercase tracking-widest">TECH STACK</h2>
+                                    <h2 className="text-sm font-bold text-text-primary uppercase tracking-widest">{t('landing.techStack').toUpperCase()}</h2>
                                     <motion.span 
                                         className="text-xs text-text-muted font-mono"
                                         animate={{ opacity: [0.5, 1, 0.5] }}
@@ -362,7 +362,7 @@ export default function LandingPage() {
                         <ScrollReveal delay={0.2}>
                             <CyberCard glowColor="purple">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h2 className="text-sm font-bold text-text-primary uppercase tracking-widest">FEATURED SIDE PROJECT</h2>
+                                    <h2 className="text-sm font-bold text-text-primary uppercase tracking-widest">{t('landing.featuredProject').toUpperCase()}</h2>
                                     <span className="text-xs text-text-muted font-mono">VIEW ALL</span>
                                 </div>
                                 <div className="rounded-xl overflow-hidden mb-4 border border-border-primary relative group">
@@ -384,10 +384,10 @@ export default function LandingPage() {
                                 </div>
                                 <div className="flex gap-4 text-xs font-bold uppercase tracking-wide">
                                     <Link href="/products" className="text-[var(--neon-purple)] flex items-center gap-1 hover:underline">
-                                        <span>🌐</span> Live Demo
+                                        <span>🌐</span> {t('landing.liveDemo')}
                                     </Link>
                                     <Link href={loginUrl} className="text-text-secondary hover:text-text-primary flex items-center gap-1 hover:underline">
-                                        <span>🔐</span> Admin Panel
+                                        <span>🔐</span> {t('landing.adminPanel')}
                                     </Link>
                                 </div>
                             </CyberCard>
@@ -396,7 +396,7 @@ export default function LandingPage() {
                         {/* Contact & Performance Stats */}
                         <div className="grid grid-cols-2 gap-4">
                             <CyberCard glowColor="cyan" className="p-5 flex flex-col justify-center">
-                                <h2 className="text-xs font-bold text-text-primary mb-3 uppercase tracking-widest">CONTACT</h2>
+                                <h2 className="text-xs font-bold text-text-primary mb-3 uppercase tracking-widest">{t('landing.contact').toUpperCase()}</h2>
                                 <div className="flex gap-3 text-text-secondary">
                                     <a href="mailto:nguyendangkhuong96@gmail.com" className="hover:text-[var(--neon-cyan)] transition-colors"><EmailIcon /></a>
                                     <a href="https://linkedin.com/in/nguyendangkhuong" target="_blank" rel="noopener noreferrer" className="hover:text-[#0A66C2] transition-colors"><LinkedInIcon /></a>
@@ -406,7 +406,7 @@ export default function LandingPage() {
                             </CyberCard>
 
                             <CyberCard glowColor="green" className="p-5 flex flex-col justify-center items-center text-center">
-                                <h2 className="text-xs font-bold text-text-primary mb-3 uppercase tracking-widest w-full">PERFORMANCE STATS</h2>
+                                <h2 className="text-xs font-bold text-text-primary mb-3 uppercase tracking-widest w-full">{t('landing.performanceStats').toUpperCase()}</h2>
                                 <div className="flex gap-3">
                                     <PerformanceBadge score="100" label="Performance" />
                                     <PerformanceBadge score="100" label="Accessibility" />
@@ -428,7 +428,7 @@ export default function LandingPage() {
                                     <motion.span
                                         animate={{ rotate: [0, 10, -10, 0] }}
                                         transition={{ repeat: Infinity, duration: 3 }}
-                                    >🎓</motion.span> EDUCATION
+                                    >🎓</motion.span> {t('landing.education').toUpperCase()}
                                 </motion.h2>
                                 <div className="relative">
                                     <h3 className="text-sm font-bold text-text-primary">Ho Chi Minh University of Science (HCMUS)</h3>
@@ -454,7 +454,7 @@ export default function LandingPage() {
                                     <motion.span
                                         animate={{ rotate: [0, 15, -15, 0] }}
                                         transition={{ repeat: Infinity, duration: 4 }}
-                                    >🛠️</motion.span> SKILLS & EXPERTISE
+                                    >🛠️</motion.span> {t('landing.skills').toUpperCase()}
                                 </motion.h2>
                                 <div className="space-y-6">
                                     {skillCategories.map((cat) => (
