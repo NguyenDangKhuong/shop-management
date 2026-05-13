@@ -99,7 +99,7 @@ export const MotionHero = () => {
                     <motion.span
                         className="w-2 h-4 bg-neon-cyan ml-1"
                         animate={{ opacity: [1, 0] }}
-                        transition={{ repeat: Infinity, duration: 0.8, ease: 'steps(1)' }}
+                        transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
                     />
                 </motion.div>
 
@@ -134,7 +134,7 @@ export const MotionHero = () => {
                         <motion.span
                             className="inline-block w-[4px] h-[0.85em] bg-neon-cyan ml-1 align-middle rounded-sm"
                             animate={{ opacity: [1, 0] }}
-                            transition={{ repeat: Infinity, duration: 0.6, ease: 'steps(1)' }}
+                            transition={{ repeat: Infinity, duration: 0.6, ease: 'linear' }}
                         />
                     </motion.span>{' '}<br />
                     <motion.span 
