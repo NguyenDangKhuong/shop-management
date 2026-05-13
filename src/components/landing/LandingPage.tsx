@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
@@ -183,21 +184,65 @@ export default function LandingPage() {
                         {/* About Me */}
                         <ScrollReveal>
                             <CyberCard glowColor="purple">
-                                <h2 className="text-xl font-bold text-text-primary mb-6 flex items-center gap-3 uppercase tracking-wider">
-                                    <span className="text-[var(--neon-purple)]">👤</span> ABOUT ME
-                                </h2>
-                                <p className="text-text-secondary leading-relaxed mb-10 text-lg">
+                                <motion.h2 
+                                    className="text-xl font-bold text-text-primary mb-6 flex items-center gap-3 uppercase tracking-wider"
+                                    initial={{ opacity: 0, x: -20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: false }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    <motion.span 
+                                        className="text-[var(--neon-purple)]"
+                                        animate={{ scale: [1, 1.2, 1] }}
+                                        transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+                                    >👤</motion.span> ABOUT ME
+                                    <motion.span 
+                                        className="flex-1 h-[1px] bg-gradient-to-r from-[var(--neon-purple)] to-transparent ml-3"
+                                        initial={{ scaleX: 0 }}
+                                        whileInView={{ scaleX: 1 }}
+                                        viewport={{ once: false }}
+                                        transition={{ duration: 0.8, delay: 0.3 }}
+                                        style={{ transformOrigin: 'left' }}
+                                    />
+                                </motion.h2>
+                                <motion.p 
+                                    className="text-text-secondary leading-relaxed mb-10 text-lg"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: false }}
+                                    transition={{ duration: 0.6, delay: 0.2 }}
+                                >
                                     {t('landing.aboutText')}
-                                </p>
+                                </motion.p>
                                 
                                 {/* Horizontal Timeline */}
                                 <div className="relative h-1.5 bg-border-primary rounded-full mx-4 mb-4">
-                                    <div className="absolute top-0 left-0 h-full w-[80%] bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] rounded-full shadow-[0_0_15px_var(--neon-cyan)]" />
+                                    <motion.div 
+                                        className="absolute top-0 left-0 h-full bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] rounded-full shadow-[0_0_15px_var(--neon-cyan)]"
+                                        initial={{ width: '0%' }}
+                                        whileInView={{ width: '80%' }}
+                                        viewport={{ once: false }}
+                                        transition={{ duration: 1.5, ease: 'easeOut', delay: 0.3 }}
+                                    />
                                     
-                                    <div className="absolute top-1/2 left-[0%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-bg-card border-2 border-[var(--neon-cyan)] rounded-full z-10" />
-                                    <div className="absolute top-1/2 left-[25%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-bg-card border-2 border-[var(--neon-cyan)] rounded-full z-10" />
-                                    <div className="absolute top-1/2 left-[55%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-bg-card border-2 border-[var(--neon-cyan)] rounded-full z-10" />
-                                    <div className="absolute top-1/2 left-[80%] -translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-[var(--neon-purple)] rounded-full shadow-[0_0_15px_var(--neon-purple)] z-20 animate-pulse" />
+                                    {[0, 25, 55].map((pos, i) => (
+                                        <motion.div 
+                                            key={pos}
+                                            className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-bg-card border-2 border-[var(--neon-cyan)] rounded-full z-10" 
+                                            style={{ left: `${pos}%` }}
+                                            initial={{ scale: 0, opacity: 0 }}
+                                            whileInView={{ scale: 1, opacity: 1 }}
+                                            viewport={{ once: false }}
+                                            transition={{ duration: 0.3, delay: 0.5 + i * 0.2 }}
+                                        />
+                                    ))}
+                                    <motion.div 
+                                        className="absolute top-1/2 left-[80%] -translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-[var(--neon-purple)] rounded-full shadow-[0_0_15px_var(--neon-purple)] z-20 animate-pulse"
+                                        initial={{ scale: 0 }}
+                                        whileInView={{ scale: 1 }}
+                                        viewport={{ once: false }}
+                                        transition={{ duration: 0.4, delay: 1.2, type: 'spring' }}
+                                    />
                                     <div className="absolute top-1/2 left-[100%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-bg-card border-2 border-border-primary rounded-full z-10" />
 
                                     <div className="absolute top-6 left-0 -translate-x-1/2 text-xs font-bold text-text-muted">2014</div>
@@ -214,9 +259,27 @@ export default function LandingPage() {
                         {/* Work Experience */}
                         <ScrollReveal delay={0.2}>
                             <CyberCard glowColor="green">
-                                <h2 className="text-xl font-bold text-text-primary mb-8 flex items-center gap-3 uppercase tracking-wider">
-                                    <span className="text-[var(--neon-green)]">💼</span> WORK EXPERIENCE
-                                </h2>
+                                <motion.h2 
+                                    className="text-xl font-bold text-text-primary mb-8 flex items-center gap-3 uppercase tracking-wider"
+                                    initial={{ opacity: 0, x: -20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: false }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    <motion.span 
+                                        className="text-[var(--neon-green)]"
+                                        animate={{ rotate: [0, -10, 10, 0] }}
+                                        transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+                                    >💼</motion.span> WORK EXPERIENCE
+                                    <motion.span 
+                                        className="flex-1 h-[1px] bg-gradient-to-r from-[var(--neon-green)] to-transparent ml-3"
+                                        initial={{ scaleX: 0 }}
+                                        whileInView={{ scaleX: 1 }}
+                                        viewport={{ once: false }}
+                                        transition={{ duration: 0.8, delay: 0.3 }}
+                                        style={{ transformOrigin: 'left' }}
+                                    />
+                                </motion.h2>
                                 <Timeline>
                                     {experiences.map((exp, i) => (
                                         <TimelineItem 
@@ -256,19 +319,41 @@ export default function LandingPage() {
                         {/* Tech Stack */}
                         <ScrollReveal delay={0.1}>
                             <CyberCard glowColor="cyan">
-                                <div className="flex items-center justify-between mb-6">
+                                <motion.div 
+                                    className="flex items-center justify-between mb-6"
+                                    initial={{ opacity: 0, y: -10 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: false }}
+                                    transition={{ duration: 0.4 }}
+                                >
                                     <h2 className="text-sm font-bold text-text-primary uppercase tracking-widest">TECH STACK</h2>
-                                    <span className="text-xs text-text-muted font-mono">VIEW ALL</span>
-                                </div>
+                                    <motion.span 
+                                        className="text-xs text-text-muted font-mono"
+                                        animate={{ opacity: [0.5, 1, 0.5] }}
+                                        transition={{ repeat: Infinity, duration: 2 }}
+                                    >VIEW ALL</motion.span>
+                                </motion.div>
                                 <div className="grid grid-cols-4 gap-3">
-                                    <TechIcon name="React" color="#61DAFB"><ReactIcon /></TechIcon>
-                                    <TechIcon name="Next.js" color="#FFFFFF"><NextJsIcon /></TechIcon>
-                                    <TechIcon name="TypeScript" color="#3178C6"><TypeScriptIcon /></TechIcon>
-                                    <TechIcon name="Tailwind" color="#38bdf8"><TailwindIcon /></TechIcon>
-                                    <TechIcon name="Figma" color="#A259FF"><FigmaIcon /></TechIcon>
-                                    <TechIcon name="Redux" color="#764ABC"><ReduxIcon /></TechIcon>
-                                    <TechIcon name="Node.js" color="#339933"><NodeJsIcon /></TechIcon>
-                                    <TechIcon name="Git" color="#F05032"><GitIcon /></TechIcon>
+                                    {[
+                                        { name: 'React', color: '#61DAFB', icon: <ReactIcon /> },
+                                        { name: 'Next.js', color: '#FFFFFF', icon: <NextJsIcon /> },
+                                        { name: 'TypeScript', color: '#3178C6', icon: <TypeScriptIcon /> },
+                                        { name: 'Tailwind', color: '#38bdf8', icon: <TailwindIcon /> },
+                                        { name: 'Figma', color: '#A259FF', icon: <FigmaIcon /> },
+                                        { name: 'Redux', color: '#764ABC', icon: <ReduxIcon /> },
+                                        { name: 'Node.js', color: '#339933', icon: <NodeJsIcon /> },
+                                        { name: 'Git', color: '#F05032', icon: <GitIcon /> },
+                                    ].map((tech, i) => (
+                                        <motion.div
+                                            key={tech.name}
+                                            initial={{ opacity: 0, scale: 0.5 }}
+                                            whileInView={{ opacity: 1, scale: 1 }}
+                                            viewport={{ once: false }}
+                                            transition={{ duration: 0.3, delay: i * 0.08, type: 'spring', bounce: 0.4 }}
+                                        >
+                                            <TechIcon name={tech.name} color={tech.color}>{tech.icon}</TechIcon>
+                                        </motion.div>
+                                    ))}
                                 </div>
                             </CyberCard>
                         </ScrollReveal>
@@ -333,9 +418,18 @@ export default function LandingPage() {
                         {/* Education */}
                         <ScrollReveal delay={0.3}>
                             <CyberCard glowColor="cyan">
-                                <h2 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2 uppercase tracking-widest">
-                                    🎓 EDUCATION
-                                </h2>
+                                <motion.h2 
+                                    className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2 uppercase tracking-widest"
+                                    initial={{ opacity: 0, x: -15 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: false }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    <motion.span
+                                        animate={{ rotate: [0, 10, -10, 0] }}
+                                        transition={{ repeat: Infinity, duration: 3 }}
+                                    >🎓</motion.span> EDUCATION
+                                </motion.h2>
                                 <div className="relative">
                                     <h3 className="text-sm font-bold text-text-primary">Ho Chi Minh University of Science (HCMUS)</h3>
                                     <p className="text-xs text-text-secondary mt-1">Faculty of Information Technology</p>
@@ -350,9 +444,18 @@ export default function LandingPage() {
                         {/* Skills & Expertise */}
                         <ScrollReveal delay={0.4}>
                             <CyberCard glowColor="purple">
-                                <h2 className="text-sm font-bold text-text-primary mb-6 flex items-center gap-2 uppercase tracking-widest">
-                                    🛠️ SKILLS & EXPERTISE
-                                </h2>
+                                <motion.h2 
+                                    className="text-sm font-bold text-text-primary mb-6 flex items-center gap-2 uppercase tracking-widest"
+                                    initial={{ opacity: 0, x: -15 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: false }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    <motion.span
+                                        animate={{ rotate: [0, 15, -15, 0] }}
+                                        transition={{ repeat: Infinity, duration: 4 }}
+                                    >🛠️</motion.span> SKILLS & EXPERTISE
+                                </motion.h2>
                                 <div className="space-y-6">
                                     {skillCategories.map((cat) => (
                                         <div key={cat.title} className="p-4 rounded-xl border border-border-dim bg-bg-surface-dim/30">
