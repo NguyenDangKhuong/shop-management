@@ -12,7 +12,6 @@ import { useStandalone } from '@/hooks/useStandalone'
 // Cyberpunk Components
 import CyberCard from '@/components/ui/CyberCard'
 import TechBadge from '@/components/ui/TechBadge'
-import HologramAvatar from '@/components/ui/HologramAvatar'
 import { Timeline, TimelineItem } from '@/components/ui/Timeline'
 
 // MotionSite Components

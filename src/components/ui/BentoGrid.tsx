@@ -1,8 +1,7 @@
 'use client'
 
 import React from 'react'
-import { motion } from 'framer-motion'
-import { Code2, Cpu, Layout, Zap, Database, Globe } from 'lucide-react'
+import { Cpu, Layout, Zap, Database } from 'lucide-react'
 import { ScrollReveal, cn } from './ScrollReveal'
 
 const features = [

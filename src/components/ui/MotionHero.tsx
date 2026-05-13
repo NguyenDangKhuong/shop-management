@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Sparkles, ArrowRight, Code2, Download, BookOpen } from 'lucide-react'
+import { Sparkles, ArrowRight, Download, BookOpen } from 'lucide-react'
 import HologramAvatar from '@/components/ui/HologramAvatar'
 import { useTranslation } from '@/i18n'
 import Link from 'next/link'
