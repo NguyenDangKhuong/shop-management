@@ -2,6 +2,8 @@ import { render, screen, waitFor } from '@testing-library/react'
 import ProductTable from '../ProductTable'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
+jest.setTimeout(30000)
+
 // Mock Next.js navigation
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),

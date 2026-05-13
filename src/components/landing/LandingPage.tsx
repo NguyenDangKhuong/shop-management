@@ -15,6 +15,11 @@ import TechBadge from '@/components/ui/TechBadge'
 import HologramAvatar from '@/components/ui/HologramAvatar'
 import { Timeline, TimelineItem } from '@/components/ui/Timeline'
 
+// MotionSite Components
+import { MotionHero } from '@/components/ui/MotionHero'
+import { BentoGrid } from '@/components/ui/BentoGrid'
+import { ScrollReveal } from '@/components/ui/ScrollReveal'
+
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const experiences = [
@@ -143,7 +148,7 @@ export default function LandingPage() {
     const { isStandalone } = useStandalone()
 
     return (
-        <div className="font-sans min-h-screen flex flex-col items-center pt-0 relative transition-colors duration-300 overflow-x-hidden">
+        <div className="font-sans min-h-screen flex flex-col items-center pt-0 relative transition-colors duration-300">
             {/* Global Background Grid Pattern */}
             <div className="fixed inset-0 pointer-events-none z-[-1] opacity-20" style={{ backgroundImage: 'linear-gradient(var(--border-primary) 1px, transparent 1px), linear-gradient(90deg, var(--border-primary) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
             
@@ -166,115 +171,82 @@ export default function LandingPage() {
                 }
             />
 
-            <main className="max-w-[1400px] w-full mx-auto relative z-10 mt-6 px-4 md:px-8 pb-32">
+            <main className="max-w-[1400px] w-full mx-auto relative z-10 mt-6 px-4 md:px-8 pb-32 flex flex-col gap-6 lg:gap-8">
+                <MotionHero />
+                <BentoGrid />
+
                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8">
                     
                     {/* ════ LEFT COLUMN ════ */}
                     <div className="xl:col-span-8 flex flex-col gap-6 lg:gap-8">
-                        
-                        {/* Hero Section */}
-                        <CyberCard glowColor="cyan" className="p-8 md:p-12 border-t-4 border-t-accent-primary">
-                            <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-12 relative z-10">
-                                <div className="flex-1 space-y-6">
-                                    <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-text-muted uppercase">
-                                        <span className="w-4 h-0.5 bg-accent-primary" /> HERO SECTION
-                                    </div>
-                                    <h1 className="text-5xl md:text-7xl font-black text-text-primary leading-[1.1] tracking-tight">
-                                        Hello, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-primary to-[var(--neon-purple)] animate-pulse" style={{ textShadow: '0 0 20px rgba(176, 38, 255, 0.3)' }}>Khuong.</span><br />
-                                        <span className="text-3xl md:text-5xl text-text-secondary mt-2 block">Front-End Developer</span>
-                                    </h1>
-                                    <h2 className="text-xl md:text-2xl font-bold text-text-primary flex items-center gap-3">
-                                        8+ Years <span className="w-1.5 h-1.5 rounded-full bg-accent-primary shadow-[0_0_10px_var(--neon-cyan)]" /> React <span className="text-accent-primary">Specialist</span>
-                                    </h2>
-                                    <p className="text-text-secondary leading-relaxed max-w-xl text-lg">
-                                        {t('landing.purpose')}
-                                    </p>
-                                    <div className="pt-6 flex flex-wrap gap-4">
-                                        <Link href="/projects" className="group relative px-6 py-3 rounded-lg overflow-hidden border border-accent-primary text-accent-primary font-bold transition hover:bg-accent-primary/10">
-                                            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-accent-primary/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                                            <span className="relative flex items-center gap-2">🚀 Side Projects</span>
-                                        </Link>
-                                        <Link href="/blogs" className="group relative px-6 py-3 rounded-lg overflow-hidden border border-[var(--neon-purple)] text-[var(--neon-purple)] font-bold transition hover:bg-[var(--neon-purple)]/10">
-                                            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-[var(--neon-purple)]/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                                            <span className="relative flex items-center gap-2">📝 Blog</span>
-                                        </Link>
-                                        <Link href="/cv" className="group relative px-6 py-3 rounded-lg overflow-hidden border border-[var(--neon-green)] text-[var(--neon-green)] font-bold transition hover:bg-[var(--neon-green)]/10">
-                                            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-[var(--neon-green)]/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                                            <span className="relative flex items-center gap-2">📄 Download CV</span>
-                                        </Link>
-                                    </div>
-                                </div>
-                                <div className="shrink-0 scale-110 md:scale-125 transform-gpu mt-8 md:mt-0 md:mr-10">
-                                    <HologramAvatar src="/image/home/avatar.png" alt="Khuong" size={300} color="var(--neon-cyan)" />
-                                </div>
-                            </div>
-                            {/* Scroll Down Indicator */}
-                            <div className="flex items-center justify-end gap-2 mt-6 text-text-muted text-xs font-bold tracking-widest uppercase animate-bounce">
-                                SCROLL DOWN <span className="text-accent-primary">↓</span>
-                            </div>
-                        </CyberCard>
+
 
                         {/* About Me */}
-                        <CyberCard glowColor="purple">
-                            <h2 className="text-xl font-bold text-text-primary mb-6 flex items-center gap-3 uppercase tracking-wider">
-                                <span className="text-[var(--neon-purple)]">👤</span> ABOUT ME
-                            </h2>
-                            <p className="text-text-secondary leading-relaxed mb-10 text-lg">
-                                {t('landing.aboutText')}
-                            </p>
-                            
-                            {/* Horizontal Timeline */}
-                            <div className="relative h-1.5 bg-border-primary rounded-full mx-4 mb-4">
-                                <div className="absolute top-0 left-0 h-full w-[80%] bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] rounded-full shadow-[0_0_15px_var(--neon-cyan)]" />
+                        <ScrollReveal>
+                            <CyberCard glowColor="purple">
+                                <h2 className="text-xl font-bold text-text-primary mb-6 flex items-center gap-3 uppercase tracking-wider">
+                                    <span className="text-[var(--neon-purple)]">👤</span> ABOUT ME
+                                </h2>
+                                <p className="text-text-secondary leading-relaxed mb-10 text-lg">
+                                    {t('landing.aboutText')}
+                                </p>
                                 
-                                <div className="absolute top-1/2 left-[0%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-bg-card border-2 border-[var(--neon-cyan)] rounded-full z-10" />
-                                <div className="absolute top-1/2 left-[25%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-bg-card border-2 border-[var(--neon-cyan)] rounded-full z-10" />
-                                <div className="absolute top-1/2 left-[55%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-bg-card border-2 border-[var(--neon-cyan)] rounded-full z-10" />
-                                <div className="absolute top-1/2 left-[80%] -translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-[var(--neon-purple)] rounded-full shadow-[0_0_15px_var(--neon-purple)] z-20 animate-pulse" />
-                                <div className="absolute top-1/2 left-[100%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-bg-card border-2 border-border-primary rounded-full z-10" />
+                                {/* Horizontal Timeline */}
+                                <div className="relative h-1.5 bg-border-primary rounded-full mx-4 mb-4">
+                                    <div className="absolute top-0 left-0 h-full w-[80%] bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] rounded-full shadow-[0_0_15px_var(--neon-cyan)]" />
+                                    
+                                    <div className="absolute top-1/2 left-[0%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-bg-card border-2 border-[var(--neon-cyan)] rounded-full z-10" />
+                                    <div className="absolute top-1/2 left-[25%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-bg-card border-2 border-[var(--neon-cyan)] rounded-full z-10" />
+                                    <div className="absolute top-1/2 left-[55%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-bg-card border-2 border-[var(--neon-cyan)] rounded-full z-10" />
+                                    <div className="absolute top-1/2 left-[80%] -translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-[var(--neon-purple)] rounded-full shadow-[0_0_15px_var(--neon-purple)] z-20 animate-pulse" />
+                                    <div className="absolute top-1/2 left-[100%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-bg-card border-2 border-border-primary rounded-full z-10" />
 
-                                <div className="absolute top-6 left-0 -translate-x-1/2 text-xs font-bold text-text-muted">2014</div>
-                                <div className="absolute top-6 left-[25%] -translate-x-1/2 text-xs font-bold text-text-muted">2018</div>
-                                <div className="absolute top-6 left-[55%] -translate-x-1/2 text-xs font-bold text-text-muted">2022</div>
-                                <div className="absolute top-6 left-[80%] -translate-x-1/2 text-center text-xs font-bold text-[var(--neon-purple)]">
-                                    Present<br /><span className="text-[10px] text-[var(--neon-purple)]/70">Tech Lead</span>
+                                    <div className="absolute top-6 left-0 -translate-x-1/2 text-xs font-bold text-text-muted">2014</div>
+                                    <div className="absolute top-6 left-[25%] -translate-x-1/2 text-xs font-bold text-text-muted">2018</div>
+                                    <div className="absolute top-6 left-[55%] -translate-x-1/2 text-xs font-bold text-text-muted">2022</div>
+                                    <div className="absolute top-6 left-[80%] -translate-x-1/2 text-center text-xs font-bold text-[var(--neon-purple)]">
+                                        Present<br /><span className="text-[10px] text-[var(--neon-purple)]/70">Tech Lead</span>
+                                    </div>
+                                    <div className="absolute top-6 left-[100%] -translate-x-1/2 text-xs font-bold text-text-muted">2030</div>
                                 </div>
-                                <div className="absolute top-6 left-[100%] -translate-x-1/2 text-xs font-bold text-text-muted">2030</div>
-                            </div>
-                        </CyberCard>
+                            </CyberCard>
+                        </ScrollReveal>
 
                         {/* Work Experience */}
-                        <CyberCard glowColor="green">
-                            <h2 className="text-xl font-bold text-text-primary mb-8 flex items-center gap-3 uppercase tracking-wider">
-                                <span className="text-[var(--neon-green)]">💼</span> WORK EXPERIENCE
-                            </h2>
-                            <Timeline>
-                                {experiences.map((exp, i) => (
-                                    <TimelineItem 
-                                        key={i} 
-                                        color={exp.color} 
-                                        title={exp.role} 
-                                        subtitle={`${exp.company}${exp.client ? ` • ${exp.client}` : ''} — ${exp.location}`} 
-                                        date={exp.period}
-                                        teamSize={exp.teamSize}
-                                    >
-                                        <ul className="space-y-2 mt-2">
-                                            {exp.highlights.map((h, j) => (
-                                                <li key={j} className="flex items-start gap-2">
-                                                    <span className="text-[10px] mt-1.5" style={{ color: exp.color }}>►</span>
-                                                    <span>{h}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                        {exp.link && (
-                                            <a href={exp.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wide mt-4 hover:underline" style={{ color: exp.color }}>
-                                                🔗 {exp.link}
-                                            </a>
-                                        )}
-                                    </TimelineItem>
-                                ))}
-                            </Timeline>
-                        </CyberCard>
+                        <ScrollReveal delay={0.2}>
+                            <CyberCard glowColor="green">
+                                <h2 className="text-xl font-bold text-text-primary mb-8 flex items-center gap-3 uppercase tracking-wider">
+                                    <span className="text-[var(--neon-green)]">💼</span> WORK EXPERIENCE
+                                </h2>
+                                <Timeline>
+                                    {experiences.map((exp, i) => (
+                                        <TimelineItem 
+                                            key={i} 
+                                            color={exp.color} 
+                                            title={exp.role} 
+                                            subtitle={`${exp.company}${exp.client ? ` • ${exp.client}` : ''} — ${exp.location}`} 
+                                            date={exp.period}
+                                            teamSize={exp.teamSize}
+                                        >
+                                            <ul className="space-y-2 mt-2">
+                                                {exp.highlights.map((h, j) => (
+                                                    <li key={j} className="flex items-start gap-2">
+                                                        <span className="text-[10px] mt-1.5" style={{ color: exp.color }}>►</span>
+                                                        <span>{h}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            {exp.link && (
+                                                <a href={exp.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wide mt-4 hover:underline" style={{ color: exp.color }}>
+                                                    🔗 {exp.link}
+                                                </a>
+                                            )}
+                                        </TimelineItem>
+                                    ))}
+                                </Timeline>
+                            </CyberCard>
+                        </ScrollReveal>
+
 
                     </div>
 
@@ -283,55 +255,59 @@ export default function LandingPage() {
                     <div className="xl:col-span-4 flex flex-col gap-6 lg:gap-8">
                         
                         {/* Tech Stack */}
-                        <CyberCard glowColor="cyan">
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-sm font-bold text-text-primary uppercase tracking-widest">TECH STACK</h2>
-                                <span className="text-xs text-text-muted font-mono">VIEW ALL</span>
-                            </div>
-                            <div className="grid grid-cols-4 gap-3">
-                                <TechIcon name="React" color="#61DAFB"><ReactIcon /></TechIcon>
-                                <TechIcon name="Next.js" color="#FFFFFF"><NextJsIcon /></TechIcon>
-                                <TechIcon name="TypeScript" color="#3178C6"><TypeScriptIcon /></TechIcon>
-                                <TechIcon name="Tailwind" color="#38bdf8"><TailwindIcon /></TechIcon>
-                                <TechIcon name="Figma" color="#A259FF"><FigmaIcon /></TechIcon>
-                                <TechIcon name="Redux" color="#764ABC"><ReduxIcon /></TechIcon>
-                                <TechIcon name="Node.js" color="#339933"><NodeJsIcon /></TechIcon>
-                                <TechIcon name="Git" color="#F05032"><GitIcon /></TechIcon>
-                            </div>
-                        </CyberCard>
+                        <ScrollReveal delay={0.1}>
+                            <CyberCard glowColor="cyan">
+                                <div className="flex items-center justify-between mb-6">
+                                    <h2 className="text-sm font-bold text-text-primary uppercase tracking-widest">TECH STACK</h2>
+                                    <span className="text-xs text-text-muted font-mono">VIEW ALL</span>
+                                </div>
+                                <div className="grid grid-cols-4 gap-3">
+                                    <TechIcon name="React" color="#61DAFB"><ReactIcon /></TechIcon>
+                                    <TechIcon name="Next.js" color="#FFFFFF"><NextJsIcon /></TechIcon>
+                                    <TechIcon name="TypeScript" color="#3178C6"><TypeScriptIcon /></TechIcon>
+                                    <TechIcon name="Tailwind" color="#38bdf8"><TailwindIcon /></TechIcon>
+                                    <TechIcon name="Figma" color="#A259FF"><FigmaIcon /></TechIcon>
+                                    <TechIcon name="Redux" color="#764ABC"><ReduxIcon /></TechIcon>
+                                    <TechIcon name="Node.js" color="#339933"><NodeJsIcon /></TechIcon>
+                                    <TechIcon name="Git" color="#F05032"><GitIcon /></TechIcon>
+                                </div>
+                            </CyberCard>
+                        </ScrollReveal>
 
                         {/* Featured Side Project */}
-                        <CyberCard glowColor="purple">
-                            <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-sm font-bold text-text-primary uppercase tracking-widest">FEATURED SIDE PROJECT</h2>
-                                <span className="text-xs text-text-muted font-mono">VIEW ALL</span>
-                            </div>
-                            <div className="rounded-xl overflow-hidden mb-4 border border-border-primary relative group">
-                                <div className="absolute inset-0 bg-[var(--neon-purple)]/20 opacity-0 group-hover:opacity-100 transition duration-300 z-10" />
-                                <Image
-                                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&auto=format&fit=crop"
-                                    alt="Project Mockup"
-                                    width={400}
-                                    height={200}
-                                    className="w-full h-auto object-cover transform group-hover:scale-105 transition duration-500"
-                                />
-                            </div>
-                            <h3 className="text-lg font-bold text-text-primary mb-2 text-shadow-glow">E-commerce App</h3>
-                            <p className="text-sm text-text-secondary mb-4">A modern e-commerce application built with React, TypeScript and Node.js.</p>
-                            <div className="flex flex-wrap gap-2 mb-4">
-                                <span className="px-2 py-1 text-[10px] uppercase tracking-wider rounded-sm border border-border-dim text-text-secondary">React</span>
-                                <span className="px-2 py-1 text-[10px] uppercase tracking-wider rounded-sm border border-border-dim text-text-secondary">Next.js</span>
-                                <span className="px-2 py-1 text-[10px] uppercase tracking-wider rounded-sm border border-border-dim text-text-secondary">TypeScript</span>
-                            </div>
-                            <div className="flex gap-4 text-xs font-bold uppercase tracking-wide">
-                                <Link href="/products" className="text-[var(--neon-purple)] flex items-center gap-1 hover:underline">
-                                    <span>🌐</span> Live Demo
-                                </Link>
-                                <Link href={loginUrl} className="text-text-secondary hover:text-text-primary flex items-center gap-1 hover:underline">
-                                    <span>🔐</span> Admin Panel
-                                </Link>
-                            </div>
-                        </CyberCard>
+                        <ScrollReveal delay={0.2}>
+                            <CyberCard glowColor="purple">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h2 className="text-sm font-bold text-text-primary uppercase tracking-widest">FEATURED SIDE PROJECT</h2>
+                                    <span className="text-xs text-text-muted font-mono">VIEW ALL</span>
+                                </div>
+                                <div className="rounded-xl overflow-hidden mb-4 border border-border-primary relative group">
+                                    <div className="absolute inset-0 bg-[var(--neon-purple)]/20 opacity-0 group-hover:opacity-100 transition duration-300 z-10" />
+                                    <Image
+                                        src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&auto=format&fit=crop"
+                                        alt="Project Mockup"
+                                        width={400}
+                                        height={200}
+                                        className="w-full h-auto object-cover transform group-hover:scale-105 transition duration-500"
+                                    />
+                                </div>
+                                <h3 className="text-lg font-bold text-text-primary mb-2 text-shadow-glow">E-commerce App</h3>
+                                <p className="text-sm text-text-secondary mb-4">A modern e-commerce application built with React, TypeScript and Node.js.</p>
+                                <div className="flex flex-wrap gap-2 mb-4">
+                                    <span className="px-2 py-1 text-[10px] uppercase tracking-wider rounded-sm border border-border-dim text-text-secondary">React</span>
+                                    <span className="px-2 py-1 text-[10px] uppercase tracking-wider rounded-sm border border-border-dim text-text-secondary">Next.js</span>
+                                    <span className="px-2 py-1 text-[10px] uppercase tracking-wider rounded-sm border border-border-dim text-text-secondary">TypeScript</span>
+                                </div>
+                                <div className="flex gap-4 text-xs font-bold uppercase tracking-wide">
+                                    <Link href="/products" className="text-[var(--neon-purple)] flex items-center gap-1 hover:underline">
+                                        <span>🌐</span> Live Demo
+                                    </Link>
+                                    <Link href={loginUrl} className="text-text-secondary hover:text-text-primary flex items-center gap-1 hover:underline">
+                                        <span>🔐</span> Admin Panel
+                                    </Link>
+                                </div>
+                            </CyberCard>
+                        </ScrollReveal>
 
                         {/* Contact & Performance Stats */}
                         <div className="grid grid-cols-2 gap-4">
@@ -356,40 +332,44 @@ export default function LandingPage() {
                         </div>
 
                         {/* Education */}
-                        <CyberCard glowColor="cyan">
-                            <h2 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2 uppercase tracking-widest">
-                                🎓 EDUCATION
-                            </h2>
-                            <div className="relative">
-                                <h3 className="text-sm font-bold text-text-primary">Ho Chi Minh University of Science (HCMUS)</h3>
-                                <p className="text-xs text-text-secondary mt-1">Faculty of Information Technology</p>
-                                <p className="text-xs text-text-muted">HCM, Vietnam</p>
-                                <span className="inline-block mt-3 text-[10px] font-bold px-3 py-1 rounded-sm border border-[var(--neon-cyan)]/40 text-[var(--neon-cyan)] bg-[var(--neon-cyan)]/10">
-                                    Jul 2014 — Jul 2018
-                                </span>
-                            </div>
-                        </CyberCard>
+                        <ScrollReveal delay={0.3}>
+                            <CyberCard glowColor="cyan">
+                                <h2 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2 uppercase tracking-widest">
+                                    🎓 EDUCATION
+                                </h2>
+                                <div className="relative">
+                                    <h3 className="text-sm font-bold text-text-primary">Ho Chi Minh University of Science (HCMUS)</h3>
+                                    <p className="text-xs text-text-secondary mt-1">Faculty of Information Technology</p>
+                                    <p className="text-xs text-text-muted">HCM, Vietnam</p>
+                                    <span className="inline-block mt-3 text-[10px] font-bold px-3 py-1 rounded-sm border border-[var(--neon-cyan)]/40 text-[var(--neon-cyan)] bg-[var(--neon-cyan)]/10">
+                                        Jul 2014 — Jul 2018
+                                    </span>
+                                </div>
+                            </CyberCard>
+                        </ScrollReveal>
 
                         {/* Skills & Expertise */}
-                        <CyberCard glowColor="purple">
-                            <h2 className="text-sm font-bold text-text-primary mb-6 flex items-center gap-2 uppercase tracking-widest">
-                                🛠️ SKILLS & EXPERTISE
-                            </h2>
-                            <div className="space-y-6">
-                                {skillCategories.map((cat) => (
-                                    <div key={cat.title} className="p-4 rounded-xl border border-border-dim bg-bg-surface-dim/30">
-                                        <h3 className="text-xs font-bold mb-3 tracking-widest" style={{ color: cat.color }}>
-                                            {cat.title}
-                                        </h3>
-                                        <div className="flex flex-wrap gap-2">
-                                            {cat.skills.map((skill) => (
-                                                <TechBadge key={skill} label={skill} color={cat.color} />
-                                            ))}
+                        <ScrollReveal delay={0.4}>
+                            <CyberCard glowColor="purple">
+                                <h2 className="text-sm font-bold text-text-primary mb-6 flex items-center gap-2 uppercase tracking-widest">
+                                    🛠️ SKILLS & EXPERTISE
+                                </h2>
+                                <div className="space-y-6">
+                                    {skillCategories.map((cat) => (
+                                        <div key={cat.title} className="p-4 rounded-xl border border-border-dim bg-bg-surface-dim/30">
+                                            <h3 className="text-xs font-bold mb-3 tracking-widest" style={{ color: cat.color }}>
+                                                {cat.title}
+                                            </h3>
+                                            <div className="flex flex-wrap gap-2">
+                                                {cat.skills.map((skill) => (
+                                                    <TechBadge key={skill} label={skill} color={cat.color} />
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </CyberCard>
+                                    ))}
+                                </div>
+                            </CyberCard>
+                        </ScrollReveal>
 
                     </div>
                 </div>
