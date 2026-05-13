@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { MotionHero } from '../MotionHero'
 
 describe('MotionHero Component', () => {
@@ -6,10 +6,12 @@ describe('MotionHero Component', () => {
         render(<MotionHero purposeText="landing.purpose" />)
     })
 
-    it('displays the correct name and title', () => {
+    it('displays the correct name and title', async () => {
         render(<MotionHero purposeText="landing.purpose" />)
         expect(screen.getByText(/Hello, I'm/i)).toBeInTheDocument()
-        expect(screen.getByText(/Khuong/i)).toBeInTheDocument()
+        await waitFor(() => {
+            expect(screen.getByText(/Khuong/i)).toBeInTheDocument()
+        }, { timeout: 3000 })
         expect(screen.getByText(/Front-End Developer/i)).toBeInTheDocument()
     })
 
