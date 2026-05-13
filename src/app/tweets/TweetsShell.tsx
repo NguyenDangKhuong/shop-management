@@ -11,7 +11,7 @@ interface SavedUser {
     username: string
 }
 
-const PINNED_USERNAME = process.env.NEXT_PUBLIC_PINNED_USERNAME || ''
+const _PINNED_USERNAME = process.env.NEXT_PUBLIC_PINNED_USERNAME || ''
 
 const TABS = [
     { href: '/tweets/for-you', label: 'For You', emoji: '✨' },

@@ -12,4 +12,5 @@ export function getRedis(): Redis {
   return redis
 }
 
-export default { get redis() { return getRedis() } }
+const redisClient = { get redis() { return getRedis() } }
+export default redisClient
