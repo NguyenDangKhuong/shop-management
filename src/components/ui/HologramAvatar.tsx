@@ -59,7 +59,7 @@ export default function HologramAvatar({
                     sizes="(max-width: 768px) 250px, 350px"
                     priority
                     quality={100}
-                    className="object-cover scale-[5] translate-y-[8%]"
+                    className="object-cover scale-[5] translate-y-[15%] md:translate-y-[8%]"
                 />
             </div>
             {/* Scanner line overlay effect */}
