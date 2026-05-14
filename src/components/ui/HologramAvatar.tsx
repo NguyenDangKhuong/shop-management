@@ -19,9 +19,9 @@ export default function HologramAvatar({
     return (
         <div
             className={`relative flex items-center justify-center ${className}`}
-            style={{ 
+            style={{
                 ...(size ? { width: size, height: size } : {}),
-                '--holo-color': color 
+                '--holo-color': color
             } as React.CSSProperties}
         >
             {/* Outer Rotating Ring 1 */}
@@ -59,7 +59,7 @@ export default function HologramAvatar({
                     sizes="(max-width: 768px) 250px, 350px"
                     priority
                     quality={100}
-                    className="object-cover scale-[5] translate-y-[15%] md:translate-y-[8%]"
+                    className="object-cover scale-[5] translate-y-[8%]"
                 />
             </div>
             {/* Scanner line overlay effect */}
