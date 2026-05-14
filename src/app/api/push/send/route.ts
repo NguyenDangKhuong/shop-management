@@ -14,7 +14,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+ 
 const webpush = require('web-push')
 import connectDB from '@/utils/connectDb'
 import PushSubscriptionModel from '@/models/PushSubscription'

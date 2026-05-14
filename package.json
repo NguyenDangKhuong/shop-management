@@ -15,8 +15,8 @@
     "build": "next build",
     "build-ananalyzer": "ANALYZE=true yarn build",
     "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "format": "prettier --write \"./**/*.{ts,tsx,json}\"",
     "test": "jest",
     "test:perf": "lighthouse http://localhost:3000 --only-categories=performance --output=html --output-path=./lighthouse-reports/report-$(date +%Y%m%d-%H%M%S).html --view",
@@ -71,6 +71,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
     "@next/bundle-analyzer": "^14.1.0",
     "@notionhq/client": "^5.9.0",
     "@tailwindcss/postcss": "^4",
@@ -91,7 +92,7 @@
     "@types/shortid": "^0.0.29",
     "@typescript-eslint/eslint-plugin": "^8.51.0",
     "@typescript-eslint/parser": "^8.51.0",
-    "eslint": "^8.54.0",
+    "eslint": "^9",
     "eslint-config-next": "^15.5.12",
     "eslint-plugin-unused-imports": "^4.3.0",
     "jest": "^29.7.0",

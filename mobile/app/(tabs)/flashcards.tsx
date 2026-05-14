@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
     useSharedValue, useAnimatedStyle, withTiming, interpolate,
 } from 'react-native-reanimated';
-import { flashcards, type Flashcard } from '@/constants/flashcardData';
+import { flashcards } from '@/constants/flashcardData';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = SCREEN_WIDTH - 40;

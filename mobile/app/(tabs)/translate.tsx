@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     View, Text, TextInput, StyleSheet, TouchableOpacity,
-    ScrollView, FlatList, ActivityIndicator, Alert,
+    ScrollView, ActivityIndicator, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Clipboard from 'expo-clipboard';

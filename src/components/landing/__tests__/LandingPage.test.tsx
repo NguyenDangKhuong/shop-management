@@ -7,7 +7,7 @@ jest.mock('next/image', () => ({
     default: (props: any) => {
         // Filter out Next.js specific props that don't apply to <img>
         const { priority, quality, loading, sizes, ...imgProps } = props
-        // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+        // eslint-disable-next-line jsx-a11y/alt-text
         return <img {...imgProps} />
     }
 }))
