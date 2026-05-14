@@ -55,11 +55,11 @@ export default function HologramAvatar({
                 <Image
                     src={src}
                     alt={alt}
-                    fill
-                    sizes="(max-width: 768px) 250px, 350px"
+                    width={size || 350}
+                    height={size || 350}
                     priority
                     quality={100}
-                    className="object-cover scale-[5] translate-y-[15%]"
+                    className="w-full h-auto object-cover scale-[2] -translate-y-[40%]"
                 />
             </div>
             {/* Scanner line overlay effect */}
