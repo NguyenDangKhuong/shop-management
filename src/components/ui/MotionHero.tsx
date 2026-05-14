@@ -72,13 +72,13 @@ export const MotionHero = () => {
             <motion.div 
                 animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3], rotate: [0, 90, 0] }}
                 transition={{ repeat: Infinity, duration: 15, ease: "easeInOut" }}
-                className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-neon-purple/20 rounded-full blur-[120px] mix-blend-screen pointer-events-none -z-10" 
+                className="hidden md:block absolute top-0 right-0 w-[40rem] h-[40rem] bg-neon-purple/20 rounded-full blur-[120px] mix-blend-screen pointer-events-none -z-10" 
             />
             
             <motion.div 
                 animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.5, 0.2], rotate: [0, -90, 0] }}
                 transition={{ repeat: Infinity, duration: 20, ease: "easeInOut", delay: 2 }}
-                className="absolute bottom-0 left-0 w-[50rem] h-[50rem] bg-neon-cyan/20 rounded-full blur-[120px] mix-blend-screen pointer-events-none -z-10" 
+                className="hidden md:block absolute bottom-0 left-0 w-[50rem] h-[50rem] bg-neon-cyan/20 rounded-full blur-[120px] mix-blend-screen pointer-events-none -z-10" 
             />
 
             {/* Left Content */}
@@ -223,8 +223,8 @@ export const MotionHero = () => {
                     className="relative"
                 >
                     {/* Glowing Aura behind Avatar */}
-                    <div className="absolute inset-0 bg-neon-cyan/30 blur-[80px] rounded-full mix-blend-screen pointer-events-none" />
-                    <div className="absolute inset-[-20%] bg-neon-purple/20 blur-[100px] rounded-full mix-blend-screen pointer-events-none animate-pulse" />
+                    <div className="absolute inset-0 bg-neon-cyan/30 blur-[40px] md:blur-[80px] rounded-full mix-blend-screen pointer-events-none" />
+                    <div className="absolute inset-[-20%] bg-neon-purple/20 blur-[50px] md:blur-[100px] rounded-full mix-blend-screen pointer-events-none md:animate-pulse" />
                     
                     {/* The Avatar itself */}
                     <div className="relative border-4 border-neon-cyan/20 rounded-full p-4 bg-bg-surface-dim/30 backdrop-blur-xl shadow-[0_0_50px_-10px_var(--neon-cyan)]">
