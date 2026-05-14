@@ -15,10 +15,17 @@ import CyberCard from '@/components/ui/CyberCard'
 import TechBadge from '@/components/ui/TechBadge'
 import { Timeline, TimelineItem } from '@/components/ui/Timeline'
 
-// MotionSite Components
 import { MotionHero } from '@/components/ui/MotionHero'
 import { BentoGrid } from '@/components/ui/BentoGrid'
 import { ScrollReveal } from '@/components/ui/ScrollReveal'
+import { DecryptText } from '@/components/ui/DecryptText'
+import { SpaceTerminal } from '@/components/ui/SpaceTerminal'
+import { StarMap } from '@/components/ui/StarMap'
+import dynamic from 'next/dynamic'
+
+const HologramBackground = dynamic(() => import('@/components/ui/HologramBackground'), {
+    ssr: false,
+})
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -146,16 +153,23 @@ export default function LandingPage() {
     const { t, language, setLanguage } = useTranslation()
     const loginUrl = useLoginUrl()
     const { isStandalone } = useStandalone()
+    const [expViewMode, setExpViewMode] = React.useState<'list' | 'map'>('list')
 
     return (
         <div className="font-sans min-h-screen flex flex-col items-center pt-0 relative transition-colors duration-300">
             {/* Global Background Grid Pattern */}
             <div className="fixed inset-0 pointer-events-none z-[-1] opacity-20" style={{ backgroundImage: 'linear-gradient(var(--border-primary) 1px, transparent 1px), linear-gradient(90deg, var(--border-primary) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
             
-            {/* Ambient Background Glow Orbs — Nebula effect */}
-            <div className="fixed top-[-15%] left-[-15%] w-[55%] h-[55%] rounded-full bg-[var(--neon-cyan)] opacity-[0.06] blur-[150px] pointer-events-none z-[-1]" />
-            <div className="fixed bottom-[-15%] right-[-15%] w-[60%] h-[60%] rounded-full bg-[var(--neon-purple)] opacity-[0.05] blur-[180px] pointer-events-none z-[-1]" />
-            <div className="fixed top-[30%] left-[50%] w-[40%] h-[40%] rounded-full bg-[#0066ff] opacity-[0.04] blur-[130px] pointer-events-none z-[-1]" />
+            {/* Ambient Background Glow Orbs & Hologram (Desktop) */}
+            <div className="hidden md:block">
+                <HologramBackground />
+            </div>
+            
+            {/* Mobile Fallback Glows */}
+            <div className="md:hidden">
+                <div className="fixed top-[-15%] left-[-15%] w-[55%] h-[55%] rounded-full bg-[var(--neon-cyan)] opacity-[0.06] blur-[150px] pointer-events-none z-[-1]" />
+                <div className="fixed bottom-[-15%] right-[-15%] w-[60%] h-[60%] rounded-full bg-[var(--neon-purple)] opacity-[0.05] blur-[180px] pointer-events-none z-[-1]" />
+            </div>
 
             <SiteHeader
                 maxWidth="max-w-[1400px]"
@@ -195,7 +209,7 @@ export default function LandingPage() {
                                         className="text-[var(--neon-purple)]"
                                         animate={{ scale: [1, 1.2, 1] }}
                                         transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-                                    >👤</motion.span> {t('landing.about').toUpperCase()}
+                                    >👤</motion.span> <DecryptText text={t('landing.about').toUpperCase()} />
                                     <motion.span 
                                         className="flex-1 h-[1px] bg-gradient-to-r from-[var(--neon-purple)] to-transparent ml-3"
                                         initial={{ scaleX: 0 }}
@@ -259,53 +273,66 @@ export default function LandingPage() {
                         {/* Work Experience */}
                         <ScrollReveal delay={0.2}>
                             <CyberCard glowColor="green">
-                                <motion.h2 
-                                    className="text-xl font-bold text-text-primary mb-8 flex items-center gap-3 uppercase tracking-wider"
-                                    initial={{ opacity: 0, x: -20 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    viewport={{ once: false }}
-                                    transition={{ duration: 0.5 }}
-                                >
-                                    <motion.span 
-                                        className="text-[var(--neon-green)]"
-                                        animate={{ rotate: [0, -10, 10, 0] }}
-                                        transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-                                    >💼</motion.span> {t('landing.experience').toUpperCase()}
-                                    <motion.span 
-                                        className="flex-1 h-[1px] bg-gradient-to-r from-[var(--neon-green)] to-transparent ml-3"
-                                        initial={{ scaleX: 0 }}
-                                        whileInView={{ scaleX: 1 }}
+                                <div className="flex items-center justify-between mb-8">
+                                    <motion.h2 
+                                        className="text-xl font-bold text-text-primary flex items-center gap-3 uppercase tracking-wider m-0"
+                                        initial={{ opacity: 0, x: -20 }}
+                                        whileInView={{ opacity: 1, x: 0 }}
                                         viewport={{ once: false }}
-                                        transition={{ duration: 0.8, delay: 0.3 }}
-                                        style={{ transformOrigin: 'left' }}
-                                    />
-                                </motion.h2>
-                                <Timeline>
-                                    {experiences.map((exp, i) => (
-                                        <TimelineItem 
-                                            key={i} 
-                                            color={exp.color} 
-                                            title={exp.role} 
-                                            subtitle={`${exp.company}${exp.client ? ` • ${exp.client}` : ''} — ${exp.location}`} 
-                                            date={exp.period}
-                                            teamSize={exp.teamSize}
-                                        >
-                                            <ul className="space-y-2 mt-2">
-                                                {exp.highlights.map((h, j) => (
-                                                    <li key={j} className="flex items-start gap-2">
-                                                        <span className="text-[10px] mt-1.5" style={{ color: exp.color }}>►</span>
-                                                        <span>{h}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                            {exp.link && (
-                                                <a href={exp.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wide mt-4 hover:underline" style={{ color: exp.color }}>
-                                                    🔗 {exp.link}
-                                                </a>
-                                            )}
-                                        </TimelineItem>
-                                    ))}
-                                </Timeline>
+                                        transition={{ duration: 0.5 }}
+                                    >
+                                        <motion.span 
+                                            className="text-[var(--neon-green)]"
+                                            animate={{ rotate: [0, -10, 10, 0] }}
+                                            transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+                                        >💼</motion.span> <DecryptText text={t('landing.experience').toUpperCase()} />
+                                        <motion.span 
+                                            className="hidden sm:block flex-1 h-[1px] bg-gradient-to-r from-[var(--neon-green)] to-transparent ml-3"
+                                            initial={{ scaleX: 0 }}
+                                            whileInView={{ scaleX: 1 }}
+                                            viewport={{ once: false }}
+                                            transition={{ duration: 0.8, delay: 0.3 }}
+                                            style={{ transformOrigin: 'left' }}
+                                        />
+                                    </motion.h2>
+
+                                    <button 
+                                        onClick={() => setExpViewMode(prev => prev === 'list' ? 'map' : 'list')}
+                                        className="text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-md border border-[var(--neon-green)] text-[var(--neon-green)] hover:bg-[var(--neon-green)]/10 transition-colors flex items-center gap-2"
+                                    >
+                                        {expViewMode === 'list' ? '🌌 Star Map' : '📋 List View'}
+                                    </button>
+                                </div>
+                                {expViewMode === 'list' ? (
+                                    <Timeline>
+                                        {experiences.map((exp, i) => (
+                                            <TimelineItem 
+                                                key={i} 
+                                                color={exp.color} 
+                                                title={exp.role} 
+                                                subtitle={`${exp.company}${exp.client ? ` • ${exp.client}` : ''} — ${exp.location}`} 
+                                                date={exp.period}
+                                                teamSize={exp.teamSize}
+                                            >
+                                                <ul className="space-y-2 mt-2">
+                                                    {exp.highlights.map((h, j) => (
+                                                        <li key={j} className="flex items-start gap-2">
+                                                            <span className="text-[10px] mt-1.5" style={{ color: exp.color }}>►</span>
+                                                            <span>{h}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                                {exp.link && (
+                                                    <a href={exp.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wide mt-4 hover:underline" style={{ color: exp.color }}>
+                                                        🔗 {exp.link}
+                                                    </a>
+                                                )}
+                                            </TimelineItem>
+                                        ))}
+                                    </Timeline>
+                                ) : (
+                                    <StarMap experiences={experiences} />
+                                )}
                             </CyberCard>
                         </ScrollReveal>
 
@@ -326,7 +353,7 @@ export default function LandingPage() {
                                     viewport={{ once: false }}
                                     transition={{ duration: 0.4 }}
                                 >
-                                    <h2 className="text-sm font-bold text-text-primary uppercase tracking-widest">{t('landing.techStack').toUpperCase()}</h2>
+                                    <h2 className="text-sm font-bold text-text-primary uppercase tracking-widest"><DecryptText text={t('landing.techStack').toUpperCase()} /></h2>
                                     <motion.span 
                                         className="text-xs text-text-muted font-mono"
                                         animate={{ opacity: [0.5, 1, 0.5] }}
@@ -362,7 +389,7 @@ export default function LandingPage() {
                         <ScrollReveal delay={0.2}>
                             <CyberCard glowColor="purple">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h2 className="text-sm font-bold text-text-primary uppercase tracking-widest">{t('landing.featuredProject').toUpperCase()}</h2>
+                                    <h2 className="text-sm font-bold text-text-primary uppercase tracking-widest"><DecryptText text={t('landing.featuredProject').toUpperCase()} /></h2>
                                     <span className="text-xs text-text-muted font-mono">VIEW ALL</span>
                                 </div>
                                 <div className="rounded-xl overflow-hidden mb-4 border border-border-primary relative group">
@@ -395,18 +422,13 @@ export default function LandingPage() {
 
                         {/* Contact & Performance Stats */}
                         <div className="grid grid-cols-2 gap-4">
-                            <CyberCard glowColor="cyan" className="p-5 flex flex-col justify-center">
-                                <h2 className="text-xs font-bold text-text-primary mb-3 uppercase tracking-widest">{t('landing.contact').toUpperCase()}</h2>
-                                <div className="flex gap-3 text-text-secondary">
-                                    <a href="mailto:nguyendangkhuong96@gmail.com" className="hover:text-[var(--neon-cyan)] transition-colors"><EmailIcon /></a>
-                                    <a href="https://linkedin.com/in/nguyendangkhuong" target="_blank" rel="noopener noreferrer" className="hover:text-[#0A66C2] transition-colors"><LinkedInIcon /></a>
-                                    <a href="https://github.com/NguyenDangKhuong" target="_blank" rel="noopener noreferrer" className="hover:text-text-primary transition-colors"><GitHubIcon /></a>
-                                    <a href="#" className="hover:text-text-primary transition-colors"><TwitterIcon /></a>
-                                </div>
-                            </CyberCard>
+                            <div className="flex flex-col gap-2">
+                                <h2 className="text-xs font-bold text-text-primary mb-1 uppercase tracking-widest pl-1"><DecryptText text={t('landing.contact').toUpperCase()} /></h2>
+                                <SpaceTerminal />
+                            </div>
 
                             <CyberCard glowColor="green" className="p-5 flex flex-col justify-center items-center text-center">
-                                <h2 className="text-xs font-bold text-text-primary mb-3 uppercase tracking-widest w-full">{t('landing.performanceStats').toUpperCase()}</h2>
+                                <h2 className="text-xs font-bold text-text-primary mb-3 uppercase tracking-widest w-full"><DecryptText text={t('landing.performanceStats').toUpperCase()} /></h2>
                                 <div className="flex gap-3">
                                     <PerformanceBadge score="100" label="Performance" />
                                     <PerformanceBadge score="100" label="Accessibility" />
@@ -428,7 +450,7 @@ export default function LandingPage() {
                                     <motion.span
                                         animate={{ rotate: [0, 10, -10, 0] }}
                                         transition={{ repeat: Infinity, duration: 3 }}
-                                    >🎓</motion.span> {t('landing.education').toUpperCase()}
+                                    >🎓</motion.span> <DecryptText text={t('landing.education').toUpperCase()} />
                                 </motion.h2>
                                 <div className="relative">
                                     <h3 className="text-sm font-bold text-text-primary">Ho Chi Minh University of Science (HCMUS)</h3>
@@ -454,7 +476,7 @@ export default function LandingPage() {
                                     <motion.span
                                         animate={{ rotate: [0, 15, -15, 0] }}
                                         transition={{ repeat: Infinity, duration: 4 }}
-                                    >🛠️</motion.span> {t('landing.skills').toUpperCase()}
+                                    >🛠️</motion.span> <DecryptText text={t('landing.skills').toUpperCase()} />
                                 </motion.h2>
                                 <div className="space-y-6">
                                     {skillCategories.map((cat) => (
@@ -557,7 +579,4 @@ function FigmaIcon() { return <svg className="w-full h-full fill-current" viewBo
 function ReduxIcon() { return <svg className="w-full h-full" viewBox="0 0 100 100"><path fill="#764ABC" d="M65.6 65.4c3.4-.4 6-3.3 5.8-6.8-.2-3.5-3.2-6.3-6.8-6.3h-.2c-3.7.1-6.6 3.2-6.4 6.9.1 1.8.8 3.4 2 4.5-4.2 8.2-10.5 14.3-20.1 19.3-6.5 3.4-13.2 4.6-19.9 3.7-5.5-.7-9.8-3.1-12.6-7-4.2-5.8-4.5-12.2-1-18.5 2.5-4.5 6.3-7.8 8.7-9.6-.5-1.5-1.2-4.1-1.7-5.9C1.2 55.5-2.3 67.4 1.5 76.2c2.8 6.5 8.5 10.6 16.1 10.6 1.9 0 3.8-.2 5.7-.6 12.2-2.5 21.4-10 27.1-20.8zM84.3 49.3c-9.5-11.1-23.5-17.2-39.4-17.2h-2c-1.2-2.2-3.5-3.7-6.1-3.7h-.2c-3.7.1-6.6 3.2-6.4 6.9.2 3.5 3.2 6.3 6.8 6.3h.2c2.7-.1 5-1.8 6.1-4.1h2.2c9.5 0 18.5 2.8 26.6 8.2 6.2 4.1 10.6 9.4 13.1 15.6 2.1 5.2 2 10.3-.2 14.7-3.4 6.7-9.1 10.3-16.6 10.3-4.8 0-9.4-1.5-11.8-2.6-1.3 1.1-3.7 3-5.3 4.2 5 2.3 10.1 3.6 14.9 3.6 11.1 0 19.3-6.2 22.5-12.3 3.4-6.7 3.2-18.2-4.4-29.9zM32.4 67.1c.2 3.5 3.2 6.3 6.8 6.3h.2c3.7-.1 6.6-3.2 6.4-6.9-.2-3.5-3.2-6.3-6.8-6.3h-.2c-.3 0-.5 0-.8.1-4.7-7.9-6.7-16.5-5.9-25.8.6-7 3-13.1 7.1-18.1 3.4-4.2 10-6.2 14.5-6.4 12.5-.2 17.8 15.3 18.2 21.5 1.5.4 4.1 1.3 5.9 1.9C76.8 16.2 66.9 4.3 55.4 4.3c-10.8 0-20.7 7.8-24.6 19.4-5.3 15.6-1.9 30.5 5 42.3-1.1 1.5-1.7 3.4-1.6 5.5l.2-.4z" /></svg> }
 function NodeJsIcon() { return <svg className="w-full h-full" viewBox="0 0 128 128"><path fill="#339933" d="M112.771 30.334L68.674 4.729c-2.781-1.584-6.402-1.584-9.205 0L14.901 30.334C12.031 31.985 10 35.088 10 38.407v51.142c0 3.319 2.084 6.423 4.954 8.083l11.775 6.688c5.628 2.772 7.617 2.772 10.178 2.772 8.333 0 13.093-5.039 13.093-13.828V42.159c0-.744-.593-1.339-1.337-1.339h-5.877c-.744 0-1.339.595-1.339 1.339v51.105c0 3.927-4.088 7.828-10.723 4.513l-12.311-7.056c-.462-.263-.737-.756-.737-1.283V38.407c0-.528.277-1.02.74-1.283l44.068-25.636c.449-.267 1.053-.267 1.503 0l44.068 25.636c.462.263.739.756.739 1.283v51.142c0 .527-.277 1.02-.74 1.283l-44.068 25.636c-.449.267-1.053.267-1.503 0l-11.561-6.83c-.358-.207-.816-.276-1.176-.097-3.234 1.643-3.85 1.853-6.88 2.812-.744.237-1.854.593.417 1.713l15.056 8.905c1.396.793 2.99 1.212 4.604 1.212 1.614 0 3.208-.419 4.604-1.212l44.068-25.636c2.871-1.66 4.954-4.763 4.954-8.083V38.407c0-3.319-2.084-6.422-4.954-8.073zM77.91 81.445c-11.726 0-14.309-3.235-15.17-9.066-.1-.628-.633-1.099-1.278-1.099h-5.975c-.745 0-1.339.674-1.339 1.417 0 7.833 4.264 17.147 23.762 17.147 14.235 0 22.399-5.583 22.399-15.369 0-9.707-6.555-12.296-20.353-14.138-13.937-1.859-15.347-2.818-15.347-6.118 0-2.718 1.214-6.354 11.659-6.354 9.327 0 12.775 2.013 14.184 8.305.131.58.63 1.003 1.225 1.003h6.035c.375 0 .735-.162.979-.435.246-.271.369-.634.329-1.003-1.005-11.882-8.934-17.416-22.752-17.416-13.009 0-20.759 5.489-20.759 14.698 0 9.977 7.718 12.745 20.201 13.969 14.944 1.465 15.516 3.652 15.516 6.593 0 5.107-4.1 7.283-13.737 7.283z" /></svg> }
 function GitIcon() { return <svg className="w-full h-full" viewBox="0 0 128 128"><path fill="#F05032" d="M124.742 58.378l-55.117-55.117c-3.172-3.174-8.32-3.174-11.497 0l-11.444 11.446 14.518 14.518c3.375-1.139 7.243-.375 9.932 2.314 2.703 2.706 3.462 6.607 2.293 9.993l13.992 13.993c3.385-1.167 7.292-.413 9.994 2.295 3.78 3.777 3.78 9.9 0 13.679a9.673 9.673 0 01-13.683 0 9.677 9.677 0 01-2.105-10.521L68.574 45.818l-.002 34.341c.922.455 1.791 1.063 2.559 1.828 3.779 3.777 3.779 9.898 0 13.683-3.779 3.777-9.904 3.777-13.679 0-3.778-3.784-3.778-9.905 0-13.683a9.556 9.556 0 013.702-2.458V45.085a9.58 9.58 0 01-3.702-2.458c-2.726-2.728-3.468-6.66-2.259-10.053L40.818 18.2 3.266 55.765c-3.178 3.176-3.178 8.322 0 11.499l55.117 55.114c3.174 3.174 8.32 3.174 11.499 0l54.86-54.858c3.174-3.176 3.174-8.327 0-11.5v.358z" /></svg> }
-function EmailIcon() { return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg> }
-function LinkedInIcon() { return <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></svg> }
-function TwitterIcon() { return <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4l11.733 16H20L8.267 4z" /><path d="M4 20l6.768-6.768M20 4l-6.768 6.768" /></svg> }
-function GitHubIcon() { return <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg> }
+// Removed unused icons

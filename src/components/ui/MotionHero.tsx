@@ -6,6 +6,7 @@ import { Sparkles, ArrowRight, Download, BookOpen } from 'lucide-react'
 import HologramAvatar from '@/components/ui/HologramAvatar'
 import { useTranslation } from '@/i18n'
 import Link from 'next/link'
+import { useSoundContext } from '@/contexts/SoundContext'
 
 const TYPEWRITER_WORDS_EN = ['Khuong.', 'Developer.', 'Creative.']
 const TYPEWRITER_WORDS_VI = ['Khương.', 'Lập trình.', 'Sáng tạo.']
@@ -59,6 +60,7 @@ function useTypewriter(words: string[]) {
 
 export const MotionHero = () => {
     const { t, language } = useTranslation()
+    const { playHover, playClick } = useSoundContext()
     const yearsOfExperience = new Date().getFullYear() - 2018
     const typewriterWords = language === 'vi' ? TYPEWRITER_WORDS_VI : TYPEWRITER_WORDS_EN
     const typedText = useTypewriter(typewriterWords)
@@ -183,7 +185,7 @@ export const MotionHero = () => {
                     transition={{ duration: 0.5, delay: 0.5 }}
                     className="flex flex-wrap gap-4 w-full"
                 >
-                    <Link href="/blogs" className="group/blog relative px-6 py-3 rounded-full font-bold text-text-primary border border-border-primary bg-bg-surface-dim/20 backdrop-blur-md hover:border-neon-purple/50 hover:scale-105 active:scale-95 shadow-[0_0_25px_-10px_var(--neon-purple)] hover:shadow-[0_0_40px_-10px_var(--neon-purple)] transition-all flex items-center justify-center gap-2 overflow-hidden">
+                    <Link href="/blogs" onMouseEnter={playHover} onClick={playClick} className="group/blog relative px-6 py-3 rounded-full font-bold text-text-primary border border-border-primary bg-bg-surface-dim/20 backdrop-blur-md hover:border-neon-purple/50 hover:scale-105 active:scale-95 shadow-[0_0_25px_-10px_var(--neon-purple)] hover:shadow-[0_0_40px_-10px_var(--neon-purple)] transition-all flex items-center justify-center gap-2 overflow-hidden">
                         <span className="relative z-10 flex items-center gap-2">
                             <BookOpen className="w-5 h-5 text-neon-purple group-hover/blog:animate-pulse" />
                             Blog
@@ -191,7 +193,7 @@ export const MotionHero = () => {
                         <div className="absolute inset-0 bg-gradient-to-r from-neon-purple to-neon-cyan opacity-0 group-hover/blog:opacity-15 transition-opacity" />
                     </Link>
                     
-                    <Link href="/cv" className="group/cv relative px-6 py-3 rounded-full font-bold text-text-primary border border-border-primary bg-bg-surface-dim/20 backdrop-blur-md hover:border-neon-green/50 hover:scale-105 active:scale-95 shadow-[0_0_25px_-10px_var(--neon-green)] hover:shadow-[0_0_40px_-10px_var(--neon-green)] transition-all flex items-center justify-center gap-2 overflow-hidden">
+                    <Link href="/cv" onMouseEnter={playHover} onClick={playClick} className="group/cv relative px-6 py-3 rounded-full font-bold text-text-primary border border-border-primary bg-bg-surface-dim/20 backdrop-blur-md hover:border-neon-green/50 hover:scale-105 active:scale-95 shadow-[0_0_25px_-10px_var(--neon-green)] hover:shadow-[0_0_40px_-10px_var(--neon-green)] transition-all flex items-center justify-center gap-2 overflow-hidden">
                         <span className="relative z-10 flex items-center gap-2">
                             <Download className="w-5 h-5 text-neon-green group-hover/cv:animate-bounce" />
                             {t('landing.downloadCV')}
@@ -199,7 +201,7 @@ export const MotionHero = () => {
                         <div className="absolute inset-0 bg-gradient-to-r from-neon-green to-neon-cyan opacity-0 group-hover/cv:opacity-15 transition-opacity" />
                     </Link>
 
-                    <Link href="/projects" className="group/proj relative px-6 py-3 bg-text-primary text-bg-page rounded-full font-bold overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_-10px_var(--neon-cyan)] flex items-center justify-center gap-2">
+                    <Link href="/projects" onMouseEnter={playHover} onClick={playClick} className="group/proj relative px-6 py-3 bg-text-primary text-bg-page rounded-full font-bold overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_-10px_var(--neon-cyan)] flex items-center justify-center gap-2">
                         <span className="relative z-10 flex items-center gap-2">
                             🚀 {t('landing.viewProjects')}
                             <ArrowRight className="w-5 h-5 transition-transform group-hover/proj:translate-x-1" />
