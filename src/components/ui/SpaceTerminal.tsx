@@ -12,7 +12,9 @@ export function SpaceTerminal() {
     const endRef = useRef<HTMLDivElement>(null)
 
     const scrollToBottom = () => {
-        endRef.current?.scrollIntoView({ behavior: 'smooth' })
+        if (typeof endRef.current?.scrollIntoView === 'function') {
+            endRef.current.scrollIntoView({ behavior: 'smooth' })
+        }
     }
 
     useEffect(() => {

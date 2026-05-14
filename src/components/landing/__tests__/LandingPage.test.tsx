@@ -68,12 +68,11 @@ describe('LandingPage Component', () => {
         expect(screen.getByRole('link', { name: /admin panel/i })).toHaveAttribute('href', '/login')
     })
 
-    it('displays contact section with email', () => {
+    it('displays terminal contact section', () => {
         render(<LandingPage />)
 
         expect(screen.getByRole('heading', { name: /contact/i })).toBeInTheDocument()
-        const emailLink = document.querySelector('a[href="mailto:nguyendangkhuong96@gmail.com"]')
-        expect(emailLink).toBeInTheDocument()
+        expect(screen.getByText(/INITIALIZING CONTACT MODULE/i)).toBeInTheDocument()
     })
 
     it('shows performance stats badges', () => {
@@ -167,10 +166,9 @@ describe('LandingPage Component', () => {
         expect(cvLink).toHaveAttribute('href', '/cv')
     })
 
-    it('renders LinkedIn link in contact section', () => {
+    it('renders terminal contact instructions', () => {
         render(<LandingPage />)
 
-        const linkedinLink = document.querySelector('a[href="https://linkedin.com/in/nguyendangkhuong"]')
-        expect(linkedinLink).toBeInTheDocument()
+        expect(screen.getByText(/TYPE "help" FOR AVAILABLE COMMANDS/i)).toBeInTheDocument()
     })
 })

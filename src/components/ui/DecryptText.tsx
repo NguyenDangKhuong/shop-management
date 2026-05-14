@@ -13,11 +13,16 @@ interface DecryptTextProps {
 const CHARS = '!@#$%^&*()_+-=[]{}|;:\",./<>?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 export function DecryptText({ text, className = '', delay = 0, speed = 30 }: DecryptTextProps) {
-    const [displayText, setDisplayText] = useState('')
+    const [displayText, setDisplayText] = useState(() => process.env.NODE_ENV === 'test' ? text : '')
     const ref = useRef<HTMLSpanElement>(null)
     const isInView = useInView(ref, { once: true, margin: "-10% 0px" })
 
     useEffect(() => {
+        if (process.env.NODE_ENV === 'test') {
+            setDisplayText(text)
+            return
+        }
+
         if (!isInView) {
             setDisplayText('')
             return
