@@ -228,7 +228,7 @@ export const MotionHero = () => {
                     
                     {/* The Avatar itself */}
                     <div className="relative border-4 border-neon-cyan/20 rounded-full p-4 bg-bg-surface-dim/30 backdrop-blur-xl shadow-[0_0_50px_-10px_var(--neon-cyan)]">
-                        <HologramAvatar src="/image/home/avatar.png" alt="Khuong" size={350} color="var(--neon-cyan)" />
+                        <HologramAvatar src="/image/home/avatar.png" alt="Khuong" className="w-[250px] h-[250px] md:w-[350px] md:h-[350px]" color="var(--neon-cyan)" />
                         
                         {/* Floating Tech Badges */}
                         <motion.div 

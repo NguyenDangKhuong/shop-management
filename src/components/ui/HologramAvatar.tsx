@@ -5,19 +5,24 @@ interface HologramAvatarProps {
     src: string
     alt: string
     size?: number
+    className?: string
     color?: string
 }
 
 export default function HologramAvatar({
     src,
     alt,
-    size = 256,
+    size,
+    className = '',
     color = 'var(--neon-cyan)'
 }: HologramAvatarProps) {
     return (
         <div
-            className="relative flex items-center justify-center"
-            style={{ width: size, height: size, '--holo-color': color } as React.CSSProperties}
+            className={`relative flex items-center justify-center ${className}`}
+            style={{ 
+                ...(size ? { width: size, height: size } : {}),
+                '--holo-color': color 
+            } as React.CSSProperties}
         >
             {/* Outer Rotating Ring 1 */}
             <div className="absolute inset-[-10%] rounded-full border-t-2 border-r-2 border-transparent animate-[spin_10s_linear_infinite]"
@@ -50,23 +55,23 @@ export default function HologramAvatar({
                 <Image
                     src={src}
                     alt={alt}
-                    width={size}
-                    height={size}
+                    fill
+                    sizes="(max-width: 768px) 250px, 350px"
                     priority
                     quality={100}
-                    className="w-full h-auto object-cover scale-[5] translate-y-[8%]"
+                    className="object-cover scale-[5] translate-y-[8%]"
                 />
             </div>
             {/* Scanner line overlay effect */}
             <div className="absolute inset-0 rounded-full overflow-hidden z-20 pointer-events-none">
-                <div className="w-full h-1 bg-white opacity-20 blur-[1px] shadow-[0_0_10px_#fff] animate-[scan_3s_ease-in-out_infinite]" />
+                <div className="absolute left-0 right-0 h-1 bg-white opacity-20 blur-[1px] shadow-[0_0_10px_#fff] animate-[scan_3s_ease-in-out_infinite]" />
             </div>
 
             <style jsx>{`
                 @keyframes scan {
-                    0% { transform: translateY(-100%); }
-                    50% { transform: translateY(${size}px); }
-                    100% { transform: translateY(-100%); }
+                    0% { top: -5%; }
+                    50% { top: 105%; }
+                    100% { top: -5%; }
                 }
             `}</style>
         </div>
