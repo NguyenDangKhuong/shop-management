@@ -10,10 +10,11 @@ export function SpaceTerminal() {
     ])
     const [input, setInput] = useState('')
     const endRef = useRef<HTMLDivElement>(null)
+    const containerRef = useRef<HTMLDivElement>(null)
 
     const scrollToBottom = () => {
-        if (typeof endRef.current?.scrollIntoView === 'function') {
-            endRef.current.scrollIntoView({ behavior: 'smooth' })
+        if (containerRef.current) {
+            containerRef.current.scrollTop = containerRef.current.scrollHeight
         }
     }
 
@@ -63,7 +64,7 @@ export function SpaceTerminal() {
             {/* Scanline Overlay */}
             <div className="absolute inset-0 pointer-events-none opacity-10 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] z-10" />
             
-            <div className="h-full overflow-y-auto space-y-2 pr-2 scrollbar-hide text-[var(--neon-cyan)] text-shadow-glow">
+            <div ref={containerRef} className="h-full overflow-y-auto space-y-2 pr-2 scrollbar-hide text-[var(--neon-cyan)] text-shadow-glow scroll-smooth">
                 {history.map((line, i) => (
                     <div key={i} className={`${line.type === 'in' ? 'opacity-70' : 'opacity-100'} break-all`}>
                         {line.text}
@@ -77,7 +78,6 @@ export function SpaceTerminal() {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         className="flex-1 bg-transparent outline-none border-none text-[var(--neon-cyan)] focus:ring-0"
-                        autoFocus
                         spellCheck="false"
                         autoComplete="off"
                     />
