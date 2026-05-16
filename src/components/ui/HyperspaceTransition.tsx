@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { usePathname } from 'next/navigation'
 
 export function HyperspaceTransition() {
@@ -23,12 +23,11 @@ export function HyperspaceTransition() {
     }, [pathname, prevPath])
 
     return (
-        <AnimatePresence>
+        <>
             {isTransitioning && (
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
                     className="fixed inset-0 z-[100] pointer-events-none bg-black overflow-hidden flex items-center justify-center"
                 >
@@ -72,6 +71,6 @@ export function HyperspaceTransition() {
                     </div>
                 </motion.div>
             )}
-        </AnimatePresence>
+        </>
     )
 }

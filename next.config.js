@@ -31,7 +31,7 @@ const nextConfig = {
     const tweetsOnlyDomain = process.env.TWEETS_ONLY_DOMAIN || ''
     if (!tweetsOnlyDomain) return []
     return tweetsOnlyDomain.split(',').map(domain => ({
-      source: '/:path((?!tweets|_next|api|favicon).*)',
+      source: '/:path((?!tweets|_next|api|favicon|sw\\.js|manifest\\.json|workbox-.*).*)',
       has: [{ type: 'host', value: domain.trim() }],
       destination: '/tweets',
       permanent: false,
