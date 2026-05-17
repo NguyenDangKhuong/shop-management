@@ -7,20 +7,21 @@ import { usePathname } from 'next/navigation'
 export function HyperspaceTransition() {
     const [isTransitioning, setIsTransitioning] = useState(false)
     const pathname = usePathname()
-    const [prevPath, setPrevPath] = useState(pathname)
+    const isMounted = React.useRef(false)
 
     useEffect(() => {
-        if (pathname !== prevPath) {
-            setIsTransitioning(true)
-            setPrevPath(pathname)
-            
-            // Animation takes about 800ms
-            const timer = setTimeout(() => {
-                setIsTransitioning(false)
-            }, 1000)
-            return () => clearTimeout(timer)
+        if (!isMounted.current) {
+            isMounted.current = true
+            return
         }
-    }, [pathname, prevPath])
+        
+        setIsTransitioning(true)
+        const timer = setTimeout(() => {
+            setIsTransitioning(false)
+        }, 1000)
+        
+        return () => clearTimeout(timer)
+    }, [pathname])
 
     return (
         <>
