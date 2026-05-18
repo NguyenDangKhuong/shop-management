@@ -320,6 +320,8 @@ MINIO_SECRET_KEY=...
 | [AUTOFLOW.md](AUTOFLOW.md) | AutoFlow feature documentation |
 | [PROMPT.md](PROMPT.md) | Prompt Library, Veo3 templates & design notes |
 | [FORGOT_PASSWORD.md](FORGOT_PASSWORD.md) | Forgot Password feature |
+| [LANDING_UI.md](LANDING_UI.md) | Spaceship UI system — components, sound, transitions |
+| [ESLINT.md](ESLINT.md) | ESLint Flat Config migration & rules |
 
 ---
 
@@ -388,6 +390,8 @@ Sử dụng `react-device-detect` để tối ưu trải nghiệm trên từng t
 3. **Idle Detection** - Tự động logout với react-idle-timer
 4. **i18n Ready** - Hỗ trợ đa ngôn ngữ (next-i18next)
 5. **Form Validation** - Zod schema validation
+6. **Spaceship UI System** - Landing page theme sci-fi: 3D hologram background (Three.js), hyperspace page transitions, radar HUD, interactive terminal, star constellation map, Web Audio sound effects. Chi tiết: [LANDING_UI.md](LANDING_UI.md)
+7. **ESLint Flat Config** - Migrate sang modern ESLint format, auto-remove unused imports. Chi tiết: [ESLINT.md](ESLINT.md)
 
 ---
 
@@ -430,4 +434,4 @@ Chi tiết: [ORACLE_VPS.md](./ORACLE_VPS.md)
 
 ---
 
-*Tài liệu cập nhật: 23/03/2026*
+*Tài liệu cập nhật: 18/05/2026*

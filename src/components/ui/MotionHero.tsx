@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Sparkles, ArrowRight, Download, BookOpen } from 'lucide-react'
 import HologramAvatar from '@/components/ui/HologramAvatar'
@@ -65,8 +65,20 @@ export const MotionHero = () => {
     const typewriterWords = language === 'vi' ? TYPEWRITER_WORDS_VI : TYPEWRITER_WORDS_EN
     const typedText = useTypewriter(typewriterWords)
 
+    // ── FOUC Prevention (scoped to hero only) ────────────────────────────────
+    // SSR renders hero content visible → JS hydrates → framer-motion sets
+    // children to initial states (opacity:0, transforms) → flash!
+    // Fix: SSR renders hero with opacity:0 (inline style). useLayoutEffect
+    // removes it synchronously before paint, after framer-motion initializes.
+    // Header + backgrounds are NOT affected → FCP stays fast.
+    const [mounted, setMounted] = useState(false)
+
+    useLayoutEffect(() => {
+        setMounted(true)
+    }, [])
+
     return (
-        <div className="cyber-card relative w-full min-h-[calc(100vh-8rem)] flex flex-col md:flex-row items-center justify-center gap-12 overflow-hidden hover-cyber-glow group p-8 md:p-16">
+        <div className="cyber-card relative w-full min-h-[calc(100vh-8rem)] flex flex-col md:flex-row items-center justify-center gap-12 overflow-hidden hover-cyber-glow group p-8 md:p-16" style={mounted ? undefined : { opacity: 0 }}>
             
             {/* Ambient Background Grid & Glows - Bound to Card */}
             <div className="absolute inset-0 z-0 pointer-events-none opacity-20" style={{ backgroundImage: 'linear-gradient(var(--border-primary) 1px, transparent 1px), linear-gradient(90deg, var(--border-primary) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
