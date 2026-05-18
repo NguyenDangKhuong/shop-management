@@ -31,6 +31,16 @@ const en = {
     'landing.a11yScore': 'Accessibility Score',
     'landing.teamSize': 'Team Leadership',
     'landing.downloadCV': 'Download CV',
+    'landing.bentoHeading': 'Cutting-edge Tech',
+    'landing.bentoDescription': 'The project is meticulously designed, applying the latest Frontend technologies on the market to deliver the best experience.',
+    'landing.bentoModernArch': 'Modern Architecture',
+    'landing.bentoModernArchDesc': 'Next.js 15 App Router, React Server Components, and Tailwind v4 engine.',
+    'landing.bentoCinematicUI': 'Cinematic UI',
+    'landing.bentoCinematicUIDesc': 'Framer Motion animations, glassmorphism, and neon LED effects.',
+    'landing.bentoHighPerf': 'High Performance',
+    'landing.bentoHighPerfDesc': 'Optimized for speed with 100 Lighthouse score.',
+    'landing.bentoFullstack': 'Fullstack Ready',
+    'landing.bentoFullstackDesc': 'Integrated with NextAuth, MongoDB, and Edge Redis.',
 
     // Login
     'login.title': 'Welcome Back',

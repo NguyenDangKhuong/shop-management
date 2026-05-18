@@ -3,43 +3,46 @@
 import React from 'react'
 import { Cpu, Layout, Zap, Database } from 'lucide-react'
 import { ScrollReveal, cn } from './ScrollReveal'
-
-const features = [
-    {
-        title: 'Modern Architecture',
-        description: 'Next.js 15 App Router, React Server Components, and Tailwind v4 engine.',
-        icon: <Cpu className="w-6 h-6 text-neon-cyan" />,
-        className: 'md:col-span-2',
-    },
-    {
-        title: 'Cinematic UI',
-        description: 'Framer Motion animations, glassmorphism, and neon LED effects.',
-        icon: <Layout className="w-6 h-6 text-neon-purple" />,
-        className: 'md:col-span-1',
-    },
-    {
-        title: 'High Performance',
-        description: 'Optimized for speed with 100 Lighthouse score.',
-        icon: <Zap className="w-6 h-6 text-neon-green" />,
-        className: 'md:col-span-1',
-    },
-    {
-        title: 'Fullstack Ready',
-        description: 'Integrated with NextAuth, MongoDB, and Edge Redis.',
-        icon: <Database className="w-6 h-6 text-accent-primary" />,
-        className: 'md:col-span-2',
-    },
-]
+import { useTranslation } from '@/i18n'
 
 export const BentoGrid = () => {
+    const { t } = useTranslation()
+
+    const features = [
+        {
+            title: t('landing.bentoModernArch'),
+            description: t('landing.bentoModernArchDesc'),
+            icon: <Cpu className="w-6 h-6 text-neon-cyan" />,
+            className: 'md:col-span-2',
+        },
+        {
+            title: t('landing.bentoCinematicUI'),
+            description: t('landing.bentoCinematicUIDesc'),
+            icon: <Layout className="w-6 h-6 text-neon-purple" />,
+            className: 'md:col-span-1',
+        },
+        {
+            title: t('landing.bentoHighPerf'),
+            description: t('landing.bentoHighPerfDesc'),
+            icon: <Zap className="w-6 h-6 text-neon-green" />,
+            className: 'md:col-span-1',
+        },
+        {
+            title: t('landing.bentoFullstack'),
+            description: t('landing.bentoFullstackDesc'),
+            icon: <Database className="w-6 h-6 text-accent-primary" />,
+            className: 'md:col-span-2',
+        },
+    ]
+
     return (
         <section className="py-24 px-4 max-w-6xl mx-auto">
             <ScrollReveal direction="up" className="text-center mb-16">
                 <h2 className="text-3xl md:text-5xl font-bold text-text-primary mb-4 tracking-tight">
-                    Powered by <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-purple to-neon-cyan">Cutting-edge Tech</span>
+                    Powered by <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-purple to-neon-cyan">{t('landing.bentoHeading')}</span>
                 </h2>
                 <p className="text-text-secondary max-w-2xl mx-auto text-lg">
-                    Cấu trúc dự án được thiết kế tỉ mỉ, áp dụng những công nghệ Frontend mới nhất trên thị trường để mang lại trải nghiệm tối đa.
+                    {t('landing.bentoDescription')}
                 </p>
             </ScrollReveal>
 

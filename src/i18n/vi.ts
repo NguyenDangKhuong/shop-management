@@ -33,6 +33,16 @@ const vi: Record<TranslationKeys, string> = {
     'landing.a11yScore': 'Điểm Accessibility',
     'landing.teamSize': 'Quản lý đội nhóm',
     'landing.downloadCV': 'Tải CV',
+    'landing.bentoHeading': 'Công nghệ tiên tiến',
+    'landing.bentoDescription': 'Cấu trúc dự án được thiết kế tỉ mỉ, áp dụng những công nghệ Frontend mới nhất trên thị trường để mang lại trải nghiệm tối đa.',
+    'landing.bentoModernArch': 'Kiến trúc hiện đại',
+    'landing.bentoModernArchDesc': 'Next.js 15 App Router, React Server Components và Tailwind v4 engine.',
+    'landing.bentoCinematicUI': 'Giao diện điện ảnh',
+    'landing.bentoCinematicUIDesc': 'Hiệu ứng Framer Motion, glassmorphism và neon LED.',
+    'landing.bentoHighPerf': 'Hiệu năng cao',
+    'landing.bentoHighPerfDesc': 'Tối ưu tốc độ với điểm Lighthouse 100.',
+    'landing.bentoFullstack': 'Fullstack sẵn sàng',
+    'landing.bentoFullstackDesc': 'Tích hợp NextAuth, MongoDB và Edge Redis.',
 
     // Login
     'login.title': 'Chào mừng trở lại',
