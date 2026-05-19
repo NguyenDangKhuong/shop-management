@@ -1,13 +1,11 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import LandingPage from '@/components/landing/LandingPage'
 
 // Mock Next.js Image component
 jest.mock('next/image', () => ({
     __esModule: true,
     default: (props: any) => {
-        // Filter out Next.js specific props that don't apply to <img>
         const { priority, quality, loading, sizes, ...imgProps } = props
-        // eslint-disable-next-line jsx-a11y/alt-text
         return <img {...imgProps} />
     }
 }))
@@ -170,5 +168,36 @@ describe('LandingPage Component', () => {
         render(<LandingPage />)
 
         expect(screen.getByText(/TYPE "help" FOR AVAILABLE COMMANDS/i)).toBeInTheDocument()
+    })
+
+    // ─── Interactive Background Hover ───────────────────────────────────────
+
+    it('dispatches setHoveredSection event on mouse enter and leave', () => {
+        const dispatchEventSpy = jest.spyOn(window, 'dispatchEvent')
+        render(<LandingPage />)
+
+        const aboutSection = screen.getByTestId('hover-section-about')
+        
+        // Mouse enter should emit event with detail: 'about'
+        fireEvent.mouseEnter(aboutSection)
+        
+        expect(dispatchEventSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                type: 'setHoveredSection',
+                detail: 'about'
+            })
+        )
+
+        // Mouse leave should emit event with detail: null
+        fireEvent.mouseLeave(aboutSection)
+        
+        expect(dispatchEventSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                type: 'setHoveredSection',
+                detail: null
+            })
+        )
+        
+        dispatchEventSpy.mockRestore()
     })
 })

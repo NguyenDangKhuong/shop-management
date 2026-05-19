@@ -153,6 +153,7 @@ function HoverSection({ id, children, className = "" }: { id: string, children: 
     return (
         <div 
             className={className}
+            data-testid={`hover-section-${id}`}
             onMouseEnter={() => window.dispatchEvent(new CustomEvent('setHoveredSection', { detail: id }))}
             onMouseLeave={() => window.dispatchEvent(new CustomEvent('setHoveredSection', { detail: null }))}
         >
