@@ -149,6 +149,18 @@ const skillCategories = [
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
+function HoverSection({ id, children, className = "" }: { id: string, children: React.ReactNode, className?: string }) {
+    return (
+        <div 
+            className={className}
+            onMouseEnter={() => window.dispatchEvent(new CustomEvent('setHoveredSection', { detail: id }))}
+            onMouseLeave={() => window.dispatchEvent(new CustomEvent('setHoveredSection', { detail: null }))}
+        >
+            {children}
+        </div>
+    )
+}
+
 export default function LandingPage() {
     const { t, language, setLanguage } = useTranslation()
     const loginUrl = useLoginUrl()
@@ -186,8 +198,8 @@ export default function LandingPage() {
             />
 
             <main className="max-w-[1400px] w-full mx-auto relative z-10 mt-6 px-4 md:px-8 pb-32 flex flex-col gap-6 lg:gap-8">
-                <MotionHero />
-                <BentoGrid />
+                <HoverSection id="hero"><MotionHero /></HoverSection>
+                <HoverSection id="features"><BentoGrid /></HoverSection>
 
                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8">
                     
@@ -196,6 +208,7 @@ export default function LandingPage() {
 
 
                         {/* About Me */}
+                        <HoverSection id="about">
                         <ScrollReveal>
                             <CyberCard glowColor="purple">
                                 <motion.h2 
@@ -269,8 +282,10 @@ export default function LandingPage() {
                                 </div>
                             </CyberCard>
                         </ScrollReveal>
+                        </HoverSection>
 
                         {/* Work Experience */}
+                        <HoverSection id="experience">
                         <ScrollReveal delay={0.2}>
                             <CyberCard glowColor="green">
                                 <div className="flex items-center justify-between mb-8">
@@ -335,6 +350,7 @@ export default function LandingPage() {
                                 )}
                             </CyberCard>
                         </ScrollReveal>
+                        </HoverSection>
 
 
                     </div>
@@ -344,6 +360,7 @@ export default function LandingPage() {
                     <div className="xl:col-span-4 flex flex-col gap-6 lg:gap-8">
                         
                         {/* Tech Stack */}
+                        <HoverSection id="techstack">
                         <ScrollReveal delay={0.1}>
                             <CyberCard glowColor="cyan">
                                 <motion.div 
@@ -384,8 +401,10 @@ export default function LandingPage() {
                                 </div>
                             </CyberCard>
                         </ScrollReveal>
+                        </HoverSection>
 
                         {/* Featured Side Project */}
+                        <HoverSection id="project">
                         <ScrollReveal delay={0.2}>
                             <CyberCard glowColor="purple">
                                 <div className="flex items-center justify-between mb-4">
@@ -419,13 +438,14 @@ export default function LandingPage() {
                                 </div>
                             </CyberCard>
                         </ScrollReveal>
+                        </HoverSection>
 
                         {/* Contact & Performance Stats */}
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="flex flex-col gap-2">
+                            <HoverSection id="contact" className="flex flex-col gap-2">
                                 <h2 className="text-xs font-bold text-text-primary mb-1 uppercase tracking-widest pl-1"><DecryptText text={t('landing.contact').toUpperCase()} /></h2>
                                 <SpaceTerminal />
-                            </div>
+                            </HoverSection>
 
                             <CyberCard glowColor="green" className="p-5 flex flex-col justify-center items-center text-center">
                                 <h2 className="text-xs font-bold text-text-primary mb-3 uppercase tracking-widest w-full"><DecryptText text={t('landing.performanceStats').toUpperCase()} /></h2>
@@ -438,6 +458,7 @@ export default function LandingPage() {
                         </div>
 
                         {/* Education */}
+                        <HoverSection id="education">
                         <ScrollReveal delay={0.3}>
                             <CyberCard glowColor="cyan">
                                 <motion.h2 
@@ -462,8 +483,10 @@ export default function LandingPage() {
                                 </div>
                             </CyberCard>
                         </ScrollReveal>
+                        </HoverSection>
 
                         {/* Skills & Expertise */}
+                        <HoverSection id="skills">
                         <ScrollReveal delay={0.4}>
                             <CyberCard glowColor="purple">
                                 <motion.h2 
@@ -494,6 +517,7 @@ export default function LandingPage() {
                                 </div>
                             </CyberCard>
                         </ScrollReveal>
+                        </HoverSection>
 
                     </div>
                 </div>
