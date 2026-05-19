@@ -7,6 +7,7 @@ import HologramAvatar from '@/components/ui/HologramAvatar'
 import { useTranslation } from '@/i18n'
 import Link from 'next/link'
 import { useSoundContext } from '@/contexts/SoundContext'
+import { DecryptText } from '@/components/ui/DecryptText'
 
 const TYPEWRITER_WORDS_EN = ['Khuong.', 'Developer.', 'Creative.']
 const TYPEWRITER_WORDS_VI = ['Khương.', 'Lập trình.', 'Sáng tạo.']
@@ -131,7 +132,7 @@ export const MotionHero = () => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, delay: 0.3 }}
                     >
-                        {t('landing.heroGreeting')}{' '}
+                        <DecryptText text={t('landing.heroGreeting')} delay={0.4} />{' '}
                     </motion.span>
                     <br className="hidden md:block" />
                     <motion.span 
@@ -163,7 +164,7 @@ export const MotionHero = () => {
                             animate={{ opacity: [0.6, 1, 0.6] }}
                             transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
                         >
-                            Front-End Developer
+                            <DecryptText text="Front-End Developer" delay={0.8} />
                         </motion.span>
                         <motion.span 
                             className="inline-block w-3 h-3 rounded-full bg-neon-green shadow-[0_0_10px_var(--neon-green)]"
@@ -187,7 +188,7 @@ export const MotionHero = () => {
                         transition={{ duration: 0.8, delay: 1.1, ease: 'easeOut' }}
                         style={{ transformOrigin: 'top' }}
                     />
-                    {t('landing.purpose')}
+                    <DecryptText text={t('landing.purpose')} delay={1.2} speed={15} />
                 </motion.p>
 
                 {/* CTA Buttons */}
