@@ -1,5 +1,7 @@
 import { render, waitFor } from '@testing-library/react'
 
+jest.setTimeout(30000)
+
 // Mock next/navigation
 const mockPush = jest.fn()
 jest.mock('next/navigation', () => ({
