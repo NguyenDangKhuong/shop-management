@@ -188,7 +188,7 @@ export const MotionHero = () => {
                         transition={{ duration: 0.8, delay: 1.1, ease: 'easeOut' }}
                         style={{ transformOrigin: 'top' }}
                     />
-                    <DecryptText text={t('landing.purpose')} delay={1.2} speed={15} />
+                    <DecryptText text={t('landing.purpose')} delay={1.2} speed={15} charsPerStep={3} />
                 </motion.p>
 
                 {/* CTA Buttons */}

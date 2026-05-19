@@ -8,11 +8,12 @@ interface DecryptTextProps {
     className?: string
     delay?: number
     speed?: number
+    charsPerStep?: number
 }
 
 const CHARS = '!@#$%^&*()_+-=[]{}|;:\",./<>?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
-export function DecryptText({ text, className = '', delay = 0, speed = 30 }: DecryptTextProps) {
+export function DecryptText({ text, className = '', delay = 0, speed = 30, charsPerStep = 0.5 }: DecryptTextProps) {
     const [displayText, setDisplayText] = useState(() => process.env.NODE_ENV === 'test' ? text : '')
     const ref = useRef<HTMLSpanElement>(null)
     const isInView = useInView(ref, { once: true, margin: "-10% 0px" })
@@ -30,7 +31,7 @@ export function DecryptText({ text, className = '', delay = 0, speed = 30 }: Dec
 
         let timeoutId: NodeJS.Timeout
         let iteration = 0
-        const totalIterations = text.length * 2 // How many times we scramble before settling
+        const totalIterations = Math.ceil(text.length / charsPerStep) // How many times we scramble before settling
 
         // Initial delay
         timeoutId = setTimeout(() => {
@@ -41,7 +42,7 @@ export function DecryptText({ text, className = '', delay = 0, speed = 30 }: Dec
                         if (char === ' ') return ' '
                         
                         // If we've passed this character's reveal time, show the real char
-                        if (index < iteration / 2) {
+                        if (index < iteration * charsPerStep) {
                             return text[index]
                         }
                         
@@ -64,7 +65,7 @@ export function DecryptText({ text, className = '', delay = 0, speed = 30 }: Dec
         }, delay * 1000)
 
         return () => clearTimeout(timeoutId)
-    }, [isInView, text, delay, speed])
+    }, [isInView, text, delay, speed, charsPerStep])
 
     return (
         <motion.span
