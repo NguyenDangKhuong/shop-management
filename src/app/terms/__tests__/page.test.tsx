@@ -52,7 +52,7 @@ describe('TermsOfService Page', () => {
     it('shows copyright notice', () => {
         render(<TermsOfService />)
 
-        expect(screen.getByText(/© 2024 thetaphoa\. all rights reserved\./i)).toBeInTheDocument()
+        expect(screen.getByText(new RegExp(`© ${new Date().getFullYear()} Khuong Dev\\. all rights reserved\\.`, 'i'))).toBeInTheDocument()
     })
 
     it('displays user responsibilities', () => {

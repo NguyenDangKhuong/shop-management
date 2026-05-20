@@ -552,7 +552,7 @@ export default function LandingPage() {
             {/* Static Footer */}
             <footer className="w-full border-t border-border-dim py-6 px-4 md:px-8">
                 <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-text-muted">
-                    <span>© 2025 Khuong Dev. All rights reserved.</span>
+                    <span>© {new Date().getFullYear()} Khuong Dev. All rights reserved.</span>
                     <div className="flex items-center gap-6">
                         <Link href="/privacy" className="hover:text-text-primary transition-colors">Privacy Policy</Link>
                         <Link href="/terms" className="hover:text-text-primary transition-colors italic">Terms of Service</Link>

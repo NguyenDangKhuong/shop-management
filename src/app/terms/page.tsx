@@ -142,7 +142,7 @@ export default function TermsOfService() {
 
                 <div className="mt-10 pt-6 border-t border-border-primary">
                     <p className="text-center text-text-secondary">
-                        © 2024 Thetaphoa. All rights reserved.
+                        © {new Date().getFullYear()} Khuong Dev. All rights reserved.
                     </p>
                 </div>
             </div>
