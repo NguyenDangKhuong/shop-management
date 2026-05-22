@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
+import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react'
 
 interface SoundContextType {
     isEnabled: boolean
@@ -19,6 +19,7 @@ const SoundContext = createContext<SoundContextType>({
 export function SoundProvider({ children }: { children: React.ReactNode }) {
     const [isEnabled, setIsEnabled] = useState(false)
     const audioCtxRef = useRef<AudioContext | null>(null)
+    const lastHoveredRef = useRef<Element | null>(null)
 
     useEffect(() => {
         const stored = localStorage.getItem('sound_enabled')
@@ -48,7 +49,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         return audioCtxRef.current
     }
 
-    const playHover = () => {
+    const playHover = useCallback(() => {
         if (!isEnabled) return
         const ctx = initCtx()
         
@@ -68,9 +69,9 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         
         osc.start(ctx.currentTime)
         osc.stop(ctx.currentTime + 0.1)
-    }
+    }, [isEnabled])
 
-    const playClick = () => {
+    const playClick = useCallback(() => {
         if (!isEnabled) return
         const ctx = initCtx()
         
@@ -90,7 +91,42 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         
         osc.start(ctx.currentTime)
         osc.stop(ctx.currentTime + 0.15)
-    }
+    }, [isEnabled])
+
+    useEffect(() => {
+        if (!isEnabled) return
+
+        const handleMouseOver = (e: MouseEvent) => {
+            const target = e.target as HTMLElement
+            const interactive = target.closest('a, button, [role="button"]')
+            if (interactive) {
+                if (interactive.getAttribute('data-sound-hover') === 'none') return
+
+                if (interactive !== lastHoveredRef.current) {
+                    lastHoveredRef.current = interactive
+                    playHover()
+                }
+            } else {
+                lastHoveredRef.current = null
+            }
+        }
+
+        const handleClick = (e: MouseEvent) => {
+            const target = e.target as HTMLElement
+            const interactive = target.closest('a, button, [role="button"]')
+            if (interactive) {
+                if (interactive.getAttribute('data-sound-click') === 'none') return
+                playClick()
+            }
+        }
+
+        document.addEventListener('mouseover', handleMouseOver)
+        document.addEventListener('click', handleClick)
+        return () => {
+            document.removeEventListener('mouseover', handleMouseOver)
+            document.removeEventListener('click', handleClick)
+        }
+    }, [isEnabled, playHover, playClick])
 
     return (
         <SoundContext.Provider value={{ isEnabled, toggleSound, playHover, playClick }}>
