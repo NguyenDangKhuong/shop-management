@@ -14,6 +14,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext'
 import { SoundProvider } from '@/contexts/SoundContext'
 import MobileTabBar from '@/components/MobileTabBar'
 import { HyperspaceTransition } from '@/components/ui/HyperspaceTransition'
+import { PageTransition } from '@/components/ui/PageTransition'
 
 import './globals.css'
 
@@ -103,7 +104,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
               <SoundProvider>
                 <AntdProvider>
                   <HyperspaceTransition />
-                  {children}
+                  <PageTransition>{children}</PageTransition>
                   <MobileTabBar />
                 </AntdProvider>
               </SoundProvider>
