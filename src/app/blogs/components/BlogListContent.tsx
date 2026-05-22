@@ -94,7 +94,7 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
 
     return (
         <div
-            className="font-sans min-h-screen flex flex-col items-center relative transition-colors duration-300 overflow-x-hidden"
+            className="font-sans min-h-screen flex flex-col items-center relative transition-colors duration-300 overflow-x-clip"
         >
             {/* Grid Pattern */}
             <div className="fixed inset-0 pointer-events-none z-[-1] opacity-20" style={{ backgroundImage: 'linear-gradient(var(--border-primary) 1px, transparent 1px), linear-gradient(90deg, var(--border-primary) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />

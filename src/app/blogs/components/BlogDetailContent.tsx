@@ -36,7 +36,7 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
     }, [])
 
     return (
-        <div className="font-sans min-h-screen flex flex-col items-center relative transition-colors duration-300 overflow-x-hidden">
+        <div className="font-sans min-h-screen flex flex-col items-center relative transition-colors duration-300 overflow-x-clip">
             {/* Grid + Glow */}
             <div className="fixed inset-0 pointer-events-none z-[-1] opacity-20" style={{ backgroundImage: 'linear-gradient(var(--border-primary) 1px, transparent 1px), linear-gradient(90deg, var(--border-primary) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
             <div className="fixed top-[-15%] left-[-15%] w-[55%] h-[55%] rounded-full bg-[var(--neon-cyan)] opacity-[0.06] blur-[150px] pointer-events-none z-[-1]" />
