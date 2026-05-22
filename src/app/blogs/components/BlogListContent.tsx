@@ -108,7 +108,7 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
                         <LanguageSwitcher lang={lang} onToggle={() => { const next = lang === 'vi' ? 'en' : 'vi'; setLang(next) }} />
                         <Link
                             href="/"
-                            className="text-sm transition flex items-center gap-1"
+                            className="text-sm transition flex items-center gap-1 whitespace-nowrap shrink-0"
 
                         >
                             ← Back

@@ -49,7 +49,7 @@ export function BlogDetailContent({ post, relatedPosts }: { post: BlogPost; rela
                         <LanguageSwitcher lang={lang} onToggle={() => { const next = lang === 'vi' ? 'en' : 'vi'; setLang(next) }} />
                         <Link
                             href="/blogs"
-                            className="text-sm text-text-secondary hover:text-text-primary transition flex items-center gap-1"
+                            className="text-sm text-text-secondary hover:text-text-primary transition flex items-center gap-1 whitespace-nowrap shrink-0"
                         >
                             {lang === 'vi' ? '← Tất cả bài viết' : '← All posts'}
                         </Link>
