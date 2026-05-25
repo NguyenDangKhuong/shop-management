@@ -232,6 +232,7 @@ export default function CodeSandboxPage() {
   const [code, setCode] = useState(PRESETS.ts[0].code)
   const [logs, setLogs] = useState<LogItem[]>([])
   const [isBabelLoaded, setIsBabelLoaded] = useState(false)
+  const [babelCompiler, setBabelCompiler] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
 
   // React Live Preview component
@@ -242,23 +243,14 @@ export default function CodeSandboxPage() {
 
   // --- Dynamic Babel Load ---
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if ((window as any).Babel) {
+    import('@babel/standalone')
+      .then((module) => {
+        setBabelCompiler(module)
         setIsBabelLoaded(true)
-        return
-      }
-
-      const script = document.createElement('script')
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.12/babel.min.js'
-      script.async = true
-      script.onload = () => {
-        setIsBabelLoaded(true)
-      }
-      script.onerror = () => {
-        console.error('Failed to load Babel standalone CDN.')
-      }
-      document.body.appendChild(script)
-    }
+      })
+      .catch((err) => {
+        console.error('Failed to load local Babel compiler:', err)
+      })
   }, [])
 
   // --- Sync console scroll ---
@@ -325,12 +317,12 @@ export default function CodeSandboxPage() {
     }
 
     try {
-      if (typeof window === 'undefined' || !(window as any).Babel) {
-        throw new Error('Babel compiler is still loading from CDN. Please wait.')
+      if (!babelCompiler) {
+        throw new Error('Babel compiler is still loading locally. Please wait.')
       }
 
       // Transpile TypeScript + JSX to JavaScript
-      const transpiled = (window as any).Babel.transform(code, {
+      const transpiled = babelCompiler.transform(code, {
         presets: ['react', ['typescript', { isTSX: true, allExtensions: true }]],
         filename: 'sandbox.tsx'
       }).code
