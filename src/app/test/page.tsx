@@ -249,7 +249,7 @@ export default function CodeSandboxPage() {
       }
 
       const script = document.createElement('script')
-      script.src = 'https://unpkg.com/@babel/standalone/babel.min.js'
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.12/babel.min.js'
       script.async = true
       script.onload = () => {
         setIsBabelLoaded(true)
@@ -325,7 +325,7 @@ export default function CodeSandboxPage() {
     }
 
     try {
-      if (!isBabelLoaded) {
+      if (typeof window === 'undefined' || !(window as any).Babel) {
         throw new Error('Babel compiler is still loading from CDN. Please wait.')
       }
 
