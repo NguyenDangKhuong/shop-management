@@ -546,6 +546,10 @@ export default function LandingPage() {
                         <span className="text-lg group-hover:scale-125 transition-transform duration-300 drop-shadow-md">🎯</span>
                         <span className="text-xs font-bold text-text-secondary group-hover:text-text-primary hidden sm:inline-block">Clarity</span>
                     </Link>
+                    <Link href="/test" className="group flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-bg-tag transition-colors">
+                        <span className="text-lg group-hover:scale-125 transition-transform duration-300 drop-shadow-md">🛠️</span>
+                        <span className="text-xs font-bold text-text-secondary group-hover:text-text-primary hidden sm:inline-block">Sandbox</span>
+                    </Link>
                 </div>
             </div>
 
