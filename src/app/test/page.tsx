@@ -243,10 +243,40 @@ export default function CodeSandboxPage() {
 
   // --- Dynamic Babel Load ---
   useEffect(() => {
-    import('@babel/standalone')
-      .then((module) => {
-        setBabelCompiler(module)
-        setIsBabelLoaded(true)
+    if (typeof window === 'undefined') return
+
+    // If Babel is already loaded globally
+    if ((window as any).Babel) {
+      setBabelCompiler((window as any).Babel)
+      setIsBabelLoaded(true)
+      return
+    }
+
+    // Fetch and execute Babel while temporarily hiding Monaco's AMD define loader
+    fetch('/babel.min.js')
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
+        return res.text()
+      })
+      .then((codeText) => {
+        const oldDefine = (window as any).define
+        ;(window as any).define = undefined
+        try {
+          // Global eval of Babel compiler
+          ;(0, eval)(codeText)
+          if ((window as any).Babel) {
+            setBabelCompiler((window as any).Babel)
+            setIsBabelLoaded(true)
+          } else {
+            console.error('Babel evaluated but window.Babel is undefined')
+          }
+        } catch (e) {
+          console.error('Error evaluating Babel script:', e)
+        } finally {
+          if (oldDefine) {
+            ;(window as any).define = oldDefine
+          }
+        }
       })
       .catch((err) => {
         console.error('Failed to load local Babel compiler:', err)
@@ -323,7 +353,13 @@ export default function CodeSandboxPage() {
 
       // Transpile TypeScript + JSX to JavaScript
       const transpiled = babelCompiler.transform(code, {
-        presets: ['react', ['typescript', { isTSX: true, allExtensions: true }]],
+        presets: [
+          ['react', { runtime: 'classic' }],
+          ['typescript', { isTSX: true, allExtensions: true }]
+        ],
+        parserOpts: {
+          allowReturnOutsideFunction: true
+        },
         filename: 'sandbox.tsx'
       }).code
 
@@ -332,6 +368,12 @@ export default function CodeSandboxPage() {
         const execFn = new Function(
           'console',
           'React',
+          'useState',
+          'useEffect',
+          'useRef',
+          'useMemo',
+          'useCallback',
+          'useTransition',
           'motion',
           'CyberCard',
           'DecryptText',
@@ -343,13 +385,34 @@ export default function CodeSandboxPage() {
           })()`
         )
 
-        await execFn(customConsole, React, motion, CyberCard, DecryptText, TechBadge, LoadingSpinner, Button)
+        await execFn(
+          customConsole,
+          React,
+          React.useState,
+          React.useEffect,
+          React.useRef,
+          React.useMemo,
+          React.useCallback,
+          React.useTransition,
+          motion,
+          CyberCard,
+          DecryptText,
+          TechBadge,
+          LoadingSpinner,
+          Button
+        )
         setActiveComponent(null)
       } else {
         // React Component mode
         const evalFn = new Function(
           'console',
           'React',
+          'useState',
+          'useEffect',
+          'useRef',
+          'useMemo',
+          'useCallback',
+          'useTransition',
           'motion',
           'CyberCard',
           'DecryptText',
@@ -359,7 +422,22 @@ export default function CodeSandboxPage() {
           transpiled
         )
 
-        const result = evalFn(customConsole, React, motion, CyberCard, DecryptText, TechBadge, LoadingSpinner, Button)
+        const result = evalFn(
+          customConsole,
+          React,
+          React.useState,
+          React.useEffect,
+          React.useRef,
+          React.useMemo,
+          React.useCallback,
+          React.useTransition,
+          motion,
+          CyberCard,
+          DecryptText,
+          TechBadge,
+          LoadingSpinner,
+          Button
+        )
 
         let ComponentToMount: React.ComponentType
         if (typeof result === 'function') {

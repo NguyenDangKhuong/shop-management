@@ -14,9 +14,6 @@ importers:
       '@ant-design/icons':
         specifier: ^6.2.2
         version: 6.2.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@babel/standalone':
-        specifier: ^7.29.4
-        version: 7.29.4
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -141,6 +138,9 @@ importers:
         specifier: ^3.22.4
         version: 3.25.76
     devDependencies:
+      '@babel/standalone':
+        specifier: ^7.29.4
+        version: 7.29.4
       '@eslint/eslintrc':
         specifier: ^3.3.5
         version: 3.3.5

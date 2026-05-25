@@ -1126,90 +1126,184 @@ export default async function ProductPage({ params }) {
                         </div>
                     </div>
 
-                    <CodeBlock title="rsc-pattern.tsx">{`// ===== SERVER COMPONENT (default) =====
-// File: app/products/page.tsx  — no need for 'use server'
+                    <CodeBlock title="rsc-pattern.tsx">{`// ===== SERVER COMPONENT (Default) =====
+// File: app/products/page.tsx
 import { db } from '@/lib/database'
-import AddToCartButton from './AddToCartButton'
+import ProductList from './ProductList' // Interactive Client Component
 
-async function ProductPage() {
-    const products = await db.product.findMany()  // Direct DB access!
+export default async function ProductsPage() {
+    // 1. Fetch data directly from DB in Server Component
+    const products = await db.product.findMany({
+        orderBy: { createdAt: 'desc' }
+    })
+
     return (
-        <div>
-            <h1>Products ({products.length})</h1>
-            {products.map(p => (
-                <div key={p.id}>
-                    <h2>{p.name} - \${p.price}</h2>
-                    <AddToCartButton productId={p.id} />  {/* Client component */}
-                </div>
-            ))}
+        <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4 font-mono text-cyan-400">Product Management ({products.length})</h1>
+            {/* 2. Pass data to Client Component for interactivity */}
+            <ProductList initialProducts={products} />
         </div>
     )
 }
 
-// ===== CLIENT COMPONENT =====
-// File: app/products/AddToCartButton.tsx
+// ===== CLIENT COMPONENT (Interacts with UI & calls Actions) =====
+// File: app/products/ProductList.tsx
 'use client'
-import { useState } from 'react'
-import { addToCart } from './actions'
+import { useState, useTransition } from 'react'
+import { deleteProduct, updateProduct } from './actions'
+import QuickAddForm from './QuickAddForm'
 
-export default function AddToCartButton({ productId }) {
-    const [isPending, setIsPending] = useState(false)
+export default function ProductList({ initialProducts }) {
+    const [products, setProducts] = useState(initialProducts)
+    const [editingId, setEditingId] = useState<string | null>(null)
+    const [editName, setEditName] = useState('')
+    const [editPrice, setEditPrice] = useState(0)
+    const [isPending, startTransition] = useTransition()
+
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this product?')) return
+        
+        // Optimistic UI update (remove immediately on client for smooth UX)
+        const oldProducts = [...products]
+        setProducts(products.filter(p => p.id !== id))
+        
+        startTransition(async () => {
+            const result = await deleteProduct(id)
+            if (result?.error) {
+                alert(result.error)
+                setProducts(oldProducts) // Rollback if server fails
+            }
+        })
+    }
+
+    const handleSaveEdit = async (id: string) => {
+        startTransition(async () => {
+            const result = await updateProduct(id, { name: editName, price: editPrice })
+            if (result.success) {
+                setProducts(products.map(p => p.id === id ? { ...p, name: editName, price: editPrice } : p))
+                setEditingId(null)
+            } else {
+                alert(result.error)
+            }
+        })
+    }
+
     return (
-        <button onClick={async () => {
-            setIsPending(true)
-            await addToCart(productId)
-            setIsPending(false)
-        }} disabled={isPending}>
-            {isPending ? '⏳' : '🛒 Add to Cart'}
-        </button>
+        <div className="space-y-4">
+            {/* Quick add form using React 19 useActionState */}
+            <QuickAddForm onAdd={(newP) => setProducts([newP, ...products])} />
+
+            <div className="space-y-2 mt-4">
+                {products.map(p => (
+                    <div key={p.id} className="flex justify-between items-center p-3 border border-white/5 rounded-lg bg-slate-900/40">
+                        {editingId === p.id ? (
+                            <div className="flex gap-2 w-full">
+                                <input value={editName} onChange={e => setEditName(e.target.value)} className="p-1 rounded text-black bg-white" />
+                                <input type="number" value={editPrice} onChange={e => setEditPrice(Number(e.target.value))} className="p-1 rounded text-black bg-white w-24" />
+                                <button onClick={() => handleSaveEdit(p.id)} disabled={isPending} className="px-3 py-1 bg-green-600 rounded">Save</button>
+                                <button onClick={() => setEditingId(null)} className="px-3 py-1 bg-slate-600 rounded">Cancel</button>
+                            </div>
+                        ) : (
+                            <>
+                                <span className="font-mono text-slate-300">{p.name} - <strong className="text-cyan-400">\${p.price}</strong></span>
+                                <div className="flex gap-2">
+                                    <button onClick={() => {
+                                        setEditingId(p.id)
+                                        setEditName(p.name)
+                                        setEditPrice(p.price)
+                                    }} className="px-3 py-1 bg-blue-600/30 border border-blue-500/30 text-blue-400 rounded hover:bg-blue-600/50 transition">Edit</button>
+                                    <button onClick={() => handleDelete(p.id)} disabled={isPending} className="px-3 py-1 bg-red-600/30 border border-red-500/30 text-red-400 rounded hover:bg-red-600/50 transition">Delete</button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                ))}
+            </div>
+        </div>
     )
 }`}</CodeBlock>
 
-                    <CodeBlock title="server-actions.tsx">{`// ===== SERVER ACTION =====
+                    <CodeBlock title="server-actions.tsx">{`// ===== SERVER ACTIONS (Runs purely on the server) =====
 // File: app/products/actions.ts
 'use server'
 
 import { db } from '@/lib/database'
 import { revalidatePath } from 'next/cache'
 
-export async function addToCart(productId: string) {
-    await db.cart.create({ data: { productId, quantity: 1 } })
-    revalidatePath('/cart')
+// 1. Delete Action
+export async function deleteProduct(id: string) {
+    try {
+        await db.product.delete({ where: { id } })
+        revalidatePath('/products') // Revalidate Next.js router cache
+        return { success: true }
+    } catch (error) {
+        return { error: 'Server error: Failed to delete product.' }
+    }
 }
 
-export async function createProduct(formData: FormData) {
+// 2. Update Action
+export async function updateProduct(id: string, data: { name: string; price: number }) {
+    if (!data.name || data.price <= 0) {
+        return { error: 'Invalid name or price.' }
+    }
+    try {
+        await db.product.update({
+            where: { id },
+            data: { name: data.name, price: data.price }
+        })
+        revalidatePath('/products')
+        return { success: true }
+    } catch (error) {
+        return { error: 'Server error: Failed to update product.' }
+    }
+}
+
+// 3. Create Action (React 19 Form Action compatible)
+export async function createProduct(prevState: any, formData: FormData) {
     const name = formData.get('name') as string
     const price = Number(formData.get('price'))
-    if (!name) return { error: 'Name is required' }
 
-    await db.product.create({ data: { name, price } })
-    revalidatePath('/products')
-    return { success: true }
+    if (!name || price <= 0) {
+        return { error: 'Invalid name or price.' }
+    }
+
+    try {
+        const newProduct = await db.product.create({
+            data: { name, price }
+        })
+        revalidatePath('/products')
+        return { success: true, product: newProduct }
+    } catch (error) {
+        return { error: 'Server error: Failed to create product.' }
+    }
 }
 
-// Use in form — Progressive Enhancement!
-function CreateForm() {
-    return (
-        <form action={createProduct}>
-            <input name="name" required />
-            <input name="price" type="number" required />
-            <button type="submit">Create</button>
-        </form>
-    )
-}
-
-// React 19 — useActionState
+// ===== CLIENT COMPONENT FORM (React 19 useActionState) =====
+// File: app/products/QuickAddForm.tsx
 'use client'
-import { useActionState } from 'react'
+import { useActionState, useEffect } from 'react'
 import { createProduct } from './actions'
 
-function CreateProductForm() {
-    const [state, action, isPending] = useActionState(createProduct, null)
+export default function QuickAddForm({ onAdd }) {
+    // useActionState manages pending status and returned state from Server Action
+    const [state, formAction, isPending] = useActionState(createProduct, null)
+
+    useEffect(() => {
+        if (state?.success && state.product) {
+            onAdd(state.product) // Push new product to client state
+        }
+    }, [state, onAdd])
+
     return (
-        <form action={action}>
-            <input name="name" required />
-            <button disabled={isPending}>{isPending ? '...' : 'Create'}</button>
-            {state?.error && <span className="text-red-500">{state.error}</span>}
+        <form action={formAction} className="flex gap-2 p-3 bg-slate-800/60 border border-white/5 rounded-lg items-center">
+            <input name="name" placeholder="Product name..." required className="p-1 rounded text-black bg-white" />
+            <input name="price" type="number" placeholder="Price..." required className="p-1 rounded text-black bg-white w-24" />
+            
+            <button type="submit" disabled={isPending} className="px-4 py-1.5 bg-cyan-600 text-white rounded hover:bg-cyan-700 disabled:opacity-50">
+                {isPending ? 'Creating...' : 'Quick Add'}
+            </button>
+
+            {state?.error && <span className="text-red-400 text-xs font-mono">{state.error}</span>}
         </form>
     )
 }`}</CodeBlock>

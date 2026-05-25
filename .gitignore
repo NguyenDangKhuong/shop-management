@@ -44,3 +44,6 @@ yarn-error.log*
 lighthouse-reports/
 *.report.html
 *.report.json
+
+# dynamic assets
+/public/babel.min.js
