@@ -98,3 +98,32 @@ curl -X POST https://api.github.com/repos/NguyenDangKhuong/shop-management/dispa
     }
   }'
 ```
+
+---
+
+## 📱 4. Cách sử dụng Zalo Webhook Relay (Tham khảo)
+
+Dịch vụ `zalo-relay` chạy trên VPS của bạn tại `https://zalo-relay.khuong.theworkpc.com` có thể được gọi thủ công để gửi tin nhắn bất kỳ về Zalo của bạn:
+
+### Gửi tin nhắn bằng cURL (Terminal):
+```bash
+curl -X POST https://zalo-relay.khuong.theworkpc.com/uptime-webhook \
+  -H "Content-Type: application/json" \
+  -d '{"msg": "Nội dung tin nhắn muốn gửi ở đây!"}'
+```
+
+### Gửi tin nhắn bằng JavaScript:
+```javascript
+fetch('https://zalo-relay.khuong.theworkpc.com/uptime-webhook', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ msg: 'Nội dung tin nhắn của bạn!' })
+});
+```
+
+### Cơ chế hoạt động của Zalo Relay:
+*   Khi nhận request `POST` vào `/uptime-webhook` với body dạng `{"msg": "..."}`, file script `relay.py` trên VPS sẽ:
+    1.  Tự động sử dụng token trong `.env` và xử lý các vấn đề refresh token OAuth của Zalo.
+    2.  Đọc ID người dùng đã được lưu sẵn tại file `~/zalo-relay/chat_id.txt` (được lưu tự động khi bạn nhắn tin cho bot lần đầu).
+    3.  Thực hiện gửi tin nhắn trực tiếp về máy của bạn thông qua Zalo OA API.
+
