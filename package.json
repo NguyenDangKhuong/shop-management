@@ -38,6 +38,7 @@
     "@next/eslint-plugin-next": "^15.5.12",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
+    "@sentry/nextjs": "^10",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.37.0",
     "@vercel/analytics": "^1.5.0",
@@ -74,6 +75,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@babel/standalone": "^7.29.4",
     "@eslint/eslintrc": "^3.3.5",
     "@next/bundle-analyzer": "^14.1.0",
     "@notionhq/client": "^5.9.0",
@@ -84,7 +86,6 @@
     "@testing-library/user-event": "^14.6.1",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/babel__standalone": "^7.1.9",
-    "@babel/standalone": "^7.29.4",
     "@types/bcryptjs": "^2.4.6",
     "@types/dompurify": "^3.0.5",
     "@types/jest": "^29.5.14",

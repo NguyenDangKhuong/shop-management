@@ -3,6 +3,8 @@ name: Auto-Fix Self-Healing Pipeline
 on:
   repository_dispatch:
     types: [prod_error_alert]
+  issues:
+    types: [opened]
   workflow_dispatch:
     inputs:
       file_path:
@@ -44,11 +46,34 @@ jobs:
         run: pnpm install --no-frozen-lockfile
 
       - name: Setup Env Variables
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "FILE_PATH=${{ github.event.inputs.file_path }}" >> $GITHUB_ENV
             echo "ERROR_MESSAGE=${{ github.event.inputs.error_message }}" >> $GITHUB_ENV
             echo "ERROR_STACK=${{ github.event.inputs.error_stack }}" >> $GITHUB_ENV
+          elif [ "${{ github.event_name }}" = "issues" ]; then
+            node -e "
+              const fs = require('fs');
+              const title = process.env.ISSUE_TITLE || '';
+              const body = process.env.ISSUE_BODY || '';
+              const pathRegex = /((src\/[a-zA-Z0-9_\/.-]+\.(tsx|ts|js|jsx))|(next\.config\.(js|mjs))|(auth\.ts))/g;
+              let filePath = '';
+              let match;
+              while ((match = pathRegex.exec(body + '\n' + title)) !== null) {
+                const potentialPath = match[1];
+                if (fs.existsSync(potentialPath)) {
+                  filePath = potentialPath;
+                  break;
+                }
+              }
+              
+              fs.appendFileSync(process.env.GITHUB_ENV, 'FILE_PATH=' + filePath + '\n');
+              fs.appendFileSync(process.env.GITHUB_ENV, 'ERROR_MESSAGE=' + title.replace(/\n/g, ' ') + '\n');
+              fs.appendFileSync(process.env.GITHUB_ENV, 'ERROR_STACK<<EOF\n' + body.substring(0, 3000) + '\nEOF\n');
+            "
           else
             echo "FILE_PATH=${{ github.event.client_payload.file }}" >> $GITHUB_ENV
             echo "ERROR_MESSAGE=${{ github.event.client_payload.message }}" >> $GITHUB_ENV

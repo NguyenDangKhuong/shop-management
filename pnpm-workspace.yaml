@@ -2,6 +2,7 @@ packages:
   - '.'
 allowBuilds:
   '@parcel/watcher': true
+  '@sentry/cli': set this to true or false
   '@tailwindcss/oxide': set this to true or false
   '@vercel/speed-insights': set this to true or false
   sharp: true
