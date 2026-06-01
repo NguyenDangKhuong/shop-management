@@ -324,6 +324,26 @@ curl -X POST "https://bot-api.zaloplatforms.com/bot<TOKEN>/setWebhook" \
 | `/zalo-webhook` | POST | Nhận tin nhắn từ Zalo → lưu chat_id + trả health check |
 | `/uptime-webhook` | POST | Nhận alert từ Uptime Kuma → gửi Zalo |
 
+### Hướng dẫn sử dụng nhanh (cURL / JS)
+
+Bạn có thể gọi thủ công webhook này từ bất kỳ script hoặc dự án nào để gửi tin nhắn về Zalo của mình:
+
+*   **Gọi bằng cURL (Terminal):**
+    ```bash
+    curl -X POST https://zalo-relay.khuong.theworkpc.com/uptime-webhook \
+      -H "Content-Type: application/json" \
+      -d '{"msg": "Nội dung tin nhắn muốn gửi ở đây!"}'
+    ```
+
+*   **Gọi bằng JavaScript:**
+    ```javascript
+    fetch('https://zalo-relay.khuong.theworkpc.com/uptime-webhook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ msg: 'Nội dung tin nhắn của bạn!' })
+    });
+    ```
+
 ### Quản lý
 
 ```bash
