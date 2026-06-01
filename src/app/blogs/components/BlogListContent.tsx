@@ -82,10 +82,15 @@ export function BlogListContent({ posts }: { posts: BlogPost[] }) {
         } else if (e.key === 'ArrowUp') {
             e.preventDefault()
             setActiveIndex((prev) => (prev > 0 ? prev - 1 : navItems.length - 1))
-        } else if (e.key === 'Enter' && activeIndex >= 0) {
+        } else if (e.key === 'Enter') {
             e.preventDefault()
-            const item = navItems[activeIndex]
-            handleNavigate(item.slug, item.hash)
+            setActiveIndex((prev) => {
+                if (prev >= 0) {
+                    const item = navItems[prev]
+                    handleNavigate(item.slug, item.hash)
+                }
+                return prev
+            })
         } else if (e.key === 'Escape') {
             setIsOpen(false)
             inputRef.current?.blur()
