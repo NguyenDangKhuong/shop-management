@@ -67,9 +67,9 @@ export default function Page() {
 
         <button
           type='button'
-          onClick={async () => {
+          onClick={() => {
             Sentry.logger.info('User clicked the button, throwing a sample error')
-            await Sentry.startSpan(
+            Sentry.startSpan(
               {
                 name: 'Example Frontend/Backend Span',
                 op: 'test'
@@ -79,10 +79,10 @@ export default function Page() {
                 if (!res.ok) {
                   setHasSentError(true)
                 }
+                throw new SentryExampleFrontendError(
+                  'This error is raised on the frontend of the example page.'
+                )
               }
-            )
-            throw new SentryExampleFrontendError(
-              'This error is raised on the frontend of the example page.'
             )
           }}
           disabled={!isConnected}>
