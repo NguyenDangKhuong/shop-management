@@ -9,8 +9,13 @@ Tài liệu hướng dẫn cơ chế tự động phát hiện, sửa lỗi bằ
 ```
 [ Lỗi Prod / Staging ]
           │
-          ▼ (1. Bắt lỗi / Sentry Free / Custom Code)
-   GitHub Dispatch API (POST /dispatches)
+          ├─→ (Sự cố xảy ra) ──→ [ Sentry Error Tracking ]
+          │                            │ (Tự động giám sát & bắt lỗi)
+          │                            ▼
+          │                      [ GitHub Issue ] (Sentry tự động mở Issue mới)
+          │                            │
+          ▼                            ▼
+   GitHub Dispatch API (POST /dispatches)  hoặc  GitHub Issues (opened)
           │
           ▼ (2. Trigger Workflow)
    GitHub Actions (auto-fix.yml)
@@ -18,7 +23,7 @@ Tài liệu hướng dẫn cơ chế tự động phát hiện, sửa lỗi bằ
           ├─→ (3. Run CLI Script) ──→ auto-fix.js
           │                             │ (Gọi API với API Key: "khuong")
           │                             ▼
-          │                       CLI Proxy (gemini-3-flash-preview)
+          │                       CLI Proxy (gh-gpt-4.1-mini)
           │                             │ (Phân tích & viết lại code sửa lỗi)
           │                             ▼
           │                       Ghi đè file nguồn trực tiếp
@@ -60,15 +65,33 @@ Tài liệu hướng dẫn cơ chế tự động phát hiện, sửa lỗi bằ
 
 ---
 
-## 🚀 2. Hướng dẫn cấu hình trên GitHub
+## 🚀 2. Hướng dẫn cấu hình trên GitHub & Sentry
 
-Để hệ thống hoạt động tự động, bạn cần cấu hình các thông tin sau trên kho lưu trữ GitHub của mình (*Settings -> Secrets and Variables -> Actions*):
+Để luồng hoạt động hoàn toàn tự động, bạn cần hoàn thành các bước cấu hình sau:
+
+### A. Cấu hình Secrets trên GitHub
+Truy cập kho lưu trữ GitHub của bạn (*Settings -> Secrets and Variables -> Actions*) và thêm:
 
 1.  **`GH_PAT`** (Repository Secret):
     *   Tạo một Personal Access Token (PAT) trên tài khoản GitHub của bạn có quyền `repo` và `workflow`.
     *   Token này giúp GitHub Actions có quyền tạo branch mới và mở Pull Request trực tiếp trên nhánh `master`.
-2.  **`CLI_PROXY_KEY`** (Tùy chọn):
-    *   Mặc định là `khuong` (đã hardcoded trong script). Bạn có thể cấu hình secret này nếu muốn đổi API key khác.
+2.  **`SENTRY_AUTH_TOKEN`** (Repository Secret):
+    *   Sử dụng mã Token Sentry của bạn (bắt đầu bằng `sntrys_...`).
+    *   Token này giúp GitHub Actions tải Source Maps lên Sentry khi chạy lệnh build, hỗ trợ dịch ngược lỗi chính xác về dòng code gốc.
+
+### B. Liên kết Sentry với GitHub Issues
+1.  Truy cập Sentry Dashboard của bạn -> Chọn **Settings** -> **Integrations** -> Chọn **GitHub**.
+2.  Tiến hành liên kết với tài khoản/tổ chức GitHub chứa repo `shop-management`.
+3.  Vào phần dự án Sentry của bạn -> Chọn **Alerts** -> Tạo một **Alert Rule**:
+    *   *Điều kiện (When)*: Khi phát hiện ra sự kiện lỗi mới (New Issue).
+    *   *Hành động (Then)*: Tạo một Issue tương ứng trên kho lưu trữ GitHub của dự án (`shop-management`).
+
+### C. Cách thức phân tích file lỗi tự động
+Khi Sentry tạo ra một GitHub Issue:
+1.  Workflow sẽ tự động được kích hoạt thông qua sự kiện `issues: [opened]`.
+2.  Workflow sử dụng đoạn mã Node.js để quét tiêu đề lỗi (Error Message) và phần thân Issue (Error Stack).
+3.  Nó sẽ tìm kiếm các chuỗi ký tự khớp với đường dẫn file trong thư mục `src/` (ví dụ: `src/app/blogs/components/BlogListContent.tsx`).
+4.  Nếu khớp với file tồn tại trong repo, nó tự động gán đường dẫn đó để chạy luồng Auto-Fix bằng AI.
 
 ---
 
