@@ -59,7 +59,7 @@ jobs:
         env:
           CLI_PROXY_KEY: ${{ secrets.CLI_PROXY_KEY || 'khuong' }}
           CLI_PROXY_URL: https://cli-proxy.khuong.theworkpc.com
-          CLI_PROXY_MODEL: gemini-3-flash-preview
+          CLI_PROXY_MODEL: gh-gpt-4.1-mini
         run: node scripts/auto-fix.js
 
       - name: Verify Fix (Build & Test)
@@ -79,7 +79,7 @@ jobs:
         env:
           CLI_PROXY_KEY: ${{ secrets.CLI_PROXY_KEY || 'khuong' }}
           CLI_PROXY_URL: https://cli-proxy.khuong.theworkpc.com
-          CLI_PROXY_MODEL: gemini-3-flash-preview
+          CLI_PROXY_MODEL: gh-gpt-4.1-mini
           ERROR_MESSAGE: "The previous fix caused a build/compile error."
           ERROR_STACK: "Please review the code and fix the syntax or logical build error."
         run: |

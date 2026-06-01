@@ -44,7 +44,7 @@ Tài liệu hướng dẫn cơ chế tự động phát hiện, sửa lỗi bằ
 *   **Chức năng:** 
     *   Đọc nội dung file lỗi.
     *   Gửi prompt chứa nội dung file + stack trace qua CLI Proxy (`https://cli-proxy.khuong.theworkpc.com/v1/chat/completions`) bằng API Key `khuong`.
-    *   Sử dụng model **`gemini-3-flash-preview`** (do gpt-5-codex bị giới hạn trên tài khoản ChatGPT).
+    *   Sử dụng model **`gh-gpt-4.1-mini`** (chạy ổn định và tránh lỗi 504 Gateway Timeout từ tài khoản Google OAuth trên proxy).
     *   Tách lọc phần giải thích lỗi của AI và ghi đè nội dung code mới đã được sửa vào file nguồn.
 
 ### B. Workflow tự động: `.github/workflows/auto-fix.yml`

@@ -7,7 +7,7 @@ const errorMessage = process.env.ERROR_MESSAGE || process.argv[3];
 const errorStack = process.env.ERROR_STACK || process.argv[4] || '';
 const apiKey = process.env.CLI_PROXY_KEY || 'khuong';
 const apiBaseUrl = process.env.CLI_PROXY_URL || 'https://cli-proxy.khuong.theworkpc.com';
-const model = process.env.CLI_PROXY_MODEL || 'gemini-3-flash-preview';
+const model = process.env.CLI_PROXY_MODEL || 'gh-gpt-4.1-mini';
 
 if (!filePath) {
   console.error('Error: FILE_PATH is required as env var or first argument.');
