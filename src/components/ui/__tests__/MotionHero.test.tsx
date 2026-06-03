@@ -3,11 +3,11 @@ import { MotionHero } from '../MotionHero'
 
 describe('MotionHero Component', () => {
     it('renders without crashing', () => {
-        render(<MotionHero purposeText="landing.purpose" />)
+        render(<MotionHero />)
     })
 
     it('displays the correct name and title', async () => {
-        render(<MotionHero purposeText="landing.purpose" />)
+        render(<MotionHero />)
         expect(screen.getByText(/Hello, I'm/i)).toBeInTheDocument()
         await waitFor(() => {
             expect(screen.getByText(/Khuong/i)).toBeInTheDocument()
@@ -16,14 +16,14 @@ describe('MotionHero Component', () => {
     })
 
     it('renders CTA buttons', () => {
-        render(<MotionHero purposeText="landing.purpose" />)
+        render(<MotionHero />)
         expect(screen.getByRole('link', { name: /Side Projects/i })).toBeInTheDocument()
         expect(screen.getByRole('link', { name: /Blog/i })).toBeInTheDocument()
         expect(screen.getByRole('link', { name: /Download CV/i })).toBeInTheDocument()
     })
 
     it('calculates years of experience correctly', () => {
-        render(<MotionHero purposeText="landing.purpose" />)
+        render(<MotionHero />)
         const yearsOfExperience = new Date().getFullYear() - 2018
         expect(screen.getByText(new RegExp(`${yearsOfExperience}\\+ Years`, 'i'))).toBeInTheDocument()
     })

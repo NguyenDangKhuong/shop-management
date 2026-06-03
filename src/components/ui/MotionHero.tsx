@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Sparkles, ArrowRight, Download, BookOpen } from 'lucide-react'
+import { Sparkles, ArrowRight, Download, BookOpen, Layers } from 'lucide-react'
 import HologramAvatar from '@/components/ui/HologramAvatar'
 import { useTranslation } from '@/i18n'
 import Link from 'next/link'
@@ -211,13 +211,21 @@ export const MotionHero = () => {
                         </span>
                         <div className="absolute inset-0 bg-gradient-to-r from-neon-green to-neon-cyan opacity-0 group-hover/cv:opacity-15 transition-opacity" />
                     </Link>
+
+                    <Link href="/journey" className="group/journey relative px-6 py-3 rounded-full font-bold text-text-primary border border-border-primary bg-bg-surface-dim/20 backdrop-blur-md hover:border-neon-cyan/50 hover:scale-105 active:scale-95 shadow-[0_0_25px_-10px_var(--neon-cyan)] hover:shadow-[0_0_40px_-10px_var(--neon-cyan)] transition-all flex items-center justify-center gap-2 overflow-hidden">
+                        <span className="relative z-10 flex items-center gap-2">
+                            <Layers className="w-5 h-5 text-neon-cyan group-hover/journey:animate-pulse" />
+                            {language === 'vi' ? 'Hành trình' : 'Journey'}
+                        </span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-neon-cyan to-neon-green opacity-0 group-hover/journey:opacity-15 transition-opacity" />
+                    </Link>
  
                     <Link href="/projects" className="group/proj relative px-6 py-3 bg-text-primary text-bg-page rounded-full font-bold overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_-10px_var(--neon-cyan)] flex items-center justify-center gap-2">
                         <span className="relative z-10 flex items-center gap-2">
                             🚀 {t('landing.viewProjects')}
                             <ArrowRight className="w-5 h-5 transition-transform group-hover/proj:translate-x-1" />
                         </span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-neon-cyan to-neon-purple opacity-0 group-hover/proj:opacity-20 transition-opacity" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-neon-cyan to-neon-green opacity-0 group-hover/proj:opacity-20 transition-opacity" />
                     </Link>
                 </motion.div>
             </div>

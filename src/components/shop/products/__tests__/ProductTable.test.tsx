@@ -84,8 +84,8 @@ describe('ProductTable - Functional Tests', () => {
         render(
             <ProductTable
                 totalDocs={2}
-                products={mockProducts}
-                categories={mockCategories}
+                products={mockProducts as any}
+                categories={mockCategories as any}
             />
         )
 
@@ -119,7 +119,7 @@ describe('ProductTable - Functional Tests', () => {
             <ProductTable
                 totalDocs={0}
                 products={[]}
-                categories={mockCategories}
+                categories={mockCategories as any}
             />
         )
 
@@ -137,8 +137,8 @@ describe('ProductTable - Functional Tests', () => {
         render(
             <ProductTable
                 totalDocs={2}
-                products={mockProducts}
-                categories={mockCategories}
+                products={mockProducts as any}
+                categories={mockCategories as any}
             />
         )
 
@@ -151,8 +151,8 @@ describe('ProductTable - Functional Tests', () => {
         render(
             <ProductTable
                 totalDocs={2}
-                products={mockProducts}
-                categories={mockCategories}
+                products={mockProducts as any}
+                categories={mockCategories as any}
             />
         )
 
@@ -165,8 +165,8 @@ describe('ProductTable - Functional Tests', () => {
         render(
             <ProductTable
                 totalDocs={2}
-                products={mockProducts}
-                categories={mockCategories}
+                products={mockProducts as any}
+                categories={mockCategories as any}
             />
         )
 
