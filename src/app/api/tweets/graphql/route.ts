@@ -1,1 +1,1 @@
-export * from '@/tweets-private/api-tweets/graphql/route'
+export { GET } from '@/tweets-private/api-tweets/graphql/route'

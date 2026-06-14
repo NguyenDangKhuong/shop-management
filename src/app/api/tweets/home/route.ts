@@ -1,1 +1,1 @@
-export * from '@/tweets-private/api-tweets/home/route'
+export { GET } from '@/tweets-private/api-tweets/home/route'

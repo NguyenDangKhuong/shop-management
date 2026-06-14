@@ -1,1 +1,1 @@
-export * from '@/tweets-private/api-tweets/follow/route'
+export { POST, DELETE } from '@/tweets-private/api-tweets/follow/route'
