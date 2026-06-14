@@ -11,6 +11,7 @@
   },
   "private": true,
   "scripts": {
+    "preinstall": "bash scripts/vercel-submodule.sh",
     "dev": "next dev",
     "build": "next build",
     "build-ananalyzer": "ANALYZE=true yarn build",
