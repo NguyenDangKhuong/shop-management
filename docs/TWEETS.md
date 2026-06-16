@@ -32,7 +32,7 @@ Trang hiển thị Twitter/X timelines của các username đã lưu.
 | `TWEETS_ONLY_DOMAIN` | Domain chỉ cho phép /tweets (redirect path khác → /tweets) |
 | `BLOCKED_DOMAINS_FOR_TWEETS` | Domain bị chặn truy cập /tweets (comma-separated) |
 
-Cả hai cấu hình trong `.env.local` và Vercel Dashboard.
+Cấu hình cả hai trong `.env.local` và Vercel Dashboard.
 
 ## Cấu trúc files
 
@@ -120,7 +120,21 @@ Component `LazyVideo` trong `GraphQLTweets.tsx` xử lý video/GIF:
 - **GIF support** — Auto-play, loop, muted, badge "GIF"
 - **Standard controls** — Dùng native browser video controls
 
-### Video Proxy Optimization
+## Media Preview Lightbox (ImagePreview)
+
+Component `ImagePreview` trong `GraphQLTweets.tsx` quản lý chế độ xem toàn màn hình (fullscreen/lightbox) cho cả hình ảnh, video và animated GIF.
+
+- **Swipe-to-dismiss gesture** — Người dùng có thể vuốt (swipe) bằng ngón tay (trên di động) hoặc kéo (drag) bằng chuột (trên desktop) theo bất kỳ hướng nào để đóng chế độ xem toàn màn hình.
+  - **Dynamic translation & scale** — Element phóng to sẽ di chuyển theo tọa độ kéo của pointer, đồng thời co giãn nhẹ (scale down) tạo cảm giác vật lý organic, mượt mà.
+  - **Fade backdrop** — Độ mờ (opacity) của nền đen tự động giảm dần theo khoảng cách kéo.
+  - **Bounce-back animation** — Nếu thả tay trước khoảng cách ngưỡng (120px), hình ảnh/video sẽ tự động đàn hồi về vị trí cũ bằng hiệu ứng transition mượt mà.
+- **Video & GIF Fullscreen Support** — Hỗ trợ phóng to cả video và animated GIF:
+  - Trên `MediaGrid`, video có một nút zoom ở góc trên cùng bên phải khi hover.
+  - Khi mở chế độ phóng to, video tự động phát (`autoPlay`) có đầy đủ controls, GIF tự động lặp (`loop`) và tắt tiếng (`muted`).
+  - **Tap-to-play/pause** — Chạm/Click nhẹ vào video phóng to sẽ phát/tạm dừng video.
+  - **Controls zone bypass** — Không kích hoạt cử chỉ swipe-to-dismiss khi tương tác ở khu vực 20% cạnh dưới của video để người dùng có thể thoải mái tua timeline (scrubbing) mà không bị thoát nhầm.
+
+## Video Proxy Optimization
 
 | Feature | Cloudflare Worker | Vercel Fallback |
 |---------|------------------|-----------------|
