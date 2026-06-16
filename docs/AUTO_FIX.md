@@ -45,7 +45,7 @@ Tài liệu hướng dẫn cơ chế tự động phát hiện, sửa lỗi bằ
 ## 🛠️ 1. Các thành phần chính
 
 ### A. Script sửa lỗi: `scripts/auto-fix.js`
-*   **Vị trí:** [scripts/auto-fix.js](file:///Users/khuongn/Downloads/shop-management/scripts/auto-fix.js)
+*   **Vị trí:** [scripts/auto-fix.js](../scripts/auto-fix.js)
 *   **Chức năng:** 
     *   Đọc nội dung file lỗi.
     *   Gửi prompt chứa nội dung file + stack trace qua CLI Proxy (`https://cli-proxy.khuong.theworkpc.com/v1/chat/completions`) bằng API Key `khuong`.
@@ -53,7 +53,7 @@ Tài liệu hướng dẫn cơ chế tự động phát hiện, sửa lỗi bằ
     *   Tách lọc phần giải thích lỗi của AI và ghi đè nội dung code mới đã được sửa vào file nguồn.
 
 ### B. Workflow tự động: `.github/workflows/auto-fix.yml`
-*   **Vị trí:** [.github/workflows/auto-fix.yml](file:///Users/khuongn/Downloads/shop-management/.github/workflows/auto-fix.yml)
+*   **Vị trí:** [.github/workflows/auto-fix.yml](../.github/workflows/auto-fix.yml)
 *   **Chức năng:**
     *   Lắng nghe sự kiện `repository_dispatch` (từ webhook tự động) hoặc chạy thủ công bằng `workflow_dispatch`.
     *   Cài đặt Node 22, pnpm, và cài dependencies.

@@ -116,6 +116,7 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@parcel/watcher",
+      "@sentry/cli",
       "@tailwindcss/oxide",
       "@vercel/speed-insights",
       "sharp",
