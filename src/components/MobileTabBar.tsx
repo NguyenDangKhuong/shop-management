@@ -35,6 +35,7 @@ const TABS: TabItem[] = [
 const MORE_ITEMS = [
     { icon: '🔐', label: 'Đăng nhập', href: '/login' },
     { icon: '🃏', label: 'Flashcards', href: '/vocabulary-flashcards' },
+    { icon: '📥', label: 'Douyin Downloader', href: '/douyin' },
     { icon: '💻', label: 'LeetCode', href: '/leetcode' },
     { icon: '🧩', label: 'Algorithm', href: '/flashcards' },
     { icon: '📄', label: 'CV', href: '/cv' },
