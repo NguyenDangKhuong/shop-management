@@ -84,7 +84,18 @@ export default function DouyinClient() {
 
         try {
             const res = await fetch(`/api/douyin?url=${encodeURIComponent(targetUrl)}`)
-            const data = await res.json()
+            
+            let data: any = null
+            const contentType = res.headers.get('content-type')
+            if (contentType && contentType.includes('application/json')) {
+                data = await res.json()
+            } else {
+                const text = await res.text()
+                if (text.includes('<html') || text.includes('<!DOCTYPE')) {
+                    throw new Error(`Máy chủ API phản hồi lỗi ${res.status} (Gateway Error). Vui lòng thử lại sau!`)
+                }
+                throw new Error(text || `Yêu cầu thất bại với trạng thái ${res.status}.`)
+            }
 
             if (!res.ok || data.error) {
                 throw new Error(data.error || 'Lỗi hệ thống khi phân tích liên kết.')
