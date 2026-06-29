@@ -78,4 +78,30 @@ Khi bạn muốn chuyển hướng API sang một tên miền khác trên VPS (v
    * Lưu lại và kích hoạt Deploy lại (Redeploy) để Vercel nạp cấu hình mới.
 
 ---
-*Tài liệu cập nhật ngày: 27/06/2026 bởi Antigravity Assistant.*
+
+## 🚀 4. Các giải pháp và cơ chế tự động đã triển khai
+
+Để đảm bảo hệ thống hoạt động ổn định trọn đời và không bị lỗi vặt, các giải pháp dưới đây đã được cấu hình hoàn chỉnh:
+
+### A. Cơ chế tự động cập nhật Cookie Douyin (Weekly Auto-Refresh)
+* **Vấn đề cũ:** Cookie `ttwid` của Douyin hết hạn làm API trả về dữ liệu trống, kích hoạt cơ chế retry của VPS làm thời gian phản hồi vượt quá 10s dẫn đến lỗi 504 trên Vercel.
+* **Giải pháp:**
+  1. Đã tạo một script Bash tại `/home/ubuntu/refresh_douyin_cookie.sh` trên VPS để tự động gọi API nội bộ `/generate_ttwid`, lấy token mới và gọi POST cập nhật cookie cho crawler.
+  2. Đã thêm cronjob vào crontab của VPS chạy tự động vào **00:00 Chủ Nhật hàng tuần**:
+     ```bash
+     0 0 * * 0 /home/ubuntu/refresh_douyin_cookie.sh
+     ```
+  * *Kết quả:* Cookie Douyin luôn được tự động làm mới hàng tuần mà không cần thao tác thủ công.
+
+### B. Route Handler Proxy & Phòng chống crash Frontend
+* **Vấn đề cũ:** API trên VPS không cấu hình CORS khiến trình duyệt chặn request trực tiếp từ domain `shop.thetaphoa.store`. Đồng thời, các lỗi 504 (trả về trang HTML) làm hàm parse JSON ở client bị lỗi cú pháp (`Unexpected token A...`) gây đơ giao diện.
+* **Giải pháp:**
+  1. Tạo Route Handler tại `src/app/api/douyin/route.ts` làm proxy trung gian để Next.js gọi trực tiếp sang VPS từ server-side, hoàn toàn bypass được CORS.
+  2. Cập nhật `DouyinClient.tsx` để kiểm tra `Content-Type` của response. Nếu phát hiện trang lỗi HTML (504/503) thay vì JSON, hệ thống sẽ đọc dạng text và hiển thị thông báo lỗi thân thiện cho người dùng thay vì crash JavaScript.
+
+### C. Nginx Subpath Routing
+* **Vấn đề cũ:** Cloudflare Tunnel chạy ở chế độ Cloudflare-managed (Zero Trust Dashboard) nên mọi cấu hình sửa file local `config.yml` trên VPS đều bị bỏ qua, không thể tạo subdomain `douyin-api.thetaphoa.store` trực tiếp từ VPS.
+* **Giải pháp:** Định tuyến thông qua một subpath trong tên miền chính đang trỏ thẳng vào Nginx của VPS: `https://khuong.theworkpc.com/douyin-api`. Nginx sẽ nhận diện path `/douyin-api/` và chuyển tiếp đến container port `8000` của API.
+
+---
+*Tài liệu cập nhật ngày: 29/06/2026 bởi Antigravity Assistant.*
