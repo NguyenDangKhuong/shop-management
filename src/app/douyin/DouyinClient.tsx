@@ -357,7 +357,7 @@ export default function DouyinClient() {
                                 {videoUrl && (
                                     <div className="space-y-2">
                                         <a
-                                            href={`${process.env.NEXT_PUBLIC_DOUYIN_API_URL || 'https://khuong.theworkpc.com/douyin-api'}/download?url=${encodeURIComponent(videoUrl)}&prefix=true`}
+                                            href={`${process.env.NEXT_PUBLIC_DOUYIN_API_URL || 'https://khuong.theworkpc.com/douyin-api'}/download?url=${encodeURIComponent(videoUrl)}`}
                                             download
                                             className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider text-center transition-all shadow-md shadow-blue-900/20 active:scale-95 flex items-center justify-center gap-2"
                                         >
