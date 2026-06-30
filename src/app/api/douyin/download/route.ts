@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const url = searchParams.get('url')
+    const mode = searchParams.get('mode') // 'stream' = inline for iOS Save to Photos
 
     if (!url) {
         return NextResponse.json({ error: 'URL is required' }, { status: 400 })
@@ -24,8 +25,15 @@ export async function GET(req: NextRequest) {
 
         const headers = new Headers()
         headers.set('Content-Type', response.headers.get('Content-Type') || 'video/mp4')
-        headers.set('Content-Disposition', 'attachment; filename="douyin-video.mp4"')
         headers.set('Accept-Ranges', 'bytes')
+
+        // mode=stream: serve inline so iOS Safari can long-press → Save to Photos
+        // default: force download as attachment (saves to Files on iOS)
+        if (mode === 'stream') {
+            headers.set('Content-Disposition', 'inline')
+        } else {
+            headers.set('Content-Disposition', 'attachment; filename="douyin-video.mp4"')
+        }
 
         const contentLength = response.headers.get('Content-Length')
         if (contentLength) {

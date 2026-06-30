@@ -59,6 +59,20 @@ export default function DouyinClient() {
     const [videoData, setVideoData] = useState<DouyinVideoData | null>(null)
     const [copiedVideo, setCopiedVideo] = useState(false)
     const [copiedAudio, setCopiedAudio] = useState(false)
+    const [pasted, setPasted] = useState(false)
+
+    const handlePaste = async () => {
+        try {
+            const text = await navigator.clipboard.readText()
+            if (text) {
+                setInput(text)
+                setPasted(true)
+                setTimeout(() => setPasted(false), 1500)
+            }
+        } catch {
+            // Fallback: nếu quyền clipboard bị từ chối, không làm gì
+        }
+    }
 
     // Helper: Trích xuất link HTTP/HTTPS từ chuỗi văn bản bất kỳ
     const extractUrl = (text: string): string | null => {
@@ -201,6 +215,17 @@ export default function DouyinClient() {
                                 disabled={loading}
                             />
                         </div>
+                        {/* Paste Button */}
+                        <div className="flex justify-end">
+                            <button
+                                type="button"
+                                onClick={handlePaste}
+                                className="px-4 py-2 rounded-xl border border-cyan-500/30 hover:bg-cyan-500/10 text-cyan-400 text-xs font-bold uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5"
+                                disabled={loading}
+                            >
+                                {pasted ? '✓ Đã Dán' : '📋 Dán Link'}
+                            </button>
+                        </div>
                         <div className="flex justify-end gap-3">
                             {input && (
                                 <button
@@ -330,20 +355,31 @@ export default function DouyinClient() {
                                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Tải xuống</h3>
 
                                 {videoUrl && (
-                                    <div className="flex flex-col sm:flex-row gap-2">
+                                    <div className="space-y-2">
+                                        <div className="flex flex-col sm:flex-row gap-2">
+                                            <a
+                                                href={`/api/douyin/download?url=${encodeURIComponent(videoUrl)}`}
+                                                download={`douyin_${videoData.author?.nickname || 'video'}.mp4`}
+                                                className="flex-1 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider text-center transition-all shadow-md shadow-blue-900/20 active:scale-95 flex items-center justify-center gap-2"
+                                            >
+                                                🚀 Tải Video (Không Watermark)
+                                            </a>
+                                            <button
+                                                onClick={() => copyToClipboard(videoUrl, 'video')}
+                                                className="py-3 px-4 rounded-xl border border-blue-500/30 hover:bg-blue-500/10 text-blue-400 font-bold text-xs uppercase tracking-wider transition-all active:scale-95 flex items-center justify-center gap-2"
+                                            >
+                                                {copiedVideo ? '✓ Đã Copy' : '📋 Copy Link'}
+                                            </button>
+                                        </div>
+                                        {/* iOS: Mở video trên tab mới để nhấn giữ → Save to Photos */}
                                         <a
-                                            href={`/api/douyin/download?url=${encodeURIComponent(videoUrl)}`}
-                                            download={`douyin_${videoData.author?.nickname || 'video'}.mp4`}
-                                            className="flex-1 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider text-center transition-all shadow-md shadow-blue-900/20 active:scale-95 flex items-center justify-center gap-2"
+                                            href={`/api/douyin/download?url=${encodeURIComponent(videoUrl)}&mode=stream`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="w-full py-3 px-4 rounded-xl border border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-400 font-bold text-xs uppercase tracking-wider text-center transition-all active:scale-95 flex items-center justify-center gap-2"
                                         >
-                                            🚀 Tải Video (Không Watermark)
+                                            📱 Mở Video (Nhấn giữ → Lưu vào Photos)
                                         </a>
-                                        <button
-                                            onClick={() => copyToClipboard(videoUrl, 'video')}
-                                            className="py-3 px-4 rounded-xl border border-blue-500/30 hover:bg-blue-500/10 text-blue-400 font-bold text-xs uppercase tracking-wider transition-all active:scale-95 flex items-center justify-center gap-2"
-                                        >
-                                            {copiedVideo ? '✓ Đã Copy' : '📋 Copy Link'}
-                                        </button>
                                     </div>
                                 )}
 
