@@ -155,5 +155,18 @@ sudo systemctl restart download-proxy  # Khởi động lại
 sudo journalctl -u download-proxy -f   # Xem log realtime
 ```
 
+### H. Loại bỏ Video Player Preview (Tiết kiệm Bandwidth)
+* **Vấn đề:** Khi hiển thị kết quả trích xuất, trang có embed `<video src={cdnUrl}>` để xem trước video. Mỗi lần load trang, trình duyệt tự động tải một phần video từ CDN. Dù không tính vào Vercel bandwidth (vì CDN là bên thứ ba), nhưng gây hiểu nhầm khi theo dõi usage và tốn data di động của user.
+* **Giải pháp:** Xóa hoàn toàn cột Video Player (`<video>` element) khỏi `DouyinClient.tsx`. Trang giờ chỉ hiển thị metadata (tác giả, mô tả, stats) và các nút tải xuống. Layout chuyển từ grid 2 cột sang single column.
+
+### I. SEO Optimization
+* **Mục tiêu:** Đưa trang `/douyin` lên top kết quả tìm kiếm cho các từ khóa tiếng Việt và tiếng Anh liên quan đến tải video Douyin.
+* **Đã triển khai:**
+  1. **Metadata** (`page.tsx`): Title tag, meta description, 19 keywords (VN + EN), Open Graph, Twitter Card, canonical URL, robots directives.
+  2. **JSON-LD Structured Data**: Schema.org `WebApplication` — giúp Google hiển thị rich results (tên app, giá miễn phí, danh sách tính năng).
+  3. **H1 Tag**: Chuyển từ "Douyin Downloader" sang "Tải Video Douyin Không Watermark" (target keyword chính).
+  4. **FAQ Section**: 5 câu hỏi thường gặp dùng `<details>/<summary>` — Google có thể hiển thị FAQ rich snippets trong kết quả tìm kiếm.
+  5. **Semantic HTML**: Sử dụng `<section>`, `<h2>`, `<details>` đúng chuẩn cho crawler.
+
 ---
 *Tài liệu cập nhật ngày: 30/06/2026 bởi Antigravity Assistant.*
