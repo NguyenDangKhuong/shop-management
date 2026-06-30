@@ -355,21 +355,30 @@ export default function DouyinClient() {
                                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Tải xuống</h3>
 
                                 {videoUrl && (
-                                    <div className="flex flex-col sm:flex-row gap-2">
+                                    <div className="space-y-2">
                                         <a
-                                            href={videoUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex-1 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider text-center transition-all shadow-md shadow-blue-900/20 active:scale-95 flex items-center justify-center gap-2"
+                                            href={`${process.env.NEXT_PUBLIC_DOUYIN_API_URL || 'https://khuong.theworkpc.com/douyin-api'}/download?url=${encodeURIComponent(videoUrl)}&prefix=true`}
+                                            download
+                                            className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider text-center transition-all shadow-md shadow-blue-900/20 active:scale-95 flex items-center justify-center gap-2"
                                         >
-                                            🚀 Mở Video (Không Watermark)
+                                            📥 Tải Video (Không Watermark)
                                         </a>
-                                        <button
-                                            onClick={() => copyToClipboard(videoUrl, 'video')}
-                                            className="py-3 px-4 rounded-xl border border-blue-500/30 hover:bg-blue-500/10 text-blue-400 font-bold text-xs uppercase tracking-wider transition-all active:scale-95 flex items-center justify-center gap-2"
-                                        >
-                                            {copiedVideo ? '✓ Đã Copy' : '📋 Copy Link'}
-                                        </button>
+                                        <div className="flex gap-2">
+                                            <a
+                                                href={videoUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex-1 py-3 px-4 rounded-xl border border-blue-500/30 hover:bg-blue-500/10 text-blue-400 font-bold text-xs uppercase tracking-wider text-center transition-all active:scale-95 flex items-center justify-center gap-2"
+                                            >
+                                                🔗 Mở Video
+                                            </a>
+                                            <button
+                                                onClick={() => copyToClipboard(videoUrl, 'video')}
+                                                className="py-3 px-4 rounded-xl border border-blue-500/30 hover:bg-blue-500/10 text-blue-400 font-bold text-xs uppercase tracking-wider transition-all active:scale-95 flex items-center justify-center gap-2"
+                                            >
+                                                {copiedVideo ? '✓ Đã Copy' : '📋 Copy Link'}
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
 
