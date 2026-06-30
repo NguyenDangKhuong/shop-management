@@ -371,9 +371,9 @@ export default function DouyinClient() {
                                                 {copiedVideo ? '✓ Đã Copy' : '📋 Copy Link'}
                                             </button>
                                         </div>
-                                        {/* iOS: Mở video trên tab mới để nhấn giữ → Save to Photos */}
+                                        {/* iOS: Mở video trực tiếp (không qua proxy) để nhấn giữ → Save to Photos */}
                                         <a
-                                            href={`/api/douyin/download?url=${encodeURIComponent(videoUrl)}&mode=stream`}
+                                            href={videoUrl}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="w-full py-3 px-4 rounded-xl border border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-400 font-bold text-xs uppercase tracking-wider text-center transition-all active:scale-95 flex items-center justify-center gap-2"
