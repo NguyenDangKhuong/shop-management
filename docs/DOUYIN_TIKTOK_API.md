@@ -103,13 +103,57 @@ Khi bạn muốn chuyển hướng API sang một tên miền khác trên VPS (v
 * **Vấn đề cũ:** Cloudflare Tunnel chạy ở chế độ Cloudflare-managed (Zero Trust Dashboard) nên mọi cấu hình sửa file local `config.yml` trên VPS đều bị bỏ qua, không thể tạo subdomain `douyin-api.thetaphoa.store` trực tiếp từ VPS.
 * **Giải pháp:** Định tuyến thông qua một subpath trong tên miền chính đang trỏ thẳng vào Nginx của VPS: `https://khuong.theworkpc.com/douyin-api`. Nginx sẽ nhận diện path `/douyin-api/` và chuyển tiếp đến container port `8000` của API.
 
-### D. Hỗ trợ tải Video trực tiếp trên di động (Mobile Download Force Proxy)
-* **Vấn đề cũ:** Nút "Tải Video" liên kết trực tiếp tới URL CDN của Douyin (`zjcdn.com`). Do khác tên miền (Cross-Origin), trình duyệt di động (như Safari trên iOS) bỏ qua thuộc tính `download` của thẻ `<a>` và mở trình phát stream trực tiếp thay vì lưu file.
-* **Giải pháp:**
-  1. Tạo Route Handler proxy tải xuống tại `src/app/api/douyin/download/route.ts`. API này nhận link CDN của video, fetch stream dữ liệu từ CDN, và trả về cho trình duyệt kèm header `Content-Disposition: attachment; filename="douyin-video.mp4"`.
-  2. Cập nhật nút tải xuống trong `DouyinClient.tsx` trỏ tới `/api/douyin/download?url=...` đã được mã hóa bằng `encodeURIComponent`.
-  * *Kết quả:* Trình duyệt di động (iOS Safari & Android Chrome) sẽ nhận diện đúng header và mở hộp thoại xác nhận tải xuống gốc của hệ điều hành để lưu trực tiếp vào máy.
+### D. Tải Video trên di động — Chuyển từ Vercel Proxy sang VPS Proxy
+* **Vấn đề ban đầu:** Nút "Tải Video" liên kết trực tiếp tới URL CDN của Douyin (`zjcdn.com`). Do khác tên miền (Cross-Origin), trình duyệt di động bỏ qua thuộc tính `download` của thẻ `<a>` và mở trình phát stream thay vì lưu file.
+* **Giải pháp v1 (Vercel Proxy):** Tạo Route Handler tại `src/app/api/douyin/download/route.ts` trên Vercel để proxy video stream kèm header `Content-Disposition: attachment`. **Vấn đề:** Mỗi lần tải video ~10-30MB đều đi qua Vercel → tốn Fast Origin Transfer bandwidth (304 MB/ngày khi test nhiều).
+* **Giải pháp v2 (VPS Proxy — hiện tại):**
+  1. Tạo Python download proxy tại `/home/ubuntu/download_proxy.py` trên VPS, chạy trên port `8001`. Script dùng Python stdlib (`http.server` + `urllib`), nhận URL video qua query param, fetch từ CDN và trả về kèm header `Content-Disposition: attachment`.
+  2. Tạo systemd service `download-proxy.service` để auto-start khi VPS khởi động.
+  3. Cập nhật Nginx: thêm `location /douyin-api/download` proxy tới `127.0.0.1:8001`.
+  4. Frontend: nút "📥 Tải Video" trỏ tới `https://khuong.theworkpc.com/douyin-api/download?url=...`.
+  * *Kết quả:* Tải video không tốn Vercel bandwidth. Toàn bộ video stream đi qua VPS Oracle Cloud (miễn phí).
+
+### E. Nút "Dán Link" (Paste Button)
+* **Vấn đề:** Trên điện thoại, việc dán link Douyin vào ô input rất bất tiện (cần nhấn giữ → Paste).
+* **Giải pháp:** Thêm nút **"📋 Dán Link"** phía dưới ô nhập URL trong `DouyinClient.tsx`. Sử dụng `navigator.clipboard.readText()` để đọc clipboard và tự điền vào input chỉ với 1 tap. Hiển thị xác nhận "✓ Đã Dán" trong 1.5 giây.
+
+### F. Lưu Video vào Camera Roll (Web Share API)
+* **Vấn đề:** Khi tải video trên iPhone, file luôn lưu vào app **Files** thay vì **Photos** (Camera Roll). Không có Web API nào cho phép ghi trực tiếp vào Camera Roll từ trình duyệt.
+* **Giải pháp:** Thêm nút **"📱 Lưu vào Photos (Camera Roll)"** sử dụng Web Share API:
+  1. Fetch video dưới dạng blob từ VPS proxy (không qua Vercel).
+  2. Tạo `File` object từ blob với MIME type `video/mp4`.
+  3. Gọi `navigator.share({ files: [file] })` để mở Share Sheet gốc của iOS.
+  4. User chọn **"Save Video"** trong Share Sheet → video lưu thẳng vào Photos/Camera Roll.
+  * *Lưu ý:* Yêu cầu trình duyệt hỗ trợ Web Share API Level 2 (iOS Safari 15+, Chrome iOS 89+).
+
+### G. Kiến trúc VPS Download Proxy
+
+```
+┌──────────────┐     ┌───────────────────────┐     ┌────────────────┐
+│   Browser    │────▶│  Nginx (VPS:443)      │────▶│ Python Proxy   │
+│   (iPhone)   │     │  /douyin-api/download  │     │ (127.0.0.1:    │
+│              │◀────│                       │◀────│  8001)         │
+└──────────────┘     └───────────────────────┘     └───────┬────────┘
+                                                           │ fetch
+                                                   ┌───────▼────────┐
+                                                   │  Douyin CDN    │
+                                                   │  (zjcdn.com)   │
+                                                   └────────────────┘
+```
+
+**Files trên VPS:**
+| File | Mô tả |
+|------|--------|
+| `/home/ubuntu/download_proxy.py` | Python download proxy script (port 8001) |
+| `/etc/systemd/system/download-proxy.service` | Systemd service auto-start |
+| `/etc/nginx/sites-available/khuong.theworkpc.com` | Nginx config với `/douyin-api/download` location |
+
+**Quản lý service:**
+```bash
+sudo systemctl status download-proxy   # Kiểm tra trạng thái
+sudo systemctl restart download-proxy  # Khởi động lại
+sudo journalctl -u download-proxy -f   # Xem log realtime
+```
 
 ---
 *Tài liệu cập nhật ngày: 30/06/2026 bởi Antigravity Assistant.*
-
