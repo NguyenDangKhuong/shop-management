@@ -311,29 +311,9 @@ export default function DouyinClient() {
 
                 {/* Results Presentation */}
                 {videoData && (
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 animate-in fade-in slide-in-from-bottom-3 duration-300">
-                        {/* Video Player Column */}
-                        <div className="md:col-span-5 flex flex-col items-center">
-                            <div className="w-full aspect-[9/16] max-h-[550px] rounded-2xl overflow-hidden border border-white/10 bg-black relative shadow-2xl group">
-                                {videoUrl ? (
-                                    <video
-                                        src={videoUrl}
-                                        controls
-                                        poster={coverUrl}
-                                        playsInline
-                                        className="w-full h-full object-contain"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-slate-500">
-                                        <span className="text-4xl mb-2">🎞️</span>
-                                        Không tải được trình phát video trực tiếp.
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Metadata & Downloads Column */}
-                        <div className="md:col-span-7 space-y-6">
+                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-3 duration-300">
+                        {/* Metadata & Downloads */}
+                        <div className="space-y-6">
                             {/* Author Info */}
                             <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-900/30 border border-white/5">
                                 {avatarUrl && (
