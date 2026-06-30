@@ -103,5 +103,13 @@ Khi bạn muốn chuyển hướng API sang một tên miền khác trên VPS (v
 * **Vấn đề cũ:** Cloudflare Tunnel chạy ở chế độ Cloudflare-managed (Zero Trust Dashboard) nên mọi cấu hình sửa file local `config.yml` trên VPS đều bị bỏ qua, không thể tạo subdomain `douyin-api.thetaphoa.store` trực tiếp từ VPS.
 * **Giải pháp:** Định tuyến thông qua một subpath trong tên miền chính đang trỏ thẳng vào Nginx của VPS: `https://khuong.theworkpc.com/douyin-api`. Nginx sẽ nhận diện path `/douyin-api/` và chuyển tiếp đến container port `8000` của API.
 
+### D. Hỗ trợ tải Video trực tiếp trên di động (Mobile Download Force Proxy)
+* **Vấn đề cũ:** Nút "Tải Video" liên kết trực tiếp tới URL CDN của Douyin (`zjcdn.com`). Do khác tên miền (Cross-Origin), trình duyệt di động (như Safari trên iOS) bỏ qua thuộc tính `download` của thẻ `<a>` và mở trình phát stream trực tiếp thay vì lưu file.
+* **Giải pháp:**
+  1. Tạo Route Handler proxy tải xuống tại `src/app/api/douyin/download/route.ts`. API này nhận link CDN của video, fetch stream dữ liệu từ CDN, và trả về cho trình duyệt kèm header `Content-Disposition: attachment; filename="douyin-video.mp4"`.
+  2. Cập nhật nút tải xuống trong `DouyinClient.tsx` trỏ tới `/api/douyin/download?url=...` đã được mã hóa bằng `encodeURIComponent`.
+  * *Kết quả:* Trình duyệt di động (iOS Safari & Android Chrome) sẽ nhận diện đúng header và mở hộp thoại xác nhận tải xuống gốc của hệ điều hành để lưu trực tiếp vào máy.
+
 ---
-*Tài liệu cập nhật ngày: 29/06/2026 bởi Antigravity Assistant.*
+*Tài liệu cập nhật ngày: 30/06/2026 bởi Antigravity Assistant.*
+

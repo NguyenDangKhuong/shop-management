@@ -332,9 +332,7 @@ export default function DouyinClient() {
                                 {videoUrl && (
                                     <div className="flex flex-col sm:flex-row gap-2">
                                         <a
-                                            href={videoUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                            href={`/api/douyin/download?url=${encodeURIComponent(videoUrl)}`}
                                             download={`douyin_${videoData.author?.nickname || 'video'}.mp4`}
                                             className="flex-1 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider text-center transition-all shadow-md shadow-blue-900/20 active:scale-95 flex items-center justify-center gap-2"
                                         >
