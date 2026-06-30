@@ -60,6 +60,35 @@ export default function DouyinClient() {
     const [copiedVideo, setCopiedVideo] = useState(false)
     const [copiedAudio, setCopiedAudio] = useState(false)
     const [pasted, setPasted] = useState(false)
+    const [saving, setSaving] = useState(false)
+
+    // Fetch video as blob → trigger iOS Share Sheet → user chọn "Save Video" → lưu vào Photos
+    const handleSaveToPhotos = async (url: string) => {
+        setSaving(true)
+        try {
+            const proxyUrl = `${process.env.NEXT_PUBLIC_DOUYIN_API_URL || 'https://khuong.theworkpc.com/douyin-api'}/download?url=${encodeURIComponent(url)}`
+            const res = await fetch(proxyUrl)
+            const blob = await res.blob()
+            const file = new File([blob], 'douyin-video.mp4', { type: 'video/mp4' })
+
+            if (navigator.share && navigator.canShare?.({ files: [file] })) {
+                await navigator.share({
+                    files: [file],
+                    title: 'Douyin Video',
+                })
+            } else {
+                // Fallback: mở link trực tiếp nếu Share API không hỗ trợ
+                window.open(url, '_blank')
+            }
+        } catch (err: any) {
+            // User cancelled share hoặc lỗi fetch
+            if (err?.name !== 'AbortError') {
+                console.error('Save to photos error:', err)
+            }
+        } finally {
+            setSaving(false)
+        }
+    }
 
     const handlePaste = async () => {
         try {
@@ -379,6 +408,20 @@ export default function DouyinClient() {
                                                 {copiedVideo ? '✓ Đã Copy' : '📋 Copy Link'}
                                             </button>
                                         </div>
+                                        <button
+                                            onClick={() => handleSaveToPhotos(videoUrl)}
+                                            disabled={saving}
+                                            className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-600 text-white font-bold text-xs uppercase tracking-wider text-center transition-all shadow-md shadow-emerald-900/20 active:scale-95 flex items-center justify-center gap-2"
+                                        >
+                                            {saving ? (
+                                                <>
+                                                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                                    Đang tải video...
+                                                </>
+                                            ) : (
+                                                <>📱 Lưu vào Photos (Camera Roll)</>
+                                            )}
+                                        </button>
                                     </div>
                                 )}
 
