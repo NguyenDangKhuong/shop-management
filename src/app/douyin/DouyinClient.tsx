@@ -355,31 +355,21 @@ export default function DouyinClient() {
                                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Tải xuống</h3>
 
                                 {videoUrl && (
-                                    <div className="space-y-2">
-                                        <div className="flex flex-col sm:flex-row gap-2">
-                                            <a
-                                                href={`/api/douyin/download?url=${encodeURIComponent(videoUrl)}`}
-                                                download={`douyin_${videoData.author?.nickname || 'video'}.mp4`}
-                                                className="flex-1 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider text-center transition-all shadow-md shadow-blue-900/20 active:scale-95 flex items-center justify-center gap-2"
-                                            >
-                                                🚀 Tải Video (Không Watermark)
-                                            </a>
-                                            <button
-                                                onClick={() => copyToClipboard(videoUrl, 'video')}
-                                                className="py-3 px-4 rounded-xl border border-blue-500/30 hover:bg-blue-500/10 text-blue-400 font-bold text-xs uppercase tracking-wider transition-all active:scale-95 flex items-center justify-center gap-2"
-                                            >
-                                                {copiedVideo ? '✓ Đã Copy' : '📋 Copy Link'}
-                                            </button>
-                                        </div>
-                                        {/* iOS: Mở video trực tiếp (không qua proxy) để nhấn giữ → Save to Photos */}
+                                    <div className="flex flex-col sm:flex-row gap-2">
                                         <a
                                             href={videoUrl}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="w-full py-3 px-4 rounded-xl border border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-400 font-bold text-xs uppercase tracking-wider text-center transition-all active:scale-95 flex items-center justify-center gap-2"
+                                            className="flex-1 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider text-center transition-all shadow-md shadow-blue-900/20 active:scale-95 flex items-center justify-center gap-2"
                                         >
-                                            📱 Mở Video (Nhấn giữ → Lưu vào Photos)
+                                            🚀 Mở Video (Không Watermark)
                                         </a>
+                                        <button
+                                            onClick={() => copyToClipboard(videoUrl, 'video')}
+                                            className="py-3 px-4 rounded-xl border border-blue-500/30 hover:bg-blue-500/10 text-blue-400 font-bold text-xs uppercase tracking-wider transition-all active:scale-95 flex items-center justify-center gap-2"
+                                        >
+                                            {copiedVideo ? '✓ Đã Copy' : '📋 Copy Link'}
+                                        </button>
                                     </div>
                                 )}
 
