@@ -214,10 +214,10 @@ export default function DouyinClient() {
                             <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
                                 <span className="text-3xl filter drop-shadow-[0_0_8px_rgba(56,189,248,0.5)]">📥</span>
                                 <h1 className="text-3xl md:text-4xl font-black uppercase tracking-wider text-white text-shadow-glow">
-                                    Douyin Downloader
+                                    Tải Video Douyin Không Watermark
                                 </h1>
                             </div>
-                            <p className="text-slate-400 text-sm">Tải video Douyin chất lượng cao, không hình mờ (Watermark)</p>
+                            <p className="text-slate-400 text-sm">Douyin Downloader — Tải video Douyin (TikTok Trung Quốc) chất lượng cao, miễn phí, không cần cài app</p>
                         </div>
                         <div className="flex justify-center">
                             <span className="px-3 py-1.5 rounded-full bg-slate-900 border border-white/10 text-xs font-mono text-[var(--neon-cyan)] shadow-[0_0_10px_rgba(34,211,238,0.1)]">
@@ -439,6 +439,56 @@ export default function DouyinClient() {
                         </div>
                     </div>
                 )}
+
+                {/* SEO Content - FAQ */}
+                <section className="mt-16 space-y-6 text-sm text-slate-500 leading-relaxed">
+                    <h2 className="text-lg font-bold text-slate-300">Câu hỏi thường gặp về Douyin Downloader</h2>
+
+                    <details className="group">
+                        <summary className="cursor-pointer font-semibold text-slate-400 hover:text-white transition-colors">
+                            Douyin là gì? Khác gì TikTok?
+                        </summary>
+                        <p className="mt-2 pl-4 border-l border-slate-800">
+                            Douyin (抖音) là phiên bản gốc của TikTok, được phát triển bởi ByteDance và chỉ hoạt động tại thị trường Trung Quốc. Douyin có kho nội dung phong phú, nhiều video trend, nhạc hay mà TikTok quốc tế không có.
+                        </p>
+                    </details>
+
+                    <details className="group">
+                        <summary className="cursor-pointer font-semibold text-slate-400 hover:text-white transition-colors">
+                            Làm sao tải video Douyin không watermark?
+                        </summary>
+                        <p className="mt-2 pl-4 border-l border-slate-800">
+                            Chỉ cần dán link video Douyin vào ô nhập liên kết ở trên, bấm &quot;Trích Xuất Video&quot;. Hệ thống sẽ tự động phân tích và trả về link video gốc chất lượng cao không có watermark (hình mờ). Hỗ trợ cả điện thoại iPhone, Android và máy tính.
+                        </p>
+                    </details>
+
+                    <details className="group">
+                        <summary className="cursor-pointer font-semibold text-slate-400 hover:text-white transition-colors">
+                            Có cần đăng nhập tài khoản Douyin không?
+                        </summary>
+                        <p className="mt-2 pl-4 border-l border-slate-800">
+                            Không cần. Công cụ hoạt động hoàn toàn miễn phí, không yêu cầu đăng nhập, không cần cài đặt ứng dụng hay extension nào.
+                        </p>
+                    </details>
+
+                    <details className="group">
+                        <summary className="cursor-pointer font-semibold text-slate-400 hover:text-white transition-colors">
+                            Có tải được nhạc nền (audio) từ video Douyin không?
+                        </summary>
+                        <p className="mt-2 pl-4 border-l border-slate-800">
+                            Có. Sau khi trích xuất video, hệ thống cũng hiển thị link tải nhạc nền (audio MP3) riêng biệt. Bạn có thể tải nhạc nền để làm nhạc chuông hoặc sử dụng cho mục đích cá nhân.
+                        </p>
+                    </details>
+
+                    <details className="group">
+                        <summary className="cursor-pointer font-semibold text-slate-400 hover:text-white transition-colors">
+                            Làm sao lưu video vào Camera Roll (Photos) trên iPhone?
+                        </summary>
+                        <p className="mt-2 pl-4 border-l border-slate-800">
+                            Bấm nút &quot;📱 Lưu vào Photos (Camera Roll)&quot;, đợi video tải xong, Share Sheet iOS sẽ hiện lên — chọn &quot;Save Video&quot; để lưu trực tiếp vào thư viện ảnh mà không cần qua app Files.
+                        </p>
+                    </details>
+                </section>
             </div>
         </div>
     )
