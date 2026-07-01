@@ -46,3 +46,17 @@ export const AUTHOR_NAME = 'Nguyen Dang Khuong'
 
 // Admin domain (for login/dashboard when accessing from proxy domains like khuong.theworkpc.com)
 export const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://thetaphoa.vercel.app'
+
+// Facebook Graph API
+export const FB_APP_ID = process.env.FB_APP_ID
+export const FB_APP_SECRET = process.env.FB_APP_SECRET
+export const FB_PAGE_ID = process.env.FB_PAGE_ID
+export const FB_PAGE_NAME = process.env.FB_PAGE_NAME
+export const FB_PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN
+export const FB_GRAPH_API_VERSION = 'v21.0'
+export const FB_GRAPH_API_BASE = `https://graph.facebook.com/${FB_GRAPH_API_VERSION}`
+
+// AI Caption (CLI Proxy)
+export const CLI_PROXY_URL = process.env.CLI_PROXY_URL
+export const CLI_PROXY_API_KEY = process.env.CLI_PROXY_API_KEY
+export const AI_CAPTION_MODEL = 'gemini-2.5-flash-lite'

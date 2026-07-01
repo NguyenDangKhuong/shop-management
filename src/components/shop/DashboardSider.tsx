@@ -11,6 +11,7 @@ import {
   FacebookOutlined,
   FileTextOutlined,
   KeyOutlined,
+  RocketOutlined,
   ShoppingCartOutlined,
   ShoppingOutlined,
   SoundOutlined,
@@ -103,6 +104,11 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
             key: '/facebook-posts',
             icon: <FacebookOutlined />,
             label: <Link href='/facebook-posts'>Facebook Posts</Link>
+          },
+          {
+            key: '/facebook-auto-post',
+            icon: <RocketOutlined />,
+            label: <Link href='/facebook-auto-post'>FB Auto Post</Link>
           },
           {
             key: '/veo3-tokens',
