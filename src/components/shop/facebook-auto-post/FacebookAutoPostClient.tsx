@@ -1,13 +1,13 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Button, Input, Table, Tag, Modal, Space, message, Popconfirm, Select, Tooltip, Typography } from 'antd'
+import { Button, Input, Table, Tag, Modal, Space, message, Popconfirm, Select, Tooltip, Typography, Segmented, Upload } from 'antd'
 import {
     PlusOutlined, SendOutlined, DeleteOutlined,
-    ReloadOutlined, RobotOutlined,
+    ReloadOutlined, RobotOutlined, UploadOutlined,
     EditOutlined, EyeOutlined, FacebookOutlined,
     CheckCircleOutlined, CloseCircleOutlined,
-    ClockCircleOutlined, FileTextOutlined
+    ClockCircleOutlined, FileTextOutlined, LinkOutlined
 } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
@@ -45,6 +45,8 @@ export default function FacebookAutoPostClient() {
     const [creating, setCreating] = useState(false)
     const [generatingCaption, setGeneratingCaption] = useState(false)
     const [douyinDesc, setDouyinDesc] = useState('')
+    const [createMode, setCreateMode] = useState<'douyin' | 'upload'>('douyin')
+    const [uploadFile, setUploadFile] = useState<File | null>(null)
 
     // Edit caption modal
     const [editModalOpen, setEditModalOpen] = useState(false)
@@ -138,6 +140,45 @@ export default function FacebookAutoPostClient() {
         } finally {
             setCreating(false)
         }
+    }
+
+    const handleUpload = async () => {
+        if (!uploadFile) {
+            message.warning('Vui lòng chọn file video')
+            return
+        }
+        setCreating(true)
+        try {
+            const formData = new FormData()
+            formData.append('video', uploadFile)
+            formData.append('caption', caption.trim())
+            formData.append('douyinUrl', douyinUrl.trim())
+
+            const res = await fetch('/api/facebook-auto-post/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            const data = await res.json()
+            if (data.success) {
+                message.success('Đã upload video + tạo bài đăng!')
+                setCreateModalOpen(false)
+                resetForm()
+                fetchPosts()
+            } else {
+                message.error(data.error || 'Lỗi upload')
+            }
+        } catch {
+            message.error('Lỗi kết nối server')
+        } finally {
+            setCreating(false)
+        }
+    }
+
+    const resetForm = () => {
+        setDouyinUrl('')
+        setCaption('')
+        setDouyinDesc('')
+        setUploadFile(null)
     }
 
     const handlePublish = async (id: string) => {
@@ -325,42 +366,92 @@ export default function FacebookAutoPostClient() {
 
             {/* Create Modal */}
             <Modal
-                title="📤 Tạo bài đăng Facebook từ Douyin"
+                title="📤 Tạo bài đăng Facebook"
                 open={createModalOpen}
-                onCancel={() => setCreateModalOpen(false)}
+                onCancel={() => { setCreateModalOpen(false); resetForm() }}
                 footer={null}
                 width={600}
             >
                 <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Link Douyin</label>
-                        <Input.Search
-                            placeholder="Dán link video Douyin..."
-                            value={douyinUrl}
-                            onChange={e => setDouyinUrl(e.target.value)}
-                            enterButton="Lấy mô tả"
-                            loading={generatingCaption}
-                            onSearch={async () => {
-                                if (!douyinUrl.trim()) return
-                                const desc = await fetchDouyinDesc(douyinUrl.trim())
-                                setDouyinDesc(desc)
-                                if (desc) {
-                                    message.success('Đã lấy mô tả video')
-                                    generateCaption(desc)
-                                } else {
-                                    message.warning('Không tìm thấy mô tả')
-                                }
-                            }}
-                        />
-                    </div>
+                    <Segmented
+                        block
+                        value={createMode}
+                        onChange={(v) => { setCreateMode(v as 'douyin' | 'upload'); resetForm() }}
+                        options={[
+                            { value: 'douyin', label: '🔗 Từ link Douyin', icon: <LinkOutlined /> },
+                            { value: 'upload', label: '📁 Upload video đã chỉnh sửa', icon: <UploadOutlined /> },
+                        ]}
+                    />
 
-                    {douyinDesc && (
-                        <div className="p-3 bg-gray-50 rounded-lg">
-                            <Text type="secondary" className="text-xs">Mô tả gốc từ Douyin:</Text>
-                            <p className="text-sm mt-1">{douyinDesc}</p>
-                        </div>
+                    {createMode === 'douyin' ? (
+                        /* Mode 1: Auto download from Douyin URL */
+                        <>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Link Douyin</label>
+                                <Input.Search
+                                    placeholder="Dán link video Douyin..."
+                                    value={douyinUrl}
+                                    onChange={e => setDouyinUrl(e.target.value)}
+                                    enterButton="Lấy mô tả"
+                                    loading={generatingCaption}
+                                    onSearch={async () => {
+                                        if (!douyinUrl.trim()) return
+                                        const desc = await fetchDouyinDesc(douyinUrl.trim())
+                                        setDouyinDesc(desc)
+                                        if (desc) {
+                                            message.success('Đã lấy mô tả video')
+                                            generateCaption(desc)
+                                        } else {
+                                            message.warning('Không tìm thấy mô tả')
+                                        }
+                                    }}
+                                />
+                            </div>
+
+                            {douyinDesc && (
+                                <div className="p-3 bg-gray-50 rounded-lg">
+                                    <Text type="secondary" className="text-xs">Mô tả gốc từ Douyin:</Text>
+                                    <p className="text-sm mt-1">{douyinDesc}</p>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        /* Mode 2: Upload edited video */
+                        <>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Link Douyin gốc (tùy chọn)</label>
+                                <Input
+                                    placeholder="Dán link Douyin gốc để lưu reference..."
+                                    value={douyinUrl}
+                                    onChange={e => setDouyinUrl(e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Chọn video đã chỉnh sửa</label>
+                                <Upload.Dragger
+                                    accept="video/*"
+                                    maxCount={1}
+                                    beforeUpload={(file) => {
+                                        setUploadFile(file)
+                                        return false // prevent auto upload
+                                    }}
+                                    onRemove={() => setUploadFile(null)}
+                                    fileList={uploadFile ? [{
+                                        uid: '-1',
+                                        name: uploadFile.name,
+                                        status: 'done',
+                                        size: uploadFile.size,
+                                    }] : []}
+                                >
+                                    <p className="text-2xl">📁</p>
+                                    <p className="text-sm">Kéo thả hoặc click để chọn video</p>
+                                    <p className="text-xs text-gray-400">MP4, MOV, AVI — tối đa 100MB</p>
+                                </Upload.Dragger>
+                            </div>
+                        </>
                     )}
 
+                    {/* Caption section — shared for both modes */}
                     <div>
                         <div className="flex items-center justify-between mb-1">
                             <label className="text-sm font-medium">Caption Facebook</label>
@@ -380,8 +471,8 @@ export default function FacebookAutoPostClient() {
                                     size="small"
                                     icon={<RobotOutlined />}
                                     loading={generatingCaption}
-                                    onClick={() => generateCaption(douyinDesc || douyinUrl)}
-                                    disabled={!douyinDesc && !douyinUrl}
+                                    onClick={() => generateCaption(douyinDesc || caption || douyinUrl)}
+                                    disabled={!douyinDesc && !douyinUrl && !caption}
                                 >
                                     AI Caption
                                 </Button>
@@ -400,14 +491,21 @@ export default function FacebookAutoPostClient() {
                         block
                         size="large"
                         loading={creating}
-                        onClick={handleCreate}
-                        icon={<PlusOutlined />}
+                        onClick={createMode === 'douyin' ? handleCreate : handleUpload}
+                        icon={createMode === 'douyin' ? <PlusOutlined /> : <UploadOutlined />}
+                        disabled={createMode === 'douyin' ? !douyinUrl.trim() : !uploadFile}
                     >
-                        {creating ? 'Đang tải video + tạo bài...' : 'Tạo bài đăng'}
+                        {creating
+                            ? (createMode === 'douyin' ? 'Đang tải video từ Douyin...' : 'Đang upload video...')
+                            : (createMode === 'douyin' ? '🔗 Tải từ Douyin + Tạo bài' : '📁 Upload + Tạo bài')
+                        }
                     </Button>
                     {creating && (
                         <Text type="secondary" className="text-xs">
-                            ⏳ Video đang được tải từ Douyin CDN → lưu vào R2. Quá trình này mất 10-30 giây.
+                            {createMode === 'douyin'
+                                ? '⏳ Video đang được tải từ Douyin CDN → lưu vào R2. Quá trình này mất 10-30 giây.'
+                                : '⏳ Đang upload video lên cloud storage...'
+                            }
                         </Text>
                     )}
                 </div>
