@@ -99,5 +99,82 @@ Request → authorized() callback
 
 ---
 
+## 🌐 Proxy Domain Login Redirect
+
+### Vấn đề
+
+Login qua VPS reverse proxy (`khuong.theworkpc.com`) sẽ 500 Error vì NextAuth v5 dùng `__Host-` cookie prefix — bắt buộc match domain. Browser từ chối lưu cookie cross-domain.
+
+### Workaround
+
+Hook `useLoginUrl` (`src/hooks/useLoginUrl.ts`) tự detect hostname:
+- Trên proxy domain (vd: `khuong.theworkpc.com`) → nút Login trỏ sang `thetaphoa.vercel.app/login`
+- Trên domain chính (`shop.thetaphoa.store` / `thetaphoa.vercel.app` / `localhost`) → giữ `/login` (relative)
+
+### Config
+
+| Constant | File | Mô tả |
+|----------|------|-------|
+| `ADMIN_URL` | `src/utils/constants.ts` | URL admin app (default: `https://thetaphoa.vercel.app`) |
+| `SITE_DOMAIN` | `src/utils/constants.ts` | Domain chính (default: `shop.thetaphoa.store`) |
+
+### Files
+
+| File | Mô tả |
+|------|-------|
+| `src/hooks/useLoginUrl.ts` | Hook detect hostname → return login URL |
+| `src/components/landing/LandingPage.tsx` | Sử dụng `useLoginUrl()` cho 2 login links |
+
+---
+
+## 🔑 API Key Auth (n8n / Automation)
+
+### Tổng quan
+
+Admin API routes hỗ trợ 2 cách auth:
+- **Session cookie** — browser admin (không đổi)
+- **API key** — n8n, cron, automation gọi từ bên ngoài
+
+### Flow
+
+```
+Request đến admin API route
+  ↓
+├── Có header x-api-key hợp lệ? → ✅ Allow (n8n)
+├── Có session cookie? → ✅ Allow (browser admin)
+└── Không có gì? → ❌ 401 Unauthorized
+```
+
+### Protected Admin API Paths
+
+```
+/api/product, /api/products, /api/categories, /api/category,
+/api/orders, /api/order, /api/facebook-posts,
+/api/tiktok, /api/tiktok-accounts, /api/tiktok-music,
+/api/tiktok-products, /api/tiktok-scheduled-posts,
+/api/prompts, /api/autoflows, /api/r2-video,
+/api/veo3-media, /api/check-connection
+```
+
+### Setup
+
+1. **Gen key:** `openssl rand -hex 32`
+2. **Env:** Thêm `ADMIN_API_KEY=<key>` vào `.env.local` + Vercel
+3. **n8n:** Header Auth → Name: `x-api-key`, Value: `<key>`
+
+### Cách dùng
+
+```bash
+# n8n / curl
+curl -X GET https://domain.com/api/products \
+  -H "x-api-key: <ADMIN_API_KEY>"
+```
+
+> **Lưu ý:** Browser admin KHÔNG cần API key — session cookie tự gửi kèm.
+
+---
+
 *Tài liệu tạo: 11/02/2026*
 *Cập nhật: 16/02/2026 — Protect all routes, add /shopee-links to public*
+*Cập nhật: 15/03/2026 — Proxy domain login redirect workaround*
+*Cập nhật: 22/03/2026 — Admin API key auth cho n8n/automation*

@@ -229,21 +229,19 @@ const TikTokAccountModal = ({
                     label="HTTP Request"
                     name="httpRequest"
                 >
-                    <div>
-                        <Input.TextArea
-                            rows={4}
-                            placeholder="Nhập HTTP Request (tùy chọn)..."
-                        />
-                        <Button
-                            icon={<FilterOutlined />}
-                            onClick={extractCookie}
-                            className="mt-2"
-                            type="default"
-                        >
-                            Lọc Cookie
-                        </Button>
-                    </div>
+                    <Input.TextArea
+                        rows={4}
+                        placeholder="Nhập HTTP Request (tùy chọn)..."
+                    />
                 </Form.Item>
+                <Button
+                    icon={<FilterOutlined />}
+                    onClick={extractCookie}
+                    className="-mt-4 mb-4"
+                    type="default"
+                >
+                    Lọc Cookie
+                </Button>
 
                 <Form.Item
                     label="Avatar"

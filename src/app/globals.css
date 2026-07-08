@@ -1,7 +1,361 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:is(.dark, .dark *));
+
+/* ═══════════════════════════════════════════════
+   Tailwind v4 Theme — Maps CSS vars to utilities
+   Usage: bg-bg-page, text-text-primary, etc.
+   ═══════════════════════════════════════════════ */
+@theme {
+  /* Background Colors */
+  --color-bg-page: var(--bg-page);
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-card: var(--bg-card);
+  --color-bg-card-hover: var(--bg-card-hover);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-surface-dim: var(--bg-surface-dim);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-input: var(--bg-input);
+  --color-bg-tag: var(--bg-tag);
+  --color-bg-tag-active: var(--bg-tag-active);
+  --color-bg-header: var(--bg-header);
+  --color-bg-header-scrolled: var(--bg-header-scrolled);
+  --color-bg-glow-blue: var(--bg-glow-blue);
+  --color-bg-glow-purple: var(--bg-glow-purple);
+  --color-space-bg: var(--space-bg);
+
+  /* Cyberpunk / Sci-Fi Neon Accents */
+  --color-neon-cyan: var(--neon-cyan);
+  --color-neon-purple: var(--neon-purple);
+  --color-neon-green: var(--neon-green);
+
+  /* Text Colors */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-dimmed: var(--text-dimmed);
+  --color-text-link: var(--text-link);
+  --color-text-link-hover: var(--text-link-hover);
+
+  /* Border Colors */
+  --color-border-primary: var(--border-primary);
+  --color-border-dim: var(--border-dim);
+  --color-border-input: var(--border-input);
+
+  /* Accent */
+  --color-accent-primary: var(--accent-primary);
+
+  /* Shadows */
+  --shadow-theme-sm: var(--shadow-sm);
+  --shadow-theme-xl: var(--shadow-xl);
+
+  /* Misc */
+  --color-ring-bg: var(--ring-bg);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+}
+
+/* ═══════════════════════════════════════════════
+   Theme Design Tokens — CSS Custom Properties
+   Toggle by adding/removing .dark on <html>
+   ═══════════════════════════════════════════════ */
+:root {
+  /* Backgrounds */
+  --bg-page: #f9fafb;
+  /* gray-50 */
+  --bg-page-gradient-from: #f3f4f6;
+  /* gray-100 */
+  --bg-page-gradient-via: #f9fafb;
+  --bg-page-gradient-to: #f9fafb;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f9fafb;
+  /* gray-50 */
+  --bg-surface: rgba(255, 255, 255, 0.8);
+  --bg-surface-dim: #f3f4f6;
+  /* gray-100 */
+  --bg-secondary: #f3f4f6;
+  /* gray-100 */
+  --bg-input: #f3f4f6;
+  /* gray-100 */
+  --bg-tag: #f3f4f6;
+  --bg-tag-active: rgba(56, 189, 248, 0.1);
+  --bg-header: rgba(255, 255, 255, 0.5);
+  --bg-header-scrolled: rgba(255, 255, 255, 0.8);
+  --bg-glow-blue: rgba(37, 99, 235, 0.06);
+  --bg-glow-purple: rgba(124, 58, 237, 0.06);
+  --space-bg: #f8fafc; /* Light Sci-Fi background */
+
+  /* Light Sci-Fi Accents (Darker for contrast) */
+  --neon-cyan: #0284c7;
+  --neon-purple: #9333ea;
+  --neon-green: #16a34a;
+
+  /* Text */
+  --text-primary: #111827;
+  /* gray-900 */
+  --text-secondary: #4b5563;
+  /* gray-600 */
+  --text-muted: #9ca3af;
+  /* gray-400 */
+  --text-dimmed: #6b7280;
+  /* gray-500 */
+  --text-link: #38bdf8;
+  --text-link-hover: #0ea5e9;
+
+  /* Borders */
+  --border-primary: #e5e7eb;
+  /* gray-200 */
+  --border-dim: #f3f4f6;
+  /* gray-100 */
+  --border-input: #d1d5db;
+  /* gray-300 */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+  /* Misc */
+  --ring-bg: #ffffff;
+
+  /* Aliases & Missing tokens */
+  --bg-primary: #f9fafb; /* alias of --bg-page */
+  --accent-primary: #38bdf8; /* sky-400 — tech accent */
+
+  /* Legacy tokens (keep for glass-card) */
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: #e5e7eb;
+}
+
+.dark {
+  /* Premium Cyberpunk Deep Space Background */
+  --bg-page: #030712;
+  --bg-page-gradient-from: #020617;
+  --bg-page-gradient-via: #030712;
+  --bg-page-gradient-to: #050b14;
+  --space-bg: #030712;
+
+  /* Cards - Deep Navy/Indigo Glass */
+  --bg-card: rgba(10, 15, 30, 0.6);
+  --bg-card-hover: rgba(15, 23, 42, 0.8);
+  --bg-surface: rgba(10, 15, 30, 0.7);
+  --bg-surface-dim: rgba(5, 10, 20, 0.5);
+  --bg-secondary: rgba(15, 23, 42, 0.6);
+  --bg-input: rgba(10, 15, 30, 0.8);
+  --bg-tag: rgba(30, 41, 59, 0.6);
+  --bg-tag-active: rgba(0, 240, 255, 0.15);
+  --bg-header: rgba(3, 7, 18, 0.7);
+  --bg-header-scrolled: rgba(3, 7, 18, 0.95);
+  --bg-glow-blue: rgba(0, 240, 255, 0.08);
+  --bg-glow-purple: rgba(176, 38, 255, 0.08);
+
+  /* Dark Cyberpunk Neon Accents */
+  --neon-cyan: #00f0ff;
+  --neon-purple: #b026ff;
+  --neon-green: #39ff14;
+  --accent-primary: #00f0ff;
+
+  /* Text - High Contrast */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-dimmed: #475569;
+  --text-link: #00f0ff;
+  --text-link-hover: #7dd3fc;
+
+  /* Borders - Tinted Neon */
+  --border-primary: rgba(0, 240, 255, 0.15);
+  --border-dim: rgba(0, 240, 255, 0.05);
+  --border-input: rgba(0, 240, 255, 0.2);
+
+  /* Shadows */
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.8);
+
+  /* Legacy & CyberCard specific */
+  --ring-bg: #030712;
+  --card-bg: rgba(10, 15, 30, 0.6);
+  --card-border: rgba(0, 240, 255, 0.15);
+  --glass-bg: rgba(10, 15, 30, 0.65);
+  --glass-border: rgba(0, 240, 255, 0.15);
+}
+
 @layer components {
-  .glass-card {
-    @apply bg-[rgba(30,41,59,0.4)] backdrop-blur-xl border border-[rgba(255,255,255,0.1)] rounded-[2rem] p-6 lg:p-8;
+  /* ═══ Cyberpunk Neon LED Card ═══ */
+  .cyber-card {
+    --cyber-accent: rgba(0, 240, 255, 0.5);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--cyber-accent) 8%, rgba(8, 12, 24, 0.97)) 0%,
+      rgba(5, 8, 18, 0.98) 35%,
+      rgba(3, 5, 14, 0.99) 100%
+    );
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-top-color: transparent;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 24px -4px rgba(0, 0, 0, 0.7);
   }
+
+  /* ── Vivid Neon LED Strip (top edge) ── */
+  .cyber-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--cyber-accent) 60%, transparent) 15%,
+      var(--cyber-accent) 50%,
+      color-mix(in srgb, var(--cyber-accent) 60%, transparent) 85%,
+      transparent 100%
+    );
+    border-radius: 0 0 50% 50%;
+    filter: brightness(1.5);
+    transition: all 0.35s ease;
+  }
+
+  /* ── LED Bloom / Glow bleed behind the strip ── */
+  .cyber-card::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 15%;
+    width: 70%;
+    height: 24px;
+    background: radial-gradient(
+      ellipse at top center,
+      color-mix(in srgb, var(--cyber-accent) 35%, transparent) 0%,
+      color-mix(in srgb, var(--cyber-accent) 10%, transparent) 50%,
+      transparent 100%
+    );
+    pointer-events: none;
+    transition: all 0.35s ease;
+  }
+
+  /* ── Hover ── */
+  .cyber-card:hover.hover-cyber-glow {
+    box-shadow:
+      0 0 30px -5px color-mix(in srgb, var(--cyber-accent) 18%, transparent),
+      0 8px 32px -4px rgba(0, 0, 0, 0.8);
+    border-color: color-mix(in srgb, var(--cyber-accent) 15%, transparent);
+  }
+
+  .cyber-card:hover.hover-cyber-glow::before {
+    width: 90%;
+    left: 5%;
+    filter: brightness(2);
+    box-shadow: 0 0 12px var(--cyber-accent);
+  }
+
+  .cyber-card:hover.hover-cyber-glow::after {
+    height: 36px;
+    opacity: 1.2;
+  }
+
+  /* ── Light Mode Card Override ── */
+  :root:not(.dark) .cyber-card {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--cyber-accent) 4%, rgba(255, 255, 255, 0.95)) 0%,
+      rgba(255, 255, 255, 0.92) 35%,
+      rgba(248, 250, 252, 0.95) 100%
+    );
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-top-color: transparent;
+    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  :root:not(.dark) .cyber-card::before {
+    filter: brightness(1.2) saturate(1.3);
+    height: 2px;
+  }
+
+  :root:not(.dark) .cyber-card::after {
+    opacity: 0.5;
+  }
+
+  :root:not(.dark) .cyber-card:hover.hover-cyber-glow {
+    box-shadow:
+      0 0 20px -5px color-mix(in srgb, var(--cyber-accent) 15%, transparent),
+      0 6px 24px -4px rgba(0, 0, 0, 0.1);
+    border-color: color-mix(in srgb, var(--cyber-accent) 20%, transparent);
+  }
+
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    border-radius: 2rem;
+    padding: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .glass-card {
+      padding: 2rem;
+    }
+  }
+
+  /* Themed button — for LanguageSwitcher, ThemeToggle, etc. */
+  .theme-btn {
+    background-color: var(--bg-tag);
+    border: 1px solid var(--border-primary);
+    color: var(--text-secondary);
+    transition: all 0.2s;
+  }
+
+  .theme-btn:hover {
+    border-color: rgba(56, 189, 248, 0.5);
+    color: var(--text-primary);
+  }
+
+  /* Round variant for icon buttons */
+  .theme-btn-round {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-primary);
+    transition: all 0.3s;
+  }
+
+  /* Custom thin scrollbar — auto-hide, theme-aware */
+  .scrollbar-thin {
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: transparent transparent; /* Firefox — hide by default */
+  }
+  .scrollbar-thin:hover {
+    scrollbar-color: var(--border-primary) transparent; /* Firefox — show on hover */
+  }
+
+  /* WebKit (Chrome, Safari, Edge) */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 9999px;
+    transition: background 0.2s;
+  }
+  .scrollbar-thin:hover::-webkit-scrollbar-thumb {
+    background: var(--border-primary);
+  }
+  .scrollbar-thin:hover::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+  }
+}
+
+/* ─── Clarity Streak Animation ─── */
+@keyframes streakPulse {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.15); filter: brightness(1.3); }
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { PUBLIC_SITE_NAME, AUTHOR_NAME } from '@/utils/constants'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
 
@@ -8,6 +9,11 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import NextAuthProvider from '@/components/providers/NextAuthProvider'
 import AntdProvider from '@/components/providers/AntdProvider'
 import { LanguageProvider } from '@/i18n'
+
+import { ThemeProvider } from '@/contexts/ThemeContext'
+import { SoundProvider } from '@/contexts/SoundContext'
+import MobileTabBar from '@/components/MobileTabBar'
+import { HyperspaceTransition } from '@/components/ui/HyperspaceTransition'
 
 import './globals.css'
 
@@ -19,9 +25,50 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'TheTapHoa',
-  description: 'TheTapHoa, TPHCM, Viet Nam',
+  metadataBase: new URL('https://thetaphoa.com'),
+  title: {
+    default: `${PUBLIC_SITE_NAME} — Frontend Knowledge Blog | ${AUTHOR_NAME}`,
+    template: `%s | ${PUBLIC_SITE_NAME}`,
+  },
+  description: 'Chia sẻ kiến thức Frontend chuyên sâu: JavaScript, React, Next.js, TypeScript, System Design, Algorithm Patterns — dành cho developer Việt Nam muốn phỏng vấn Big Tech.',
+  keywords: [
+    'Frontend', 'JavaScript', 'React', 'Next.js', 'TypeScript',
+    'System Design', 'Algorithm', 'LeetCode', 'Interview',
+    AUTHOR_NAME, PUBLIC_SITE_NAME, 'Web Development',
+  ],
+  authors: [{ name: AUTHOR_NAME, url: 'https://thetaphoa.com' }],
+  creator: AUTHOR_NAME,
+  publisher: PUBLIC_SITE_NAME,
   manifest: '/favicon_io/site.webmanifest',
+  openGraph: {
+    type: 'website',
+    locale: 'vi_VN',
+    alternateLocale: 'en_US',
+    url: 'https://thetaphoa.com',
+    siteName: PUBLIC_SITE_NAME,
+    title: `${PUBLIC_SITE_NAME} — Frontend Knowledge Blog`,
+    description: 'Chia sẻ kiến thức Frontend chuyên sâu: JavaScript, React, Next.js, TypeScript, System Design.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${PUBLIC_SITE_NAME} — Frontend Knowledge Blog`,
+    description: 'Chia sẻ kiến thức Frontend chuyên sâu cho developer Việt Nam.',
+  },
+  alternates: {
+    canonical: 'https://thetaphoa.com',
+    types: {
+      'application/rss+xml': '/feed.xml',
+    },
+  },
+  // PWA meta tags
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: PUBLIC_SITE_NAME,
+  },
+  formatDetection: {
+    telephone: false,
+  },
   icons: {
     icon: [
       { url: '/favicon_io/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
@@ -38,15 +85,29 @@ export const metadata: Metadata = {
   }
 }
 
+export const viewport = {
+  themeColor: '#0a0a0a',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: 'cover' as const,
+}
+
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang='en'>
-      <body className={inter.className} suppressHydrationWarning={true}>
+    <html lang='en' suppressHydrationWarning>
+      <body className={`${inter.className} bg-[var(--space-bg)] text-text-primary transition-colors duration-300`} suppressHydrationWarning={true}>
         <NextAuthProvider>
           <LanguageProvider>
-            <AntdProvider>
-              {children}
-            </AntdProvider>
+            <ThemeProvider>
+              <SoundProvider>
+                <AntdProvider>
+                  <HyperspaceTransition />
+                  {children}
+                  <MobileTabBar />
+                </AntdProvider>
+              </SoundProvider>
+            </ThemeProvider>
           </LanguageProvider>
           <SpeedInsights />
           <Analytics />
@@ -56,6 +117,16 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
         src='https://widget.cloudinary.com/v2.0/global/all.js'
         strategy="lazyOnload"
       />
+      {/* Register PWA Service Worker */}
+      <Script id="sw-register" strategy="afterInteractive">
+        {`
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+              .then(reg => console.log('✅ SW registered:', reg.scope))
+              .catch(err => console.error('❌ SW failed:', err))
+          }
+        `}
+      </Script>
     </html>
   )
 }

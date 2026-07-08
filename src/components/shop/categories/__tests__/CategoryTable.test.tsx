@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import CategoryTable from '@/components/shop/categories/CategoryTable'
-import { Category } from '@/models/Category'
 
 // Mock Next.js navigation
 jest.mock('next/navigation', () => ({
@@ -38,7 +37,7 @@ jest.mock('antd', () => {
 const { useRouter, usePathname, useSearchParams } = require('next/navigation')
 
 describe('CategoryTable Component', () => {
-    const mockCategories: Category[] = [
+    const mockCategories: any[] = [
         { _id: '1', name: 'Danh mục 1' },
         { _id: '2', name: 'Danh mục 2' },
         { _id: '3', name: 'Danh mục 3' }
@@ -105,7 +104,7 @@ describe('CategoryTable Component', () => {
     })
 
     it('renders with single category', async () => {
-        const singleCategory: Category[] = [{ _id: '1', name: 'Only Category' }]
+        const singleCategory: any[] = [{ _id: '1', name: 'Only Category' }]
 
         render(<CategoryTable totalDocs={1} categories={singleCategory} />)
 

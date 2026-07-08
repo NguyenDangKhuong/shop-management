@@ -4,6 +4,16 @@ import ProductModel, { Product } from '@/models/Product'
 import { errorResponse, successResponse } from '@/utils/apiResponse'
 import connectDb from '@/utils/connectDb'
 import removeImage from '@/utils/removeImage'
+import { getRedis } from '@/lib/redis'
+
+/** Invalidate all product cache keys (they have varying query params) */
+async function invalidateProductCache() {
+  try {
+    const redis = getRedis()
+    const keys = await redis.keys('admin:products:*')
+    if (keys.length > 0) await redis.del(...keys)
+  } catch { /* fail-open */ }
+}
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -28,6 +38,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     const product: Product = await new ProductModel({ ...body }).save()
+    await invalidateProductCache()
     return successResponse('Sản phẩm đã được thêm!', 201, product)
   } catch (err) {
     console.error(err)
@@ -55,6 +66,7 @@ export const PUT = async (req: NextRequest) => {
     const currentImagePublicId = currentProduct?.imagePublicId
     currentImagePublicId !== imagePublicId && removeImage(String(currentImagePublicId))
 
+    await invalidateProductCache()
     return successResponse(`Sản phẩm đã được cập nhật!`)
   } catch (err) {
     console.error(err)
@@ -73,6 +85,7 @@ export const DELETE = async (req: NextRequest) => {
     })
     deletedProduct && removeImage(String(deletedProduct?.imagePublicId))
 
+    await invalidateProductCache()
     return successResponse(`Sản phẩm đã được xóa`)
   } catch (err) {
     console.error(err)

@@ -60,7 +60,7 @@ const AutoFlowModal = ({
             }
             setVideoFiles([])
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+         
     }, [firstPromptType])
 
     const { openWidget: openVideoWidget, isUploading: isVideoUploading } = useCloudinaryUpload(

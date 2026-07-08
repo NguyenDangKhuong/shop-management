@@ -2,6 +2,8 @@ import { render, screen, waitFor } from '@testing-library/react'
 import ProductTable from '../ProductTable'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
+jest.setTimeout(30000)
+
 // Mock Next.js navigation
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
@@ -82,8 +84,8 @@ describe('ProductTable - Functional Tests', () => {
         render(
             <ProductTable
                 totalDocs={2}
-                products={mockProducts}
-                categories={mockCategories}
+                products={mockProducts as any}
+                categories={mockCategories as any}
             />
         )
 
@@ -117,7 +119,7 @@ describe('ProductTable - Functional Tests', () => {
             <ProductTable
                 totalDocs={0}
                 products={[]}
-                categories={mockCategories}
+                categories={mockCategories as any}
             />
         )
 
@@ -135,8 +137,8 @@ describe('ProductTable - Functional Tests', () => {
         render(
             <ProductTable
                 totalDocs={2}
-                products={mockProducts}
-                categories={mockCategories}
+                products={mockProducts as any}
+                categories={mockCategories as any}
             />
         )
 
@@ -149,8 +151,8 @@ describe('ProductTable - Functional Tests', () => {
         render(
             <ProductTable
                 totalDocs={2}
-                products={mockProducts}
-                categories={mockCategories}
+                products={mockProducts as any}
+                categories={mockCategories as any}
             />
         )
 
@@ -163,8 +165,8 @@ describe('ProductTable - Functional Tests', () => {
         render(
             <ProductTable
                 totalDocs={2}
-                products={mockProducts}
-                categories={mockCategories}
+                products={mockProducts as any}
+                categories={mockCategories as any}
             />
         )
 

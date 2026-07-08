@@ -85,7 +85,7 @@ const TikTokAccountTable = () => {
                         className="rounded-full object-cover"
                     />
                 ) : (
-                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                         <UserOutlined className="text-gray-400" />
                     </div>
                 )
@@ -152,7 +152,7 @@ const TikTokAccountTable = () => {
                         className="cursor-pointer text-gray-400 hover:text-blue-500"
                         onClick={() => handleCopy(cookie, 'cookie')}
                     />
-                    <span className="text-xs font-mono text-gray-600 truncate">
+                    <span className="text-xs font-mono text-gray-600 dark:text-gray-400 truncate">
                         {cookie.substring(0, 30)}...
                     </span>
                 </div>
@@ -214,7 +214,7 @@ const TikTokAccountTable = () => {
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h1 className="text-2xl font-bold">TikTok Accounts</h1>
-                    <p className="text-gray-600 mt-1">Quản lý tài khoản TikTok</p>
+                    <p className="text-gray-600 dark:text-gray-400 mt-1">Quản lý tài khoản TikTok</p>
                 </div>
                 <Button
                     type="primary"
@@ -248,10 +248,10 @@ const TikTokAccountTable = () => {
                 {loading ? (
                     <div className="text-center py-8">Đang tải...</div>
                 ) : accounts.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">Chưa có account nào</div>
+                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">Chưa có account nào</div>
                 ) : (
                     accounts.map(account => (
-                        <div key={account._id?.toString()} className="bg-white border rounded-lg p-4 shadow-sm">
+                        <div key={account._id?.toString()} className="bg-white dark:bg-[#1f1f1f] border dark:border-gray-700 rounded-lg p-4 shadow-sm">
                             {/* Avatar & Name */}
                             <div className="flex items-center gap-3 mb-3">
                                 {account.avatar?.url ? (
@@ -261,8 +261,8 @@ const TikTokAccountTable = () => {
                                         className="w-12 h-12 rounded-full object-cover"
                                     />
                                 ) : (
-                                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                                        <UserOutlined className="text-gray-400" />
+                                    <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                        <UserOutlined className="text-gray-400 dark:text-gray-500" />
                                     </div>
                                 )}
                                 <div className="flex-1">
@@ -283,7 +283,7 @@ const TikTokAccountTable = () => {
 
                             {/* Email */}
                             <div className="mb-2">
-                                <div className="text-xs text-gray-500 mb-1">Email</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Email</div>
                                 <div className="flex items-center gap-2">
                                     <CopyOutlined
                                         className="cursor-pointer text-gray-400 hover:text-blue-500 flex-shrink-0"
@@ -295,25 +295,25 @@ const TikTokAccountTable = () => {
 
                             {/* Cookie */}
                             <div className="mb-3">
-                                <div className="text-xs text-gray-500 mb-1">Cookie</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Cookie</div>
                                 <div className="flex items-center gap-2">
                                     <CopyOutlined
                                         className="cursor-pointer text-gray-400 hover:text-blue-500 flex-shrink-0"
                                         onClick={() => handleCopy(account.cookie, 'cookie')}
                                     />
-                                    <span className="text-xs font-mono text-gray-600 truncate">
+                                    <span className="text-xs font-mono text-gray-600 dark:text-gray-400 truncate">
                                         {account.cookie.substring(0, 30)}...
                                     </span>
                                 </div>
                             </div>
 
                             {/* Date */}
-                            <div className="text-xs text-gray-400 mb-3">
+                            <div className="text-xs text-gray-400 dark:text-gray-500 mb-3">
                                 {new Date(account.createdAt!).toLocaleDateString('vi-VN')}
                             </div>
 
                             {/* Actions */}
-                            <div className="flex gap-2 pt-3 border-t">
+                            <div className="flex gap-2 pt-3 border-t dark:border-gray-700">
                                 <Link href={`/tiktok-accounts/${account.username}`} className="flex-1">
                                     <Button
                                         type="default"

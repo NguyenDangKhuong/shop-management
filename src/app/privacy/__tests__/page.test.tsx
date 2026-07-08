@@ -54,7 +54,7 @@ describe('PrivacyPolicy Page', () => {
     it('shows copyright notice', () => {
         render(<PrivacyPolicy />)
 
-        expect(screen.getByText(/© 2024 thetaphoa\. all rights reserved\./i)).toBeInTheDocument()
+        expect(screen.getByText(new RegExp(`© ${new Date().getFullYear()} Khuong Dev\. all rights reserved\.`, 'i'))).toBeInTheDocument()
     })
 
     it('has proper page structure with sections', () => {

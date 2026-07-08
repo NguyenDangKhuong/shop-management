@@ -1,0 +1,161 @@
+name: Auto-Fix Self-Healing Pipeline
+
+on:
+  repository_dispatch:
+    types: [prod_error_alert]
+  issues:
+    types: [opened]
+  workflow_dispatch:
+    inputs:
+      file_path:
+        description: 'Path to the file that has the error'
+        required: true
+        type: string
+      error_message:
+        description: 'The error message'
+        required: true
+        type: string
+      error_stack:
+        description: 'The stack trace of the error (optional)'
+        required: false
+        type: string
+
+jobs:
+  auto-fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Setup Env Variables
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "FILE_PATH=${{ github.event.inputs.file_path }}" >> $GITHUB_ENV
+            echo "ERROR_MESSAGE=${{ github.event.inputs.error_message }}" >> $GITHUB_ENV
+            echo "ERROR_STACK=${{ github.event.inputs.error_stack }}" >> $GITHUB_ENV
+          elif [ "${{ github.event_name }}" = "issues" ]; then
+            node -e "
+              const fs = require('fs');
+              const title = process.env.ISSUE_TITLE || '';
+              const body = process.env.ISSUE_BODY || '';
+              const pathRegex = /((src\/[a-zA-Z0-9_\/.-]+\.(tsx|ts|js|jsx))|(next\.config\.(js|mjs))|(auth\.ts))/g;
+              let filePath = '';
+              let match;
+              while ((match = pathRegex.exec(body + '\n' + title)) !== null) {
+                const potentialPath = match[1];
+                if (fs.existsSync(potentialPath)) {
+                  filePath = potentialPath;
+                  break;
+                }
+              }
+              
+              fs.appendFileSync(process.env.GITHUB_ENV, 'FILE_PATH=' + filePath + '\n');
+              fs.appendFileSync(process.env.GITHUB_ENV, 'ERROR_MESSAGE=' + title.replace(/\n/g, ' ') + '\n');
+              fs.appendFileSync(process.env.GITHUB_ENV, 'ERROR_STACK<<EOF\n' + body.substring(0, 3000) + '\nEOF\n');
+            "
+          else
+            echo "FILE_PATH=${{ github.event.client_payload.file }}" >> $GITHUB_ENV
+            echo "ERROR_MESSAGE=${{ github.event.client_payload.message }}" >> $GITHUB_ENV
+            echo "ERROR_STACK=${{ github.event.client_payload.stack }}" >> $GITHUB_ENV
+          fi
+
+      - name: Run Auto-Fix Script
+        env:
+          CLI_PROXY_KEY: ${{ secrets.CLI_PROXY_KEY || 'khuong' }}
+          CLI_PROXY_URL: https://cli-proxy.khuong.theworkpc.com
+          CLI_PROXY_MODEL: gh-gpt-4.1-mini
+        run: node scripts/auto-fix.js
+
+      - name: Verify Fix (Build & Test)
+        id: verify
+        run: |
+          echo "Running build verification..."
+          if pnpm run build; then
+            echo "build_status=success" >> $GITHUB_OUTPUT
+          else
+            echo "build_status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+        continue-on-error: true
+
+      - name: Retry Fix if Build Failed
+        if: steps.verify.outputs.build_status == 'failed'
+        env:
+          CLI_PROXY_KEY: ${{ secrets.CLI_PROXY_KEY || 'khuong' }}
+          CLI_PROXY_URL: https://cli-proxy.khuong.theworkpc.com
+          CLI_PROXY_MODEL: gh-gpt-4.1-mini
+          ERROR_MESSAGE: "The previous fix caused a build/compile error."
+          ERROR_STACK: "Please review the code and fix the syntax or logical build error."
+        run: |
+          echo "Previous build failed. Running Auto-Fix script again to self-correct..."
+          node scripts/auto-fix.js
+          echo "Re-running build verification..."
+          pnpm run build
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          commit-message: "auto-fix: resolve error in ${{ env.FILE_PATH }}"
+          title: "Auto-fix: Resolve error in `${{ env.FILE_PATH }}`"
+          body: |
+            An automated fix has been generated for the following error:
+            - **Error Message:** `${{ env.ERROR_MESSAGE }}`
+            - **Target File:** `${{ env.FILE_PATH }}`
+
+            ### Verification Status
+            - Build status verified during CI run.
+            
+            *Please inspect changes before merging.*
+          branch: auto-fix/${{ github.run_id }}
+          base: master
+
+      - name: Notify Zalo
+        if: always()
+        run: |
+          python3 -c '
+          import urllib.request, json
+          status = "${{ job.status }}"
+          file_path = "${{ env.FILE_PATH }}"
+          pr_url = "${{ steps.cpr.outputs.pull-request-url }}"
+          error_msg = "${{ env.ERROR_MESSAGE }}"
+          
+          if status == "success":
+              msg = f"🤖 [Auto-Fix Success]\n- File: {file_path}\n- Error: {error_msg}\n- PR Link: {pr_url}"
+          else:
+              msg = f"🤖 [Auto-Fix Failed]\n- File: {file_path}\n- Error: {error_msg}\n- Workflow failed to fix the issue."
+          
+          req = urllib.request.Request(
+              "https://zalo-relay.khuong.theworkpc.com/uptime-webhook",
+              data=json.dumps({"msg": msg}).encode("utf-8"),
+              headers={"Content-Type": "application/json"}
+          )
+          try:
+              with urllib.request.urlopen(req) as response:
+                  print("Zalo notification sent. Response status:", response.status)
+          except Exception as e:
+              print("Failed to send Zalo notification:", e)
+          '
+

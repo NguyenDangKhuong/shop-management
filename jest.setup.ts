@@ -62,3 +62,26 @@ jest.mock('next/link', () => {
         return React.createElement('a', { href }, children)
     }
 })
+
+// Mock IntersectionObserver for Framer Motion
+class MockIntersectionObserver {
+    observe = jest.fn()
+    disconnect = jest.fn()
+    unobserve = jest.fn()
+}
+
+if (typeof window !== 'undefined') {
+    Object.defineProperty(window, 'IntersectionObserver', {
+        writable: true,
+        configurable: true,
+        value: MockIntersectionObserver
+    })
+}
+
+if (typeof global !== 'undefined') {
+    Object.defineProperty(global, 'IntersectionObserver', {
+        writable: true,
+        configurable: true,
+        value: MockIntersectionObserver
+    })
+}

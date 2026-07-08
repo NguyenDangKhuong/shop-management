@@ -1,0 +1,3 @@
+[submodule "src/tweets-private"]
+	path = src/tweets-private
+	url = https://github.com/NguyenDangKhuong/tweets-x.git

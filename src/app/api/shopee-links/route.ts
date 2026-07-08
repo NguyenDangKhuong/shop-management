@@ -1,25 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/utils/connectDb'
 import ShopeeLinkModel from '@/models/ShopeeLink'
+import { withCache, invalidateCache } from '@/lib/cache'
 
 
 // GET - Fetch all Shopee links
 export async function GET() {
     try {
-        await connectDB()
-
-        const links = await ShopeeLinkModel.find().sort({ order: 1, createdAt: -1 })
-
-        return NextResponse.json({
-            success: true,
-            data: links
+        const data = await withCache('shopee-links', 300, async () => {
+            await connectDB()
+            return await ShopeeLinkModel.find().sort({ order: 1, createdAt: -1 }).lean()
         })
+
+        return NextResponse.json({ success: true, data })
     } catch (error: any) {
         console.error('❌ Shopee Links GET Error:', error)
-        return NextResponse.json({
-            success: false,
-            error: error.message
-        }, { status: 500 })
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 })
     }
 }
 
@@ -29,7 +25,6 @@ export async function POST(request: NextRequest) {
         await connectDB()
         const body = await request.json()
 
-        // Validate required fields
         if (!body.name || !body.productUrl || !body.mediaFile) {
             return NextResponse.json({
                 success: false,
@@ -37,31 +32,22 @@ export async function POST(request: NextRequest) {
             }, { status: 400 })
         }
 
-        // Get the highest order number and increment
         const maxOrderLink = await ShopeeLinkModel.findOne().sort({ order: -1 }).select('order')
         const nextOrder = (maxOrderLink?.order ?? -1) + 1
 
-        // Create link data
-        const linkData = {
+        const newLink = await ShopeeLinkModel.create({
             name: body.name,
             productUrl: body.productUrl,
             mediaFile: body.mediaFile,
             description: body.description,
             order: nextOrder
-        }
-
-        const newLink = await ShopeeLinkModel.create(linkData)
-
-        return NextResponse.json({
-            success: true,
-            data: newLink
         })
+
+        await invalidateCache('shopee-links')
+        return NextResponse.json({ success: true, data: newLink })
     } catch (error: any) {
         console.error('❌ Shopee Link POST Error:', error)
-        return NextResponse.json({
-            success: false,
-            error: error.message
-        }, { status: 500 })
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 })
     }
 }
 
@@ -73,34 +59,19 @@ export async function PUT(request: NextRequest) {
         const { id, ...updateData } = body
 
         if (!id) {
-            return NextResponse.json({
-                success: false,
-                error: 'ID is required'
-            }, { status: 400 })
+            return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 })
         }
 
-        const updatedLink = await ShopeeLinkModel.findByIdAndUpdate(
-            id,
-            updateData,
-            { new: true }
-        )
+        const updatedLink = await ShopeeLinkModel.findByIdAndUpdate(id, updateData, { new: true })
 
         if (!updatedLink) {
-            return NextResponse.json({
-                success: false,
-                error: 'Link not found'
-            }, { status: 404 })
+            return NextResponse.json({ success: false, error: 'Link not found' }, { status: 404 })
         }
 
-        return NextResponse.json({
-            success: true,
-            data: updatedLink
-        })
+        await invalidateCache('shopee-links')
+        return NextResponse.json({ success: true, data: updatedLink })
     } catch (error: any) {
-        return NextResponse.json({
-            success: false,
-            error: error.message
-        }, { status: 500 })
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 })
     }
 }
 
@@ -112,29 +83,18 @@ export async function DELETE(request: NextRequest) {
         const id = searchParams.get('id')
 
         if (!id) {
-            return NextResponse.json({
-                success: false,
-                error: 'ID is required'
-            }, { status: 400 })
+            return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 })
         }
 
         const deletedLink = await ShopeeLinkModel.findByIdAndDelete(id)
 
         if (!deletedLink) {
-            return NextResponse.json({
-                success: false,
-                error: 'Link not found'
-            }, { status: 404 })
+            return NextResponse.json({ success: false, error: 'Link not found' }, { status: 404 })
         }
 
-        return NextResponse.json({
-            success: true,
-            message: 'Link deleted successfully'
-        })
+        await invalidateCache('shopee-links')
+        return NextResponse.json({ success: true, message: 'Link deleted successfully' })
     } catch (error: any) {
-        return NextResponse.json({
-            success: false,
-            error: error.message
-        }, { status: 500 })
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 })
     }
 }

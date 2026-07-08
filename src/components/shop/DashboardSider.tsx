@@ -5,19 +5,23 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import {
-    BarChartOutlined,
-    BookOutlined,
-    FacebookOutlined,
-    FileTextOutlined,
-    KeyOutlined,
-    ShoppingCartOutlined,
-    ShoppingOutlined,
-    SoundOutlined,
-    TableOutlined,
-    TikTokOutlined,
-    UserOutlined
+  AimOutlined,
+  BarChartOutlined,
+  BookOutlined,
+  FacebookOutlined,
+  FileTextOutlined,
+  KeyOutlined,
+  RocketOutlined,
+  ShoppingCartOutlined,
+  ShoppingOutlined,
+  SoundOutlined,
+  TableOutlined,
+  TikTokOutlined,
+  UserOutlined
 } from '@ant-design/icons'
 import { Layout, Menu } from 'antd'
+
+import { useThemeMode } from '@/contexts/ThemeContext'
 
 const { Sider } = Layout
 
@@ -33,6 +37,7 @@ interface TikTokAccount {
 const DashboardSider = ({ collapsed, onItemClick }: any) => {
   const pathname = usePathname()
   const [accounts, setAccounts] = useState<TikTokAccount[]>([])
+  const { isDarkMode } = useThemeMode()
 
   useEffect(() => {
     // Fetch TikTok accounts
@@ -62,15 +67,27 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
   }))
 
   return (
-    <Sider trigger={null} collapsedWidth='0' breakpoint='lg' collapsible collapsed={collapsed}>
+    <Sider
+      trigger={null}
+      collapsedWidth='0'
+      breakpoint='lg'
+      collapsible
+      collapsed={collapsed}
+      style={{
+        background: isDarkMode ? '#141414' : '#001529',
+      }}
+    >
       <Link href='/'>
-        <img className='bg-white mb-5 w-full h-[65px] m-auto' src='/image/logo.png' alt='logo' />
+        <img className='mb-5 w-[200px] h-[65px] object-contain m-auto' src='/image/logo.png' alt='logo' />
       </Link>
       <Menu
         theme='dark'
         mode='inline'
         defaultSelectedKeys={[pathname]}
         onClick={onItemClick}
+        style={{
+          background: isDarkMode ? '#141414' : undefined,
+        }}
         items={[
           {
             key: '/tiktok-accounts',
@@ -87,6 +104,11 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
             key: '/facebook-posts',
             icon: <FacebookOutlined />,
             label: <Link href='/facebook-posts'>Facebook Posts</Link>
+          },
+          {
+            key: '/facebook-auto-post',
+            icon: <RocketOutlined />,
+            label: <Link href='/facebook-auto-post'>FB Auto Post</Link>
           },
           {
             key: '/veo3-tokens',
@@ -119,6 +141,11 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
             label: <Link href='/categories'>Danh mục</Link>
           },
           {
+            key: '/clarity',
+            icon: <AimOutlined />,
+            label: <Link href='/clarity'>Clarity Plan</Link>
+          },
+          {
             key: '/orders',
             icon: <BarChartOutlined />,
             label: <Link href='/orders'>Thống kê</Link>
@@ -130,3 +157,4 @@ const DashboardSider = ({ collapsed, onItemClick }: any) => {
 }
 
 export default DashboardSider
+

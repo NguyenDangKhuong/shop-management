@@ -5,6 +5,7 @@ import ProductModel from '@/models/Product'
 import connectDb from '@/utils/connectDb'
 import removeImage from '@/utils/removeImage'
 import { errorResponse } from '@/utils/apiResponse'
+import { getRedis } from '@/lib/redis'
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -40,6 +41,14 @@ export const POST = async (req: NextRequest) => {
       })
     )
     await new OrderModel({ ...body }).save()
+    // Invalidate orders + products cache (stock changed)
+    try {
+      const redis = getRedis()
+      const oKeys = await redis.keys('admin:orders:*')
+      const pKeys = await redis.keys('admin:products:*')
+      const allKeys = [...oKeys, ...pKeys]
+      if (allKeys.length > 0) await redis.del(...allKeys)
+    } catch { /* fail-open */ }
     return NextResponse.json(
       {
         message: 'Đã thêm đơn vào hệ thống!',

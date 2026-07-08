@@ -10,6 +10,7 @@ export interface ITikTokScheduledPost extends Document {
     productTitle?: string
     description: string
     video: IMediaFile
+    hasMusic: boolean
     status: 'draft' | 'scheduled' | 'posted' | 'failed'
     createdAt?: Date
     updatedAt?: Date
@@ -26,6 +27,7 @@ const TikTokScheduledPostSchema = new Schema({
     productTitle: { type: String },
     description: { type: String, required: true },
     video: { type: MediaFileSchema, required: true },
+    hasMusic: { type: Boolean, default: false },
     status: {
         type: String,
         enum: ['draft', 'scheduled', 'posted', 'failed'],

@@ -1,6 +1,13 @@
 import Link from 'next/link'
+import { Metadata } from 'next'
 
 import { Button, Result } from 'antd'
+
+export const metadata: Metadata = {
+  title: 'Not Found',
+  description: 'Page not found',
+  icons: [],
+}
 
 const NotFoundPage = () => {
   return (
@@ -10,7 +17,7 @@ const NotFoundPage = () => {
       subTitle='Sorry, the page you visited does not exist.'
       extra={
         <Link href='/'>
-          <Button type='primary'>Back Home</Button>
+          <Button type='primary'>Back to Home</Button>
         </Link>
       }
     />

@@ -20,4 +20,12 @@ else
     echo "⚠️  .githooks/pre-push not found"
 fi
 
+# Copy babel.min.js to public directory so Webpack doesn't bundle it and crash Next.js
+if [ -f "node_modules/@babel/standalone/babel.min.js" ]; then
+    cp node_modules/@babel/standalone/babel.min.js public/babel.min.js
+    echo "✅ babel.min.js copied to public/"
+else
+    echo "⚠️  node_modules/@babel/standalone/babel.min.js not found"
+fi
+
 echo "✨ Git hooks setup complete!"

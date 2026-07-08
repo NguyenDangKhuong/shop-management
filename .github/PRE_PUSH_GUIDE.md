@@ -55,4 +55,4 @@ npm run build
 
 ## Xem chi tiết
 
-Đọc [PRE_PUSH_HOOK.md](file:///Users/khuongn/Downloads/Src/shop-management/PRE_PUSH_HOOK.md) để biết thêm.
+Đọc [PRE_PUSH_HOOK.md](../PRE_PUSH_HOOK.md) để biết thêm.

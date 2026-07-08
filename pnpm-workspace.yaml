@@ -1,0 +1,10 @@
+packages:
+  - '.'
+allowBuilds:
+  '@parcel/watcher': true
+  '@sentry/cli': true
+  '@tailwindcss/oxide': set this to true or false
+  '@vercel/speed-insights': set this to true or false
+  sharp: true
+  unrs-resolver: true
+ignoreScripts: false

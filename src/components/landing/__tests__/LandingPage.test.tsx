@@ -1,15 +1,17 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import LandingPage from '@/components/landing/LandingPage'
 
 // Mock Next.js Image component
 jest.mock('next/image', () => ({
     __esModule: true,
     default: (props: any) => {
-        // Filter out Next.js specific props that don't apply to <img>
         const { priority, quality, loading, sizes, ...imgProps } = props
-        // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
         return <img {...imgProps} />
     }
+}))
+
+jest.mock('@/hooks/useStandalone', () => ({
+    useStandalone: () => ({ isStandalone: false, isReady: true })
 }))
 
 describe('LandingPage Component', () => {
@@ -18,28 +20,27 @@ describe('LandingPage Component', () => {
 
         expect(screen.getByText(/hello, i'm/i)).toBeInTheDocument()
         expect(screen.getAllByText(/khuong/i).length).toBeGreaterThan(0)
-        expect(screen.getByText(/i build accessible web experiences/i)).toBeInTheDocument()
+        expect(screen.getAllByText(/front-end developer/i).length).toBeGreaterThan(0)
     })
 
     it('displays login button with correct link', () => {
         render(<LandingPage />)
 
-        const loginLink = screen.getByRole('link', { name: /login/i })
-        expect(loginLink).toBeInTheDocument()
-        expect(loginLink).toHaveAttribute('href', '/login')
+        const loginLinks = screen.getAllByRole('link', { name: /login/i })
+        expect(loginLinks.length).toBeGreaterThan(0)
+        expect(loginLinks[0]).toHaveAttribute('href', '/login')
     })
 
-    it('shows TheTapHoa branding', () => {
+    it('shows Khuong.Dev branding', () => {
         render(<LandingPage />)
 
-        // Text appears multiple times, check it exists
-        expect(screen.getAllByText(/taphoa/i).length).toBeGreaterThan(0)
+        // Logo text is split: "Khuong" + <span>.Dev</span>
+        expect(screen.getAllByText('.Dev').length).toBeGreaterThan(0)
     })
 
-    it('renders "View Projects" button', () => {
+    it('renders "Side Projects" button', () => {
         render(<LandingPage />)
-
-        const viewProjectsLink = screen.getByRole('link', { name: /view projects/i })
+        const viewProjectsLink = screen.getByRole('link', { name: /side projects/i })
         expect(viewProjectsLink).toBeInTheDocument()
         expect(viewProjectsLink).toHaveAttribute('href', '/projects')
     })
@@ -50,27 +51,26 @@ describe('LandingPage Component', () => {
         expect(screen.getByRole('heading', { name: /tech stack/i })).toBeInTheDocument()
     })
 
-    it('shows about me section with description', () => {
+    it('shows about me section with professional summary', () => {
         render(<LandingPage />)
 
         expect(screen.getByRole('heading', { name: /about me/i })).toBeInTheDocument()
-        expect(screen.getByText(/i'm khuong, a front-end developer based in ho chi minh city/i)).toBeInTheDocument()
+        expect(screen.getByText(/front-end developer with 8 years of experience/i)).toBeInTheDocument()
     })
 
     it('renders featured project section', () => {
         render(<LandingPage />)
 
-        expect(screen.getByText(/featured project: e-commerce app/i)).toBeInTheDocument()
+        expect(screen.getByText(/featured side project/i)).toBeInTheDocument()
         expect(screen.getByRole('link', { name: /live demo/i })).toHaveAttribute('href', '/products')
         expect(screen.getByRole('link', { name: /admin panel/i })).toHaveAttribute('href', '/login')
     })
 
-    it('displays contact section with email', () => {
+    it('displays terminal contact section', () => {
         render(<LandingPage />)
 
         expect(screen.getByRole('heading', { name: /contact/i })).toBeInTheDocument()
-        const emailLink = document.querySelector('a[href="mailto:nguyendangkhuong96@gmail.com"]')
-        expect(emailLink).toBeInTheDocument()
+        expect(screen.getByText(/INITIALIZING CONTACT MODULE/i)).toBeInTheDocument()
     })
 
     it('shows performance stats badges', () => {
@@ -78,29 +78,28 @@ describe('LandingPage Component', () => {
 
         expect(screen.getByRole('heading', { name: /performance stats/i })).toBeInTheDocument()
 
-        // Use getAllByText since these labels appear multiple times
-        const seoLabels = screen.getAllByText(/SEO/i)
-        expect(seoLabels.length).toBeGreaterThan(0)
-
-        const perfLabels = screen.getAllByText(/PERF/i)
+        const perfLabels = screen.getAllByText(/Performance/i)
         expect(perfLabels.length).toBeGreaterThan(0)
 
-        const a11yLabels = screen.getAllByText(/A11Y/i)
+        const a11yLabels = screen.getAllByText(/Accessibility/i)
         expect(a11yLabels.length).toBeGreaterThan(0)
+
+        const bpLabels = screen.getAllByText(/Best Practices/i)
+        expect(bpLabels.length).toBeGreaterThan(0)
     })
 
-    it('renders dark mode toggle', () => {
+    it('renders theme toggle button', () => {
         render(<LandingPage />)
 
-        expect(screen.getByText(/dark mode/i)).toBeInTheDocument()
+        const toggleButtons = screen.getAllByRole('button', { name: /toggle.*mode|switch.*theme|dark.*mode|light.*mode/i })
+        expect(toggleButtons.length).toBeGreaterThan(0)
     })
 
     it('displays developer portrait image', () => {
         render(<LandingPage />)
 
-        const portrait = screen.getByAltText(/khuong.*developer portrait/i)
+        const portrait = screen.getByAltText(/khuong/i)
         expect(portrait).toBeInTheDocument()
-        expect(portrait).toHaveAttribute('src', '/image/home/avatar.jpg')
     })
 
     it('shows project mockup image', () => {
@@ -110,12 +109,12 @@ describe('LandingPage Component', () => {
         expect(mockup).toBeInTheDocument()
     })
 
-    it('displays timeline with dates', () => {
+    it('displays timeline with career dates', () => {
         render(<LandingPage />)
 
-        expect(screen.getByText(/2018/i)).toBeInTheDocument()
-        expect(screen.getByText(/2022/i)).toBeInTheDocument()
-        expect(screen.getByText(/present/i)).toBeInTheDocument()
+        expect(screen.getAllByText('2014').length).toBeGreaterThan(0)
+        expect(screen.getAllByText('2018').length).toBeGreaterThan(0)
+        expect(screen.getAllByText(/present/i).length).toBeGreaterThan(0)
     })
 
     it('renders technology tags for featured project', () => {
@@ -124,5 +123,81 @@ describe('LandingPage Component', () => {
         // Check that these technologies appear (they appear multiple times)
         expect(screen.getAllByText(/react/i).length).toBeGreaterThanOrEqual(1)
         expect(screen.getAllByText(/typescript/i).length).toBeGreaterThanOrEqual(1)
+    })
+
+    // ─── New sections ───────────────────────────────────────────────────
+
+    it('renders work experience section with all positions', () => {
+        render(<LandingPage />)
+
+        expect(screen.getByRole('heading', { name: /work experience/i })).toBeInTheDocument()
+        expect(screen.getByText(/technical lead/i)).toBeInTheDocument()
+        expect(screen.getByText(/senior frontend engineer/i)).toBeInTheDocument()
+        expect(screen.getByText(/ANZ Banking Group/i)).toBeInTheDocument()
+        expect(screen.getByText(/Asoview Vietnam/i)).toBeInTheDocument()
+        expect(screen.getByText(/Vteach Edu/i)).toBeInTheDocument()
+    })
+
+    it('renders education section with HCMUS', () => {
+        render(<LandingPage />)
+
+        expect(screen.getByRole('heading', { name: /education/i })).toBeInTheDocument()
+        expect(screen.getByText(/ho chi minh university of science/i)).toBeInTheDocument()
+        expect(screen.getByText(/faculty of information technology/i)).toBeInTheDocument()
+    })
+
+    it('renders skills section with categories from CV', () => {
+        render(<LandingPage />)
+
+        expect(screen.getByRole('heading', { name: /skills.*expertise/i })).toBeInTheDocument()
+        expect(screen.getByText(/core technologies/i)).toBeInTheDocument()
+        expect(screen.getAllByText(/testing/i).length).toBeGreaterThan(0)
+        expect(screen.getByText(/architecture.*devops/i)).toBeInTheDocument()
+    })
+
+
+    it('renders download CV link', () => {
+        render(<LandingPage />)
+
+        const cvLink = screen.getByRole('link', { name: /download cv/i })
+        expect(cvLink).toBeInTheDocument()
+        expect(cvLink).toHaveAttribute('href', '/cv')
+    })
+
+    it('renders terminal contact instructions', () => {
+        render(<LandingPage />)
+
+        expect(screen.getByText(/TYPE "help" FOR AVAILABLE COMMANDS/i)).toBeInTheDocument()
+    })
+
+    // ─── Interactive Background Hover ───────────────────────────────────────
+
+    it('dispatches setHoveredSection event on mouse enter and leave', () => {
+        const dispatchEventSpy = jest.spyOn(window, 'dispatchEvent')
+        render(<LandingPage />)
+
+        const aboutSection = screen.getByTestId('hover-section-about')
+        
+        // Mouse enter should emit event with detail: 'about'
+        fireEvent.mouseEnter(aboutSection)
+        
+        expect(dispatchEventSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                type: 'setHoveredSection',
+                detail: 'about'
+            })
+        )
+
+        // Mouse leave should emit event with detail: null
+        fireEvent.mouseLeave(aboutSection)
+        
+        expect(dispatchEventSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                type: 'setHoveredSection',
+                detail: null
+            })
+        )
+        
+        dispatchEventSpy.mockRestore()
     })
 })

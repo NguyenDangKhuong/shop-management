@@ -14,18 +14,18 @@ export async function GET(request: NextRequest) {
         if (accountId) query.accountId = accountId
         if (productId) query.productId = productId
 
-        const prompts = await PromptModel.find(query)
+        const results = await PromptModel.find(query)
             .sort({ order: 1, createdAt: 1 })
             .lean()
 
         // Strip _id from referenceImages subdocuments
-        prompts.forEach((p: any) => {
+        results.forEach((p: any) => {
             if (p.referenceImages) {
                 p.referenceImages = p.referenceImages.map(({ _id, ...rest }: any) => rest)
             }
         })
 
-        return NextResponse.json({ success: true, data: prompts })
+        return NextResponse.json({ success: true, data: results })
     } catch (error: any) {
         return NextResponse.json({ success: false, error: error.message }, { status: 500 })
     }
