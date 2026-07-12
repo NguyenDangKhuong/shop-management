@@ -27,6 +27,7 @@ export interface IPushSubscription extends Document {
     lastSentVocabIds: string[] // last N sent vocab IDs to avoid repeats
     lastPushedAt: Date | null
     active: boolean
+    dailyPhrasesEnabled: boolean  // Bật/tắt nhắc daily phrases
     createdAt?: Date
     updatedAt?: Date
 }
@@ -43,6 +44,7 @@ const PushSubscriptionSchema = new Schema({
     lastSentVocabIds: { type: [String], default: [] },
     lastPushedAt: { type: Date, default: null },
     active: { type: Boolean, default: true },
+    dailyPhrasesEnabled: { type: Boolean, default: true },
 }, {
     timestamps: true,
     collection: 'push_subscriptions'

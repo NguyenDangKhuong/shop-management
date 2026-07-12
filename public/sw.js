@@ -117,23 +117,25 @@ function isStaticAsset(pathname) {
     )
 }
 
-// ─── Push Notification: nhắc ôn từ vựng ─────────────────────
+// ─── Push Notification: nhắc ôn từ vựng + daily phrases ─────
 self.addEventListener('push', (event) => {
     if (!event.data) return
 
     const data = event.data.json()
+    const isDailyPhrase = data.tag === 'daily-phrase'
     const options = {
         body: data.body || '',
         icon: '/favicon_io/android-chrome-192x192.png',
         badge: '/favicon_io/android-chrome-192x192.png',
         tag: data.tag || 'vocab-reminder',
         renotify: true,
-        data: { url: data.url || '/translate' },
+        data: { url: data.url || (isDailyPhrase ? '/daily-phrases' : '/translate') },
         vibrate: [100, 50, 100],
     }
 
+    const defaultTitle = isDailyPhrase ? '📚 Daily English' : '📖 Ôn từ vựng'
     event.waitUntil(
-        self.registration.showNotification(data.title || '📖 Ôn từ vựng', options)
+        self.registration.showNotification(data.title || defaultTitle, options)
     )
 })
 
