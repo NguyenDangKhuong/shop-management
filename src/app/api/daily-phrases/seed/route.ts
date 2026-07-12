@@ -10,10 +10,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/utils/connectDb'
 import DailyPhraseModel from '@/models/DailyPhrase'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { DAILY_PHRASES } = require('../../../../../scripts/seed-daily-phrases')
 
 export const dynamic = 'force-dynamic'
+
+// Import phrase data dynamically to avoid Vercel build issues with scripts/ folder
+async function getPhraseData() {
+    // Use dynamic import with try/catch for flexibility
+    try {
+        const mod = await import('../../../../../scripts/seed-daily-phrases')
+        return mod.DAILY_PHRASES
+    } catch {
+        // Fallback: return empty if script not bundled (shouldn't happen in production)
+        console.error('Failed to import DAILY_PHRASES from scripts/')
+        return []
+    }
+}
 
 export async function POST(req: NextRequest) {
     const secret = req.headers.get('x-cron-secret')
@@ -29,8 +40,13 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ success: true, skipped: true, existing })
         }
 
+        const DAILY_PHRASES = await getPhraseData()
+        if (!DAILY_PHRASES || DAILY_PHRASES.length === 0) {
+            return NextResponse.json({ error: 'No phrase data found' }, { status: 500 })
+        }
+
         const now = new Date()
-        const docs = DAILY_PHRASES.map((p) => ({
+        const docs = DAILY_PHRASES.map((p: Record<string, unknown>) => ({
             ...p,
             interval: 1,
             nextReviewAt: now,
