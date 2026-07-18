@@ -99,5 +99,5 @@ Config `oauth-model-alias` trong `config.yaml` map model names cho Antigravity c
 ## Related
 
 - [ORACLE_VPS.md](./ORACLE_VPS.md) — VPS info
-- [UBUNTU_VM.md](./UBUNTU_VM.md) — Ubuntu VM services
+- [ALPINE_VM.md](./ALPINE_VM.md) — Alpine VM services
 - [backup-vps](https://github.com/NguyenDangKhuong/backup-vps) — Private backup repo

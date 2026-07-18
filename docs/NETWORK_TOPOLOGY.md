@@ -171,7 +171,7 @@ Tất cả thiết bị quan trọng kết nối qua Tailscale, tạo thành m�
 | Thiết bị | Tailscale IP | Vai trò |
 |----------|-------------|---------|
 | **heyyolo-free-vps** (Oracle VPS) | `100.118.218.99` | Server, Exit Node, DNS (AdGuard) |
-| **khuong-ubuntu-esxi** (Ubuntu VM) | `100.108.169.39` | **Subnet Router** (`192.168.1.0/24`) |
+| **alpine-cloudflared** (Alpine VM) | `100.64.80.29` | **Subnet Router** (`192.168.1.0/24`) |
 | **n5-max** (Armbian TV Box) | `100.91.8.9` | HA Slave, AdGuard Local, DNS Server |
 | **khuong-home-server** (HP Xubuntu) | `100.101.104.52` | Home server, RustDesk |
 | **khuongnas** (Synology NAS) | `100.116.76.83` | NAS storage |
@@ -210,7 +210,7 @@ sudo tailscale up --advertise-exit-node --accept-routes --ssh
 |----------|--------|-------------|---------|
 | Nokia Router | `192.168.1.1` | — | Gateway / DHCP / Firewall |
 | ESXi Host | `192.168.1.100` | — | Hypervisor (Huananzhi + Xeon) |
-| Ubuntu VM (trên ESXi) | `192.168.1.38` | `100.108.169.39` | Dev server, Subnet Router |
+| Alpine VM (trên ESXi) | `192.168.1.4` | `100.64.80.29` | Subnet Router, Nginx proxy |
 | Magicsee N5 Max | `192.168.1.108` | `100.91.8.9` | HA Slave, AdGuard Local |
 | HP Home Server | DHCP (WiFi) | `100.101.104.52` | RustDesk, headless server |
 | Synology NAS | `192.168.1.200:5001` | `100.116.76.83` | NAS storage |
@@ -260,6 +260,6 @@ sudo tailscale up --advertise-exit-node --accept-routes --ssh
 - [MAGICSEE_N5_MAX_ARMBIAN.md](./MAGICSEE_N5_MAX_ARMBIAN.md) — N5 Max setup, HA Slave, AdGuard Local
 - [HOME_ASSISTANT.md](./HOME_ASSISTANT.md) — Master-Slave HA architecture
 - [HOME_SERVER.md](./HOME_SERVER.md) — HP home server
-- [UBUNTU_VM.md](./UBUNTU_VM.md) — ESXi Ubuntu VM, subnet router
+- [ALPINE_VM.md](./ALPINE_VM.md) — ESXi Alpine VM, subnet router
 - [ADGUARD.md](./ADGUARD.md) — DNS ad blocker
 - [RUSTDESK_SETUP.md](./RUSTDESK_SETUP.md) — Remote desktop setup
