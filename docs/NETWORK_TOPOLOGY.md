@@ -1,6 +1,6 @@
 # 🌐 Network Topology — Cấu Hình Mạng Nhà
 
-Last updated: 2026-05-07
+Last updated: 2026-07-18
 
 ## Overview
 
@@ -263,3 +263,4 @@ sudo tailscale up --advertise-exit-node --accept-routes --ssh
 - [ALPINE_VM.md](./ALPINE_VM.md) — ESXi Alpine VM, subnet router
 - [ADGUARD.md](./ADGUARD.md) — DNS ad blocker
 - [RUSTDESK_SETUP.md](./RUSTDESK_SETUP.md) — Remote desktop setup
+- [ESXI_BACKUP.md](./ESXI_BACKUP.md) — ESXi automated VM backup configuration (ghettoVCB)
