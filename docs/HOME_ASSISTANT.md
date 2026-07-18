@@ -47,8 +47,31 @@ Do Boardlink chỉ cung cấp "nút bấm raw", không tạo ra cái tủ lạnh
    - Khi add IP Tailscale vào Integration, phải bỏ tick ô **Secure** (HTTPS) và **Verify SSL** vì ta gọi qua IP thuần không qua TLS.
    - Nhớ copy đủ cái Long-Lived Access Token.
 
-2. **Mất kết nối:**
-   - Mạng Ethernet (LAN) trên con Armbian Box ổn định hơn Wi-Fi. Đảm bảo cắm cáp Ethernet vào thẳng Router phát để tránh việc con Local HA rớt mạng. Tắt GUI (Multi-user target) của màn hình TV nếu không cần thiết để tránh giật lag CPU do driver đồ hoạ Mali yếu kém trên Linux.
+2. **Mất kết nối đồng bộ thiết bị Local (Midea AC, Broadlink) giữa Master-Slave:**
+   - **Triệu chứng:** Các thiết bị local (như AC, Remote) hiển thị trạng thái "Unavailable" trên Master (VPS) mặc dù Local HA trên Armbian vẫn chạy bình thường.
+   - **Nguyên nhân:** Do sự cố mất điện/mất mạng đột ngột hoặc lệnh khởi động bị lệch nhịp, khiến socket Tailscale hoặc API kết nối giữa Master và Slave bị kẹt.
+   - **Cách khắc phục:** Khởi động lại container Home Assistant trên cả 2 node để tạo kết nối mới. Làm theo đúng thứ tự:
+     1. Khởi động lại Local HA (Slave) trước:
+        ```bash
+        ssh root@100.91.8.9 "docker restart homeassistant"
+        ```
+     2. Đợi Local HA khởi động xong (khoảng 30 giây), sau đó khởi động lại Master HA (VPS):
+        ```bash
+        ssh ubuntu@100.118.218.99 "docker restart homeassistant"
+        ```
+
+3. **Lỗi thiết bị Sonoff (eWeLink) bị báo "Unavailable" hàng loạt:**
+   - **Triệu chứng:** Toàn bộ công tắc Sonoff báo down, log HA Master báo lỗi `access token expired` hoặc `You logged in from another place`.
+   - **Nguyên nhân:** eWeLink Cloud chỉ cho phép duy nhất 1 session token hoạt động. Khi bạn mở app eWeLink trên điện thoại, phiên của Home Assistant trên VPS sẽ bị đá ra ngoài.
+   - **Cách khắc phục tạm thời:** Restart Home Assistant trên VPS để nó tự động login lại.
+   - **Cách khắc phục triệt để:** 
+     1. Tạo một tài khoản eWeLink phụ (sub-account) bằng email mới.
+     2. Trong app eWeLink điện thoại (tài khoản chính), chia sẻ (Share) toàn bộ thiết bị sang tài khoản phụ này.
+     3. Đăng nhập tài khoản phụ này vào Home Assistant.
+
+4. **Lỗi chết card LAN (Cannot attach to PHY) trên TV Box Magicsee N5 Max:**
+   - **Triệu chứng:** Box tự động chuyển sang dùng Wi-Fi (`wlan0`) với IP `192.168.1.108` thay vì card LAN mạng dây.
+   - **Cách khắc phục:** Rút nguồn điện vật lý của box ra (Cold Boot), đợi 10s rồi cắm lại để ngắt điện hoàn toàn chip PHY. Lệnh `sudo reboot` sẽ không sửa được lỗi này.
 
 ---
-*Cập nhật: 02/04/2026*
+*Cập nhật: 18/07/2026*
