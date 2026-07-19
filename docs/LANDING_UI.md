@@ -29,7 +29,8 @@ src/
 │       ├── HologramBackground.tsx   # [NEW] 3D wireframe spaceship background
 │       ├── HyperspaceTransition.tsx # [NEW] Page transition effect
 │       ├── MotionHero.tsx           # [UPDATED] Hero section với typewriter
-│       ├── RadarNav.tsx             # [NEW] Mini radar scroll indicator
+│       ├── RadarNav.tsx             # [UPDATED] Mini radar scroll indicator & game trigger
+│       ├── RadarGame.tsx            # [NEW] Infinite Space Interceptor Game modal
 │       ├── SiteHeader.tsx           # [UPDATED] Header với HUD elements
 │       ├── SoundToggle.tsx          # [NEW] Nút bật/tắt âm thanh
 │       ├── SpaceTerminal.tsx        # [NEW] Terminal tương tác
@@ -154,22 +155,15 @@ src/
 ### 4. RadarNav
 
 **File:** `src/components/ui/RadarNav.tsx`
-**Mục đích:** Mini radar HUD hiển thị scroll position.
+**Mục đích:** Mini radar HUD hiển thị scroll position kiêm nút kích hoạt Minigame Space Interceptor.
 
 **Kích thước:** 32×32px (w-8 h-8), hiện trên Desktop header.
 
-**Thành phần visual:**
-- Vòng tròn ngoài (border neon cyan)
-- Crosshairs (dọc + ngang)
-- 2 concentric circles (20%, 40% inset)
-- Sweep animation (gradient xoay 360°, 4 giây/vòng)
-- **Blip** (điểm sáng 6px) — vị trí thay đổi theo scroll %
-
-**Tính toán blip position:**
-```js
-top: 5% + (scrollPct * 0.9)%       // Y: từ trên xuống
-left: 50% + sin(scrollPct/100 * π) * 35%  // X: arc movement
-```
+**Tính năng tương tác:**
+- **Scroll Tracking:** Blip di chuyển theo cuộn màn hình.
+- **Mouse Click Trigger:** Hover chuột đổi màu neon sáng rực và click để khởi chạy Space Interceptor game.
+- **Keyboard Shortcut G:** Nhấn phím `G` trên trình duyệt để kích hoạt trò chơi nhanh chóng (tự động bỏ qua khi trỏ chuột đang focus ở các ô nhập dữ liệu admin).
+- **Body portal rendering:** Tránh lỗi stacking context bị cắt xén (clip-path) bởi Header bằng cách mount trực tiếp qua Portal của React vào `document.body` giúp tràn tràn viền hiển thị full màn hình.
 
 **Sử dụng:** Chỉ trong `SiteHeader.tsx`, desktop view:
 ```tsx
@@ -338,6 +332,17 @@ const [expViewMode, setExpViewMode] = useState<'list' | 'map'>('list')
 ┌─[K] Khuong.Dev───────────────────────────── ──[🔊][🌙][Login]─┐
 └────────────────────────────────────────────────────────────────┘
 ```
+
+### 11. RadarGame
+
+**File:** `src/components/ui/RadarGame.tsx`
+**Mục đích:** Bảng điều khiển minigame phi thuyền bắn súng Infinite Space Interceptor (Canvas HTML5).
+
+**Tính năng nổi bật:**
+- **Canvas Rendering:** Vẽ và vận hành các thành phần chuyển động (máy bay ta, kẻ địch, đạn laser, hạt nổ tung tóe, bầu trời sao trôi cuộn) mượt mà bằng Canvas 2D.
+- **Tốc độ tăng dần (Speed Scaling):** Multiplier nhân vận tốc và tần suất của kẻ địch tăng dần `0.02` mỗi giây (tương đương nhanh hơn `10%` mỗi 8 giây) liên tục cho đến khi người chơi cạn 3 điểm khiên chắn (Shield).
+- **Âm thanh tổng hợp (Audio Synth):** Sử dụng `AudioContext` của Web Audio API để phát ra các bước sóng tiếng nổ, tiếng rít súng laser tương thích theo nút bật/tắt audio tổng của site (`SoundContext`).
+- **Highscore:** Lưu kỷ lục điểm số bền vững vào cache trình duyệt.
 
 ---
 
