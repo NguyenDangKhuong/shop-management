@@ -75,7 +75,7 @@ export default function SiteHeader({
                     {/* Decorative HUD Corner Accents */}
                     <div className="absolute top-0 left-2 w-2 h-2 border-l border-t border-[var(--neon-cyan)] opacity-50" />
                     <div className="absolute top-0 right-2 w-2 h-2 border-r border-t border-[var(--neon-cyan)] opacity-50" />
-                    
+
                     {/* Mobile */}
                     <div className="flex md:hidden items-center w-full">
                         <div className="flex-1 flex justify-start">
@@ -95,6 +95,7 @@ export default function SiteHeader({
                             <SoundToggle />
                             <ThemeToggle />
                             {rightSlot}
+                            <RadarNav />
                         </div>
                     </div>
                     {/* Desktop */}
@@ -110,7 +111,7 @@ export default function SiteHeader({
                                 Khuong<span className="text-[#38bdf8]">.Dev</span>
                             </span>
                         </Link>
-                        
+
                         {/* System Status (HUD) */}
                         <div className="hidden lg:flex items-center gap-4 mx-4 flex-1 justify-center opacity-70">
                             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[var(--neon-cyan)] to-transparent opacity-30" />
