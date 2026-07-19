@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import RadarGame from './RadarGame'
 
 export function RadarNav() {
@@ -21,21 +22,41 @@ export function RadarNav() {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
+    // Global keyboard shortcut to launch the game ('g' key)
+    useEffect(() => {
+        const handleKeys = (e: KeyboardEvent) => {
+            // Ignore if user is editing inputs/text-areas
+            if (document.activeElement) {
+                const tag = document.activeElement.tagName.toUpperCase()
+                if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement.getAttribute('contenteditable') === 'true') {
+                    return
+                }
+            }
+
+            if (e.key.toLowerCase() === 'g') {
+                e.preventDefault()
+                setGameOpen(prev => !prev)
+            }
+        }
+        window.addEventListener('keydown', handleKeys)
+        return () => window.removeEventListener('keydown', handleKeys)
+    }, [])
+
     return (
         <>
             <div
                 onClick={() => setGameOpen(true)}
                 className="relative w-8 h-8 rounded-full border border-[var(--neon-cyan)]/50 bg-[var(--neon-cyan)]/5 overflow-hidden flex-shrink-0 cursor-pointer hover:border-[var(--neon-cyan)] hover:scale-110 hover:shadow-[0_0_10px_rgba(6,182,212,0.3)] active:scale-95 transition-all duration-200"
                 style={{ boxShadow: 'inset 0 0 10px rgba(0, 255, 255, 0.1)' }}
-                title="Launch Space Interceptor Game"
+                title="Launch Space Interceptor Game (Press 'G')"
             >
                 {/* Crosshairs */}
                 <div className="absolute top-1/2 left-0 w-full h-[1px] bg-[var(--neon-cyan)]/30 -translate-y-1/2" />
                 <div className="absolute left-1/2 top-0 w-[1px] h-full bg-[var(--neon-cyan)]/30 -translate-x-1/2" />
 
                 {/* Concentric circles */}
-                <div className="absolute inset-[20%] rounded-full border border-[var(--neon-cyan)]/20" />
-                <div className="absolute inset-[40%] rounded-full border border-[var(--neon-cyan)]/20" />
+                <div className="absolute inset-[20%] rounded-full border border-[var(--neon-cyan)]/25" />
+                <div className="absolute inset-[40%] rounded-full border border-[var(--neon-cyan)]/25" />
 
                 {/* Sweep animation */}
                 <div
@@ -66,8 +87,10 @@ export function RadarNav() {
                 `}</style>
             </div>
 
-            {gameOpen && <RadarGame onClose={() => setGameOpen(false)} />}
+            {gameOpen && typeof document !== 'undefined' && createPortal(
+                <RadarGame onClose={() => setGameOpen(false)} />,
+                document.body
+            )}
         </>
     )
 }
-
