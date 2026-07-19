@@ -714,7 +714,7 @@ whitelist:
   ip:
     - "127.0.0.1"
     - "100.118.218.99"    # VPS Tailscale IP
-    - "100.108.169.39"    # Ubuntu VM Tailscale IP
+    - "100.64.80.29"      # Alpine VM Tailscale IP
   cidr:
     - "100.64.0.0/10"    # Tailscale CGNAT range (tất cả thiết bị Tailscale)
     - "192.168.1.0/24"   # Home LAN
@@ -873,9 +873,9 @@ cd ~/homeassistant && docker compose pull && docker compose up -d  # Update
 |--------|---------|--------|
 | `khuong.theworkpc.com` | Dynu DDNS | → Vercel (shop) |
 | `server.khuong.theworkpc.com` | Dynu wildcard | → ESXi (192.168.1.100:9443 via subnet) |
-| `n8n.khuong.theworkpc.com` | Dynu wildcard | → n8n (100.108.169.39:5678 via Tailscale) |
-| `cli-proxy.khuong.theworkpc.com` | Dynu wildcard | → cli-proxy (100.108.169.39:8317 via Tailscale) |
-| `openclaw.khuong.theworkpc.com` | Dynu wildcard | → openclaw (100.108.169.39:18789 via Tailscale) |
+| `n8n.khuong.theworkpc.com` | Dynu wildcard | → n8n (localhost:5678) |
+| `cli-proxy.khuong.theworkpc.com` | Dynu wildcard | → cli-proxy (localhost:8317) |
+| `openclaw.khuong.theworkpc.com` | Dynu wildcard | → openclaw (localhost:18789) |
 | `nas.khuong.theworkpc.com` | Dynu wildcard | → NAS Synology (192.168.1.200:5001 via subnet) |
 | `ha.khuong.theworkpc.com` | Dynu wildcard | → Home Assistant (localhost:8123) |
 | `*.khuong.theworkpc.com` | Dynu wildcard | → VPS (add more subdomains) |
@@ -923,11 +923,11 @@ Auto-renew: `certbot.timer` runs 2x/day, renews 30 days before expiry.
                            │ Tailscale VPN
                            │ (subnet: 192.168.1.0/24)
                            ▼
-              ┌═══════════════════════════════════┐
-              ║  🖥️ Ubuntu VM (100.108.169.39)     ║
-              ║  (khuong-ubuntu-esxi)              ║
-              ║  Subnet Router → forwards LAN      ║
-              ╚════════════╤══════════════════════╝
+               ┌═══════════════════════════════════┐
+               ║  🖥️ Alpine VM (100.64.80.29)       ║
+               ║  (alpine-cloudflared)              ║
+               ║  Subnet Router → forwards LAN      ║
+               ╚════════════╤══════════════════════╝
                            │ LAN
                            ▼
               ┌═══════════════════════════════════┐
@@ -987,12 +987,12 @@ sudo certbot --nginx -d myapp.${BASE_DOMAIN} --non-interactive --agree-tos --ema
 
 ## Tailscale Subnet Routing
 
-VPS accesses local LAN (192.168.1.0/24) through Ubuntu VM subnet router.
+VPS accesses local LAN (192.168.1.0/24) through Alpine VM subnet router.
 
 | Machine | Tailscale IP | Role |
 |---------|-------------|------|
 | **heyyolo-free-vps** | 100.118.218.99 | `--advertise-exit-node --accept-routes --ssh` |
-| **khuong-ubuntu-esxi** | 100.108.169.39 | `--advertise-routes=192.168.1.0/24` |
+| **alpine-cloudflared** | 100.64.80.29 | `--advertise-routes=192.168.1.0/24` |
 | **macbook-pro-may-cty** | 100.90.20.107 | Client |
 | **khuongnas** | 100.116.76.83 | NAS |
 | **iphone-13-pro-max** | 100.65.129.97 | Mobile |
@@ -1001,7 +1001,7 @@ VPS accesses local LAN (192.168.1.0/24) through Ubuntu VM subnet router.
 # VPS: accept subnet routes + advertise exit node
 sudo tailscale up --advertise-exit-node --accept-routes --ssh
 
-# Ubuntu VM: advertise LAN
+# Alpine VM: advertise LAN
 sudo tailscale up --advertise-routes=192.168.1.0/24 --accept-routes
 ```
 
@@ -1113,9 +1113,9 @@ chkconfig slpd on
 |--------|--------|---------|
 | `khuong.theworkpc.com` | Vercel shop (public only) | VPS → Vercel |
 | `server.khuong.theworkpc.com` | ESXi Web UI | VPS → subnet → 192.168.1.100:9443 |
-| `n8n.khuong.theworkpc.com` | n8n | VPS → Tailscale → 100.108.169.39:5678 |
-| `cli-proxy.khuong.theworkpc.com` | CLI Proxy API | VPS → Tailscale → 100.108.169.39:8317 |
-| `openclaw.khuong.theworkpc.com` | OpenClaw | VPS → Tailscale → 100.108.169.39:18789 |
+| `n8n.khuong.theworkpc.com` | n8n | VPS → localhost:5678 |
+| `cli-proxy.khuong.theworkpc.com` | CLI Proxy API | VPS → localhost:8317 |
+| `openclaw.khuong.theworkpc.com` | OpenClaw | VPS → localhost:18789 |
 | `nas.khuong.theworkpc.com` | NAS Synology | VPS → subnet → 192.168.1.200:5001 |
 | `ha.khuong.theworkpc.com` | Home Assistant | VPS → localhost:8123 |
 | `ui.khuong.theworkpc.com` | Webtop (web desktop) | VPS → localhost:3010 |

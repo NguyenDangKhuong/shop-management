@@ -74,4 +74,24 @@ Do Boardlink chỉ cung cấp "nút bấm raw", không tạo ra cái tủ lạnh
    - **Cách khắc phục:** Rút nguồn điện vật lý của box ra (Cold Boot), đợi 10s rồi cắm lại để ngắt điện hoàn toàn chip PHY. Lệnh `sudo reboot` sẽ không sửa được lỗi này.
 
 ---
-*Cập nhật: 18/07/2026*
+*Cập nhật: 19/07/2026*
+
+## 5. UI Customization & Cyberpunk Theme
+
+Dashboard của HA Master được tinh chỉnh giao diện theo phong cách tối tân, giả lập giao diện tối giản công nghệ (Hologram / Sci-Fi) đồng bộ với ngôn ngữ thiết kế của Website cá nhân.
+
+### 5.1 Giao diện Lưới ô vuông (Grid of Tile Cards)
+Thay vì sử dụng danh sách dọc truyền thống của thẻ `entities`, hầu hết công tắc đèn và thiết bị trong nhà được chuyển đổi sang thẻ `tile` đặt trong khối `grid` (2 cột):
+* **Trực quan:** Biểu tượng thiết bị bo tròn, hiển thị trạng thái động và màu phát sáng rõ nét khi được kích hoạt.
+* **Gọn gàng:** Giảm chiều dài cuộn trang trên giao diện điện thoại.
+* **Bảo toàn:** Các điều khiển nút bấm quạt hồng ngoại (`custom:paper-buttons-row`) và remote TV (`custom:firemote-card`) phức tạp được giữ nguyên cấu trúc YAML để tránh mất cấu hình lệnh.
+
+### 5.2 Theme Cyberpunk Dark
+Theme được viết và lưu tại thư mục cấu hình trên VPS: `/home/ubuntu/homeassistant/config/themes/cyberpunk_dark.yaml`.
+
+**Đặc điểm nổi bật:**
+* **Nền lưới Blueprint:** Kết hợp radial gradient tối và lưới kẻ ô xanh nhạt (`30px x 30px`) tạo cảm giác chiều sâu không gian.
+* **Nổi bật (High Contrast):** Nền thẻ có độ đục 88% (`rgba(15, 23, 42, 0.88)`) để tách biệt rõ khỏi lưới nền.
+* **Viền phát sáng (Neon Glow):** Viền bo cong `16px`, phát quang màu Cyan mờ ảo xung quanh card (`box-shadow: 0 0 20px rgba(6, 182, 212, 0.25)`).
+* **Fix lỗi Popups trắng:** Khai báo đầy đủ các biến Material Components (`mdc-theme-surface`, `dialog-background-color`, v.v.) sang tông tối `#0b0f19` để khắc phục tình trạng bảng "Xem chi tiết" bị trắng xóa chữ mờ.
+
