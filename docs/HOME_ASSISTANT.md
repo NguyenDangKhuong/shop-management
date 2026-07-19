@@ -89,9 +89,25 @@ Thay vì sử dụng danh sách dọc truyền thống của thẻ `entities`, h
 ### 5.2 Theme Cyberpunk Dark
 Theme được viết và lưu tại thư mục cấu hình trên VPS: `/home/ubuntu/homeassistant/config/themes/cyberpunk_dark.yaml`.
 
-**Đặc điểm nổi bật:**
-* **Nền lưới Blueprint:** Kết hợp radial gradient tối và lưới kẻ ô xanh nhạt (`30px x 30px`) tạo cảm giác chiều sâu không gian.
+* **Nền lưới Blueprint Tĩnh (Fixed):** Kết hợp radial gradient tối, lưới ô vuông xanh nhạt và hình radar quét vector. Toàn bộ các lớp nền này được neo tĩnh (`fixed`) vào viewport của trình duyệt. Khi cuộn trang, các card điều khiển sẽ trượt mịn màng đè lên nền radar tĩnh mà không làm trôi lệch hay méo ảnh nền ở mọi độ phân giải.
 * **Nổi bật (High Contrast):** Nền thẻ có độ đục 88% (`rgba(15, 23, 42, 0.88)`) để tách biệt rõ khỏi lưới nền.
 * **Viền phát sáng (Neon Glow):** Viền bo cong `16px`, phát quang màu Cyan mờ ảo xung quanh card (`box-shadow: 0 0 20px rgba(6, 182, 212, 0.25)`).
-* **Fix lỗi Popups trắng:** Khai báo đầy đủ các biến Material Components (`mdc-theme-surface`, `dialog-background-color`, v.v.) sang tông tối `#0b0f19` để khắc phục tình trạng bảng "Xem chi tiết" bị trắng xóa chữ mờ.
+* **Bản đồ & Popups xem nhanh:** Áp dụng `map-filter` để tự động đổi màu bản đồ Leaflet sang tông tối huyền ảo. Đồng bộ hóa màu sắc tất cả các bảng xem thiết bị (More-Info popups), danh sách dropdown, ô input và log hệ thống sang màu tối đồng nhất.
+
+### 5.3 Custom Card Wrapper (`custom:spaceship-card`)
+Để tái sử dụng hiệu ứng phi thuyền HUD trên mọi tab và dashboard một cách linh hoạt, một custom card wrapper đã được cài đặt tại `/home/ubuntu/homeassistant/config/www/spaceship-card.js` và đăng ký trong Lovelace Resources.
+
+* **Cách hoạt động:** Thẻ bọc ngoài cho phép gom bất kỳ card Lovelace nào có sẵn (Tile, Entities, v.v.) và tự động ghi đè thuộc tính CSS để làm nền card trong suốt, chuyển dời khung viền kiểm soát ra lớp bọc ngoài.
+* **Hiệu ứng Khóa mục tiêu (Zoom Lock-on):** Ở chế độ chờ, hiển thị mờ một khung target F-22 mờ ảo (`scale 1.45`) lệch nhẹ ngoài góc dưới. Khi hover chuột hoặc chạm tap, khung ngắm này lập tức co hẹp khít lại (`scale 1`) và phát sáng cyan rực rỡ tượng trưng cho hành động khóa mục tiêu bắn hạ.
+* **Máy bay tuần tra viền (Border Orbit):** Khi được active, một chiếc máy bay F-22 lớn (`20px`) sẽ tự động xuất hiện bay tuần tra vòng quanh viền chữ nhật của card và nghiêng mình bẻ lái ở mỗi khúc cua góc.
+
+**Cấu hình sử dụng mẫu:**
+```yaml
+type: custom:spaceship-card
+card:
+  type: tile
+  entity: switch.sonoff_device
+  name: Thiết bị Spaceship
+```
+
 
